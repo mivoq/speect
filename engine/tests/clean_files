@@ -1,0 +1,24 @@
+#!/bin/sh
+
+echo "\tin tests"
+
+########################################################################
+
+if [ -d CMakeFiles ]
+then 
+    rm -fr CMakeFiles
+fi
+
+if [ -f cmake_install.cmake ]
+then 
+    rm -f cmake_install.cmake
+fi
+
+if [ -f Makefile ]
+then 
+    rm -f Makefile
+fi
+
+########################################################################
+
+rm -f *~

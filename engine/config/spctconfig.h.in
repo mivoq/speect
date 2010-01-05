@@ -1,0 +1,140 @@
+/************************************************************************************/
+/* Copyright (c) 2008-2009 The Department of Arts and Culture,                      */
+/* The Government of the Republic of South Africa.                                  */
+/*                                                                                  */
+/* Contributors:  Meraka Institute, CSIR, South Africa.                             */
+/*                                                                                  */
+/* Permission is hereby granted, free of charge, to any person obtaining a copy     */
+/* of this software and associated documentation files (the "Software"), to deal    */
+/* in the Software without restriction, including without limitation the rights     */
+/* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell        */
+/* copies of the Software, and to permit persons to whom the Software is            */
+/* furnished to do so, subject to the following conditions:                         */
+/* The above copyright notice and this permission notice shall be included in       */
+/* all copies or substantial portions of the Software.                              */
+/*                                                                                  */
+/* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR       */
+/* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,         */
+/* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE      */
+/* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER           */
+/* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,    */
+/* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN        */
+/* THE SOFTWARE.                                                                    */
+/*                                                                                  */
+/************************************************************************************/
+/*                                                                                  */
+/* AUTHOR  : Aby Louw                                                               */
+/* DATE    : 25 March 2008                                                          */
+/*                                                                                  */
+/************************************************************************************/
+/*                                                                                  */
+/* spctconfig.h is auto generated from config/spctconfig.h.in                       */
+/* Do not edit spctconfig.h                                                         */
+/*                                                                                  */
+/************************************************************************************/
+
+#ifndef _SPCT_CONFIG_H__
+#define _SPCT_CONFIG_H__
+
+
+/**
+ * @file spctconfig.h
+ * System specific defintions as determined by build system.
+ */
+
+
+/************************************************************************************/
+/*                                                                                  */
+/* Compiler settings                                                                */
+/*                                                                                  */
+/************************************************************************************/
+
+#cmakedefine SPCT_MSVC
+
+#cmakedefine SPCT_MINGW32
+
+#cmakedefine SPCT_BCC32
+
+#cmakedefine SPCT_GCC
+
+
+/************************************************************************************/
+/*                                                                                  */
+/* Platform                                                                         */
+/*                                                                                  */
+/************************************************************************************/
+
+#cmakedefine SPCT_WIN32
+
+#cmakedefine SPCT_UNIX
+
+#cmakedefine SPCT_MACOSX
+
+
+/************************************************************************************/
+/*                                                                                  */
+/* System includes                                                                  */
+/*                                                                                  */
+/************************************************************************************/
+
+#cmakedefine SPCT_HAVE_SYS_TYPES_H
+
+#cmakedefine SPCT_HAVE_LIMITS_H
+
+#cmakedefine SPCT_HAVE_SYS_STAT_H
+
+#cmakedefine SPCT_HAVE_UNISTD_H
+
+#cmakedefine SPCT_HAVE_FCNTL_H
+
+#cmakedefine SPCT_HAVE_SYS_MMAN_H
+
+
+/************************************************************************************/
+/*                                                                                  */
+/* Machine specific                                                                 */
+/*                                                                                  */
+/************************************************************************************/
+
+#cmakedefine SPCT_LITTLE_ENDIAN
+
+#cmakedefine SPCT_BIG_ENDIAN
+
+#cmakedefine SPCT_LONG_DOUBLE
+
+
+/************************************************************************************/
+/*                                                                                  */
+/* Multi-threaded support                                                           */
+/*                                                                                  */
+/************************************************************************************/
+
+#cmakedefine SPCT_USE_THREADS
+
+#cmakedefine SPCT_USE_POSIX_THREADS
+
+#cmakedefine SPCT_USE_WIN32_THREADS
+
+
+/************************************************************************************/
+/*                                                                                  */
+/* Errors, warnings and debugging                                                   */
+/*                                                                                  */
+/************************************************************************************/
+
+#cmakedefine SPCT_ERROR_ABORT_FATAL
+
+#cmakedefine SPCT_ERROR_VERBOSE
+
+
+/************************************************************************************/
+/*                                                                                  */
+/* Object casts                                                                     */
+/*                                                                                  */
+/************************************************************************************/
+
+#cmakedefine SPCT_DO_SAFE_CAST
+
+
+
+#endif /* _SPCT_CONFIG_H__ */

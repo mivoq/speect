@@ -1,0 +1,32 @@
+######################################################################################
+##                                                                                  ##
+## CMake build information for Speect Engine library.                               ##
+##                                                                                  ##
+## SpeectConf.cmake is auto generated from config/SpeectConf.cmake.in, do           ##
+## not edit SpeectConf.cmake                                                        ##
+##                                                                                  ##
+## Include this file in other projects that want to link with Speect                ##
+## The link target is SPCT_LIBRARY_TARGET                                           ##
+##                                                                                  ##
+######################################################################################
+
+
+set(SPEECT_INCLUDE_PATH "@SPCT_INCLUDE_DIRS@")
+set(SPEECT_VERSION_STRING @SPCT_VERSION@)
+set(SPEECT_VERSION_MAJOR @SPCT_VERSION_MAJOR@)
+set(SPEECT_VERSION_MINOR @SPCT_VERSION_MINOR@)
+set(SPEECT_VERSION_PATCH @SPCT_VERSION_PATCH@)
+
+#
+# SWIG interface includes
+#
+set(SPEECT_PYTHON_WRAPPER_INCLUDE_PATH "@CMAKE_SOURCE_DIR@/swig/python")
+
+
+#
+# include CMake export() generated file named spctConfig.cmake
+#
+get_filename_component(_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
+include("${_DIR}/spctConfig.cmake")
+
+

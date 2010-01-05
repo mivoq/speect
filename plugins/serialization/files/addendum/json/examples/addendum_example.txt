@@ -1,0 +1,70 @@
+  {
+    "addendum-definition" :
+      {
+	"name" : "English Lwazi",
+	"description" : "An English addendum for the Lwazi project.",
+	"language" : "English",
+	"lang-code" : "eng-ZA",
+	"version" :
+	  {
+	    "major" : 0,
+	    "minor" : 1
+	  }
+      },
+    "addendum-entries" :
+      {
+	"project" :
+	  [
+	    {
+	      "pos" : "noun",
+	      "syllables" : [["p", "r", "o"], ["j", "e", "k", "t"]]
+	    },
+	    {
+	      "pos" : "verb",
+	      "syllables" : [["p", "r", "@"], ["j", "e", "k", "t"]]
+	    }
+	  ],
+	"meraka" :
+	  [
+	    {
+	      "pos" : "noun",
+	      "syllables" : [["m", "i"], ["r", "aa"], ["k", "aa"]]
+	    }
+	  ],
+	"tshwane" :
+	  [
+	    {
+	      "pos" : "noun",
+	      "syllables" : [["t", "s", "w", "aa"], ["n", "e"]]
+	    }
+	  ],
+	"*" :
+	  [
+	    {
+	      "orthography" : "asterisk",
+	      "pos" : "noun",
+	      "type" : "symbol",
+	      "syllables" : [["a"], ["s", "t", "@"], ["r", "i", "s", "k"]]
+	    }
+	  ],
+	"hz" :
+	  [
+	    {
+	      "orthography" : "hertz",
+	      "pos" : "noun",
+	      "type" : "abbreviation",
+	      "phones" : ["h", "@@", "r", "t", "s"]
+	    }
+	  ],
+	"khz" :
+	  [
+	    {
+	      "orthography" : "kilohertz",
+	      "pos" : "noun",
+	      "type" : "abbreviation",
+	      "phones" : ["k", "ii", "l", "ou", "h", "@@", "r", "t", "s"]
+	    }
+	  ]
+      }
+  }
+

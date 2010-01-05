@@ -1,0 +1,87 @@
+#!/bin/sh
+
+echo ""
+
+########################################################################
+
+echo "cleaning cmake files"
+
+if [ -d CMakeFiles ]
+then 
+    rm -fr CMakeFiles
+fi
+
+if [ -f cmake_install.cmake ]
+then 
+    rm -f cmake_install.cmake
+fi
+
+if [ -f Makefile ]
+then 
+    rm -f Makefile
+fi
+
+
+########################################################################
+# Add plug-in directories here if they have a 'clean_files' script, 
+# see the templates directory for examples
+########################################################################
+
+echo "--cleaning addendum--"
+
+cd ./addendum/
+./clean_files
+cd ..
+
+
+########################################################################
+
+echo "--cleaning g2p_rewrites--"
+
+cd ./g2p_rewrites/
+./clean_files
+cd ..
+
+
+########################################################################
+
+echo "--cleaning halfphone_db--"
+
+cd ./halfphone_db/
+./clean_files
+cd ..
+
+
+########################################################################
+
+echo "--cleaning lexicon--"
+
+cd ./lexicon/
+./clean_files
+cd ..
+
+
+########################################################################
+
+echo "--cleaning phoneset--"
+
+cd ./phoneset/
+./clean_files
+cd ..
+
+
+########################################################################
+
+echo "--cleaning utterance--"
+
+cd ./utterance/
+./clean_files
+cd ..
+
+
+########################################################################
+
+
+rm -f  *~
+
+echo ""

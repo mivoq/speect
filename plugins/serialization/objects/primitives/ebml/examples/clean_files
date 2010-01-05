@@ -1,0 +1,18 @@
+#!/bin/sh
+
+########################################################################
+
+echo "\tcleaning cmake files"
+
+rm -f  CMakeCache.txt 
+rm -fr CMakeFiles 
+rm -f  cmake_install.cmake
+rm -f  Makefile
+
+
+########################################################################
+
+rm -f example_write.c
+rm -f example_read.c
+rm -f prim_ebml_test.bin
+rm -f *~

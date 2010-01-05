@@ -1,0 +1,69 @@
+#!/bin/sh
+
+echo ""
+
+########################################################################
+
+echo "cleaning cmake files"
+
+if [ -d CMakeFiles ]
+then 
+    rm -fr CMakeFiles
+fi
+
+if [ -f cmake_install.cmake ]
+then 
+    rm -f cmake_install.cmake
+fi
+
+if [ -f Makefile ]
+then 
+    rm -f Makefile
+fi
+
+
+########################################################################
+# Add plug-in directories here if they have a 'clean_files' script, 
+# see the templates directory for examples
+########################################################################
+
+echo "--cleaning arrays--"
+
+cd ./arrays/
+./clean_files
+cd ..
+
+
+########################################################################
+
+echo "--cleaning matrices--"
+
+cd ./matrices/
+./clean_files
+cd ..
+
+
+########################################################################
+
+echo "--cleaning primitives--"
+
+cd ./primitives/
+./clean_files
+cd ..
+
+
+########################################################################
+
+echo "--cleaning tracks--"
+
+cd ./tracks/
+./clean_files
+cd ..
+
+
+########################################################################
+
+
+rm -f  *~
+
+echo ""

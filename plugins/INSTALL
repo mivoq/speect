@@ -1,0 +1,28 @@
+Speect plug-ins are written in ANSI C/ISO C90 and should compile with any standards
+compliant compiler, although we still need to do some extensive testing.
+
+The bash script "clean_files" can be run to clean the build (delete the
+cache and cmake makefiles) and to delete auto generated files and backup files.
+
+First configure and build the Speect engine (see speect/engine/INSTALL).
+Set the "SPEECT_PLUGINS" enviroment variable to the full path of your 
+plug-in directory.
+
+for example in bash do
+
+export SPEECT_PLUGINS="/home/your_path/speect/plugins"
+
+Now edit speect/plugins/cmake/options.cmake and set the SPEECT_DIR path 
+variable (line 37) to the full path of your Speect engine 
+directory (speect/engine).
+
+After Speect has been compiled you can just run "cmake ." in the 
+speect/plugins directory to configure the plug-ins. There is no need 
+to go through the configuration as with Speect as that configuration 
+is imported by the plug-ins.
+
+If no errors occurred one can build the plug-ins with the "make" command.
+
+
+The speect/swig/python directory contains a Python client/server which
+can be used with a voice. See the README in speect/swig/python

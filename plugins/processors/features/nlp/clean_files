@@ -1,0 +1,195 @@
+#!/bin/sh
+
+echo ""
+
+########################################################################
+
+echo "cleaning cmake files"
+
+if [ -d CMakeFiles ]
+then 
+    rm -fr CMakeFiles
+fi
+
+if [ -f cmake_install.cmake ]
+then 
+    rm -f cmake_install.cmake
+fi
+
+if [ -f Makefile ]
+then 
+    rm -f Makefile
+fi
+
+
+########################################################################
+# Add plug-in directories here if they have a 'clean_files' script, 
+# see the templates directory for examples
+########################################################################
+
+echo "--cleaning segment_duration--"
+
+cd ./segment_duration/
+./clean_files
+cd ..
+
+
+########################################################################
+
+echo "--cleaning segment_end--"
+
+cd ./segment_end/
+./clean_files
+cd ..
+
+
+########################################################################
+
+echo "--cleaning segment_mid--"
+
+cd ./segment_mid/
+./clean_files
+cd ..
+
+
+########################################################################
+
+echo "--cleaning segment_pos_syl--"
+
+cd ./segment_pos_syl/
+./clean_files
+cd ..
+
+
+########################################################################
+
+echo "--cleaning segment_start--"
+
+cd ./segment_start/
+./clean_files
+cd ..
+
+
+########################################################################
+
+echo "--cleaning syllable_break--"
+
+cd ./syllable_break/
+./clean_files
+cd ..
+
+
+########################################################################
+
+echo "--cleaning syllable_duration--"
+
+cd ./syllable_duration/
+./clean_files
+cd ..
+
+
+########################################################################
+
+echo "--cleaning syllable_end--"
+
+cd ./syllable_end/
+./clean_files
+cd ..
+
+
+########################################################################
+
+echo "--cleaning syllable_num_phones--"
+
+cd ./syllable_num_phones/
+./clean_files
+cd ..
+
+
+########################################################################
+
+echo "--cleaning syllable_pos_type--"
+
+cd ./syllable_pos_type/
+./clean_files
+cd ..
+
+
+########################################################################
+
+echo "--cleaning syllable_pos_word--"
+
+cd ./syllable_pos_word/
+./clean_files
+cd ..
+
+
+########################################################################
+
+echo "--cleaning syllable_start--"
+
+cd ./syllable_start/
+./clean_files
+cd ..
+
+
+########################################################################
+
+echo "--cleaning word_break--"
+
+cd ./word_break/
+./clean_files
+cd ..
+
+
+########################################################################
+
+echo "--cleaning word_duration--"
+
+cd ./word_duration/
+./clean_files
+cd ..
+
+
+########################################################################
+
+echo "--cleaning word_end--"
+
+cd ./word_end/
+./clean_files
+cd ..
+
+
+########################################################################
+
+echo "--cleaning word_num_syls--"
+
+cd ./word_num_syls/
+./clean_files
+cd ..
+
+
+########################################################################
+
+echo "--cleaning word_pos_phrase--"
+
+cd ./word_pos_phrase/
+./clean_files
+cd ..
+
+
+########################################################################
+
+echo "--cleaning word_start--"
+
+cd ./word_start/
+./clean_files
+cd ..
+
+
+########################################################################
+
+
+rm -f  *~
+
+echo ""

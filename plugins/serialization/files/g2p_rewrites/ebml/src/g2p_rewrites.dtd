@@ -1,0 +1,108 @@
+/************************************************************************************/
+/* Copyright (c) 2009 The Department of Arts and Culture,                           */
+/* The Government of the Republic of South Africa.                                  */
+/*                                                                                  */
+/* Contributors:  Meraka Institute, CSIR, South Africa.                             */
+/*                                                                                  */
+/* Permission is hereby granted, free of charge, to any person obtaining a copy     */
+/* of this software and associated documentation files (the "Software"), to deal    */
+/* in the Software without restriction, including without limitation the rights     */
+/* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell        */
+/* copies of the Software, and to permit persons to whom the Software is            */
+/* furnished to do so, subject to the following conditions:                         */
+/* The above copyright notice and this permission notice shall be included in       */
+/* all copies or substantial portions of the Software.                              */
+/*                                                                                  */
+/* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR       */
+/* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,         */
+/* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE      */
+/* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER           */
+/* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,    */
+/* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN        */
+/* THE SOFTWARE.                                                                    */
+/*                                                                                  */
+/************************************************************************************/
+/*                                                                                  */
+/* AUTHOR  : Aby Louw                                                               */
+/* DATE    : April 2009                                                             */
+/*                                                                                  */
+/************************************************************************************/
+/*                                                                                  */
+/* Speect G2P rewrites EBML DTD.                                                    */
+/* ebml version: 1                                                                  */
+/* max id length = 4 bytes                                                          */
+/* max size length = 4 bytes                                                        */
+/* doc type = "spct_g2p_rewrites"                                                   */
+/* doc type version = 1                                                             */
+/* doc type read version = 1                                                        */
+/*                                                                                  */
+/************************************************************************************/
+
+
+declare header
+{
+    EBMLVersion := 1;
+    EBMLReadVersion := 1;
+    EBMLMaxIDLength := 4;
+    EBMLMaxSizeLength := 4;
+    DocType := "spct_g2p_rewrites";
+    DocTypeVersion := 1;
+    DocTypeReadVersion := 1;
+}
+
+
+define types 
+{
+    ascii := string [ range:32..126; ]
+    uint8 := uint [ range:0..255; ] 
+}
+
+
+define elements
+{
+    G2PRewrites := 1371111b container [ card:1; ]
+    {
+        G2PRewritesDefinition := 1111111a container [ card:1; ] [ ordered:yes ]
+        {
+            Name := 1111111b ascii;
+            Language := 1111111c string;
+            Langcode := 1111111d string;
+            Description := 1111111e string;
+            Version := 1111111f container [card:1; ] [ ordered:yes ]
+            {
+                Major := 11111120 uint8;
+                Minor := 11111121 uint8;
+            }
+        }
+
+        Sets := 111111a0 container [ card:?; ] [ ordered:yes ]
+        {
+            SetName := 83 ascii;
+            SetGraphemesContainer := 84 container [ card:+; ]
+            {
+                SetGrapheme := 85 string;
+            }
+        }
+
+        RulesContainer := 111111a1 container [ card:1; ] [ ordered:yes ]
+        {
+            Grapheme := 86 string;
+            SingleRuleContainer := 87 container [ card:+ ] [ ordered:yes ]
+            {
+                /* this is the reversed context, i.e. if "#car" then it must be "rac#" */
+                LeftContext := 88 string;  
+                /* normal left-to-right context */
+                RightContext := 89 string; 
+                Phoneme := 8a string;
+            }
+        }
+
+        GZerosRules := 111111a2 container [ card:*; ] [ ordered:yes ]
+        {
+            GZeroSymbol := 8b string; 
+            GZeroReplacement := 8c string; 
+        }
+    }
+}
+    
+    

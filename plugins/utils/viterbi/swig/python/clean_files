@@ -1,0 +1,20 @@
+#!/bin/sh
+
+echo "\t\tin python"
+
+
+########################################################################
+
+echo "\t\tcleaning doc"
+cd ./doc/
+rm -f *
+cd ..
+
+
+########################################################################
+
+rm -f *~
+rm -fr CMakeFiles
+rm -f CMakeCache.txt
+rm -f cmake_install.cmake
+rm -f Makefile

@@ -1,0 +1,124 @@
+#!/bin/sh
+
+#
+# Do not delete this file, CMake needs it to find the correct
+# plug-in directory path.
+#
+
+echo ""
+
+########################################################################
+
+if [ -f Makefile ]
+then 
+    echo "running make clean"
+    make clean
+    rm -f  Makefile 
+fi
+
+########################################################################
+
+echo "cleaning cmake files"
+
+if [ -f CMakeCache.txt ]
+then 
+    rm -f  CMakeCache.txt 
+fi
+
+if [ -d CMakeFiles ]
+then 
+    rm -fr CMakeFiles
+fi
+
+if [ -f cmake_install.cmake ]
+then 
+    rm -f cmake_install.cmake
+fi
+
+if [ -f cmake_uninstall.cmake ]
+then 
+    rm -f cmake_uninstall.cmake
+fi
+
+if [ -f install_manifest.txt ]
+then 
+    rm -f install_manifest.txt
+fi
+
+
+########################################################################
+
+echo "--cleaning cmake--"
+
+cd ./cmake/
+./clean_files
+cd ..
+
+
+########################################################################
+# Add plug-in directories here if they have a 'clean_files' script, 
+# see the templates directory for examples
+########################################################################
+
+
+echo "--cleaning acoustic"
+
+cd ./acoustic/
+./clean_files
+cd ..
+
+
+########################################################################
+
+
+echo "--cleaning languages"
+
+cd ./languages/
+./clean_files
+cd ..
+
+
+########################################################################
+
+
+echo "--cleaning linguistic"
+
+cd ./linguistic/
+./clean_files
+cd ..
+
+
+########################################################################
+
+
+echo "--cleaning processors"
+
+cd ./processors/
+./clean_files
+cd ..
+
+
+########################################################################
+
+echo "--cleaning serialization"
+
+cd ./serialization/
+./clean_files
+cd ..
+
+
+########################################################################
+
+echo "--cleaning utils"
+
+cd ./utils/
+./clean_files
+cd ..
+
+
+########################################################################
+
+
+rm -f  *~
+
+echo ""

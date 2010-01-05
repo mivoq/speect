@@ -1,0 +1,11 @@
+Speect Plug-ins version 0.9.0 RELEASE December 2009
+
+To use the Speect plug-ins you need the Speect engine version 0.9.0
+
+Speect plug-ins are free and open source software. As a collection it is distributed
+under a MIT license, see COPYING for more details. 
+
+
+To build the Speect plug-ins one needs cmake (http://www.cmake.org, minimum version 2.6) and
+a ANSI C/ISO C90 compliant compiler. See INSTALL for more details. Python and SWIG
+are required to use Speect as a TTS server.

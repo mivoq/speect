@@ -1,0 +1,14 @@
+######################################################################################
+##                                                                                  ##
+## CMake build information for plug-ins.                                            ##
+##                                                                                  ##
+##                                                                                  ##
+##                                                                                  ##
+##                                                                                  ##
+######################################################################################
+
+set(@PLUGIN_SONAME@_include_path "@tmp_name@")
+
+list(APPEND ${PLUGIN_SONAME}_INCLUDE_DIRS
+  ${@PLUGIN_SONAME@_include_path}
+  )

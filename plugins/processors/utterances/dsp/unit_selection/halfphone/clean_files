@@ -1,0 +1,60 @@
+#!/bin/sh
+
+echo ""
+
+########################################################################
+
+echo "cleaning cmake files"
+
+if [ -d CMakeFiles ]
+then 
+    rm -fr CMakeFiles
+fi
+
+if [ -f cmake_install.cmake ]
+then 
+    rm -f cmake_install.cmake
+fi
+
+if [ -f Makefile ]
+then 
+    rm -f Makefile
+fi
+
+
+########################################################################
+# Add plug-in directories here if they have a 'clean_files' script, 
+# see the templates directory for examples
+########################################################################
+
+echo "--cleaning create_units--"
+
+cd ./create_units/
+./clean_files
+cd ..
+
+
+########################################################################
+
+echo "--cleaning process_units--"
+
+cd ./process_units/
+./clean_files
+cd ..
+
+
+########################################################################
+
+echo "--cleaning select_units--"
+
+cd ./select_units/
+./clean_files
+cd ..
+
+
+########################################################################
+
+
+rm -f  *~
+
+echo ""

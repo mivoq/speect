@@ -1,0 +1,80 @@
+#!/bin/sh
+
+echo "\tin src"
+
+
+########################################################################
+
+echo "\tcleaning base"
+cd ./base/
+./clean_files
+cd ..
+
+
+########################################################################
+
+echo "\tcleaning containers"
+cd ./containers/
+./clean_files
+cd ..
+
+
+########################################################################
+
+echo "\tcleaning datasources"
+cd ./datasources/
+./clean_files
+cd ..
+
+
+########################################################################
+
+echo "\tcleaning hrg"
+cd ./hrg/
+./clean_files
+cd ..
+
+
+########################################################################
+
+echo "\tcleaning include"
+cd ./include/
+./clean_files
+cd ..
+
+
+########################################################################
+
+echo "\tcleaning main"
+cd ./main/
+./clean_files
+cd ..
+
+
+########################################################################
+
+echo "\tcleaning pluginmanager"
+cd ./pluginmanager/
+./clean_files
+cd ..
+
+
+########################################################################
+
+echo "\tcleaning serialization"
+cd ./serialization/
+./clean_files
+cd ..
+
+
+########################################################################
+
+echo "\tcleaning voicemanager"
+cd ./voicemanager/
+./clean_files
+cd ..
+
+
+########################################################################
+
+rm -f  *~

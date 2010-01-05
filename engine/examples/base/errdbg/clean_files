@@ -1,0 +1,6 @@
+#!/bin/sh
+
+rm -f *~
+rm -fr CMakeFiles
+rm -f cmake_install.cmake
+rm -f Makefile

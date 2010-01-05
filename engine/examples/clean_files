@@ -1,0 +1,43 @@
+#!/bin/sh
+
+echo "\tin examples"
+
+
+########################################################################
+
+echo "\tcleaning base"
+cd ./base/
+./clean_files
+cd ..
+
+
+########################################################################
+
+echo "\tcleaning containers"
+cd ./containers/
+./clean_files
+cd ..
+
+
+########################################################################
+
+echo "\tcleaning datasources"
+cd ./datasources/
+./clean_files
+cd ..
+
+
+########################################################################
+
+echo "\tcleaning hrg"
+cd ./hrg/
+./clean_files
+cd ..
+
+
+########################################################################
+
+rm -f *~
+rm -fr CMakeFiles
+rm -f cmake_install.cmake
+rm -f Makefile

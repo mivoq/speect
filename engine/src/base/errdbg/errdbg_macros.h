@@ -1,0 +1,383 @@
+/************************************************************************************/
+/* Copyright (c) 2008-2009 The Department of Arts and Culture,                      */
+/* The Government of the Republic of South Africa.                                  */
+/*                                                                                  */
+/* Contributors:  Meraka Institute, CSIR, South Africa.                             */
+/*                                                                                  */
+/* Permission is hereby granted, free of charge, to any person obtaining a copy     */
+/* of this software and associated documentation files (the "Software"), to deal    */
+/* in the Software without restriction, including without limitation the rights     */
+/* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell        */
+/* copies of the Software, and to permit persons to whom the Software is            */
+/* furnished to do so, subject to the following conditions:                         */
+/* The above copyright notice and this permission notice shall be included in       */
+/* all copies or substantial portions of the Software.                              */
+/*                                                                                  */
+/* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR       */
+/* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,         */
+/* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE      */
+/* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER           */
+/* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,    */
+/* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN        */
+/* THE SOFTWARE.                                                                    */
+/*                                                                                  */
+/************************************************************************************/
+/*                                                                                  */
+/* AUTHOR  : Aby Louw                                                               */
+/* DATE    : 5 June 2009                                                            */
+/*                                                                                  */
+/************************************************************************************/
+/*                                                                                  */
+/* Error and debugging macros.                                                      */
+/*                                                                                  */
+/*                                                                                  */
+/************************************************************************************/
+
+#ifndef _SPCT_ERRDBG_MACROS_H__
+#define _SPCT_ERRDBG_MACROS_H__
+
+
+/**
+ * @file errdbg_macros.h
+ * Error and debugging macros.
+ */
+
+
+/**
+ * @ingroup SErrDbg
+ * @defgroup SErrDbgMacros Macros
+ * Error and debugging macros definitions. Detailed description of macros:
+ *
+ * <ul>
+ * <li> <h3> @anchor S_SETCLEAR_MACROS Set/Clear </h3>
+ * Macros that sets and clears errors.
+ *
+ *  <ul>
+ *   <li> @anchor S_NEW_ERR_DETAIL @code void S_NEW_ERR(s_erc *error, s_erc new_error) @endcode
+ *   Set a new error with no context.
+ *
+ *   Set @a error to the error code that occured, @a new_error. This macro
+ *   is useful in deeply nested functions where there is not enough context to add, i.e.
+ *   it is only known that an error of @a new_error type occured, but not why it
+ *   occured.
+ *   <h4> Paramaters: </h4>
+ *    <ul>
+ *     <li> @a error     Pointer to error code variable to set. </li>
+ *     <li> @a new_error The new error code. </li>
+ *    </ul>
+ *   </li>
+ *
+ *   <li> @anchor S_CLR_ERR_DETAIL @code void S_CLR_ERR(s_erc *error) @endcode
+ *   Clear the given error.
+ *
+ *   It is good practice to clear the error code (*@a error == #S_SUCCESS) at the
+ *   beginning of all functions.
+ *   <h4> Paramaters: </h4>
+ *    <ul>
+ *     <li> @a error Pointer to error code to clear. </li>
+ *    </ul>
+ *
+ *   <li> @anchor S_CTX_ERR_DETAIL @code void S_CTX_ERR(s_erc *error, s_erc new_error, const char *function_name, const char *msg, ...) @endcode
+ *   Set a new error with a context.
+ *
+ *   Sets @a error to the error code that occured, @a new_error, as well as giving
+ *   the error logger the function name and a variable length argument string of the context
+ *   wherein this error occured.
+ *   <h4> Paramaters: </h4>
+ *    <ul>
+ *     <li> @a error  Pointer to error code variable to set. </li>
+ *     <li> @a new_error  The new error code. </li>
+ *     <li> @a function_name  The name of the function where the error occured (optional, can be @c NULL). </li>
+ *     <li> @a msg  A format string specifying the error message and the format of the variable
+ *                  length argument list. Same as the the standard @c printf() function. </li>
+ *    </ul>
+ *   </li>
+ *
+ *   <li> @anchor S_FTL_ERR_DETAIL @code void S_FTL_ERR(s_erc *error, s_erc new_error, const char *function_name, const char *msg, ...) @endcode
+ *   Set a new @b fatal context error.
+
+ *   Sets @a error to the fatal error code that occured, @a new_error, as well as giving
+ *   the error logger the function name and a variable length argument string of the context
+ *   wherein this error occured. The same as @b S_CTX_ERR except that if the build
+ *   option @a ERROR_ABORT_FATAL is set then the program is aborted.
+ *   <h4> Paramaters: </h4>
+ *    <ul>
+ *     <li> @a error  Pointer to error code variable to set. </li>
+ *     <li> @a new_error  The new error code. </li>
+ *     <li> @a function_name  The name of the function where the error occured (optional, can be @c NULL). </li>
+ *     <li> @a msg  A format string specifying the error message and the format of the variable
+ *                  length argument list. Same as the the standard @c printf() function. </li>
+ *    </ul>
+ *   </li>
+ *   </ul>
+ *
+ * <li> <h3> @anchor S_CHECK_MACROS Check & set </h3>
+ * Macro that tests for errors and sets new context based on test.
+ *
+ *  <ul>
+ *   <li> @anchor S_CHK_ERR_DETAIL @code s_bool S_CHK_ERR(s_erc *error, s_erc new_error, const char *function_name, const char *msg, ...) @endcode
+ *   Check for an error.
+ *
+ *   Test if an error has occured (if @a error is set, i.e. not equal to #S_SUCCESS), and if so set a new
+ *   context error (same as @b S_CTX_ERR), and return #TRUE. If no error was set,
+ *   (*@a error == #S_SUCCESS) then nothing is done and #FALSE is returned. This macro
+ *   can be used in @c if statements directly after calling a function with an error code parameter,
+ *   testing if an error occured, setting a new error context and executing the @c if statement. If
+ *   no error occured then no new context is set and the @c if statement is not executed.
+ *   <h4> Paramaters: </h4>
+ *    <ul>
+ *     <li> @a error  Pointer to error code variable to set. </li>
+ *     <li> @a new_error  The new error code. </li>
+ *     <li> @a function_name  The name of the function where the error occured (optional, can be @c NULL). </li>
+ *     <li> @a msg  A format string specifying the error message and the format of the variable
+ *                  length argument list. Same as the the standard @c printf() function. </li>
+ *    </ul>
+ *   </li>
+ *  </ul>
+ *
+ * <li> <h3> @anchor S_WARNING_MACROS Warnings </h3>
+ * Macro that sets warning messages.
+ *
+ *  <ul>
+ *   <li> @anchor S_WARNING_DETAIL @code void S_WARNING(s_erc error, const char *function_name, const char *msg, ...) @endcode
+ *   Set a warning.
+ *
+ *   Set a warning with the given context. The warning is logged with the given context and message.
+ *   <h4> Paramaters: </h4>
+ *    <ul>
+ *     <li> @a error  The error code associated with the warning message. </li>
+ *     <li> @a function_name  The name of the function where the error occured (optional, can be @c NULL). </li>
+ *     <li> @a msg  A format string specifying the error message and the format of the variable
+ *                  length argument list. Same as the the standard @c printf() function. </li>
+ *    </ul>
+ *   </li>
+ *  </ul>
+ *
+ *
+ * <li> <h3> @anchor S_DEBUG_MACROS Debugging </h3>
+ * Macro that sets debug messages.
+ *
+ *  <ul>
+ *   <li> @anchor S_DEBUG_DETAIL @code void S_DEBUG(s_dbg_lvl level, const char *msg, ...) @endcode
+ *   Set a debug message.
+ *
+ *   The debug message is logged only if the the given debug level is equal or lower that
+ *   the set level of the @ref SErrDbg module. This level can be changed with the #s_errdbg_level
+ *   function.
+ *   <h4> Paramaters: </h4>
+ *    <ul>
+ *     <li> @a level  The debug level of this message. </li>
+ *     <li> @a msg  A format string specifying the error message and the format of the variable
+ *                  length argument list. Same as the the standard @c printf() function. </li>
+ *    </ul>
+ *   </li>
+ *  </ul>
+ * </li>
+ * </ul>
+ *
+ */
+
+/************************************************************************************/
+/*                                                                                  */
+/* Modules used                                                                     */
+/*                                                                                  */
+/************************************************************************************/
+
+#include <stdlib.h>  /* for abort */
+#include <stdio.h>
+#include "include/common.h"
+#include "base/utils/alloc.h"
+
+/************************************************************************************/
+/*                                                                                  */
+/* Begin external c declaration                                                     */
+/*                                                                                  */
+/************************************************************************************/
+S_BEGIN_C_DECLS
+
+
+/************************************************************************************/
+/*                                                                                  */
+/* Macros                                                                           */
+/*                                                                                  */
+/************************************************************************************/
+
+/**
+ * @ingroup SErrDbgMacros
+ * @hideinitializer
+ * @def S_NEW_ERR
+ * Set a new error with no context.
+ * See @ref S_NEW_ERR_DETAIL "description".
+ * @example errdbg_example.c
+ */
+#define S_NEW_ERR(ERROR, ERROR_CODE)			\
+	do {						\
+		if ((ERROR) != NULL)			\
+			(*(ERROR)) = ERROR_CODE;	\
+	} while(0)
+
+
+/**
+ * @ingroup SErrDbgMacros
+ * @hideinitializer
+ * @def S_CLR_ERR
+ * Clear the given error.
+ * See @ref S_CLR_ERR_DETAIL "description".
+ */
+#define S_CLR_ERR(ERROR)			\
+	do {					\
+		if ((ERROR) != NULL)		\
+			(*(ERROR)) = S_SUCCESS;	\
+	} while(0)
+
+
+/**
+ * @ingroup SErrDbgMacros
+ * @hideinitializer
+ * @def S_CTX_ERR
+ * Set a new error with a context.
+ * See @ref S_CTX_ERR_DETAIL "description".
+ */
+#define S_CTX_ERR (*_s_err(__FILE__, __LINE__))
+
+
+/**
+ * @ingroup SErrDbgMacros
+ * @hideinitializer
+ * @def S_FTL_ERR
+ * Set a new @b fatal context error.
+ * See @ref S_FTL_ERR_DETAIL "description".
+ */
+#ifdef SPCT_ERROR_ABORT_FATAL
+#  define S_FTL_ERR (*_s_fatal_err(__FILE__, __LINE__))
+#else /* !S_ERROR_ABORT_FATAL */
+#  define S_FTL_ERR (*_s_err(__FILE__, __LINE__))
+#endif /* S_ERROR_ABORT_FATAL */
+
+
+/**
+ * @ingroup SErrDbgMacros
+ * @hideinitializer
+ * @def S_CHK_ERR
+ * Check for an error.
+ * See @ref S_CHK_ERR_DETAIL "description".
+ */
+#define S_CHK_ERR (*_s_check_err(__FILE__, __LINE__))
+
+
+/**
+ * @ingroup SErrDbgMacros
+ * @hideinitializer
+ * @def S_WARNING
+ * Set a warning message.
+ * See @ref S_WARNING_DETAIL "description".
+ * @todo add example
+ */
+#define S_WARNING (*_s_warn(__FILE__, __LINE__))
+
+
+/**
+ * @ingroup SErrDbgMacros
+ * @hideinitializer
+ * @def S_DEBUG
+ * Sets a debug message.
+ * See @ref S_DEBUG_DETAIL "description".
+ * @todo add more examples
+ */
+/* SPCT_DEBUGMODE is a compiler switch, -DSPCT_DEBUGMODE=1 */
+#ifdef SPCT_DEBUGMODE
+#  define S_DEBUG _s_dbg
+#else /* !SPCT_DEBUGMODE */
+#  define S_DEBUG 1 ? 0 : _s_dbg
+#endif /* SPCT_DEBUGMODE */
+
+
+/************************************************************************************/
+/*                                                                                  */
+/* Private macros (for internal use only)                                           */
+/*                                                                                  */
+/************************************************************************************/
+
+/*
+ * Used internally by Error and debug module, Logging module
+ * for errors that occur during their initialization.
+ *
+ * -------------------------------------
+ *
+ * S_ERR_PRINT(ERR, FUNC, MSG)
+ *
+ * Print an error to stderr.
+ * ERR The error, of type s_erc.
+ * FUNC String function name in which the error occured.
+ * MSG String error message.
+ *
+ * -------------------------------------
+ *
+ * S_FTL_ERR_PRINT(ERR, FUNC, MSG)
+ *
+ * Print a fatal error to stderr and abort.
+ * ERR The error, of type s_erc.
+ * FUNC String function name in which the error occured.
+ * MSG String error message.
+ *
+ * -------------------------------------
+ *
+ */
+
+#ifdef SPCT_USE_THREADS
+#  define S_ERR_PRINT(ERR, FUNC, MSG)					\
+	do {								\
+	char *err_str = s_error_str(ERR);				\
+	fprintf(stderr, "[ERROR (%s) %lu] %s (in function '%s', %s, %d)\n", \
+		err_str, s_thread_id(), MSG, FUNC, __FILE__, __LINE__);	\
+	S_FREE(err_str);						\
+	} while (0)
+#else /* !SPCT_USE_THREADS */
+#  define S_ERR_PRINT(ERR, FUNC, MSG)				\
+	do {								\
+	char *err_str = s_error_str(ERR);				\
+	fprintf(stderr, "[ERROR (%s)] %s (in function '%s', %s, %d)\n",	\
+		err_str, MSG, FUNC, __FILE__, __LINE__);		\
+	S_FREE(err_str);						\
+	} while (0)
+#endif /* SPCT_USE_THREADS */
+
+
+#ifdef SPCT_ERROR_ABORT_FATAL
+#  ifdef SPCT_USE_THREADS
+#    define S_FTL_ERR_PRINT(ERR, FUNC, MSG)				\
+	do {								\
+		char *err_str = s_error_str(ERR);			\
+		fprintf(stderr, "[FATAL (%s) %lu] %s (in function '%s', %s, %d)\n", \
+			err_str, s_thread_id(), MSG, FUNC, __FILE__, __LINE__); \
+		S_FREE(err_str);					\
+		abort();						\
+	} while (0)
+#  else /* !SPCT_USE_THREADS */
+#    define S_FTL_ERR_PRINT(ERR, FUNC, MSG)				\
+	do {								\
+		char *err_str = s_error_str(ERR);			\
+		fprintf(stderr, "[FATAL ERROR (%s)] %s (in function '%s', %s, %d)\n", \
+			err_str, MSG, FUNC, __FILE__, __LINE__);	\
+		S_FREE(err_str);					\
+		abort();						\
+	} while (0)
+#  endif /* SPCT_USE_THREADS */
+#else /* !SPCT_ERROR_ABORT_FATAL */
+#  ifdef  SPCT_USE_THREADS
+#    define S_FTL_ERR_PRINT(ERR, FUNC, MSG) S_ERR_PRINT(ERR, FUNC, MSG)
+#  else /* !SPCT_USE_THREADS */
+#    define S_FTL_ERR_PRINT(ERR, FUNC, MSG) S_ERR_PRINT(ERR, FUNC, MSG)
+#  endif /* SPCT_USE_THREADS */
+#endif /* SPCT_ERROR_ABORT_FATAL */
+
+
+/************************************************************************************/
+/*                                                                                  */
+/* End external c declaration                                                       */
+/*                                                                                  */
+/************************************************************************************/
+S_END_C_DECLS
+
+
+#endif /* _SPCT_ERRDBG_MACROS_H__ */

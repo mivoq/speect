@@ -12,9 +12,11 @@ for example in bash do
 
 export SPEECT_PLUGINS="/home/your_path/speect/plugins"
 
-Now edit speect/plugins/cmake/options.cmake and set the SPEECT_DIR path 
-variable (line 37) to the full path of your Speect engine 
-directory (speect/engine).
+Now edit speect/plugins/cmake/options.cmake and set the SPEECT_DIR
+path variable (line 37) to the full path of your Speect engine
+directory (this is the root path to the Speect engine _source_
+e.g. "speect/engine" where cmake configuration files from the engine
+configuration can be found).
 
 After Speect has been compiled you can just run "cmake ." in the 
 speect/plugins directory to configure the plug-ins. There is no need 

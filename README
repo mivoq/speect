@@ -1,0 +1,13 @@
+
+                                                      __
+                                                     /\ \__
+                    ____  _____      __     __    ___\ \ ,_\
+                   /',__\/\ '__`\  /'__`\ /'__`\ /'___\ \ \/
+                  /\__, `\ \ \L\ \/\  __//\  __//\ \__/\ \ \_
+                  \/\____/\ \ ,__/\ \____\ \____\ \____\\ \__\
+                   \/___/  \ \ \/  \/____/\/____/\/____/ \/__/
+                            \ \_\
+                             \/_/
+
+./engine/ Contains the Speect engine, see ./engine/README
+./plugins/ Directory to place standard Speect plug-ins, see ./plugins/README

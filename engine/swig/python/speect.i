@@ -66,6 +66,14 @@
 
 
 /*
+ * plug-in loading Speect functions and Python
+ * helper functions
+  */
+%include "plugins.c"
+%include "plugins.py"
+
+
+/*
  * SObject wrapper functions
  */
 %include "object.c"
@@ -77,6 +85,54 @@
  */
 %include "primitives.c"
 %include "primitives.py"
+
+
+/*
+ * SIterator wrapper functions
+ */
+%include "iterator.c"
+%include "iterator.py"
+
+
+/*
+ * SContainer Python class
+ */
+%include "container.py"
+
+
+/*
+ * SList wrapper functions
+ */
+%include "list.c"
+%include "list.py"
+
+
+/*
+ * SMap wrapper functions
+ */
+%include "map.c"
+%include "map.py"
+
+
+/*
+ * SMapInternal Python class
+ */
+%include "map_internal.py"
+
+
+/*
+ * SItem wrapper functions
+ */
+%include "item.c"
+%include "item.py"
+
+
+/*
+ * SRelation wrapper functions
+ */
+%include "relation.c"
+%include "relation.py"
+
 
 /*
  * SUtterance wrapper functions
@@ -90,4 +146,18 @@
  */
 %include "voice.c"
 %include "voice.py"
+
+
+/*
+ * SUttProcessor wrapper functions
+ */
+%include "utt_processor.c"
+%include "utt_processor.py"
+
+
+/*
+ * SFeatProcessor wrapper functions
+ */
+%include "feat_processor.c"
+%include "feat_processor.py"
 

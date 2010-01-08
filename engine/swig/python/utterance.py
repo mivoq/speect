@@ -72,47 +72,74 @@ class SUtterance(SObject):
         """
 
         self._voice = None
-        if not py_sobject_is_type(object, "SUtterance"):
-            raise TypeError('Input argument \"object\" must be ' +
-                            'of type \'C Speect SUtterance\'')
-        else:
-            super(SUtterance, self).__init__(object, owner)
+
+        if not object:
+            voice_object = None
+
+            if voice:
+                # test that it is an Python SVoice object
+                if not isinstance(utt, speect.SVoice):
+                    raise TypeError('Input argument \"voice\" must be ' +
+                                    'of type \'SVoice\'')
+
+                self._voice = voice
+                voice_object = voice._get_speect_object()
+
+            utterance_object = py_sutterance_new(voice_object)
+            if utterance_object:
+                super(SUtterance, self).__init__(utterance_object, True)
+            else:
+                raise RuntimeError('Failed to create new Speect SUtterance object')
+
+        else :
+            if not py_sobject_is_type(object, "SUtterance"):
+                raise TypeError('Input argument \"object\" must be ' +
+                                'of type \'C Speect SUtterance\'')
+            else:
+                super(SUtterance, self).__init__(object, owner)
+
+        utt_object = self._get_speect_object()
+
+        # utterance features
+        spct_utt_feats_object = py_sutterance_features(utt_object)
+        self.features = SMapInternal(owner_object=utt_object,
+                                     spct_map_object=spct_utt_feats_object,
+                                     get_item_func=py_sutterance_get_feature,
+                                     set_item_func=py_sutterance_set_feature,
+                                     del_item_func=py_sutterance_del_feature)
+
+        # utterance relations
+        spct_utt_relations_object = py_sutterance_relations(utt_object)
+        self.relations = SMapInternal(owner_object=utt_object,
+                                      spct_map_object=spct_utt_relations_object,
+                                      get_item_func=py_sutterance_get_relation,
+                                      set_item_func=py_sutterance_set_relation,
+                                      del_item_func=py_sutterance_del_relation)
 
         
-    ## def __str__(self):
-    ##     """
-    ##     Overloaded 'print' method
-    ##     @returns: String representation of utterance object.
-    ##     @rtype: str
-    ##     """
+    def __str__(self):
+        """
+        Overloaded 'print' method
+        @returns: String representation of utterance object.
+        @rtype: str
+        """
         
-    ##     str = "Utterance:\n"
-    ##     for f in self.features:
-    ##         str += '    Feature: %20.20s => %s\n' %(f, repr(self.features[f]))
+        str = "Utterance:\n"
+        for f in self.features:
+            str += '    Feature: %20.20s => %s\n' %(f, repr(self.features[f]))
 
-    ##     for r in self.relations:
-    ##         str += self.relations[r].to_string(prefix="        ")
+        for r in self.relations:
+            str += self.relations[r].to_string(prefix="        ")
                        
-    ##     return str
+        return str
 
         
-    ## def get_voice(self):
-    ##     """
-    ##     Return the voice of this utterance.
-    ##     @return: The voice of this utterance or C{None} if no voice.
-    ##     @rtype: L{SVoice}
-    ##     """
-
-
-    def get_feature(self, feat_name):
+    def get_voice(self):
         """
-        Get an utterance feature as a Python SObject.
+        Return the voice of this utterance.
+        @return: The voice of this utterance or C{None} if no voice.
+        @rtype: L{SVoice}
         """
-
-        feat_object = py_sutterance_get_feature(self._get_speect_object(),
-                                                feat_name)
-        if feat_object:
-            return create_py_sobject(object=feat_object, owner=True)
-
-        return None
+        
+        return self._voice
 %}

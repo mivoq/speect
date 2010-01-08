@@ -90,18 +90,18 @@ class SInt(SObject):
         return str(self.get())
 
 
-    ## def get(self):
-    ##     """
-    ##     Get the value of this SInt object.
-    ##     @return: The integer value of this SInt object instance.
-    ##     @rtype: int
-    ##     """
+    def get(self):
+        """
+        Get the value of this SInt object.
+        @return: The integer value of this SInt object instance.
+        @rtype: int
+        """
 
-    ##     spct_object = self._get_speect_object()
-    ##     if spct_object:
-    ##         return py_sint_get(spct_object)
-    ##     else:
-    ##         return None
+        spct_object = self._get_speect_object()
+        if spct_object:
+            return py_sint_get(spct_object)
+        else:
+            return None
 
 
 
@@ -158,18 +158,18 @@ class SFloat(SObject):
         return str(self.get())
 
 
-    ## def get(self):
-    ##     """
-    ##     Get the value of this SFloat object.
-    ##     @return: The float value of this SFloat object instance.
-    ##     @rtype: float
-    ##     """
+    def get(self):
+        """
+        Get the value of this SFloat object.
+        @return: The float value of this SFloat object instance.
+        @rtype: float
+        """
 
-    ##     spct_object = self._get_speect_object()
-    ##     if spct_object:
-    ##         return py_sfloat_get(spct_object)
-    ##     else:
-    ##         return None        
+        spct_object = self._get_speect_object()
+        if spct_object:
+            return py_sfloat_get(spct_object)
+        else:
+            return None        
 
 
 
@@ -226,73 +226,73 @@ class SString(SObject):
         return self.get()
 
 
-    ## def get(self):
-    ##     """
-    ##     Get the value of this SString object.
-    ##     @return: The string value of this SString object instance.
-    ##     @rtype: unicode
-    ##     """
+    def get(self):
+        """
+        Get the value of this SString object.
+        @return: The string value of this SString object instance.
+        @rtype: unicode
+        """
 
-    ##     spct_object = self._get_speect_object()
-    ##     if spct_object:
-    ##         string = py_sstring_get(spct_object)
-    ##         if string:
-    ##             return unicode(string, 'utf-8')
-    ##         else:
-    ##             return None
-    ##     else:
-    ##         return None
-
-
-
-## class SVoid(SObject):
-##     """
-##     A class for the I{void*} primitive data type.
-##     """
-
-##     def __init__(self, val=None, object=None, owner=False):
-##         """
-##         Construct a new SVoid object. The input can either be a
-##         Python object (anytype), or a C Speect SVoid type SObject.
-##         @param val: Any Python type object.
-##         @param object: A pointer to a C-type Speect SVoid type
-##         SObject (default = I{None}).
-##         @type object: I{PySwigObject SObject*}
-##         @param owner: I{True} if the Python SVoid is the owner of the
-##         C-type Speect SObject (and can therefore delete it),
-##         otherwise I{False} (default = I{False}).
-##         @type owner: bool
-##         @return: A new SVoid instance.
-##         @rtype: L{SVoid}
-##         """
-
-##         if val and not object:
-##             new_spct_object = py_svoid_set(val)
-##             # this is a new object, so this instance is
-##             # the owner for now
-##             super(SVoid, self).__init__(new_spct_object, True) 
-
-##         elif object and not val:
-##             if not py_sobject_is_type(object, "SVoid"):
-##                 raise TypeError('Input argument \"object\" must be ' +
-##                                 'of type \'C Speect SVoid\'')
-##             else:
-##                 super(SVoid, self).__init__(object, owner) 
-##         else:
-##             raise RuntimeError('Invalid input arguments')
+        spct_object = self._get_speect_object()
+        if spct_object:
+            string = py_sstring_get(spct_object)
+            if string:
+                return unicode(string, 'utf-8')
+            else:
+                return None
+        else:
+            return None
 
 
-##     def get(self):
-##         """
-##         Get the value of this SVoid object.
-##         @return: The Python object value of this SVoid object
-##         instance.
-##         @rtype: Python object
-##         """
 
-##         spct_object = self._get_speect_object()
-##         if spct_object:
-##             return py_svoid_get(spct_object)
-##         else:
-##             return None
+class SVoid(SObject):
+    """
+    A class for the I{void*} primitive data type.
+    """
+
+    def __init__(self, val=None, object=None, owner=False):
+        """
+        Construct a new SVoid object. The input can either be a
+        Python object (anytype), or a C Speect SVoid type SObject.
+        @param val: Any Python type object.
+        @param object: A pointer to a C-type Speect SVoid type
+        SObject (default = I{None}).
+        @type object: I{PySwigObject SObject*}
+        @param owner: I{True} if the Python SVoid is the owner of the
+        C-type Speect SObject (and can therefore delete it),
+        otherwise I{False} (default = I{False}).
+        @type owner: bool
+        @return: A new SVoid instance.
+        @rtype: L{SVoid}
+        """
+
+        if val and not object:
+            new_spct_object = py_svoid_set(val)
+            # this is a new object, so this instance is
+            # the owner for now
+            super(SVoid, self).__init__(new_spct_object, True) 
+
+        elif object and not val:
+            if not py_sobject_is_type(object, "SVoid"):
+                raise TypeError('Input argument \"object\" must be ' +
+                                'of type \'C Speect SVoid\'')
+            else:
+                super(SVoid, self).__init__(object, owner) 
+        else:
+            raise RuntimeError('Invalid input arguments')
+
+
+    def get(self):
+        """
+        Get the value of this SVoid object.
+        @return: The Python object value of this SVoid object
+        instance.
+        @rtype: Python object
+        """
+
+        spct_object = self._get_speect_object()
+        if spct_object:
+            return py_svoid_get(spct_object)
+        else:
+            return None
 %}

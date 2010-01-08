@@ -72,18 +72,19 @@ class SObject(object):
                             'Speect C SObject pointer (SWIG) type')
 
 
-    ## def __del__(self):
-    ##     """
-    ##     Destructor
-    ##     Calls the Speect C{S_DELETE} macro on the Speect SObject*
-    ##     instance variable
-    ##     """
+    def __del__(self):
+        """
+        Destructor
+        Calls the Speect C{S_DELETE} macro on the Speect SObject*
+        instance variable
+        """
 
-    ##     spct_object = self._get_speect_object()
-    ##     if self._owner() and spct_object:
-    ##         py_sobject_delete(spct_object)
-    ##     elif spct_object:
-    ##         self.__spct_object__ = None   # remove reference
+#        print "del called on " + type(self)
+#        spct_object = self._get_speect_object()
+#        if self._owner() and spct_object:
+#            py_sobject_delete(spct_object)
+ #       elif spct_object:
+#            self.__spct_object__ = None   # remove reference
 
 
 
@@ -100,90 +101,90 @@ class SObject(object):
             return None
 
 
-    ## def __eq__(self, other):
-    ##     """
-    ##     Compare two Python SObject's C Speect SObject pointers.
-    ##     @param other: An instance of the Python SObject (or sub-class thereof).
-    ##     @type other: L{SObject} instance (or sub-class).
-    ##     @return: I{True} or I{False}
-    ##     @rtype: bool
-    ##     """
+    def __eq__(self, other):
+        """
+        Compare two Python SObject's C Speect SObject pointers.
+        @param other: An instance of the Python SObject (or sub-class thereof).
+        @type other: L{SObject} instance (or sub-class).
+        @return: I{True} or I{False}
+        @rtype: bool
+        """
 
-    ##     if isinstance(other, type(self)):
-    ##         other_spct_object = other.__spct_object__
-    ##         self_spct_object = self.__spct_object__
-    ##         if other_spct_object and self_spct_object:
-    ##             return py_sobject_compare(self_spct_object, other_spct_object)
-    ##     return False
-
-
-    ## def __nonzero__(self):
-    ##     """
-    ##     Query the validity of the object. Checks if the object
-    ##     has a reference to a C Speect SObject.
-    ##     @return: I{True} or I{False}
-    ##     @rtype: bool
-    ##     """
-
-    ##     spct_object = self.__spct_object__
-    ##     if spct_object:
-    ##         return True
-    ##     else:
-    ##         return False
+        if isinstance(other, type(self)):
+            other_spct_object = other.__spct_object__
+            self_spct_object = self.__spct_object__
+            if other_spct_object and self_spct_object:
+                return py_sobject_compare(self_spct_object, other_spct_object)
+        return False
 
 
-    ## def is_speect_type(self, type):
-    ##     """
-    ##     Query if given Speect object type is in this instance's
-    ##     inheritance tree.
-    ##     @param type: The Speect object type to check for.
-    ##     @type type: unicode or str
-    ##     @return: I{True} or I{False}
-    ##     @rtype: bool
-    ##     """
+    def __nonzero__(self):
+        """
+        Query the validity of the object. Checks if the object
+        has a reference to a C Speect SObject.
+        @return: I{True} or I{False}
+        @rtype: bool
+        """
 
-    ##     if not isinstance(type, str) and not isinstance(type, unicode):
-    ##         raise TypeError('Input argument \"type\" is not of type ' +
-    ##                         '\'unicode\' or \'str\'')
-
-    ##     spct_object = self.__spct_object__
-    ##     if spct_object:
-    ##         return py_sobject_is_type(spct_object, type)
-    ##     else:
-    ##         return False
+        spct_object = self.__spct_object__
+        if spct_object:
+            return True
+        else:
+            return False
 
 
-    ## def get_speect_type(self):
-    ##     """
-    ##     Get the Speect type this object
-    ##     @return: The C Speect SObject type.
-    ##     @rtype: unicode
-    ##     """
+    def is_speect_type(self, type):
+        """
+        Query if given Speect object type is in this instance's
+        inheritance tree.
+        @param type: The Speect object type to check for.
+        @type type: unicode or str
+        @return: I{True} or I{False}
+        @rtype: bool
+        """
 
-    ##     spct_object = self.__spct_object__
-    ##     if spct_object:
-    ##         return py_sobject_get_type(spct_object)
-    ##     else:
-    ##         return None
+        if not isinstance(type, str) and not isinstance(type, unicode):
+            raise TypeError('Input argument \"type\" is not of type ' +
+                            '\'unicode\' or \'str\'')
+
+        spct_object = self.__spct_object__
+        if spct_object:
+            return py_sobject_is_type(spct_object, type)
+        else:
+            return False
 
 
-    ## def _copy(self):
-    ##     """
-    ##     Copy this object. This operation depends on the C Speect object's
-    ##     implementation or lack thereof (some objects do not provide a copy
-    ##     method implementation), and therefore I{None} can be returned. 
-    ##     @note: This is a deep copy.
-    ##     @return: Copy of this object.
-    ##     @rtype: L{SObject}
-    ##     """
+    def get_speect_type(self):
+        """
+        Get the Speect type this object
+        @return: The C Speect SObject type.
+        @rtype: unicode
+        """
 
-    ##     spct_object = self.__spct_object__
-    ##     if spct_object:
-    ##         new_spct_object = py_sobject_copy(spct_object)
-    ##         if new_spct_object:
-    ##             return SObject(new_spct_object, True)
+        spct_object = self.__spct_object__
+        if spct_object:
+            return py_sobject_get_type(spct_object)
+        else:
+            return None
 
-    ##     return None
+
+    def _copy(self):
+        """
+        Copy this object. This operation depends on the C Speect object's
+        implementation or lack thereof (some objects do not provide a copy
+        method implementation), and therefore I{None} can be returned. 
+        @note: This is a deep copy.
+        @return: Copy of this object.
+        @rtype: L{SObject}
+        """
+
+        spct_object = self.__spct_object__
+        if spct_object:
+            new_spct_object = py_sobject_copy(spct_object)
+            if new_spct_object:
+                return SObject(new_spct_object, True)
+
+        return None
 
 
     def _owner(self):
@@ -218,26 +219,26 @@ class SObject(object):
         return self.__spct_object__
 
 
-    ## def _dec_ref(self):
-    ##     """
-    ##     Decrement the object's C Speect SObject reference count.
-    ##     @warning: Dont use this if you're not sure what you are doing.
-    ##     """
+    def _dec_ref(self):
+        """
+        Decrement the object's C Speect SObject reference count.
+        @warning: Dont use this if you're not sure what you are doing.
+        """
 
-    ##     spct_object = self.__spct_object__
-    ##     owner = self.__this_own__
-    ##     if spct_object and owner:
-    ##         py_sobject_dec_ref(spct_object)
+        spct_object = self.__spct_object__
+        owner = self.__this_own__
+        if spct_object and owner:
+            py_sobject_dec_ref(spct_object)
 
 
-    ## def _inc_ref(self):
-    ##     """
-    ##     Increment the object's C Speect SObject reference count.
-    ##     @warning: Dont use this if you're not sure what you are doing.
-    ##     """
+    def _inc_ref(self):
+        """
+        Increment the object's C Speect SObject reference count.
+        @warning: Dont use this if you're not sure what you are doing.
+        """
 
-    ##     spct_object = self.__spct_object__
-    ##     owner = self.__this_own__
-    ##     if spct_object and owner:
-    ##         py_sobject_inc_ref(spct_object)
+        spct_object = self.__spct_object__
+        owner = self.__this_own__
+        if spct_object and owner:
+            py_sobject_inc_ref(spct_object)
 %}

@@ -93,7 +93,73 @@ class SVoice(SObject):
             else:
                 super(SVoice, self).__init__(object, owner)
 
+        voice_object = self._get_speect_object()
+
+        # voice features
+        spct_voice_feats_object = py_svoice_features(voice_object)
+        self.features = SMapInternal(owner_object=voice_object,
+                                     spct_map_object=spct_voice_feats_object,
+                                     get_item_func=py_svoice_get_feature,
+                                     set_item_func=py_svoice_set_feature,
+                                     del_item_func=py_svoice_del_feature)
         
+        # voice feature processors 
+        spct_voice_feat_procs_object = py_svoice_featprocs(voice_object)
+        self.feature_processors = SMapInternal(owner_object=voice_object,
+                                               spct_map_object=spct_voice_feat_procs_object,
+                                               get_item_func=py_svoice_get_featproc,
+                                               set_item_func=py_svoice_set_featproc,
+                                               del_item_func=py_svoice_del_featproc)
+        
+        # voice utterance processors 
+        spct_voice_utt_procs_object = py_svoice_uttprocs(voice_object)
+        self.utterance_processor = SMapInternal(owner_object=voice_object,
+                                                spct_map_object=spct_voice_utt_procs_object,
+                                                get_item_func=py_svoice_get_uttproc,
+                                                set_item_func=py_svoice_set_uttproc,
+                                                del_item_func=py_svoice_del_uttproc)
+        
+        # voice utterance types 
+        spct_voice_utt_types_object = py_svoice_utttypes(voice_object)
+        self.utterance_types = SMapInternal(owner_object=voice_object,
+                                            spct_map_object=spct_voice_utt_types_object,
+                                            get_item_func=py_svoice_get_utttype,
+                                            set_item_func=py_svoice_set_utttype,
+                                            del_item_func=py_svoice_del_utttype)
+
+        # voice data work differently, needs to delete it's map object
+        spct_voice_data_object = py_svoice_data(voice_object)
+        self.data = SMapInternal(owner_object=voice_object,
+                                 spct_map_object=spct_voice_data_object,
+                                 get_item_func=py_svoice_get_data,
+                                 set_item_func=self._set_voice_data,
+                                 del_item_func=self._del_voice_data)
+        self.data.__this_own__ = True
+       
+
+    def _set_voice_data(self, owner, key, val):
+        """
+        Set the voice data in the voice and in the local
+        voice data map. Used by SMapInternal.
+        """
+        py_svoice_set_data(owner, key, val);
+
+        # and in the data map
+        py_smap_set_item(self.data._get_speect_object(), key, val)
+
+
+    def _del_voice_data(self, owner, key, val):
+        """
+        Delete the voice data in the voice and in the local
+        voice data map. Used by SMapInternal.
+        """
+        
+        py_svoice_del_data(owner, key);
+
+        # and in the data map
+        py_smap_del_item(self.data._get_speect_object(), key)
+
+
     def get_name(self):
         """
         Get the voice's name.

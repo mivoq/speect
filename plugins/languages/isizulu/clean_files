@@ -27,21 +27,9 @@ fi
 # see the templates directory for examples
 ########################################################################
 
-echo "--cleaning english--"
+echo "--cleaning zul--"
 
-cd ./english/
-./clean_files
-cd ..
-
-
-########################################################################
-# Add plug-in directories here if they have a 'clean_files' script, 
-# see the templates directory for examples
-########################################################################
-
-echo "--cleaning isizulu--"
-
-cd ./isizulu/
+cd ./zul/
 ./clean_files
 cd ..
 

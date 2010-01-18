@@ -23,31 +23,51 @@ fi
 
 
 ########################################################################
-# Add plug-in directories here if they have a 'clean_files' script, 
-# see the templates directory for examples
-########################################################################
 
-echo "--cleaning english--"
+echo "cleaning cmake"
 
-cd ./english/
-./clean_files
-cd ..
-
-
-########################################################################
-# Add plug-in directories here if they have a 'clean_files' script, 
-# see the templates directory for examples
-########################################################################
-
-echo "--cleaning isizulu--"
-
-cd ./isizulu/
+cd ./cmake/
 ./clean_files
 cd ..
 
 
 ########################################################################
 
+echo "cleaning doc"
+
+cd ./doc/
+./clean_files
+cd ..
+
+
+########################################################################
+
+echo "cleaning examples"
+
+cd ./examples/
+./clean_files
+cd ..
+
+
+########################################################################
+
+echo "cleaning lib"
+
+cd ./lib/
+./clean_files
+cd ..
+
+
+########################################################################
+
+echo "cleaning src"
+
+cd ./src/
+./clean_files
+cd ..
+
+
+########################################################################
 
 rm -f  *~
 

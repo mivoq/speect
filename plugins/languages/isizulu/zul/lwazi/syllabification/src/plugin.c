@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2009 The Department of Arts and Culture,                           */
+/* Copyright (c) 2010 The Department of Arts and Culture,                           */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -22,16 +22,15 @@
 /* THE SOFTWARE.                                                                    */
 /*                                                                                  */
 /************************************************************************************/
-/*                                                                                  */
 /* AUTHOR  : Aby Louw                                                               */
-/* DATE    : December 2009                                                          */
+/* DATE    : January 2010                                                           */
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* A South African English (eng-za) syllabification class                           */
-/* implementation for the Lwazi project. Based on T.A. Hall,                        */
-/* "English syllabification as the interaction of markedness                        */
-/* constraints*", Studia Linguistica, vol. 60, 2006, pp. 1-33                       */
+/* A South African isiZulu (zul) syllabification class                              */
+/* implementation for the Lwazi project.                                            */
+/* Very basic isiZulu syllabification, based on the basic syllabification scheme    */
+/* devised by Etienne Barnard for isiZulu.                                          */
 /*                                                                                  */
 /************************************************************************************/
 
@@ -42,7 +41,7 @@
 /*                                                                                  */
 /************************************************************************************/
 
-#include "eng_za_lwazi.h"
+#include "zul_lwazi.h"
 
 
 /************************************************************************************/
@@ -51,9 +50,9 @@
 /*                                                                                  */
 /************************************************************************************/
 
-static const char * const plugin_init_func = "SSyllabEngZaLwazi plug-in initialization";
+static const char * const plugin_init_func = "SSyllabZulLwazi plug-in initialization";
 
-static const char * const plugin_exit_func = "SSyllabEngZaLwazi plug-in free";
+static const char * const plugin_exit_func = "SSyllabZulLwazi plug-in free";
 
 
 /************************************************************************************/
@@ -76,12 +75,12 @@ static void plugin_exit_function(s_erc *error);
 static const s_plugin_params plugin_params =
 {
 	/* plug-in name */
-	"South African English (eng-za) syllabification",
+	"South African isiZulu (zul) syllabification",
 
 	/* description */
-	"A South African English (eng-za) syllabification class implementation for the "
-	"Lwazi project. Based on T.A. Hall, \"English syllabification as the interaction "
-	"of markedness constraints*\", Studia Linguistica, vol. 60, 2006, pp. 1-33",
+	"A South African isiZulu (zul) syllabification class implementation for the "
+	"Lwazi project. Very basic isiZulu syllabification, based on the basic "
+	"syllabification scheme devised by Etienne Barnard for isiZulu",
 
 	/* version */
 	{
@@ -119,10 +118,10 @@ const s_plugin_params *s_plugin_init(const s_lib_version version, s_erc *error)
 	}
 
 	/* register plug-in classes here */
-	_s_syllab_eng_za_lwazi_class_reg(error);
+	_s_syllab_zul_lwazi_class_reg(error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  plugin_init_func,
-				  "Failed to register SSyllabEngZaLwazi class"))
+				  "Failed to register SSyllabZulLwazi class"))
 		return NULL;
 
 	return &plugin_params;
@@ -155,8 +154,8 @@ static void plugin_exit_function(s_erc *error)
 	S_CLR_ERR(error);
 
 	/* free plug-in classes here */
-	_s_syllab_eng_za_lwazi_class_free(error);
+	_s_syllab_zul_lwazi_class_free(error);
 	S_CHK_ERR(error, S_CONTERR,
 			  plugin_exit_func,
-			  "Failed to free SSyllabEngZaLwazi class");
+			  "Failed to free SSyllabZulLwazi class");
 }

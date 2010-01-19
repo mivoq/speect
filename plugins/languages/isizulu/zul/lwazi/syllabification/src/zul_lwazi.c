@@ -100,9 +100,38 @@ S_LOCAL void _s_syllab_zul_lwazi_class_free(s_erc *error)
 /*                                                                                  */
 /************************************************************************************/
 
+/* sonorant + consonant = syllabic consonant */
 static s_bool phone_is_syllabic_consonant(const SPhoneset *phoneset, const char *phone,
-										  s_erc *error);
+										  s_erc *error)
+{
+	s_bool present;
 
+
+	S_CLR_ERR(error);
+	present = S_PHONESET_CALL(phoneset, phone_has_feature)(phoneset, phone,
+														   "class_consonantal",
+														   error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "phone_is_syllabic_consonant",
+				  "Call to method \"phone_has_feature\" failed"))
+		return FALSE;
+
+	if (!present)
+		return FALSE;
+
+	present = S_PHONESET_CALL(phoneset, phone_has_feature)(phoneset, phone,
+														   "class_sonorant",
+														   error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "phone_is_syllabic_consonant",
+				  "Call to method \"phone_has_feature\" failed"))
+		return FALSE;
+
+	if (!present)
+		return FALSE;
+
+	return TRUE;
+}
 
 
 /************************************************************************************/
@@ -134,12 +163,7 @@ static SList *Syllabify(const SItem *word, const SList *phoneList, s_erc *error)
 	SList *syl;
 	const SObject *tmp;
 	const char *phone_string;
-	char current_cluster[100] = "\0";
-	s_bool prev_is_obstrudent = FALSE;
-	s_bool prev_is_nasal = FALSE;
 	size_t list_size;
-	s_bool testrv;
-	s_cluster cluster_type;
 
 
 	S_CLR_ERR(error);
@@ -247,6 +271,10 @@ static SList *Syllabify(const SItem *word, const SList *phoneList, s_erc *error)
 
 	while (list_size > 0)
 	{
+		s_bool current_is_vowel;
+
+
+
 		/* pop phone */
 		tmp = SListPop(phoneListCopy, error);
 		if (S_CHK_ERR(error, S_CONTERR,
@@ -260,238 +288,223 @@ static SList *Syllabify(const SItem *word, const SList *phoneList, s_erc *error)
 					  "Call to \"SObjectGetString\" failed"))
 			goto quit_error;
 
-		/*
-		 * add the phone to the syllable for now, we add the
-		 * phone_string so that it is independent from the phoneList
-		 */
-		SListPush(syl, SObjectSetString(phone_string, error), error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "Syllabify",
-					  "Call to \"SListPush/SObjectSetString\" failed"))
-			goto quit_error;
-
-		/*
-		 * C for a consonant, V represents a syllable peak (i.e. short
-		 * vowel, syllabic sonorant, long vowel, diphthong), G represents glide.
-		 */
-
-		/*
-		 * ABY: hacks for syllabic consonants
-		 * for bottle, button etc.
-		 */
-		testrv = phone_is_syllabic_consonant(phone_string, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "Syllabify",
-					  "Call to \"phone_is_syllabic_consonant\" failed"))
-			goto quit_error;
-
-		list_size = SListSize(phoneListCopy, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "Syllabify",
-					  "Call to \"SListSize\" failed"))
-			goto quit_error;
-
-		if (prev_is_obstrudent
-		    && testrv
-		    && (list_size == 0))
+		/* test for SA -> S.A, where A is any type */
 		{
-			s_strcat(current_cluster, "V", error);
+			s_bool sylcon;
+
+
+			sylcon = phone_is_syllabic_consonant(phoneset, phone_string, error);
 			if (S_CHK_ERR(error, S_CONTERR,
 						  "Syllabify",
-						  "Call to \"s_strcat\" failed"))
-				goto quit_error;
-		}
-
-		if (prev_is_nasal
-		    && testrv
-		    && (list_size == 0))
-		{
-			s_strcat(current_cluster, "V", error);
-			if (S_CHK_ERR(error, S_CONTERR,
-						  "Syllabify",
-						  "Call to \"s_strcat\" failed"))
-				goto quit_error;
-		}
-
-		prev_is_obstrudent = phone_is_obstrudent(phoneset, phone_string, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "Syllabify",
-					  "Call to \"phone_is_obstrudent\" failed"))
-			goto quit_error;
-
-		prev_is_nasal = S_PHONESET_CALL(phoneset,
-										phone_has_feature)(phoneset, phone_string,
-														   "manner_nasal", error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "Syllabify",
-					  "Call to \"phone_has_feature\" failed"))
-			goto quit_error;
-
-		/*
-		 * hacks end
-		 */
-		testrv = S_PHONESET_CALL(phoneset, phone_has_feature)(phoneset, phone_string,
-															  "vowel", error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "Syllabify",
-					  "Call to \"phone_has_feature\" failed"))
-			goto quit_error;
-
-		if (testrv)
-		{
-			s_strcat(current_cluster, "V", error);
-			if (S_CHK_ERR(error, S_CONTERR,
-						  "Syllabify",
-						  "Call to \"s_strcat\" failed"))
-				goto quit_error;
-		}
-		else
-		{
-			testrv = S_PHONESET_CALL(phoneset, phone_has_feature)(phoneset, phone_string,
-																  "manner_glide", error);
-			if (S_CHK_ERR(error, S_CONTERR,
-						  "Syllabify",
-						  "Call to \"phone_has_feature\" failed"))
+						  "Call to \"phone_is_syllabic_consonant\" failed"))
 				goto quit_error;
 
-			if (testrv)
+			if (sylcon)
 			{
-				s_strcat(current_cluster, "G", error);
+				/* this is a syllable boundary */
+
+				/*
+				 * we add the phone_string so that it is
+				 * independent from the phoneList
+				 */
+				SListPush(syl, SObjectSetString(phone_string, error), error);
 				if (S_CHK_ERR(error, S_CONTERR,
 							  "Syllabify",
-							  "Call to \"s_strcat\" failed"))
+							  "Call to \"SListPush/SObjectSetString\" failed"))
 					goto quit_error;
-			}
-			else
-			{
-				s_strcat(current_cluster, "C", error);
-				if (S_CHK_ERR(error, S_CONTERR,
-							  "Syllabify",
-							  "Call to \"s_strcat\" failed"))
-					goto quit_error;
+
+				if (list_size > 0)
+				{
+					/* new syllable */
+					syl = (SList*)S_NEW("SListList", error);
+					if (S_CHK_ERR(error, S_CONTERR,
+								  "Syllabify",
+								  "Failed to create new 'SList' object"))
+						goto quit_error;
+
+					SListListInit(&syl, error);
+					if (S_CHK_ERR(error, S_CONTERR,
+								  "Syllabify",
+								  "Failed to initialize new 'SList' object"))
+						goto quit_error;
+
+					SListPush(syllables, S_OBJECT(syl), error);
+					if (S_CHK_ERR(error, S_CONTERR,
+								  "Syllabify",
+								  "Call to \"SListPush\" failed"))
+					{
+						S_DELETE(syl, "Syllabify", error);
+						goto quit_error;
+					}
+				}
+
+				continue;
 			}
 		}
 
-		cluster_type = get_cluster_type(current_cluster, error);
+
+		current_is_vowel = S_PHONESET_CALL(phoneset, phone_has_feature)(phoneset,
+																		phone_string,
+																		"vowel",
+																		error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "Syllabify",
-					  "Call to \"get_cluster_type\" failed"))
+					  "Call to method \"phone_has_feature\" failed"))
 			goto quit_error;
 
-		switch (cluster_type)
+
+		/* test for VCC -> VC.C */
+		if (list_size > 2)
 		{
-		case S_VCV_CLUSTER:
-		{
-			process_VCV(syllables, &syl, current_cluster, error);
+			const char *second_last_phone_string;
+			const char *third_last_phone_string;
+			s_bool second_last_is_vowel;
+			s_bool third_last_is_vowel;
+
+
+			second_last_phone_string = SObjectGetString(SListNth(phoneListCopy,
+																 list_size - 1,
+																 error), error);
 			if (S_CHK_ERR(error, S_CONTERR,
 						  "Syllabify",
-						  "Call to \"process_VCV\" failed"))
+						  "Call to \"SObjectGetString/SListNth\" failed"))
 				goto quit_error;
 
-			break;
-		}
-		case S_VCCV_CLUSTER:
-		{
-			process_VCCV(phoneset, syllables, &syl, current_cluster, error);
+			third_last_phone_string = SObjectGetString(SListNth(phoneListCopy,
+																 list_size - 2,
+																 error), error);
 			if (S_CHK_ERR(error, S_CONTERR,
 						  "Syllabify",
-						  "Call to \"process_VCCV\" failed"))
+						  "Call to \"SObjectGetString/SListNth\" failed"))
 				goto quit_error;
 
-			break;
+			if (current_is_vowel)
+			{
+				second_last_is_vowel = S_PHONESET_CALL(phoneset, phone_has_feature)(phoneset,
+																					second_last_phone_string,
+																					"vowel",
+																					error);
+				if (S_CHK_ERR(error, S_CONTERR,
+							  "Syllabify",
+							  "Call to method \"phone_has_feature\" failed"))
+					goto quit_error;
+
+				if (!second_last_is_vowel)
+				{
+					third_last_is_vowel = S_PHONESET_CALL(phoneset, phone_has_feature)(phoneset,
+																					   third_last_phone_string,
+																					   "vowel",
+																					   error);
+					if (S_CHK_ERR(error, S_CONTERR,
+								  "Syllabify",
+								  "Call to method \"phone_has_feature\" failed"))
+						goto quit_error;
+
+					if (!third_last_is_vowel)
+					{
+						/* pop second last, no need to
+						 * delete as it still belongs to
+						 * original phone list
+						 */
+						SListPop(phoneListCopy, error);
+						if (S_CHK_ERR(error, S_CONTERR,
+									  "Syllabify",
+									  "Call to \"SListPop\" failed"))
+							goto quit_error;
+
+						/* add to syllable, phone_string first */
+						SListPush(syl, SObjectSetString(phone_string, error), error);
+						if (S_CHK_ERR(error, S_CONTERR,
+									  "Syllabify",
+									  "Call to \"SListPush/SObjectSetString\" failed"))
+							goto quit_error;
+
+						/* add to syllable */
+						SListPush(syl, SObjectSetString(second_last_phone_string, error), error);
+						if (S_CHK_ERR(error, S_CONTERR,
+									  "Syllabify",
+									  "Call to \"SListPush/SObjectSetString\" failed"))
+							goto quit_error;
+
+						if (list_size > 0)
+						{
+							/* new syllable */
+							syl = (SList*)S_NEW("SListList", error);
+							if (S_CHK_ERR(error, S_CONTERR,
+										  "Syllabify",
+										  "Failed to create new 'SList' object"))
+								goto quit_error;
+
+							SListListInit(&syl, error);
+							if (S_CHK_ERR(error, S_CONTERR,
+										  "Syllabify",
+										  "Failed to initialize new 'SList' object"))
+								goto quit_error;
+
+							SListPush(syllables, S_OBJECT(syl), error);
+							if (S_CHK_ERR(error, S_CONTERR,
+										  "Syllabify",
+										  "Call to \"SListPush\" failed"))
+							{
+								S_DELETE(syl, "Syllabify", error);
+								goto quit_error;
+							}
+						}
+
+						continue;
+					}
+				}
+			}
 		}
-		case S_VCCCV_CLUSTER:
+
+		/* test for VA -> V.A, where A is any type */
+		if (current_is_vowel)
 		{
-			process_VCCCV(phoneset, syllables, &syl, current_cluster, error);
+			/* add to syllable */
+			SListPush(syl, SObjectSetString(phone_string, error), error);
 			if (S_CHK_ERR(error, S_CONTERR,
 						  "Syllabify",
-						  "Call to \"process_VCCCV\" failed"))
+						  "Call to \"SListPush/SObjectSetString\" failed"))
 				goto quit_error;
 
-			break;
+			if (list_size > 0)
+			{
+				/* new syllable */
+				syl = (SList*)S_NEW("SListList", error);
+				if (S_CHK_ERR(error, S_CONTERR,
+							  "Syllabify",
+							  "Failed to create new 'SList' object"))
+					goto quit_error;
+
+				SListListInit(&syl, error);
+				if (S_CHK_ERR(error, S_CONTERR,
+							  "Syllabify",
+							  "Failed to initialize new 'SList' object"))
+					goto quit_error;
+
+				SListPush(syllables, S_OBJECT(syl), error);
+				if (S_CHK_ERR(error, S_CONTERR,
+							  "Syllabify",
+							  "Call to \"SListPush\" failed"))
+				{
+					S_DELETE(syl, "Syllabify", error);
+					goto quit_error;
+				}
+			}
+
+			continue;
 		}
-		case S_VCCCCV_CLUSTER:
+
+		/* add all types except vowels (which should be caught above) to current syllable */
+		if (!current_is_vowel)
 		{
-			process_VCCCCV(syllables, &syl, current_cluster, error);
+			/* add to syllable */
+			SListPush(syl, SObjectSetString(phone_string, error), error);
 			if (S_CHK_ERR(error, S_CONTERR,
 						  "Syllabify",
-						  "Call to \"process_VCCCCV\" failed"))
+						  "Call to \"SListPush/SObjectSetString\" failed"))
 				goto quit_error;
-
-			break;
 		}
-		case S_VCGV_CLUSTER:
-		{
-			process_VCGV(phoneset, syllables, &syl, current_cluster, error);
-			if (S_CHK_ERR(error, S_CONTERR,
-						  "Syllabify",
-						  "Call to \"process_VCGV\" failed"))
-				goto quit_error;
-
-			break;
-		}
-		case S_VCCGV_CLUSTER:
-		{
-			process_VCCGV(syllables, &syl, current_cluster, error);
-			if (S_CHK_ERR(error, S_CONTERR,
-						  "Syllabify",
-						  "Call to \"process_VCCGV\" failed"))
-				goto quit_error;
-
-			break;
-		}
-		case S_VCCCGV_CLUSTER:
-		{
-			process_VCCCGV(syllables, &syl, current_cluster, error);
-			if (S_CHK_ERR(error, S_CONTERR,
-						  "Syllabify",
-						  "Call to \"process_VCCCGV\" failed"))
-				goto quit_error;
-
-			break;
-		}
-		case S_VV_CLUSTER:
-		{
-			process_VV(syllables, &syl, current_cluster, error);
-			if (S_CHK_ERR(error, S_CONTERR,
-						  "Syllabify",
-						  "Call to \"process_VV\" failed"))
-				goto quit_error;
-
-			break;
-		}
-		case S_UNKNOWN_CLUSTER:
-		{
-			break;
-		}
-		}
-
-		list_size = SListSize(phoneListCopy, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "Syllabify",
-					  "Call to \"SListSize\" failed"))
-			goto quit_error;
-	}
-
-
-
-	/* check if there are any phones in the last syllable */
-	list_size = SListSize(syl, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "Syllabify",
-				  "Call to \"SListSize\" failed"))
-		goto quit_error;
-
-	if (list_size == 0)
-	{
-		/* nothing, so pop and delete */
-		SListPop(syllables, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "Syllabify",
-					  "Call to \"SListPop\" failed"))
-			goto quit_error;
-
-		S_DELETE(syl, "Syllabify", error);
 	}
 
 	S_DELETE(phoneListCopy, "Syllabify", error);

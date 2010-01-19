@@ -410,14 +410,15 @@ static SList *Apply(const SG2P *self, const char *word, s_erc *error)
 				  "Failed to initialize new 'SList' object"))
 		goto quit_error;
 
-	word_size = s_strzsize(word, error);
+	/* +2 for # at begin and end */
+	word_size = s_strzsize(word, error) + 2;
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Apply",
 				  "Call to \"s_strsize\" failed"))
 		goto quit_error;
 
 	/* add "#" at beginning and end of word */
-	word_copy = S_MALLOC(char, word_size + 2);
+	word_copy = S_MALLOC(char, word_size);
 	if (word_copy == NULL)
 	{
 		S_FTL_ERR(error, S_MEMERROR,

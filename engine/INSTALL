@@ -9,6 +9,10 @@ directory. One will be prompted with configuration options, with defaults
 appearing in [] brackets, press ENTER to continue with the default value
 or type in the desired value and ENTER to continue.
 
+PLEASE NOTE: This release does not support configuration of local
+installation paths, Speect should be built and used "in-place" without
+doing a "make install"
+
 The first configuration option is to see the advanced cmake options, use
 the default (No) for a quick configuration process. The other options and
 their meanings are given below.

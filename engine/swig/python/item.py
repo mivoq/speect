@@ -322,6 +322,8 @@ class SItem(SObject):
         @rtype: L{SItem}
         """
 
+        print "in daughter(item), my swig info = " + str(self._get_speect_object())
+
         if not isinstance(nth, int):
             raise TypeError('Input argument \"nth\" must be ' +
                                     'of type \'int\'')
@@ -330,6 +332,7 @@ class SItem(SObject):
             raise TypeError('Input argument \"nth\" must be equal or bigger than -1')
 
         spct_object = self._get_speect_object()
+        
         if spct_object:
             if nth == 0:
                 item_object = py_sitem_daughter(spct_object)
@@ -339,10 +342,17 @@ class SItem(SObject):
                 item_object = py_sitem_nth_daughter(spct_object, nth)
                        
             if item_object:
+                print "daughter swig info = " + str(item_object)
+                print "making Python daughter"
+                daughter = SItem(object=item_object, owner=False)
+                print "---Python daughter = " + str(daughter)
+                print "---end Python daughter"
                 return SItem(object=item_object, owner=False)
             else:
+                print "daughter swig info = NO DAUGHTER"
                 return None
         else:
+            print "shit happend"
             return None
 
 
@@ -383,43 +393,60 @@ class SItem(SObject):
         @returns: String representation of the item object.
         @rtype: str
         """
-        
+
+        print "my swig info = " + str(self._get_speect_object())
+
+        print "in to_string(item)"
         label_spacing = ''
         
         for s in range(0, len(label)):
             label_spacing += ' '
 
+        print "getting num_features"
         num_features = len(self.features)
+        print "got num_features"
         
         if num_features > 0:
-            str = "%s%s: [ " %(prefix,label)
+            stri = "%s%s: [ " %(prefix,label)
+                  
+            first = True
+            count = num_features
+
+            for ik in self.features:
+                if not first:
+                    stri += '\n%s%s    ' %(prefix, label_spacing)
+                first = False
+                count -= 1
+                if count != 0:
+                    stri += '%15.15s => %s,' %(ik, repr(self.features[ik]))
+                else:
+                    stri += '%15.15s => %s' %(ik, repr(self.features[ik]))
                 
-        first = True
-        count = num_features
-        for ik in self.features:
-            if not first:
-                str += '\n%s%s    ' %(prefix, label_spacing)
-            first = False
-            count -= 1
-            if count != 0:
-                str += '%15.15s => %s,' %(ik, repr(self.features[ik]))
-            else:
-                str += '%15.15s => %s' %(ik, repr(self.features[ik]))
-                
-        if  num_features > 0:
-            str += '    ]\n'
-                
+            if  num_features > 0:
+                stri += '    ]\n'
+
+        else:
+            stri = ""
+            
+        print "getting daughter"
         i = self.daughter()
+        print "got daughter"
+
+        if i:
+            print "daughter not none"
+        else:
+            print "daughter is none"
+        
         n = 0
         daughter_prefix = '%s    ' %prefix
         
         while i:
-            str += '%s' %i.to_string(prefix=daughter_prefix, 
+            stri += '%s' %i.to_string(prefix=daughter_prefix, 
                                      label='Daughter')
             n += 1
             i = self.daughter(n)
 
-        return str
+        return stri
 
 
     def __str__(self):
@@ -428,7 +455,7 @@ class SItem(SObject):
         @returns: String representation of L{SItem}.
         @rtype: str
         """
-        
+        print "in __str__(item)"
         return self.to_string()
 
 

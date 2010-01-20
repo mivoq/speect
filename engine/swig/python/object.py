@@ -79,13 +79,14 @@ class SObject(object):
         instance variable
         """
 
-#        print "del called on " + type(self)
-#        spct_object = self._get_speect_object()
-#        if self._owner() and spct_object:
-#            py_sobject_delete(spct_object)
- #       elif spct_object:
-#            self.__spct_object__ = None   # remove reference
-
+        print "SObject __del__(" + str(type(self)) + ")"
+        spct_object = self._get_speect_object()
+        if self._owner() and spct_object:
+            print "del on speect object from python"
+            py_sobject_delete(spct_object)
+     #   elif spct_object:
+     #       print "remove reference on speect object from python"
+     #       self.__spct_object__ = None   # remove reference
 
 
     def __str__(self):

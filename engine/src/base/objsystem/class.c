@@ -68,6 +68,21 @@
 
 /************************************************************************************/
 /*                                                                                  */
+/* Defines                                                                          */
+/*                                                                                  */
+/************************************************************************************/
+
+/*
+ * If SPCT_DEBUG_OBJECTS is defined then all Speect object creation
+ * and deletion information is printed to stdout.
+ */
+#if 1
+#define SPCT_DEBUG_OBJECTS
+#endif
+
+
+/************************************************************************************/
+/*                                                                                  */
 /* Modules used                                                                     */
 /*                                                                                  */
 /************************************************************************************/
@@ -79,15 +94,19 @@
 #include "base/strings/strings.h"
 #include "base/objsystem/object_def.h"
 #include "base/objsystem/object_macros.h"
-
-/* ABY: remove this, for python testing */
-#include "base/objsystem/object.h"
-
 #include "base/objsystem/class.h"
 
 #ifdef SPCT_DEBUGMODE
 #include <stdio.h>
+#define SPCT_DEBUG_STDIO_INCLUDED
 #endif /* SPCT_DEBUGMODE */
+
+#ifdef SPCT_DEBUG_OBJECTS
+#include "base/objsystem/object.h"
+  #ifndef SPCT_DEBUG_STDIO_INCLUDED
+  #include <stdio.h>
+  #endif /* SPCT_DEBUG_STDIO_INCLUDED */
+#endif /* SPCT_DEBUG_OBJECTS */
 
 
 /************************************************************************************/
@@ -489,8 +508,9 @@ S_API SObject *SObjectNewFromName(const char *name, s_erc *error)
 		}
 	}
 
-	/* ABY: remove this, for python */
-	/* printf("created new object of type %s\n", SObjectType(obj, error)); */
+#ifdef SPCT_DEBUG_OBJECTS
+	printf("created new object of type '%s', at address %p\n", SObjectType(obj, error), obj);
+#endif /* SPCT_DEBUG_OBJECTS */
 
 	return obj;
 }
@@ -584,8 +604,9 @@ S_API void SObjectDelete(SObject *self, s_erc *error)
 		return;
 	}
 
-	/* ABY: remove this, for python testing */
-	/* printf("deleting object of type %s\n", SObjectType(self, NULL)); */
+#ifdef SPCT_DEBUG_OBJECTS
+	printf("deleting object of type '%s', at address %p\n", SObjectType(self, NULL), self);
+#endif /* SPCT_DEBUG_OBJECTS */
 
 	/* get class name */
 	class_name = s_class_name(self->cls, error);

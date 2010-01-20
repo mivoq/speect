@@ -94,3 +94,19 @@
 	$result = versionTuple;
 }
 
+
+/*** error handling ***/
+
+%typemap(in, numinputs=0, noblock=1) s_erc *OUTPUT (s_erc tmp_error)
+{
+	S_CLR_ERR(&tmp_error);
+	$1 = &tmp_error;
+}
+
+%typemap(argout,noblock=1) s_erc *OUTPUT
+{
+	if (*$1 != S_SUCCESS)
+		SWIG_exception(SWIG_RuntimeError, "Speect runtime error at function '$symname'");
+}
+
+%apply s_erc *OUTPUT {s_erc *error}

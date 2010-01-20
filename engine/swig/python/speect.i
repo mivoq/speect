@@ -37,7 +37,7 @@
 
 %include "typemaps.i"
 %include "speect_typemaps.i"
-
+%include "exception.i"
 
 /************************************************************************************/
 /*                                                                                  */
@@ -69,8 +69,8 @@
  * plug-in loading Speect functions and Python
  * helper functions
   */
-%include "plugins.c"
-%include "plugins.py"
+ /* %include "plugins.c" */
+ /* %include "plugins.py" */
 
 
 /*
@@ -107,57 +107,57 @@
 %include "list.py"
 
 
-/*
- * SMap wrapper functions
- */
-%include "map.c"
-%include "map.py"
+/* /\* */
+/*  * SMap wrapper functions */
+/*  *\/ */
+/* %include "map.c" */
+/* %include "map.py" */
 
 
-/*
- * SMapInternal Python class
- */
-%include "map_internal.py"
+/* /\* */
+/*  * SMapInternal Python class */
+/*  *\/ */
+/* %include "map_internal.py" */
 
 
-/*
- * SItem wrapper functions
- */
-%include "item.c"
-%include "item.py"
+/* /\* */
+/*  * SItem wrapper functions */
+/*  *\/ */
+/* %include "item.c" */
+/* %include "item.py" */
 
 
-/*
- * SRelation wrapper functions
- */
-%include "relation.c"
-%include "relation.py"
+/* /\* */
+/*  * SRelation wrapper functions */
+/*  *\/ */
+/* %include "relation.c" */
+/* %include "relation.py" */
 
 
-/*
- * SUtterance wrapper functions
- */
-%include "utterance.c"
-%include "utterance.py"
+/* /\* */
+/*  * SUtterance wrapper functions */
+/*  *\/ */
+/* %include "utterance.c" */
+/* %include "utterance.py" */
 
 
-/*
- * SVoice wrapper functions
- */
-%include "voice.c"
-%include "voice.py"
+/* /\* */
+/*  * SVoice wrapper functions */
+/*  *\/ */
+/* %include "voice.c" */
+/* %include "voice.py" */
 
 
-/*
- * SUttProcessor wrapper functions
- */
-%include "utt_processor.c"
-%include "utt_processor.py"
+/* /\* */
+/*  * SUttProcessor wrapper functions */
+/*  *\/ */
+/* %include "utt_processor.c" */
+/* %include "utt_processor.py" */
 
 
-/*
- * SFeatProcessor wrapper functions
- */
-%include "feat_processor.c"
-%include "feat_processor.py"
+/* /\* */
+/*  * SFeatProcessor wrapper functions */
+/*  *\/ */
+/* %include "feat_processor.c" */
+/* %include "feat_processor.py" */
 

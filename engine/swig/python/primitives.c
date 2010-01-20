@@ -40,137 +40,105 @@
  */
 %inline
 %{
-	SObject *py_sint_set(sint32 val)
+	SObject *py_sint_set(sint32 val, s_erc *error)
 	{
-		s_erc rv = S_SUCCESS;
 		SObject *newInt;
 
 
-		newInt = SObjectSetInt(val, &rv);
-		if (rv != S_SUCCESS)
-		{
-			PyErr_SetString(PyExc_RuntimeError, "Failed to set SInt value");
+		newInt = SObjectSetInt(val, error);
+		if (*error != S_SUCCESS)
 			return NULL;
-		}
 
 		return newInt;
 	}
 
 
-	sint32 py_sint_get(SObject *self)
+	sint32 py_sint_get(SObject *self, s_erc *error)
 	{
-		s_erc rv = S_SUCCESS;
 		sint32 val;
 
 
-		val = SObjectGetInt(self, &rv);
-		if (rv != S_SUCCESS)
-		{
-			PyErr_SetString(PyExc_RuntimeError, "Failed to get SInt value");
+		val = SObjectGetInt(self, error);
+		if (*error != S_SUCCESS)
 			return 0;
-		}
 
 		return val;
 	}
 
 
-	SObject *py_sfloat_set(float val)
+	SObject *py_sfloat_set(float val, s_erc *error)
 	{
-		s_erc rv = S_SUCCESS;
 		SObject *newFloat;
 
 
-		newFloat = SObjectSetFloat(val, &rv);
-		if (rv != S_SUCCESS)
-		{
-			PyErr_SetString(PyExc_RuntimeError, "Failed to set SFloat value");
+		newFloat = SObjectSetFloat(val, error);
+		if (*error != S_SUCCESS)
 			return NULL;
-		}
 
 		return newFloat;
 	}
 
 
-	float py_sfloat_get(SObject *self)
+	float py_sfloat_get(SObject *self, s_erc *error)
 	{
-		s_erc rv = S_SUCCESS;
 		float val;
 
 
-		val = SObjectGetFloat(self, &rv);
-		if (rv != S_SUCCESS)
-		{
-			PyErr_SetString(PyExc_RuntimeError, "Failed to get SFloat value");
+		val = SObjectGetFloat(self, error);
+		if (*error != S_SUCCESS)
 			return 0;
-		}
 
 		return val;
 	}
 
 
-	SObject *py_sstring_set(const char *val)
+	SObject *py_sstring_set(const char *val, s_erc *error)
 	{
-		s_erc rv = S_SUCCESS;
 		SObject *newString;
 
 
-		newString = SObjectSetString(val, &rv);
-		if (rv != S_SUCCESS)
-		{
-			PyErr_SetString(PyExc_RuntimeError, "Failed to set SString value");
+		newString = SObjectSetString(val, error);
+		if (*error != S_SUCCESS)
 			return NULL;
-		}
 
 		return newString;
 	}
 
 
-	const char *py_sstring_get(SObject *self)
+	const char *py_sstring_get(SObject *self, s_erc *error)
 	{
-		s_erc rv = S_SUCCESS;
 		const char *val;
 
 
-		val = SObjectGetString(self, &rv);
-		if (rv != S_SUCCESS)
-		{
-			PyErr_SetString(PyExc_RuntimeError, "Failed to get SString value");
+		val = SObjectGetString(self, error);
+		if (*error != S_SUCCESS)
 			return NULL;
-		}
 
 		return val;
 	}
 
 
-	SObject *py_svoid_set(PyObject *val)
+	SObject *py_svoid_set(PyObject *val, s_erc *error)
 	{
-		s_erc rv = S_SUCCESS;
 		SObject *newVoid;
 
 
-		newVoid = SObjectSetVoid((void*)val, "PythonObject", NULL, &rv);
-		if (rv != S_SUCCESS)
-		{
-			PyErr_SetString(PyExc_RuntimeError, "Failed to set SVoid value");
+		newVoid = SObjectSetVoid((void*)val, "PythonObject", NULL, error);
+		if (*error != S_SUCCESS)
 			return NULL;
-		}
 
 		return newVoid;
 	}
 
 
-	PyObject *py_svoid_get(SObject *self)
+	PyObject *py_svoid_get(SObject *self, s_erc *error)
 	{
-		s_erc rv = S_SUCCESS;
 		PyObject *val;
 
 
-		val = (PyObject*)SObjectGetVoid(self, "PythonObject", &rv);
-		if (rv != S_SUCCESS)
-		{
-			PyErr_SetString(PyExc_RuntimeError, "Failed to get SVoid value");
+		val = (PyObject*)SObjectGetVoid(self, "PythonObject", error);
+		if (*error != S_SUCCESS)
 			return NULL;
-		}
 
 		return val;
 	}
@@ -179,3 +147,5 @@
  * Do not delete this delimiter, required for SWIG
  */
 %}
+
+

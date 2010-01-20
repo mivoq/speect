@@ -33,6 +33,9 @@
 /*                                                                                  */
 /************************************************************************************/
 
+%apply float *OUTPUT {float *output}
+
+
 
 /*
  * Do not delete these delimiters, required for SWIG
@@ -50,117 +53,89 @@
 	}
 
 
-	void py_sobject_delete(SObject *self)
+	void py_sobject_delete(SObject *self, s_erc *error)
 	{
-		s_erc rv = S_SUCCESS;
-
-
-		S_DELETE(self, "py_sobject_delete", &rv);
-		if (rv != S_SUCCESS)
-			PyErr_SetString(PyExc_RuntimeError, "Failed to delete object");
+		S_DELETE(self, "py_sobject_delete", error);
 	}
 
 
-	void py_sobject_force_delete(SObject *self)
+	void py_sobject_force_delete(SObject *self, s_erc *error)
 	{
-		s_erc rv = S_SUCCESS;
-
-
-		S_FORCE_DELETE(self, "py_sobject_force_delete", &rv);
-		if (rv != S_SUCCESS)
-			PyErr_SetString(PyExc_RuntimeError, "Failed to force delete object");
+		S_FORCE_DELETE(self, "py_sobject_force_delete", error);
 	}
 
 
-	s_bool py_sobject_is_type(SObject *self, const char *type)
+	PyObject *py_sobject_print(const SObject *self, s_erc *error)
 	{
-		s_erc rv = S_SUCCESS;
+		char *buf;
+		size_t buff_size;
+		PyObject *pyString;
+
+
+		buf = SObjectPrint(self, error);
+		if (*error != S_SUCCESS)
+			return NULL;
+
+		buff_size = s_strsize(buf, error);
+		if (*error != S_SUCCESS)
+		{
+			S_FREE(buf);
+			return NULL;
+		}
+
+		pyString = PyString_FromStringAndSize(buf, buff_size);
+		S_FREE(buf);
+
+		return pyString;
+	}
+
+
+	s_bool py_sobject_is_type(SObject *self, const char *type, s_erc *error)
+	{
 		s_bool is_instance;
 
 
-		is_instance = SObjectIsType(self, type, &rv);
-		if (rv != S_SUCCESS)
-		{
-			PyErr_SetString(PyExc_RuntimeError, "Failed to determine object type");
-			return 0;
-		}
+		is_instance = SObjectIsType(self, type, error);
+		if (*error != S_SUCCESS)
+			return FALSE;
 
 		return is_instance;
 	}
 
 
-	const char *py_sobject_get_type(SObject *self)
+	const char *py_sobject_get_type(SObject *self, s_erc *error)
 	{
-		s_erc rv = S_SUCCESS;
 		const char *type;
 
 
-		type = SObjectType(self, &rv);
-		if (rv != S_SUCCESS)
-		{
-			PyErr_SetString(PyExc_RuntimeError, "Failed to determine object type");
+		type = SObjectType(self, error);
+		if (*error != S_SUCCESS)
 			return NULL;
-		}
 
 		return type;
 	}
 
 
-	PyObject *py_sobject_print(SObject *self)
+	s_bool py_sobject_compare(SObject *self, SObject *other, s_erc *error)
 	{
-		s_erc rv = S_SUCCESS;
-		char *type;
-		PyObject *contents;
-
-
-		type = SObjectPrint(self, &rv);
-		if (rv != S_SUCCESS)
-		{
-			PyErr_SetString(PyExc_RuntimeError, "Failed to print object contents");
-			return NULL;
-		}
-
-		if (type == NULL)
-			return NULL;
-
-		contents = PyString_FromString(type);
-		S_FREE(type);
-
-		return contents;
-	}
-
-
-	s_bool py_sobject_compare(SObject *self, SObject *other)
-	{
-		s_erc rv = S_SUCCESS;
 		s_bool compare;
 
 
-		compare = SObjectCompare(self, other, &rv);
-		if (rv != S_SUCCESS)
-		{
-			PyErr_SetString(PyExc_RuntimeError, "Failed to compare objects");
-			return 0;
-		}
+		compare = SObjectCompare(self, other, error);
+		if (*error != S_SUCCESS)
+			return FALSE;
 
 		return compare;
 	}
 
 
-	SObject *py_sobject_copy(SObject *self)
+	SObject *py_sobject_copy(SObject *self, s_erc *error)
 	{
-		s_erc rv = S_SUCCESS;
 		SObject *copy;
 
 
-		copy = SObjectCopy(self, &rv);
-		if (rv != S_SUCCESS)
-		{
-			PyErr_SetString(PyExc_RuntimeError, "Failed to copy object");
-			return NULL;
-		}
-
-		if (copy == NULL)
+		copy = SObjectCopy(self, error);
+		if (*error != S_SUCCESS)
 			return NULL;
 
 		return copy;
@@ -177,8 +152,8 @@
 	{
 		SObjectIncRef(self);
 	}
-
 /*
  * Do not delete this delimiter, required for SWIG
  */
 %}
+

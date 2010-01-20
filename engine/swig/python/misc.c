@@ -39,15 +39,9 @@
  */
 %inline
 %{
-	void py_speect_quit(void)
+	void py_speect_quit(s_erc *error)
 	{
-		s_erc rv = S_SUCCESS;
-		const char *message = "Failed to quit Speect Engine";
-
-
-		rv = speect_quit();
-		if (rv != S_SUCCESS)
-			PyErr_SetString(PyExc_RuntimeError, message);
+		*error = speect_quit();
 	}
 %}
 

@@ -39,7 +39,7 @@
  */
 %inline
 %{
-	void py_speect_quit(s_erc *error)
+	void quit(s_erc *error)
 	{
 		*error = speect_quit();
 	}
@@ -54,11 +54,13 @@
 	/* delimiters because of the need for local variables */
 	{
 		s_erc rv = S_SUCCESS;
-		const char *message = "Failed to initialize Speect Engine";
 
 
 		rv = speect_init();
 		if (rv != S_SUCCESS)
-			PyErr_SetString(PyExc_RuntimeError, message);
+			SWIG_exception(SWIG_RuntimeError, "Failed to initialize Speect Engine");
+
+	fail:
+		return;
 	}
 %}

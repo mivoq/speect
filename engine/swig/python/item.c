@@ -34,391 +34,331 @@
 /*                                                                                  */
 /************************************************************************************/
 
-/*
- * Do not delete these delimiters, required for SWIG
- */
-%inline
-%{
-	SObject *py_sitem_new(const SObject *rel, const SObject *shared)
+%nodefaultctor SItem;
+
+
+
+
+typedef struct
+{
+} SItem;
+
+
+%types(SItem = SObject);
+
+%extend SItem
+{
+	SItem *as_relation(const char *relname, s_erc *error)
 	{
-		s_erc rv = S_SUCCESS;
-		SItem *newItem;
-
-
-		newItem = (SItem*)S_NEW("SItem", &rv);
-		if (rv != S_SUCCESS)
-		{
-			PyErr_SetString(PyExc_RuntimeError, "Failed to create new SItem");
-			return NULL;
-		}
-
-		SItemInit(&newItem, S_RELATION(rel), S_ITEM(shared), &rv);
-		if (rv != S_SUCCESS)
-		{
-			PyErr_SetString(PyExc_RuntimeError, "Failed to initialize new SItem");
-			return NULL;
-		}
-
-		return S_OBJECT(newItem);
-	}
-
-
-	SObject *py_sitem_as(const SObject *self, const char *relname)
-	{
-		s_erc rv = S_SUCCESS;
 		SItem *itemAs;
 
 
-		itemAs = SItemAs(S_ITEM(self), relname, &rv);
-		if (rv != S_SUCCESS)
-		{
-			PyErr_Format(PyExc_RuntimeError, "Failed to get item as in relation '%s'", relname);
+		itemAs = SItemAs($self, relname, error);
+		if (*error != S_SUCCESS)
 			return NULL;
-		}
 
-		return S_OBJECT(itemAs);
+		return itemAs;
 	}
 
 
-	s_bool py_sitem_in(const SObject *self, const char *relname)
+	s_bool in_relation(const char *relname, s_erc *error)
 	{
-		s_erc rv = S_SUCCESS;
 		s_bool item_in;
 
 
-		item_in = SItemIn(S_ITEM(self), relname, &rv);
-		if (rv != S_SUCCESS)
-		{
-			PyErr_Format(PyExc_RuntimeError, "Failed to query if item is in relation '%s'", relname);
+		item_in = SItemIn($self, relname, error);
+		if (*error != S_SUCCESS)
 			return FALSE;
-		}
 
 		return item_in;
 	}
 
 
-	SObject *py_sitem_next(const SObject *self, s_erc * tmp)
+	SItem *next(s_erc *error)
 	{
-		s_erc rv = S_SUCCESS;
 		SItem *next;
 
-		next = SItemNext(S_ITEM(self), &rv);
-		if (rv != S_SUCCESS)
-		{
-			PyErr_SetString(PyExc_RuntimeError, "Failed to get next item");
+		next = SItemNext($self, error);
+		if (*error != S_SUCCESS)
 			return NULL;
-		}
 
-		return S_OBJECT(next);
+		return next;
 	}
 
 
-	SObject *py_sitem_prev(const SObject *self)
+	SItem *prev(s_erc *error)
 	{
-		s_erc rv = S_SUCCESS;
 		SItem *prev;
 
 
-		prev = SItemPrev(S_ITEM(self), &rv);
-		if (rv != S_SUCCESS)
-		{
-			PyErr_SetString(PyExc_RuntimeError, "Failed to get previous item");
+		prev = SItemPrev($self, error);
+		if (*error != S_SUCCESS)
 			return NULL;
-		}
 
-		return S_OBJECT(prev);
+		return prev;
 	}
 
 
-	SObject *py_sitem_append(SObject *self, const SObject *toShare)
+	SItem *append(const SItem *toShare=NULL, s_erc *error)
 	{
-		s_erc rv = S_SUCCESS;
 		SItem *appended;
 
 
-		appended = SItemAppend(S_ITEM(self), S_ITEM(toShare), &rv);
-		if (rv != S_SUCCESS)
-		{
-			PyErr_SetString(PyExc_RuntimeError, "Failed to append item");
+		appended = SItemAppend($self, toShare, error);
+		if (*error != S_SUCCESS)
 			return NULL;
-		}
 
-		return S_OBJECT(appended);
+		return appended;
 	}
 
 
-	SObject *py_sitem_prepend(SObject *self, const SObject *toShare)
+	SItem *prepend(const SItem *toShare=NULL, s_erc *error)
 	{
-		s_erc rv = S_SUCCESS;
 		SItem *prepended;
 
 
-		prepended = SItemPrepend(S_ITEM(self), S_ITEM(toShare), &rv);
-		if (rv != S_SUCCESS)
-		{
-			PyErr_SetString(PyExc_RuntimeError, "Failed to prepend item");
+		prepended = SItemPrepend($self, toShare, error);
+		if (*error != S_SUCCESS)
 			return NULL;
-		}
 
-		return S_OBJECT(prepended);
+		return prepended;
 	}
 
 
-	SObject *py_sitem_parent(const SObject *self)
+	SItem *parent(s_erc *error)
 	{
-		s_erc rv = S_SUCCESS;
 		SItem *parent;
 
 
-		parent = SItemParent(S_ITEM(self), &rv);
-		if (rv != S_SUCCESS)
-		{
-			PyErr_SetString(PyExc_RuntimeError, "Failed to get parent item");
+		parent = SItemParent($self, error);
+		if (*error != S_SUCCESS)
 			return NULL;
-		}
 
-		return S_OBJECT(parent);
+		return parent;
 	}
 
 
-	SObject *py_sitem_daughter(const SObject *self)
+	SItem *daughter(int nth=0, s_erc *error)
 	{
-		s_erc rv = S_SUCCESS;
 		SItem *daughter;
 
 
-		daughter = SItemDaughter(S_ITEM(self), &rv);
-		if (rv != S_SUCCESS)
+		if (nth < -1)
 		{
-			PyErr_SetString(PyExc_RuntimeError, "Failed to get daughter item");
+			PyErr_SetString(PyExc_TypeError, "Input argument \"nth\" must be equal or bigger than -1");
 			return NULL;
 		}
 
-		return S_OBJECT(daughter);
+		if (nth == 0)
+		{
+			daughter = SItemDaughter($self, error);
+			if (*error != S_SUCCESS)
+				return NULL;
+		}
+		else if (nth == -1)
+		{
+			daughter = SItemLastDaughter($self, error);
+			if (*error != S_SUCCESS)
+				return NULL;
+		}
+		else
+		{
+			daughter = SItemNthDaughter($self, nth, error);
+			if (*error != S_SUCCESS)
+				return NULL;
+		}
+
+		return daughter;
 	}
 
 
-	SObject *py_sitem_nth_daughter(const SObject *self, uint32 n)
+	SItem *add_daughter(const SItem *toShare=NULL, s_erc *error)
 	{
-		s_erc rv = S_SUCCESS;
 		SItem *daughter;
 
 
-		daughter = SItemNthDaughter(S_ITEM(self), n, &rv);
-		if (rv != S_SUCCESS)
-		{
-			PyErr_SetString(PyExc_RuntimeError, "Failed to get nth daughter item");
+		daughter = SItemAddDaughter($self, toShare, error);
+		if (*error != S_SUCCESS)
 			return NULL;
-		}
 
-		return S_OBJECT(daughter);
+		return daughter;
 	}
 
 
-	SObject *py_sitem_last_daughter(const SObject *self)
+	const SRelation *relation(s_erc *error)
 	{
-		s_erc rv = S_SUCCESS;
-		SItem *daughter;
+		const SRelation *rel;
 
-
-		daughter = SItemLastDaughter(S_ITEM(self), &rv);
-		if (rv != S_SUCCESS)
-		{
-			PyErr_SetString(PyExc_RuntimeError, "Failed to get last daughter item");
+		rel = SItemRelation($self, error);
+		if (*error != S_SUCCESS)
 			return NULL;
-		}
 
-		return S_OBJECT(daughter);
+		return rel;
 	}
 
 
-	SObject *py_sitem_add_daughter(const SObject *self, const SObject *toShare)
+	const SUtterance *utterance(s_erc *error)
 	{
-		s_erc rv = S_SUCCESS;
-		SItem *daughter;
+		const SUtterance *utt;
 
-
-		daughter = SItemAddDaughter(S_ITEM(self), S_ITEM(toShare), &rv);
-		if (rv != S_SUCCESS)
-		{
-			PyErr_SetString(PyExc_RuntimeError, "Failed to add daughter item");
+		utt = SItemUtterance($self, error);
+		if (*error != S_SUCCESS)
 			return NULL;
-		}
 
-		return S_OBJECT(daughter);
+		return utt;
 	}
 
 
-	s_bool py_sitem_feat_present(const SObject *self, const char *feat_name)
+	const SVoice *voice(s_erc *error)
 	{
-		s_erc rv = S_SUCCESS;
+		const SVoice *voice;
+
+		voice = SItemVoice($self, error);
+		if (*error != S_SUCCESS)
+			return NULL;
+
+		return voice;
+	}
+
+
+	SItem *path_to_item(const char *path, s_erc *error)
+	{
+		const SItem *item;
+
+
+		item = s_path_to_item($self, path, error);
+		if (*error != S_SUCCESS)
+			return NULL;
+
+		return S_ITEM(item);
+	}
+
+
+	int __len__(s_erc *error)
+	{
+		size_t num_feats;
+
+
+		num_feats = SMapSize($self->content->features, error);
+		if (*error != S_SUCCESS)
+			return 0;
+
+		return (int)num_feats;
+	}
+
+
+	s_bool __contains__(const char *feat_name, s_erc *error)
+	{
 		s_bool is_present;
 
 
-		is_present = SItemFeatureIsPresent(S_ITEM(self), feat_name, &rv);
-		if (rv != S_SUCCESS)
-		{
-			PyErr_SetString(PyExc_RuntimeError, "Failed to query feature presence");
+		is_present = SItemFeatureIsPresent($self, feat_name, error);
+		if (*error != S_SUCCESS)
 			return FALSE;
-		}
 
 		return is_present;
 	}
 
 
-	void py_sitem_del_feature(SObject *self, const char *feat_name)
+	PyObject *__getitem__(const char *key, s_erc *error)
 	{
-		s_erc rv = S_SUCCESS;
-
-
-		SItemDelFeature(S_ITEM(self), feat_name, &rv);
-		if (rv != S_SUCCESS)
-			PyErr_SetString(PyExc_RuntimeError, "Failed to remove feature");
-	}
-
-
-	const SObject *py_sitem_get_feature(const SObject *self, const char *featname)
-	{
-		s_erc rv = S_SUCCESS;
 		const SObject *feature;
+		PyObject *object;
 
 
-		feature = SItemGetObject(S_ITEM(self), featname, &rv);
-		if (rv != S_SUCCESS)
-		{
-			PyErr_Format(PyExc_RuntimeError, "Failed to get item feature '%s'", featname);
-			return NULL;
-		}
-
-		return S_OBJECT(feature);
-	}
-
-
-	void py_sitem_set_feature(SObject *self, const char *featname, const SObject *feat)
-	{
-		s_erc rv = S_SUCCESS;
-
-
-		SItemSetObject(S_ITEM(self), featname, feat, &rv);
-		if (rv != S_SUCCESS)
-			PyErr_Format(PyExc_RuntimeError, "Failed to set item feature '%s'", featname);
-	}
-
-
-	const SObject *py_sitem_relation(const SObject *self)
-	{
-		s_erc rv = S_SUCCESS;
-		const SRelation *rel;
-
-		rel = SItemRelation(S_ITEM(self), &rv);
-		if (rv != S_SUCCESS)
-		{
-			PyErr_SetString(PyExc_RuntimeError, "Failed to get item's relation");
-			return NULL;
-		}
-
-		return S_OBJECT(rel);
-	}
-
-
-	const SObject *py_sitem_utterance(const SObject *self)
-	{
-		s_erc rv = S_SUCCESS;
-		const SUtterance *utt;
-
-		utt = SItemUtterance(S_ITEM(self), &rv);
-		if (rv != S_SUCCESS)
-		{
-			PyErr_SetString(PyExc_RuntimeError, "Failed to get item's utterance");
-			return NULL;
-		}
-
-		return S_OBJECT(utt);
-	}
-
-
-	const SObject *py_sitem_voice(const SObject *self)
-	{
-		s_erc rv = S_SUCCESS;
-		const SVoice *voice;
-
-		voice = SItemVoice(S_ITEM(self), &rv);
-		if (rv != S_SUCCESS)
-		{
-			PyErr_SetString(PyExc_RuntimeError, "Failed to get item's voice");
-			return NULL;
-		}
-
-		return S_OBJECT(voice);
-	}
-
-
-	const SObject *py_sitem_features(SObject *self)
-	{
-		SItem *item = S_ITEM(self);
-
-
-		if (item == NULL)
+		feature = SItemGetObject($self, key, error);
+		if (*error != S_SUCCESS)
 			return NULL;
 
-		return (const SObject*)item->content->features;
-	}
-
-
-	SObject *py_sitem_path_to_item(const SObject *self, const char *path)
-	{
-		s_erc rv = S_SUCCESS;
-		const SItem *item;
-
-
-		item = s_path_to_item(S_ITEM(self), path, &rv);
-		if (rv != S_SUCCESS)
-		{
-			PyErr_SetString(PyExc_RuntimeError, "Failed to get item from path");
+		object = sobject_2_pyobject(feature, error);
+		if (*error != S_SUCCESS)
 			return NULL;
-		}
 
-		return S_OBJECT(item);
+		return object;
 	}
 
 
-	const SObject *py_sitem_path_to_feature(const SObject *self, const char *path)
+	void __setitem__(const char *key, PyObject *val, s_erc *error)
 	{
-		s_erc rv = S_SUCCESS;
-		const SObject *feature;
+		SObject *newObject;
 
 
-		feature = s_path_to_feature(S_ITEM(self), path, &rv);
-		if (rv != S_SUCCESS)
-		{
-			PyErr_SetString(PyExc_RuntimeError, "Failed to get item feature from path");
-			return NULL;
-		}
+		newObject = pyobject_2_sobject(val, error);
+		if (*error != S_SUCCESS)
+			return;
 
-		return feature;
+		if (newObject == NULL)
+			return;
+
+		SItemSetObject($self, key, newObject, error);
+		if (*error != S_SUCCESS)
+			S_DELETE(newObject, "SItem::__setitem__", error);
 	}
 
 
-	SObject *py_sitem_path_to_extracted_feature(const SObject *self, const char *path)
+	void __delitem__(const char *key, s_erc *error)
 	{
-		s_erc rv = S_SUCCESS;
-		SObject *feature;
+		s_bool is_present;
 
 
-		feature = s_path_to_featproc(S_ITEM(self), path, &rv);
-		if (rv != S_SUCCESS)
-		{
-			PyErr_SetString(PyExc_RuntimeError, "Failed to get extract item feature from path");
-			return NULL;
-		}
+		is_present = SItemFeatureIsPresent($self, key, error);
+		if (*error != S_SUCCESS)
+			return;
 
-		return feature;
+		if (!is_present)
+			return;
+
+		SItemDelFeature($self, key, error);
 	}
 
-/*
- * Do not delete this delimiter, required for SWIG
- */
-%}
+
+	PIterator *__iter__()
+	{
+		PIterator *pitr;
+		SIterator *itr;
+		s_erc error;
+
+
+		S_CLR_ERR(&error);
+		itr = SMapIterator($self->content->features, &error);
+		if (error != S_SUCCESS)
+			return NULL;
+
+		itr = SIteratorFirst(itr);
+		pitr = make_PIterator(itr, &error);
+		if (error != S_SUCCESS)
+			return NULL;
+
+		return pitr;
+	}
+
+
+	const char *__str__()
+	{
+		s_erc error = S_SUCCESS;
+
+
+		S_CTX_ERR(&error, S_FAILURE,
+				  "SItem::__str__()",
+				  "This function should have been overloaded in python");
+		return NULL;
+	}
+
+
+	const char *to_string(const char *prefix="", const char *label="SItem")
+	{
+		s_erc error = S_SUCCESS;
+
+
+		S_CTX_ERR(&error, S_FAILURE,
+				  "SItem::to_string()",
+				  "This function should have been overloaded in python");
+		return NULL;
+	}
+}
+
+
+
 
 
 

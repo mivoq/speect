@@ -28,120 +28,300 @@
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* C convenience functions for primitives SInt, SFloat, SString and                 */
-/* SVoid Python wrappers.                                                           */
+/* C convenience functions for primitives SInt, SFloat, SString.                    */
 /*                                                                                  */
 /*                                                                                  */
 /************************************************************************************/
-
 
 /*
  * Do not delete these delimiters, required for SWIG
  */
 %inline
 %{
-	SObject *py_sint_set(sint32 val, s_erc *error)
+	void SVoid_PyObject_free(void *ptr, s_erc *error)
 	{
-		SObject *newInt;
+		PyObject *object = ptr;
 
 
-		newInt = SObjectSetInt(val, error);
+		Py_XDECREF(object);
+	}
+
+
+	PyObject *sobject_2_pyobject(const SObject *object, s_erc *error)
+	{
+		PyObject *pobject;
+		const char *type;
+		int s_comp;
+		swig_type_info *info;
+
+
+		if (object == NULL)
+			return Py_None;
+
+		type = SObjectType(object, error);
 		if (*error != S_SUCCESS)
 			return NULL;
 
-		return newInt;
-	}
-
-
-	sint32 py_sint_get(SObject *self, s_erc *error)
-	{
-		sint32 val;
-
-
-		val = SObjectGetInt(self, error);
-		if (*error != S_SUCCESS)
-			return 0;
-
-		return val;
-	}
-
-
-	SObject *py_sfloat_set(float val, s_erc *error)
-	{
-		SObject *newFloat;
-
-
-		newFloat = SObjectSetFloat(val, error);
+		s_comp = s_strcmp(type, "SInt", error);
 		if (*error != S_SUCCESS)
 			return NULL;
 
-		return newFloat;
-	}
+		if (s_comp == 0)
+		{
+			sint32 val;
 
 
-	float py_sfloat_get(SObject *self, s_erc *error)
-	{
-		float val;
+			val = SObjectGetInt(object, error);
+			if (*error != S_SUCCESS)
+				return NULL;
 
+			pobject = PyInt_FromLong((long)val);
+			return pobject;
+		}
 
-		val = SObjectGetFloat(self, error);
-		if (*error != S_SUCCESS)
-			return 0;
-
-		return val;
-	}
-
-
-	SObject *py_sstring_set(const char *val, s_erc *error)
-	{
-		SObject *newString;
-
-
-		newString = SObjectSetString(val, error);
+		s_comp = s_strcmp(type, "SFloat", error);
 		if (*error != S_SUCCESS)
 			return NULL;
 
-		return newString;
-	}
+		if (s_comp == 0)
+		{
+			float val;
 
 
-	const char *py_sstring_get(SObject *self, s_erc *error)
-	{
-		const char *val;
+			val = SObjectGetFloat(object, error);
+			if (*error != S_SUCCESS)
+				return NULL;
 
+			pobject = PyFloat_FromDouble((double)val);
+			return pobject;
+		}
 
-		val = SObjectGetString(self, error);
+		s_comp = s_strcmp(type, "SString", error);
 		if (*error != S_SUCCESS)
 			return NULL;
 
-		return val;
-	}
+		if (s_comp == 0)
+		{
+			const char *val;
+			size_t slen;
 
 
-	SObject *py_svoid_set(PyObject *val, s_erc *error)
-	{
-		SObject *newVoid;
+			val = SObjectGetString(object, error);
+			if (*error != S_SUCCESS)
+				return NULL;
 
+			slen = s_strsize(val, error);
+			if (*error != S_SUCCESS)
+				return NULL;
 
-		newVoid = SObjectSetVoid((void*)val, "PythonObject", NULL, error);
+			pobject = PyString_FromStringAndSize(val, slen);
+			return pobject;
+		}
+
+		s_comp = s_strcmp(type, "SVoid", error);
 		if (*error != S_SUCCESS)
 			return NULL;
 
-		return newVoid;
+		if (s_comp == 0)
+		{
+			pobject = (PyObject*)SObjectGetVoid(object, "PythonObject", error);
+			if (*error != S_SUCCESS)
+				return NULL;
+
+			return pobject;
+		}
+
+		{
+			char               *cname;
+			char               *c;
+			char               *cp;
+			const char         *inherit_hier;
+			size_t             len;
+			char               *full_type_name;
+
+			inherit_hier = SObjectInheritance(object, error);
+			if (*error != S_SUCCESS)
+				return NULL;
+
+			cname = s_strdup(inherit_hier, error);
+			if (*error != S_SUCCESS)
+				return NULL;
+
+			cp = cname;
+			do
+			{
+				c = s_strtok_r(NULL, ":", &cp, error);
+
+				if (S_CHK_ERR(error, S_CONTERR,
+							  "sobject_2_pyobject",
+							  "Failed to extract token from class name"))
+				{
+					S_FREE(cname);
+					return NULL;
+				}
+
+				if (c == NULL)
+				{
+					S_FREE(cname);
+					break;
+				}
+
+				len = s_strlen(c, error) + 2;
+				if (*error != S_SUCCESS)
+				{
+					S_FREE(cname);
+					return NULL;
+				}
+
+				full_type_name = S_CALLOC(char, len);
+				if (full_type_name == NULL)
+				{
+					S_FREE(cname);
+					S_FTL_ERR(error, S_MEMERROR,
+							  "sobject_2_pyobject",
+							  "Failed to allocate memory for 'char' object");
+					return NULL;
+				}
+
+				s_strcat(full_type_name, c, error);
+				if (*error != S_SUCCESS)
+				{
+					S_FREE(full_type_name);
+					S_FREE(cname);
+					return NULL;
+				}
+
+				s_strcat(full_type_name, " *", error);
+				if (*error != S_SUCCESS)
+				{
+					S_FREE(full_type_name);
+					S_FREE(cname);
+					return NULL;
+				}
+
+				info = SWIG_TypeQuery(full_type_name);
+				S_FREE(full_type_name);
+
+				if (info != NULL)
+				{
+					S_FREE(cname);
+					break;
+				}
+
+			} while (c != NULL);
+		}
+
+		if (info != NULL)
+		{
+			pobject = SWIG_NewPointerObj(SWIG_as_voidptr(object),
+										 info, 0 |0);
+		}
+		else
+		{
+			/* don't know this object type, use SObject */
+			pobject = SWIG_NewPointerObj(SWIG_as_voidptr(object),
+										 SWIGTYPE_p_SObject, 0 |0);
+		}
+
+		return pobject;
 	}
 
 
-	PyObject *py_svoid_get(SObject *self, s_erc *error)
+	SObject *pyobject_2_sobject(PyObject *pobject, s_erc *error)
 	{
-		PyObject *val;
+		SObject *object;
+		int res;
+		void *argp;
 
 
-		val = (PyObject*)SObjectGetVoid(self, "PythonObject", error);
-		if (*error != S_SUCCESS)
+		if (pobject == Py_None)
 			return NULL;
 
-		return val;
+		res = SWIG_ConvertPtr(pobject, &argp,SWIGTYPE_p_SObject, SWIG_POINTER_DISOWN|0);
+		if (SWIG_IsOK(res))
+		{
+			/* it's a speect object */
+			object = (SObject*)argp;
+			return object;
+		}
+
+		/* it's a python object */
+		if (PyObject_IsInstance(pobject, (PyObject*)&PyInt_Type))
+		{
+			sint32 tmp;
+
+
+			tmp = (sint32)PyLong_AsLong(pobject);
+			object = SObjectSetInt(tmp, error);
+			if (*error != S_SUCCESS)
+				return NULL;
+
+			return object;
+		}
+
+		if (PyObject_IsInstance(pobject, (PyObject*)&PyFloat_Type))
+		{
+			float tmp;
+
+
+			tmp = (float)PyFloat_AsDouble(pobject);
+			object = SObjectSetFloat(tmp, error);
+			if (*error != S_SUCCESS)
+				return NULL;
+
+			return object;
+		}
+
+		if (PyObject_IsInstance(pobject, (PyObject*)&PyString_Type))
+		{
+			const char *tmp;
+
+
+			tmp = PyString_AsString(pobject);
+			object = SObjectSetString(tmp, error);
+			if (*error != S_SUCCESS)
+				return NULL;
+
+			return object;
+		}
+
+		if (PyObject_IsInstance(pobject, (PyObject*)&PyUnicode_Type))
+		{
+			PyObject *ustring;
+			const char *tmp;
+
+
+			ustring = PyUnicode_AsUTF8String(pobject);
+			if (ustring == NULL)
+			{
+				S_CTX_ERR(error, S_FAILURE,
+						  "SPobject",
+						  "Call to \"PyUnicode_AsUTF8String\" failed");
+				return NULL;
+			}
+
+			tmp = PyString_AsString(ustring);
+			object = SObjectSetString(tmp, error);
+			if (*error != S_SUCCESS)
+				return NULL;
+
+			Py_XDECREF(ustring);
+			return object;
+		}
+
+		/* not a simple object, make a SVoid type */
+		Py_XINCREF(pobject);
+		object = SObjectSetVoid((void*)pobject, "PythonObject",
+								&SVoid_PyObject_free, error);
+		if (*error != S_SUCCESS)
+		{
+			Py_XDECREF(pobject);
+			return NULL;
+		}
+
+		return object;
 	}
+
 
 /*
  * Do not delete this delimiter, required for SWIG

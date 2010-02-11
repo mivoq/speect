@@ -28,224 +28,117 @@
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* C convenience functions for SMap Python wrapper.                                 */
-/*                                                                                  */
+/* C convenience functions for SObject Python wrapper.                              */
 /*                                                                                  */
 /*                                                                                  */
 /************************************************************************************/
 
 
-/*
- * Do not delete these delimiters, required for SWIG
- */
-%inline
-%{
-	/*
-	 * SMap iterator functions.
-	 */
-	SObject *py_smap_iterator_new(const SObject *map)
+typedef struct
+{
+} SMap;
+
+
+%types(SMap = SObject);
+%nodefaultctor SMap;
+
+%extend SMap
+{
+	PyObject *__getitem__(const char *key, s_erc *error)
 	{
-		s_erc rv = S_SUCCESS;
-		SIterator *itr;
-		SMap *self = S_MAP(map);
+		const SObject *mapObject;
+		PyObject *object;
 
 
-		itr = SMapIterator(self, &rv);
-		if (rv != S_SUCCESS)
-		{
-			PyErr_SetString(PyExc_RuntimeError, "Failed to get map iterator");
+		mapObject = SMapGetObjectDef($self, key, NULL, error);
+		if (*error != S_SUCCESS)
 			return NULL;
-		}
 
-		return S_OBJECT(itr);
+		object = sobject_2_pyobject(mapObject, error);
+		if (*error != S_SUCCESS)
+			return NULL;
+
+		return object;
 	}
 
 
-	const char *py_smap_iterator_get_item(const SObject *itr)
+	int __len__(s_erc *error)
 	{
-		s_erc rv = S_SUCCESS;
-		const char *key;
-		SIterator *iterator = (SIterator*)itr;
+		size_t num_feats;
 
 
-		key = SMapIteratorKey(iterator, &rv);
-		if (rv != S_SUCCESS)
-		{
-			PyErr_SetString(PyExc_RuntimeError, "Failed to get map iterator key");
-			return NULL;
-		}
-
-		return key;
-	}
-
-
-	SObject *py_smap_new(void)
-	{
-		s_erc rv = S_SUCCESS;
-		SMap *newMap;
-
-
-		newMap = S_MAP(S_NEW("SMapList", &rv));
-		if (rv != S_SUCCESS)
-		{
-			PyErr_SetString(PyExc_RuntimeError, "Failed to create new map");
-			return NULL;
-		}
-
-		SMapListInit(&newMap, &rv);
-		if (rv != S_SUCCESS)
-		{
-			PyErr_SetString(PyExc_RuntimeError, "Failed to initialize new map");
-			return NULL;
-		}
-
-		return S_OBJECT(newMap);
-	}
-
-
-	uint32 py_smap_len(const SObject *map)
-	{
-		s_erc rv = S_SUCCESS;
-		uint32 len = 0;
-		const SMap *self = S_MAP(map);
-
-
-		len = (uint32)SMapSize(self, &rv);
-		if (rv != S_SUCCESS)
-		{
-			PyErr_SetString(PyExc_RuntimeError, "Failed to determine "
-							"map length");
+		num_feats = SMapSize($self, error);
+		if (*error != S_SUCCESS)
 			return 0;
-		}
 
-		return len;
+		return (int)num_feats;
 	}
 
 
-	s_bool py_smap_key_present(const SObject *map, const char *key)
+	void __setitem__(const char *key, PyObject *val, s_erc *error)
 	{
-		s_erc rv = S_SUCCESS;
-		const SMap *self = S_MAP(map);
-		s_bool key_present;
+		SObject *newObject;
 
 
-		key_present = SMapObjectPresent(self, key, &rv);
-		if (rv != S_SUCCESS)
-		{
-			PyErr_SetString(PyExc_RuntimeError, "Failed to determine "
-							"if key is present in map");
-			return FALSE;
-		}
+		newObject = pyobject_2_sobject(val, error);
+		if (*error != S_SUCCESS)
+			return;
 
-		return key_present;
+		if (newObject == NULL)
+			return;
+
+		SMapSetObject($self, key, newObject, error);
+		if (*error != S_SUCCESS)
+			S_DELETE(newObject, "SMap::__setitem__", error);
 	}
 
 
-	const SObject *py_smap_get_item(const SObject *map, const char *key)
+	void __delitem__(const char *key, s_erc *error)
 	{
-		s_erc rv = S_SUCCESS;
-		const SMap *self = S_MAP(map);
-		const SObject *item;
+		s_bool is_present;
 
 
-		item = SMapGetObject(self, key, &rv);
-		if (rv != S_SUCCESS)
-		{
-			PyErr_SetString(PyExc_RuntimeError, "Failed to get item "
-							"from map");
+		is_present = SMapObjectPresent($self, key, error);
+		if (*error != S_SUCCESS)
+			return;
+
+		if (!is_present)
+			return;
+
+		SMapObjectDelete($self, key, error);
+	}
+
+
+	const char *__str__()
+	{
+		s_erc error = S_SUCCESS;
+
+
+		S_CTX_ERR(&error, S_FAILURE,
+				  "SMap::__str__()",
+				  "This function should have been overloaded in python");
+		return NULL;
+	}
+
+
+	PIterator *__iter__()
+	{
+		PIterator *pitr;
+		SIterator *itr;
+		s_erc error;
+
+
+		S_CLR_ERR(&error);
+		itr = SMapIterator($self, &error);
+		if (error != S_SUCCESS)
 			return NULL;
-		}
 
-		return item;
-	}
-
-
-	void py_smap_set_item(SObject *map, const char *key, const SObject *item)
-	{
-		s_erc rv = S_SUCCESS;
-		SMap *self = S_MAP(map);
-
-
-		SMapSetObject(self, key, item, &rv);
-		if (rv != S_SUCCESS)
-			PyErr_SetString(PyExc_RuntimeError, "Failed to set item "
-							"in map");
-	}
-
-
-	void py_smap_del_item(SObject *map, const char *key)
-	{
-		s_erc rv = S_SUCCESS;
-		SMap *self = S_MAP(map);
-
-
-		SMapObjectDelete(self, key, &rv);
-		if (rv != S_SUCCESS)
-			PyErr_SetString(PyExc_RuntimeError, "Failed to delete item "
-							"from map");
-	}
-
-
-	SObject *py_smap_get_keys(const SObject *map)
-	{
-		s_erc rv = S_SUCCESS;
-		SMap *self = S_MAP(map);
-		SList *keys;
-
-
-		keys = SMapGetKeys(self, &rv);
-		if (rv != S_SUCCESS)
-		{
-			PyErr_SetString(PyExc_RuntimeError, "Failed to get the key "
-							"list from the map");
+		itr = SIteratorFirst(itr);
+		pitr = make_PIterator(itr, &error);
+		if (error != S_SUCCESS)
 			return NULL;
-		}
 
-		return S_OBJECT(keys);
+		return pitr;
 	}
-
-
-	SObject *py_smap_unlink_item(const SObject *map, const char *key)
-	{
-		s_erc rv = S_SUCCESS;
-		SMap *self = S_MAP(map);
-		SObject *item;
-
-
-		item = SMapObjectUnlink(self, key, &rv);
-		if (rv != S_SUCCESS)
-		{
-			PyErr_SetString(PyExc_RuntimeError, "Failed to unlink key "
-							"from the map");
-			return NULL;
-		}
-
-		return item;
-	}
-
-
-	SObject *py_smap_copy(const SObject *map)
-	{
-		s_erc rv = S_SUCCESS;
-		const SMap *self = S_MAP(map);
-		SMap *newMap = NULL;
-
-
-		newMap = SMapCopy(NULL, self, &rv);
-		if (rv != S_SUCCESS)
-		{
-			PyErr_SetString(PyExc_RuntimeError, "Failed to copy map");
-			return NULL;
-		}
-
-		return S_OBJECT(newMap);
-	}
-
-/*
- * Do not delete this delimiter, required for SWIG
- */
-%}
-
-
-
+};
 

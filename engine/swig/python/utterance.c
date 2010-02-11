@@ -35,222 +35,131 @@
 /************************************************************************************/
 
 
-/*
- * Do not delete these delimiters, required for SWIG
- */
-%inline
-%{
-	SObject *py_sutterance_new(const SObject *voice)
+
+typedef struct
+{
+	SMap *features;
+} SUtterance;
+
+
+%types(SUtterance = SObject);
+
+%extend SUtterance
+{
+	SUtterance(const SVoice *voice=NULL, s_erc *error)
 	{
-		s_erc rv = S_SUCCESS;
 		SUtterance *utt;
 
 
-		utt = (SUtterance*)S_NEW("SUtterance", &rv);
-		if (rv != S_SUCCESS)
-		{
-			PyErr_SetString(PyExc_RuntimeError, "Failed to create new SUtterance");
+		utt = (SUtterance*)S_NEW("SUtterance", error);
+		if (*error != S_SUCCESS)
 			return NULL;
-		}
 
-		SUtteranceInit(&utt, S_VOICE(voice), &rv);
-		if (rv != S_SUCCESS)
-		{
-			PyErr_SetString(PyExc_RuntimeError, "Failed to initialize new SUtterance");
+		SUtteranceInit(&utt, S_VOICE(voice), error);
+		if (*error != S_SUCCESS)
 			return NULL;
-		}
 
-		return S_OBJECT(utt);
+		return utt;
+	}
+
+	~SUtterance()
+	{
+		s_erc error;
+
+		S_CLR_ERR(&error);
+		S_DELETE($self, "~SUtterance()", &error);
 	}
 
 
-	void py_sutterance_set_relation(const SObject *self, const char *name,
-									const SObject *relation)
+	SRelation *relation_new(const char *name, s_erc *error)
 	{
-		s_erc rv = S_SUCCESS;
-		SRelation *rel = NULL;
-		SUtterance *utt = S_UTTERANCE(self);
-		s_bool type_ok;
-
-
-		type_ok = SObjectIsType(relation, "SRelation", &rv);
-		if (rv != S_SUCCESS)
-		{
-			PyErr_SetString(PyExc_RuntimeError, "Failed to check relation object type");
-			return;
-		}
-
-		if (!type_ok)
-		{
-			PyErr_SetString(PyExc_RuntimeError, "Given relation object not of type 'SRelation'");
-			return;
-		}
-
-		rel = S_RELATION(relation);
-		if (rel->name != NULL)
-			S_FREE(rel->name);
-
-		rel->name = s_strdup(name, &rv);
-		if (rv != S_SUCCESS)
-		{
-			PyErr_SetString(PyExc_RuntimeError, "Failed to copy relation name");
-			return;
-		}
-
-		SUtteranceSetRelation(utt, rel, &rv);
-		if (rv != S_SUCCESS)
-		{
-			PyErr_SetString(PyExc_RuntimeError, "Failed to add relation to utterance");
-			rel->utterance = NULL;
-			return;
-		}
-	}
-
-
-	SObject *py_sutterance_create_relation(SObject *self, const char *name)
-	{
-		s_erc rv = S_SUCCESS;
 		SRelation *rel;
 
 
-		rel = SUtteranceNewRelation(S_UTTERANCE(self), name, &rv);
-		if (rv != S_SUCCESS)
-		{
-			PyErr_SetString(PyExc_RuntimeError, "Failed to create new relation");
-			return NULL;
-		}
+		rel = SUtteranceNewRelation($self, name, error);
 
-		return S_OBJECT(rel);
+		if (*error != S_SUCCESS)
+			return NULL;
+
+		return rel;
 	}
 
 
-	const SObject *py_sutterance_get_relation(const SObject *self, const char *name)
+	const SRelation *relation_get(const char *name, s_erc *error)
 	{
-		s_erc rv = S_SUCCESS;
 		const SRelation *rel;
-
-
-		rel = SUtteranceGetRelation(S_UTTERANCE(self), name, &rv);
-		if (rv != S_SUCCESS)
-		{
-			PyErr_SetString(PyExc_RuntimeError, "Failed to get relation");
-			return NULL;
-		}
-
-		return S_OBJECT(rel);
-	}
-
-
-	void py_sutterance_del_relation(const SObject *self, const char *name)
-	{
-		s_erc rv = S_SUCCESS;
-
-
-		SUtteranceDelRelation(S_UTTERANCE(self), name, &rv);
-		if (rv != S_SUCCESS)
-			PyErr_Format(PyExc_RuntimeError, "Failed to delete relation '%s'", name);
-
-	}
-
-
-	s_bool py_sutterance_relation_present(const SObject *self, const char *name)
-	{
-		s_erc rv = S_SUCCESS;
 		s_bool is_present;
 
 
-		is_present = SUtteranceRelationIsPresent(S_UTTERANCE(self), name, &rv);
-		if (rv != S_SUCCESS)
-		{
-			PyErr_SetString(PyExc_RuntimeError, "Failed to query presence of relation");
+		is_present = SUtteranceRelationIsPresent($self, name, error);
+		if (*error != S_SUCCESS)
+			return NULL;
+
+		if (!is_present)
+			return NULL;
+
+		rel = SUtteranceGetRelation($self, name, error);
+		if (*error != S_SUCCESS)
+			return NULL;
+
+		return rel;
+	}
+
+
+	void relation_set(SRelation *rel, s_erc *error)
+	{
+		SUtteranceSetRelation($self, rel, error);
+	}
+
+
+	void relation_del(const char *name, s_erc *error)
+	{
+		SUtteranceDelRelation($self, name, error);
+	}
+
+
+	s_bool __contains__(const char *name, s_erc *error)
+	{
+		s_bool is_present;
+
+
+		is_present = SUtteranceRelationIsPresent($self, name, error);
+		if (*error != S_SUCCESS)
 			return FALSE;
-		}
 
 		return is_present;
 	}
 
 
-	const SObject *py_sutterance_get_feature(const SObject *self, const char *featname)
+	const char *__str__()
 	{
-		s_erc rv = S_SUCCESS;
-		const SObject *feature;
+		s_erc error = S_SUCCESS;
 
 
-		feature = SUtteranceGetFeature(S_UTTERANCE(self), featname, &rv);
-		if (rv != S_SUCCESS)
-		{
-			PyErr_Format(PyExc_RuntimeError, "Failed to get utterance feature '%s'", featname);
-			return NULL;
-		}
-
-		return S_OBJECT(feature);
+		S_CTX_ERR(&error, S_FAILURE,
+				  "SUtterance::__str__()",
+				  "This function should have been overloaded in python");
+		return NULL;
 	}
 
 
-	void py_sutterance_set_feature(SObject *self, const char *featname, const SObject *feat)
+	PIterator *__iter__()
 	{
-		s_erc rv = S_SUCCESS;
+		PIterator *pitr;
+		SIterator *itr;
+		s_erc error;
 
 
-		SUtteranceSetFeature(S_UTTERANCE(self), featname, feat, &rv);
-		if (rv != S_SUCCESS)
-			PyErr_Format(PyExc_RuntimeError, "Failed to set utterance feature '%s'", featname);
-	}
-
-
-	s_bool py_sutterance_feat_present(const SObject *self, const char *feat_name)
-	{
-		s_erc rv = S_SUCCESS;
-		s_bool is_present;
-
-
-		is_present = SUtteranceFeatureIsPresent(S_UTTERANCE(self), feat_name, &rv);
-		if (rv != S_SUCCESS)
-		{
-			PyErr_SetString(PyExc_RuntimeError, "Failed to query feature presence");
-			return FALSE;
-		}
-
-		return is_present;
-	}
-
-
-	void py_sutterance_del_feature(SObject *self, const char *feat_name)
-	{
-		s_erc rv = S_SUCCESS;
-
-
-		SUtteranceDelFeature(S_UTTERANCE(self), feat_name, &rv);
-		if (rv != S_SUCCESS)
-			PyErr_SetString(PyExc_RuntimeError, "Failed to delete feature");
-	}
-
-
-	const SObject *py_sutterance_features(SObject *self)
-	{
-		SUtterance *utt = S_UTTERANCE(self);
-
-
-		if (utt == NULL)
+		S_CLR_ERR(&error);
+		itr = SMapIterator($self->relations, &error);
+		if (error != S_SUCCESS)
 			return NULL;
 
-		return (const SObject*)utt->features;
-	}
-
-
-	const SObject *py_sutterance_relations(SObject *self)
-	{
-		SUtterance *utt = S_UTTERANCE(self);
-
-
-		if (utt == NULL)
+		itr = SIteratorFirst(itr);
+		pitr = make_PIterator(itr, &error);
+		if (error != S_SUCCESS)
 			return NULL;
 
-		return (const SObject*)utt->relations;
+		return pitr;
 	}
-
-
-/*
- * Do not delete this delimiter, required for SWIG
- */
-%}
+};

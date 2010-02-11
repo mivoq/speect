@@ -28,72 +28,10 @@
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* Typemaps to convert types between Python and C, for the Speect Engine.           */
+/* Common typemaps for the Speect Engine.                                           */
 /*                                                                                  */
 /*                                                                                  */
 /************************************************************************************/
-
-/*** sint32 ***/
-%typemap(in) sint32
-{
-	$1 = (sint32) PyLong_AsLong($input);
-}
-
-%typemap(out) sint32
-{
-	$result = PyInt_FromLong((long) $1);
-}
-
-
-/*** uint32 ***/
-%typemap(in) uint32
-{
-	$1 = (uint32) PyLong_AsUnsignedLong($input);
-}
-
-%typemap(out) uint32
-{
-	$result = PyInt_FromLong((ulong) $1);
-}
-
-
-/*** s_bool ***/
-%typemap(in) s_bool
-{
-	if ($input == Py_False)
-		$1 = 0;
-	else
-		$1 = 1;
-}
-
-%typemap(out) s_bool
-{
-	if ($1 == 0)
-		$result = Py_False;
-	else
-		$result = Py_True;
-}
-
-
-/*** version ***/
-%typemap(out) s_version*
-{
-	PyObject *versionTuple;
-	PyObject *versionMajor;
-	PyObject *versionMinor;
-	s_version *output = $1;
-
-
-	versionTuple = PyTuple_New(2);
-	versionMajor = PyInt_FromLong((long)output->major);
-	versionMinor = PyInt_FromLong((long)output->minor);
-
-	PyTuple_SetItem(versionTuple, 0, versionMajor);
-	PyTuple_SetItem(versionTuple, 1, versionMinor);
-
-	$result = versionTuple;
-}
-
 
 /*** error handling ***/
 

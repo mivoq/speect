@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2009 The Department of Arts and Culture,                           */
+/* Copyright (c) 2009-2010 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -36,8 +36,8 @@
 %module speect
 
 %include "typemaps.i"
-%include "speect_typemaps.i"
 %include "exception.i"
+%include "speect_typemaps.i"
 
 /************************************************************************************/
 /*                                                                                  */
@@ -50,114 +50,43 @@
 #include "speect.h"
 %}
 
+%feature("autodoc", "1");
 
 /************************************************************************************/
 /*                                                                                  */
-/* SWIG/Python interface files.                                                     */
+/* Speect Python typemaps.                                                          */
 /*                                                                                  */
 /************************************************************************************/
 
-/*
- * miscellaneous Speect functions and Python
- * helper functions
- */
+%include "speect_py_typemaps.i"
+
+
+/************************************************************************************/
+/*                                                                                  */
+/* Miscellaneous C Speect functions.                                                */
+/*                                                                                  */
+/************************************************************************************/
+
 %include "misc.c"
-%include "misc.py"
 
 
-/*
- * plug-in loading Speect functions and Python
- * helper functions
-  */
- /* %include "plugins.c" */
- /* %include "plugins.py" */
+/************************************************************************************/
+/*                                                                                  */
+/* SObject wrapper functions                                                        */
+/*                                                                                  */
+/************************************************************************************/
 
-
-/*
- * SObject wrapper functions
- */
-%include "object.c"
-%include "object.py"
-
-
-/*
- * SInt, SFloat, SString and SVoid wrapper functions
- */
-%include "primitives.c"
-%include "primitives.py"
-
-
-/*
- * SIterator wrapper functions
- */
 %include "iterator.c"
-%include "iterator.py"
-
-
-/*
- * SContainer Python class
- */
-%include "container.py"
-
-
-/*
- * SList wrapper functions
- */
-%include "list.c"
-%include "list.py"
-
-
-/* /\* */
-/*  * SMap wrapper functions */
-/*  *\/ */
-/* %include "map.c" */
-/* %include "map.py" */
-
-
-/* /\* */
-/*  * SMapInternal Python class */
-/*  *\/ */
-/* %include "map_internal.py" */
-
-
-/* /\* */
-/*  * SItem wrapper functions */
-/*  *\/ */
-/* %include "item.c" */
-/* %include "item.py" */
-
-
-/* /\* */
-/*  * SRelation wrapper functions */
-/*  *\/ */
-/* %include "relation.c" */
-/* %include "relation.py" */
-
-
-/* /\* */
-/*  * SUtterance wrapper functions */
-/*  *\/ */
-/* %include "utterance.c" */
-/* %include "utterance.py" */
-
-
-/* /\* */
-/*  * SVoice wrapper functions */
-/*  *\/ */
-/* %include "voice.c" */
-/* %include "voice.py" */
-
-
-/* /\* */
-/*  * SUttProcessor wrapper functions */
-/*  *\/ */
-/* %include "utt_processor.c" */
-/* %include "utt_processor.py" */
-
-
-/* /\* */
-/*  * SFeatProcessor wrapper functions */
-/*  *\/ */
-/* %include "feat_processor.c" */
-/* %include "feat_processor.py" */
-
+%include "primitives.c"
+%include "object.c"
+%include "utterance.py"
+%include "utterance.c"
+%include "relation.py"
+%include "relation_itr.c"
+%include "relation.c"
+%include "map.py"
+%include "map.c"
+%include "item.py"
+%include "item.c"
+%include "voice.c"
+%include "plugin.c"

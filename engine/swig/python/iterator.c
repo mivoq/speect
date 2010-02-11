@@ -1,87 +1,74 @@
-/************************************************************************************/
-/* Copyright (c) 2009 The Department of Arts and Culture,                           */
-/* The Government of the Republic of South Africa.                                  */
-/*                                                                                  */
-/* Contributors:  Meraka Institute, CSIR, South Africa.                             */
-/*                                                                                  */
-/* Permission is hereby granted, free of charge, to any person obtaining a copy     */
-/* of this software and associated documentation files (the "Software"), to deal    */
-/* in the Software without restriction, including without limitation the rights     */
-/* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell        */
-/* copies of the Software, and to permit persons to whom the Software is            */
-/* furnished to do so, subject to the following conditions:                         */
-/* The above copyright notice and this permission notice shall be included in       */
-/* all copies or substantial portions of the Software.                              */
-/*                                                                                  */
-/* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR       */
-/* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,         */
-/* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE      */
-/* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER           */
-/* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,    */
-/* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN        */
-/* THE SOFTWARE.                                                                    */
-/*                                                                                  */
-/************************************************************************************/
-/*                                                                                  */
-/* AUTHOR  : Aby Louw                                                               */
-/* DATE    : November 2009                                                          */
-/*                                                                                  */
-/************************************************************************************/
-/*                                                                                  */
-/* C convenience functions for Speect SIterator.                                    */
-/*                                                                                  */
-/*                                                                                  */
-/************************************************************************************/
 
-
-/*
- * Do not delete these delimiters, required for SWIG
- */
 %inline
-%{
-	SObject *py_siterator_first(SObject *itr)
+{
+	typedef struct
 	{
-		SIterator *iterator = (SIterator*)itr;
+		SIterator *itr;
+	} PIterator;
 
 
-		iterator = SIteratorFirst(iterator);
-		return S_OBJECT(iterator);
+	PIterator *make_PIterator(SIterator *itr, s_erc *error)
+	{
+		PIterator *pitr;
+
+
+		S_CLR_ERR(error);
+		pitr = S_MALLOC(PIterator, 1);
+		if (pitr == NULL)
+		{
+			S_FTL_ERR(error, S_MEMERROR,
+					  "make_PIterator",
+					  "Failed to allocate memory for 'PIterator' object");
+			return NULL;
+		}
+
+		pitr->itr = itr;
+		return pitr;
+	}
+}
+
+%nodefaultctor PIterator;
+
+
+%extend PIterator
+{
+	PIterator *__iter__()
+	{
+		return $self;
 	}
 
-
-	SObject *py_siterator_last(SObject *itr)
+	PyObject *next()
 	{
-		SIterator *iterator = (SIterator*)itr;
+		const char *key;
+		size_t slen;
+		s_erc error;
+		PyObject *pobject;
 
 
-		iterator = SIteratorLast(iterator);
-		return S_OBJECT(iterator);
+		S_CLR_ERR(&error);
+		if ($self->itr == NULL)
+		{
+			PyErr_SetNone(PyExc_StopIteration);
+			return NULL;
+		}
+
+		key = SMapIteratorKey($self->itr, &error);
+		if (error != S_SUCCESS)
+		{
+			PyErr_SetString(PyExc_RuntimeError, "Call to \"SMapIteratorKey\" failed");
+			return NULL;
+		}
+
+		slen = s_strsize(key, &error);
+		if (error != S_SUCCESS)
+		{
+			PyErr_SetString(PyExc_RuntimeError, "Call to \"s_strsize\" failed");
+			return NULL;
+		}
+
+		$self->itr = SIteratorNext($self->itr);
+		pobject = PyString_FromStringAndSize(key, slen);
+		return pobject;
 	}
-
-
-	SObject *py_siterator_next(SObject *itr)
-	{
-		SIterator *iterator = (SIterator*)itr;
-
-
-		iterator = SIteratorNext(iterator);
-		return S_OBJECT(iterator);
-	}
-
-
-	SObject *py_siterator_prev(SObject *itr)
-	{
-		SIterator *iterator = (SIterator*)itr;
-
-
-		iterator = SIteratorPrev(iterator);
-		return S_OBJECT(iterator);
-	}
-
-/*
- * Do not delete this delimiter, required for SWIG
- */
-%}
-
-
+};
 

@@ -31,182 +31,159 @@
 /* C convenience functions for SRelation Python wrapper.                            */
 /*                                                                                  */
 /*                                                                                  */
-/*                                                                                  */
 /************************************************************************************/
 
+typedef struct
+{
+} SRelation;
 
-/*
- * Do not delete these delimiters, required for SWIG
- */
-%inline
-%{
-	SObject *py_srelation_new(const char *name, const SObject *utt)
+
+%types(SRelation = SObject);
+
+
+
+%extend SRelation
+{
+	SRelation(const SUtterance *utt, const char *name, s_erc *error)
 	{
-		s_erc rv = S_SUCCESS;
 		SRelation *rel;
 
 
-		rel = (SRelation*)S_NEW("SRelation", &rv);
-		if (rv != S_SUCCESS)
-		{
-			PyErr_SetString(PyExc_RuntimeError, "Failed to create new SRelation");
+		rel = (SRelation*)S_NEW("SRelation", error);
+		if (*error != S_SUCCESS)
 			return NULL;
-		}
 
-		SRelationInit(&rel, name, &rv);
-		if (rv != S_SUCCESS)
-		{
-			PyErr_SetString(PyExc_RuntimeError, "Failed to initialize new SRelation");
+		SRelationInit(&rel, name, error);
+		if (*error != S_SUCCESS)
 			return NULL;
-		}
 
 		if (utt != NULL)
 		{
-			SUtteranceSetRelation(S_UTTERANCE(utt), rel, &rv);
-			if (rv != S_SUCCESS)
+			SUtteranceSetRelation(S_UTTERANCE(utt), rel, error);
+			if (*error != S_SUCCESS)
 			{
-				PyErr_SetString(PyExc_RuntimeError, "Failed to set new SRelation to utterance");
-				S_FORCE_DELETE(rel, "py_srelation_new", &rv);
+				S_FORCE_DELETE(rel, "SRelation", error);
 				return NULL;
 			}
 		}
 
-		return S_OBJECT(rel);
+		return rel;
 	}
 
 
-	void py_srelation_delete(SObject *rel)
+	const SItem *append(const SItem *toShare=NULL, s_erc *error)
 	{
-		s_erc rv = S_SUCCESS;
-		SRelation *self = S_RELATION(rel);
+		const SItem *appended;
 
 
-		/*
-		 * if the relation is connected delete it
-		 * through the utterance, otherwise force delete.
-		 */
-		if (self->utterance != NULL)
-		{
-			SUtteranceDelRelation(self->utterance, self->name, &rv);
-			if (rv != S_SUCCESS)
-				PyErr_SetString(PyExc_RuntimeError, "Failed to delete relation");
-		}
-		else
-		{
-			S_FORCE_DELETE(rel, "py_srelation_delete", &rv);
-			if (rv != S_SUCCESS)
-				PyErr_SetString(PyExc_RuntimeError, "Failed to delete relation");
-		}
+		appended = SRelationAppend($self, toShare, error);
+		if (*error != S_SUCCESS)
+			return NULL;
+
+		return appended;
 	}
 
 
-	const char *py_srelaion_name(const SObject *self)
+	const SItem *prepend(const SItem *toShare=NULL, s_erc *error)
 	{
-		s_erc rv = S_SUCCESS;
+		const SItem *prepended;
+
+
+		prepended = SRelationPrepend($self, toShare, error);
+		if (*error != S_SUCCESS)
+			return NULL;
+
+		return prepended;
+	}
+
+
+	const SItem *head(s_erc *error)
+	{
+		const SItem *item;
+
+
+		item = SRelationHead($self, error);
+		if (*error != S_SUCCESS)
+			return NULL;
+
+		return item;
+	}
+
+
+	const SItem *tail(s_erc *error)
+	{
+		const SItem *item;
+
+
+		item = SRelationTail($self, error);
+		if (*error != S_SUCCESS)
+			return NULL;
+
+		return item;
+	}
+
+
+	const char *name(s_erc *error)
+	{
 		const char *name;
 
 
-		name = SRelationName(S_RELATION(self), &rv);
-		if (rv != S_SUCCESS)
-		{
-			PyErr_SetString(PyExc_RuntimeError, "Failed to get relation name");
+		name = SRelationName($self, error);
+		if (*error != S_SUCCESS)
 			return NULL;
-		}
 
 		return name;
 	}
 
 
-	const SObject *py_srelation_utterance(const SObject *self)
+	const SUtterance *utterance(s_erc *error)
 	{
-		s_erc rv = S_SUCCESS;
 		const SUtterance *utt;
 
 
-		utt = SRelationUtterance(S_RELATION(self), &rv);
-		if (rv != S_SUCCESS)
-		{
-			PyErr_SetString(PyExc_RuntimeError, "Failed to get relation utterance");
+		utt = SRelationUtterance($self, error);
+		if (*error != S_SUCCESS)
 			return NULL;
-		}
 
-		return S_OBJECT(utt);
+		return utt;
 	}
 
 
-	const SObject *py_srelation_head(const SObject *self)
+	const char *__str__()
 	{
-		s_erc rv = S_SUCCESS;
-		const SItem *head;
+		s_erc error = S_SUCCESS;
 
 
-		head = SRelationHead(S_RELATION(self), &rv);
-		if (rv != S_SUCCESS)
-		{
-			PyErr_SetString(PyExc_RuntimeError, "Failed to get relation head");
-			return NULL;
-		}
-
-		return S_OBJECT(head);
+		S_CTX_ERR(&error, S_FAILURE,
+				  "SRelation::__str__()",
+				  "This function should have been overloaded in python");
+		return NULL;
 	}
 
 
-	const SObject *py_srelation_tail(const SObject *self)
+	const char *to_string(const char *prefix="")
 	{
-		s_erc rv = S_SUCCESS;
-		const SItem *tail;
+		s_erc error = S_SUCCESS;
 
 
-		tail = SRelationTail(S_RELATION(self), &rv);
-		if (rv != S_SUCCESS)
-		{
-			PyErr_SetString(PyExc_RuntimeError, "Failed to get relation tail");
-			return NULL;
-		}
-
-		return S_OBJECT(tail);
+		S_CTX_ERR(&error, S_FAILURE,
+				  "SRelation::to_string()",
+				  "This function should have been overloaded in python");
+		return NULL;
 	}
 
 
-	SObject *py_srelation_append(SObject *self, const SObject *toShare)
+	SRelationItr *__iter__()
 	{
-		s_erc rv = S_SUCCESS;
-		const SItem *appended;
+		SRelationItr *pitr;
+		s_erc error;
 
 
-		appended = SRelationAppend(S_RELATION(self), S_ITEM(toShare), &rv);
-		if (rv != S_SUCCESS)
-		{
-			PyErr_SetString(PyExc_RuntimeError, "Failed to append item");
+		S_CLR_ERR(&error);
+		pitr = make_SRelationItr($self, &error);
+		if (error != S_SUCCESS)
 			return NULL;
-		}
 
-		return S_OBJECT(appended);
+		return pitr;
 	}
-
-
-	SObject *py_srelation_prepend(SObject *self, const SObject *toShare)
-	{
-		s_erc rv = S_SUCCESS;
-		const SItem *prepended;
-
-
-		prepended = SRelationPrepend(S_RELATION(self), S_ITEM(toShare), &rv);
-		if (rv != S_SUCCESS)
-		{
-			PyErr_SetString(PyExc_RuntimeError, "Failed to prepend item");
-			return NULL;
-		}
-
-		return S_OBJECT(prepended);
-	}
-
-/*
- * Do not delete this delimiter, required for SWIG
- */
-%}
-
-
-
-
-
+}

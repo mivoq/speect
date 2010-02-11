@@ -79,9 +79,8 @@ class TTSServer():
         #TODO: check this:
         str = "Loading voice from file \'" + voicefilename + "\'"
         print(str)
-        v = speect.SVoice(file_name=voicefilename,
-                          load_data=True)
-        voicename = v.get_name()
+        v = speect.SVoice(voicefilename, True)
+        voicename = v.name()
         str = "Voice \'" + voicename + "\' loaded"
         print(str)
         self.voices[voicename] = v
@@ -109,10 +108,8 @@ class TTSServer():
         
             
     def synth(self, requestmsg):
-        inputSpeectString = speect.SString(requestmsg["text"])
-        utt = self.voices[requestmsg["voicename"]].synth(utt_type="text",
-                                                         input=inputSpeectString)
-        speectwaveform = utt.get_feature("audio")
+        utt = self.voices[requestmsg["voicename"]].synth("text", requestmsg["text"])
+        speectwaveform = utt.features["audio"]
         if not speectwaveform:
             raise RuntimeError('Synthesis failed')
 
@@ -163,6 +160,6 @@ if __name__ == "__main__":
     #Either CLI parms or config file should be loaded here and server
     #setup done based on that...
     tts_server = TTSServer()
-    tts_server.loadvoice("/home/aby/Development/speect_release_december2009/sa_english/voice.conf")
+    tts_server.loadvoice("/home/aby/Data/Voices/English/eng-ZA/Lwazi/voice.txt")
     tts_server.run()
     

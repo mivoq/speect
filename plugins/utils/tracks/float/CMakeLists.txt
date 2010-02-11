@@ -60,3 +60,9 @@ add_dependencies(${PLUGIN_SONAME}_plugin matrix-float_plugin)
 
 include(plugin_conf)
 
+
+#------------------------------------------------------------------------------------#
+#                              SWIG wrappers                                         #
+#------------------------------------------------------------------------------------#
+
+add_subdirectory(swig)

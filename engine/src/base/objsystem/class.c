@@ -76,7 +76,7 @@
  * If SPCT_DEBUG_OBJECTS is defined then all Speect object creation
  * and deletion information is printed to stdout.
  */
-#if 1
+#if 0
 #define SPCT_DEBUG_OBJECTS
 #endif
 
@@ -390,6 +390,15 @@ S_API const char *s_class_name(const SObjectClass *cls, s_erc *error)
 		class_name = cls->name;
 
 	return class_name;
+}
+
+
+S_API const char *s_class_inheritance(const SObjectClass *cls, s_erc *error)
+{
+	S_CLR_ERR(error);
+
+	/* get class inheritance */
+	return cls->name;
 }
 
 

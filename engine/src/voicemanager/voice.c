@@ -2136,20 +2136,6 @@ static void InitVoice(void *obj, s_erc *error)
 				  "Failed to initialize new data objects map"))
 		return;
 
-#if 0
-	self->data->dataConfig = S_MAP(S_NEW("SMapList", error));
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "InitVoice",
-				  "Failed to create new data config map"))
-		return;
-
-	SMapListInit(&(self->data->dataConfig), error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "InitVoice",
-				  "Failed to initialize new data config map"))
-		return;
-#endif
-
 	s_mutex_init(&self->voice_mutex);
 }
 

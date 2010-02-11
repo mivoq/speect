@@ -62,7 +62,7 @@ cd ..
 
 echo "cleaning swig"
 
-cd ./src/
+cd ./swig/
 ./clean_files
 cd ..
 

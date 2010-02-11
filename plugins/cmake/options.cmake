@@ -34,7 +34,7 @@ option(WARN_DECL_AFTER_STMT "Warn about declarations after statements (GCC)" off
 #
 # Speect path
 #
-set(SPEECT_DIR "/home/aby/Software/Packages/install/speect/engine" CACHE STRING "Path to Speect Engine")
+set(SPEECT_DIR "/home/aby/Development/speect/engine" CACHE STRING "Path to Speect Engine")
 
 
 #

@@ -21,7 +21,7 @@ include(${SWIG_USE_FILE})
 find_package(PythonLibs REQUIRED) # Note, currently PythonInterp does not look for Python 3
 
 # add Python to includes
-include_directories(${PYTHON_INCLUDE_DIRS})
+include_directories(${PYTHON_INCLUDE_PATH})
 
 # add Speect Engine includes
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})

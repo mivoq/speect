@@ -48,8 +48,9 @@
 #include "ebml.h"
 %}
 
-
+%include "exception.i"
 %import speect.i
+%include "primitives.c"
 
 
 /************************************************************************************/
@@ -67,7 +68,10 @@
 
 		plugin = s_pm_load_plugin("ebml.spi", &rv);
 		if (rv != S_SUCCESS)
-			PyErr_SetString(PyExc_RuntimeError, "Failed to load Speect EBML plug-in");
+			SWIG_exception(SWIG_RuntimeError, "Failed to load Speect EBML plug-in");
+
+	fail:
+		return;
 	}
 %}
 
@@ -81,14 +85,12 @@
 /*
  * SEbmlRead Python class
  */
-%include "ebml_reader.c"
 %include "ebml_reader.py"
-
+%include "ebml_reader.c"
 
 /*
  * SEbmlWrite Python class
  */
 %include "ebml_writer.c"
-%include "ebml_writer.py"
 
 

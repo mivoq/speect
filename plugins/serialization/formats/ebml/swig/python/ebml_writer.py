@@ -53,7 +53,7 @@ class SEbmlWrite(speect.SObject):
                  doc_type=None,
                  doc_type_version=None,
                  doc_type_read_version=None,
-                 object=None, owner=False):
+                 spct_object=None, owner=False):
         """
         Constructor.
         @param path: Full path and file name of the ebml file to write.
@@ -72,9 +72,9 @@ class SEbmlWrite(speect.SObject):
         @type doctype_version: int
         @param doctype_read_version: Document type read version.
         @type doctype_read_version: int
-        @param object: A pointer to a C-type Speect SEbmlWrite type
+        @param spct_object: A pointer to a C-type Speect SEbmlWrite type
         SObject (default = I{None}).
-        @type object: I{PySwigObject SObject*}
+        @type spct_object: I{PySwigObject SObject*}
         @param owner: I{True} if the Python SEbmlWrite is the owner of the
         C-type Speect SObject (and can therefore delete it),
         otherwise I{False} (default = I{False}).
@@ -83,9 +83,9 @@ class SEbmlWrite(speect.SObject):
         @rtype: L{SEbmlWrite}
         """
 
-        if (path and object) or (not path and not object):
+        if (path and spct_object) or (not path and not spct_object):
             raise RuntimeError('Either argument \"path\" or '+\
-                               '\"object\" must not be \'None\'')
+                               '\"spct_object\" must not be \'None\'')
 
         if path:
             if not isinstance(path, str):
@@ -130,19 +130,19 @@ class SEbmlWrite(speect.SObject):
             if doc_type_read_version <= 0:
                 raise RuntimeError('The \'doc_type_read_version\' argument must be >= 1')
             
-            ebml_object = py_sebml_writer_new(path, ebml_version, ebml_read_version,
-                                              max_id_width, max_size_width, doc_type,
-                                              doc_type_version, doc_type_read_version)
+            ebml_object = sebml_writer_new(path, ebml_version, ebml_read_version,
+                                           max_id_width, max_size_width, doc_type,
+                                           doc_type_version, doc_type_read_version)
             if not ebml_object:
                 raise RuntimeError('Speect failed to create new \'SEbmlWrite\' object')
    
             super(SEbmlWrite, self).__init__(ebml_object, True)
         else:
-            if not py_sobject_is_type(object, "SEbmlWrite"):
+            if not sobject_is_type(spct_object, "SEbmlWrite"):
                 raise TypeError('Input argument \"object\" must be ' +
                                 'of type \'C Speect SEbmlWrite\'')
             else:
-                super(SEbmlWrite, self).__init__(object, owner)
+                super(SEbmlWrite, self).__init__(spct_object, owner)
 
 
     def write_uint(self, id, val):
@@ -166,7 +166,7 @@ class SEbmlWrite(speect.SObject):
         if val < 0:
             raise RuntimeError('The \'val\' argument must be >= 0')
        
-        py_sebml_writer_write_uint(self._get_speect_object(), id, val)
+        sebml_writer_write_uint(self.this, id, val)
     
 
     def write_sint(self, id, val):
@@ -187,7 +187,7 @@ class SEbmlWrite(speect.SObject):
         if not isinstance(val, int):
             raise RuntimeError('The \'val\' argument must be an \'int\' type')
       
-        py_sebml_writer_write_suint(self._get_speect_object(), id, val)
+        sebml_writer_write_suint(self.this, id, val)
    
         
     def write_double(self, id, val):
@@ -209,7 +209,7 @@ class SEbmlWrite(speect.SObject):
             raise RuntimeError('The \'val\' argument must be an \'int\' or \'float\' type')
 
    
-        py_sebml_writer_write_double(self._get_speect_object(), id, val)
+        sebml_writer_write_double(self.this, id, val)
  
   
     def write_str(self, id, val):
@@ -230,7 +230,7 @@ class SEbmlWrite(speect.SObject):
         if not isinstance(val, str) or not isinstance(val, unicode):
             raise RuntimeError('The \'val\' argument must be an \'str\' or \'unicode\' type')
 
-        py_sebml_writer_write_utf8(self._get_speect_object(), id, val.encode('utf8'))
+        sebml_writer_write_utf8(self.this, id, val.encode('utf8'))
 
 
     def write_object(self, id, val):
@@ -255,8 +255,8 @@ class SEbmlWrite(speect.SObject):
                      'or a sub-class thereof'
             raise RuntimeError(string)
         
-        py_sebml_writer_write_object(self._get_speect_object(), id,
-                                     val._get_speect_object())
+        sebml_writer_write_object(self.this, id,
+                                  val.this)
 
         
     def start_container(self, id):
@@ -272,7 +272,7 @@ class SEbmlWrite(speect.SObject):
         if id < 0:
             raise RuntimeError('The \'val\' argument must be > 0')
       
-        py_sebml_writer_start_container(self._get_speect_object(), id)
+        sebml_writer_start_container(self.this, id)
 
 
     def end_container(self):
@@ -280,7 +280,7 @@ class SEbmlWrite(speect.SObject):
         End an already started container.
         """
 
-        py_sebml_writer_stop_container(self._get_speect_object())
+        sebml_writer_stop_container(self.this)
          
   
 # register class with Speect Engine

@@ -34,21 +34,21 @@
 /*                                                                                  */
 /************************************************************************************/
 
-/*
- * Do not delete these delimiters, required for SWIG
- */
-%inline
-%{
-	SObject *py_sebml_writer_new(const char *path,
-								 int ebml_version,
-								 int ebml_read_version,
-								 int max_id_width,
-								 int max_size_width,
-								 const char *doc_type,
-								 int doc_type_version,
-								 int doc_type_read_version)
+typedef struct
+{
+} SEbmlWrite;
+
+
+%types(SEbmlWrite = SObject);
+
+%extend SEbmlWrite
+{
+	SEbmlWrite(const char *path, int ebml_version,
+			   int ebml_read_version, int max_id_width,
+			   int max_size_width, const char *doc_type,
+			   int doc_type_version, int doc_type_read_version,
+			   s_erc *error)
 	{
-		s_erc rv = S_SUCCESS;
 		SDatasource *ds;
 		SEbmlWrite *ebmlWriter;
 		s_ebml_header *header;
@@ -56,12 +56,9 @@
 		/*
 		 * create a data source, "wb" = write, binary
 		 */
-		ds = SFilesourceOpenFile(path, "wb", &rv);
-		if (rv != S_SUCCESS)
-		{
-			PyErr_SetString(PyExc_RuntimeError, "Failed to open file");
+		ds = SFilesourceOpenFile(path, "wb", error);
+		if (*error != S_SUCCESS)
 			return NULL;
-		}
 
 		/*
 		 * create ebml header
@@ -69,8 +66,10 @@
 		header = S_MALLOC(s_ebml_header, 1);
 		if (header == NULL)
 		{
-			PyErr_SetString(PyExc_RuntimeError, "Failed to create header structure");
-			S_DELETE(ds, "py_sebml_writer_new", &rv);
+			S_FTL_ERR(error, S_MEMERROR,
+					  "SEbmlWrite()",
+					  "Failed to allocate memory for 's_ebml_header' object");
+			S_DELETE(ds, "SEbmlWrite()", error);
 			return NULL;
 		}
 
@@ -80,14 +79,11 @@
 		header->max_size_width = (uint8)max_size_width;
 		header->doctype_version = (uint8)doc_type_version;
 		header->doctype_read_version = (uint8)doc_type_read_version;
-		header->doctype = s_strdup(doc_type, &rv);
+		header->doctype = s_strdup(doc_type, error);
 
-		if (S_CHK_ERR(&rv, S_CONTERR,
-					  "py_sebml_writer_new",
-					  "Call to \"s_strdup\" failed"))
+		if (*error != S_SUCCESS)
 		{
-			PyErr_SetString(PyExc_RuntimeError, "Failed to copy header document type");
-			S_DELETE(ds, "py_sebml_writer_new", &rv);
+			S_DELETE(ds, "SEbmlWrite()", error);
 			S_FREE(header);
 			return NULL;
 		}
@@ -95,11 +91,10 @@
 		/*
 		 * create ebml reader object
 		 */
-		ebmlWriter = (SEbmlWrite*)S_NEW("SEbmlWrite", &rv);
-		if (rv != S_SUCCESS)
+		ebmlWriter = (SEbmlWrite*)S_NEW("SEbmlWrite", error);
+		if (*error != S_SUCCESS)
 		{
-			PyErr_SetString(PyExc_RuntimeError, "Failed to create ebml writer");
-			S_DELETE(ds, "py_sebml_read_new", &rv);
+			S_DELETE(ds, "SEbmlWrite()", error);
 			S_FREE(header);
 			return NULL;
 		}
@@ -107,102 +102,56 @@
 		/*
 		 * initialize ebml writer object
 		 */
-		S_EBMLWRITE_CALL(ebmlWriter, write_init)(&ebmlWriter, ds, header, &rv);
-		if (rv != S_SUCCESS)
+		S_EBMLWRITE_CALL(ebmlWriter, write_init)(&ebmlWriter, ds, header, error);
+		if (*error != S_SUCCESS)
 		{
-			PyErr_SetString(PyExc_RuntimeError, "Failed to initialize ebml writer");
-			S_DELETE(ds, "py_sebml_read_new", &rv);
+			S_DELETE(ds, "SEbmlWrite()", error);
 			S_FREE(header);
 			return NULL;
 		}
 
-		return S_OBJECT(ebmlWriter);
+		return ebmlWriter;
 	}
 
 
-	void py_sebml_writer_write_uint(SObject *ebmlWrite, uint32 id, uint32 val)
+	void write_uint(uint32 id, uint32 val, s_erc *error)
 	{
-		SEbmlWrite *self = S_EBMLWRITE(ebmlWrite);
-		s_erc rv = S_SUCCESS;
-
-
-		S_EBMLWRITE_CALL(self, write_uint)(self, id, val, &rv);
-		if (rv != S_SUCCESS)
-			PyErr_SetString(PyExc_RuntimeError, "Failed to write uint");
+		S_EBMLWRITE_CALL($self, write_uint)($self, id, val, error);
 	}
 
 
-	void py_sebml_writer_write_sint(SObject *ebmlWrite, uint32 id, sint32 val)
+	void write_sint(uint32 id, sint32 val, s_erc *error)
 	{
-		SEbmlWrite *self = S_EBMLWRITE(ebmlWrite);
-		s_erc rv = S_SUCCESS;
-
-
-		S_EBMLWRITE_CALL(self, write_sint)(self, id, val, &rv);
-		if (rv != S_SUCCESS)
-			PyErr_SetString(PyExc_RuntimeError, "Failed to write sint");
+		S_EBMLWRITE_CALL($self, write_sint)($self, id, val, error);
 	}
 
 
-	void py_sebml_writer_write_double(SObject *ebmlWrite, uint32 id, double val)
+	void write_double(uint32 id, double val, s_erc *error)
 	{
-		SEbmlWrite *self = S_EBMLWRITE(ebmlWrite);
-		s_erc rv = S_SUCCESS;
-
-
-		S_EBMLWRITE_CALL(self, write_double)(self, id, val, &rv);
-		if (rv != S_SUCCESS)
-			PyErr_SetString(PyExc_RuntimeError, "Failed to write double");
+		S_EBMLWRITE_CALL($self, write_double)($self, id, val, error);
 	}
 
 
-	void py_sebml_writer_write_utf8(SObject *ebmlWrite, uint32 id, const char *val)
+	void write_str(uint32 id, const char *val, s_erc *error)
 	{
-		SEbmlWrite *self = S_EBMLWRITE(ebmlWrite);
-		s_erc rv = S_SUCCESS;
-
-
-		S_EBMLWRITE_CALL(self, write_utf8)(self, id, val, &rv);
-		if (rv != S_SUCCESS)
-			PyErr_SetString(PyExc_RuntimeError, "Failed to write utf8");
+		S_EBMLWRITE_CALL($self, write_utf8)($self, id, val, error);
 	}
 
 
-	void py_sebml_writer_write_object(SObject *ebmlWrite, uint32 id, const SObject *val)
+	void write_object(uint32 id, const SObject *val, s_erc *error)
 	{
-		SEbmlWrite *self = S_EBMLWRITE(ebmlWrite);
-		s_erc rv = S_SUCCESS;
-
-
-		S_EBMLWRITE_CALL(self, write_object)(self, id, val, &rv);
-		if (rv != S_SUCCESS)
-			PyErr_SetString(PyExc_RuntimeError, "Failed to write object");
+		S_EBMLWRITE_CALL($self, write_object)($self, id, val, error);
 	}
 
 
-	void py_sebml_writer_start_container(SObject *ebmlWrite, uint32 id)
+	void start_container(uint32 id, s_erc *error)
 	{
-		SEbmlWrite *self = S_EBMLWRITE(ebmlWrite);
-		s_erc rv = S_SUCCESS;
-
-
-		S_EBMLWRITE_CALL(self, start_container)(self, id, &rv);
-		if (rv != S_SUCCESS)
-			PyErr_SetString(PyExc_RuntimeError, "Failed to start container");
+		S_EBMLWRITE_CALL($self, start_container)($self, id, error);
 	}
 
 
-	void py_sebml_writer_stop_container(SObject *ebmlWrite)
+	void end_container(s_erc *error)
 	{
-		SEbmlWrite *self = S_EBMLWRITE(ebmlWrite);
-		s_erc rv = S_SUCCESS;
-
-
-		S_EBMLWRITE_CALL(self, stop_container)(self, &rv);
-		if (rv != S_SUCCESS)
-			PyErr_SetString(PyExc_RuntimeError, "Failed to stop container");
+		S_EBMLWRITE_CALL($self, stop_container)($self, error);
 	}
-/*
- * Do not delete this delimiter, required for SWIG
- */
-%}
+}

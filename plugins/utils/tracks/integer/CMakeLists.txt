@@ -60,3 +60,9 @@ add_dependencies(${PLUGIN_SONAME}_plugin matrix-int_plugin)
 
 include(plugin_conf)
 
+
+#------------------------------------------------------------------------------------#
+#                              SWIG wrappers                                         #
+#------------------------------------------------------------------------------------#
+
+add_subdirectory(swig)

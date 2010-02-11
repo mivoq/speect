@@ -53,7 +53,7 @@
 	$result = PyList_New(fa.fa_count);
 	for (i = 0; i < fa.fa_count; i++)
 	{
-		o = PyFloat_FromDouble((double)fa.fa_ip[i]);
+		o = PyFloat_FromDouble((double)fa.fa_fp[i]);
 		PyList_SetItem($result,i,o);
 	}
  }

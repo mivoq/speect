@@ -38,7 +38,7 @@
 %{
 	typedef struct
 	{
-		float *fa_ip;
+		float *fa_fp;
 		uint32 fa_count;
 	} float_array_t;
 %}
@@ -88,7 +88,7 @@ typedef struct
 		float_array_t tmp;
 
 
-		tmp.fa_ip = $self->f;
+		tmp.fa_fp = $self->f;
 		tmp.fa_count = $self->count;
 
 		return tmp;

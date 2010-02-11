@@ -39,13 +39,13 @@
  */
 %inline
 %{
-	void sutterance_ebml_save(SObject *utt, const char *path, s_erc *error)
+	void sutterance_ebml_save(SUtterance *utt, const char *path, s_erc *error)
 	{
 		SObjectSave(S_OBJECT(utt), path, "spct_utt", error);
 	}
 
 
-	SObject *sutterance_ebml_load(const char *path, s_erc *error)
+	SUtterance *sutterance_ebml_load(const char *path, s_erc *error)
 	{
 		SObject *loadedUtt;
 
@@ -53,7 +53,7 @@
 		if (*error != S_SUCCESS)
 			return NULL;
 
-		return loadedUtt;
+		return S_UTTERANCE(loadedUtt);
 	}
 /*
  * Do not delete this delimiter, required for SWIG

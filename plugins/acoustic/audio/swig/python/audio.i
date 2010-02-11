@@ -48,7 +48,7 @@
 #include "audio.h"
 %}
 
-
+%include "exception.i"
 %import speect.i
 
 
@@ -67,7 +67,10 @@
 
 		plugin = s_pm_load_plugin("audio.spi", &rv);
 		if (rv != S_SUCCESS)
-			PyErr_SetString(PyExc_RuntimeError, "Failed to load SAudio plug-in");
+			SWIG_exception(SWIG_RuntimeError, "Failed to load SAudio plug-in");
+
+	fail:
+		return;
 	}
 %}
 
@@ -81,6 +84,6 @@
 /*
  * SAudio Python class
  */
-%include "audio.c"
 %include "audio.py"
+%include "audio.c"
 

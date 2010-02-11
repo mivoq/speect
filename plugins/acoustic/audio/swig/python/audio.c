@@ -39,47 +39,56 @@
 
 %cstring_output_allocate_size(char **s, int *slen, free(*$1));
 
-void py_saudio_samples(char **s, int *slen, const SObject *audio);
-
-
-/*
- * Do not delete these delimiters, required for SWIG
- */
 %inline
 %{
-	void py_saudio_samples(char **s, int *slen, const SObject *audio)
+	void saudio_samples(char **s, int *slen, const SAudio *audio, s_erc *error)
 	{
 		sint16 *samples;
-		SAudio *self = S_AUDIO(audio);
 		uint32 counter;
 
 
-		samples = S_CALLOC(sint16, self->num_samples);
-		for (counter = 0; counter < self->num_samples; counter++)
-			samples[counter] = (sint16)self->samples[counter];
+		samples = S_CALLOC(sint16, audio->num_samples);
+		if (samples == NULL)
+		{
+			S_FTL_ERR(error, S_MEMERROR,
+					  "saudio_samples",
+					  "Failed to allocate audio samples");
+			return;
+		}
 
-		*slen = self->num_samples * sizeof(sint16);
+		for (counter = 0; counter < audio->num_samples; counter++)
+			samples[counter] = (sint16)audio->samples[counter];
+
+		*slen = audio->num_samples * sizeof(sint16);
 		*s = (char*)samples;
 	}
-
-
-	uint32 py_saudio_num_samples(const SObject *audio)
-	{
-		SAudio *self = S_AUDIO(audio);
-
-
-		return self->num_samples;
-	}
-
-	uint32 py_saudio_sample_rate(const SObject *audio)
-	{
-		SAudio *self = S_AUDIO(audio);
-
-
-		return self->sample_rate;
-	}
-
-/*
- * Do not delete this delimiter, required for SWIG
- */
 %}
+
+
+%nodefaultctor SAudio;
+
+typedef struct
+{
+} SAudio;
+
+
+%types(SAudio = SObject);
+
+
+%extend SAudio
+{
+	PyObject *get_audio_waveform()
+	{
+		return NULL;
+	}
+
+	uint32 num_samples()
+	{
+		return $self->num_samples;
+	}
+
+	uint32 sample_rate()
+	{
+		return $self->sample_rate;
+	}
+}

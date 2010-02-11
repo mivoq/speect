@@ -49,13 +49,13 @@ def load_ebml_utterance(path):
     if not isinstance(path, str):
         raise TypeError('path must be of type \'str\'')
 
-    utt_object = py_sutterance_ebml_load(path)
+    utt_object = sutterance_ebml_load(path)
     if not utt_object:
         string = "Speect failed to load utterance of type \'EBML\' from file \'" +\
                  path + "\'"
         raise RuntimeError(string)
 
-    return speect.SUtterance(object=utt_object, owner=True)
+    return speect.SUtterance(spct_object=utt_object, owner=True)
 
 
 def save_ebml_utterance(self, path):
@@ -68,11 +68,11 @@ def save_ebml_utterance(self, path):
     if not isinstance(path, str):
         raise TypeError('path must be of type \'str\'')
 
-    utt_object = self._get_speect_object()
+    utt_object = self.this
     if not utt_object:
         raise RuntimeError("Utterance has no Speect object")
 
-    py_sutterance_ebml_save(utt_object, path)
+    sutterance_ebml_save(utt_object, path)
     
 # add the functions to the Speect SUtterance class
 setattr(speect.SUtterance, "load_ebml", staticmethod(load_ebml_utterance))

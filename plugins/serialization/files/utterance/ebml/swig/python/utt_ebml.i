@@ -47,7 +47,7 @@
 #include "speect.h"
 %}
 
-
+%include "exception.i"
 %import speect.i
 
 
@@ -67,18 +67,18 @@
 
 		uttEBMLPlugin = s_pm_load_plugin("utt-ebml.spi", &rv);
 		if (rv != S_SUCCESS)
-		{
-			PyErr_SetString(PyExc_RuntimeError, "Failed to load Speect utterance EBML plug-in");
-			return;
-		}
+			SWIG_exception(SWIG_RuntimeError, "Failed to load Speect utterance EBML plug-in");
 
 		primEBMLPlugin = s_pm_load_plugin("prim-ebml.spi", &rv);
 		if (rv != S_SUCCESS)
 		{
-			PyErr_SetString(PyExc_RuntimeError, "Failed to load Speect primitives EBML plug-in");
 			S_DELETE(uttEBMLPlugin, "utt_ebml.i init", &rv);
+			SWIG_exception(SWIG_RuntimeError, "Failed to load Speect primitives EBML plug-in");
 			return;
 		}
+
+	fail:
+		return;
 	}
 %}
 

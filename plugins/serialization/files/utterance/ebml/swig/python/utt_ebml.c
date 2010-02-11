@@ -39,27 +39,19 @@
  */
 %inline
 %{
-	void py_sutterance_ebml_save(SObject *utt, const char *path)
+	void sutterance_ebml_save(SObject *utt, const char *path, s_erc *error)
 	{
-		s_erc rv = S_SUCCESS;
-
-		SObjectSave(S_OBJECT(utt), path, "spct_utt", &rv);
-		if (rv != S_SUCCESS)
-			PyErr_SetString(PyExc_RuntimeError, "Failed to save utterance in EBML format");
+		SObjectSave(S_OBJECT(utt), path, "spct_utt", error);
 	}
 
 
-	SObject *py_sutterance_ebml_load(const char *path)
+	SObject *sutterance_ebml_load(const char *path, s_erc *error)
 	{
 		SObject *loadedUtt;
-		s_erc rv = S_SUCCESS;
 
-		loadedUtt = SObjectLoad(path, "spct_utt", &rv);
-		if (rv != S_SUCCESS)
-		{
-			PyErr_SetString(PyExc_RuntimeError, "Failed to load utterance in EBML format");
+		loadedUtt = SObjectLoad(path, "spct_utt", error);
+		if (*error != S_SUCCESS)
 			return NULL;
-		}
 
 		return loadedUtt;
 	}

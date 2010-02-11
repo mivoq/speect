@@ -165,6 +165,19 @@ S_API const char *SObjectType(const SObject *self, s_erc *error);
 
 
 /**
+ * Get the given object's class inheritance.
+ * @public @memberof SObject
+ *
+ * @param self The given object.
+ * @param error Error Code.
+ *
+ * @return A ":" separated string of the given classes inheritance
+ * hierarchy, excluding #SObject.
+ */
+S_API const char *SObjectInheritance(const SObject *self, s_erc *error);
+
+
+/**
  * Dispose of an object.
  * @private @memberof SObject
  *

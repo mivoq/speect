@@ -258,6 +258,30 @@ S_API const char *SObjectType(const SObject *self, s_erc *error)
 }
 
 
+S_API const char *SObjectInheritance(const SObject *self, s_erc *error)
+{
+	const char *inheritance;
+
+	S_CLR_ERR(error);
+
+	if (self == NULL)
+	{
+		S_CTX_ERR(error, S_ARGERROR,
+				  "SObjectInheritance",
+				  "Argument \"self\" is NULL");
+		return NULL;
+	}
+
+	inheritance = s_class_inheritance(S_OBJECT_CLS(self), error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "SObjectInheritance",
+				  "Call to \"s_class_inheritance\" failed"))
+		return NULL;
+
+	return inheritance;
+}
+
+
 S_API size_t SObjectSize(const SObject *self, s_erc *error)
 {
 	S_CLR_ERR(error);

@@ -168,6 +168,19 @@ S_API const char *s_class_name(const SObjectClass *cls, s_erc *error);
 
 
 /**
+ * Get the complete inheritance of the given class. The inheritance
+ * will exclude the #SObject.
+ *
+ * @param cls Class object to get inheritance from.
+ * @param error Error Code.
+ *
+ * @return A ":" separated string of the given classes inheritance
+ * hierarchy, excluding #SObject.
+ */
+S_API const char *s_class_inheritance(const SObjectClass *cls, s_erc *error);
+
+
+/**
  * Query if the given class name is registered.
  *
  * @param name The class name to query.

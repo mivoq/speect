@@ -62,8 +62,6 @@
 		if (*error != S_SUCCESS)
 			return NULL;
 
-		printf("type = %s\n",type);
-
 		s_comp = s_strcmp(type, "SInt", error);
 		if (*error != S_SUCCESS)
 			return NULL;

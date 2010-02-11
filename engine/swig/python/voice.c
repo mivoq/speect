@@ -39,6 +39,9 @@
 typedef struct
 {
 	SMap *features;
+	SMap *featProcessors;
+	SMap *uttProcessors;
+	SMap *uttTypes;
 } SVoice;
 
 
@@ -123,7 +126,7 @@ typedef struct
 	}
 
 
-	PyObject *get_data(const char *key, s_erc *error)
+	PyObject *data_get(const char *key, s_erc *error)
 	{
 		const SObject *sdata;
 		PyObject *pdata;
@@ -139,5 +142,30 @@ typedef struct
 			return NULL;
 
 		return pdata;
+	}
+
+
+	s_bool data_present(const char *key, s_erc *error)
+	{
+		s_bool present;
+
+
+		present = SVoiceDataIsPresent($self, key, error);
+		if (*error != S_SUCCESS)
+			return FALSE;
+
+		return present;
+	}
+
+
+	void data_set(const char *key, const SObject *object,  s_erc *error)
+	{
+		SVoiceSetData($self, key, object, error);
+	}
+
+
+	void data_del(const char *key, s_erc *error)
+	{
+		SVoiceDelData($self, key, error);
 	}
 };

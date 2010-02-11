@@ -21,6 +21,10 @@ then
     rm -f Makefile
 fi
 
+if [ -f CMakeCache.txt ]
+then
+    rm -f CMakeCache.txt
+fi
 
 ########################################################################
 

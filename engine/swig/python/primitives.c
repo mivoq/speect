@@ -62,6 +62,8 @@
 		if (*error != S_SUCCESS)
 			return NULL;
 
+		printf("type = %s\n",type);
+
 		s_comp = s_strcmp(type, "SInt", error);
 		if (*error != S_SUCCESS)
 			return NULL;
@@ -166,7 +168,7 @@
 					break;
 				}
 
-				len = s_strlen(c, error) + 2;
+				len = s_strzsize(c, error) + 2;
 				if (*error != S_SUCCESS)
 				{
 					S_FREE(cname);

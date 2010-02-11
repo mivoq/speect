@@ -159,7 +159,7 @@
 					break;
 				}
 
-				len = s_strlen(c, error) + 2;
+				len = s_strzsize(c, error) + 2;
 				if (*error != S_SUCCESS)
 				{
 					S_FREE(cname);

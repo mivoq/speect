@@ -69,4 +69,4 @@ endif(WANT_EXAMPLES)
 #                              SWIG wrappers                                         #
 #------------------------------------------------------------------------------------#
 
-#add_subdirectory(swig)
+add_subdirectory(swig)

@@ -436,10 +436,11 @@ static void write_uint(SEbmlWrite *self, uint32 id, uint32 i, s_erc *error)
 	if (i == 0) /* A zero byte integer represents the integer value 0. */
 	{
 		s_ebml_write_size(self, 0, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "write_uint",
-					  "Failed to write size"))
-			return;
+		S_CHK_ERR(error, S_CONTERR,
+				  "write_uint",
+				  "Failed to write size");
+
+		return;
 	}
 
 	size = s_ebml_get_uint_size(i);
@@ -511,10 +512,11 @@ static void write_sint(SEbmlWrite *self, uint32 id, sint32 i, s_erc *error)
 	if (i == 0) /* A zero byte integer represents the integer value 0. */
 	{
 		s_ebml_write_size(self, 0, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "write_sint",
-					  "Failed to write size"))
-			return;
+		S_CHK_ERR(error, S_CONTERR,
+				  "write_sint",
+				  "Failed to write size");
+
+		return;
 	}
 
 	size = s_ebml_get_sint_size(i);
@@ -603,10 +605,11 @@ static void write_float(SEbmlWrite *self, uint32 id, float f, s_erc *error)
 	if (s_float_equal(f, 0.0) == TRUE)  /* A zero byte float represents the float value 0.0. */
 	{
 		s_ebml_write_size(self, 0, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "write_float",
-					  "Failed to write size"))
-			return;
+		S_CHK_ERR(error, S_CONTERR,
+				  "write_float",
+				  "Failed to write size");
+
+		return;
 	}
 
 	/*
@@ -644,10 +647,11 @@ static void write_double(SEbmlWrite *self, uint32 id, double d, s_erc *error)
 	if (s_float_equal(d, 0.0) == TRUE)  /* A zero byte float represents the float value 0.0. */
 	{
 		s_ebml_write_size(self, 0, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "write_double",
-					  "Failed to write size"))
-			return;
+		S_CHK_ERR(error, S_CONTERR,
+				  "write_double",
+				  "Failed to write size");
+
+		return;
 	}
 
 	/*

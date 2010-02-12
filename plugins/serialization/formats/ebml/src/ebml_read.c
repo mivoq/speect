@@ -901,7 +901,7 @@ static SObject *read_object(SEbmlRead *self, uint32 *id, s_erc *error)
 	container_closed = read_container_at_end(self, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "read_object",
-				  "Call to \"read_container_at_end\" for unread object failed"))
+				  "Call to \"read_container_at_end\" for read object failed"))
 	{
 		S_DELETE(object, "read_object", error);
 		return NULL;
@@ -909,9 +909,9 @@ static SObject *read_object(SEbmlRead *self, uint32 *id, s_erc *error)
 
 	if (container_closed != TRUE)
 	{
-		S_CTX_ERR(error, S_CONTERR,
+		S_CTX_ERR(error, S_FAILURE,
 				  "read_object",
-				  "Failed to close container of unread object");
+				  "Failed to close container of read object");
 		S_DELETE(object, "read_object", error);
 		return NULL;
 	}

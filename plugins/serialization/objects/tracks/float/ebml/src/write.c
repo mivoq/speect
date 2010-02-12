@@ -78,7 +78,7 @@ S_LOCAL void write_float_track(SEbmlWrite *writer, const SObject *object, s_erc 
 		return;
 
 	/* write the column count of the data */
-	S_EBMLWRITE_CALL(writer, write_uint)(writer, S_TRACK_FLOAT_EBML_ROW_COUNT,
+	S_EBMLWRITE_CALL(writer, write_uint)(writer, S_TRACK_FLOAT_EBML_COL_COUNT,
 										 self->data->col_count, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "write_float_track",
@@ -153,6 +153,4 @@ S_LOCAL void write_float_track(SEbmlWrite *writer, const SObject *object, s_erc 
 	S_CHK_ERR(error, S_CONTERR,
 			  "write_float_track",
 			  "Call to SEbmlWrite method \"stop_container\" failed");
-
-	return;
 }

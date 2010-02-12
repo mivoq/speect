@@ -107,14 +107,14 @@ S_LOCAL void write_float_array(SEbmlWrite *writer, const SObject *object, s_erc 
 
 	/* stop S_ARRAY_FLOAT_EBML_DATA container */
 	S_EBMLWRITE_CALL(writer, stop_container)(writer, error);
-	S_CHK_ERR(error, S_CONTERR,
-			  "write_float_array",
-			  "Call to SEbmlWrite method \"stop_container\" failed");
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "write_float_array",
+				  "Call to SEbmlWrite method \"stop_container\" failed"))
+		return;
 
 	/* finally close S_EBML_ID_OBJECT_DATA container and return */
 	S_EBMLWRITE_CALL(writer, stop_container)(writer, error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "write_float_array",
 			  "Call to SEbmlWrite method \"stop_container\" failed");
-	return;
 }

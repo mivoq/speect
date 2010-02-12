@@ -58,7 +58,7 @@ add_dependencies(${PLUGIN_SONAME}_plugin audio_plugin)
 #                                   examples                                         #
 #------------------------------------------------------------------------------------#
 
-if(WANT_EXAMPLES)
-  add_subdirectory(examples)
-endif(WANT_EXAMPLES)
+#if(WANT_EXAMPLES)
+#  add_subdirectory(examples)
+#endif(WANT_EXAMPLES)
 

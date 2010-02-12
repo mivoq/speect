@@ -135,7 +135,7 @@ S_BEGIN_C_DECLS
  SObjectDecRef(S_OBJECT(obj));
  }
  @endcode
- * But, if the sutiation arrises that an object should not be deleted,
+ * But, if the situation arrises that an object should not be deleted,
  * by users or other objects (for example read data), then one sets
  * the #SObjectClass::dispose function of that object's class
  * to @c NULL in the object class initialization and also a

@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2009-2010 The Department of Arts and Culture,                      */
+/* Copyright (c) 2009 The Department of Arts and Culture,                           */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -23,71 +23,32 @@
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* AUTHOR  : Richard Carlson, Aby Louw                                              */
-/* DATE    : March 2009                                                             */
+/* AUTHOR  : Aby Louw                                                               */
+/* DATE    : November 2009                                                          */
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* The Speect Engine library SWIG/Python interface definition.                      */
+/* C convenience functions for SUttProc Python wrapper.                             */
 /*                                                                                  */
 /*                                                                                  */
-/************************************************************************************/
-
-%module speect
-
-%include "typemaps.i"
-%include "exception.i"
-%include "speect_typemaps.i"
-
-/************************************************************************************/
-/*                                                                                  */
-/* Speect Engine header.                                                            */
 /*                                                                                  */
 /************************************************************************************/
 
-%header
-%{
-#include "speect.h"
-%}
-
-%feature("autodoc", "1");
-
-/************************************************************************************/
-/*                                                                                  */
-/* Speect Python typemaps.                                                          */
-/*                                                                                  */
-/************************************************************************************/
-
-%include "speect_py_typemaps.i"
+%nodefaultctor SUttProcessor;
 
 
-/************************************************************************************/
-/*                                                                                  */
-/* Miscellaneous C Speect functions.                                                */
-/*                                                                                  */
-/************************************************************************************/
-
-%include "misc.c"
+typedef struct
+{
+	SMap *features;
+} SUttProcessor;
 
 
-/************************************************************************************/
-/*                                                                                  */
-/* SObject wrapper functions                                                        */
-/*                                                                                  */
-/************************************************************************************/
+%types(SUttProcessor = SObject);
 
-%include "iterator.c"
-%include "primitives.c"
-%include "object.c"
-%include "utterance.py"
-%include "utterance.c"
-%include "relation.py"
-%include "relation_itr.c"
-%include "relation.c"
-%include "map.py"
-%include "map.c"
-%include "item.py"
-%include "item.c"
-%include "voice.c"
-%include "plugin.c"
-%include "utt_processor.c"
+%extend SUttProcessor
+{
+	void run(SUtterance *utt, s_erc *error)
+	{
+		SUttProcessorRun($self, utt, error);
+	}
+};

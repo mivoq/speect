@@ -1277,7 +1277,7 @@ S_API void SVoiceDelUttProc(SVoice *self, const char *key, s_erc *error)
 
 /* utterance types */
 
-S_API SList *SVoiceGetUttTypeKeys(const SVoice *self, s_erc *error)
+S_API SList *SVoiceGetUttTypesKeys(const SVoice *self, s_erc *error)
 {
 	SList *tmp;
 

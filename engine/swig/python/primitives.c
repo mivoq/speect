@@ -295,7 +295,7 @@
 			if (ustring == NULL)
 			{
 				S_CTX_ERR(error, S_FAILURE,
-						  "SPobject",
+						  "pyobject_2_sobject",
 						  "Call to \"PyUnicode_AsUTF8String\" failed");
 				return NULL;
 			}

@@ -114,3 +114,198 @@
 }
 
 
+/*** SList ***/
+%typemap(out) const SList*
+{
+	size_t len;
+	s_erc error;
+	SIterator *itr;
+	int count;
+	PyObject *pyList;
+
+
+	S_CLR_ERR(&error);
+	pyList = NULL;
+
+	len = SListSize($1, &error);
+	if (error != S_SUCCESS)
+		goto slist_fail;
+
+	pyList = PyList_New(len);
+
+	itr = SListIterator($1, &error);
+	if (error != S_SUCCESS)
+		goto slist_fail;
+
+	count = 0;
+	while (itr != NULL)
+	{
+		const SObject *obj;
+		PyObject *pobj;
+
+
+		obj = SListIteratorValue(itr, &error);
+		if (error != S_SUCCESS)
+			goto slist_fail;
+
+		pobj = sobject_2_pyobject(obj, &error);
+		if (error != S_SUCCESS)
+			goto slist_fail;
+
+		PyList_SetItem(pyList, count, pobj);
+
+		itr = SIteratorNext(itr);
+		count++;
+	}
+
+	goto slist_good;
+
+
+slist_fail:
+	Py_CLEAR(pyList);
+slist_good:
+	$result = pyList;
+}
+
+
+%typemap(out) SList*
+{
+	size_t len;
+	s_erc error;
+	SIterator *itr;
+	int count;
+	PyObject *pyList;
+
+
+	S_CLR_ERR(&error);
+	pyList = NULL;
+
+	len = SListSize($1, &error);
+	if (error != S_SUCCESS)
+		goto slist_fail;
+
+	pyList = PyList_New(len);
+
+	itr = SListIterator($1, &error);
+	if (error != S_SUCCESS)
+		goto slist_fail;
+
+	count = 0;
+	while (itr != NULL)
+	{
+		const SObject *obj;
+		PyObject *pobj;
+
+
+		obj = SListIteratorValue(itr, &error);
+		if (error != S_SUCCESS)
+			goto slist_fail;
+
+		pobj = sobject_2_pyobject(obj, &error);
+		if (error != S_SUCCESS)
+			goto slist_fail;
+
+		PyList_SetItem(pyList, count, pobj);
+
+		itr = SIteratorNext(itr);
+		count++;
+	}
+
+	goto slist_good;
+
+
+slist_fail:
+	Py_CLEAR(pyList);
+slist_good:
+	$result = pyList;
+	S_DELETE($1, "typemap(out) SList*", &error);
+}
+
+
+%typemap(in) const SList* uttType
+{
+	SList *list;
+	int count;
+	int i;
+	s_erc error;
+
+
+	S_CLR_ERR(&error);
+	if (PyList_Check($input))
+	{
+		count = PyList_Size($input);
+		if (count == 0)
+			goto slist_fail;
+
+		list = (SList*)S_NEW("SListList", &error);
+		if (error != S_SUCCESS)
+			goto slist_fail;
+
+		SListListInit(&list, &error);
+		if (error != S_SUCCESS)
+			goto slist_fail;
+
+		for (i = 0; i < count; i++)
+		{
+			PyObject *p = PyList_GetItem($input, i);
+
+
+			if (PyString_Check(p))
+			{
+				const char *tmp;
+				SObject *obj;
+
+
+				tmp = PyString_AsString(p);
+				obj = SObjectSetString(tmp, &error);
+				if (error != S_SUCCESS)
+					goto slist_fail;
+
+				SListAppend(list, obj, &error);
+			}
+			else if (PyUnicode_Check(p))
+			{
+				const char *tmp;
+				SObject *obj;
+				PyObject *ustring;
+
+
+				ustring = PyUnicode_AsUTF8String(p);
+				if (ustring == NULL)
+				{
+					S_CTX_ERR(&error, S_FAILURE,
+							  "%typemap(in) const SList* uttType",
+							  "Call to \"PyUnicode_AsUTF8String\" failed");
+					goto slist_fail;
+				}
+
+				tmp = PyString_AsString(p);
+				obj = SObjectSetString(tmp, &error);
+				if (error != S_SUCCESS)
+					goto slist_fail;
+
+				SListAppend(list, obj, &error);
+			}
+			else
+			{
+				PyErr_SetString(PyExc_TypeError,
+								"object in list is not str/unicode type");
+				goto slist_fail;
+			}
+		}
+	}
+	else
+	{
+		PyErr_SetString(PyExc_TypeError,"input is not a list");
+		goto slist_fail;
+	}
+
+	goto slist_good;
+
+
+slist_fail:
+	if (list != NULL)
+		S_DELETE(list, "%typemap(in) const SList* uttType", &error);
+slist_good:
+	$1 = list;
+}

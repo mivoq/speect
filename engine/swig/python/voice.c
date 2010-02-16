@@ -39,9 +39,12 @@
 typedef struct
 {
 	SMap *features;
-	SMap *featProcessors;
-	SMap *uttProcessors;
-	SMap *uttTypes;
+	%extend
+	{
+		SList *uttTypes;
+		SList *uttProcessors;
+		SList *dataObjects;
+	}
 } SVoice;
 
 
@@ -145,19 +148,6 @@ typedef struct
 	}
 
 
-	s_bool data_present(const char *key, s_erc *error)
-	{
-		s_bool present;
-
-
-		present = SVoiceDataIsPresent($self, key, error);
-		if (*error != S_SUCCESS)
-			return FALSE;
-
-		return present;
-	}
-
-
 	void data_set(const char *key, const SObject *object,  s_erc *error)
 	{
 		SVoiceSetData($self, key, object, error);
@@ -168,4 +158,133 @@ typedef struct
 	{
 		SVoiceDelData($self, key, error);
 	}
+
+
+	const SList *uttType_get(const char *key, s_erc *error)
+	{
+		const SList *uttType;
+
+
+		uttType = SVoiceGetUttType($self, key, error);
+		if (*error != S_SUCCESS)
+			return NULL;
+
+		return uttType;
+	}
+
+
+	void uttType_set(const char *key, const SList *uttType, s_erc *error)
+	{
+		SVoiceSetUttType($self, key, uttType, error);
+	}
+
+
+	void uttType_del(const char *key, s_erc *error)
+	{
+		SVoiceDelUttType($self, key, error);
+	}
+
+
+	const SUttProcessor *uttProcessor_get(const char *key, s_erc *error)
+	{
+		const SUttProcessor *uttProc;
+
+
+		uttProc = SVoiceGetUttProc($self, key, error);
+		if (*error != S_SUCCESS)
+			return NULL;
+
+		return uttProc;
+	}
+
+
+	void uttProcessor_set(const char *key, const SUttProcessor *uttProc, s_erc *error)
+	{
+		printf("hello world\n");
+
+		SVoiceSetUttProc($self, key, uttProc, error);
+	}
+
+
+	void uttProcessor_del(const char *key, s_erc *error)
+	{
+		SVoiceDelUttProc($self, key, error);
+	}
 };
+
+
+%{
+	SList *SVoice_uttTypes_get(const SVoice *voice)
+	{
+		s_erc error;
+		SList *uttTypes;
+
+
+		S_CLR_ERR(&error);
+		uttTypes = SVoiceGetUttTypesKeys(voice, &error);
+		if (error != S_SUCCESS)
+			return NULL;
+
+		return uttTypes;
+	}
+
+
+	void SVoice_uttTypes_set(const SVoice *voice, SList *list)
+	{
+		s_erc error;
+
+
+		S_CLR_ERR(&error);
+		S_DELETE(list, "SVoice_uttTypes_set", &error);
+	}
+
+
+	SList *SVoice_uttProcessors_get(const SVoice *voice)
+	{
+		s_erc error;
+		SList *uttProcessors;
+
+
+		S_CLR_ERR(&error);
+		uttProcessors = SVoiceGetUttProcKeys(voice, &error);
+		if (error != S_SUCCESS)
+			return NULL;
+
+		return uttProcessors;
+	}
+
+
+	void SVoice_uttProcessors_set(const SVoice *voice, SList *list)
+	{
+		s_erc error;
+
+
+		S_CLR_ERR(&error);
+		S_DELETE(list, "SVoice_uttProcessors_set", &error);
+	}
+
+
+	SList *SVoice_dataObjects_get(const SVoice *voice)
+	{
+		s_erc error;
+		SList *data;
+
+
+		S_CLR_ERR(&error);
+		data = SVoiceGetDataKeys(voice, &error);
+		if (error != S_SUCCESS)
+			return NULL;
+
+		return data;
+	}
+
+
+	void SVoice_dataObjects_set(const SVoice *voice, SList *list)
+	{
+		s_erc error;
+
+
+		S_CLR_ERR(&error);
+		S_DELETE(list, "SVoice_dataObjects_set", &error);
+	}
+%}

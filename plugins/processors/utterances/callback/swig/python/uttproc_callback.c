@@ -34,19 +34,17 @@
 /*                                                                                  */
 /************************************************************************************/
 
+%include "exception.i"
 
-/*
- * Do not delete these delimiters, required for SWIG
- */
 %inline
 %{
 	/*
 	 * Function that executes the Python callback
 	 * by calling PyObject_CallObject
 	 */
-	static void execute_python_callback(SObject *utt, void *sfunction, s_erc *error)
+	static void execute_python_callback(SUtterance *utt, void *sfunction, s_erc *error)
 	{
-		PyObject *pySObject;
+		PyObject *pySUtt;
 		PyObject *func;
 		PyObject *arglist;
 		PyObject *result;
@@ -58,10 +56,10 @@
 		/* Create a PyObject from the SObject, flag = 0 (Python does
 		 * not own the SObject/PyObject
 		 */
-		pySObject = SWIG_NewPointerObj((void*)utt, SWIGTYPE_p_SObject, 0);
+		pySUtt = SWIG_NewPointerObj((void*)utt, SWIGTYPE_p_SUtterance, 0);
 
 		/* create argument list */
-		arglist = Py_BuildValue("(O)",pySObject);
+		arglist = Py_BuildValue("(O)", pySUtt);
 
 		/* call Python and execute the function */
 		result = PyObject_CallObject(func, arglist);
@@ -74,50 +72,7 @@
 	}
 
 
-	SObject *py_suttproc_cb_new(PyObject *callback_func)
-	{
-		s_erc rv = S_SUCCESS;
-		SUttProcessorCB *uttProcPy;
-
-
-		/* create new Python utterance processor */
-		uttProcPy = (SUttProcessorCB*)S_NEW("SUttProcessorCB", &rv);
-		if (rv != S_SUCCESS)
-		{
-			PyErr_SetString(PyExc_RuntimeError,
-							"Failed to create new SUttProcessorCB object");
-			return NULL;
-		}
-
-		/* set the object's callback and execute functions */
-		if (!S_UTTPROCESSOR_CB_METH_VALID(uttProcPy, set_callback))
-		{
-			PyErr_SetString(PyExc_RuntimeError,
-							"SUttProcessorCB method \"set_callback\" not implemented");
-			S_DELETE(uttProcPy, "py_suttproc_cb_new", &rv);
-			return NULL;
-		}
-
-		S_UTTPROCESSOR_CB_CALL(uttProcPy, set_callback)(uttProcPy,
-														&execute_python_callback,
-														(void*)callback_func,
-														&rv);
-		if (rv != S_SUCCESS)
-		{
-			PyErr_SetString(PyExc_RuntimeError,
-							"Failed to set SUttProcessorCB callback function");
-			S_DELETE(uttProcPy, "py_suttproc_cb_new", &rv);
-			return NULL;
-		}
-
-		/* increment the reference to the callback function */
-		Py_XINCREF(callback_func);
-
-		return S_OBJECT(uttProcPy);
-	}
-
-
-	void py_suttproc_cb_decrement_func(SObject *uttProcPy)
+	static void suttproc_cb_decrement_func(SUttProcessorCB *uttProcPy, s_erc *error)
 	{
 		PyObject *callback_func;
 		SUttProcessorCB *self = S_UTTPROCESSOR_CB(uttProcPy);
@@ -130,6 +85,44 @@
 		 * this function anymore
 		 */
 		Py_CLEAR(callback_func);
+	}
+
+
+	SUttProcessor *suttproc_cb_new(PyObject *callback_func, s_erc *error)
+	{
+		SUttProcessorCB *uttProcPy;
+
+
+		/* create new Python utterance processor */
+		uttProcPy = (SUttProcessorCB*)S_NEW("SUttProcessorCB", error);
+		if (*error != S_SUCCESS)
+			return NULL;
+
+		/* set the object's callback and execute functions */
+		if (!S_UTTPROCESSOR_CB_METH_VALID(uttProcPy, set_callback))
+		{
+			S_CTX_ERR(error, S_FAILURE,
+					  "suttproc_cb_new",
+					  "SUttProcessorCB method \"set_callback\" not implemented");
+			S_DELETE(uttProcPy, "py_suttproc_cb_new", error);
+			return NULL;
+		}
+
+		S_UTTPROCESSOR_CB_CALL(uttProcPy, set_callback)(uttProcPy,
+														&execute_python_callback,
+														&suttproc_cb_decrement_func,
+														(void*)callback_func,
+														error);
+		if (*error != S_SUCCESS)
+		{
+			S_DELETE(uttProcPy, "suttproc_cb_new", error);
+			return NULL;
+		}
+
+		/* increment the reference to the callback function */
+		Py_XINCREF(callback_func);
+
+		return S_UTTPROCESSOR(uttProcPy);
 	}
 /*
  * Do not delete this delimiter, required for SWIG

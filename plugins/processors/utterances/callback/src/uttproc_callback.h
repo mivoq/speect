@@ -147,7 +147,17 @@ S_BEGIN_C_DECLS
  * variable. The scripting language callback function must have this
  * typedef signature.
  */
-typedef void (*callback)(SObject *utt, void *sfunction, s_erc *error);
+typedef void (*callback)(SUtterance *utt, void *sfunction, s_erc *error);
+
+typedef struct SUttProcessorCB SUttProcessorCB;
+
+
+/**
+ * Type definition of the delete function. The delete function takes
+ * care of any clean up actions required when deleting the scripting
+ * language <i> callback function </i>.
+ */
+typedef void (*delete)(SUttProcessorCB *uttProc, s_erc *error);
 
 
 /************************************************************************************/
@@ -161,7 +171,7 @@ typedef void (*callback)(SObject *utt, void *sfunction, s_erc *error);
  * A Python callback utture processor class.
  * @extends SUttProcessor
  */
-typedef struct
+struct SUttProcessorCB
 {
 	/**
 	 * @protected Inherit from #SUttProcessor.
@@ -172,13 +182,20 @@ typedef struct
 	 * @protected Pointer to the wrapper function that executes the scripting
 	 * language callback function.
 	 */
-	callback       sexecute;
+	callback      sexecute;
+
+	/**
+	 * @protected Pointer to the wrapper function that takes care of
+	 * any clean up actions required when deleting the scripting
+	 * language callback function.
+	 */
+	delete        scleanup;
 
 	/**
 	 * @protected The scripting language callback function.
 	 */
 	void          *sfunction;
-} SUttProcessorCB;
+};
 
 
 /************************************************************************************/
@@ -206,9 +223,13 @@ typedef struct
 	 * @param self The callback utterance processor.
 	 * @param sexecute The wrapper function that executes the
 	 * scripting language callback function @c sfunction.
+	 * @param scleanup The wrapper function that takes care of
+	 * any clean up actions required when deleting the scripting
+	 * language callback function.
 	 * @param sfunction The scripting language callback function to execute.
 	 */
-	void  (*set_callback)(SUttProcessorCB *self, callback sexecute,
+	void  (*set_callback)(SUttProcessorCB *self,
+						  callback sexecute, delete scleanup,
 						  void *sfunction, s_erc *error);
 } SUttProcessorCBClass;
 

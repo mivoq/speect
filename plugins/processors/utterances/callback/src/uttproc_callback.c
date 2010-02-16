@@ -93,7 +93,18 @@ static void Init(void *obj, s_erc *error)
 
 	S_CLR_ERR(error);
 	self->sexecute = NULL;
+	self->scleanup = NULL;
 	self->sfunction = NULL;
+}
+
+
+static void Destroy(void *obj, s_erc *error)
+{
+	SUttProcessorCB *self = obj;
+
+	S_CLR_ERR(error);
+	if (self->scleanup != NULL)
+		self->scleanup(self, error);
 }
 
 
@@ -128,14 +139,15 @@ static void Run(const SUttProcessor *uttProc, SUtterance *utt,
 		return;
 	}
 
-	self->sexecute(S_OBJECT(utt), self->sfunction, error);
+	self->sexecute(utt, self->sfunction, error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "Run",
 			  "Scripting language callback function failed");
 }
 
 
-static void SetCallback(SUttProcessorCB *self, callback sexecute,
+static void SetCallback(SUttProcessorCB *self,
+						callback sexecute, delete scleanup,
 						void *sfunction, s_erc *error)
 {
 	S_CLR_ERR(error);
@@ -157,6 +169,7 @@ static void SetCallback(SUttProcessorCB *self, callback sexecute,
 	}
 
 	self->sexecute = sexecute;
+	self->scleanup = scleanup;
 	self->sfunction = sfunction;
 }
 
@@ -176,7 +189,7 @@ static SUttProcessorCBClass UttProcessorCBClass =
 			sizeof(SUttProcessorCB),
 			{ 0, 1},
 			Init,            /* init    */
-			NULL,            /* destroy */
+			Destroy,         /* destroy */
 			Dispose,         /* dispose */
 			NULL,            /* compare */
 			NULL,            /* print   */

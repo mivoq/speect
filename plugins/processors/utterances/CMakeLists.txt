@@ -2,6 +2,6 @@
 #------------------------------------------------------------------------------------#
 #                        Plug-in directories                                         #
 #------------------------------------------------------------------------------------#
-#add_subdirectory(callback)
+add_subdirectory(callback)
 add_subdirectory(dsp)
 add_subdirectory(nlp)

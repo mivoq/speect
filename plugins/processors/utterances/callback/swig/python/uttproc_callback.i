@@ -48,7 +48,7 @@
 #include "uttproc_callback.h"
 %}
 
-
+%include "exception.i"
 %import speect.i
 
 
@@ -65,9 +65,12 @@
 		SPlugin *plugin;
 
 
-		plugin = s_pm_load_plugin("utttproc_cb.spi", &rv);
+		plugin = s_pm_load_plugin("uttproc_cb.spi", &rv);
 		if (rv != S_SUCCESS)
-			PyErr_SetString(PyExc_RuntimeError, "Failed to load SUtttProcessorCB plug-in");
+			SWIG_exception(SWIG_RuntimeError, "Failed to load SUtttProcessorCB plug-in");
+
+	fail:
+		return;
 	}
 %}
 

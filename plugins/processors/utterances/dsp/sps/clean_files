@@ -27,18 +27,9 @@ fi
 # see the templates directory for examples
 ########################################################################
 
-echo "--cleaning unit_selection--"
+echo "--cleaning hts_engine--"
 
-cd ./unit_selection/
-./clean_files
-cd ..
-
-
-########################################################################
-
-echo "--cleaning sps--"
-
-cd ./sps/
+cd ./hts_engine/
 ./clean_files
 cd ..
 

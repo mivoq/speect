@@ -234,6 +234,45 @@ typedef struct
 	}
 
 
+	PyObject *path_to_feature(const char *path, s_erc *error)
+	{
+		const SObject *sfeature;
+		PyObject *pfeature;
+
+
+		sfeature = s_path_to_feature($self, path, error);
+		if (*error != S_SUCCESS)
+			return NULL;
+
+		pfeature = sobject_2_pyobject(sfeature, error, FALSE);
+		if (*error != S_SUCCESS)
+			return NULL;
+
+		return pfeature;
+	}
+
+
+	PyObject *path_to_derived_feature(const char *path, s_erc *error)
+	{
+		SObject *sfeature;
+		PyObject *pfeature;
+
+
+		sfeature = s_path_to_featproc($self, path, error);
+		if (*error != S_SUCCESS)
+			return NULL;
+
+		pfeature = sobject_2_pyobject(sfeature, error, TRUE);
+		if (*error != S_SUCCESS)
+		{
+			S_DELETE(sfeature, "SItem::path_to_derived_feature()", error);
+			return NULL;
+		}
+
+		return pfeature;
+	}
+
+
 	int __len__(s_erc *error)
 	{
 		size_t num_feats;
@@ -270,7 +309,7 @@ typedef struct
 		if (*error != S_SUCCESS)
 			return NULL;
 
-		object = sobject_2_pyobject(feature, error);
+		object = sobject_2_pyobject(feature, error, FALSE);
 		if (*error != S_SUCCESS)
 			return NULL;
 

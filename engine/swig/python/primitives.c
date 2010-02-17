@@ -47,7 +47,7 @@
 	}
 
 
-	PyObject *sobject_2_pyobject(const SObject *object, s_erc *error)
+	PyObject *sobject_2_pyobject(const SObject *object, s_erc *error, s_bool own)
 	{
 		PyObject *pobject;
 		const char *type;
@@ -76,6 +76,9 @@
 				return NULL;
 
 			pobject = PyInt_FromLong((long)val);
+			if (own == TRUE)
+				S_DELETE(object, "sobject_2_pyobject", error);
+
 			return pobject;
 		}
 
@@ -93,6 +96,9 @@
 				return NULL;
 
 			pobject = PyFloat_FromDouble((double)val);
+			if (own == TRUE)
+				S_DELETE(object, "sobject_2_pyobject", error);
+
 			return pobject;
 		}
 
@@ -115,6 +121,9 @@
 				return NULL;
 
 			pobject = PyString_FromStringAndSize(val, slen);
+			if (own == TRUE)
+				S_DELETE(object, "sobject_2_pyobject", error);
+
 			return pobject;
 		}
 
@@ -127,6 +136,9 @@
 			pobject = (PyObject*)SObjectGetVoid(object, "PythonObject", error);
 			if (*error != S_SUCCESS)
 				return NULL;
+
+			if (own == TRUE)
+				S_DELETE(object, "sobject_2_pyobject", error);
 
 			return pobject;
 		}
@@ -213,15 +225,34 @@
 
 		if (info != NULL)
 		{
-			pobject = SWIG_NewPointerObj(SWIG_as_voidptr(object),
-										 info, 0 |0);
+			if (own == TRUE)
+			{
+				pobject = SWIG_NewPointerObj(SWIG_as_voidptr(object),
+											 info, 1);
+			}
+			else
+			{
+				pobject = SWIG_NewPointerObj(SWIG_as_voidptr(object),
+											 info, 0 |0);
+			}
 		}
 		else
 		{
 			/* don't know this object type, use SObject */
-			pobject = SWIG_NewPointerObj(SWIG_as_voidptr(object),
-										 SWIGTYPE_p_SObject, 0 |0);
+			if (own == TRUE)
+			{
+				pobject = SWIG_NewPointerObj(SWIG_as_voidptr(object),
+											 SWIGTYPE_p_SObject, 1);
+			}
+			else
+			{
+				pobject = SWIG_NewPointerObj(SWIG_as_voidptr(object),
+											 SWIGTYPE_p_SObject, 0 |0);
+			}
 		}
+
+		if (own == TRUE)
+			S_DELETE(object, "sobject_2_pyobject", error);
 
 		return pobject;
 	}

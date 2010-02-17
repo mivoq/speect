@@ -148,7 +148,7 @@
 		if (error != S_SUCCESS)
 			goto slist_fail;
 
-		pobj = sobject_2_pyobject(obj, &error);
+		pobj = sobject_2_pyobject(obj, &error, FALSE);
 		if (error != S_SUCCESS)
 			goto slist_fail;
 
@@ -201,7 +201,7 @@ slist_good:
 		if (error != S_SUCCESS)
 			goto slist_fail;
 
-		pobj = sobject_2_pyobject(obj, &error);
+		pobj = sobject_2_pyobject(obj, &error, FALSE);
 		if (error != S_SUCCESS)
 			goto slist_fail;
 

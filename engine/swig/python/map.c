@@ -54,7 +54,7 @@ typedef struct
 		if (*error != S_SUCCESS)
 			return NULL;
 
-		object = sobject_2_pyobject(mapObject, error);
+		object = sobject_2_pyobject(mapObject, error, FALSE);
 		if (*error != S_SUCCESS)
 			return NULL;
 

@@ -140,7 +140,7 @@ typedef struct
 		if (*error != S_SUCCESS)
 			return NULL;
 
-		pdata = sobject_2_pyobject(sdata, error);
+		pdata = sobject_2_pyobject(sdata, error, FALSE);
 		if (*error != S_SUCCESS)
 			return NULL;
 

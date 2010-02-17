@@ -63,6 +63,15 @@ cd ..
 
 ########################################################################
 
+echo "--cleaning segment_pos_syl_rev--"
+
+cd ./segment_pos_syl_rev/
+./clean_files
+cd ..
+
+
+########################################################################
+
 echo "--cleaning segment_start--"
 
 cd ./segment_start/
@@ -126,9 +135,45 @@ cd ..
 
 ########################################################################
 
+echo "--cleaning syllable_pos_word_rev--"
+
+cd ./syllable_pos_word_rev/
+./clean_files
+cd ..
+
+
+########################################################################
+
+echo "--cleaning syllable_pos_phrase--"
+
+cd ./syllable_pos_phrase/
+./clean_files
+cd ..
+
+
+########################################################################
+
+echo "--cleaning syllable_pos_phrase_rev--"
+
+cd ./syllable_pos_phrase_rev/
+./clean_files
+cd ..
+
+
+########################################################################
+
 echo "--cleaning syllable_start--"
 
 cd ./syllable_start/
+./clean_files
+cd ..
+
+
+########################################################################
+
+echo "--cleaning syllable_vowel--"
+
+cd ./syllable_vowel/
 ./clean_files
 cd ..
 
@@ -180,9 +225,81 @@ cd ..
 
 ########################################################################
 
+echo "--cleaning word_pos_phrase_rev--"
+
+cd ./word_pos_phrase_rev/
+./clean_files
+cd ..
+
+
+########################################################################
+
 echo "--cleaning word_start--"
 
 cd ./word_start/
+./clean_files
+cd ..
+
+
+########################################################################
+
+echo "--cleaning phrase_num_syls--"
+
+cd ./phrase_num_syls/
+./clean_files
+cd ..
+
+
+########################################################################
+
+echo "--cleaning phrase_num_words--"
+
+cd ./phrase_num_words/
+./clean_files
+cd ..
+
+
+########################################################################
+
+echo "--cleaning phrase_pos_utt--"
+
+cd ./phrase_pos_utt/
+./clean_files
+cd ..
+
+
+########################################################################
+
+echo "--cleaning phrase_pos_utt_rev--"
+
+cd ./phrase_pos_utt_rev/
+./clean_files
+cd ..
+
+
+########################################################################
+
+echo "--cleaning utt_num_syls--"
+
+cd ./utt_num_syls/
+./clean_files
+cd ..
+
+
+########################################################################
+
+echo "--cleaning utt_num_words--"
+
+cd ./utt_num_words/
+./clean_files
+cd ..
+
+
+########################################################################
+
+echo "--cleaning utt_num_phrases--"
+
+cd ./utt_num_phrases/
 ./clean_files
 cd ..
 

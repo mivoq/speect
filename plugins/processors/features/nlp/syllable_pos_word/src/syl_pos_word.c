@@ -101,7 +101,6 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 	const SItem *wordItem;
 	const SItem *itr;
 	sint32 count;
-	s_bool last_item;
 
 
 	S_CLR_ERR(error);
@@ -150,7 +149,6 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 		goto quit_error;
 
 	count = 0;
-	last_item = FALSE;
 	while (itr != NULL)
 	{
 		s_bool is_equal;
@@ -171,13 +169,7 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 					  "Run",
 					  "Call to \"SItemNext\" failed"))
 			goto quit_error;
-
-		if (itr == NULL)
-			last_item = TRUE;
 	}
-
-	if (last_item)
-		count = -1;
 
 	extractedFeat = SObjectSetInt(count, error);
 	if (S_CHK_ERR(error, S_CONTERR,

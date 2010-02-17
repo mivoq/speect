@@ -77,8 +77,7 @@ static const s_plugin_params plugin_params =
 	"Segment position in syllable feature processor",
 
 	/* description */
-	"The position of the given segment in it's syllable. 0 for initial, -1 for final, "
-	"and numeric position for in between",
+	"The position of the given segment in it's syllable.",
 
 	/* version */
 	{

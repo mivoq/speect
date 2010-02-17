@@ -77,8 +77,7 @@ static const s_plugin_params plugin_params =
 	"Syllable position in word feature processor",
 
 	/* description */
-	"The position of the given word in it's phrase. 0 for initial, -1 for final, "
-	"and numeric position for in between",
+	"The position of the given word in it's phrase.",
 
 	/* version */
 	{

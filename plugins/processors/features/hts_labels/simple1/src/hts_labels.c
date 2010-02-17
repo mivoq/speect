@@ -531,32 +531,15 @@ static char *create_syl_context_pause(const SItem *item, s_erc *error)
 {
 	char *syl_context;
 	const char *all_x = "x_x";
-	size_t len;
 
 
 	S_CLR_ERR(error);
-	len = s_strsize(all_x, error);
+	syl_context = s_strdup(all_x, error);
 	if (S_CHK_ERR(error, S_CONTERR,
-				  "create_phone_syl_context_pause",
-				  "Call to \"s_strsize\" failed"))
-		return NULL;
-
-	syl_context = S_MALLOC(char, len);
-	if (syl_context == NULL)
+				  "create_syl_context_pause",
+				  "Call to \"s_strdup\" failed"))
 	{
-		S_FTL_ERR(error, S_MEMERROR,
-				  "create_phone_syl_context_pause",
-				  "Failed to allocate memory for 'char' object");
 		item = NULL; /* compiler noise about unused parameters */
-		return NULL;
-	}
-
-	s_strcpy(syl_context, all_x, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "create_phone_syl_context_pause",
-				  "Call to \"s_strcpy\" failed"))
-	{
-		S_FREE(syl_context);
 		return NULL;
 	}
 
@@ -887,32 +870,15 @@ static char *create_B_context_pause(const SItem *item, s_erc *error)
 {
 	char *b_context;
 	const char *all_x = "/B:x-x-x@x-x&x-x#x-x$x-x!x-x;x-x|x";
-	size_t len;
 
 
 	S_CLR_ERR(error);
-	len = s_strsize(all_x, error);
+	b_context = s_strdup(all_x, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "create_B_context_pause",
-				  "Call to \"s_strsize\" failed"))
-		return NULL;
-
-	b_context = S_MALLOC(char, len);
-	if (b_context == NULL)
+				  "Call to \"s_strdup\" failed"))
 	{
-		S_FTL_ERR(error, S_MEMERROR,
-				  "create_B_context_pause",
-				  "Failed to allocate memory for 'char' object");
 		item = NULL; /* compiler noise about unused parameters */
-		return NULL;
-	}
-
-	s_strcpy(b_context, all_x, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "create_B_context_pause",
-				  "Call to \"s_strcpy\" failed"))
-	{
-		S_FREE(b_context);
 		return NULL;
 	}
 
@@ -1248,32 +1214,15 @@ static char *create_E_context_pause(const SItem *item, s_erc *error)
 {
 	char *e_context;
 	const char *all_x = "/E:x+x@x+x&x+x#x+x";
-	size_t len;
 
 
 	S_CLR_ERR(error);
-	len = s_strsize(all_x, error);
+	e_context = s_strdup(all_x, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "create_E_context_pause",
-				  "Call to \"s_strsize\" failed"))
-		return NULL;
-
-	e_context = S_MALLOC(char, len);
-	if (e_context == NULL)
+				  "Call to \"s_strdup\" failed"))
 	{
-		S_FTL_ERR(error, S_MEMERROR,
-				  "create_E_context_pause",
-				  "Failed to allocate memory for 'char' object");
 		item = NULL; /* compiler noise about unused parameters */
-		return NULL;
-	}
-
-	s_strcpy(e_context, all_x, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "create_E_context_pause",
-				  "Call to \"s_strcpy\" failed"))
-	{
-		S_FREE(e_context);
 		return NULL;
 	}
 

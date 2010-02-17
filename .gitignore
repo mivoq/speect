@@ -1,14 +1,23 @@
+##########################################################################
 # Ignore objects and archives.
-*.[oa]
 
+*.[oa]
+*.so*
+
+
+##########################################################################
 # Ignore Makefile and cmake files
+
 Makefile
 CMakeCache.txt
 *_install.cmake
 *_uninstall.cmake
 CMakeFiles
 
-# Ignore generated files
+
+##########################################################################
+# Ignore Speect Engine generated files
+
 engine/SpeectConf.cmake
 engine/spctConfig.cmake
 engine/speect.ini
@@ -19,3 +28,24 @@ engine/src/include/spctconfig.h
 engine/src/include/version.h
 engine/src/main/ini.c
 engine/src/pluginmanager/platform/dynamic_loading_impl.h
+
+
+##########################################################################
+# Ignore Speect Plugins generated files
+
+plugins/cmake/config/*.cmake
+plugins/serialization/formats/ebml/examples/example_read.c
+plugins/serialization/formats/ebml/examples/example_write.c
+plugins/lib/*
+
+
+##########################################################################
+# Ignore Speect SWIG/Python generated files
+
+*PYTHON_wrap.c
+swig/python/*.py
+
+# except the client/server
+!speect/swig/python/client.py
+!speect/swig/python/server.py
+

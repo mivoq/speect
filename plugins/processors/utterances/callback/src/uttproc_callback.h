@@ -149,6 +149,8 @@ S_BEGIN_C_DECLS
  */
 typedef void (*callback)(SUtterance *utt, void *sfunction, s_erc *error);
 
+
+/* forward declaration */
 typedef struct SUttProcessorCB SUttProcessorCB;
 
 
@@ -168,7 +170,7 @@ typedef void (*delete)(SUttProcessorCB *uttProc, s_erc *error);
 
 /**
  * The SUttProcessorCB structure.
- * A Python callback utture processor class.
+ * A scripting language callback utterance processor class.
  * @extends SUttProcessor
  */
 struct SUttProcessorCB

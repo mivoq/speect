@@ -1,0 +1,21 @@
+# Ignore objects and archives.
+*.[oa]
+
+# Ignore Makefile and cmake files
+Makefile
+CMakeCache.txt
+*_install.cmake
+*_uninstall.cmake
+CMakeFiles
+
+# Ignore generated files
+engine/SpeectConf.cmake
+engine/spctConfig.cmake
+engine/speect.ini
+engine/src/base/threads/platform/threads_impl.h
+engine/src/base/utils/platform/types_impl.h
+engine/src/datasources/platform/mmapfile_impl.h
+engine/src/include/spctconfig.h
+engine/src/include/version.h
+engine/src/main/ini.c
+engine/src/pluginmanager/platform/dynamic_loading_impl.h

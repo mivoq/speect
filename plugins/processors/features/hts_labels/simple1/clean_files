@@ -23,37 +23,51 @@ fi
 
 
 ########################################################################
-# Add plug-in directories here if they have a 'clean_files' script, 
-# see the templates directory for examples
-########################################################################
 
-echo "--cleaning callback--"
+echo "cleaning cmake"
 
-cd ./callback/
+cd ./cmake/
 ./clean_files
 cd ..
 
 
 ########################################################################
 
-echo "--cleaning nlp--"
+echo "cleaning doc"
 
-cd ./nlp/
+cd ./doc/
 ./clean_files
 cd ..
 
 
 ########################################################################
 
-echo "--cleaning hts_labels--"
+echo "cleaning examples"
 
-cd ./hts_labels/
+cd ./examples/
 ./clean_files
 cd ..
 
 
 ########################################################################
 
+echo "cleaning lib"
+
+cd ./lib/
+./clean_files
+cd ..
+
+
+########################################################################
+
+echo "cleaning src"
+
+cd ./src/
+./clean_files
+cd ..
+
+
+##################################################
 
 rm -f  *~
 

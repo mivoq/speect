@@ -27,27 +27,9 @@ fi
 # see the templates directory for examples
 ########################################################################
 
-echo "--cleaning callback--"
+echo "--cleaning simple1"
 
-cd ./callback/
-./clean_files
-cd ..
-
-
-########################################################################
-
-echo "--cleaning nlp--"
-
-cd ./nlp/
-./clean_files
-cd ..
-
-
-########################################################################
-
-echo "--cleaning hts_labels--"
-
-cd ./hts_labels/
+cd ./simple1/
 ./clean_files
 cd ..
 

@@ -1093,7 +1093,7 @@ S_API void s_sappend(char **str1, const char *str2, s_erc *error)
 	if (str2 == NULL)
 		return;
 
-	if (str1 == NULL)
+	if (*str1 == NULL)
 	{
 		ndst = s_strdup(str2, error);
 		if (S_CHK_ERR(error, S_CONTERR,
@@ -1102,6 +1102,7 @@ S_API void s_sappend(char **str1, const char *str2, s_erc *error)
 			return;
 
 		*str1 = ndst;
+		return;
 	}
 
 	nsize = s_strsize(*str1, error);

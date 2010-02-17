@@ -1,0 +1,74 @@
+#!/bin/sh
+
+echo ""
+
+########################################################################
+
+echo "cleaning cmake files"
+
+if [ -d CMakeFiles ]
+then 
+    rm -fr CMakeFiles
+fi
+
+if [ -f cmake_install.cmake ]
+then 
+    rm -f cmake_install.cmake
+fi
+
+if [ -f Makefile ]
+then 
+    rm -f Makefile
+fi
+
+
+########################################################################
+
+echo "cleaning cmake"
+
+cd ./cmake/
+./clean_files
+cd ..
+
+
+########################################################################
+
+echo "cleaning doc"
+
+cd ./doc/
+./clean_files
+cd ..
+
+
+########################################################################
+
+echo "cleaning examples"
+
+cd ./examples/
+./clean_files
+cd ..
+
+
+########################################################################
+
+echo "cleaning lib"
+
+cd ./lib/
+./clean_files
+cd ..
+
+
+########################################################################
+
+echo "cleaning src"
+
+cd ./src/
+./clean_files
+cd ..
+
+
+##################################################
+
+rm -f  *~
+
+echo ""

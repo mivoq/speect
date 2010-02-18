@@ -200,8 +200,6 @@ typedef struct
 
 	void uttProcessor_set(const char *key, const SUttProcessor *uttProc, s_erc *error)
 	{
-		printf("hello world\n");
-
 		SVoiceSetUttProc($self, key, uttProc, error);
 	}
 

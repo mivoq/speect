@@ -893,7 +893,12 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 					  "Call to \"s_strdup\" failed"))
 			goto quit_error;
 
-		S_DELETE(dFeat, "Run", error);
+		SItemSetObject((SItem*)itemItr, "hts_label", dFeat, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "Run",
+					  "Call to \"SItemSetObject\" failed"))
+			goto quit_error;
+
 		itemItr = SItemNext(itemItr, error);
 	}
 

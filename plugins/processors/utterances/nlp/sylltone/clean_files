@@ -23,64 +23,51 @@ fi
 
 
 ########################################################################
-# Add plug-in directories here if they have a 'clean_files' script, 
-# see the templates directory for examples
-########################################################################
 
-echo "--cleaning lexlookup--"
+echo "cleaning cmake"
 
-cd ./lexlookup/
+cd ./cmake/
 ./clean_files
 cd ..
 
 
 ########################################################################
 
-echo "--cleaning normalizer--"
+echo "cleaning doc"
 
-cd ./normalizer/
+cd ./doc/
 ./clean_files
 cd ..
 
 
 ########################################################################
 
-echo "--cleaning pauses--"
+echo "cleaning examples"
 
-cd ./pauses/
+cd ./examples/
 ./clean_files
 cd ..
 
 
 ########################################################################
 
-echo "--cleaning phrasify--"
+echo "cleaning lib"
 
-cd ./phrasify/
+cd ./lib/
 ./clean_files
 cd ..
 
 
 ########################################################################
 
-echo "--cleaning tokenizer--"
+echo "cleaning src"
 
-cd ./tokenizer/
+cd ./src/
 ./clean_files
 cd ..
 
 
 ########################################################################
-
-echo "--cleaning sylltone--"
-
-cd ./sylltone/
-./clean_files
-cd ..
-
-
-########################################################################
-
 
 rm -f  *~
 

@@ -96,16 +96,42 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 				s_erc *error)
 {
 	const SRelation *sylRel;
+	const SRelation *sylStructRel;
 	const SItem *sylItr;
+	const SItem *word;
 	const SItem *sylAsSylStruct;
 	const SItem *tone;
 	const SItem *toneAsSegment;
+	const SItem *pos;
+	const SItem *posAsSegment;
 	s_bool is_present;
 
 
 	S_CLR_ERR(error);
 
-	/* we require the Syllable relation */
+
+	/* we require the SylStructure relation */
+	is_present = SUtteranceRelationIsPresent(utt, "SylStructure", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "Run",
+				  "Call to \"SUtteranceRelationIsPresent\" failed"))
+		goto quit_error;
+
+	if (!is_present)
+	{
+		S_CTX_ERR(error, S_FAILURE,
+				  "Run",
+				  "Failed to find 'Syllable' relation in utterance");
+		goto quit_error;
+	}
+
+	sylStructRel = SUtteranceGetRelation(utt, "SylStructure", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "Run",
+				  "Call to \"SUtteranceGetRelation\" failed"))
+		goto quit_error;
+
+	/* and the Syllable relation */
 	is_present = SUtteranceRelationIsPresent(utt, "Syllable", error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Run",
@@ -126,6 +152,67 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 				  "Call to \"SUtteranceGetRelation\" failed"))
 		goto quit_error;
 
+	/* first sort out the word POS */
+	word = SRelationHead(sylStructRel, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "Run",
+				  "Call to \"SRelationHead\" failed"))
+		goto quit_error;
+
+	while (word != NULL)
+	{
+		/* get the last syllable */
+		sylAsSylStruct = SItemLastDaughter(word, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "Run",
+					  "Call to \"SItemLastDaughter\" failed"))
+			goto quit_error;
+
+		/* and as in the Syllable relation */
+		sylItr = SItemAs(sylAsSylStruct, "Syllable", error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "Run",
+					  "Call to \"SItemAs\" failed"))
+			goto quit_error;
+
+		/* get the syllable's daughter */
+		pos = SItemDaughter(sylAsSylStruct, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "Run",
+					  "Call to \"SItemDaughter\" failed"))
+			goto quit_error;
+
+		/* and as it is in the segment relation */
+		posAsSegment = SItemAs(pos, "Segment", error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "Run",
+					  "Call to \"SItemAs\" failed"))
+			goto quit_error;
+
+		/* set word pos, which is syllable's daughter's name */
+		SItemSetObject((SItem*)word, "pos",
+					   SItemGetObject(pos, "name", error), error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "Run",
+					  "Call to \"SItemSetObject/SItemGetObject\" failed"))
+			goto quit_error;
+
+		/* delete the pos */
+		S_FORCE_DELETE(pos, "Run", error);
+		S_FORCE_DELETE(posAsSegment, "Run", error);
+
+		/* delete the syllable */
+		S_FORCE_DELETE(sylItr, "Run", error);
+		S_FORCE_DELETE(sylAsSylStruct, "Run", error);
+
+		word = SItemNext(word, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "Run",
+					  "Call to \"SItemNext\" failed"))
+			goto quit_error;
+	}
+
+	/* now sort out syllable tone */
 	sylItr = SRelationHead(sylRel, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Run",
@@ -165,10 +252,8 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 			goto quit_error;
 	}
 
-
 	/* here all is OK */
 	return;
-
 
 	/* error clean-up code */
 quit_error:

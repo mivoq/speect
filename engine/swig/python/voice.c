@@ -72,7 +72,7 @@ typedef struct
 	}
 
 
-	SUtterance *synth(const char *utt_type, const char *input, s_erc *error)
+	SUtterance *synth(const char *input, const char *utt_type="text", s_erc *error)
 	{
 		SUtterance *utt;
 		SObject *inputObject;

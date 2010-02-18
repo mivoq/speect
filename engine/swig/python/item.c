@@ -74,6 +74,19 @@ typedef struct
 	}
 
 
+	s_bool __eq__(const SItem *other, s_erc *error)
+	{
+		s_bool is_equal;
+
+
+		is_equal = SItemEqual($self, other, error);
+		if (*error != S_SUCCESS)
+			return FALSE;
+
+		return is_equal;
+	}
+
+
 	SItem *next(s_erc *error)
 	{
 		SItem *next;

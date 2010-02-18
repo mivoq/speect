@@ -106,6 +106,19 @@ typedef struct
 	}
 
 
+	const SVoice *voice(s_erc *error)
+	{
+		const SVoice *voice;
+
+
+		voice = SUtteranceVoice($self, error);
+		if (*error != S_SUCCESS)
+			return NULL;
+
+		return voice;
+	}
+
+
 	void relation_set(SRelation *rel, s_erc *error)
 	{
 		SUtteranceSetRelation($self, rel, error);

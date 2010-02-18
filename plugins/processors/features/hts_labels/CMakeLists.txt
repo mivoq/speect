@@ -3,3 +3,4 @@
 #                        Plug-in directories                                         #
 #------------------------------------------------------------------------------------#
 add_subdirectory(simple1)
+add_subdirectory(simple2)

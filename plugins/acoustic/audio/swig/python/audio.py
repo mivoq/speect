@@ -53,3 +53,29 @@
         return wave_dict
 %}    
 
+%pythoncode
+%{
+    import ossaudiodev
+
+    def utt_play(self):
+        audio = self.features["audio"]
+        if audio is None:
+            return
+
+        waveform = audio.get_audio_waveform()
+
+        dsp = ossaudiodev.open("/dev/dsp", "w")
+        dsp.setparameters(ossaudiodev.AFMT_S16_LE,
+                          1,
+                          waveform["samplerate"],
+                          True)
+
+        dsp.writeall(waveform["samples"])
+        dsp.close()
+
+    setattr(speect.SUtterance, "play", utt_play)
+%}
+        
+
+
+        

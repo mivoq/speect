@@ -196,22 +196,22 @@ static const char s_char_lookup_table[256];
 /************************************************************************************/
 
 static uchar s_read_char(s_json_lexer *lxr, const uchar *txt,
-						 size_t *off, s_erc *error);
+						 uint *off, s_erc *error);
 
-static void s_unread_char(s_json_lexer *lxr, size_t *off, s_erc *error);
+static void s_unread_char(s_json_lexer *lxr, uint *off, s_erc *error);
 
 static s_json_tok s_json_lex_utf8_char(s_json_lexer *lexer, const uchar *text,
-									   size_t text_len, size_t *offset,
+									   uint text_len, uint *offset,
 									   uchar cur_char, s_erc *error);
 
 static s_json_tok s_json_lex_string(s_json_lexer *lexer, const uchar *text,
-									size_t text_len, size_t *offset, s_erc *error);
+									uint text_len, uint *offset, s_erc *error);
 
 static s_json_tok s_json_lex_number(s_json_lexer *lexer, const uchar *text,
-									size_t text_len, size_t *offset, s_erc *error);
+									uint text_len, uint *offset, s_erc *error);
 
 static s_json_tok s_json_lex_comment(s_json_lexer *lexer, const uchar *text,
-									 size_t text_len, size_t *offset, s_erc *error);
+									 uint text_len, uint *offset, s_erc *error);
 
 
 /************************************************************************************/
@@ -274,12 +274,12 @@ S_LOCAL void s_json_lex_delete(s_json_lexer *lxr, s_erc *error)
 
 
 S_LOCAL s_json_tok s_json_lex_lex(s_json_lexer *lexer, const uchar *text,
-								  size_t text_len, size_t *context,
-								  const uchar **out_buf, size_t *out_len, s_erc *error)
+								  uint text_len, uint *context,
+								  const uchar **out_buf, uint *out_len, s_erc *error)
 {
 	s_json_tok tok = S_JSON_TOK_ERROR;
 	uchar c;
-	size_t start_ctx = *context;
+	uint start_ctx = *context;
 
 
 	S_CLR_ERR(error);
@@ -715,13 +715,13 @@ S_LOCAL uint32 s_json_lex_current_char(s_json_lexer *lexer, s_erc *error)
 
 
 S_LOCAL s_json_tok s_json_lex_peek(s_json_lexer *lexer, const uchar *text,
-								   size_t text_len, size_t offset, s_erc *error)
+								   uint text_len, uint offset, s_erc *error)
 {
 	const uchar *out_buf;
-	size_t out_len;
-	size_t buf_len;
-	size_t buf_off;
-	size_t buf_in_use;
+	uint out_len;
+	uint buf_len;
+	uint buf_off;
+	uint buf_in_use;
 	s_json_tok tok;
 
 
@@ -798,7 +798,7 @@ static const char *s_tok_to_str(s_json_tok tok)
 
 
 static uchar s_read_char(s_json_lexer *lxr, const uchar *txt,
-						 size_t *off, s_erc *error)
+						 uint *off, s_erc *error)
 {
 	S_CLR_ERR(error);
 
@@ -838,7 +838,7 @@ static uchar s_read_char(s_json_lexer *lxr, const uchar *txt,
 }
 
 
-static void s_unread_char(s_json_lexer *lxr, size_t *off, s_erc *error)
+static void s_unread_char(s_json_lexer *lxr, uint *off, s_erc *error)
 {
 	S_CLR_ERR(error);
 
@@ -935,7 +935,7 @@ static const char s_char_lookup_table[256] =
 #define UTF8_CHECK_EOF if (*offset >= text_len) { return S_JSON_TOK_EOF; }
 
 static s_json_tok s_json_lex_utf8_char(s_json_lexer *lexer, const uchar *text,
-									   size_t text_len, size_t *offset,
+									   uint text_len, uint *offset,
 									   uchar cur_char, s_erc *error)
 {
 	S_CLR_ERR(error);
@@ -1062,7 +1062,7 @@ static s_json_tok s_json_lex_utf8_char(s_json_lexer *lexer, const uchar *text,
 	}
 
 static s_json_tok s_json_lex_string(s_json_lexer *lexer, const uchar *text,
-									size_t text_len, size_t *offset, s_erc *error)
+									uint text_len, uint *offset, s_erc *error)
 {
 	s_json_tok tok = S_JSON_TOK_ERROR;
 	int has_escapes = 0;
@@ -1221,7 +1221,7 @@ finish_string_lex:
 #define RETURN_IF_EOF if (*offset >= text_len) return S_JSON_TOK_EOF;
 
 static s_json_tok s_json_lex_number(s_json_lexer *lexer, const uchar *text,
-									size_t text_len, size_t *offset, s_erc *error)
+									uint text_len, uint *offset, s_erc *error)
 {
 	/*
 	 * XXX: numbers are the only entities in json that we must lex
@@ -1408,7 +1408,7 @@ static s_json_tok s_json_lex_number(s_json_lexer *lexer, const uchar *text,
 
 
 static s_json_tok s_json_lex_comment(s_json_lexer *lexer, const uchar *text,
-									 size_t text_len, size_t *offset, s_erc *error)
+									 uint text_len, uint *offset, s_erc *error)
 {
 	uchar c;
 	s_json_tok tok = S_JSON_TOK_COMMENT;

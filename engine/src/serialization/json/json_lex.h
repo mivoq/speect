@@ -199,13 +199,13 @@ S_LOCAL void s_json_lex_delete(s_json_lexer *lxr, s_erc *error);
  * size to get adequate performance.
  */
 S_LOCAL s_json_tok s_json_lex_lex(s_json_lexer *lexer, const uchar *text,
-				  size_t text_len, size_t *context,
-				  const uchar **out_buf, size_t *out_len, s_erc *error);
+								  uint text_len, uint *context, const uchar **out_buf,
+								  uint *out_len, s_erc *error);
 
 
 /** have a peek at the next token, but don't move the lexer forward */
 S_LOCAL s_json_tok s_json_lex_peek(s_json_lexer *lexer, const uchar *text,
-				   size_t text_len, size_t offset, s_erc *error);
+								   uint text_len, uint offset, s_erc *error);
 
 
 /* get a string representation of the lexer error */

@@ -536,8 +536,9 @@ around_again:
 		 * than state_start */
 		s_json_state state_to_push = S_JSON_STATE_START;
 
+
 		tok = s_json_lex_lex(self->lexer, text, text_len,
-							 (size_t *)offset, &buf, (size_t *)&buf_len, error);
+							 offset, &buf, &buf_len, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "s_json_do_parse",
 					  "Call to s_json_lex_lex failed"))
@@ -819,7 +820,7 @@ around_again:
 		 * start '}' is valid, whereas in need_key, we've parsed
 		 * a comma, and a string key _must_ follow */
 		tok = s_json_lex_lex(self->lexer, text, text_len,
-							 (size_t *)offset, &buf, (size_t *)&buf_len, error);
+							 offset, &buf, &buf_len, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "s_json_do_parse",
 					  "Call to s_json_lex_lex failed"))
@@ -906,7 +907,7 @@ around_again:
 	case S_JSON_STATE_MAP_SEP:
 	{
 		tok = s_json_lex_lex(self->lexer, text, text_len,
-							 (size_t *)offset, &buf, (size_t *)&buf_len, error);
+							 offset, &buf, &buf_len, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "s_json_do_parse",
 					  "Call to s_json_lex_lex failed"))
@@ -950,7 +951,7 @@ around_again:
 	case S_JSON_STATE_MAP_GOT_VAL:
 	{
 		tok = s_json_lex_lex(self->lexer, text, text_len,
-							 (size_t *)offset, &buf, (size_t *)&buf_len, error);
+							 offset, &buf, &buf_len, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "s_json_do_parse",
 					  "Call to s_json_lex_lex failed"))
@@ -1010,7 +1011,7 @@ around_again:
 	case S_JSON_STATE_ARRAY_GOT_VAL:
 	{
 		tok = s_json_lex_lex(self->lexer, text, text_len,
-							 (size_t *)offset, &buf, (size_t *)&buf_len, error);
+							 offset, &buf, &buf_len, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "s_json_do_parse",
 					  "Call to s_json_lex_lex failed"))

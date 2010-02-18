@@ -71,6 +71,9 @@ static const char *none_string = "x";
 /*                                                                                  */
 /************************************************************************************/
 
+static const char *name_hack(const SObject *nameObject);
+
+
 static s_bool segment_is_pause(const SItem *item, s_erc *error);
 
 
@@ -141,86 +144,6 @@ static char *create_C_context(const SItem *item, s_erc *error);
 static char *create_C_context_pause(const SItem *item, s_erc *error);
 
 
-/* /D:d1_d2
- *
- * d1 gpos (guess part-of-speech) of the previous word
- * d2 the number of syllables in the previous word
- */
-static char *create_D_context(const SItem *item, s_erc *error);
-
-static char *create_D_context_pause(const SItem *item, s_erc *error);
-
-
-/* /E:e1+e2@e3+e4&e5+e6#e7+e8
- *
- * e1 gpos (guess part-of-speech) of the current word
- * e2 the number of syllables in the current word
- * e3 position of the current word in the current phrase (forward)
- * e4 position of the current word in the current phrase (backward)
- * e5 the number of content words before the current word in the current phrase
- * e6 the number of content words after the current word in the current phrase
- * e7 the number of words from the previous content word to the current word
- * e8 the number of words from the current word to the next content word
- */
-static char *create_E_context(const SItem *item, s_erc *error);
-
-static char *create_E_context_pause(const SItem *item, s_erc *error);
-
-
-/* /F:f1_f2
- *
- * f1 gpos (guess part-of-speech) of the next word
- * f2 the number of syllables in the next word
- */
-static char *create_F_context(const SItem *item, s_erc *error);
-
-static char *create_F_context_pause(const SItem *item, s_erc *error);
-
-
-/* /G:g1_g2
- *
- * g1 the number of syllables in the previous phrase
- * g2 the number of words in the previous phrase
- */
-static char *create_G_context(const SItem *item, s_erc *error);
-
-static char *create_G_context_pause(const SItem *item, s_erc *error);
-
-
-/* /H:h1=h2@h3=h4|h5
- *
- * h1 the number of syllables in the current phrase
- * h2 the number of words in the current phrase
- * h3 position of the current phrase in utterence (forward)
- * h4 position of the current phrase in utterence (backward)
- * h5 TOBI endtone of the current phrase
- */
-static char *create_H_context(const SItem *item, s_erc *error);
-
-static char *create_H_context_pause(const SItem *item, s_erc *error);
-
-
-/* /I:i1_i2
- *
- * i1 the number of syllables in the next phrase
- * i2 the number of words in the next phrase
- */
-static char *create_I_context(const SItem *item, s_erc *error);
-
-static char *create_I_context_pause(const SItem *item, s_erc *error);
-
-
-/* /J:j1+j2-j3
- *
- * j1 the number of syllables in this utterence
- * j2 the number of words in this utternce
- * j3 the number of phrases in this utterence
- */
-static char *create_J_context(const SItem *item, s_erc *error);
-
-/* note that pauses use create_J_context as well */
-
-
 /************************************************************************************/
 /*                                                                                  */
 /* Plug-in class registration/free                                                  */
@@ -254,6 +177,40 @@ S_LOCAL void _s_hts_labels_simple1_class_free(s_erc *error)
 /* Static function implementations                                                  */
 /*                                                                                  */
 /************************************************************************************/
+
+static const char *name_hack(const SObject *nameObject)
+{
+	const char *tmp;
+	s_erc error;
+
+
+	S_CLR_ERR(&error);
+	tmp = SObjectGetString(nameObject, &error);
+
+	if (s_strcmp(tmp, "@", &error) == 0)
+	{
+		return "_";
+	}
+	else if (s_strcmp(tmp, "@@", &error) == 0)
+	{
+		return "__";
+	}
+	else if (s_strcmp(tmp, "e@", &error) == 0)
+	{
+		return "e_";
+	}
+	else if (s_strcmp(tmp, "i@", &error) == 0)
+	{
+		return "i_";
+	}
+	else if (s_strcmp(tmp, "u@", &error) == 0)
+	{
+		return "u_";
+	}
+
+	return tmp;
+}
+
 
 static s_bool segment_is_pause(const SItem *item, s_erc *error)
 {
@@ -336,7 +293,7 @@ static char *create_phone_context(const SItem *item, s_erc *error)
 
 	if (featPath != NULL)
 	{
-		s_strcpy(p1, SObjectGetString(featPath, error), error);
+		s_strcpy(p1, name_hack(featPath), error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "create_phone_context",
 					  "Call to \"s_strcpy/SObjectGetString\" failed"))
@@ -360,7 +317,7 @@ static char *create_phone_context(const SItem *item, s_erc *error)
 
 	if (featPath != NULL)
 	{
-		s_strcpy(p2, SObjectGetString(featPath, error), error);
+		s_strcpy(p2, name_hack(featPath), error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "create_phone_context",
 					  "Call to \"s_strcpy/SObjectGetString\" failed"))
@@ -376,7 +333,7 @@ static char *create_phone_context(const SItem *item, s_erc *error)
 	}
 
 	/* p3 = name */
-	tmp = SItemGetName(item, error);
+	tmp = name_hack(SItemGetObject(item, "name", error));
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "create_phone_context",
 				  "Call to \"SItemGetName\" failed"))
@@ -408,7 +365,7 @@ static char *create_phone_context(const SItem *item, s_erc *error)
 
 	if (featPath != NULL)
 	{
-		s_strcpy(p4, SObjectGetString(featPath, error), error);
+		s_strcpy(p4, name_hack(featPath), error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "create_phone_context",
 					  "Call to \"s_strcpy/SObjectGetString\" failed"))
@@ -432,7 +389,7 @@ static char *create_phone_context(const SItem *item, s_erc *error)
 
 	if (featPath != NULL)
 	{
-		s_strcpy(p5, SObjectGetString(featPath, error), error);
+		s_strcpy(p5, name_hack(featPath), error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "create_phone_context",
 					  "Call to \"s_strcpy/SObjectGetString\" failed"))
@@ -592,7 +549,7 @@ static char *create_A_context(const SItem *item, s_erc *error)
 	}
 
 	/* we currently cannot compute a1 and a2 */
-	s_asprintf(&a_context, error, "/A:x_x_%d", a3);
+	s_asprintf(&a_context, error, "/A:0_0_%d", a3);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "create_A_context",
 				  "Call to \"s_asprintf\" failed"))
@@ -642,7 +599,7 @@ static char *create_A_context_pause(const SItem *item, s_erc *error)
 	}
 
 	/* we currently cannot compute a1 and a2 */
-	s_asprintf(&a_context, error, "/A:x_x_%d", a3);
+	s_asprintf(&a_context, error, "/A:0_0_%d", a3);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "create_A_context_pause",
 				  "Call to \"s_asprintf\" failed"))
@@ -837,7 +794,7 @@ static char *create_B_context(const SItem *item, s_erc *error)
 
 	if (dFeat != NULL)
 	{
-		b16 = SObjectGetString(dFeat, error);
+		b16 = name_hack(dFeat);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "create_B_context",
 					  "Call to \"SObjectGetString\" failed"))
@@ -850,8 +807,8 @@ static char *create_B_context(const SItem *item, s_erc *error)
 	}
 
 	/* we currently cannot compute b1, b2, b8, b9, b10, b11, b12, b13, b14 and b15 */
-	s_asprintf(&b_context, error, "/B:x-x-%d@%d-%d&%d-%d#x-x$x-x!x-x;x-x|%s",
-			   b3, b4, b5, b6, b7, b16);
+	s_asprintf(&b_context, error, "/B:0-0-%d@%d-%d&%d-%d#x-x$x-x!x-x;x-x|x",
+			   b3, b4, b5, b6, b7);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "create_B_context",
 				  "Call to \"s_asprintf\" failed"))
@@ -931,7 +888,7 @@ static char *create_C_context(const SItem *item, s_erc *error)
 	}
 
 	/* we currently cannot compute c1 and c2 */
-	s_asprintf(&c_context, error, "/C:x+x+%d", c3);
+	s_asprintf(&c_context, error, "/C:0+0+%d", c3);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "create_C_context",
 				  "Call to \"s_asprintf\" failed"))
@@ -981,1032 +938,13 @@ static char *create_C_context_pause(const SItem *item, s_erc *error)
 	}
 
 	/* we currently cannot compute c1 and c2 */
-	s_asprintf(&c_context, error, "/C:x+x+%d", c3);
+	s_asprintf(&c_context, error, "/C:0+0+%d", c3);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "create_C_context_pause",
 				  "Call to \"s_asprintf\" failed"))
 		return NULL;
 
 	return c_context;
-}
-
-
-/* /D:d1_d2
- *
- * d1 gpos (guess part-of-speech) of the previous word
- * d2 the number of syllables in the previous word
- */
-static char *create_D_context(const SItem *item, s_erc *error)
-{
-	SObject *dFeat;
-	char *d_context;
-	const char *d1;
-	sint32 d2;
-
-
-	S_CLR_ERR(error);
-
-	/* we currently cannot compute d1 */
-	d1 = NULL;
-
-
-	/* d2 */
-	dFeat = s_path_to_featproc(item, "R:SylStructure.parent.parent.R:Word.p.word_num_syls",
-							   error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "create_D_context",
-				  "Call to \"s_path_to_featproc\" failed"))
-		return NULL;
-
-	if (dFeat != NULL)
-	{
-		d2 = SObjectGetInt(dFeat, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "create_D_context",
-					  "Call to \"SObjectGetInt\" failed"))
-			return NULL;
-
-		S_DELETE(dFeat, "create_D_context", error);
-	}
-	else
-	{
-		d2 = 0;
-	}
-
-	/* we currently cannot compute d1 */
-	s_asprintf(&d_context, error, "/D:x_%d", d2);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "create_D_context",
-				  "Call to \"s_asprintf\" failed"))
-		return NULL;
-
-	return d_context;
-}
-
-/* differs from create_D_context in that previous phone's word is queried
- * and not previous word */
-static char *create_D_context_pause(const SItem *item, s_erc *error)
-{
-	SObject *dFeat;
-	char *d_context;
-	const char *d1;
-	sint32 d2;
-
-
-	S_CLR_ERR(error);
-
-	/* we currently cannot compute d1 */
-	d1 = NULL;
-
-
-	/* d2 */
-	dFeat = s_path_to_featproc(item, "p.R:SylStructure.parent.parent.R:Word.word_num_syls",
-							   error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "create_D_context_pause",
-				  "Call to \"s_path_to_featproc\" failed"))
-		return NULL;
-
-	if (dFeat != NULL)
-	{
-		d2 = SObjectGetInt(dFeat, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "create_D_context_pause",
-					  "Call to \"SObjectGetInt\" failed"))
-			return NULL;
-
-		S_DELETE(dFeat, "create_D_context_pause", error);
-	}
-	else
-	{
-		d2 = 0;
-	}
-
-	/* we currently cannot compute d1 */
-	s_asprintf(&d_context, error, "/D:x_%d", d2);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "create_D_context_pause",
-				  "Call to \"s_asprintf\" failed"))
-		return NULL;
-
-	return d_context;
-}
-
-
-/* /E:e1+e2@e3+e4&e5+e6#e7+e8
- *
- * e1 gpos (guess part-of-speech) of the current word
- * e2 the number of syllables in the current word
- * e3 position of the current word in the current phrase (forward)
- * e4 position of the current word in the current phrase (backward)
- * e5 the number of content words before the current word in the current phrase
- * e6 the number of content words after the current word in the current phrase
- * e7 the number of words from the previous content word to the current word
- * e8 the number of words from the current word to the next content word
- */
-static char *create_E_context(const SItem *item, s_erc *error)
-{
-	SObject *dFeat;
-	char *e_context;
-	const char *e1;
-	sint32 e2;
-	sint32 e3;
-	sint32 e4;
-	sint32 e5;
-	sint32 e6;
-	sint32 e7;
-	sint32 e8;
-
-
-	S_CLR_ERR(error);
-
-	/* we currently cannot compute e1 */
-	e1 = NULL;
-
-
-	/* e2 */
-	dFeat = s_path_to_featproc(item, "R:SylStructure.parent.parent.R:Word.word_num_syls",
-							   error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "create_E_context",
-				  "Call to \"s_path_to_featproc\" failed"))
-		return NULL;
-
-	if (dFeat != NULL)
-	{
-		e2 = SObjectGetInt(dFeat, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "create_E_context",
-					  "Call to \"SObjectGetInt\" failed"))
-			return NULL;
-
-		S_DELETE(dFeat, "create_E_context", error);
-	}
-	else
-	{
-		e2 = 0;
-	}
-
-	/* e3 */
-	dFeat = s_path_to_featproc(item, "R:SylStructure.parent.parent.R:Word.word_pos_phrase",
-							   error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "create_E_context",
-				  "Call to \"s_path_to_featproc\" failed"))
-		return NULL;
-
-	if (dFeat != NULL)
-	{
-		e3 = SObjectGetInt(dFeat, error) + 1; /* it seems as if HTS likes indexing from 1 */
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "create_E_context",
-					  "Call to \"SObjectGetInt\" failed"))
-			return NULL;
-
-		S_DELETE(dFeat, "create_E_context", error);
-	}
-	else
-	{
-		e3 = 0;
-	}
-
-	/* e4 */
-	dFeat = s_path_to_featproc(item, "R:SylStructure.parent.parent.R:Word.word_pos_phrase_rev",
-							   error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "create_E_context",
-				  "Call to \"s_path_to_featproc\" failed"))
-		return NULL;
-
-	if (dFeat != NULL)
-	{
-		e4 = SObjectGetInt(dFeat, error) + 1; /* it seems as if HTS likes indexing from 1 */
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "create_E_context",
-					  "Call to \"SObjectGetInt\" failed"))
-			return NULL;
-
-		S_DELETE(dFeat, "create_E_context", error);
-	}
-	else
-	{
-		e4 = 0;
-	}
-
-	/* we currently cannot compute e5, e6, e7 and e8 */
-	e5 = 0;
-	e6 = 0;
-	e7 = 0;
-	e8 = 0;
-
-	s_asprintf(&e_context, error, "/E:x+%d@%d+%d&x+x#x+x", e2, e3, e4);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "create_E_context",
-				  "Call to \"s_asprintf\" failed"))
-		return NULL;
-
-	return e_context;
-}
-
-/* differs from create_E_context in that all is "x", pause does not
- * have a word */
-static char *create_E_context_pause(const SItem *item, s_erc *error)
-{
-	char *e_context;
-	const char *all_x = "/E:x+x@x+x&x+x#x+x";
-
-
-	S_CLR_ERR(error);
-	e_context = s_strdup(all_x, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "create_E_context_pause",
-				  "Call to \"s_strdup\" failed"))
-	{
-		item = NULL; /* compiler noise about unused parameters */
-		return NULL;
-	}
-
-	return e_context;
-}
-
-
-/* /F:f1_f2
- *
- * f1 gpos (guess part-of-speech) of the next word
- * f2 the number of syllables in the next word
- */
-static char *create_F_context(const SItem *item, s_erc *error)
-{
-	SObject *dFeat;
-	char *f_context;
-	const char *f1;
-	sint32 f2;
-
-
-	S_CLR_ERR(error);
-
-	/* we currently cannot compute f1 */
-	f1 = NULL;
-
-
-	/* f2 */
-	dFeat = s_path_to_featproc(item, "R:SylStructure.parent.parent.R:Word.n.word_num_syls",
-							   error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "create_F_context",
-				  "Call to \"s_path_to_featproc\" failed"))
-		return NULL;
-
-	if (dFeat != NULL)
-	{
-		f2 = SObjectGetInt(dFeat, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "create_F_context",
-					  "Call to \"SObjectGetInt\" failed"))
-			return NULL;
-
-		S_DELETE(dFeat, "create_F_context", error);
-	}
-	else
-	{
-		f2 = 0;
-	}
-
-	/* we currently cannot compute f1 */
-	s_asprintf(&f_context, error, "/F:x_%d", f2);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "create_F_context",
-				  "Call to \"s_asprintf\" failed"))
-		return NULL;
-
-	return f_context;
-}
-
-/* differs from create_F_context in that next phone's word is queried
- * and not next word */
-static char *create_F_context_pause(const SItem *item, s_erc *error)
-{
-	SObject *dFeat;
-	char *f_context;
-	const char *f1;
-	sint32 f2;
-
-
-	S_CLR_ERR(error);
-
-	/* we currently cannot compute f1 */
-	f1 = NULL;
-
-
-	/* f2 */
-	dFeat = s_path_to_featproc(item, "n.R:SylStructure.parent.parent.R:Word.word_num_syls",
-							   error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "create_F_context_pause",
-				  "Call to \"s_path_to_featproc\" failed"))
-		return NULL;
-
-	if (dFeat != NULL)
-	{
-		f2 = SObjectGetInt(dFeat, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "create_F_context_pause",
-					  "Call to \"SObjectGetInt\" failed"))
-			return NULL;
-
-		S_DELETE(dFeat, "create_F_context_pause", error);
-	}
-	else
-	{
-		f2 = 0;
-	}
-
-	/* we currently cannot compute d1 */
-	s_asprintf(&f_context, error, "/F:x_%d", f2);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "create_F_context_pause",
-				  "Call to \"s_asprintf\" failed"))
-		return NULL;
-
-	return f_context;
-}
-
-
-/* /G:g1_g2
- *
- * g1 the number of syllables in the previous phrase
- * g2 the number of words in the previous phrase
- */
-static char *create_G_context(const SItem *item, s_erc *error)
-{
-	SObject *dFeat;
-	char *g_context;
-	sint32 g1;
-	sint32 g2;
-
-
-	S_CLR_ERR(error);
-
-
-	/* g1 */
-	dFeat = s_path_to_featproc(item, "R:SylStructure.parent.parent.R:Phrase.parent.p.phrase_num_syls",
-							   error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "create_G_context",
-				  "Call to \"s_path_to_featproc\" failed"))
-		return NULL;
-
-	if (dFeat != NULL)
-	{
-		g1 = SObjectGetInt(dFeat, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "create_G_context",
-					  "Call to \"SObjectGetInt\" failed"))
-			return NULL;
-
-		S_DELETE(dFeat, "create_G_context", error);
-	}
-	else
-	{
-		g1 = 0;
-	}
-
-
-	/* g2 */
-	dFeat = s_path_to_featproc(item, "R:SylStructure.parent.parent.R:Phrase.parent.p.phrase_num_words",
-							   error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "create_G_context",
-				  "Call to \"s_path_to_featproc\" failed"))
-		return NULL;
-
-	if (dFeat != NULL)
-	{
-		g2 = SObjectGetInt(dFeat, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "create_G_context",
-					  "Call to \"SObjectGetInt\" failed"))
-			return NULL;
-
-		S_DELETE(dFeat, "create_G_context", error);
-	}
-	else
-	{
-		g2 = 0;
-	}
-
-	s_asprintf(&g_context, error, "/G:%d_%d", g1, g2);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "create_G_context",
-				  "Call to \"s_asprintf\" failed"))
-		return NULL;
-
-	return g_context;
-}
-
-/* differs from create_G_context in that previous phone's phrase is queried
- * and not previous phrase */
-static char *create_G_context_pause(const SItem *item, s_erc *error)
-{
-	SObject *dFeat;
-	char *g_context;
-	sint32 g1;
-	sint32 g2;
-
-
-	S_CLR_ERR(error);
-
-
-	/* g1 */
-	dFeat = s_path_to_featproc(item, "p.R:SylStructure.parent.parent.R:Phrase.parent.phrase_num_syls",
-							   error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "create_G_context_pause",
-				  "Call to \"s_path_to_featproc\" failed"))
-		return NULL;
-
-	if (dFeat != NULL)
-	{
-		g1 = SObjectGetInt(dFeat, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "create_G_context_pause",
-					  "Call to \"SObjectGetInt\" failed"))
-			return NULL;
-
-		S_DELETE(dFeat, "create_G_context_pause", error);
-	}
-	else
-	{
-		g1 = 0;
-	}
-
-
-	/* g2 */
-	dFeat = s_path_to_featproc(item, "p.R:SylStructure.parent.parent.R:Phrase.parent.phrase_num_words",
-							   error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "create_G_context_pause",
-				  "Call to \"s_path_to_featproc\" failed"))
-		return NULL;
-
-	if (dFeat != NULL)
-	{
-		g2 = SObjectGetInt(dFeat, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "create_G_context_pause",
-					  "Call to \"SObjectGetInt\" failed"))
-			return NULL;
-
-		S_DELETE(dFeat, "create_G_context_pause", error);
-	}
-	else
-	{
-		g2 = 0;
-	}
-
-	s_asprintf(&g_context, error, "/G:%d_%d", g1, g2);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "create_G_context_pause",
-				  "Call to \"s_asprintf\" failed"))
-		return NULL;
-
-	return g_context;
-}
-
-
-/* /H:h1=h2@h3=h4|h5
- *
- * h1 the number of syllables in the current phrase
- * h2 the number of words in the current phrase
- * h3 position of the current phrase in utterence (forward)
- * h4 position of the current phrase in utterence (backward)
- * h5 TOBI endtone of the current phrase
- */
-static char *create_H_context(const SItem *item, s_erc *error)
-{
-	SObject *dFeat;
-	char *h_context;
-	sint32 h1;
-	sint32 h2;
-	sint32 h3;
-	sint32 h4;
-	const char *h5;
-
-
-	S_CLR_ERR(error);
-
-	/* h1 */
-	dFeat = s_path_to_featproc(item, "R:SylStructure.parent.parent.R:Phrase.parent.phrase_num_syls",
-							   error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "create_H_context",
-				  "Call to \"s_path_to_featproc\" failed"))
-		return NULL;
-
-	if (dFeat != NULL)
-	{
-		h1 = SObjectGetInt(dFeat, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "create_H_context",
-					  "Call to \"SObjectGetInt\" failed"))
-			return NULL;
-
-		S_DELETE(dFeat, "create_H_context", error);
-	}
-	else
-	{
-		h1 = 0;
-	}
-
-
-	/* h2 */
-	dFeat = s_path_to_featproc(item, "R:SylStructure.parent.parent.R:Phrase.parent.phrase_num_words",
-							   error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "create_H_context",
-				  "Call to \"s_path_to_featproc\" failed"))
-		return NULL;
-
-	if (dFeat != NULL)
-	{
-		h2 = SObjectGetInt(dFeat, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "create_H_context",
-					  "Call to \"SObjectGetInt\" failed"))
-			return NULL;
-
-		S_DELETE(dFeat, "create_H_context", error);
-	}
-	else
-	{
-		h2 = 0;
-	}
-
-	/* h3 */
-	dFeat = s_path_to_featproc(item, "R:SylStructure.parent.parent.R:Phrase.parent.phrase_pos_utt",
-							   error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "create_H_context",
-				  "Call to \"s_path_to_featproc\" failed"))
-		return NULL;
-
-	if (dFeat != NULL)
-	{
-		h3 = SObjectGetInt(dFeat, error) + 1; /* it seems as if HTS likes indexing from 1 */
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "create_H_context",
-					  "Call to \"SObjectGetInt\" failed"))
-			return NULL;
-
-		S_DELETE(dFeat, "create_H_context", error);
-	}
-	else
-	{
-		h3 = 0;
-	}
-
-	/* h4 */
-	dFeat = s_path_to_featproc(item, "R:SylStructure.parent.parent.R:Phrase.parent.phrase_pos_utt_rev",
-							   error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "create_H_context",
-				  "Call to \"s_path_to_featproc\" failed"))
-		return NULL;
-
-	if (dFeat != NULL)
-	{
-		h4 = SObjectGetInt(dFeat, error) + 1; /* it seems as if HTS likes indexing from 1 */
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "create_H_context",
-					  "Call to \"SObjectGetInt\" failed"))
-			return NULL;
-
-		S_DELETE(dFeat, "create_H_context", error);
-	}
-	else
-	{
-		h4 = 0;
-	}
-
-	/* we currently cannot compute h5 */
-	h5 = NULL;
-
-	s_asprintf(&h_context, error, "/H:%d=%d@%d=%d|x", h1, h2, h3, h4);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "create_H_context",
-				  "Call to \"s_asprintf\" failed"))
-		return NULL;
-
-	return h_context;
-}
-
-/* differs from create_H_context in that either next or previous
- * phone's phrase is used (if prev exits, use, else next)
- */
-static char *create_H_context_pause(const SItem *item, s_erc *error)
-{
-	const SItem *tmp;
-	s_bool use_next;
-	SObject *dFeat;
-	char *h_context;
-	sint32 h1;
-	sint32 h2;
-	sint32 h3;
-	sint32 h4;
-	const char *h5;
-
-
-	S_CLR_ERR(error);
-	tmp = SItemPrev(item, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "create_H_context_pause",
-				  "Call to \"SItemPrev\" failed"))
-		return NULL;
-
-	if (tmp != NULL)
-		use_next = FALSE;
-	else
-		use_next = TRUE;
-
-	/* h1 */
-	if (use_next)
-	{
-		dFeat = s_path_to_featproc(item, "n.R:SylStructure.parent.parent.R:Phrase.parent.phrase_num_syls",
-								   error);
-	}
-	else
-	{
-		dFeat = s_path_to_featproc(item, "p.R:SylStructure.parent.parent.R:Phrase.parent.phrase_num_syls",
-								   error);
-	}
-
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "create_H_context_pause",
-				  "Call to \"s_path_to_featproc\" failed"))
-		return NULL;
-
-	if (dFeat != NULL)
-	{
-		h1 = SObjectGetInt(dFeat, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "create_H_context_pause",
-					  "Call to \"SObjectGetInt\" failed"))
-			return NULL;
-
-		S_DELETE(dFeat, "create_H_context_pause", error);
-	}
-	else
-	{
-		h1 = 0;
-	}
-
-
-	/* h2 */
-	if (use_next)
-	{
-		dFeat = s_path_to_featproc(item, "n.R:SylStructure.parent.parent.R:Phrase.parent.phrase_num_words",
-								   error);
-	}
-	else
-	{
-		dFeat = s_path_to_featproc(item, "p.R:SylStructure.parent.parent.R:Phrase.parent.phrase_num_words",
-								   error);
-	}
-
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "create_H_context_pause",
-				  "Call to \"s_path_to_featproc\" failed"))
-		return NULL;
-
-	if (dFeat != NULL)
-	{
-		h2 = SObjectGetInt(dFeat, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "create_H_context_pause",
-					  "Call to \"SObjectGetInt\" failed"))
-			return NULL;
-
-		S_DELETE(dFeat, "create_H_context_pause", error);
-	}
-	else
-	{
-		h2 = 0;
-	}
-
-	/* h3 */
-	if (use_next)
-	{
-		dFeat = s_path_to_featproc(item, "n.R:SylStructure.parent.parent.R:Phrase.parent.phrase_pos_utt",
-								   error);
-	}
-	else
-	{
-		dFeat = s_path_to_featproc(item, "p.R:SylStructure.parent.parent.R:Phrase.parent.phrase_pos_utt",
-								   error);
-	}
-
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "create_H_context_pause",
-				  "Call to \"s_path_to_featproc\" failed"))
-		return NULL;
-
-	if (dFeat != NULL)
-	{
-		h3 = SObjectGetInt(dFeat, error) + 1; /* it seems as if HTS likes indexing from 1 */
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "create_H_context_pause",
-					  "Call to \"SObjectGetInt\" failed"))
-			return NULL;
-
-		S_DELETE(dFeat, "create_H_context_pause", error);
-	}
-	else
-	{
-		h3 = 0;
-	}
-
-	/* h4 */
-	if (use_next)
-	{
-		dFeat = s_path_to_featproc(item, "n.R:SylStructure.parent.parent.R:Phrase.parent.phrase_pos_utt_rev",
-								   error);
-	}
-	else
-	{
-		dFeat = s_path_to_featproc(item, "p.R:SylStructure.parent.parent.R:Phrase.parent.phrase_pos_utt_rev",
-								   error);
-	}
-
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "create_H_context_pause",
-				  "Call to \"s_path_to_featproc\" failed"))
-		return NULL;
-
-	if (dFeat != NULL)
-	{
-		h4 = SObjectGetInt(dFeat, error) + 1; /* it seems as if HTS likes indexing from 1 */
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "create_H_context_pause",
-					  "Call to \"SObjectGetInt\" failed"))
-			return NULL;
-
-		S_DELETE(dFeat, "create_H_context_pause", error);
-	}
-	else
-	{
-		h4 = 0;
-	}
-
-	/* we currently cannot compute h5 */
-	h5 = NULL;
-
-	s_asprintf(&h_context, error, "/H:%d=%d@%d=%d|x", h1, h2, h3, h4);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "create_H_context_pause",
-				  "Call to \"s_asprintf\" failed"))
-		return NULL;
-
-	return h_context;
-}
-
-
-/* /I:i1_i2
- *
- * i1 the number of syllables in the next phrase
- * i2 the number of words in the next phrase
- */
-static char *create_I_context(const SItem *item, s_erc *error)
-{
-	SObject *dFeat;
-	char *i_context;
-	sint32 i1;
-	sint32 i2;
-
-
-	S_CLR_ERR(error);
-
-
-	/* i1 */
-	dFeat = s_path_to_featproc(item, "R:SylStructure.parent.parent.R:Phrase.parent.n.phrase_num_syls",
-							   error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "create_I_context",
-				  "Call to \"s_path_to_featproc\" failed"))
-		return NULL;
-
-	if (dFeat != NULL)
-	{
-		i1 = SObjectGetInt(dFeat, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "create_I_context",
-					  "Call to \"SObjectGetInt\" failed"))
-			return NULL;
-
-		S_DELETE(dFeat, "create_I_context", error);
-	}
-	else
-	{
-		i1 = 0;
-	}
-
-
-	/* i2 */
-	dFeat = s_path_to_featproc(item, "R:SylStructure.parent.parent.R:Phrase.parent.n.phrase_num_words",
-							   error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "create_I_context",
-				  "Call to \"s_path_to_featproc\" failed"))
-		return NULL;
-
-	if (dFeat != NULL)
-	{
-		i2 = SObjectGetInt(dFeat, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "create_I_context",
-					  "Call to \"SObjectGetInt\" failed"))
-			return NULL;
-
-		S_DELETE(dFeat, "create_I_context", error);
-	}
-	else
-	{
-		i2 = 0;
-	}
-
-	s_asprintf(&i_context, error, "/I:%d_%d", i1, i2);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "create_I_context",
-				  "Call to \"s_asprintf\" failed"))
-		return NULL;
-
-	return i_context;
-}
-
-/* differs from create_I_context in that next phone's phrase is queried
- * and not next phrase */
-static char *create_I_context_pause(const SItem *item, s_erc *error)
-{
-	SObject *dFeat;
-	char *i_context;
-	sint32 i1;
-	sint32 i2;
-
-
-	S_CLR_ERR(error);
-
-
-	/* i1 */
-	dFeat = s_path_to_featproc(item, "n.R:SylStructure.parent.parent.R:Phrase.parent.phrase_num_syls",
-							   error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "create_I_context_pause",
-				  "Call to \"s_path_to_featproc\" failed"))
-		return NULL;
-
-	if (dFeat != NULL)
-	{
-		i1 = SObjectGetInt(dFeat, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "create_I_context_pause",
-					  "Call to \"SObjectGetInt\" failed"))
-			return NULL;
-
-		S_DELETE(dFeat, "create_I_context_pause", error);
-	}
-	else
-	{
-		i1 = 0;
-	}
-
-
-	/* i2 */
-	dFeat = s_path_to_featproc(item, "n.R:SylStructure.parent.parent.R:Phrase.parent.phrase_num_words",
-							   error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "create_I_context_pause",
-				  "Call to \"s_path_to_featproc\" failed"))
-		return NULL;
-
-	if (dFeat != NULL)
-	{
-		i2 = SObjectGetInt(dFeat, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "create_I_context_pause",
-					  "Call to \"SObjectGetInt\" failed"))
-			return NULL;
-
-		S_DELETE(dFeat, "create_I_context_pause", error);
-	}
-	else
-	{
-		i2 = 0;
-	}
-
-	s_asprintf(&i_context, error, "/I:%d_%d", i1, i2);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "create_I_context_pause",
-				  "Call to \"s_asprintf\" failed"))
-		return NULL;
-
-	return i_context;
-}
-
-
-/* /J:j1+j2-j3
- *
- * j1 the number of syllables in this utterence
- * j2 the number of words in this utternce
- * j3 the number of phrases in this utterence
- */
-static char *create_J_context(const SItem *item, s_erc *error)
-{
-	SObject *dFeat;
-	char *j_context;
-	sint32 j1;
-	sint32 j2;
-	sint32 j3;
-
-
-	S_CLR_ERR(error);
-
-
-	/* j1 */
-	dFeat = s_path_to_featproc(item, "utt_num_syls",
-							   error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "create_J_context",
-				  "Call to \"s_path_to_featproc\" failed"))
-		return NULL;
-
-	if (dFeat != NULL)
-	{
-		j1 = SObjectGetInt(dFeat, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "create_J_context",
-					  "Call to \"SObjectGetInt\" failed"))
-			return NULL;
-
-		S_DELETE(dFeat, "create_J_context", error);
-	}
-	else
-	{
-		j1 = 0;
-	}
-
-
-	/* j2 */
-	dFeat = s_path_to_featproc(item, "utt_num_words",
-							   error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "create_J_context",
-				  "Call to \"s_path_to_featproc\" failed"))
-		return NULL;
-
-	if (dFeat != NULL)
-	{
-		j2 = SObjectGetInt(dFeat, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "create_J_context",
-					  "Call to \"SObjectGetInt\" failed"))
-			return NULL;
-
-		S_DELETE(dFeat, "create_J_context", error);
-	}
-	else
-	{
-		j2 = 0;
-	}
-
-	/* j3 */
-	dFeat = s_path_to_featproc(item, "utt_num_phrases",
-							   error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "create_J_context",
-				  "Call to \"s_path_to_featproc\" failed"))
-		return NULL;
-
-	if (dFeat != NULL)
-	{
-		j3 = SObjectGetInt(dFeat, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "create_J_context",
-					  "Call to \"SObjectGetInt\" failed"))
-			return NULL;
-
-		S_DELETE(dFeat, "create_J_context", error);
-	}
-	else
-	{
-		j3 = 0;
-	}
-
-	s_asprintf(&j_context, error, "/J:%d+%d-%d", j1, j2, j3);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "create_J_context",
-				  "Call to \"s_asprintf\" failed"))
-		return NULL;
-
-	return j_context;
 }
 
 
@@ -2129,96 +1067,6 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 			goto quit_error;
 
 		S_FREE(tmp);
-
-		/* D context */
-		tmp = create_D_context_pause(segItem, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "Run",
-					  "Call to \"create_D_context_pause\" failed"))
-			goto quit_error;
-
-		s_sappend(&hts_label, tmp, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "Run",
-					  "Call to \"s_sappend\" failed"))
-			goto quit_error;
-
-		S_FREE(tmp);
-
-		/* E context */
-		tmp = create_E_context_pause(segItem, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "Run",
-					  "Call to \"create_E_context_pause\" failed"))
-			goto quit_error;
-
-		s_sappend(&hts_label, tmp, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "Run",
-					  "Call to \"s_sappend\" failed"))
-			goto quit_error;
-
-		S_FREE(tmp);
-
-		/* F context */
-		tmp = create_F_context_pause(segItem, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "Run",
-					  "Call to \"create_F_context_pause\" failed"))
-			goto quit_error;
-
-		s_sappend(&hts_label, tmp, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "Run",
-					  "Call to \"s_sappend\" failed"))
-			goto quit_error;
-
-		S_FREE(tmp);
-
-		/* G context */
-		tmp = create_G_context_pause(segItem, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "Run",
-					  "Call to \"create_G_context_pause\" failed"))
-			goto quit_error;
-
-		s_sappend(&hts_label, tmp, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "Run",
-					  "Call to \"s_sappend\" failed"))
-			goto quit_error;
-
-		S_FREE(tmp);
-
-		/* H context */
-		tmp = create_H_context_pause(segItem, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "Run",
-					  "Call to \"create_H_context_pause\" failed"))
-			goto quit_error;
-
-		s_sappend(&hts_label, tmp, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "Run",
-					  "Call to \"s_sappend\" failed"))
-			goto quit_error;
-
-		S_FREE(tmp);
-
-		/* I context */
-		tmp = create_I_context_pause(segItem, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "Run",
-					  "Call to \"create_I_context_pause\" failed"))
-			goto quit_error;
-
-		s_sappend(&hts_label, tmp, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "Run",
-					  "Call to \"s_sappend\" failed"))
-			goto quit_error;
-
-		S_FREE(tmp);
 	}
 	else
 	{
@@ -2281,112 +1129,7 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 			goto quit_error;
 
 		S_FREE(tmp);
-
-		/* D context */
-		tmp = create_D_context(segItem, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "Run",
-					  "Call to \"create_D_context\" failed"))
-			goto quit_error;
-
-		s_sappend(&hts_label, tmp, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "Run",
-					  "Call to \"s_sappend\" failed"))
-			goto quit_error;
-
-		S_FREE(tmp);
-
-		/* E context */
-		tmp = create_E_context(segItem, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "Run",
-					  "Call to \"create_E_context\" failed"))
-			goto quit_error;
-
-		s_sappend(&hts_label, tmp, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "Run",
-					  "Call to \"s_sappend\" failed"))
-			goto quit_error;
-
-		S_FREE(tmp);
-
-		/* F context */
-		tmp = create_F_context(segItem, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "Run",
-					  "Call to \"create_F_context\" failed"))
-			goto quit_error;
-
-		s_sappend(&hts_label, tmp, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "Run",
-					  "Call to \"s_sappend\" failed"))
-			goto quit_error;
-
-		S_FREE(tmp);
-
-		/* G context */
-		tmp = create_G_context(segItem, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "Run",
-					  "Call to \"create_G_context\" failed"))
-			goto quit_error;
-
-		s_sappend(&hts_label, tmp, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "Run",
-					  "Call to \"s_sappend\" failed"))
-			goto quit_error;
-
-		S_FREE(tmp);
-
-		/* H context */
-		tmp = create_H_context(segItem, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "Run",
-					  "Call to \"create_H_context\" failed"))
-			goto quit_error;
-
-		s_sappend(&hts_label, tmp, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "Run",
-					  "Call to \"s_sappend\" failed"))
-			goto quit_error;
-
-		S_FREE(tmp);
-
-		/* I context */
-		tmp = create_I_context(segItem, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "Run",
-					  "Call to \"create_I_context\" failed"))
-			goto quit_error;
-
-		s_sappend(&hts_label, tmp, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "Run",
-					  "Call to \"s_sappend\" failed"))
-			goto quit_error;
-
-		S_FREE(tmp);
 	}
-
-	/* J context */
-	tmp = create_J_context(segItem, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "Run",
-				  "Call to \"create_J_context\" failed"))
-		goto quit_error;
-
-	s_sappend(&hts_label, tmp, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "Run",
-				  "Call to \"s_sappend\" failed"))
-		goto quit_error;
-
-	S_FREE(tmp);
 
 	extractedFeat = SObjectSetString(hts_label, error);
 	if (S_CHK_ERR(error, S_CONTERR,

@@ -62,3 +62,9 @@ add_dependencies(${PLUGIN_SONAME}_plugin audio_plugin)
 #  add_subdirectory(examples)
 #endif(WANT_EXAMPLES)
 
+
+#------------------------------------------------------------------------------------#
+#                              SWIG wrappers                                         #
+#------------------------------------------------------------------------------------#
+
+add_subdirectory(swig)

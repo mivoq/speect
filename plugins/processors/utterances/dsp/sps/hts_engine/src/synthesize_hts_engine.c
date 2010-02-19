@@ -818,6 +818,8 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 	const SItem *itemItr;
 	int counter;
 	uint i;
+	int frame;
+	int state;
 
 
 	S_CLR_ERR(error);
@@ -907,6 +909,41 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 	HTS_Engine_create_sstream(&(HTSsynth->engine));
 	HTS_Engine_create_pstream(&(HTSsynth->engine));
 	HTS_Engine_create_gstream(&(HTSsynth->engine));
+
+	itemItr = item;
+	counter = 0;
+	frame = 0;
+	state = 0;
+	while (itemItr != NULL)
+	{
+		int j;
+		int duration;
+		HTS_SStreamSet *sss = &(HTSsynth->engine.sss);
+		const int nstate = HTS_ModelSet_get_nstate(&(HTSsynth->engine.ms));
+		const double rate = HTSsynth->engine.global.fperiod * 1e+7 / HTSsynth->engine.global.sampling_rate;
+		float tmp;
+
+		for (j = 0, duration = 0; j < nstate; j++)
+			duration += HTS_SStreamSet_get_duration(sss, state++);
+
+		tmp = frame * rate;
+		SItemSetFloat((SItem*)itemItr, "start_time", tmp/1e+7, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "Run",
+					  "Call to \"SItemSetFloat\" failed"))
+			goto quit_error;
+
+		tmp = (frame + duration) * rate;
+		SItemSetFloat((SItem*)itemItr, "end_time", tmp/1e+7, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "Run",
+					  "Call to \"SItemSetFloat\" failed"))
+			goto quit_error;
+
+		frame += duration;
+		itemItr = SItemNext(itemItr, error);
+		counter++;
+	}
 
 	/* create an audio object */
 	audio = (SAudio*)S_NEW("SAudio", error);

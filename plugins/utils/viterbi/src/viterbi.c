@@ -924,7 +924,7 @@ static void Search(SViterbi *self, s_erc *error)
 	double best_score = 0.0;
 	double score_cutoff = 0.0;
 	double best_candidate_score;
-	double candidate_cutoff;
+	double candidate_cutoff = 0.0;
 	int dcount;
 	int pcount;
 	int cand_count;

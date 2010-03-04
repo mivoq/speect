@@ -727,7 +727,7 @@ static void read_utt_relations(SEbmlRead *ebmlReader, SUtterance *utt,
 							   s_hash_table *items_content_table, s_erc *error)
 {
 	uint32 id;
-	SRelation *rel;
+	SRelation *rel = NULL;
 	s_bool container_exhausted;
 
 

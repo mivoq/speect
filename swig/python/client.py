@@ -87,6 +87,11 @@ def setopts():
                       default=DEF_HOST,
                       help="Specify the host address to connect to. [%default]",
                       metavar="HOSTADDRESS")
+    parser.add_option("-l",
+                      "--listvoices",
+                      action="store_true",
+                      dest="listvoices",
+                      help="Request a list of loaded voices from the server.")
     return parser
 
 
@@ -94,17 +99,21 @@ if __name__ == "__main__":
     parser = setopts()
     opts, args = parser.parse_args()
 
-    if len(args) < 2:
-        parser.print_usage()
-        sys.exit()
-        
-    voicename, text = args
     host = opts.host
     port = opts.port
 
     #create message
-    message = {"voicename": voicename,
-               "text": text}
+    if opts.listvoices:
+        message = {"type": "listvoices"}
+    else:
+        if len(args) < 2:
+            parser.print_usage()
+            sys.exit()
+        voicename, text = args
+        message = {"type": "synth",
+                   "voicename": voicename,
+                   "text": text}
+
     fulls = pickle.dumps(message)
     #create a socket
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -113,35 +122,39 @@ if __name__ == "__main__":
     #send..
     s.sendall(fulls)
     s.sendall(END_OF_MESSAGE_STRING)
-    #recv waveform..
-    wavemsgfull = str()
+    #recv reply..
+    replymsgfull = str()
     while True:
-        wavemsgpart = s.recv(RECV_SIZE)
-        if wavemsgpart:
-            wavemsgfull += wavemsgpart
+        replymsgpart = s.recv(RECV_SIZE)
+        if replymsgpart:
+            replymsgfull += replymsgpart
         else:
             break
     #close connection..
     s.close()
-    #recover waveform..
-    waveform = pickle.loads(wavemsgfull)
-    if waveform["sampletype"] != "int16":
-        raise Exception("Client currently only supports 16bit samplesize")
-    
-    if opts.wavefilename:
-        #assume that we only want to save - not play..
-        outwf = wave.open(opts.wavefilename, "w")
-        outwf.setparams((1, 2, waveform["samplerate"], len(waveform["samples"]) / 2, "NONE", "not compressed"))
-        outwf.writeframesraw(waveform["samples"])
-        outwf.close()
-    else:
-        #init audio device and play samples..
-        dsp = ossaudiodev.open("/dev/dsp", "w")
-        dsp.setparameters(ossaudiodev.AFMT_S16_LE,
-                          1,
-                          waveform["samplerate"],
-                          True)
-        dsp.writeall(waveform["samples"])
-        dsp.close()
+    #recover reply..
+    reply = pickle.loads(replymsgfull)
+    if not reply["success"]:
+        raise Exception("Request failed..")
 
-    
+    if opts.listvoices:
+        print("\n".join(reply["voicelist"]))
+    else:
+        if reply["sampletype"] != "int16":
+            raise Exception("Client currently only supports 16bit samplesize")
+
+        if opts.wavefilename:
+            #assume that we only want to save - not play..
+            outwf = wave.open(opts.wavefilename, "w")
+            outwf.setparams((1, 2, reply["samplerate"], len(reply["samples"]) / 2, "NONE", "not compressed"))
+            outwf.writeframesraw(reply["samples"])
+            outwf.close()
+        else:
+            #init audio device and play samples..
+            dsp = ossaudiodev.open("/dev/dsp", "w")
+            dsp.setparameters(ossaudiodev.AFMT_S16_LE,
+                              1,
+                              reply["samplerate"],
+                              True)
+            dsp.writeall(reply["samples"])
+            dsp.close()

@@ -113,31 +113,31 @@ typedef struct
 	}
 
 
-	void write_uint(uint32 id, uint32 val, s_erc *error)
+	void write_uint(uint32 val, uint32 id, s_erc *error)
 	{
 		S_EBMLWRITE_CALL($self, write_uint)($self, id, val, error);
 	}
 
 
-	void write_sint(uint32 id, sint32 val, s_erc *error)
+	void write_sint(sint32 val, uint32 id, s_erc *error)
 	{
 		S_EBMLWRITE_CALL($self, write_sint)($self, id, val, error);
 	}
 
 
-	void write_double(uint32 id, double val, s_erc *error)
+	void write_double(double val, uint32 id, s_erc *error)
 	{
 		S_EBMLWRITE_CALL($self, write_double)($self, id, val, error);
 	}
 
 
-	void write_str(uint32 id, const char *val, s_erc *error)
+	void write_str(const char *val, uint32 id, s_erc *error)
 	{
 		S_EBMLWRITE_CALL($self, write_utf8)($self, id, val, error);
 	}
 
 
-	void write_object(uint32 id, const SObject *val, s_erc *error)
+	void write_object(const SObject *val, uint32 id, s_erc *error)
 	{
 		S_EBMLWRITE_CALL($self, write_object)($self, id, val, error);
 	}

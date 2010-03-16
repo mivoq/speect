@@ -43,11 +43,10 @@ typedef struct
 
 %extend SEbmlWrite
 {
-	SEbmlWrite(const char *path, int ebml_version,
-			   int ebml_read_version, int max_id_width,
-			   int max_size_width, const char *doc_type,
-			   int doc_type_version, int doc_type_read_version,
-			   s_erc *error)
+	SEbmlWrite(const char *path, const char *doc_type="spct",
+			   int doc_type_version=1, int doc_type_read_version=1,
+			   int ebml_version=1,int ebml_read_version=1, int max_id_width=4,
+			   int max_size_width=4, s_erc *error)
 	{
 		SDatasource *ds;
 		SEbmlWrite *ebmlWriter;

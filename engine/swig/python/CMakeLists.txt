@@ -47,7 +47,7 @@ set_source_files_properties(speectPYTHON_wrap.c
 
 # set ouput directory
 #message(STATUS "CMAKE_CURRENT_BIN_DIR = ${CMAKE_BINARY_DIR}")
-set(CMAKE_SWIG_OUTDIR ${CMAKE_BINARY_DIR}/../swig/python)
+set(CMAKE_SWIG_OUTDIR ${CMAKE_BINARY_DIR}/../swig/python/speect)
 
 # create the Python Speect Engine wrapper (C and Python files)
 swig_add_module(speect python speect.i)
@@ -58,7 +58,7 @@ swig_link_libraries(speect ${PYTHON_LIBRARIES} ${SPCT_LINK_WITH})
 # set the output directory
 set_target_properties(${SWIG_MODULE_speect_REAL_NAME}
   PROPERTIES
-  LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/../swig/python
-  RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/../swig/python
+  LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/../swig/python/speect
+  RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/../swig/python/speect
 )
 

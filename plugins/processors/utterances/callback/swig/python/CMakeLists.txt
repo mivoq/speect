@@ -48,7 +48,7 @@ set_source_files_properties(uttproc_callbackPYTHON_wrap.c
 
 # set ouput directory
 #message(STATUS "CMAKE_CURRENT_BIN_DIR = ${CMAKE_BINARY_DIR}")
-set(CMAKE_SWIG_OUTDIR "${PLUGINS_ENV_VAR}/../swig/python")
+set(CMAKE_SWIG_OUTDIR "${PLUGINS_ENV_VAR}/../swig/python/speect")
 
 # create the Python Speect Engine wrapper (C and Python files)
 swig_add_module(uttproc_callback python uttproc_callback.i)
@@ -59,8 +59,8 @@ swig_link_libraries(uttproc_callback ${PYTHON_LIBRARIES} SPCT_LIBRARY_TARGET)
 # set the output directory
 set_target_properties(${SWIG_MODULE_uttproc_callback_REAL_NAME}
   PROPERTIES
-  LIBRARY_OUTPUT_DIRECTORY "${PLUGINS_ENV_VAR}/../swig/python"
-  RUNTIME_OUTPUT_DIRECTORY "${PLUGINS_ENV_VAR}/../swig/python"
+  LIBRARY_OUTPUT_DIRECTORY "${PLUGINS_ENV_VAR}/../swig/python/speect"
+  RUNTIME_OUTPUT_DIRECTORY "${PLUGINS_ENV_VAR}/../swig/python/speect"
 )
 
 #configure_file(${CMAKE_SOURCE_DIR}/swig/python/config/setup.py.in 

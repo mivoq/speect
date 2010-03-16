@@ -48,7 +48,7 @@ import ConfigParser
 import logging
 
 import speect
-import audio
+import speect.audio
 
 
 __author__     = "HLT - Meraka Institute CSIR"

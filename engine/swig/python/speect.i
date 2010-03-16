@@ -76,8 +76,8 @@
 /*                                                                                  */
 /************************************************************************************/
 
-%include "iterator.c"
 %include "primitives.c"
+%include "iterator.c"
 %include "object.c"
 %include "utterance.py"
 %include "utterance.c"
@@ -86,6 +86,7 @@
 %include "relation.c"
 %include "map.py"
 %include "map.c"
+%include "list.c"
 %include "item.py"
 %include "item.c"
 %include "voice.c"

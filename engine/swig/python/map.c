@@ -121,9 +121,9 @@ typedef struct
 	}
 
 
-	PIterator *__iter__()
+	PMapIterator *__iter__()
 	{
-		PIterator *pitr;
+		PMapIterator *pitr;
 		SIterator *itr;
 		s_erc error;
 
@@ -134,7 +134,7 @@ typedef struct
 			return NULL;
 
 		itr = SIteratorFirst(itr);
-		pitr = make_PIterator(itr, &error);
+		pitr = make_PMapIterator(itr, &error);
 		if (error != S_SUCCESS)
 			return NULL;
 

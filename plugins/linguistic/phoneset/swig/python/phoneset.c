@@ -39,6 +39,7 @@
 
 typedef struct
 {
+	SMap *features;
 } SPhoneset;
 
 

@@ -47,6 +47,11 @@ plugins/lib/*
 *PYTHON_wrap.c
 swig/python/*.py
 swig/python/*.pyc
+swig/python/speect/*.py
+swig/python/speect/*.pyc
+
+# except the __init__.py
+!swig/python/speect/__init__.py
 
 # except the client/server
 !speect/swig/python/client.py

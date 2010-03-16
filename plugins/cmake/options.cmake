@@ -32,12 +32,6 @@ option(WARN_DECL_AFTER_STMT "Warn about declarations after statements (GCC)" off
 
 
 #
-# Speect path
-#
-set(SPEECT_DIR "/home/aby/Development/speect/engine" CACHE STRING "Path to Speect Engine")
-
-
-#
 # Examples.
 #
 option(WANT_EXAMPLES "Include the example suite in the compilation" off)

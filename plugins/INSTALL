@@ -6,18 +6,25 @@ cache and cmake makefiles) and to delete auto generated files and backup files.
 
 First configure and build the Speect engine (see speect/engine/INSTALL).
 
+
+Enviroment variables
+--------------------
+
+Set the "SPEECT_ENGINE" enviroment variable to the full path of your 
+Speect Engine directory (this is the root path to the Speect engine _source_
+e.g. "speect/engine" where cmake configuration files from the engine
+configuration can be found).
+
+for example in bash do
+
+export SPEECT_ENGINE="/home/your_path/speect/engine"
+
 Set the "SPEECT_PLUGINS" enviroment variable to the full path of your 
 plug-in directory.
 
 for example in bash do
 
 export SPEECT_PLUGINS="/home/your_path/speect/plugins"
-
-Now edit speect/plugins/cmake/options.cmake and set the SPEECT_DIR
-path variable (line 37) to the full path of your Speect engine
-directory (this is the root path to the Speect engine _source_
-e.g. "speect/engine" where cmake configuration files from the engine
-configuration can be found).
 
 
 Configuration

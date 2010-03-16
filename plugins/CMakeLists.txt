@@ -57,6 +57,21 @@ set(PLUGINS_COMMON_CMAKE_PATH ${PLUGINS_ENV_VAR}/cmake/)
 list(APPEND CMAKE_MODULE_PATH ${PLUGINS_COMMON_CMAKE_PATH})
 list(APPEND CMAKE_MODULE_PATH ${PLUGINS_COMMON_CMAKE_PATH}/config)
 
+
+#------------------------------------------------------------------------------------#
+#                            Speect Engine location                                  #
+#------------------------------------------------------------------------------------#
+
+set(SPEECT_ENGINE_ENV_VAR_SET FALSE)
+set(SPEECT_ENGINE_ENV_VAR "$ENV{SPEECT_ENGINE}")
+string(COMPARE NOTEQUAL SPEECT_ENGINE_ENV_VAR "" SPEECT_ENGINE_ENV_VAR_SET)
+if(NOT SPEECT_ENGINE_ENV_VAR_SET)
+  message(FATAL_ERROR "The environment variable \"SPEECT_ENGINE\" is not set. Please set it to the root of the Speect Engine directory.")
+endif(NOT SPEECT_ENGINE_ENV_VAR_SET)
+
+set(SPEECT_DIR ${SPEECT_ENGINE_ENV_VAR})
+
+
 #------------------------------------------------------------------------------------#
 #                             Get all CMake modules                                  #
 #------------------------------------------------------------------------------------#

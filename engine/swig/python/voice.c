@@ -34,9 +34,6 @@
 /*                                                                                  */
 /************************************************************************************/
 
-%nodefaultdtor SVoice;
-
-
 typedef struct
 {
 	SMap *features;
@@ -64,12 +61,13 @@ typedef struct
 		return voice;
 	}
 
-	void delete()
+
+	~SVoice()
 	{
 		s_erc error;
 
 		S_CLR_ERR(&error);
-		S_DELETE($self, "SVoice::delete()", &error);
+		S_DELETE($self, "~SVoice", &error);
 	}
 
 

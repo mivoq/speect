@@ -72,6 +72,8 @@
 		$result = Py_False;
 	else
 		$result = Py_True;
+
+	Py_XINCREF($result);
 }
 
 

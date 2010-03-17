@@ -59,7 +59,7 @@
 
 
 		if (object == NULL)
-			return Py_None;
+			Py_RETURN_NONE;
 
 		type = SObjectType(object, error);
 		if (*error != S_SUCCESS)

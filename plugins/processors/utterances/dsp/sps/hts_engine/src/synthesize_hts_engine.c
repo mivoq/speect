@@ -927,14 +927,14 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 			duration += HTS_SStreamSet_get_duration(sss, state++);
 
 		tmp = frame * rate;
-		SItemSetFloat((SItem*)itemItr, "start_time", tmp/1e+7, error);
+		SItemSetFloat((SItem*)itemItr, "start", tmp/1e+7, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "Run",
 					  "Call to \"SItemSetFloat\" failed"))
 			goto quit_error;
 
 		tmp = (frame + duration) * rate;
-		SItemSetFloat((SItem*)itemItr, "end_time", tmp/1e+7, error);
+		SItemSetFloat((SItem*)itemItr, "end", tmp/1e+7, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "Run",
 					  "Call to \"SItemSetFloat\" failed"))

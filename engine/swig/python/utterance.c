@@ -38,7 +38,8 @@
 
 typedef struct
 {
-	SMap *features;
+	SVoice *voice;
+	SMap   *features;
 } SUtterance;
 
 
@@ -103,19 +104,6 @@ typedef struct
 			return NULL;
 
 		return rel;
-	}
-
-
-	const SVoice *voice(s_erc *error)
-	{
-		const SVoice *voice;
-
-
-		voice = SUtteranceVoice($self, error);
-		if (*error != S_SUCCESS)
-			return NULL;
-
-		return voice;
 	}
 
 

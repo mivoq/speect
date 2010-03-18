@@ -867,6 +867,8 @@ S_API SList *SItemFeatKeys(const SItem *self, s_erc *error);
  * @param name The feature name.
  * @param error Error code.
  * @return Pointer to the SObject object.
+ * @note If feature does not exist an @c S_ARGERROR will be raised,
+ * use #SItemFeatureIsPresent to test if feature is present.
  */
 S_API const SObject *SItemGetObject(const SItem *self, const char *name, s_erc *error);
 
@@ -878,6 +880,8 @@ S_API const SObject *SItemGetObject(const SItem *self, const char *name, s_erc *
  * @param name The feature name.
  * @param error Error code.
  * @return Integer value of named feature.
+ * @note If feature does not exist an @c S_ARGERROR will be raised,
+ * use #SItemFeatureIsPresent to test if feature is present.
  */
 S_API sint32 SItemGetInt(const SItem *self, const char *name, s_erc *error);
 
@@ -889,6 +893,8 @@ S_API sint32 SItemGetInt(const SItem *self, const char *name, s_erc *error);
  * @param name The feature name.
  * @param error Error code.
  * @return Float value of named feature.
+ * @note If feature does not exist an @c S_ARGERROR will be raised,
+ * use #SItemFeatureIsPresent to test if feature is present.
  */
 S_API float SItemGetFloat(const SItem *self, const char *name, s_erc *error);
 
@@ -900,6 +906,8 @@ S_API float SItemGetFloat(const SItem *self, const char *name, s_erc *error);
  * @param name The feature name.
  * @param error Error code.
  * @return Pointer to the string.
+ * @note If feature does not exist an @c S_ARGERROR will be raised,
+ * use #SItemFeatureIsPresent to test if feature is present.
  */
 S_API const char *SItemGetString(const SItem *self, const char *name, s_erc *error);
 

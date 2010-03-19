@@ -137,6 +137,8 @@
 			if (*error != S_SUCCESS)
 				return NULL;
 
+			Py_XINCREF(pobject);
+
 			if (own == TRUE)
 				S_DELETE(object, "sobject_2_pyobject", error);
 

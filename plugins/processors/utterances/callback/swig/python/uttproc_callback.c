@@ -38,13 +38,67 @@
 
 %inline
 %{
+	static char *get_python_err(void)
+	{
+		PyObject *pyErr;
+		PyObject *ptype;
+		PyObject *pvalue;
+		PyObject *ptraceback;
+		PyObject *errorStr;
+		const char *perror;
+		char *rerror;
+		s_erc error;
+
+
+		S_CLR_ERR(&error);
+		pyErr = PyErr_Occurred();
+		if (pyErr == NULL)
+		{
+			rerror = s_strdup("No error", &error);
+			return rerror;
+		}
+
+		PyErr_Fetch(&ptype, &pvalue, &ptraceback);
+		if (ptype == NULL)
+		{
+			rerror = s_strdup("Unknown error", &error);
+			return rerror;
+		}
+
+		PyErr_NormalizeException(&ptype, &pvalue, &ptraceback);
+		if (ptype == NULL)
+		{
+			rerror = s_strdup("Unknown error", &error);
+			return rerror;
+		}
+
+		errorStr = PyObject_Str(ptype);
+		if (errorStr == NULL)
+		{
+			rerror = s_strdup("Unknown error", &error);
+			return rerror;
+		}
+
+		perror = PyString_AsString(errorStr);
+		if (perror == NULL)
+		{
+			rerror = s_strdup("Unknown error", &error);
+			return rerror;
+		}
+
+		rerror = s_strdup(perror, &error);
+		Py_XDECREF(errorStr);
+		return rerror;
+	}
+
+
 	/*
 	 * Function that executes the Python callback
 	 * by calling PyObject_CallObject
 	 */
 	static void execute_python_callback(SUtterance *utt, void *sfunction, s_erc *error)
 	{
-		PyObject *pySUtt;
+		PyObject *pyUtt;
 		PyObject *func;
 		PyObject *arglist;
 		PyObject *result;
@@ -56,16 +110,44 @@
 		/* Create a PyObject from the SObject, flag = 0 (Python does
 		 * not own the SObject/PyObject
 		 */
-		pySUtt = SWIG_NewPointerObj((void*)utt, SWIGTYPE_p_SUtterance, 0);
+		pyUtt = SWIG_NewPointerObj((void*)utt, SWIGTYPE_p_SUtterance, 0);
 
 		/* create argument list */
-		arglist = Py_BuildValue("(O)", pySUtt);
+		arglist = Py_BuildValue("(O)", pyUtt);
+		if (arglist == NULL) /* callback function failed */
+		{
+			S_CTX_ERR(error, S_FAILURE,
+					  "execute_python_callback",
+					  "Call to \"Py_BuildValue\" failed");
+			return;
+		}
 
 		/* call Python and execute the function */
 		result = PyObject_CallObject(func, arglist);
 
 		/* we don't need the argument list anymore */
-		Py_CLEAR(arglist);
+		Py_DECREF(arglist);
+
+		if (result == NULL) /* callback function failed */
+		{
+			char *py_error;
+
+
+			py_error = get_python_err();
+			if (py_error != NULL)
+			{
+				S_CTX_ERR(error, S_FAILURE,
+						  "execute_python_callback",
+						  "Python callback execution failed: \"%s\"", py_error);
+				S_FREE(py_error);
+			}
+			else
+			{
+				S_CTX_ERR(error, S_FAILURE,
+						  "execute_python_callback",
+						  "Python callback execution failed: \"Unknown error!\"");
+			}
+		}
 
 		/* this should be None */
 		Py_CLEAR(result);
@@ -84,7 +166,7 @@
 		/* decrement the reference count, we don't need
 		 * this function anymore
 		 */
-		Py_CLEAR(callback_func);
+		Py_XDECREF(callback_func);
 	}
 
 
@@ -92,6 +174,15 @@
 	{
 		SUttProcessorCB *uttProcPy;
 
+
+		/* test whether the callback function is actually callable */
+		if (!PyCallable_Check(callback_func))
+		{
+			S_CTX_ERR(error, S_FAILURE,
+					  "suttproc_cb_new",
+					  "Given callback function failed \"PyCallable_Check\"");
+			return NULL;
+		}
 
 		/* create new Python utterance processor */
 		uttProcPy = (SUttProcessorCB*)S_NEW("SUttProcessorCB", error);

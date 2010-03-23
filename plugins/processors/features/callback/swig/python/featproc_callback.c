@@ -42,6 +42,116 @@
  */
 %inline
 %{
+	/*
+	 * FIXME: SVoid_PyObject_free and pyobject_2_sobject come from
+	 * speect/engine/swig/python/primitives.c
+	 * Don't know how to include them here.
+	 */
+
+	void SVoid_PyObject_free(void *ptr, s_erc *error)
+	{
+		PyObject *object = ptr;
+
+
+		Py_XDECREF(object);
+	}
+
+	SObject *pyobject_2_sobject(PyObject *pobject, s_erc *error)
+	{
+		SObject *object;
+		int res;
+		void *argp;
+
+
+		if (pobject == Py_None)
+			return NULL;
+
+		res = SWIG_ConvertPtr(pobject, &argp,SWIGTYPE_p_SObject, SWIG_POINTER_DISOWN|0);
+		if (SWIG_IsOK(res))
+		{
+			/* it's a speect object */
+			object = (SObject*)argp;
+			return object;
+		}
+
+		/* it's a python object */
+		if (PyObject_IsInstance(pobject, (PyObject*)&PyInt_Type))
+		{
+			sint32 tmp;
+
+
+			tmp = (sint32)PyLong_AsLong(pobject);
+			object = SObjectSetInt(tmp, error);
+			if (*error != S_SUCCESS)
+				return NULL;
+
+			return object;
+		}
+
+		if (PyObject_IsInstance(pobject, (PyObject*)&PyFloat_Type))
+		{
+			float tmp;
+
+
+			tmp = (float)PyFloat_AsDouble(pobject);
+			object = SObjectSetFloat(tmp, error);
+			if (*error != S_SUCCESS)
+				return NULL;
+
+			return object;
+		}
+
+		if (PyObject_IsInstance(pobject, (PyObject*)&PyString_Type))
+		{
+			const char *tmp;
+
+
+			tmp = PyString_AsString(pobject);
+			object = SObjectSetString(tmp, error);
+			if (*error != S_SUCCESS)
+				return NULL;
+
+			return object;
+		}
+
+		if (PyObject_IsInstance(pobject, (PyObject*)&PyUnicode_Type))
+		{
+			PyObject *ustring;
+			const char *tmp;
+
+
+			ustring = PyUnicode_AsUTF8String(pobject);
+			if (ustring == NULL)
+			{
+				S_CTX_ERR(error, S_FAILURE,
+						  "pyobject_2_sobject",
+						  "Call to \"PyUnicode_AsUTF8String\" failed");
+				return NULL;
+			}
+
+			tmp = PyString_AsString(ustring);
+			object = SObjectSetString(tmp, error);
+			if (*error != S_SUCCESS)
+				return NULL;
+
+			Py_XDECREF(ustring);
+			return object;
+		}
+
+		/* not a simple object, make a SVoid type */
+		Py_XINCREF(pobject);
+		object = SObjectSetVoid((void*)pobject, "PythonObject",
+								&SVoid_PyObject_free, error);
+		if (*error != S_SUCCESS)
+		{
+			Py_XDECREF(pobject);
+			return NULL;
+		}
+
+		return object;
+	}
+
+
 	static char *get_python_err(void)
 	{
 		PyObject *pyErr;
@@ -155,17 +265,12 @@
 			return NULL;
 		}
 
-		/* Convert back from PyObject to SObject */
-		if (SWIG_ConvertPtr(result, (void **) &retval,
-							SWIGTYPE_p_SObject,
-							SWIG_POINTER_EXCEPTION) == -1)
-		{
-			/* let Speect know that there was an error */
-			S_CTX_ERR(error, S_FAILURE,
+		/* convert result to Speect object */
+		retval = pyobject_2_sobject(result, error);
+		if (S_CHK_ERR(error, S_CONTERR,
 					  "execute_python_callback",
-					  "Failed to convert PyObject to SObject");
-			return NULL;
-		}
+					  "Call to \"pyobject_2_sobject\" failed"))
+			retval = NULL;
 
 		/* we don't need the result object anymore */
 		Py_CLEAR(result);

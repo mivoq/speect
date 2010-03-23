@@ -180,6 +180,78 @@ cd ..
 
 ########################################################################
 
+echo "--cleaning syllable_stress_in--"
+
+cd ./syllable_stress_in/
+./clean_files
+cd ..
+
+
+########################################################################
+
+echo "--cleaning syllable_stress_out--"
+
+cd ./syllable_stress_out/
+./clean_files
+cd ..
+
+
+########################################################################
+
+echo "--cleaning syllable_accent_in--"
+
+cd ./syllable_accent_in/
+./clean_files
+cd ..
+
+
+########################################################################
+
+echo "--cleaning syllable_accent_out--"
+
+cd ./syllable_accent_out/
+./clean_files
+cd ..
+
+
+########################################################################
+
+echo "--cleaning syllable_stress_all_in--"
+
+cd ./syllable_stress_all_in/
+./clean_files
+cd ..
+
+
+########################################################################
+
+echo "--cleaning syllable_stress_all_out--"
+
+cd ./syllable_stress_all_out/
+./clean_files
+cd ..
+
+
+########################################################################
+
+echo "--cleaning syllable_accent_all_in--"
+
+cd ./syllable_accent_all_in/
+./clean_files
+cd ..
+
+
+########################################################################
+
+echo "--cleaning syllable_accent_all_out--"
+
+cd ./syllable_accent_all_out/
+./clean_files
+cd ..
+
+
+########################################################################
+
 echo "--cleaning word_break--"
 
 cd ./word_break/
@@ -237,6 +309,42 @@ cd ..
 echo "--cleaning word_start--"
 
 cd ./word_start/
+./clean_files
+cd ..
+
+
+########################################################################
+
+echo "--cleaning word_content_in--"
+
+cd ./word_content_in/
+./clean_files
+cd ..
+
+
+########################################################################
+
+echo "--cleaning word_content_out--"
+
+cd ./word_content_out/
+./clean_files
+cd ..
+
+
+########################################################################
+
+echo "--cleaning word_content_all_in--"
+
+cd ./word_content_all_in/
+./clean_files
+cd ..
+
+
+########################################################################
+
+echo "--cleaning word_content_all_out--"
+
+cd ./word_content_all_out/
 ./clean_files
 cd ..
 

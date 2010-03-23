@@ -4,3 +4,4 @@
 #------------------------------------------------------------------------------------#
 add_subdirectory(simple1)
 add_subdirectory(simple2)
+add_subdirectory(simple3)

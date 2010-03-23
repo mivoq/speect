@@ -34,19 +34,75 @@
 /*                                                                                  */
 /************************************************************************************/
 
+%include "exception.i"
+
 
 /*
  * Do not delete these delimiters, required for SWIG
  */
 %inline
 %{
+	static char *get_python_err(void)
+	{
+		PyObject *pyErr;
+		PyObject *ptype;
+		PyObject *pvalue;
+		PyObject *ptraceback;
+		PyObject *errorStr;
+		const char *perror;
+		char *rerror;
+		s_erc error;
+
+
+		S_CLR_ERR(&error);
+		pyErr = PyErr_Occurred();
+		if (pyErr == NULL)
+		{
+			rerror = s_strdup("No error", &error);
+			return rerror;
+		}
+
+		PyErr_Fetch(&ptype, &pvalue, &ptraceback);
+		if (ptype == NULL)
+		{
+			rerror = s_strdup("Unknown error", &error);
+			return rerror;
+		}
+
+		PyErr_NormalizeException(&ptype, &pvalue, &ptraceback);
+		if (ptype == NULL)
+		{
+			rerror = s_strdup("Unknown error", &error);
+			return rerror;
+		}
+
+		errorStr = PyObject_Str(ptype);
+		if (errorStr == NULL)
+		{
+			rerror = s_strdup("Unknown error", &error);
+			return rerror;
+		}
+
+		perror = PyString_AsString(errorStr);
+		if (perror == NULL)
+		{
+			rerror = s_strdup("Unknown error", &error);
+			return rerror;
+		}
+
+		rerror = s_strdup(perror, &error);
+		Py_XDECREF(errorStr);
+		return rerror;
+	}
+
+
 	/*
 	 * Function that executes the Python callback
 	 * by calling PyObject_CallObject
 	 */
-	static SObject *execute_python_callback(const SObject *item, void *sfunction, s_erc *error)
+	static SObject *execute_python_callback(const SItem *item, void *sfunction, s_erc *error)
 	{
-		PyObject *pySObject;
+		PyObject *pyItem;
 		PyObject *func;
 		PyObject *arglist;
 		PyObject *result;
@@ -58,30 +114,57 @@
 		/* Create a PyObject from the SObject, flag = 0 (Python does
 		 * not own the SObject/PyObject
 		 */
-		pySObject = SWIG_NewPointerObj((void*)item, SWIGTYPE_p_SObject, 0);
+		pyItem = SWIG_NewPointerObj((void*)item, SWIGTYPE_p_SItem, 0);
 
 		/* create argument list */
-		arglist = Py_BuildValue("(O)",pySObject);
+		arglist = Py_BuildValue("(O)", pyItem);
+		if (arglist == NULL) /* callback function failed */
+		{
+			S_CTX_ERR(error, S_FAILURE,
+					  "execute_python_callback",
+					  "Call to \"Py_BuildValue\" failed");
+			return NULL;
+		}
 
 		/* call Python and execute the function */
 		result = PyObject_CallObject(func, arglist);
 
 		/* we don't need the argument list anymore */
-		Py_CLEAR(arglist);
+		Py_DECREF(arglist);
 
-		if (result)
+		if (result == NULL) /* callback function failed */
 		{
-			/* Convert back from PyObject to SObject */
-			if (SWIG_ConvertPtr(result, (void **) &retval,
-								SWIGTYPE_p_SObject,
-								SWIG_POINTER_EXCEPTION) == -1)
+			char *py_error;
+
+
+			py_error = get_python_err();
+			if (py_error != NULL)
 			{
-				/* let Speect know that there was an error */
 				S_CTX_ERR(error, S_FAILURE,
 						  "execute_python_callback",
-						  "Failed to convert PyObject to SObject");
-				return NULL;
+						  "Python callback execution failed: \"%s\"", py_error);
+				S_FREE(py_error);
 			}
+			else
+			{
+				S_CTX_ERR(error, S_FAILURE,
+						  "execute_python_callback",
+						  "Python callback execution failed: \"Unknown error!\"");
+			}
+
+			return NULL;
+		}
+
+		/* Convert back from PyObject to SObject */
+		if (SWIG_ConvertPtr(result, (void **) &retval,
+							SWIGTYPE_p_SObject,
+							SWIG_POINTER_EXCEPTION) == -1)
+		{
+			/* let Speect know that there was an error */
+			S_CTX_ERR(error, S_FAILURE,
+					  "execute_python_callback",
+					  "Failed to convert PyObject to SObject");
+			return NULL;
 		}
 
 		/* we don't need the result object anymore */
@@ -91,50 +174,7 @@
 	}
 
 
-	SObject *py_sfeatproc_cb_new(PyObject *callback_func)
-	{
-		s_erc rv = S_SUCCESS;
-		SFeatProcessorCB *featProcPy;
-
-
-		/* create new Python feature processor */
-		featProcPy = (SFeatProcessorCB*)S_NEW("SFeatProcessorCB", &rv);
-		if (rv != S_SUCCESS)
-		{
-			PyErr_SetString(PyExc_RuntimeError,
-							"Failed to create new SFeatProcessorCB object");
-			return NULL;
-		}
-
-		/* set the object's callback and execute functions */
-		if (!S_FEATPROCESSOR_CB_METH_VALID(featProcPy, set_callback))
-		{
-			PyErr_SetString(PyExc_RuntimeError,
-							"SFeatProcessorCB method \"set_callback\" not implemented");
-			S_DELETE(featProcPy, "py_sfeatproc_cb_new", &rv);
-			return NULL;
-		}
-
-		S_FEATPROCESSOR_CB_CALL(featProcPy, set_callback)(featProcPy,
-														  &execute_python_callback,
-														  (void*)callback_func,
-														  &rv);
-		if (rv != S_SUCCESS)
-		{
-			PyErr_SetString(PyExc_RuntimeError,
-							"Failed to set SFeatProcessorCB callback function");
-			S_DELETE(featProcPy, "py_sfeatproc_cb_new", &rv);
-			return NULL;
-		}
-
-		/* increment the reference to the callback function */
-		Py_XINCREF(callback_func);
-
-		return S_OBJECT(featProcPy);
-	}
-
-
-	void py_sfeatproc_cb_decrement_func(SObject *featProcPy)
+	static void sfeatproc_cb_decrement_func(SFeatProcessorCB *featProcPy, s_erc *error)
 	{
 		PyObject *callback_func;
 		SFeatProcessorCB *self = S_FEATPROCESSOR_CB(featProcPy);
@@ -146,7 +186,55 @@
 		/* decrement the reference count, we don't need
 		 * this function anymore
 		 */
-		Py_CLEAR(callback_func);
+		Py_XDECREF(callback_func);
+	}
+
+
+	SObject *sfeatproc_cb_new(PyObject *callback_func, s_erc *error)
+	{
+		s_erc rv = S_SUCCESS;
+		SFeatProcessorCB *featProcPy;
+
+
+		/* test whether the callback function is actually callable */
+		if (!PyCallable_Check(callback_func))
+		{
+			S_CTX_ERR(error, S_FAILURE,
+					  "sfeatproc_cb_new",
+					  "Given callback function failed \"PyCallable_Check\"");
+			return NULL;
+		}
+
+		/* create new Python feature processor */
+		featProcPy = (SFeatProcessorCB*)S_NEW("SFeatProcessorCB", error);
+		if (*error != S_SUCCESS)
+			return NULL;
+
+		/* set the object's callback and execute functions */
+		if (!S_FEATPROCESSOR_CB_METH_VALID(featProcPy, set_callback))
+		{
+			S_CTX_ERR(error, S_FAILURE,
+					  "sfeatproc_cb_new",
+					  "SFeatProcessorCB method \"set_callback\" not implemented");
+			S_DELETE(featProcPy, "sfeatproc_cb_new", &rv);
+			return NULL;
+		}
+
+		S_FEATPROCESSOR_CB_CALL(featProcPy, set_callback)(featProcPy,
+														  &execute_python_callback,
+														  &sfeatproc_cb_decrement_func,
+														  (void*)callback_func,
+														  error);
+		if (*error != S_SUCCESS)
+		{
+			S_DELETE(featProcPy, "sfeatproc_cb_new", error);
+			return NULL;
+		}
+
+		/* increment the reference to the callback function */
+		Py_XINCREF(callback_func);
+
+		return S_FEATPROCESSOR(featProcPy);
 	}
 /*
  * Do not delete this delimiter, required for SWIG

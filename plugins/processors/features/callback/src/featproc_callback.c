@@ -93,7 +93,18 @@ static void Init(void *obj, s_erc *error)
 
 	S_CLR_ERR(error);
 	self->sexecute = NULL;
+	self->scleanup = NULL;
 	self->sfunction = NULL;
+}
+
+
+static void Destroy(void *obj, s_erc *error)
+{
+	SFeatProcessorCB *self = obj;
+
+	S_CLR_ERR(error);
+	if (self->scleanup != NULL)
+		self->scleanup(self, error);
 }
 
 
@@ -129,7 +140,7 @@ static SObject *Run(const SFeatProcessor *featProc, const SItem *item,
 		return NULL;
 	}
 
-	extractedFeat = self->sexecute(S_OBJECT(item), self->sfunction, error);
+	extractedFeat = self->sexecute(item, self->sfunction, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Run",
 				  "Scripting language callback function failed"))
@@ -139,7 +150,8 @@ static SObject *Run(const SFeatProcessor *featProc, const SItem *item,
 }
 
 
-static void SetCallback(SFeatProcessorCB *self, callback sexecute,
+static void SetCallback(SFeatProcessorCB *self,
+						callback sexecute, delete scleanup,
 						void *sfunction, s_erc *error)
 {
 	S_CLR_ERR(error);
@@ -161,6 +173,7 @@ static void SetCallback(SFeatProcessorCB *self, callback sexecute,
 	}
 
 	self->sexecute = sexecute;
+	self->scleanup = scleanup;
 	self->sfunction = sfunction;
 }
 
@@ -180,7 +193,7 @@ static SFeatProcessorCBClass FeatProcessorCBClass =
 			sizeof(SFeatProcessorCB),
 			{ 0, 1},
 			Init,            /* init    */
-			NULL,            /* destroy */
+			Destroy,         /* destroy */
 			Dispose,         /* dispose */
 			NULL,            /* compare */
 			NULL,            /* print   */

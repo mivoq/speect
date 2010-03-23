@@ -48,7 +48,7 @@
 #include "featproc_callback.h"
 %}
 
-
+%include "exception.i"
 %import speect.i
 
 
@@ -67,7 +67,10 @@
 
 		plugin = s_pm_load_plugin("featproc_cb.spi", &rv);
 		if (rv != S_SUCCESS)
-			PyErr_SetString(PyExc_RuntimeError, "Failed to load SFeatProcessorCB plug-in");
+			SWIG_exception(SWIG_RuntimeError, "Failed to load SFeatProcessorCB plug-in");
+
+	fail:
+		return;
 	}
 %}
 

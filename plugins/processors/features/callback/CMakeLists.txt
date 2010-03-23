@@ -48,9 +48,9 @@ include(plugin)
 #                                   examples                                         #
 #------------------------------------------------------------------------------------#
 
-if(WANT_EXAMPLES)
-  add_subdirectory(examples)
-endif(WANT_EXAMPLES)
+#if(WANT_EXAMPLES)
+#  add_subdirectory(examples)
+#endif(WANT_EXAMPLES)
 
 
 #------------------------------------------------------------------------------------#

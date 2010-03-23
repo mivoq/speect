@@ -147,7 +147,19 @@ S_BEGIN_C_DECLS
  * variable, and returns an #SObject. The scripting language callback
  * function must have this typedef signature.
  */
-typedef SObject *(*callback)(const SObject *item, void *sfunction, s_erc *error);
+typedef SObject *(*callback)(const SItem *item, void *sfunction, s_erc *error);
+
+
+/* forward declaration */
+typedef struct SFeatProcessorCB SFeatProcessorCB;
+
+
+/**
+ * Type definition of the delete function. The delete function takes
+ * care of any clean up actions required when deleting the scripting
+ * language <i> callback function </i>.
+ */
+typedef void (*delete)(SFeatProcessorCB *featProc, s_erc *error);
 
 
 /************************************************************************************/
@@ -158,10 +170,10 @@ typedef SObject *(*callback)(const SObject *item, void *sfunction, s_erc *error)
 
 /**
  * The SFeatProcessorCB structure.
- * A Python callback feature processor class.
+ * A scripting language callback feature processor class.
  * @extends SFeatProcessor
  */
-typedef struct
+struct SFeatProcessorCB
 {
 	/**
 	 * @protected Inherit from #SFeatProcessor.
@@ -175,10 +187,17 @@ typedef struct
 	callback       sexecute;
 
 	/**
+	 * @protected Pointer to the wrapper function that takes care of
+	 * any clean up actions required when deleting the scripting
+	 * language callback function.
+	 */
+	delete        scleanup;
+
+	/**
 	 * @protected The scripting language callback function.
 	 */
 	void          *sfunction;
-} SFeatProcessorCB;
+};
 
 
 /************************************************************************************/
@@ -206,9 +225,13 @@ typedef struct
 	 * @param self The callback feature processor.
 	 * @param sexecute The wrapper function that executes the
 	 * scripting language callback function @c sfunction.
+	 * @param scleanup The wrapper function that takes care of
+	 * any clean up actions required when deleting the scripting
+	 * language callback function.
 	 * @param sfunction The scripting language callback function to execute.
 	 */
-	void  (*set_callback)(SFeatProcessorCB *self, callback sexecute,
+	void  (*set_callback)(SFeatProcessorCB *self,
+						  callback sexecute, delete scleanup,
 						  void *sfunction, s_erc *error);
 } SFeatProcessorCBClass;
 

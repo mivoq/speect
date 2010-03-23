@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2009-2010 The Department of Arts and Culture,                      */
+/* Copyright (c) 2010 The Department of Arts and Culture,                           */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -23,73 +23,38 @@
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* AUTHOR  : Richard Carlson, Aby Louw                                              */
-/* DATE    : March 2009                                                             */
+/* AUTHOR  : Aby Louw                                                               */
+/* DATE    : March 2010                                                             */
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* The Speect Engine library SWIG/Python interface definition.                      */
+/* C convenience functions for SFeatProc Python wrapper.                            */
 /*                                                                                  */
 /*                                                                                  */
-/************************************************************************************/
-
-%module speect
-
-%include "typemaps.i"
-%include "exception.i"
-%include "speect_typemaps.i"
-
-/************************************************************************************/
-/*                                                                                  */
-/* Speect Engine header.                                                            */
 /*                                                                                  */
 /************************************************************************************/
 
-%header
-%{
-#include "speect.h"
-%}
-
-%feature("autodoc", "1");
-
-/************************************************************************************/
-/*                                                                                  */
-/* Speect Python typemaps.                                                          */
-/*                                                                                  */
-/************************************************************************************/
-
-%include "speect_py_typemaps.i"
+%nodefaultctor SFeatProcessor;
 
 
-/************************************************************************************/
-/*                                                                                  */
-/* Miscellaneous C Speect functions.                                                */
-/*                                                                                  */
-/************************************************************************************/
-
-%include "misc.c"
+typedef struct
+{
+} SFeatProcessor;
 
 
-/************************************************************************************/
-/*                                                                                  */
-/* SObject wrapper functions                                                        */
-/*                                                                                  */
-/************************************************************************************/
+%types(SFeatProcessor = SObject);
 
-%include "primitives.c"
-%include "iterator.c"
-%include "object.c"
-%include "utterance.py"
-%include "utterance.c"
-%include "relation.py"
-%include "relation_itr.c"
-%include "relation.c"
-%include "map.py"
-%include "map.c"
-%include "list.c"
-%include "item.py"
-%include "item.c"
-%include "voice.c"
-%include "plugin.c"
-%include "utt_processor.c"
-%include "feat_processor.c"
+%extend SFeatProcessor
+{
+	SObject *run(const SItem *item, s_erc *error)
+	{
+		SObject *featObject;
+
+
+		featObject = SFeatProcessorRun($self, item, error);
+		if (*error != S_SUCCESS)
+			return NULL;
+
+		return featObject;
+	}
+};

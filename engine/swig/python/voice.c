@@ -42,6 +42,7 @@ typedef struct
 		SList *uttTypes;
 		SList *uttProcessors;
 		SList *dataObjects;
+		SList *featProcessors;
 	}
 } SVoice;
 
@@ -207,6 +208,31 @@ typedef struct
 	{
 		SVoiceDelUttProc($self, key, error);
 	}
+
+
+	const SFeatProcessor *featProcessor_get(const char *key, s_erc *error)
+	{
+		const SFeatProcessor *featProc;
+
+
+		featProc = SVoiceGetFeatProc($self, key, error);
+		if (*error != S_SUCCESS)
+			return NULL;
+
+		return featProc;
+	}
+
+
+	void featProcessor_set(const char *key, const SFeatProcessor *featProc, s_erc *error)
+	{
+		SVoiceSetFeatProc($self, key, featProc, error);
+	}
+
+
+	void featProcessor_del(const char *key, s_erc *error)
+	{
+		SVoiceDelFeatProc($self, key, error);
+	}
 };
 
 
@@ -283,5 +309,30 @@ typedef struct
 
 		S_CLR_ERR(&error);
 		S_DELETE(list, "SVoice_dataObjects_set", &error);
+	}
+
+
+	SList *SVoice_featProcessors_get(const SVoice *voice)
+	{
+		s_erc error;
+		SList *featProcessors;
+
+
+		S_CLR_ERR(&error);
+		featProcessors = SVoiceGetFeatProcKeys(voice, &error);
+		if (error != S_SUCCESS)
+			return NULL;
+
+		return featProcessors;
+	}
+
+
+	void SVoice_featProcessors_set(const SVoice *voice, SList *list)
+	{
+		s_erc error;
+
+
+		S_CLR_ERR(&error);
+		S_DELETE(list, "SVoice_featProcessors_set", &error);
 	}
 %}

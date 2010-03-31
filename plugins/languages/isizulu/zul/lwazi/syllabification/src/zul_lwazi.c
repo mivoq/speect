@@ -279,6 +279,7 @@ static SList *Syllabify(const SItem *word, const SList *phoneList, s_erc *error)
 					  "Syllabify",
 					  "Call to \"SListPop\" failed"))
 			goto quit_error;
+		list_size--;  /* popped 1 */
 
 		phone_string = SObjectGetString(tmp, error);
 		if (S_CHK_ERR(error, S_CONTERR,
@@ -407,6 +408,9 @@ static SList *Syllabify(const SItem *word, const SList *phoneList, s_erc *error)
 								  "Syllabify",
 								  "Call to \"SListPop\" failed"))
 						goto quit_error;
+
+					list_size--;  /* popped 1 */
+
 
 					/* add to syllable, phone_string first */
 					SListPush(syl, SObjectSetString(phone_string, error), error);

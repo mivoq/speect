@@ -40,6 +40,7 @@
 /*                                                                                  */
 /************************************************************************************/
 
+#include <string.h>
 #include "g2p_rewrites_rule.h"
 #include "g2p_rewrites.h"
 
@@ -492,6 +493,7 @@ static SList *Apply(const SG2P *self, const char *word, s_erc *error)
 	while ((character != 0) && (word_size > 0)) /* skip last '#' */
 	{
 		/* move character to alpha */
+		memset(alpha, 0, 4);
 		s_setc(alpha, character, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "Apply",

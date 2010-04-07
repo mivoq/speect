@@ -295,9 +295,8 @@
 	}
 
 
-	SObject *sfeatproc_cb_new(PyObject *callback_func, s_erc *error)
+	SFeatProcessor *sfeatproc_cb_new(PyObject *callback_func, s_erc *error)
 	{
-		s_erc rv = S_SUCCESS;
 		SFeatProcessorCB *featProcPy;
 
 
@@ -321,7 +320,7 @@
 			S_CTX_ERR(error, S_FAILURE,
 					  "sfeatproc_cb_new",
 					  "SFeatProcessorCB method \"set_callback\" not implemented");
-			S_DELETE(featProcPy, "sfeatproc_cb_new", &rv);
+			S_DELETE(featProcPy, "sfeatproc_cb_new", error);
 			return NULL;
 		}
 

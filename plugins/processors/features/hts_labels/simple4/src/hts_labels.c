@@ -75,8 +75,6 @@ static sint32 get_stress_level(const SObject *stressFeat, s_erc *error);
 
 static sint32 get_accent_level(const SObject *accentFeat, s_erc *error);
 
-static const char *name_hack(const SObject *nameObject);
-
 static s_bool segment_is_pause(const SItem *item, s_erc *error);
 
 
@@ -350,40 +348,6 @@ static sint32 get_accent_level(const SObject *accentFeat, s_erc *error)
 }
 
 
-static const char *name_hack(const SObject *nameObject)
-{
-	const char *tmp;
-	s_erc error;
-
-
-	S_CLR_ERR(&error);
-	tmp = SObjectGetString(nameObject, &error);
-
-	if (s_strcmp(tmp, "@", &error) == 0)
-	{
-		return "_";
-	}
-	else if (s_strcmp(tmp, "@@", &error) == 0)
-	{
-		return "__";
-	}
-	else if (s_strcmp(tmp, "e@", &error) == 0)
-	{
-		return "e_";
-	}
-	else if (s_strcmp(tmp, "i@", &error) == 0)
-	{
-		return "i_";
-	}
-	else if (s_strcmp(tmp, "u@", &error) == 0)
-	{
-		return "u_";
-	}
-
-	return tmp;
-}
-
-
 static s_bool segment_is_pause(const SItem *item, s_erc *error)
 {
 	const SVoice *voice;
@@ -465,7 +429,7 @@ static char *create_phone_context(const SItem *item, s_erc *error)
 
 	if (featPath != NULL)
 	{
-		s_strcpy(p1, name_hack(featPath), error);
+		s_strcpy(p1, SObjectGetString(featPath, error), error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "create_phone_context",
 					  "Call to \"s_strcpy/SObjectGetString\" failed"))
@@ -489,7 +453,7 @@ static char *create_phone_context(const SItem *item, s_erc *error)
 
 	if (featPath != NULL)
 	{
-		s_strcpy(p2, name_hack(featPath), error);
+		s_strcpy(p2, SObjectGetString(featPath, error), error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "create_phone_context",
 					  "Call to \"s_strcpy/SObjectGetString\" failed"))
@@ -505,7 +469,7 @@ static char *create_phone_context(const SItem *item, s_erc *error)
 	}
 
 	/* p3 = name */
-	tmp = name_hack(SItemGetObject(item, "name", error));
+	tmp = SItemGetName(item, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "create_phone_context",
 				  "Call to \"SItemGetName\" failed"))
@@ -537,7 +501,7 @@ static char *create_phone_context(const SItem *item, s_erc *error)
 
 	if (featPath != NULL)
 	{
-		s_strcpy(p4, name_hack(featPath), error);
+		s_strcpy(p4, SObjectGetString(featPath, error), error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "create_phone_context",
 					  "Call to \"s_strcpy/SObjectGetString\" failed"))
@@ -561,7 +525,7 @@ static char *create_phone_context(const SItem *item, s_erc *error)
 
 	if (featPath != NULL)
 	{
-		s_strcpy(p5, name_hack(featPath), error);
+		s_strcpy(p5, SObjectGetString(featPath, error), error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "create_phone_context",
 					  "Call to \"s_strcpy/SObjectGetString\" failed"))
@@ -1262,7 +1226,7 @@ static char *create_B_context(const SItem *item, s_erc *error)
 
 	if (dFeat != NULL)
 	{
-		b16 = name_hack(dFeat);
+		b16 = SObjectGetString(dFeat, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "create_B_context",
 					  "Call to \"SObjectGetString\" failed"))

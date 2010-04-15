@@ -1,0 +1,35 @@
+[Lwazi English HTS]
+voice_definition: /home/tts/Voices/LWAZI/HTS/eng-ZA/voice.txt
+
+[Lwazi Afrikaans US]
+voice_definition: /home/tts/Voices/LWAZI/US/afr/voice.txt
+
+[Lwazi English US]
+voice_definition: /home/tts/Voices/LWAZI/US/eng-ZA/voice.txt
+
+[Lwazi isiZulu US]
+voice_definition: /home/tts/Voices/LWAZI/US/zul/voice.txt
+
+[Lwazi isiXhosa US]
+voice_definition: /home/tts/Voices/LWAZI/US/xho/voice.txt
+
+[Lwazi isiNdebele US]
+voice_definition: /home/tts/Voices/LWAZI/US/nde/voice.txt
+
+[Lwazi Siswati US]
+voice_definition: /home/tts/Voices/LWAZI/US/ssw/voice.txt
+
+[Lwazi Sesotho US]
+voice_definition: /home/tts/Voices/LWAZI/US/sot/voice.txt
+
+[Lwazi Sepedi US]
+voice_definition: /home/tts/Voices/LWAZI/US/nso/voice.txt
+
+[Lwazi Setswana US]
+voice_definition: /home/tts/Voices/LWAZI/US/tsn/voice.txt
+
+[Lwazi Xitsonga US]
+voice_definition: /home/tts/Voices/LWAZI/US/tso/voice.txt
+
+[Lwazi Tshivenda US]
+voice_definition: /home/tts/Voices/LWAZI/US/ven/voice.txt

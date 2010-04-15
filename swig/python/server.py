@@ -59,7 +59,7 @@ __version__    = "0.1"
 __email__      = "dvniekerk@csir.co.za"
 
 
-NAME = "speectserver"
+NAME = "server.py"
 DEF_LOG = os.path.join(os.environ.get("HOME"), ".speectserver/server.log")
 DEF_LOGLEVEL = 20
 DEF_CONF = os.path.join(os.environ.get("HOME"), ".speectserver/server.conf")
@@ -116,20 +116,26 @@ class TTSServer():
             
     def synth(self, request):
         log.info("Synthesis request: %s" % request)
-        utt = self.voices[request["voicename"]].synth(request["text"])
-        speectwaveform = utt.features["audio"]
-        if not speectwaveform:
+        try:
+            utt = self.voices[request["voicename"]].synth(request["text"])
+            speectwaveform = utt.features["audio"]
+            if not speectwaveform:
+                log.error("Synthesis failed.")
+                reply = {"success": False,
+                         "sampletype": None,
+                         "samplerate": None,
+                         "samples": None}
+            else:
+                log.info("Synthesis successful.")
+                reply = {"success": True}
+                reply.update(speectwaveform.get_audio_waveform())
+        except RunTimeError:
             log.error("Synthesis failed.")
             reply = {"success": False,
                      "sampletype": None,
                      "samplerate": None,
                      "samples": None}
-        else:
-            log.info("Synthesis successful.")
-            reply = {"success": True}
-            reply.update(speectwaveform.get_audio_waveform())
         return reply
-
 
 
 class TTSHandler(threading.Thread): 

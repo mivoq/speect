@@ -112,7 +112,7 @@ if __name__ == "__main__":
         voicename, text = args
         message = {"type": "synth",
                    "voicename": voicename,
-                   "text": text}
+                   "text": unicode(text, "latin-1").encode("utf-8")}
 
     fulls = pickle.dumps(message)
     #create a socket
@@ -138,7 +138,7 @@ if __name__ == "__main__":
         raise Exception("Request failed..")
 
     if opts.listvoices:
-        print("\n".join(reply["voicelist"]))
+        print("\n".join(sorted(reply["voicelist"])))
     else:
         if reply["sampletype"] != "int16":
             raise Exception("Client currently only supports 16bit samplesize")

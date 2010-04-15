@@ -1,5 +1,5 @@
 import speect
-import uttproc_callback
+import speect.uttproc_callback
 
 
 def do_it(utt):

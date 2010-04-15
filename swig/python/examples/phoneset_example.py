@@ -1,8 +1,8 @@
 import speect
-import phoneset
+import speect.phoneset
 
 # load voice
-voice = speect.SVoice("/home/aby/Data/Voices/English/eng-ZA/Lwazi/voice.txt")
+voice = speect.SVoice("/home/demitasse/TTS/newSpeectVoices/LWAZI/HTS/eng-ZA/voice.txt")
 
 # create a new utterance with the voice
 utt = speect.SUtterance(voice)

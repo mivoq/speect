@@ -1,21 +1,29 @@
 A simple client/server to test Speect voices.
 
-The server listens on port 22222. This can be changed in server.py on line 60.
-Voices can be loaded by the server in the "__main__" routine. See line 166 in server.py.
-After setting the desired voice configuration files the server is simply started with "./server.py"
-The server with print to stdout the voice file being loaded and when the voice is finished loading
-the server will print the voice name to stdout.
 
-The client sends synthesis requests to port 22222 at "localhost" by default. This can be changed
-by editing client.py lines 60 and 61 or with command line options, -p or --port PORTNUMBER, and
--a or --address HOST. Usage of the client is 
-
-./client.py [options] VOICENAME "text to be synthesized"
-
-The VOICENAME is the name of the voice as reported by the server after loading the voice. If the -s or
---save WAVEFILE option is given then the returned wave is saved (riff format) to WAVEFILE
-
-Send a SIGINT (CTRL-C) signal to the server to shut it down.
+Operation:
+----------
+The server ("server.py") initializes Speect and loads voices specified
+in a configuration file (an example can be found in this directory:
+"server.conf.example"), serves requests and logs all activity to a log
+file. The client ("client.py") can make synthesis requests or request
+a list of loaded voices (names to be used when making synthesis
+requests) from the server.
 
 
+Running:
+--------
+Available options and usage information can be found by executing:
 
+./server.py --help
+
+or
+
+./client.py --help
+
+The VOICENAME is any of the names returned when requesting a voicelist from the server
+
+
+Shutting down:
+--------------
+The server is shut down by sending a SIGINT (CTRL-C) signal to the process.

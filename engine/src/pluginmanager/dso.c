@@ -47,6 +47,23 @@
 
 /************************************************************************************/
 /*                                                                                  */
+/* Defines                                                                          */
+/*                                                                                  */
+/************************************************************************************/
+
+/*
+ * This is for testing memory leaks in plug-ins. Uncomment  to
+ * check a newly created plug-in for memory leaks. When set, the
+ * plug-in manager will not unload plug-ins, thereby allowing valgrind
+ * to find the leaks.
+ * Note that this will cause leaks because of unloaded plug-ins, but
+ * it should be easily distinguishable from other memory leaks.
+ */
+/* #define SPCT_VALGRIND_PLUGINS */
+
+
+/************************************************************************************/
+/*                                                                                  */
 /* Static variables                                                                 */
 /*                                                                                  */
 /************************************************************************************/
@@ -176,7 +193,9 @@ static void DestroyDso(void *obj, s_erc *error)
 
 	if (self->_handle != NULL)
 	{
+#ifndef SPCT_VALGRIND_PLUGINS  /* for memory leaks testing, see top */
 		s_dso_close(self->_handle, error);
+#endif
 		S_CHK_ERR(error, S_CONTERR,
 				  "DestroyDso",
 				  "Call to \"s_dso_close\" failed");

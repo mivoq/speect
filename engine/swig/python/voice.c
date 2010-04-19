@@ -49,6 +49,9 @@ typedef struct
 
 %types(SVoice = SObject);
 
+%newobject synth;
+
+
 %extend SVoice
 {
 	SVoice(const char *path, s_bool load_data=TRUE, s_erc *error)

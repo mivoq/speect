@@ -398,6 +398,17 @@ static SVoice *load_voice_no_data(const char *path, s_erc *error)
 		return NULL;
 	}
 
+	/* add config file as voice feature */
+	SVoiceSetFeature(voice, "config_file", SObjectSetString(path, error), error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "load_voice_no_data",
+				  "Call to \"SObjectSetString/SVoiceSetFeature\" failed"))
+	{
+		S_DELETE(voice, "load_voice_no_data", error);
+		S_DELETE(voiceConfig, "load_voice_no_data", error);
+		return NULL;
+	}
+
 	voice->featProcessors = _s_load_voice_feature_processors(voiceConfig,
 															 voice->plugins,
 															 error);

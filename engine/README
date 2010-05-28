@@ -9,7 +9,7 @@
                             \ \_\
                              \/_/
 
-version 0.9.0 RELEASE December 2009
+version 0.9.5 RELEASE May 2010
 
 
 Speect is a multilingual TTS system. It offers a full text-to-speech system with 
@@ -19,7 +19,7 @@ and quick implementation of new ideas, and uses a plug-in mechanism for extensio
 
 
 Speect is free and open source software. As a collection it is distributed under a 
-MIT license, see COPYING for more details. See NEWS for more details of this
+MIT license, see LICENSE and COPYING for more details. See NEWS for more details of this
 release.
 
 

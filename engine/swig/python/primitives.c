@@ -38,15 +38,6 @@
  */
 %inline
 %{
-	void SVoid_PyObject_free(void *ptr, s_erc *error)
-	{
-		PyObject *object = ptr;
-
-
-		Py_XDECREF(object);
-	}
-
-
 	PyObject *sobject_2_pyobject(const SObject *object, s_erc *error, s_bool own)
 	{
 		PyObject *pobject;
@@ -127,17 +118,18 @@
 			return pobject;
 		}
 
-		s_comp = s_strcmp(type, "SVoid", error);
+		s_comp = s_strcmp(type, "SPyObject", error);
 		if (*error != S_SUCCESS)
 			return NULL;
 
 		if (s_comp == 0)
 		{
-			pobject = (PyObject*)SObjectGetVoid(object, "PythonObject", error);
+			/* note that the get method implementation of the
+			 * SPyObject increased the reference count of the returned
+			 * python object */
+			pobject = (PyObject*)SObjectGetVoid(object, error);
 			if (*error != S_SUCCESS)
 				return NULL;
-
-			Py_XINCREF(pobject);
 
 			if (own == TRUE)
 				S_DELETE(object, "sobject_2_pyobject", error);
@@ -342,15 +334,16 @@
 			return object;
 		}
 
-		/* not a simple object, make a SVoid type */
-		Py_XINCREF(pobject);
-		object = SObjectSetVoid((void*)pobject, "PythonObject",
-								&SVoid_PyObject_free, error);
+		/*
+		 * Not a simple object, make a SPyObject SVoid type, note
+		 * that the SPyObject plug-in must be loaded for this to work,
+		 *
+		 * >>> import speect.pyobject
+		 *
+		 */
+		object = SObjectSetVoid("SPyObject", (void*)pobject, error);
 		if (*error != S_SUCCESS)
-		{
-			Py_XDECREF(pobject);
 			return NULL;
-		}
 
 		return object;
 	}

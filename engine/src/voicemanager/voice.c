@@ -40,6 +40,7 @@
 /*                                                                                  */
 /************************************************************************************/
 
+#include "base/utils/path.h"
 #include "base/utils/alloc.h"
 #include "base/strings/strings.h"
 #include "voicemanager/loaders/data_config.h"
@@ -629,6 +630,8 @@ S_API void SVoiceLoadData(SVoice *self, s_erc *error)
 	const SObject *loaded;
 	const SMap *dataObjectMap;
 	s_data_info *data_info;
+	const SObject *vcfgObject;
+	char *voice_base_path;
 
 
 	S_CLR_ERR(error);
@@ -641,17 +644,34 @@ S_API void SVoiceLoadData(SVoice *self, s_erc *error)
 		return;
 	}
 
+	/* get voice base path */
+	vcfgObject = SVoiceGetFeature(self, "config_file", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "SVoiceLoadData",
+				  "Call to \"SVoiceGetFeature\" failed, failed to get voice config file"))
+		return;
+
+	voice_base_path = s_get_base_path(SObjectGetString(vcfgObject, error), error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "SVoiceLoadData",
+				  "Call to \"s_get_base_path/SObjectGetString\" failed"))
+		return;
+
 	num_data_objects = SMapSize(self->data->dataObjects, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "SVoiceLoadData",
 				  "Call to \"SMapSize\" failed"))
+	{
+		S_FREE(voice_base_path);
 		return;
+	}
 
 	if (num_data_objects != 0)
 	{
 		S_WARNING(S_FAILURE,
 				  "SVoiceLoadData",
 				  "SVoiceLoadData can only be used when no objects have been loaded");
+		S_FREE(voice_base_path);
 		return;
 	}
 
@@ -664,17 +684,22 @@ S_API void SVoiceLoadData(SVoice *self, s_erc *error)
 				  "Call to \"SMapIterator\" failed"))
 	{
 		S_DELETE(itr, "SVoiceLoadData", error);
+		S_FREE(voice_base_path);
 		return;
 	}
 
 	while (itr)
 	{
+		char *combined_path;
+
+
 		data_name = SMapIteratorKey(itr, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "SVoiceLoadData",
 					  "Call to \"SMapIteratorKey\" failed"))
 		{
 			S_DELETE(itr, "SVoiceLoadData", error);
+			S_FREE(voice_base_path);
 			return;
 		}
 
@@ -689,6 +714,7 @@ S_API void SVoiceLoadData(SVoice *self, s_erc *error)
 					  data_name))
 		{
 			S_DELETE(itr, "SVoiceLoadData", error);
+			S_FREE(voice_base_path);
 			return;
 		}
 
@@ -699,6 +725,7 @@ S_API void SVoiceLoadData(SVoice *self, s_erc *error)
 					  "Data object map for data '%s' in data config in NULL",
 					  data_name);
 			S_DELETE(itr, "SVoiceLoadData", error);
+			S_FREE(voice_base_path);
 			return;
 		}
 
@@ -709,11 +736,27 @@ S_API void SVoiceLoadData(SVoice *self, s_erc *error)
 					  data_name))
 		{
 			S_DELETE(itr, "SVoiceLoadData", error);
+			S_FREE(voice_base_path);
 			return;
 		}
 
-		loaded = _s_vm_load_data(data_info->plugin, data_info->path,
+		/* get data path, the one in the config file may be relative
+		 * to the voice base path
+		 */
+		combined_path = s_path_combine(voice_base_path, data_info->path,
+									   error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "SVoiceLoadData",
+					  "Call to \"s_path_combine\" failed"))
+		{
+			S_DELETE(itr, "SVoiceLoadData", error);
+			S_FREE(voice_base_path);
+			return;
+		}
+
+		loaded = _s_vm_load_data(data_info->plugin, combined_path,
 								 data_info->format, error);
+		S_FREE(combined_path);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "SVoiceLoadData",
 					  "Call to \"_s_vm_load_voice_data\" for data '%s' in data config failed",
@@ -721,6 +764,7 @@ S_API void SVoiceLoadData(SVoice *self, s_erc *error)
 		{
 			S_FREE(data_info);
 			S_DELETE(itr, "SVoiceLoadData", error);
+			S_FREE(voice_base_path);
 			return;
 		}
 
@@ -735,6 +779,7 @@ S_API void SVoiceLoadData(SVoice *self, s_erc *error)
 			s_erc local_err = S_SUCCESS;
 
 
+			S_FREE(voice_base_path);
 			S_DELETE(itr, "SVoiceLoadData", error);
 			_s_vm_unload_data((SObject*)loaded, &local_err); /* error is already set */
 			return;
@@ -742,6 +787,8 @@ S_API void SVoiceLoadData(SVoice *self, s_erc *error)
 
 		itr = SIteratorNext(itr);
 	}
+
+	S_FREE(voice_base_path);
 }
 
 

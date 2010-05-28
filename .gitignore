@@ -23,6 +23,7 @@ engine/spctConfig.cmake
 engine/speect.ini
 engine/src/base/threads/platform/threads_impl.h
 engine/src/base/utils/platform/types_impl.h
+engine/src/base/utils/platform/path_impl.h
 engine/src/datasources/platform/mmapfile_impl.h
 engine/src/include/spctconfig.h
 engine/src/include/version.h

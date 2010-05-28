@@ -11,3 +11,6 @@
 
 ./engine/ Contains the Speect engine, see ./engine/README
 ./plugins/ Directory to place standard Speect plug-ins, see ./plugins/README
+
+
+hello 

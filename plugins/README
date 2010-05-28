@@ -1,9 +1,9 @@
-Speect Plug-ins version 0.9.0 RELEASE December 2009
+Speect Plug-ins version 0.9.5 RELEASE May 2010
 
-To use the Speect plug-ins you need the Speect engine version 0.9.0
+To use the Speect plug-ins you need the Speect engine version 0.9.5
 
 Speect plug-ins are free and open source software. As a collection it is distributed
-under a MIT license, see COPYING for more details. 
+under a MIT license, see LICENSE and COPYING for more details. 
 
 
 To build the Speect plug-ins one needs cmake (http://www.cmake.org, minimum version 2.6) and

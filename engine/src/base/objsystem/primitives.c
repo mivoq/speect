@@ -162,19 +162,21 @@ typedef struct
 
 /************************************************************************************/
 /*                                                                                  */
-/* SVoid definition                                                                 */
+/* SVoidStruct definition                                                           */
 /*                                                                                  */
 /************************************************************************************/
 
 /*
- * Definition of the void class. This class adds no class methods to the
+ * Definition of the void struct class. This class adds no class methods to the
  * #SObjectClass and is therefore exactly the same.
  */
-typedef SObjectClass SVoidClass;
+typedef SObjectClass SVoidStructClass;
 
 
 /*
- * The void object structure.
+ * The voidstruct object structure.
+ * SVoidStruct is used to encapsulate simple structures in a SObject
+ * type, without the need to define a new object that inherits from SVoid.
  */
 typedef struct
 {
@@ -182,7 +184,7 @@ typedef struct
 	void               *ptr;        /*!< Pointer to the void data.                 */
 	free_void_callback  free_func;  /*!< Callback function to free void data.      */
 	char               *type_name;  /*!< An identifier for this void object type.  */
-} SVoid;
+} SVoidStruct;
 
 
 /************************************************************************************/
@@ -191,10 +193,11 @@ typedef struct
 /*                                                                                  */
 /************************************************************************************/
 
-static SIntClass    IntClass;
-static SFloatClass  FloatClass;
-static SStringClass StringClass;
-static SVoidClass   VoidClass;
+static SIntClass        IntClass;
+static SFloatClass      FloatClass;
+static SStringClass     StringClass;
+static SVoidStructClass VoidStructClass;
+static SVoidClass       VoidClass;
 
 
 /************************************************************************************/
@@ -494,14 +497,14 @@ S_API const char *SObjectGetString(const SObject *self, s_erc *error)
 }
 
 
-/****  SVoid ****/
+/****  SVoidStruct ****/
 
-S_API SObject *SObjectSetVoid(void *ptr,
-							  const char *type_name,
-							  free_void_callback free_func,
-							  s_erc *error)
+S_API SObject *SObjectSetVoidStruct(void *ptr,
+									const char *type_name,
+									free_void_callback free_func,
+									s_erc *error)
 {
-	SVoid *self;
+	SVoidStruct *self;
 
 
 	S_CLR_ERR(error);
@@ -509,7 +512,7 @@ S_API SObject *SObjectSetVoid(void *ptr,
 	if (ptr == NULL)
 	{
 		S_CTX_ERR(error, S_ARGERROR,
-				  "SObjectSetVoid",
+				  "SObjectSetVoidStruct",
 				  "Argument \"ptr\" is NULL");
 		return NULL;
 	}
@@ -517,26 +520,26 @@ S_API SObject *SObjectSetVoid(void *ptr,
 	if (type_name == NULL)
 	{
 		S_CTX_ERR(error, S_ARGERROR,
-				  "SObjectSetVoid",
+				  "SObjectSetVoidStruct",
 				  "Argument \"type_name\" is NULL");
 		return NULL;
 	}
 
 
-	self = (SVoid*)S_NEW("SVoid", error);
+	self = (SVoidStruct*)S_NEW("SVoidStruct", error);
 	if (S_CHK_ERR(error, S_FAILURE,
-				  "SObjectSetVoid",
-				  "Failed to create new SVoid object"))
+				  "SObjectSetVoidStruct",
+				  "Failed to create new 'SVoidStruct' object"))
 		return NULL;
 
 	self->ptr = ptr;
 	self->free_func = free_func;
 	self->type_name = s_strdup(type_name, error);
 	if (S_CHK_ERR(error, S_CONTERR,
-				  "SObjectSetVoid",
+				  "SObjectSetVoidStruct",
 				  "Failed to copy type name"))
 	{
-		S_DELETE(self, "SObjectSetVoid", error);
+		S_DELETE(self, "SObjectSetVoidStruct", error);
 		return NULL;
 	}
 
@@ -544,10 +547,10 @@ S_API SObject *SObjectSetVoid(void *ptr,
 }
 
 
-S_API void SObjectResetVoid(SObject *self, void *ptr,
-							const char *type_name,
-							free_void_callback free_func,
-							s_erc *error)
+S_API void SObjectResetVoidStruct(SObject *self, void *ptr,
+								  const char *type_name,
+								  free_void_callback free_func,
+								  s_erc *error)
 {
 	s_bool type_is_good;
 
@@ -557,7 +560,7 @@ S_API void SObjectResetVoid(SObject *self, void *ptr,
 	if (self == NULL)
 	{
 		S_CTX_ERR(error, S_ARGERROR,
-				  "SObjectResetVoid",
+				  "SObjectResetVoidStruct",
 				  "Argument \"self\" is NULL");
 		return;
 	}
@@ -565,7 +568,7 @@ S_API void SObjectResetVoid(SObject *self, void *ptr,
 	if (ptr == NULL)
 	{
 		S_CTX_ERR(error, S_ARGERROR,
-				  "SObjectResetVoid",
+				  "SObjectResetVoidStruct",
 				  "Argument \"ptr\" is NULL");
 		return;
 	}
@@ -573,47 +576,47 @@ S_API void SObjectResetVoid(SObject *self, void *ptr,
 	if (type_name == NULL)
 	{
 		S_CTX_ERR(error, S_ARGERROR,
-				  "SObjectResetVoid",
+				  "SObjectResetVoidStruct",
 				  "Argument \"type_name\" is NULL");
 		return;
 	}
 
 	type_is_good = SObjectIsType(self, "SVoid", error);
 	if (S_CHK_ERR(error, S_CONTERR,
-				  "SObjectResetVoid",
+				  "SObjectResetVoidStruct",
 				  "Call to \"SObjectIsType\" failed"))
 		return;
 
 	if (type_is_good == FALSE)
 	{
 		S_CTX_ERR(error, S_FAILURE,
-				  "SObjectResetVoid",
-				  "Given object \"self\" is not of type SVoid");
+				  "SObjectResetVoidStruct",
+				  "Given object \"self\" is not of type SVoidStruct");
 		return;
 	}
 
-	if (((SVoid*)self)->free_func != NULL)
+	if (((SVoidStruct*)self)->free_func != NULL)
 	{
-		((SVoid*)self)->free_func(((SVoid*)self)->ptr, error);
+		((SVoidStruct*)self)->free_func(((SVoidStruct*)self)->ptr, error);
 		if (S_CHK_ERR(error, S_FAILURE,
-					  "SObjectResetVoid",
-					  "Call to SVoid object free function failed"))
-		return;
+					  "SObjectResetVoidStruct",
+					  "Call to SVoidStruct object free function failed"))
+			return;
 	}
 
-	S_FREE(((SVoid*)self)->type_name);
-	((SVoid*)self)->ptr = ptr;
-	((SVoid*)self)->free_func = free_func;
-	((SVoid*)self)->type_name = s_strdup(type_name, error);
+	S_FREE(((SVoidStruct*)self)->type_name);
+	((SVoidStruct*)self)->ptr = ptr;
+	((SVoidStruct*)self)->free_func = free_func;
+	((SVoidStruct*)self)->type_name = s_strdup(type_name, error);
 	S_CHK_ERR(error, S_CONTERR,
-			  "SObjectResetVoid",
+			  "SObjectResetVoidStruct",
 			  "Failed to copy type name");
 }
 
 
-S_API const void *SObjectGetVoid(const SObject *self,
-								 const char *type_name,
-								 s_erc *error)
+S_API const void *SObjectGetVoidStruct(const SObject *self,
+									   const char *type_name,
+									   s_erc *error)
 {
 	s_bool type_is_good;
 	int rv;
@@ -624,41 +627,225 @@ S_API const void *SObjectGetVoid(const SObject *self,
 	if (self == NULL)
 	{
 		S_CTX_ERR(error, S_ARGERROR,
-				  "SObjectGetVoid",
+				  "SObjectGetVoidStruct",
 				  "Argument \"self\" is NULL");
 		return NULL;
 	}
 
-	type_is_good = SObjectIsType(self, "SVoid", error);
+	type_is_good = SObjectIsType(self, "SVoidStruct", error);
 	if (S_CHK_ERR(error, S_CONTERR,
-				  "SObjectGetVoid",
+				  "SObjectGetVoidStruct",
 				  "Call to \"SObjectIsType\" failed"))
 		return NULL;
 
 	if (type_is_good == FALSE)
 	{
 		S_CTX_ERR(error, S_FAILURE,
-				  "SObjectGetVoid",
+				  "SObjectGetVoidStruct",
 				  "Given object not of type SVoid");
 		return NULL;
 	}
 
-	rv = s_strcmp(((SVoid*)self)->type_name, type_name, error);
+	rv = s_strcmp(((SVoidStruct*)self)->type_name, type_name, error);
 	if (S_CHK_ERR(error, S_CONTERR,
-				  "SObjectGetVoid",
+				  "SObjectGetVoidStruct",
 				  "Call to \"s_strcmp\" failed"))
 		return NULL;
 
 	if (rv != 0)
 	{
 		S_CTX_ERR(error, S_FAILURE,
-				  "SObjectGetVoid",
+				  "SObjectGetVoidStruct",
 				  "Type mismatch, object is of type \'%s\' and not \'%s\'",
-				  ((SVoid*)self)->type_name, type_name);
+				  ((SVoidStruct*)self)->type_name, type_name);
 		return NULL;
 	}
 
-	return ((SVoid*)self)->ptr;
+	return ((SVoidStruct*)self)->ptr;
+}
+
+
+/****  SVoid ****/
+
+S_API SObject *SObjectSetVoid(const char *type, void *ptr, s_erc *error)
+{
+	SObject *newVoidTypeInstance;
+	s_bool is_type;
+
+
+	S_CLR_ERR(error);
+
+	if (type == NULL)
+	{
+		S_CTX_ERR(error, S_ARGERROR,
+				  "SObjectSetVoid",
+				  "Argument \"type\" is NULL");
+		return NULL;
+	}
+
+	if (ptr == NULL)
+	{
+		S_CTX_ERR(error, S_ARGERROR,
+				  "SObjectSetVoid",
+				  "Argument \"ptr\" is NULL");
+		return NULL;
+	}
+
+	/* create object of given type */
+	newVoidTypeInstance = S_NEW(type, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "SObjectSetVoid",
+				  "Failed to create new object of type '%s'", type))
+		return NULL;
+
+	/* make sure that voidObject is of type SVoid */
+	is_type = SObjectIsType(newVoidTypeInstance, "SVoid", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "SObjectSetVoid",
+				  "Call to \"SObjectIsType\" failed"))
+	{
+		S_DELETE(newVoidTypeInstance, "SObjectSetVoid", error);
+		return NULL;
+	}
+
+	if (!is_type)
+	{
+		S_CTX_ERR(error, S_FAILURE,
+				  "SObjectSetVoid",
+				  "Given object type is not a child of type 'SVoid'");
+		S_DELETE(newVoidTypeInstance, "SObjectSetVoid", error);
+		return NULL;
+	}
+
+	/* check that voidObject has implemented the 'set' member function */
+	if (((SVoidClass *)S_OBJECT_CLS(newVoidTypeInstance))->set == NULL)
+	{
+		S_CTX_ERR(error, S_METHINVLD,
+				  "SObjectSetVoid",
+				  "The given object type's class does not implement"
+				  " the \"set\" method");
+		S_DELETE(newVoidTypeInstance, "SObjectSetVoid", error);
+		return NULL;
+	}
+
+	((SVoidClass *)S_OBJECT_CLS(newVoidTypeInstance))->set((SVoid*)newVoidTypeInstance,
+														   ptr, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "SObjectSetVoid",
+				  "Call to class method \"set\" failed"))
+	{
+		S_DELETE(newVoidTypeInstance, "SObjectSetVoid", error);
+		return NULL;
+	}
+
+	return newVoidTypeInstance;
+}
+
+
+S_API void SObjectResetVoid(SObject *self, void *ptr, s_erc *error)
+{
+	s_bool is_type;
+
+
+	S_CLR_ERR(error);
+
+	if (self == NULL)
+	{
+		S_CTX_ERR(error, S_ARGERROR,
+				  "SObjectResetVoid",
+				  "Argument \"self\" is NULL");
+		return;
+	}
+
+	/* make sure that voidObject is of type SVoid */
+	is_type = SObjectIsType(self, "SVoid", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "SObjectResetVoid",
+				  "Call to \"SObjectIsType\" failed"))
+		return;
+
+	if (!is_type)
+	{
+		S_CTX_ERR(error, S_FAILURE,
+				  "SObjectResetVoid",
+				  "Given \"self\" is not of type 'SVoid'");
+		return;
+	}
+
+	/* check that voidObject has implemented the 'reset' member function */
+	if (((SVoidClass *)S_OBJECT_CLS(self))->reset == NULL)
+	{
+		S_CTX_ERR(error, S_METHINVLD,
+				  "SObjectResetVoid",
+				  "The given \"self\" class does not implement"
+				  " the \"reset\" method");
+		return;
+	}
+
+	if (ptr == NULL)
+	{
+		S_CTX_ERR(error, S_ARGERROR,
+				  "SObjectResetVoid",
+				  "Argument \"ptr\" is NULL");
+		return;
+	}
+
+	((SVoidClass *)S_OBJECT_CLS(self))->reset((SVoid*)self, ptr, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "SObjectSetVoid",
+				  "Call to class method \"set\" failed"))
+		return;
+}
+
+
+S_API const void *SObjectGetVoid(const SObject *self, s_erc *error)
+{
+	s_bool is_type;
+	const void *ptr;
+
+
+	S_CLR_ERR(error);
+
+	if (self == NULL)
+	{
+		S_CTX_ERR(error, S_ARGERROR,
+				  "SObjectGetVoid",
+				  "Argument \"self\" is NULL");
+		return NULL;
+	}
+
+	/* make sure that voidObject is of type SVoid */
+	is_type = SObjectIsType(self, "SVoid", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "SObjectGetVoid",
+				  "Call to \"SObjectIsType\" failed"))
+		return NULL;
+
+	if (!is_type)
+	{
+		S_CTX_ERR(error, S_FAILURE,
+				  "SObjectGetVoid",
+				  "Given \"self\" is not of type 'SVoid'");
+		return NULL;
+	}
+
+	/* check that voidObject has implemented the 'set' member function */
+	if (((SVoidClass *)S_OBJECT_CLS(self))->get == NULL)
+	{
+		S_CTX_ERR(error, S_METHINVLD,
+				  "SObjectGetVoid",
+				  "The given \"self\" class does not implement"
+				  " the \"set\" method");
+		return NULL;
+	}
+
+	ptr = ((SVoidClass *)S_OBJECT_CLS(self))->get((SVoid*)self, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "SObjectGetVoid",
+				  "Call to class method \"get\" failed"))
+		return NULL;
+
+	return ptr;
 }
 
 
@@ -688,6 +875,12 @@ S_LOCAL void _s_primitive_class_add(s_erc *error)
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "_s_primitive_class_add",
 				  "Failed to add SStringClass"))
+		return;
+
+	s_class_add(&VoidStructClass, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "_s_primitive_class_add",
+				  "Failed to add SVoidClass"))
 		return;
 
 	s_class_add(&VoidClass, error);
@@ -953,18 +1146,18 @@ static SObject *CopyString(const SObject *self, s_erc *error)
 }
 
 
-/****  SVoid ****/
+/****  SVoidStruct ****/
 
-static void DisposeVoid(void *obj, s_erc *error)
+static void DisposeVoidStruct(void *obj, s_erc *error)
 {
 	S_CLR_ERR(error);
 	SObjectDecRef(obj);
 }
 
 
-static void InitVoid(void *obj, s_erc *error)
+static void InitVoidStruct(void *obj, s_erc *error)
 {
-	SVoid *self = obj;
+	SVoidStruct *self = obj;
 
 
 	S_CLR_ERR(error);
@@ -974,9 +1167,9 @@ static void InitVoid(void *obj, s_erc *error)
 }
 
 
-static void DestroyVoid(void *obj, s_erc *error)
+static void DestroyVoidStruct(void *obj, s_erc *error)
 {
-	SVoid *self = obj;
+	SVoidStruct *self = obj;
 
 
 	S_CLR_ERR(error);
@@ -985,31 +1178,31 @@ static void DestroyVoid(void *obj, s_erc *error)
 		self->free_func(self->ptr, error);
 
 	S_CHK_ERR(error, S_FAILURE,
-			  "DestroyVoid",
-			  "Call to SVoid object free function failed");
+			  "DestroyVoidStruct",
+			  "Call to SVoidStruct object free function failed");
 
 	if (self->type_name != NULL)
 		S_FREE(self->type_name);
 }
 
 
-static s_bool CompareVoid(const SObject *Sv1, const SObject *Sv2, s_erc *error)
+static s_bool CompareVoidStruct(const SObject *Sv1, const SObject *Sv2, s_erc *error)
 {
-	const SVoid *s1;
-	const SVoid *s2;
+	const SVoidStruct *s1;
+	const SVoidStruct *s2;
 	int rv;
 
 
 	S_CLR_ERR(error);
 
 	/* type is checked by SObjectCompare */
-	s1 = (SVoid*)Sv1;
-	s2 = (SVoid*)Sv2;
+	s1 = (SVoidStruct*)Sv1;
+	s2 = (SVoidStruct*)Sv2;
 
 	/* check type_name */
 	rv = s_strcmp(s1->type_name, s2->type_name, error);
 	if (S_CHK_ERR(error, S_CONTERR,
-				  "CompareVoid",
+				  "CompareVoidStruct",
 				  "Call to \"s_strcmp\" failed"))
 		return FALSE;
 
@@ -1023,17 +1216,17 @@ static s_bool CompareVoid(const SObject *Sv1, const SObject *Sv2, s_erc *error)
 }
 
 
-static char *PrintVoid(const SObject *self, s_erc *error)
+static char *PrintVoidStruct(const SObject *self, s_erc *error)
 {
-	const char *type = "[SVoid] %p";
+	const char *type = "[SVoidStruct] %p";
 	char *buf;
 
 
 	S_CLR_ERR(error);
 
-	s_asprintf(&buf, error, type, ((SVoid*)self)->ptr);
+	s_asprintf(&buf, error, type, ((SVoidStruct*)self)->ptr);
 	if (S_CHK_ERR(error, S_CONTERR,
-				  "PrintVoid",
+				  "PrintVoidStruct",
 				  "Call to \"s_asprintf\" failed"))
 	{
 		if (buf != NULL)
@@ -1047,7 +1240,7 @@ static char *PrintVoid(const SObject *self, s_erc *error)
 
 /************************************************************************************/
 /*                                                                                  */
-/* SInt, SFloat, SString and SVoid class initialization                             */
+/* SInt, SFloat, SString, SVoidStruct and SVoid class initialization                */
 /*                                                                                  */
 /************************************************************************************/
 
@@ -1102,20 +1295,43 @@ static SStringClass StringClass =
 };
 
 
+/****  SVoidStruct ****/
+
+static SVoidStructClass VoidStructClass =
+{
+	/* SObjectClass */
+	"SVoidStruct",
+	sizeof(SVoidStruct),
+	{ 0, 1},
+	InitVoidStruct,    /* init    */
+	DestroyVoidStruct, /* destroy */
+	DisposeVoidStruct, /* dispose */
+	CompareVoidStruct, /* compare */
+	PrintVoidStruct,   /* print   */
+	NULL               /* copy    */
+};
+
+
 /****  SVoid ****/
 
 static SVoidClass VoidClass =
 {
-	/* SObjectClass */
-	"SVoid",
-	sizeof(SVoid),
-	{ 0, 1},
-	InitVoid,    /* init    */
-	DestroyVoid, /* destroy */
-	DisposeVoid, /* dispose */
-	CompareVoid, /* compare */
-	PrintVoid,   /* print   */
-	NULL         /* copy    */
+	{
+		/* SObjectClass */
+		"SVoid",
+		sizeof(SVoid),
+		{ 0, 1},
+		NULL,     /* init    */
+		NULL,     /* destroy */
+		NULL,     /* dispose */
+		NULL,     /* compare */
+		NULL,     /* print   */
+		NULL      /* copy    */
+	},
+	/* SVoidClass */
+	NULL,    /* set   */
+	NULL,    /* reset */
+	NULL     /* get   */
 };
 
 

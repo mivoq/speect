@@ -488,10 +488,10 @@ static const SObject *load_data(const char *plugin_path,
 		 * it's loaded, get the data object's plug-in, increase both
 		 * their reference counts, and return the data object.
 		 */
-		dataEntry = (dataType*)SObjectGetVoid(tmp, "dataType", error);
+		dataEntry = (dataType*)SObjectGetVoidStruct(tmp, "dataType", error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "load_data",
-					  "Call to \"SObjectGetVoid\" for type \'dataType\' failed"))
+					  "Call to \"SObjectGetVoidStruct\" for type \'dataType\' failed"))
 			return NULL;
 
 		SObjectIncRef(tmp);
@@ -546,10 +546,10 @@ static const SObject *load_data(const char *plugin_path,
 
 	dataEntry->dataObject = dataObject;
 	dataEntry->dataPlugin = dataPlugin;
-	tmp = SObjectSetVoid(dataEntry, "dataType", free_dataType, error);
+	tmp = SObjectSetVoidStruct(dataEntry, "dataType", free_dataType, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "load_data",
-				  "Call to \"SObjectSetVoid\" failed for data at path \'%s\'",
+				  "Call to \"SObjectSetVoidStruct\" failed for data at path \'%s\'",
 				  data_path))
 	{
 		S_DELETE(dataPlugin, "load_data", error);
@@ -632,7 +632,7 @@ static void unload_data(SObject *dataObject, s_erc *error)
 		return;
 	}
 
-	dataEntry = (dataType*)SObjectGetVoid(tmp,  "dataType", error);
+	dataEntry = (dataType*)SObjectGetVoidStruct(tmp,  "dataType", error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "unload_data",
 				  "Call to \"SObjectGetVoid\" for data path \'%s\' failed",

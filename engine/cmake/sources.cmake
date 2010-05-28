@@ -54,6 +54,7 @@ set(SPCT_SRC_FILES
     src/base/utils/alloc.c
     src/base/utils/byteswap.c
     src/base/utils/math.c
+    src/base/utils/path.c
     src/base/utils/time.c
     src/base/utils/utils.c
     src/base/utils/vernum.c
@@ -226,6 +227,7 @@ set(SPCT_SRC_INCLUDE_FILES
    src/base/utils/alloc.h
    src/base/utils/byteswap.h
    src/base/utils/math.h
+   src/base/utils/path.h
    src/base/utils/time.h
    src/base/utils/types.h
    src/base/utils/utils.h
@@ -452,4 +454,29 @@ set(SPCT_INCLUDE_POSIX_TYPES_FILES
 
 set(SPCT_INCLUDE_WIN32_TYPES_FILES
   win32/win32_types.h
+)
+
+
+######################################################################################
+
+#
+# Platform specific file system path support 
+#
+
+######## posix implementation ##########################
+set(SPCT_SRC_PATH_POSIX_FILES
+  posix/posix_path.c
+)
+
+set(SPCT_INCLUDE_POSIX_PATH_FILES
+  posix/posix_path.h
+)
+
+######## win32 implementation ##########################
+set(SPCT_SRC_PATH_WIN32_FILES
+  win32/win32_path.c
+)
+
+set(SPCT_INCLUDE_WIN32_PATH_FILES
+  win32/win32_path.h
 )

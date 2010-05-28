@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2008-2009 The Department of Arts and Culture,                      */
+/* Copyright (c) 2010 The Department of Arts and Culture,                           */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -24,47 +24,41 @@
 /************************************************************************************/
 /*                                                                                  */
 /* AUTHOR  : Aby Louw                                                               */
-/* DATE    : 25 March 2008                                                          */
+/* DATE    : May 2010                                                               */
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/*  Base system utilities include file.                                             */
+/* Filesystem path routines.                                                        */
 /*                                                                                  */
 /*                                                                                  */
 /************************************************************************************/
 
-#ifndef _SPCT_BASE_UTILS_H__
-#define _SPCT_BASE_UTILS_H__
+#ifndef _SPCT_PATH_H__
+#define _SPCT_PATH_H__
 
 
 /**
- * @file utils.h
- * Base system utilities include and initialization.
+ * @file path.h
+ * Filesystem path routines.
  */
 
 
 /**
- * @ingroup SBase
- * @defgroup SBaseUtils Utilities
- * Miscellaneous base functions and utility definitions.
+ * @ingroup SBaseUtils
+ * @defgroup SPath Filesystem Path Routines
+ * Filesystem path routines.
  * @{
  */
 
 
 /************************************************************************************/
 /*                                                                                  */
-/*  Include files in base utilities                                                 */
+/* Modules used                                                                     */
 /*                                                                                  */
 /************************************************************************************/
 
 #include "include/common.h"
-#include "base/utils/alloc.h"       /* Memory allocation and deallocation. */
-#include "base/utils/types.h"       /* Defines basic data types.           */
-#include "base/utils/vernum.h"      /* Definiton of version data types.    */
-#include "base/utils/math.h"        /* Basic math functions and constants. */
-#include "base/utils/byteswap.h"    /* Endian byteswapping functions.      */
-#include "base/utils/time.h"        /* Time functions and definitions.     */
-#include "base/utils/path.h"        /* File system path functions.         */
+#include "base/utils/platform/path_impl.h"
 
 
 /************************************************************************************/
@@ -77,29 +71,39 @@ S_BEGIN_C_DECLS
 
 /************************************************************************************/
 /*                                                                                  */
-/*  Function prototypes                                                             */
+/* Function prototypes                                                              */
 /*                                                                                  */
 /************************************************************************************/
 
 /**
- * Initialize all the modules in the base utilities.
- * @private
+ * Combine a base path and a file name. If the file name is absolute
+ * then just a copy of it is returned. Otherwise, build a
+ * path to it by considering it is relative to base_path. URL are
+ * supported.
  *
+ * @param base_path The base path relative to the given file name.
+ * @param filename The file name, can be relative or absolute.
  * @param error Error code.
  *
- * @note Dependant on the @ref SErrDbg module being intialized.
+ * @return The combined base and file name.
+ *
+ * @note Caller is responsible for memory of returned string.
  */
-S_LOCAL void _s_base_utils_init(s_erc *error);
+S_API char *s_path_combine(const char *base_path, const char *filename,
+						   s_erc *error);
 
 
 /**
- * Quit and free up resources of all the modules in the base
- * utilities.
- * @private
+ * Get the base path of the given absolute file name.
  *
+ * @param absolute_filename The absolute file name.
  * @param error Error code.
+ *
+ * @return The base path of the given absolute file name.
+ *
+ * @note Caller is responsible for memory of returned string.
  */
-S_LOCAL void _s_base_utils_quit(s_erc *error);
+S_API char *s_get_base_path(const char *absolute_filename, s_erc *error);
 
 
 /************************************************************************************/
@@ -115,5 +119,5 @@ S_END_C_DECLS
  * end documentation
  */
 
-#endif /* _SPCT_BASE_UTILS_H__ */
+#endif /* _SPCT_PATH_H__ */
 

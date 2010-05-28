@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2008-2009 The Department of Arts and Culture,                      */
+/* Copyright (c) 2010 The Department of Arts and Culture,                           */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -24,96 +24,42 @@
 /************************************************************************************/
 /*                                                                                  */
 /* AUTHOR  : Aby Louw                                                               */
-/* DATE    : 25 March 2008                                                          */
+/* DATE    : May 2010                                                               */
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/*  Base system utilities include file.                                             */
+/* Filesystem path routines.                                                        */
 /*                                                                                  */
 /*                                                                                  */
 /************************************************************************************/
-
-#ifndef _SPCT_BASE_UTILS_H__
-#define _SPCT_BASE_UTILS_H__
-
-
-/**
- * @file utils.h
- * Base system utilities include and initialization.
- */
-
-
-/**
- * @ingroup SBase
- * @defgroup SBaseUtils Utilities
- * Miscellaneous base functions and utility definitions.
- * @{
- */
 
 
 /************************************************************************************/
 /*                                                                                  */
-/*  Include files in base utilities                                                 */
+/* Modules used                                                                     */
 /*                                                                                  */
 /************************************************************************************/
 
-#include "include/common.h"
-#include "base/utils/alloc.h"       /* Memory allocation and deallocation. */
-#include "base/utils/types.h"       /* Defines basic data types.           */
-#include "base/utils/vernum.h"      /* Definiton of version data types.    */
-#include "base/utils/math.h"        /* Basic math functions and constants. */
-#include "base/utils/byteswap.h"    /* Endian byteswapping functions.      */
-#include "base/utils/time.h"        /* Time functions and definitions.     */
-#include "base/utils/path.h"        /* File system path functions.         */
+#include "base/utils/path.h"
 
 
 /************************************************************************************/
 /*                                                                                  */
-/* Begin external c declaration                                                     */
-/*                                                                                  */
-/************************************************************************************/
-S_BEGIN_C_DECLS
-
-
-/************************************************************************************/
-/*                                                                                  */
-/*  Function prototypes                                                             */
+/* Function implementations                                                         */
 /*                                                                                  */
 /************************************************************************************/
 
-/**
- * Initialize all the modules in the base utilities.
- * @private
- *
- * @param error Error code.
- *
- * @note Dependant on the @ref SErrDbg module being intialized.
- */
-S_LOCAL void _s_base_utils_init(s_erc *error);
+/* wrappers to the file system path implementations */
+
+S_API char *s_path_combine(const char *base_path, const char *filename,
+						   s_erc *error)
+{
+	return _S_PATH_COMBINE(base_path, filename, error);
+}
 
 
-/**
- * Quit and free up resources of all the modules in the base
- * utilities.
- * @private
- *
- * @param error Error code.
- */
-S_LOCAL void _s_base_utils_quit(s_erc *error);
-
-
-/************************************************************************************/
-/*                                                                                  */
-/* End external c declaration                                                       */
-/*                                                                                  */
-/************************************************************************************/
-S_END_C_DECLS
-
-
-/**
- * @}
- * end documentation
- */
-
-#endif /* _SPCT_BASE_UTILS_H__ */
+S_API char *s_get_base_path(const char *absolute_filename, s_erc *error)
+{
+	return _S_GET_BASE_PATH(absolute_filename, error);
+}
 

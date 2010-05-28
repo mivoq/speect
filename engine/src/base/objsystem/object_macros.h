@@ -97,7 +97,7 @@ S_BEGIN_C_DECLS
  *
  * @return Pointer to the newly created object (#SObject*).
  *
- * @todo add reference that is must have been registered.
+ * @todo add reference that this type must have been registered.
  */
 #define S_NEW(OBJTYPE_NAME, ERROR)					\
 	(SObjectNewFromName((OBJTYPE_NAME), (ERROR)))

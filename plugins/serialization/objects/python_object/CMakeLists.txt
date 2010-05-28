@@ -2,8 +2,4 @@
 #------------------------------------------------------------------------------------#
 #                        Plug-in directories                                         #
 #------------------------------------------------------------------------------------#
-add_subdirectory(arrays)
-add_subdirectory(matrices)
-add_subdirectory(primitives)
-add_subdirectory(tracks)
-add_subdirectory(python_object)
+add_subdirectory(ebml)

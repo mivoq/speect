@@ -23,55 +23,60 @@ fi
 
 
 ########################################################################
-# Add plug-in directories here if they have a 'clean_files' script, 
-# see the templates directory for examples
-########################################################################
 
-echo "--cleaning arrays--"
+echo "cleaning cmake"
 
-cd ./arrays/
+cd ./cmake/
 ./clean_files
 cd ..
 
 
 ########################################################################
 
-echo "--cleaning matrices--"
+echo "cleaning doc"
 
-cd ./matrices/
+cd ./doc/
 ./clean_files
 cd ..
 
 
 ########################################################################
 
-echo "--cleaning primitives--"
+echo "cleaning examples"
 
-cd ./primitives/
+cd ./examples/
 ./clean_files
 cd ..
 
 
 ########################################################################
 
-echo "--cleaning tracks--"
+echo "cleaning lib"
 
-cd ./tracks/
+cd ./lib/
 ./clean_files
 cd ..
 
 
 ########################################################################
 
-echo "--cleaning python_object--"
+echo "cleaning src"
 
-cd ./python_object/
+cd ./src/
 ./clean_files
 cd ..
 
 
 ########################################################################
 
+echo "cleaning swig"
+
+cd ./swig/
+./clean_files
+cd ..
+
+
+########################################################################
 
 rm -f  *~
 

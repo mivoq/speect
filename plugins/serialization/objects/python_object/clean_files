@@ -27,45 +27,9 @@ fi
 # see the templates directory for examples
 ########################################################################
 
-echo "--cleaning arrays--"
+echo "--cleaning ebml--"
 
-cd ./arrays/
-./clean_files
-cd ..
-
-
-########################################################################
-
-echo "--cleaning matrices--"
-
-cd ./matrices/
-./clean_files
-cd ..
-
-
-########################################################################
-
-echo "--cleaning primitives--"
-
-cd ./primitives/
-./clean_files
-cd ..
-
-
-########################################################################
-
-echo "--cleaning tracks--"
-
-cd ./tracks/
-./clean_files
-cd ..
-
-
-########################################################################
-
-echo "--cleaning python_object--"
-
-cd ./python_object/
+cd ./ebml/
 ./clean_files
 cd ..
 

@@ -48,14 +48,6 @@
 	 * Don't know how to include them here.
 	 */
 
-	void SVoid_PyObject_free(void *ptr, s_erc *error)
-	{
-		PyObject *object = ptr;
-
-
-		Py_XDECREF(object);
-	}
-
 	SObject *pyobject_2_sobject(PyObject *pobject, s_erc *error)
 	{
 		SObject *object;
@@ -138,15 +130,16 @@
 			return object;
 		}
 
-		/* not a simple object, make a SVoid type */
-		Py_XINCREF(pobject);
-		object = SObjectSetVoid((void*)pobject, "PythonObject",
-								&SVoid_PyObject_free, error);
+		/*
+		 * Not a simple object, make a SPyObject SVoid type, note
+		 * that the SPyObject plug-in must be loaded for this to work,
+		 *
+		 * >>> import speect.pyobject
+		 *
+		 */
+		object = SObjectSetVoid("SPyObject", (void*)pobject, error);
 		if (*error != S_SUCCESS)
-		{
-			Py_XDECREF(pobject);
 			return NULL;
-		}
 
 		return object;
 	}

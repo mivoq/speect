@@ -51,6 +51,23 @@ list(APPEND LIBRARY_SOURCES "${CMAKE_SOURCE_DIR}/src/base/utils/platform/${SPCT_
 
 ######################################################################################
 
+# File system path support
+
+# header files, already set for different platforms in path.cmake
+list(APPEND LIBRARY_SOURCES "${CMAKE_SOURCE_DIR}/src/base/utils/platform/${SPCT_PATH_SPECIFIC_IMPL}")
+
+# source files
+if(SPCT_UNIX)
+  list(APPEND LIBRARY_SOURCES "src/base/utils/platform/${SPCT_SRC_PATH_POSIX_FILES}")
+endif(SPCT_UNIX)
+
+if(SPCT_WIN32)
+  list(APPEND LIBRARY_SOURCES "src/base/utils/platform/${SPCT_SRC_PATH_WIN32_FILES}")
+endif(SPCT_WIN32)
+
+  
+######################################################################################
+
 # Threads support
 
 # header files, already set for different platforms in threads.cmake

@@ -83,6 +83,9 @@ include(system)
 # Thread support
 include(threads)
 
+# File path functions support
+include(path)
+
 # Dynamic shared objects support
 include(dll)
 

@@ -21,74 +21,62 @@ then
     rm -f Makefile
 fi
 
-########################################################################
-# Add plug-in directories here if they have a 'clean_files' script, 
-# see the templates directory for examples
+
 ########################################################################
 
-echo "--cleaning arrays--"
+echo "cleaning cmake"
 
-cd ./arrays/
+cd ./cmake/
 ./clean_files
 cd ..
 
 
 ########################################################################
 
-echo "--cleaning cost_function--"
+echo "cleaning doc"
 
-cd ./cost_function/
+cd ./doc/
 ./clean_files
 cd ..
 
 
 ########################################################################
 
-echo "--cleaning matrices--"
+echo "cleaning examples"
 
-cd ./matrices/
+cd ./examples/
 ./clean_files
 cd ..
 
 
 ########################################################################
 
-echo "--cleaning tracks--"
+echo "cleaning lib"
 
-cd ./tracks/
+cd ./lib/
 ./clean_files
 cd ..
 
 
 ########################################################################
 
-echo "--cleaning tokenizer--"
+echo "cleaning src"
 
-cd ./tokenizer/
+cd ./src/
 ./clean_files
 cd ..
 
 
 ########################################################################
 
-echo "--cleaning viterbi--"
+echo "cleaning swig"
 
-cd ./viterbi/
+cd ./swig/
 ./clean_files
 cd ..
 
 
 ########################################################################
-
-echo "--cleaning python_object--"
-
-cd ./python_object/
-./clean_files
-cd ..
-
-
-########################################################################
-
 
 rm -f  *~
 

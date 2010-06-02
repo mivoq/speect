@@ -46,9 +46,9 @@
 /**
  * @ingroup SVoices
  * @defgroup SVoiceObject Voice
- * Plugin objects encapsulate the loading/unloading and resource acquisition
- * of <i>dynamic shared objects</i>.
+ * Voice objects.
  * @{
+ * @todo document
  */
 
 

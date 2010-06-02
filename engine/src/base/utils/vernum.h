@@ -115,17 +115,17 @@ typedef struct
 	/**
 	 * Major version number.
 	 */
-	const uint8 major;
+	uint8 major;
 
 	/**
 	 * Minor version number.
 	 */
-	const uint8 minor;
+	uint8 minor;
 
 	/**
 	 * Patch number.
 	 */
-	const uint8 patch;
+	uint8 patch;
 
 	/**
 	 * Release name.

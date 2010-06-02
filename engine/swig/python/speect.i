@@ -33,7 +33,7 @@
 /*                                                                                  */
 /************************************************************************************/
 
-%module speect
+%module(docstring="Speect Engine library Python interface") speect
 
 %include "typemaps.i"
 %include "exception.i"
@@ -79,15 +79,11 @@
 %include "primitives.c"
 %include "iterator.c"
 %include "object.c"
-%include "utterance.py"
 %include "utterance.c"
-%include "relation.py"
 %include "relation_itr.c"
 %include "relation.c"
-%include "map.py"
 %include "map.c"
 %include "list.c"
-%include "item.py"
 %include "item.c"
 %include "voice.c"
 %include "plugin.c"

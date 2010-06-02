@@ -77,25 +77,6 @@
 }
 
 
-/*** const char ***/
-/* %typemap(in) const char* */
-/* { */
-/*  	if (PyObject_IsInstance($input, (PyObject*)&PyString_Type)) */
-/*  	{ */
-/*  		$1 = PyString_AsString($input); */
-/* 	} */
-/* 	else */
-/* 	{ */
-/* 		PyObject *ustring; */
-
-
-/* 		ustring = PyUnicode_AsUTF8String($input); */
-/* 		$1 = PyString_AsString(ustring); */
-/* 	} */
-/* } */
-
-
-
 /*** version ***/
 %typemap(out) s_version*
 {
@@ -111,6 +92,32 @@
 
 	PyTuple_SetItem(versionTuple, 0, versionMajor);
 	PyTuple_SetItem(versionTuple, 1, versionMinor);
+
+	$result = versionTuple;
+}
+
+/*** Speect Engine library version ***/
+%typemap(out) s_lib_version
+{
+	PyObject *versionTuple;
+	PyObject *versionMajor;
+	PyObject *versionMinor;
+	PyObject *versionPatchLevel;
+	PyObject *versionRelease;
+	s_lib_version output = $1;
+
+
+	versionTuple = PyTuple_New(4);
+	versionMajor = PyInt_FromLong((long)output.major);
+	versionMinor = PyInt_FromLong((long)output.minor);
+	versionPatchLevel = PyInt_FromLong((long)output.patch);
+	versionRelease = PyString_FromString(output.release);
+
+
+	PyTuple_SetItem(versionTuple, 0, versionMajor);
+	PyTuple_SetItem(versionTuple, 1, versionMinor);
+	PyTuple_SetItem(versionTuple, 2, versionPatchLevel);
+	PyTuple_SetItem(versionTuple, 3, versionRelease);
 
 	$result = versionTuple;
 }

@@ -28,10 +28,89 @@
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* C convenience functions for SObject Python wrapper.                              */
+/* C convenience functions for SMap Python wrapper.                                 */
 /*                                                                                  */
 /*                                                                                  */
 /************************************************************************************/
+
+%define map_DOCSTRING
+"""
+A map class, an abstract data type composed of a collection of unique keys (strings) and a
+collection of values (``SObject``), where each key is associated with one value.
+"""
+%enddef
+
+%feature("autodoc", map_DOCSTRING) SMap;
+
+
+%define map_getitem_DOCSTRING
+"""
+__getitem__(key)
+
+Get the value in the map that is associated with the given key.
+
+:param key: The key of the desired value.
+:type key: string
+:return: The value associated with the given key or ``None`` if no such key-value pair.
+"""
+%enddef
+
+%feature("autodoc", map_getitem_DOCSTRING) SMap::__getitem__;
+
+
+%define map_setitem_DOCSTRING
+"""
+__setitem__(key, value)
+
+Set the given key-value pair in the map.
+
+:param key: The key of the value.
+:type key: string
+:param value: The value of the associated key.
+:note: If a key-value pair with the given key already exists, it will be deleted.
+"""
+%enddef
+
+%feature("autodoc", map_setitem_DOCSTRING) SMap::__setitem__;
+
+
+%define map_delitem_DOCSTRING
+"""
+__delitem__(key)
+
+Delete the key-value pair of the given in the map.
+
+:param key: The key of the key-value pair to delete.
+:type key: string
+"""
+%enddef
+
+%feature("autodoc", map_delitem_DOCSTRING) SMap::__delitem__;
+
+
+%define map_len_DOCSTRING
+"""
+__len__()
+
+Return the number of key-value pairs that are in the map.
+
+:return: The number of key-value pairs that are in the map.
+:rtype: int
+"""
+%enddef
+
+%feature("autodoc", map_len_DOCSTRING) SMap::__len__;
+
+
+%define map_iter_DOCSTRING
+"""
+__iter__()
+
+The Python iterator protocol for iteration over keys in a map.
+"""
+%enddef
+
+%feature("autodoc", utterance_iter_DOCSTRING) SMap::__iter__;
 
 
 typedef struct
@@ -40,7 +119,9 @@ typedef struct
 
 
 %types(SMap = SObject);
+
 %nodefaultctor SMap;
+
 
 %extend SMap
 {
@@ -109,18 +190,6 @@ typedef struct
 	}
 
 
-	const char *__str__()
-	{
-		s_erc error = S_SUCCESS;
-
-
-		S_CTX_ERR(&error, S_FAILURE,
-				  "SMap::__str__()",
-				  "This function should have been overloaded in python");
-		return NULL;
-	}
-
-
 	PMapIterator *__iter__()
 	{
 		PMapIterator *pitr;
@@ -140,5 +209,44 @@ typedef struct
 
 		return pitr;
 	}
+
+
+%pythoncode
+%{
+def __str__(self):
+    """
+    Return a string representation of the key-value pairs that are in the map.
+
+    :return: A string representation of the key-value pairs that are in the map.
+    :rtype: string
+    """
+
+    num_features = len(self)
+    if num_features > 0:
+        stri = "{ "
+
+        first = True
+        count = num_features
+
+        for ik in self:
+            if not first:
+                stri += '\n    '
+            first = False
+            count -= 1
+            if count != 0:
+                stri += '%s : %s,' %(ik, repr(self[ik]))
+            else:
+                stri += '%s : %s' %(ik, repr(self[ik]))
+
+        if  num_features > 0:
+            stri += '    }\n'
+
+    else:
+        stri = "{}"
+
+    return stri
+%}
+
+
 };
 

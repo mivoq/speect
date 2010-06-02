@@ -28,18 +28,44 @@
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* C convenience functions for SFeatProc Python wrapper.                            */
+/* C convenience functions for SFeatProcessor Python wrapper.                       */
 /*                                                                                  */
 /*                                                                                  */
 /*                                                                                  */
 /************************************************************************************/
 
-%nodefaultctor SFeatProcessor;
+%define FeatProcessor_DOCSTRING
+"""
+A Feature Processor processes an item by extracting information from it
+and returning this extracted information.
+"""
+%enddef
+
+%feature("autodoc", FeatProcessor_DOCSTRING) SFeatProcessor;
+
+
+%define FeatProcessor_run_DOCSTRING
+"""
+run(item)
+
+Execute the FeatProcessor on the given item.
+
+:param item: The item on which to execute the feature processor.
+:type item: SItem
+:return: The extracted information.
+"""
+%enddef
+
+%feature("autodoc", FeatProcessor_run_DOCSTRING) SFeatProcessor::run;
 
 
 typedef struct
 {
 } SFeatProcessor;
+
+%nodefaultctor SFeatProcessor;
+
+%nodefaultdtor SFeatProcessor;
 
 
 %types(SFeatProcessor = SObject);

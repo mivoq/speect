@@ -34,6 +34,143 @@
 /*                                                                                  */
 /************************************************************************************/
 
+%define utterance_ctor_DOCSTRING
+"""
+SUtterance([voice = None])
+
+The Utterance class. An Utterance consists of a set of relations,
+which in turn consists of a set of items.
+
+Initialize a newly created utterance for the given voice.
+
+:param voice: The voice associated with this utterance.
+:type voice: SVoice
+:return: Newly created utterance object
+:rtype: SUtterance
+:raises: RuntimeError if Speect was unable to create the utterance.
+"""
+%enddef
+
+%feature("autodoc", utterance_ctor_DOCSTRING) SUtterance;
+
+
+%define utterance_relation_new_DOCSTRING
+"""
+relation_new(name)
+
+Create a new named relation in the utterance.  Creates a
+relation, initializes it, and sets it in the utterance.
+
+
+:param name: The name of the new relation to create.
+:type name: string
+:return: Newly created relation object
+:rtype: SRelation
+:raises: RuntimeError if Speect was unable to create the relation.
+:note: If a relation with the given name already exists in the utterance, then it will be deleted.
+"""
+%enddef
+
+%feature("autodoc", utterance_relation_new_DOCSTRING) SUtterance::relation_new;
+
+
+%define utterance_relation_get_DOCSTRING
+"""
+relation_get(name)
+
+Get the named relation from the utterance.
+
+
+:param name: The name of the relation to get.
+:type name: string
+:return: Named relation, or ``None`` if such a relation does not exist in the utterance.
+:rtype: SRelation
+"""
+%enddef
+
+%feature("autodoc", utterance_relation_get_DOCSTRING) SUtterance::relation_get;
+
+
+%define utterance_relation_set_DOCSTRING
+"""
+relation_set(rel)
+
+Set the given relation in the utterance.
+
+
+:param rel: The relation to set in the utterance.
+:type name: SRelation
+"""
+%enddef
+
+%feature("autodoc", utterance_relation_set_DOCSTRING) SUtterance::relation_set;
+
+
+%define utterance_relation_del_DOCSTRING
+"""
+relation_del(name)
+
+Delete the relation with the given name from the utterance.
+
+
+:param name: The relation to delete from the utterance.
+:type name: string
+"""
+%enddef
+
+%feature("autodoc", utterance_relation_del_DOCSTRING) SUtterance::relation_del;
+
+
+%define utterance_contains_DOCSTRING
+"""
+__contains__(name)
+
+Test if the utterance contains the named relation.
+
+
+:param name: The relation name to test for.
+:type name: string
+:return: ``True`` or ``False``.
+:rtype: bool
+"""
+%enddef
+
+%feature("autodoc", utterance_contains_DOCSTRING) SUtterance::__contains__;
+
+
+%define utterance_iter_DOCSTRING
+"""
+__iter__()
+
+The Python iterator protocol for iteration over relation names in an utterance.
+"""
+%enddef
+
+%feature("autodoc", utterance_iter_DOCSTRING) SUtterance::__iter__;
+
+
+%define utterance_voice_DOCSTRING
+"""
+Get the voice that is associated with the utterance.
+
+:return: The voice that is associated with the utterance, or ``None`` if the utterance does not have a defined voice.
+:rtype: SVoice
+"""
+%enddef
+
+%feature("autodoc", utterance_voice_DOCSTRING) voice;
+
+
+%define utterance_features_DOCSTRING
+"""
+Get the features that are defined for the utterance.
+
+:return: A map of the utterance features.
+:rtype: SMap
+"""
+%enddef
+
+%feature("autodoc", utterance_features_DOCSTRING) features;
 
 
 typedef struct
@@ -132,18 +269,6 @@ typedef struct
 	}
 
 
-	const char *__str__()
-	{
-		s_erc error = S_SUCCESS;
-
-
-		S_CTX_ERR(&error, S_FAILURE,
-				  "SUtterance::__str__()",
-				  "This function should have been overloaded in python");
-		return NULL;
-	}
-
-
 	PMapIterator *__iter__()
 	{
 		PMapIterator *pitr;
@@ -163,4 +288,25 @@ typedef struct
 
 		return pitr;
 	}
+
+%pythoncode
+%{
+def __str__(self):
+    """
+    Get a string representation of the utterance.
+
+    :return: A string representation of the utterance.
+    :rtype: string
+    """
+
+    stri = "Utterance:\n"
+    for f in self.features:
+        stri += '    Feature: %20.20s => %s\n' %(f, repr(self.features[f]))
+
+    for r in self:
+        stri += self.relation_get(r).to_string(prefix="        ")
+
+    return stri
+%}
+
 };

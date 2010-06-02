@@ -33,6 +33,138 @@
 /*                                                                                  */
 /************************************************************************************/
 
+
+%define relation_ctor_DOCSTRING
+"""
+SRelation(utt, name)
+
+The Relation class. A Relation is a named list of items. An Utterance
+can hold an arbitrary number of Relations.
+
+Initialize a newly created relation with the given name, and set it in
+the given utterance.
+
+
+:param utt: The utterance that the newly created relation should be placed in.
+:type utt: SUtterance
+:param name: The name of the newly created relation.
+:type name: string
+:return: Newly created relation object.
+:rtype: SRelation
+:raises: RuntimeError if Speect was unable to create the utterance.
+:note: Parameter *utt* may be ``None``.
+:note: A relation with the same name that already exists in the utterance will be deleted.
+"""
+%enddef
+
+%feature("autodoc", relation_ctor_DOCSTRING) SRelation;
+
+
+%define relation_append_DOCSTRING
+"""
+append([toShare = None])
+
+Create a new item and append it to the end of the items
+in the relation.
+
+
+:param toShare: The item with which the newly created item will share it's content. If ``None`` then a new content will be created for the appended item.
+:type toShare: SItem
+:return: Newly created and appended item object.
+:rtype: SItem
+:raises: RuntimeError if Speect was unable to create the item.
+"""
+%enddef
+
+%feature("autodoc", relation_append_DOCSTRING) SRelation::append;
+
+
+%define relation_prepend_DOCSTRING
+"""
+prepend([toShare = None])
+
+Create a new item and prepend it to the beginning of the items
+in the relation.
+
+
+:param toShare: The item with which the newly created item will share it's content. If ``None`` then a new content will be created for the prepended item.
+:type toShare: SItem
+:return: Newly created and prepended item object.
+:rtype: SItem
+:raises: RuntimeError if Speect was unable to create the item.
+"""
+%enddef
+
+%feature("autodoc", relation_prepend_DOCSTRING) SRelation::prepend;
+
+
+%define relation_head_DOCSTRING
+"""
+head()
+
+Get the first item in the relation.
+
+:return: The first item in the relation or ``None`` if the relation is empty.
+:rtype: SItem
+"""
+%enddef
+
+%feature("autodoc", relation_head_DOCSTRING) SRelation::head;
+
+
+%define relation_tail_DOCSTRING
+"""
+tail()
+
+Get the last item in the relation.
+
+:return: The last item in the relation or ``None`` if the relation is empty.
+:rtype: SItem
+"""
+%enddef
+
+%feature("autodoc", relation_tail_DOCSTRING) SRelation::tail;
+
+
+%define relation_name_DOCSTRING
+"""
+name()
+
+Get the relation's name.
+
+:return: The relation's name.
+:rtype: string
+"""
+%enddef
+
+%feature("autodoc", relation_name_DOCSTRING) SRelation::name;
+
+
+%define relation_utt_DOCSTRING
+"""
+utterance()
+
+Get the relation's utterance.
+
+:return: The relation's utterance or ``None`` if no utterance was set.
+:rtype: SUtterance
+"""
+%enddef
+
+%feature("autodoc", relation_utt_DOCSTRING) SRelation::utterance;
+
+
+%define relation_iter_DOCSTRING
+"""
+__iter__()
+
+The Python iterator protocol for iteration over items in a relation.
+"""
+%enddef
+
+%feature("autodoc", relation_iter_DOCSTRING) SRelation::__iter__;
+
+
 typedef struct
 {
 } SRelation;
@@ -40,7 +172,7 @@ typedef struct
 
 %types(SRelation = SObject);
 
-
+%nodefaultdtor SRelation;
 
 %extend SRelation
 {
@@ -148,31 +280,6 @@ typedef struct
 		return utt;
 	}
 
-
-	const char *__str__()
-	{
-		s_erc error = S_SUCCESS;
-
-
-		S_CTX_ERR(&error, S_FAILURE,
-				  "SRelation::__str__()",
-				  "This function should have been overloaded in python");
-		return NULL;
-	}
-
-
-	const char *to_string(const char *prefix="")
-	{
-		s_erc error = S_SUCCESS;
-
-
-		S_CTX_ERR(&error, S_FAILURE,
-				  "SRelation::to_string()",
-				  "This function should have been overloaded in python");
-		return NULL;
-	}
-
-
 	SRelationItr *__iter__()
 	{
 		SRelationItr *pitr;
@@ -186,4 +293,26 @@ typedef struct
 
 		return pitr;
 	}
+
+%pythoncode
+%{
+def __str__(self):
+    """
+    Get a string representation of the relation.
+
+    :return: A string representation of the relation.
+    :rtype: string
+    """
+    return self.to_string()
+
+
+def to_string(self, prefix=""):
+    # helper function
+    stri = "%sRelation \'%s\':\n" %(prefix, self.name())
+    item_prefix = "%s    " %prefix
+    for i in self:
+        stri += i.to_string(prefix=item_prefix)
+
+    return stri
+%}
 }

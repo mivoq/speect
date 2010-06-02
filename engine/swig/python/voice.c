@@ -63,15 +63,33 @@ synth(input[, utt_type='text'])
 Synthesize an utterance of the given utterance type with the voice.
 
 :param input: The text to synthesize.
-:type input: string.
-:param utt_type: The utterance type to synthesize.
-:type utt_type: string.
+:type input: string
+:param utt_type: The utterance type to synthesis.
+:type utt_type: string
 :return: The synthesized utterance.
 :rtype: SUtterance
 """
 %enddef
 
 %feature("autodoc", voice_synth_DOCSTRING) SVoice::synth;
+
+
+%define voice_resynth_DOCSTRING
+"""
+resynth(utt, utt_type)
+
+Re-synthesize an utterance with the given utterance type. This
+is used when an utterance was synthesized with a certain utterance type,
+and now it must be synthesized with a different utterance type.
+
+:param utt: The utterance to re-synthesize.
+:type utt: SUtterance
+:param utt_type: The utterance type for re-synthesis.
+:type utt_type: string
+"""
+%enddef
+
+%feature("autodoc", voice_resynth_DOCSTRING) SVoice::resynth;
 
 
 %define voice_name_DOCSTRING
@@ -464,6 +482,13 @@ typedef struct
 
 		return utt;
 	}
+
+
+	void resynth(SUtterance *utt, const char *utt_type, s_erc *error)
+	{
+		SVoiceReSynthUtt($self, utt_type, utt, error);
+	}
+
 
 	const char *name(s_erc *error)
 	{

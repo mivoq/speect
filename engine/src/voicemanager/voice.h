@@ -288,6 +288,22 @@ typedef struct
 	 */
 	SUtterance  *(*synth_utt)(const SVoice *self, const char *utt_type,
 							  const SObject *input, s_erc *error);
+
+	/**
+	 * @protected ReSynthUtt function pointer.
+	 * Re-synthesize an utterance with the given utterance type. This
+	 * is used when an utterance was synthesized with a certain
+	 * utterance type, and now it must be synthesized with a different
+	 * utterance type.
+	 *
+	 * @param self The voice used for synthesis.
+	 * @param utt_type The key of the utterance type as registered in the #SVoice::uttTypes
+	 * container.
+	 * @param utt The utterance to re-synthesize.
+	 * @param error Error code.
+	 */
+	void         (*re_synth_utt)(const SVoice *self, const char *utt_type,
+								 SUtterance *utt, s_erc *error);
 } SVoiceClass;
 
 
@@ -308,8 +324,8 @@ typedef struct
  *
  * @public @memberof SVoice
  * @param self The voice used for synthesis.
- * @param utt_type The key of the utterance type as registered in the #SVoice::uttTypes
- * container.
+ * @param utt_type The key of the utterance type as registered in the
+ * #SVoice::uttTypes container.
  * @param input The input to the synthesizer.
  * @param error Error code.
  *
@@ -317,6 +333,23 @@ typedef struct
  */
 S_API SUtterance *SVoiceSynthUtt(const SVoice *self, const char *utt_type,
 								 const SObject *input, s_erc *error);
+
+
+/**
+ * Re-synthesize an utterance with the given utterance type. This
+ * is used when an utterance was synthesized with a certain
+ * utterance type, and now it must be synthesized with a different
+ * utterance type.
+ *
+ * @public @memberof SVoice
+ * @param self The voice used for synthesis.
+ * @param utt_type The key of the utterance type as registered in the
+ * #SVoice::uttTypes container.
+ * @param utt The utterance to re-synthesize.
+ * @param error Error code.
+ */
+S_API void SVoiceReSynthUtt(const SVoice *self, const char *utt_type,
+							SUtterance *utt, s_erc *error);
 
 
 /**

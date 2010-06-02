@@ -196,6 +196,79 @@ S_API SUtterance *SVoiceSynthUtt(const SVoice *self, const char *utt_type,
 }
 
 
+S_API void SVoiceReSynthUtt(const SVoice *self, const char *utt_type,
+							SUtterance *utt, s_erc *error)
+{
+	s_bool key_present;
+
+
+	S_CLR_ERR(error);
+
+	if (self == NULL)
+	{
+		S_CTX_ERR(error, S_ARGERROR,
+				  "SVoiceReSynthUtt",
+				  "Argument \"self\" is NULL");
+		return;
+	}
+
+	if (utt_type == NULL)
+	{
+		S_CTX_ERR(error, S_ARGERROR,
+				  "SVoiceReSynthUtt",
+				  "Argument \"utt_type\" is NULL");
+		return;
+	}
+
+	if (utt == NULL)
+	{
+		S_CTX_ERR(error, S_ARGERROR,
+				  "SVoiceReSynthUtt",
+				  "Argument \"utt\" is NULL");
+		return;
+	}
+
+	if (!S_VOICE_METH_VALID(self, re_synth_utt))
+	{
+		S_WARNING(S_METHINVLD,
+				  "SVoiceReSynthUtt",
+				  "Voice method \"re_synth_utt\" not implemented");
+		return;
+	}
+
+	s_mutex_lock((s_mutex*)&self->voice_mutex);
+	key_present = SVoiceUttTypeIsPresent(self, utt_type, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "SVoiceReSynthUtt",
+				  "Call to \"SVoiceUttTypeIsPresent\" failed"))
+	{
+		s_mutex_unlock((s_mutex*)&self->voice_mutex);
+		return;
+	}
+
+	if (!key_present)
+	{
+		S_CTX_ERR(error, S_FAILURE,
+				  "SVoiceReSynthUtt",
+				  "Given voice does not have a \'%s\' utterance type",
+				  utt_type);
+		s_mutex_unlock((s_mutex*)&self->voice_mutex);
+		return;
+	}
+
+	S_VOICE_CALL(self, re_synth_utt)(self, utt_type, utt, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "SVoiceReSynthUtt",
+				  "Call to class method \"re_synth_utt\" failed"))
+	{
+		s_mutex_unlock((s_mutex*)&self->voice_mutex);
+		return;
+	}
+
+	s_mutex_unlock((s_mutex*)&self->voice_mutex);
+}
+
+
 /* info */
 
 S_API const char *SVoiceGetName(const SVoice *self, s_erc *error)
@@ -2410,6 +2483,86 @@ static SUtterance *SynthUtt(const SVoice *self, const char *utt_type,
 }
 
 
+static void ReSynthUtt(const SVoice *self, const char *utt_type,
+					   SUtterance *utt, s_erc *error)
+{
+	const SList *uttType;
+	const SUttProcessor *uttProc; /* utterance processor */
+	const char *utt_processor_name;
+	SIterator *itr;
+
+
+	S_CLR_ERR(error);
+
+	uttType = SVoiceGetUttType(self, utt_type, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "ReSynthUtt",
+				  "Call to \"SVoiceGetUttType\" failed"))
+		return;
+
+	SUtteranceSetFeature(utt, "utterance-type",
+						 SObjectSetString(utt_type, error),
+						 error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "ReSynthUtt",
+				  "Failed to set utterance \'utterance-type\' feature"))
+		return;
+
+	/* run utterance processors on utterance */
+	itr = SListIterator(uttType, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "ReSynthUtt",
+				  "Call to \"SListIterator\" failed"))
+		return;
+
+	for (/* NOP */; itr != NULL; itr = SIteratorNext(itr))
+	{
+		/* get utterance processor name */
+		utt_processor_name = SObjectGetString(SListIteratorValue(itr, error), error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "ReSynthUtt",
+					  "Failed to get utterance processor name"))
+		{
+			S_DELETE(itr, "ReSynthUtt", error);
+			return;
+		}
+
+		uttProc = S_UTTPROCESSOR(SMapGetObjectDef(self->uttProcessors, utt_processor_name,
+												  NULL, error));
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "ReSynthUtt",
+					  "Call to \"SMapGetObjectDef\" failed"))
+		{
+			S_DELETE(itr, "ReSynthUtt", error);
+			return;
+		}
+
+		if (uttProc == NULL)
+		{
+			S_CTX_ERR(error, S_FAILURE,
+					  "ReSynthUtt",
+					  "Utterance processor \'%s\' not defined",
+					  utt_processor_name);
+			S_DELETE(itr, "ReSynthUtt", error);
+			return;
+		}
+
+		S_DEBUG(S_DBG_INFO,
+				"executing \'%s\' utterance processor ...",
+				utt_processor_name);
+
+		SUttProcessorRun(uttProc, utt, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "ReSynthUtt",
+					  "Execution of utterance processor \'%s\' failed",
+					  utt_processor_name))
+		{
+			S_DELETE(itr, "ReSynthUtt", error);
+			return;
+		}
+	}
+}
+
 
 /************************************************************************************/
 /*                                                                                  */
@@ -2431,7 +2584,8 @@ static SVoiceClass VoiceClass =
 		NULL,          /* print   */
 		NULL,          /* copy    */
 	},
-	SynthUtt           /* synth_utt */
+	SynthUtt,          /* synth_utt    */
+	ReSynthUtt,        /* re_synth_utt */
 };
 
 

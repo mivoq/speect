@@ -43,10 +43,10 @@ message(STATUS "cmake for project \"Speect Engine\"")
 project(speect_engine C)
 
 # version 
-set(SPCT_VERSION_RELEASE "Helium" CACHE STRING "Speect version codename" FORCE)
+set(SPCT_VERSION_RELEASE "Lithium" CACHE STRING "Speect version codename" FORCE)
 set(SPCT_VERSION_MAJOR 0 CACHE STRING "Speect major version number" FORCE)
 set(SPCT_VERSION_MINOR 9 CACHE STRING "Speect minor version number" FORCE)
-set(SPCT_VERSION_PATCH 0 CACHE STRING "Speect patch number" FORCE)
+set(SPCT_VERSION_PATCH 5 CACHE STRING "Speect patch number" FORCE)
 set(SPCT_VERSION "${SPCT_VERSION_MAJOR}.${SPCT_VERSION_MINOR}.${SPCT_VERSION_PATCH}"
   CACHE STRING "Speect full version number" FORCE)
 mark_as_advanced(SPCT_VERSION_RELEASE)

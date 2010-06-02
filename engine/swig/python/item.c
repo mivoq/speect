@@ -126,7 +126,7 @@ Get the item previous to this one in the current relation.
 """
 append([toShare = None])
 
-Create a new item and append it after this one. 
+Create a new item and append it after this one.
 
 :param toShare: The item with which the newly created item will share it's content. If ``None`` then a new content will be created for the appended item.
 :type toShare: SItem
@@ -143,7 +143,7 @@ Create a new item and append it after this one.
 """
 prepend([toShare = None])
 
-Create a new item and prepend it after this one. 
+Create a new item and prepend it after this one.
 
 :param toShare: The item with which the newly created item will share it's content. If ``None`` then a new content will be created for the prepended item.
 :type toShare: SItem
@@ -381,6 +381,22 @@ The Python iterator protocol for iteration over item features.
 %enddef
 
 %feature("autodoc", item_iter_DOCSTRING) SItem::__iter__;
+
+
+%define item_feature_get_DOCSTRING
+"""
+feature_get(key)
+
+Get the feature of the item that is associated with the given key.
+
+:param key: The key of the key-value pair to get.
+:type key: string
+:return: The feature (value) associated with the given key or ``None`` if no such key-value pair.
+"""
+%enddef
+
+%feature("autodoc", map_feature_get_DOCSTRING) SItem::feature_get;
+
 
 
 typedef struct
@@ -657,6 +673,18 @@ typedef struct
 	}
 
 
+	const SObject *feature_get(const char *key, s_erc *error)
+	{
+		const SObject *feature;
+
+		feature = SItemGetObject($self, key, error);
+		if (*error != S_SUCCESS)
+			return NULL;
+
+		return feature;
+	}
+
+
 	PyObject *__getitem__(const char *key, s_erc *error)
 	{
 		const SObject *feature;
@@ -734,7 +762,7 @@ typedef struct
 def __str__(self):
     """
     Get a string representation of the item.
-    
+
     :return: A string representation of the item.
     :rtype: string
     """
@@ -774,7 +802,7 @@ def to_string(self, prefix="", label="Item"):
     n = 0
     daughter_prefix = '%s    ' %prefix
     while i:
-        stri += '%s' %i.to_string(prefix=daughter_prefix, 
+        stri += '%s' %i.to_string(prefix=daughter_prefix,
                                  label='Daughter')
         n += 1
         i = self.daughter(n)

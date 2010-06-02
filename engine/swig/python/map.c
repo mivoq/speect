@@ -88,6 +88,21 @@ Delete the key-value pair of the given in the map.
 %feature("autodoc", map_delitem_DOCSTRING) SMap::__delitem__;
 
 
+%define map_feature_get_DOCSTRING
+"""
+feature_get(key)
+
+Get the value (feature) in the map that is associated with the given key.
+
+:param key: The key of the key-value pair to get.
+:type key: string
+:return: The value (feature) associated with the given key or ``None`` if no such key-value pair.
+"""
+%enddef
+
+%feature("autodoc", map_feature_get_DOCSTRING) SMap::feature_get;
+
+
 %define map_len_DOCSTRING
 """
 __len__()
@@ -125,6 +140,18 @@ typedef struct
 
 %extend SMap
 {
+	const SObject *feature_get(const char *key, s_erc *error)
+	{
+		const SObject *feature;
+
+		feature = SMapGetObjectDef($self, key, NULL, error);
+		if (*error != S_SUCCESS)
+			return NULL;
+
+		return feature;
+	}
+
+
 	PyObject *__getitem__(const char *key, s_erc *error)
 	{
 		const SObject *mapObject;

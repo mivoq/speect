@@ -28,7 +28,7 @@
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* C convenience functions for SAudio Python wrapper.                               */
+/* C convenience functions for SAudio riff format Python wrapper.                   */
 /*                                                                                  */
 /*                                                                                  */
 /*                                                                                  */
@@ -36,14 +36,14 @@
 
 %inline
 %{
-	void save_audio_riff(const SUtterance *utt, const char *path, s_erc *error)
+	void save_audio_riff_inline(const SUtterance *utt, const char *path, s_erc *error)
 	{
 		const SObject *audio;
 
 
 		audio = SUtteranceGetFeature(utt, "audio", error);
 		if (S_CHK_ERR(error, S_CONTERR,
-					  "main",
+					  "save_audio_riff",
 					  "Call to \"SUtteranceGetFeature\" failed"))
 			return;
 
@@ -58,5 +58,25 @@
 		/* save audio */
 		SObjectSave(audio, path, "riff", error);
 	}
+%}
+
+
+%pythoncode
+%{
+def save_audio_riff(self, path):
+    """
+    save_audio_riff(path)
+
+    Save the audio object of the utterance in the RIFF format at
+    the given path.
+
+    :param path: Full path and file name where audio should be saved.
+    :type path: string
+    """
+
+    save_audio_riff_inline(self, path)
+
+	
+setattr(speect.SUtterance, "save_audio_riff", save_audio_riff)
 %}
 

@@ -34,6 +34,28 @@
 /*                                                                                  */
 /************************************************************************************/
 
+%define suttproc_cb_new_DOCSTRING
+"""
+callback(callback_function)
+
+Create a new utterance processor that has a Python function as a callback. When
+this newly created utterance processor's ``run`` method is called, the Python
+function will be called with the arguments as supplied to the utterance processor.
+The Python callback must take one argument, an utterance (:class:`speect.SUtterance`),
+and must not return anything. The utterance can be modified in place.
+
+
+:param callback_function: A Python function that will be used as a callback
+                          function when this utterance processor's ``run`` method
+                          is called.
+:type callback_function: A callable function
+"""
+%enddef
+
+%feature("autodoc", suttproc_cb_new_DOCSTRING) suttproc_cb_new;
+
+
+
 %include "exception.i"
 
 %inline
@@ -218,4 +240,12 @@
 /*
  * Do not delete this delimiter, required for SWIG
  */
+%}
+
+%pythoncode
+%{
+
+# add the functions to the Speect SUttProcessor class
+setattr(speect.SUttProcessor, "callback", staticmethod(suttproc_cb_new))
+
 %}

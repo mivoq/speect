@@ -85,5 +85,4 @@
  * SUttProcessorCB Python class
  */
 %include "uttproc_callback.c"
-%include "uttproc_callback.py"
 

@@ -63,3 +63,4 @@ swig/python/speect/*.pyc
 # Ignore generated documentation 
 
 docs/_build/*
+docs/sphinxext/*.pyc

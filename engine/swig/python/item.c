@@ -387,15 +387,27 @@ The Python iterator protocol for iteration over item features.
 """
 feature_get(key)
 
-Get the feature of the item that is associated with the given key.
+Get the raw ``SObject`` feature of the item that is associated with the given key.
+This function can be used in place of the normal::
+
+    item['feature_name']
+
+The reason for this is that the above will try to convert the returned
+feature into a Python object if possible. Sometimes we want the feature
+as a Speect object. So instead we can use this function::
+
+    item.feature_get('feature_name')
+
+which will return the feature object as it is in Speect, i.e. an ``SObject``.
 
 :param key: The key of the key-value pair to get.
 :type key: string
-:return: The feature (value) associated with the given key or ``None`` if no such key-value pair.
+:return: The feature associated with the given key or ``None`` if no such key-value pair.
+:rtype: SObject
 """
 %enddef
 
-%feature("autodoc", map_feature_get_DOCSTRING) SItem::feature_get;
+%feature("autodoc", item_feature_get_DOCSTRING) SItem::feature_get;
 
 
 

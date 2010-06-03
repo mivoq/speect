@@ -88,19 +88,31 @@ Delete the key-value pair of the given in the map.
 %feature("autodoc", map_delitem_DOCSTRING) SMap::__delitem__;
 
 
-%define map_feature_get_DOCSTRING
+%define map_value_get_DOCSTRING
 """
-feature_get(key)
+value_get(key)
 
-Get the value (feature) in the map that is associated with the given key.
+Get the raw ``SObject`` value in the map that is associated with the given key.
+This function can be used in place of the normal::
+
+    map['key']
+
+The reason for this is that the above will try to convert the returned
+value into a Python object if possible. Sometimes we want the value
+as a Speect object. So instead we can use this function::
+
+    map.value_get('key')
+
+which will return the value object as it is in Speect, i.e. an ``SObject``.
 
 :param key: The key of the key-value pair to get.
 :type key: string
-:return: The value (feature) associated with the given key or ``None`` if no such key-value pair.
+:return: The value associated with the given key or ``None`` if no such key-value pair.
+:rtype: SObject
 """
 %enddef
 
-%feature("autodoc", map_feature_get_DOCSTRING) SMap::feature_get;
+%feature("autodoc", map_value_get_DOCSTRING) SMap::value_get;
 
 
 %define map_len_DOCSTRING
@@ -140,15 +152,15 @@ typedef struct
 
 %extend SMap
 {
-	const SObject *feature_get(const char *key, s_erc *error)
+	const SObject *value_get(const char *key, s_erc *error)
 	{
-		const SObject *feature;
+		const SObject *value;
 
-		feature = SMapGetObjectDef($self, key, NULL, error);
+		value = SMapGetObjectDef($self, key, NULL, error);
 		if (*error != S_SUCCESS)
 			return NULL;
 
-		return feature;
+		return value;
 	}
 
 

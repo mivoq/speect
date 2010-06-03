@@ -84,6 +84,5 @@
 /*
  * SAudio Python class
  */
-%include "audio.py"
 %include "audio.c"
 

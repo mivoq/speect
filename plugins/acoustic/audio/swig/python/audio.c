@@ -34,10 +34,79 @@
 /*                                                                                  */
 /************************************************************************************/
 
+%define audio_DOCSTRING
+"""
+A container class for audio objects. Provides a Speect native class for creating/adding audio
+objects. The audio samples are internally represented as floats.
+"""
+%enddef
+
+%feature("autodoc", audio_DOCSTRING) SAudio;
+
+
+%define num_samples_DOCSTRING
+"""
+num_samples()
+
+Return the number of samples of this audio object.
+
+:return: Number of samples of this audio object.
+:rtype: int
+"""
+%enddef
+
+%feature("autodoc", num_samples_DOCSTRING) SAudio::num_samples;
+
+
+%define sample_rate_DOCSTRING
+"""
+sample_rate()
+
+Return the sample rate of the samples of this audio object.
+
+:return: Sample rate of this audio object (Hertz).
+:rtype: int
+"""
+%enddef
+
+%feature("autodoc", sample_rate_DOCSTRING) SAudio::sample_rate;
+
+
 %include "cstring.i"
 
-
 %cstring_output_allocate_size(char **s, int *slen, free(*$1));
+
+%pythoncode
+%{
+import ossaudiodev
+
+def utt_play(self):
+    """
+    Play utterance waveform. Will do nothing
+    if the utterance does not have an "audio"
+    feature.
+
+    :note: This function tries to open ``/dev/dsp1``
+           and write 16bit little endian values to it.
+    """
+
+    audio = self.features["audio"]
+    if audio is None:
+        return
+
+    waveform = audio.get_audio_waveform()
+
+    dsp = ossaudiodev.open("/dev/dsp", "w")
+    dsp.setparameters(ossaudiodev.AFMT_S16_LE,
+                      1,
+                      waveform["samplerate"],
+                      True)
+
+    dsp.writeall(waveform["samples"])
+    dsp.close()
+
+setattr(speect.SUtterance, "play", utt_play)
+%}
 
 %inline
 %{
@@ -65,8 +134,6 @@
 %}
 
 
-%nodefaultctor SAudio;
-
 typedef struct
 {
 } SAudio;
@@ -74,21 +141,49 @@ typedef struct
 
 %types(SAudio = SObject);
 
+%nodefaultctor SAudio;
+
+%nodefaultdtor SAudio;
 
 %extend SAudio
 {
-	PyObject *get_audio_waveform()
-	{
-		return NULL;
-	}
-
 	uint32 num_samples()
 	{
 		return $self->num_samples;
 	}
 
+
 	uint32 sample_rate()
 	{
 		return $self->sample_rate;
 	}
+
+
+%pythoncode
+%{
+def get_audio_waveform(self):
+    """
+    Return the waveform of this SAudio object in Python dict  e.g.::
+    
+        {'sampletype': 'int16', 
+         'samplerate': 16000,
+         'samples': '...bytestring...samples....'}
+
+
+    :return: Audio waveform.
+    :rtype: dict
+    :note: Currently supports only 'int16' sample types.
+    """
+
+    sample_type = "int16"   # currently only option
+
+    sample_rate = self.sample_rate()
+    samples = saudio_samples(self)
+    wave_dict = {
+        "sampletype" : sample_type,
+        "samplerate" : sample_rate,
+        "samples" : samples
+        }
+    return wave_dict
+%}
 }

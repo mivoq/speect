@@ -84,7 +84,6 @@
 /*
  * SEbmlRead Python class
  */
-%include "ebml_reader.py"
 %include "ebml_reader.c"
 
 /*

@@ -34,6 +34,233 @@
 /*                                                                                  */
 /************************************************************************************/
 
+%define ebml_reader_DOCSTRING
+"""
+SEbmlRead(path)
+
+
+EBML data reader class. Create an Ebml reader object with a path to an EBML format file
+from which to read. The header of the file is read.
+
+:param path: Full path and file name of the file to read from.
+:type path: string
+
+:return: EBML data reader object.
+:rtype: SEbmlRead
+"""
+%enddef
+
+%feature("autodoc", ebml_reader_DOCSTRING) SEbmlRead;
+
+
+%define ebml_version_DOCSTRING
+"""
+Get the EBML version of the file.
+The version of EBML to which the document conforms to.
+
+:return: EBML version.
+:rtype: int
+"""
+%enddef
+
+%feature("autodoc", ebml_version_DOCSTRING) ebml_version;
+
+
+%define reader_version_DOCSTRING
+"""
+Get the EBML reader version of the file.
+The minimum EBML version a parser has to support in order to read the document.
+
+:return: EBML reader version.
+:rtype: int
+"""
+%enddef
+
+%feature("autodoc", reader_version_DOCSTRING) reader_version;
+
+
+%define max_id_width_DOCSTRING
+"""
+Get the maximum ``ID`` width of the file.
+The maximum width of the ``IDs`` used in this document.
+
+:return: maximum ``ID`` width.
+:rtype: int
+:note: Speect can not read EBML format file with a ``ID`` width greater than 4.
+"""
+%enddef
+
+%feature("autodoc", max_id_width_DOCSTRING) max_id_width;
+
+
+%define max_size_width_DOCSTRING
+"""
+Get the maximum size width of the file.
+The maximum width of the size descriptors used in this document.
+
+:return: maximum size width.
+:rtype: int
+:note: Speect can not read EBML format file with a size width greater than 4.
+"""
+%enddef
+
+%feature("autodoc", max_size_width_DOCSTRING) max_size_width;
+
+
+%define doc_type_version_DOCSTRING
+"""
+Get the document type version of the file.
+The version of document type to which the document conforms to.
+
+:return: document type version.
+:rtype: int
+"""
+%enddef
+
+%feature("autodoc", doc_type_version_DOCSTRING) doc_type_version;
+
+
+%define doc_type_read_version_DOCSTRING
+"""
+Get the document type reader version of the file.
+The minimum ``doc_type_version`` version an interpreter has to
+support in order to read the document.
+
+:return: document type reader version.
+:rtype: int
+"""
+%enddef
+
+%feature("autodoc", doc_type_read_version_DOCSTRING) doc_type_reader_version;
+
+
+%define doc_type_DOCSTRING
+"""
+doctype()
+
+Get the document type of the file.
+An ASCII string that identifies the type of the document.
+
+:return: document type.
+:rtype: string
+"""
+%enddef
+
+%feature("autodoc", doc_type_DOCSTRING) SEbmlRead::doc_type;
+
+
+%define peek_id_DOCSTRING
+"""
+peek_id()
+
+Peek the ``ID`` of the next element in the ebml data source.
+
+
+:return: Ebml ID.
+:rtype: int
+"""
+%enddef
+
+%feature("autodoc", peek_id_DOCSTRING) SEbmlRead::peek_id;
+
+
+%define skip_element_DOCSTRING
+"""
+skip_element()
+
+Skip the current ebml element.
+"""
+%enddef
+
+%feature("autodoc", skip_element_DOCSTRING) SEbmlRead::skip_element;
+
+
+%define read_uint_DOCSTRING
+"""
+read_uint()
+
+Read current element as an unsigned integer.
+
+:return: [ID, element]
+:rtype: tuple
+"""
+%enddef
+
+%feature("autodoc", read_uint_DOCSTRING) SEbmlRead::read_uint;
+
+
+%define read_sint_DOCSTRING
+"""
+read_sint()
+
+Read current element as a signed integer.
+
+:return: [ID, element]
+:rtype: tuple
+"""
+%enddef
+
+%feature("autodoc", read_sint_DOCSTRING) SEbmlRead::read_sint;
+
+
+%define read_double_DOCSTRING
+"""
+read_double()
+
+Read current element as a double.
+
+:return: [ID, element]
+:rtype: tuple
+"""
+%enddef
+
+%feature("autodoc", read_double_DOCSTRING) SEbmlRead::read_double;
+
+
+%define read_str_DOCSTRING
+"""
+read_str()
+
+Read current element as a str.
+
+:return: [ID, element]
+:rtype: tuple
+"""
+%enddef
+
+%feature("autodoc", read_str_DOCSTRING) SEbmlRead::read_str;
+
+
+%define open_container_DOCSTRING
+"""
+open_container()
+
+Open a container element and return it's ``ID``.
+
+:return: ID
+:rtype: int
+"""
+%enddef
+
+%feature("autodoc", open_container_DOCSTRING) SEbmlRead::open_container;
+
+
+%define container_exhausted_DOCSTRING
+"""
+container_exhausted()
+
+Query if all of a currently open container's elements have been read.
+Thus, if true then the container is 'exhausted'.
+
+:return: True of False.
+:rtype: bool
+"""
+%enddef
+
+%feature("autodoc", container_exhausted_DOCSTRING) SEbmlRead::container_exhausted;
+
+
+
 %apply unsigned int *INOUT { uint32 *id };
 
 %inline
@@ -48,176 +275,6 @@
 			return NULL;
 
 		return val;
-	}
-
-	PyObject *ebml_sobject_2_pyobject(SObject *object, s_erc *error)
-	{
-		PyObject *pobject;
-		const char *type;
-		int s_comp;
-		swig_type_info *info;
-
-
-		if (object == NULL)
-			Py_RETURN_NONE;
-
-		type = SObjectType(object, error);
-		if (*error != S_SUCCESS)
-			return NULL;
-
-		s_comp = s_strcmp(type, "SInt", error);
-		if (*error != S_SUCCESS)
-			return NULL;
-
-		if (s_comp == 0)
-		{
-			sint32 val;
-
-
-			val = SObjectGetInt(object, error);
-			if (*error != S_SUCCESS)
-				return NULL;
-
-			S_DELETE(object, "ebml_sobject_2_pyobject", error);
-			pobject = PyInt_FromLong((long)val);
-			return pobject;
-		}
-
-		s_comp = s_strcmp(type, "SFloat", error);
-		if (*error != S_SUCCESS)
-			return NULL;
-
-		if (s_comp == 0)
-		{
-			float val;
-
-
-			val = SObjectGetFloat(object, error);
-			if (*error != S_SUCCESS)
-				return NULL;
-
-			S_DELETE(object, "ebml_sobject_2_pyobject", error);
-			pobject = PyFloat_FromDouble((double)val);
-			return pobject;
-		}
-
-		s_comp = s_strcmp(type, "SString", error);
-		if (*error != S_SUCCESS)
-			return NULL;
-
-		if (s_comp == 0)
-		{
-			const char *val;
-			size_t slen;
-
-
-			val = SObjectGetString(object, error);
-			if (*error != S_SUCCESS)
-				return NULL;
-
-			slen = s_strsize(val, error);
-			if (*error != S_SUCCESS)
-				return NULL;
-
-			S_DELETE(object, "ebml_sobject_2_pyobject", error);
-			pobject = PyString_FromStringAndSize(val, slen);
-			return pobject;
-		}
-
-		{
-			char               *cname;
-			char               *c;
-			char               *cp;
-			const char         *inherit_hier;
-			size_t             len;
-			char               *full_type_name;
-
-			inherit_hier = SObjectInheritance(object, error);
-			if (*error != S_SUCCESS)
-				return NULL;
-
-			cname = s_strdup(inherit_hier, error);
-			if (*error != S_SUCCESS)
-				return NULL;
-
-			cp = cname;
-			do
-			{
-				c = s_strtok_r(NULL, ":", &cp, error);
-
-				if (S_CHK_ERR(error, S_CONTERR,
-							  "sobject_2_pyobject",
-							  "Failed to extract token from class name"))
-				{
-					S_FREE(cname);
-					return NULL;
-				}
-
-				if (c == NULL)
-				{
-					S_FREE(cname);
-					break;
-				}
-
-				len = s_strzsize(c, error) + 2;
-				if (*error != S_SUCCESS)
-				{
-					S_FREE(cname);
-					return NULL;
-				}
-
-				full_type_name = S_CALLOC(char, len);
-				if (full_type_name == NULL)
-				{
-					S_FREE(cname);
-					S_FTL_ERR(error, S_MEMERROR,
-							  "sobject_2_pyobject",
-							  "Failed to allocate memory for 'char' object");
-					return NULL;
-				}
-
-				s_strcat(full_type_name, c, error);
-				if (*error != S_SUCCESS)
-				{
-					S_FREE(full_type_name);
-					S_FREE(cname);
-					return NULL;
-				}
-
-				s_strcat(full_type_name, " *", error);
-				if (*error != S_SUCCESS)
-				{
-					S_FREE(full_type_name);
-					S_FREE(cname);
-					return NULL;
-				}
-
-				info = SWIG_TypeQuery(full_type_name);
-				S_FREE(full_type_name);
-
-				if (info != NULL)
-				{
-					S_FREE(cname);
-					break;
-				}
-
-			} while (c != NULL);
-		}
-
-
-		if (info != NULL)
-		{
-			pobject = SWIG_NewPointerObj(SWIG_as_voidptr(object),
-										 info, 1);
-		}
-		else
-		{
-			/* don't know this object type, use SObject */
-			pobject = SWIG_NewPointerObj(SWIG_as_voidptr(object),
-										 SWIGTYPE_p_SObject, 1);
-		}
-
-		return pobject;
 	}
 %}
 
@@ -277,7 +334,7 @@ typedef struct
 		return ebmlReader;
 	}
 
-	const char *doctype(void)
+	const char *doc_type(void)
 	{
 		return (const char*)$self->header->doctype;
 	}
@@ -441,42 +498,29 @@ typedef struct
 	}
 
 
-	PyObject *read_object(s_erc *error)
-	{
-		PyObject *tuple;
-		PyObject *object;
-		SObject *val;
-		PyObject *sobject;
-		uint32 id;
+%pythoncode
+%{
+def read_object(self):
+    """
+    Read current element as an object.
 
+    :return: [ID, element]
+    :rtype: tuple
+    :note: The object must have an appropriate *serialization formatter*
+           defined and registered for the ``spct_ebml`` format. If not,
+           then the object can not be read.
+    """
 
-		val = S_EBMLREAD_CALL($self, read_object)($self, &id, error);
-		if (*error != S_SUCCESS)
-			return NULL;
+    import speect
 
-		sobject = ebml_sobject_2_pyobject(val, error);
-		if (*error != S_SUCCESS)
-		{
-			S_DELETE(sobject, "SEbmlRead::read_object()", error);
-			return NULL;
-		}
+    ebml_id = 0
+    sobject = sebml_reader_read_object(self, ebml_id)
 
-		tuple = PyTuple_New(2);
-		if (tuple == NULL)
-		{
-			S_CTX_ERR(error, S_FAILURE,
-					  "read_str",
-					  "Call to \"PyTuple_New\" failed");
-			return NULL;
-		}
+    # Python takes ownership, TRUE
+    pyobject = speect.sobject_2_pobject(sobject, TRUE)
 
-		object = PyInt_FromLong((ulong) id);
-		PyTuple_SET_ITEM(tuple, 0, object);
-		PyTuple_SET_ITEM(tuple, 1, sobject);
-
-
-		return tuple;
-	}
+    return [ ebml_id, pobject ]
+%}
 
 
 	uint32 open_container(s_erc *error)

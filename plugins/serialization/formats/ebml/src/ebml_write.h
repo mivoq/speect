@@ -295,7 +295,7 @@ typedef struct
 	 *
 	 * @note The @c object must have an appropriate #SSerializedObject
 	 * defined and registered (#SSerializedObjectRegister) for the
-	 * "spct_ebml" format. If not #SSerializedObject has been
+	 * "spct_ebml" format. If no #SSerializedObject has been
 	 * registered for the given @c object, then it will not be written
 	 * and the function will return (a warning will be written to
 	 * log). Test if object is writable with #SObjectIsWritable.

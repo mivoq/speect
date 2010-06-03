@@ -85,5 +85,4 @@
  * SFeatProcessorCB Python class
  */
 %include "featproc_callback.c"
-%include "featproc_callback.py"
 

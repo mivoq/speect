@@ -34,6 +34,30 @@
 /*                                                                                  */
 /************************************************************************************/
 
+%define sfeatproc_cb_new_DOCSTRING
+"""
+callback(callback_function)
+
+Create a new feature processor that has a Python function as a callback. When
+this newly created feature processor's ``run`` method is called, the Python
+function will be called with the arguments as supplied to the feature processor.
+The Python callback must take one argument, an item (:class:`speect.SItem`),
+and return a single object, which will be considered the extracted feature. The
+input item argument must be considered as constant (in the C sense) and not
+modified in any way.
+
+:param callback_function: A Python function that will be used as a callback
+                          function when this feature processor's ``run`` method
+                          is called.
+:type callback_function: A callable function
+:return: Extracted feature.
+"""
+%enddef
+
+%feature("autodoc", sfeatproc_cb_new_DOCSTRING) sfeatproc_cb_new;
+
+
+
 %include "exception.i"
 
 
@@ -43,12 +67,12 @@
 %inline
 %{
 	/*
-	 * FIXME: SVoid_PyObject_free and pyobject_2_sobject come from
-	 * speect/engine/swig/python/primitives.c
-	 * Don't know how to include them here.
+	 * FIXME: fpc_pyobject_2_sobject come from
+	 * speect/engine/swig/python/primitives.c (as pyobject_2_sobject)
+	 * Don't know how to include it here.
 	 */
 
-	SObject *pyobject_2_sobject(PyObject *pobject, s_erc *error)
+	SObject *fpc_pyobject_2_sobject(PyObject *pobject, s_erc *error)
 	{
 		SObject *object;
 		int res;
@@ -116,7 +140,7 @@
 			if (ustring == NULL)
 			{
 				S_CTX_ERR(error, S_FAILURE,
-						  "pyobject_2_sobject",
+						  "fpc_pyobject_2_sobject",
 						  "Call to \"PyUnicode_AsUTF8String\" failed");
 				return NULL;
 			}
@@ -259,10 +283,10 @@
 		}
 
 		/* convert result to Speect object */
-		retval = pyobject_2_sobject(result, error);
+		retval = fpc_pyobject_2_sobject(result, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "execute_python_callback",
-					  "Call to \"pyobject_2_sobject\" failed"))
+					  "Call to \"fpc_pyobject_2_sobject\" failed"))
 			retval = NULL;
 
 		/* we don't need the result object anymore */
@@ -336,4 +360,13 @@
 /*
  * Do not delete this delimiter, required for SWIG
  */
+%}
+
+
+%pythoncode
+%{
+
+# add the functions to the Speect SFeatProcessor class
+setattr(speect.SFeatProcessor, "callback", staticmethod(sfeatproc_cb_new))
+
 %}

@@ -56,4 +56,6 @@ include(plugin_conf)
 #                              SWIG wrappers                                         #
 #------------------------------------------------------------------------------------#
 
-add_subdirectory(swig)
+if(SPEECT_WRAP_PYTHON)
+  add_subdirectory(swig)
+endif(SPEECT_WRAP_PYTHON)

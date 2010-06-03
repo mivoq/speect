@@ -8,5 +8,7 @@ add_subdirectory(tracks)
 add_subdirectory(tokenizer)
 add_subdirectory(viterbi)
 add_subdirectory(cost_function)
-add_subdirectory(python_object)
 
+if(SPEECT_WRAP_PYTHON)
+  add_subdirectory(python_object)
+endif(SPEECT_WRAP_PYTHON)

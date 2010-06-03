@@ -34,7 +34,131 @@
 /*                                                                                  */
 /************************************************************************************/
 
-%nodefaultctor SPhoneset;
+%define phoneset_DOCSTRING
+"""
+A phoneset class. The phones in the phoneset have binary features,
+i.e. a phone either has a specific named feature or it doesn't.
+"""
+%enddef
+
+%feature("autodoc", phoneset_DOCSTRING) SPhoneset;
+
+
+%define phoneset_name_DOCSTRING
+"""
+name()
+
+Get the name of the phoneset.
+
+:return: The phoneset name.
+:rtype: string
+"""
+%enddef
+
+%feature("autodoc", phoneset_name_DOCSTRING) SPhoneset::name;
+
+
+%define phoneset_description_DOCSTRING
+"""
+description()
+
+Get a description of the phoneset.
+
+:return: The phoneset description.
+:rtype: string
+"""
+%enddef
+
+%feature("autodoc", phoneset_description_DOCSTRING) SPhoneset::description;
+
+
+%define phoneset_language_DOCSTRING
+"""
+language()
+
+Get the phoneset language.
+
+:return: The phoneset language.
+:rtype: string
+"""
+%enddef
+
+%feature("autodoc", phoneset_language_DOCSTRING) SPhoneset::language;
+
+
+%define phoneset_lang_code_DOCSTRING
+"""
+lang_code()
+
+Get the phoneset's ``ISO 639-2`` language code.
+
+:return: The ``ISO 639-2`` language code of the phoneset.
+:rtype: string
+"""
+%enddef
+
+%feature("autodoc", phoneset_lang_code_DOCSTRING) SPhoneset::lang_code;
+
+
+%define phoneset_version_DOCSTRING
+"""
+version()
+
+Get the phoneset's version.
+
+:return: The version of the phoneset (major, minor).
+:rtype: tuple
+"""
+%enddef
+
+%feature("autodoc", phoneset_version_DOCSTRING) SPhoneset::version;
+
+
+%define phoneset_phone_has_feature_DOCSTRING
+"""
+phone_has_feature(phone, feature)
+
+Query if the phone in the phoneset has the named feature. The
+phones in the phoneset have binary features, i.e. a phone
+either has a specific named feature or it doesn't.
+
+:param phone: The phone for which the feature presence is queried.
+:type phone: string
+:param feature: The feature for which the query is done.
+:type feature: string
+:return: True or False
+:rtype: bool
+"""
+%enddef
+
+%feature("autodoc", phoneset_phone_has_feature_DOCSTRING) SPhoneset::phone_has_feature;
+
+
+%define phoneset_has_phone_DOCSTRING
+"""
+has_phone(phone)
+
+
+:param phone: The phone for which the query is done.
+:type phone: string
+:return: True or False
+:rtype: bool
+"""
+%enddef
+
+%feature("autodoc", phoneset_has_phone_DOCSTRING) SPhoneset::has_phone;
+
+
+%define phoneset_features_DOCSTRING
+"""
+Get the features that are defined for the phoneset.
+
+:return: A map of the phoneset features.
+:rtype: SMap
+"""
+%enddef
+
+%feature("autodoc", phoneset_features_DOCSTRING) features;
 
 
 typedef struct
@@ -42,6 +166,7 @@ typedef struct
 	SMap *features;
 } SPhoneset;
 
+%nodefaultctor SPhoneset;
 
 %types(SPhoneset = SObject);
 
@@ -96,6 +221,12 @@ typedef struct
 			return NULL;
 
 		return lang_code;
+	}
+
+
+	s_version *version(s_erc *error)
+	{
+		return (s_version*)S_PHONESET_CALL($self, get_version)($self, error);
 	}
 
 

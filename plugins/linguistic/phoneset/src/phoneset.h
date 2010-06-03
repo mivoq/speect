@@ -281,7 +281,7 @@ typedef struct
 	 * either has a specific named feature or it doesn't.
 	 *
 	 * @param self The given phoneset.
-	 * @param phone The phone for which the feature list is requested.
+	 * @param phone The phone for which the feature presence is queried.
 	 * @param feature The feature for which the query is done.
 	 * @param error Error code.
 	 *

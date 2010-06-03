@@ -28,11 +28,68 @@
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* C convenience functions for SAudio Python wrapper.                               */
+/* C convenience functions for SMatrixFloat Python wrapper.                         */
 /*                                                                                  */
 /*                                                                                  */
 /*                                                                                  */
 /************************************************************************************/
+
+
+%define matrix_float_DOCSTRING
+"""
+SMatrixFloat(mlist)
+
+A native Speect class for containing an matrix of floating point values.
+Create a new object, that contains an matrix of floating point point values.
+
+:param mlist: A Python list of lists containing only floating point values.
+:type mlist: list
+:return: Newly created SMatrixFloat object.
+:rtype: SMatrixFloat
+"""
+%enddef
+
+%feature("autodoc", matrix_float_DOCSTRING) SMatrixFloat;
+
+
+%define get_DOCSTRING
+"""
+get()
+
+Return a copy of this SMatrixFloat object as a Python list of lists of floating point
+values.
+
+:return: Python list of lists floating point values.
+:rtype: list
+"""
+%enddef
+
+%feature("autodoc", get_DOCSTRING) SMatrixFloat::get;
+
+
+%define row_count_DOCSTRING
+"""
+Return a count of the number of rows in the SMatrixFloat object.
+
+:return: Number of rows in the SMatrixFloat object.
+:rtype: int
+"""
+%enddef
+
+%feature("autodoc", row_count_DOCSTRING) row_count;
+
+
+%define col_count_DOCSTRING
+"""
+Return a count of the number of columns in the SMatrixFloat object.
+
+:return: Number of columns in the SMatrixFloat object.
+:rtype: int
+"""
+%enddef
+
+%feature("autodoc", col_count_DOCSTRING) col_count;
+
 
 %{
 	typedef struct

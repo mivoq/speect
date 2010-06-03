@@ -28,11 +28,54 @@
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* C convenience functions for SAudio Python wrapper.                               */
+/* C convenience functions for SArrayInt Python wrapper.                            */
 /*                                                                                  */
 /*                                                                                  */
 /*                                                                                  */
 /************************************************************************************/
+
+%define array_int_DOCSTRING
+"""
+SArrayInt(ilist)
+
+A native Speect class for containing an array (vector) of integer values.
+Create a new object, that contains an array of integer point values.
+
+:param ilist: A Python list containing only integer values.
+:type ilist: list
+:return: Newly created SArrayInt object.
+:rtype: SArrayInt
+"""
+%enddef
+
+%feature("autodoc", array_int_DOCSTRING) SArrayInt;
+
+
+%define get_DOCSTRING
+"""
+get()
+
+Return a copy of this SArrayInt object as a Python list of integer
+values.
+
+:return: Python list of integer values.
+:rtype: list
+"""
+%enddef
+
+%feature("autodoc", get_DOCSTRING) SArrayInt::get;
+
+
+%define count_DOCSTRING
+"""
+Return a count of the number of elements in the SArrayInt object.
+
+:return: Number of elements in the SArrayInt object.
+:rtype: int
+"""
+%enddef
+
+%feature("autodoc", count_DOCSTRING) count;
 
 
 %{

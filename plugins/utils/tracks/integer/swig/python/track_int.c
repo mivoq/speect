@@ -28,11 +28,89 @@
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* C convenience functions for SAudio Python wrapper.                               */
+/* C convenience functions for STrackInt Python wrapper.                            */
 /*                                                                                  */
 /*                                                                                  */
 /*                                                                                  */
 /************************************************************************************/
+
+%define track_int_DOCSTRING
+"""
+STrackInt(times, mlist)
+
+A native Speect class for containing an track of integer values. A track
+is a class for storing time aligned coefficients. Each row of a track
+corresponds to a specific time instant. A column of a track is known as a
+channel, while track rows are knows as frames, for example:
+
++-------------+---------+------------+------------+------------+
+|             | Times   | Channel 0  | Channel 1  | Channel 2  |
++=============+=========+============+============+============+
+| **Frame 1** | 0.131   | 12         | 2          | 8          |
++-------------+---------+------------+------------+------------+
+| **Frame 2** | 0.254   | 52         | 201        | 43         |
++-------------+---------+------------+------------+------------+
+| **Frame 3** | 0.428   | 21         | 134        | 78         |
++-------------+---------+------------+------------+------------+
+
+Create a new object, that contains an track of integer point values. Note
+that the time points are still floating point values.
+
+The call to create the above track one would be::
+
+    track = speect.track_int.STrackInt([0.131, 0.254, 0.428], [[12, 2, 8], [52, 201, 43], [21, 134, 78]])
+
+:param times: A Python list of the time values, floating point.
+:type times: list
+:param mlist: A Python list of lists containing only integer values (frames and channels).
+:type mlist: list
+:return: Newly created STrackInt object.
+:rtype: STrackInt
+"""
+%enddef
+
+%feature("autodoc", track_int_DOCSTRING) STrackInt;
+
+
+%define get_DOCSTRING
+"""
+get()
+
+Return a copy of this STrackInt object as a Python tuple, with the first
+element being a list of the track times, and the second element being
+the frame and channel values.
+
+:return: A tuple, with the first element being a list of the track times, and the second element being the frame and channel values.
+:rtype: tuple
+"""
+%enddef
+
+%feature("autodoc", get_DOCSTRING) STrackInt::get;
+
+
+%define row_count_DOCSTRING
+"""
+Return a count of the number of rows (frames) in the STrackInt object.
+
+:return: Number of rows (frames) in the STrackInt object.
+:rtype: int
+"""
+%enddef
+
+%feature("autodoc", row_count_DOCSTRING) row_count;
+
+
+%define col_count_DOCSTRING
+"""
+Return a count of the number of columns (channels) in the STrackInt object.
+
+:return: Number of columns (channels) in the STrackInt object.
+:rtype: int
+"""
+%enddef
+
+%feature("autodoc", col_count_DOCSTRING) col_count;
+
 
 %{
 	typedef struct

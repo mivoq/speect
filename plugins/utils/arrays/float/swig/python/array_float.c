@@ -28,11 +28,54 @@
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* C convenience functions for SAudio Python wrapper.                               */
+/* C convenience functions for SArrayFloat Python wrapper.                          */
 /*                                                                                  */
 /*                                                                                  */
 /*                                                                                  */
 /************************************************************************************/
+
+%define array_float_DOCSTRING
+"""
+SArrayFloat(flist)
+
+A native Speect class for containing an array (vector) of floating point values.
+Create a new object, that contains an array of floating point values.
+
+:param flist: A Python list containing only floating point values.
+:type flist: list
+:return: Newly created SArrayFloat object.
+:rtype: SArrayFloat
+"""
+%enddef
+
+%feature("autodoc", array_float_DOCSTRING) SArrayFloat;
+
+
+%define get_DOCSTRING
+"""
+get()
+
+Return a copy of this SArrayFloat object as a Python list of floating point
+values.
+
+:return: Python list of floating point values.
+:rtype: list
+"""
+%enddef
+
+%feature("autodoc", get_DOCSTRING) SArrayFloat::get;
+
+
+%define count_DOCSTRING
+"""
+Return a count of the number of elements in the SArrayFloat object.
+
+:return: Number of elements in the SArrayFloat object.
+:rtype: int
+"""
+%enddef
+
+%feature("autodoc", count_DOCSTRING) count;
 
 
 %{

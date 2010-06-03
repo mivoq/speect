@@ -28,11 +28,68 @@
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* C convenience functions for SAudio Python wrapper.                               */
+/* C convenience functions for SMatrixInt Python wrapper.                           */
 /*                                                                                  */
 /*                                                                                  */
 /*                                                                                  */
 /************************************************************************************/
+
+
+%define matrix_int_DOCSTRING
+"""
+SMatrixInt(mlist)
+
+A native Speect class for containing an matrix of integer values.
+Create a new object, that contains an matrix of integer point values.
+
+:param mlist: A Python list of lists containing only integer values.
+:type mlist: list
+:return: Newly created SMatrixInt object.
+:rtype: SMatrixInt
+"""
+%enddef
+
+%feature("autodoc", matrix_int_DOCSTRING) SMatrixInt;
+
+
+%define get_DOCSTRING
+"""
+get()
+
+Return a copy of this SMatrixInt object as a Python list of lists of integer
+values.
+
+:return: Python list of lists integer values.
+:rtype: list
+"""
+%enddef
+
+%feature("autodoc", get_DOCSTRING) SMatrixInt::get;
+
+
+%define row_count_DOCSTRING
+"""
+Return a count of the number of rows in the SMatrixInt object.
+
+:return: Number of rows in the SMatrixInt object.
+:rtype: int
+"""
+%enddef
+
+%feature("autodoc", row_count_DOCSTRING) row_count;
+
+
+%define col_count_DOCSTRING
+"""
+Return a count of the number of columns in the SMatrixInt object.
+
+:return: Number of columns in the SMatrixInt object.
+:rtype: int
+"""
+%enddef
+
+%feature("autodoc", col_count_DOCSTRING) col_count;
+
 
 %{
 	typedef struct

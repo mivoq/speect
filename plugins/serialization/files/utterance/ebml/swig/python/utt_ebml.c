@@ -34,6 +34,38 @@
 /*                                                                                  */
 /************************************************************************************/
 
+%define sutterance_ebml_save_DOCSTRING
+"""
+save_ebml(path)
+
+Save the utterance to a file in the EBML format.
+
+:param path: Full path and file name of the file where the utterance should be saved to.
+:type path: string
+:note: All the features in the utterance (including in the relations and items) must
+       have appropriate EBML format serialization formatters registered.
+"""
+%enddef
+
+%feature("autodoc", sutterance_ebml_save_DOCSTRING) sutterance_ebml_save;
+
+
+%define sutterance_ebml_load_DOCSTRING
+"""
+load_ebml(path)
+
+Load the utterance from a file in the EBML format.
+
+:param path: Full path and file name of the file where the utterance should be loaded from.
+:type path: string
+:note: All the features in the utterance (including in the relations and items) must
+       have appropriate EBML format serialization formatters registered.
+"""
+%enddef
+
+%feature("autodoc", sutterance_ebml_load_DOCSTRING) sutterance_ebml_load;
+
+
 /*
  * Do not delete these delimiters, required for SWIG
  */
@@ -58,4 +90,12 @@
 /*
  * Do not delete this delimiter, required for SWIG
  */
+%}
+
+
+%pythoncode
+%{
+# add the functions to the Speect SUtterance class
+setattr(speect.SUtterance, "load_ebml", staticmethod(sutterance_ebml_load))
+setattr(speect.SUtterance, "save_ebml", sutterance_ebml_save)
 %}

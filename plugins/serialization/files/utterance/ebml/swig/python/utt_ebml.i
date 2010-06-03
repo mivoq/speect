@@ -93,6 +93,6 @@
  * Utterance loading/saving in EBML format
  */
 %include "utt_ebml.c"
-%include "utt_ebml.py"
+
 
 

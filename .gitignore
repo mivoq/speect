@@ -58,3 +58,8 @@ swig/python/speect/*.pyc
 !speect/swig/python/client.py
 !speect/swig/python/server.py
 
+
+##########################################################################
+# Ignore generated documentation 
+
+docs/_build/*

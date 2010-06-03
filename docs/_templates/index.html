@@ -1,0 +1,87 @@
+{% extends "layout.html" %}
+{% set title = 'Introduction' %}
+
+
+{% block body %}
+ <div class="section" id="the-speect-text-to-speech-system">
+   <span id="index"></span>
+   <h1>The Speect text-to-speech system<a class="headerlink" href="#the-speect-text-to-speech-system" title="Permalink to this headline">¶</a></h1>
+
+    <p>Speect is a multilingual TTS system. It offers a full text-to-speech
+      system with various API's, as well an environment for research and
+      development of TTS systems and voices.</p>
+
+    <p>Speect is written in the C language, with a strict conformance to the
+      ISO/IEC 9899:1990 standard, thereby allowing for maximum portability
+      to different computing platforms. Platform specific system calls are
+      abstracted to allow ports to new platforms.</p>
+
+    <p>Speect also includes Python bindings for general customization and quick
+      implementation of new ideas, and uses a plug-in mechanism for extensions.
+      It is still under constant and active development, but can already be used
+      for creating TTS voices, and doing research.</p>
+
+    <dl class="docutils">
+      <dt>The following synthesizer technologies are currently supported:</dt>
+      <dd><ul class="first last simple">
+	  <li><em>Unit Selection</em>: Concatenative halfphone sized unit selection, and</li>
+	  <li><em>HMM-based synthesis</em>: HMM-based synthesis plug-ins for the 
+	    <a class="reference external" href="http://hts-engine.sourceforge.net/">HTS Engine</a>.</li>
+	</ul>
+      </dd>
+    </dl>
+
+    <div class="admonition note">
+      <p class="first admonition-title">Note</p>
+      <p class="last">Speect has only been tested on <strong>Linux</strong>, but might work on <em>POSIX</em> compliant
+	systems. It will not compile on Windows machines. We hope to address this as soon as possible.</p>
+    </div>
+ </div>
+
+ 
+ <div class="section" id="license">
+   <h2>License<a class="headerlink" href="#license" title="Permalink to this headline">¶</a></h2>
+   <p>Speect is licenced under the MIT license (see <a class="reference external" href="license.html#license"><em>License</em></a>).</p>
+ </div>
+    
+
+ <div class="section" id="download">
+   <h2>Download<a class="headerlink" href="#download" title="Permalink to this headline">¶</a></h2>
+   
+   <p>The current version of Speect is {{ version }} and is available for download
+     on the <a href="http://sourceforge.net/projects/speect">Speect Sourceforge project page</a></p>
+   
+   <dl class="docutils">
+     <dt>The latest development code can be cloned (read-only) with git</dt>
+     <dd><strong>git clone git://speect.git.sourceforge.net/gitroot/speect/speect</strong></dd>
+   </dl>
+ </div>
+
+ <div class="section" id="getting-help">
+   <h2>Getting Help<a class="headerlink" href="#getting-help" title="Permalink to this headline">¶</a></h2>
+   <p>Go to the <a class="reference external" href="http://sourceforge.net/projects/speect/support">Speect Sourceforge support page</a>
+     or send an email to the <a class="reference external" href="mailto:speect-users&#37;&#52;&#48;lists&#46;sourceforge&#46;net">speect-users<span>&#64;</span>lists<span>&#46;</span>sourceforge<span>&#46;</span>net</a></p>
+ </div>
+ 
+ <div class="section" id="documentation">
+   <h2>Documentation<a class="headerlink" href="#documentation" title="Permalink to this headline">¶</a></h2>
+   
+   <table class="contentstable" align="center" style="margin-left: 30px"><tr>
+       <td width="50%">
+	 <p class="biglink"><a class="biglink" href="contents.html">Contents</a><br/>
+           <span class="linkdescr">for a complete overview</span></p>
+	 <p class="biglink"><a class="biglink" href="search.html">Search page</a><br/>
+           <span class="linkdescr">search the documentation</span></p>
+	 
+       </td><td width="50%">
+	 <p class="biglink"><a class="biglink" href="genindex.html">General Index</a><br/>
+           <span class="linkdescr">all functions, classes, terms</span></p>
+	 <p class="biglink"><a class="biglink" href="modindex.html">Module Index</a><br/>
+           <span class="linkdescr">quick access to all documented modules</span></p>
+     </td></tr>
+   </table>
+ </div>
+ 
+{% endblock %}
+
+{% block relbar2 %}{% endblock %}

@@ -33,6 +33,52 @@
 /*                                                                                  */
 /************************************************************************************/
 
+
+%define sobject_2_pyobject_DOCSTRING
+"""
+sobject_2_pyobject(object, own)
+
+Convert a Speect ``SObject`` type object to a Python object. This can be
+use full for conversions where either type is required an is used extensively
+internally and in the plug-in implementations.
+
+The ``own`` ownership flag specifies if Python must take ownership of the object,
+and hence can delete it. If not then Speect controls the memory of the object.
+
+:param object: The Speect object to convert.
+:type key: SObject
+:param own: Ownership flag.
+:type own: bool
+:return: A Python representation of the given object
+:rtype: Python type object.
+"""
+%enddef
+
+%feature("autodoc", sobject_2_pyobject_DOCSTRING) sobject_2_pyobject;
+
+
+%define pyobject_2_sobject_DOCSTRING
+"""
+pyobject_2_sobject(pobject)
+
+Convert a Python type object to a Speect ``SObject`` object. This can be
+use full for conversions where either type is required an is used extensively
+internally and in the plug-in implementations.
+
+Note that for basic types (int, float, string) Speect creates a new type. For
+other types, Speect creates an ``SObject``. This function will only work with
+basic types if no external plug-ins are loaded.
+
+:param pobject: The Python object to convert.
+:return: A Speect representation of the given object
+:rtype: ``SObject`` type object.
+"""
+%enddef
+
+%feature("autodoc", pyobject_2_sobject_DOCSTRING) pyobject_2_sobject;
+
+
+
 /*
  * Do not delete these delimiters, required for SWIG
  */
@@ -137,6 +183,9 @@
 			return pobject;
 		}
 
+		/* cycle through object inheritance hierarchy,
+		 * maybe we find something
+		 */
 		{
 			char               *cname;
 			char               *c;
@@ -334,11 +383,11 @@
 			return object;
 		}
 
-		/*
-		 * Not a simple object, make a SPyObject SVoid type, note
-		 * that the SPyObject plug-in must be loaded for this to work,
+		/* Differs from speect.sobject_2_pyobject
+		 * Adds support for Python object
 		 *
-		 * >>> import speect.pyobject
+		 * Not a simple object, make a SPyObject SVoid type
+		 * Needs speect.pyobject module to work.
 		 *
 		 */
 		object = SObjectSetVoid("SPyObject", (void*)pobject, error);

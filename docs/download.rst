@@ -8,7 +8,7 @@ Speect
 ------
 
 The current version of Speect is |version| and is available for download 
-on the `Speect Sourceforge project page <http://sourceforge.net/projects/speect>`_.
+at `Speect files <http://sourceforge.net/projects/speect/files/speect/>`_.
 
 The latest development code can be cloned (read-only) with git::
     
@@ -25,7 +25,7 @@ Voicetools
 
 A set of tools for creating new voices, current version 0.1, 
 and is available for download on the project page, 
-`Speect Sourceforge project page <http://sourceforge.net/projects/speect>`_.
+`Voicetools files <http://sourceforge.net/projects/speect/files/voicetools/>`_.
 
 The latest development code can be cloned (read-only) with git::
 

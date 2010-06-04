@@ -60,7 +60,15 @@ View the utterance structure::
     >>> print utt
 
 
+Miscellaneous
+-------------
 
+More examples can be found at :file:`speect/swig/python/examples`
+
+
+.. index:: Client-Server
+
+A Python client-server implementation can be found at :file:`speect/swig/python`
 
     
 

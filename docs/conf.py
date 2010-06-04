@@ -46,7 +46,7 @@ master_doc = 'contents'
 
 # General information about the project.
 project = u'Speect'
-copyright = u'2010, Aby Louw'
+copyright = u'2010, Meraka Institute, CSIR, South Africa'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -66,7 +66,7 @@ release = version
 
 # There are two options for replacing |today|: either, you set today to some
 # non-false value, then it is used:
-today = 'June 2, 2010'
+today = 'June 4, 2010'
 # Else, today_fmt is used as the format for a strftime call.
 #today_fmt = '%B %d, %Y'
 

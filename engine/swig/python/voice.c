@@ -49,6 +49,7 @@ This reduces the need for multiple redundant calls.
 :return: Voice object
 :rtype: SVoice
 :raises: RuntimeError if Speect was unable to load the voice.
+:warning: The ``path`` must be an absolute path and not relative.
 """
 %enddef
 

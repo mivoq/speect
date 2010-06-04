@@ -1,5 +1,0 @@
-
-18 March 2010, Aby
-------------------
-Correct object attributes, like voice is an attribute of 
-utterance and not a function.

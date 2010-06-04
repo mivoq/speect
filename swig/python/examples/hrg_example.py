@@ -43,7 +43,7 @@ item_t.add_daughter(item_w2)
 print utt
 
 #save utterance
-import utt_ebml
+import speect.utt_ebml
 
 utt.save_ebml("tmp.utt")
 

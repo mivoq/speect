@@ -12,11 +12,11 @@ def do_it(utt):
 
 utt_processor = speect.SUttProcessor.callback(do_it)
 
-v = speect.SVoice("/home/aby/Data/Voices/English/eng-ZA/Lwazi/voice.txt")
+v = speect.SVoice("/home/aby/Development/testing_voices/eng-ZA/voice.txt")
 v.uttProcessor_set("Tokenize", utt_processor)
 
 
-utt = v.synth("text-to-segments", "hello world")
+utt = v.synth("hello world", "text-to-segments" )
 
 
 

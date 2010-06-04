@@ -18,5 +18,6 @@ Documentation
    installation
    getting_started
    api
-   Creating New Voices <voicetools>
+   examples
+   voicetools
 

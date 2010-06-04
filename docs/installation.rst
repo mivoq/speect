@@ -123,6 +123,28 @@ and finally run the GNU make utility::
     make
 
 
+Voicetools
+----------
+Voicetools is a set of scripts that can be used to create new voices. 
+
+In order to use these utilities, the following actions need to be
+performed:
+
+ 1. Ensure that all the required software specified in the :file:`voictools/README` are
+    installed and functional.
+
+ 2. Ensure that all the scripts in the :file:`voicetools/scripts/` directory are
+    executable and on the path. This can be done by executing::
+    
+	chmod +x voictools/scripts/*
+
+    and adding the scripts directory to the :envvar:`PATH` environment variable.
+
+ 3. Ensure that all the modules in the :file:`voicetools/modules/` directory are on
+    the Python path. This can be done by adding the modules directory
+    to the :envvar:`PYTHON_PATH` environment variable.
+
+
 Documentation
 =============
 
@@ -150,10 +172,6 @@ Now sphinx can be executed from the :file:`speect/docs/` path::
     make html
 
 The documentation will be located at :file:`speect/docs/_built/html/`
-
-
-
-
 
 
 

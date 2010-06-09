@@ -1,20 +1,23 @@
 ######################################################################################
 ##                                                                                  ##
 ## AUTHOR  : Aby Louw                                                               ##
-## DATE    : 9 November 2009                                                        ##
+## DATE    : 10 November 2009                                                       ##
 ##                                                                                  ##
 ######################################################################################
 ##                                                                                  ##
-## CMake uninstall target. From http://www.cmake.org/Wiki/CMake_FAQ                 ##
+## Create Speect configuration files that create a SPCT_LIBRARIES target that       ##
+## can then be included in other CMake projects                                     ##
 ##                                                                                  ##
 ##                                                                                  ##
 ######################################################################################
 
+configure_file(${CMAKE_SOURCE_DIR}/engine/config/SpeectConf.cmake.in 
+    ${CMAKE_BINARY_DIR}/engine/SpeectConf.cmake @ONLY)
 
-CONFIGURE_FILE(
-  "${CMAKE_SOURCE_DIR}/config/cmake_uninstall.cmake.in"
-  "${CMAKE_BINARY_DIR}/cmake_uninstall.cmake"
-  IMMEDIATE @ONLY)
+configure_file(${CMAKE_SOURCE_DIR}/engine/config/speect_conf_install.cmake.in 
+  ${CMAKE_SOURCE_DIR}/engine/cmake/speect_conf_install.cmake @ONLY)
 
-ADD_CUSTOM_TARGET(uninstall
-  "${CMAKE_COMMAND}" -P "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake")
+export(TARGETS SPCT_LIBRARIES
+  FILE spctConfig.cmake)
+
+install(SCRIPT ${CMAKE_SOURCE_DIR}/engine/cmake/speect_conf_install.cmake)

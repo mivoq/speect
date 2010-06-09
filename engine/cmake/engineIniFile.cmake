@@ -11,7 +11,7 @@
 ######################################################################################
 
 #
-# ini file
+# configuration file
 #
-configure_file(${CMAKE_SOURCE_DIR}/config/speect.ini.in 
-  ${INI_FILE_PATH}/speect.ini)
+configure_file(${CMAKE_SOURCE_DIR}/engine/config/speect.ini.in 
+  ${SPCT_INI_FILE_PATH}/speect.conf)

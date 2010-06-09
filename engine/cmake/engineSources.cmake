@@ -5,10 +5,15 @@
 ##                                                                                  ##
 ######################################################################################
 ##                                                                                  ##
-## CMake source files for Speect library                                            ##
+## Speect Engine source files                                                       ##
 ##                                                                                  ##
 ##                                                                                  ##
 ######################################################################################
+
+
+#------------------------------------------------------------------------------------#
+#                         Speect Engine source files                                 #
+#------------------------------------------------------------------------------------#
 
 set(SPCT_SRC_FILES
 
@@ -99,16 +104,16 @@ set(SPCT_SRC_FILES
 
     # src/hrg
     src/hrg/hrg.c
-    src/hrg/item_content.c
     src/hrg/item.c
+    src/hrg/item_content.c
+    src/hrg/item_path.c 
     src/hrg/relation.c
     src/hrg/utterance.c
-    src/hrg/item_path.c
 
     # src/hrg/processors
-    src/hrg/processors/uttprocessor.c
     src/hrg/processors/featprocessor.c
     src/hrg/processors/processors.c
+    src/hrg/processors/uttprocessor.c
 
 
 ######## src/main ###################
@@ -125,9 +130,9 @@ set(SPCT_SRC_FILES
 
     # src/pluginmanager
     src/pluginmanager/dso.c
-    src/pluginmanager/plugin_object.c
     src/pluginmanager/manager.c
     src/pluginmanager/pluginmanager.c
+    src/pluginmanager/plugin_object.c
 
 
 ######## src/serialization #########
@@ -165,11 +170,10 @@ set(SPCT_SRC_FILES
 )
  
 
-######################################################################################
+#------------------------------------------------------------------------------------#
+#                         Speect Engine header files                                 #
+#------------------------------------------------------------------------------------#
 
-#
-# currently not used 
-# 
 set(SPCT_SRC_INCLUDE_FILES
 
 ######## src/base ##################
@@ -185,8 +189,8 @@ set(SPCT_SRC_INCLUDE_FILES
    src/base/containers/list/list.h
 
    # src/base/errdbg
-   src/base/errdbg/errdbg.h
    src/base/errdbg/errdbg_defs.h
+   src/base/errdbg/errdbg.h
    src/base/errdbg/errdbg_impl.h
    src/base/errdbg/errdbg_macros.h
    src/base/errdbg/errdbg_utils.h
@@ -207,8 +211,8 @@ set(SPCT_SRC_INCLUDE_FILES
    
    # src/base/obj
    src/base/objsystem/class.h
-   src/base/objsystem/object.h
    src/base/objsystem/object_def.h
+   src/base/objsystem/object.h
    src/base/objsystem/object_macros.h
    src/base/objsystem/objsystem.h
    src/base/objsystem/primitives.h
@@ -261,8 +265,8 @@ set(SPCT_SRC_INCLUDE_FILES
    # src/datasources
    src/datasources/data_reader.h
    src/datasources/data_source.h
-   src/datasources/data_writer.h
    src/datasources/datasources.h
+   src/datasources/data_writer.h
    src/datasources/file_source.h
    src/datasources/load_int.h
    src/datasources/load_real.h
@@ -272,10 +276,10 @@ set(SPCT_SRC_INCLUDE_FILES
 ######## src/hrg ##################
 
    # src/hrg
-   src/hrg/hrg.h
    src/hrg/hrg_defs.h
-   src/hrg/item.h
+   src/hrg/hrg.h
    src/hrg/item_content.h
+   src/hrg/item.h
    src/hrg/item_path.h
    src/hrg/relation.h
    src/hrg/utterance.h
@@ -314,21 +318,21 @@ set(SPCT_SRC_INCLUDE_FILES
    src/pluginmanager/dynamic_loading.h
    src/pluginmanager/manager.h
    src/pluginmanager/plugin.h
-   src/pluginmanager/plugin_object.h
    src/pluginmanager/pluginmanager.h
-
+   src/pluginmanager/plugin_object.h
+ 
 
 ######## src/serialization #########
 
    # src/serialization
    src/serialization/serialization.h
-   src/serialization/serialize.h
    src/serialization/serialized_file.h
    src/serialization/serialized_object.h
+   src/serialization/serialize.h
    
    # src/serialization/json
-   src/serialization/json/json.h
    src/serialization/json/json_decode.h
+   src/serialization/json/json.h
    src/serialization/json/json_lex.h
    src/serialization/json/json_parse_config.h
    src/serialization/json/json_parser.h
@@ -348,7 +352,6 @@ set(SPCT_SRC_INCLUDE_FILES
 
    # src/voicemanager/loaders
    src/voicemanager/loaders/data_config.h
-   src/voicemanager/loaders/data_load.h
    src/voicemanager/loaders/feat_processor.h
    src/voicemanager/loaders/features.h
    src/voicemanager/loaders/info.h
@@ -356,127 +359,4 @@ set(SPCT_SRC_INCLUDE_FILES
    src/voicemanager/loaders/plugins.h
    src/voicemanager/loaders/utt_processor.h
    src/voicemanager/loaders/utt_types.h
-)
-
-######################################################################################
-
-#
-# Threads
-#
-
-######## pthreads implementation ##########################
-set(SPCT_SRC_PTHREADS_FILES
-  pthreads/threads_pthreads.c
-)
-
-set(SPCT_INCLUDE_PTHREADS_FILES
-  pthreads/threads_pthreads.h
-)
-
-######## win32 implementation ##########################
-set(SPCT_SRC_WIN32_THREADS_FILES
-  win32/threads_win32.c
-)
-
-set(SPCT_INCLUDE_WIN32_THREADS_FILES
-  win32/threads_win32.h
-)
-
-######## no implementation ##########################
-set(SPCT_INCLUDE_NO_THREADS_FILES
-  threads_none.h
-)
-
-
-######################################################################################
-
-#
-# Dynamic shared objects
-#
-
-######## dl implementation ##########################
-set(SPCT_SRC_DL_DLL_FILES
-  dl/dl_dll.c
-)
-
-set(SPCT_INCLUDE_DL_DLL_FILES
-  dl/dl_dll.h
-)
-
-######## win32 implementation ##########################
-set(SPCT_SRC_WIN32_DLL_FILES
-  win32/win32_dll.c
-)
-
-set(SPCT_INCLUDE_WIN32_DLL_FILES
-  win32/win32_dll.h
-)
-
-
-######################################################################################
-
-#
-# Memory mapped files objects
-#
-
-######## posix implementation ##########################
-set(SPCT_SRC_MMAP_POSIX_FILES
-  posix/mmapfile_posix.c
-)
-
-set(SPCT_INCLUDE_MMAP_POSIX_FILES
-  posix/mmapfile_posix.h
-)
-
-######## win32 implementation ##########################
-set(SPCT_SRC_MMAP_WIN32_FILES
-  win32/mmapfile_win32.c
-)
-
-set(SPCT_INCLUDE_MMAP_WIN32_FILES
-  win32/mmapfile_win32.h
-)
-
-
-######################################################################################
-
-#
-# Platform specific types support 
-#
-
-######## posix implementation ##########################
-
-set(SPCT_INCLUDE_POSIX_TYPES_FILES
-  posix/posix_types.h
-)
-
-######## win32 implementation ##########################
-
-set(SPCT_INCLUDE_WIN32_TYPES_FILES
-  win32/win32_types.h
-)
-
-
-######################################################################################
-
-#
-# Platform specific file system path support 
-#
-
-######## posix implementation ##########################
-set(SPCT_SRC_PATH_POSIX_FILES
-  posix/posix_path.c
-)
-
-set(SPCT_INCLUDE_POSIX_PATH_FILES
-  posix/posix_path.h
-)
-
-######## win32 implementation ##########################
-set(SPCT_SRC_PATH_WIN32_FILES
-  win32/win32_path.c
-)
-
-set(SPCT_INCLUDE_WIN32_PATH_FILES
-  win32/win32_path.h
 )

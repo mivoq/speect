@@ -1,12 +1,17 @@
 ######################################################################################
 ##                                                                                  ##
 ## AUTHOR  : Aby Louw                                                               ##
-## DATE    : 09 May 2009                                                            ##
+## DATE    : 2 Novermber 2009                                                       ##
 ##                                                                                  ##
 ######################################################################################
 ##                                                                                  ##
-## CMake documentation build                                                        ##
+## CMake Speect version information                                                 ##
 ##                                                                                  ##
 ##                                                                                  ##
 ######################################################################################
 
+#
+# version information
+#
+configure_file(${CMAKE_SOURCE_DIR}/engine/config/version.h.in 
+  ${CMAKE_BINARY_DIR}/engine/src/include/version.h)

@@ -1,27 +1,24 @@
 ######################################################################################
 ##                                                                                  ##
 ## AUTHOR  : Aby Louw                                                               ##
-## DATE    : December 2009                                                          ##
+## DATE    : June 2010                                                              ##
 ##                                                                                  ##
 ######################################################################################
 ##                                                                                  ##
-## CMakeList for Speect Wrappers                                                    ##
+## CMakeList for Speect Engine SWIG common source files                             ##
 ##                                                                                  ##
 ##                                                                                  ##
 ######################################################################################
 
-#------------------------------------------------------------------------------------#
-#                   Speect Engine SWIG common wrappers                               #
-#------------------------------------------------------------------------------------#
-
-# Provides SPCT_SWIG_COMMON_SRC_FILES, a list of sources.
-add_subdirectory(common)
-
 
 #------------------------------------------------------------------------------------#
-#                   Include wrappers for different languages                         #
+#             Speect Engine SWIG common source files list                            #
 #------------------------------------------------------------------------------------#
 
-if(WANT_PYTHON_WRAPPER)
-  add_subdirectory(python)
-endif(WANT_PYTHON_WRAPPER)
+# generate a source file list, pointing to the absolute path of the sources so
+# that we can use the CMake variable SPCT_SWIG_COMMON_SRC_FILES when the file
+# is included in other projects
+
+configure_file(${CMAKE_SOURCE_DIR}/engine/swig/common/config/engineSWIGcommon.cmake.in 
+  ${CMAKE_BINARY_DIR}/engine/swig/common/cmake/engineSWIGcommon.cmake)
+

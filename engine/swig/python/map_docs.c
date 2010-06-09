@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2009 The Department of Arts and Culture,                           */
+/* Copyright (c) 2010 The Department of Arts and Culture,                           */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -24,14 +24,16 @@
 /************************************************************************************/
 /*                                                                                  */
 /* AUTHOR  : Aby Louw                                                               */
-/* DATE    : November 2009                                                          */
+/* DATE    : June 2010                                                              */
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* C convenience functions for SMap Python wrapper.                                 */
+/* Python documentation strings for SMap.                                           */
+/*                                                                                  */
 /*                                                                                  */
 /*                                                                                  */
 /************************************************************************************/
+
 
 %define map_DOCSTRING
 """
@@ -137,155 +139,5 @@ The Python iterator protocol for iteration over keys in a map.
 """
 %enddef
 
-%feature("autodoc", utterance_iter_DOCSTRING) SMap::__iter__;
-
-
-typedef struct
-{
-} SMap;
-
-
-%types(SMap = SObject);
-
-%nodefaultctor SMap;
-
-
-%extend SMap
-{
-	const SObject *value_get(const char *key, s_erc *error)
-	{
-		const SObject *value;
-
-		value = SMapGetObjectDef($self, key, NULL, error);
-		if (*error != S_SUCCESS)
-			return NULL;
-
-		return value;
-	}
-
-
-	PyObject *__getitem__(const char *key, s_erc *error)
-	{
-		const SObject *mapObject;
-		PyObject *object;
-
-
-		mapObject = SMapGetObjectDef($self, key, NULL, error);
-		if (*error != S_SUCCESS)
-			return NULL;
-
-		object = sobject_2_pyobject(mapObject, error, FALSE);
-		if (*error != S_SUCCESS)
-			return NULL;
-
-		return object;
-	}
-
-
-	int __len__(s_erc *error)
-	{
-		size_t num_feats;
-
-
-		num_feats = SMapSize($self, error);
-		if (*error != S_SUCCESS)
-			return 0;
-
-		return (int)num_feats;
-	}
-
-
-	void __setitem__(const char *key, PyObject *val, s_erc *error)
-	{
-		SObject *newObject;
-
-
-		newObject = pyobject_2_sobject(val, error);
-		if (*error != S_SUCCESS)
-			return;
-
-		if (newObject == NULL)
-			return;
-
-		SMapSetObject($self, key, newObject, error);
-		if (*error != S_SUCCESS)
-			S_DELETE(newObject, "SMap::__setitem__", error);
-	}
-
-
-	void __delitem__(const char *key, s_erc *error)
-	{
-		s_bool is_present;
-
-
-		is_present = SMapObjectPresent($self, key, error);
-		if (*error != S_SUCCESS)
-			return;
-
-		if (!is_present)
-			return;
-
-		SMapObjectDelete($self, key, error);
-	}
-
-
-	PMapIterator *__iter__()
-	{
-		PMapIterator *pitr;
-		SIterator *itr;
-		s_erc error;
-
-
-		S_CLR_ERR(&error);
-		itr = SMapIterator($self, &error);
-		if (error != S_SUCCESS)
-			return NULL;
-
-		itr = SIteratorFirst(itr);
-		pitr = make_PMapIterator(itr, &error);
-		if (error != S_SUCCESS)
-			return NULL;
-
-		return pitr;
-	}
-
-
-%pythoncode
-%{
-def __str__(self):
-    """
-    Return a string representation of the key-value pairs that are in the map.
-
-    :return: A string representation of the key-value pairs that are in the map.
-    :rtype: string
-    """
-
-    num_features = len(self)
-    if num_features > 0:
-        stri = "{ "
-
-        first = True
-        count = num_features
-
-        for ik in self:
-            if not first:
-                stri += '\n    '
-            first = False
-            count -= 1
-            if count != 0:
-                stri += '%s : %s,' %(ik, repr(self[ik]))
-            else:
-                stri += '%s : %s' %(ik, repr(self[ik]))
-
-        if  num_features > 0:
-            stri += '    }\n'
-
-    else:
-        stri = "{}"
-
-    return stri
-%}
-
-
-};
+%feature("autodoc", map_iter_DOCSTRING) SMap::__iter__;
 

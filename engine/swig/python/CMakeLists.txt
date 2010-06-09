@@ -11,32 +11,85 @@
 ######################################################################################
 
 
-# find swig
-find_package(SWIG REQUIRED)
+#------------------------------------------------------------------------------------#
+#             Speect Engine SWIG Python source files list                            #
+#------------------------------------------------------------------------------------#
 
-# include swig
+# generate a source file list, pointing to the absolute path of the sources so
+# that we can use the CMake variable SPCT_SWIG_PYTHON_SRC_FILES when the file
+# is included in other projects
+
+configure_file(${CMAKE_SOURCE_DIR}/engine/swig/python/config/engineSWIGpython.cmake.in 
+  ${CMAKE_BINARY_DIR}/engine/swig/python/cmake/engineSWIGpython.cmake)
+
+
+#------------------------------------------------------------------------------------#
+#         Create a list of dependencies of the SWIG Python interface                 #
+#------------------------------------------------------------------------------------#
+
+# provides the source list, SPCT_SWIG_COMMON_SRC_FILES
+include(${CMAKE_BINARY_DIR}/engine/swig/common/cmake/engineSWIGcommon.cmake)
+
+# provides the source list, SPCT_SWIG_PYTHON_SRC_FILES
+include(${CMAKE_BINARY_DIR}/engine/swig/python/cmake/engineSWIGpython.cmake)
+
+list(APPEND SPCT_SWIG_PYTHON_DEPS
+  ${SPCT_SWIG_COMMON_SRC_FILES} 
+  ${SPCT_SWIG_PYTHON_SRC_FILES})
+
+
+#------------------------------------------------------------------------------------#
+#                       Find/include required packages                               #
+#------------------------------------------------------------------------------------#
+
+###################################### SWIG ##########################################
+
+find_package(SWIG REQUIRED)
 include(${SWIG_USE_FILE})
 
-# find Python interpreter
-find_package(PythonLibs REQUIRED) # Note, currently PythonInterp does not look for Python 3
 
-# add Python to includes
-include_directories(${PYTHON_INCLUDE_PATH})
+#################################### Python ##########################################
 
-# add Speect Engine includes
-include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+find_package(PythonLibs REQUIRED) # Note, CMake does not look for Python 3
+include_directories(${PYTHON_INCLUDE_DIRS})    # PYTHON_INCLUDE_PATH (deprecated)
 
-# clear SWIG flags, we don't need anything here
-set(CMAKE_SWIG_FLAGS "")
+
+#################################### Speect ##########################################
+
+include_directories(${SPCT_INCLUDE_DIRS})
+
+
+#------------------------------------------------------------------------------------#
+#                              Generate speect.i                                     #
+#------------------------------------------------------------------------------------#
+
+configure_file(${CMAKE_SOURCE_DIR}/engine/swig/python/config/speect.i.in 
+  ${CMAKE_BINARY_DIR}/engine/swig/python/speect.i) 
+
+
+#------------------------------------------------------------------------------------#
+#                                  C flags                                           #
+#------------------------------------------------------------------------------------#
 
 # clear C flags, we don't want the same stuff as Speect
 set(CMAKE_C_FLAGS "")
+
+
+#------------------------------------------------------------------------------------#
+#                                speect.i properties                                 #
+#------------------------------------------------------------------------------------#
 
 # add flags for Python Speect Engine wrapper generation
 set_source_files_properties(speect.i 
   PROPERTIES 
   SWIG_FLAGS "-Wall"
+  GENERATED TRUE
 )
+
+
+#------------------------------------------------------------------------------------#
+#                              speectPYTHON_wrap.c flags                             #
+#------------------------------------------------------------------------------------#
 
 # add flags for Python Speect Engine wrapper compilation
 set_source_files_properties(speectPYTHON_wrap.c 
@@ -45,20 +98,30 @@ set_source_files_properties(speectPYTHON_wrap.c
   GENERATED TRUE
 )
 
-# set ouput directory
-#message(STATUS "CMAKE_CURRENT_BIN_DIR = ${CMAKE_BINARY_DIR}")
-set(CMAKE_SWIG_OUTDIR ${CMAKE_BINARY_DIR}/../swig/python/speect)
+
+#------------------------------------------------------------------------------------#
+#                                 CMAKE_SWIG_OUTDIR                                  #
+#------------------------------------------------------------------------------------#
+
+set(CMAKE_SWIG_OUTDIR ${CMAKE_BINARY_DIR}/swig/python/speect)
+
+
+#------------------------------------------------------------------------------------#
+#                           Speect Engine Python wrapper                             #
+#------------------------------------------------------------------------------------#
+
+# set dependencies
+set(SWIG_MODULE_speect_EXTRA_DEPS "${SPCT_SWIG_PYTHON_DEPS}")
 
 # create the Python Speect Engine wrapper (C and Python files)
 swig_add_module(speect python speect.i)
 
 # link with Python and Speect Engine
-swig_link_libraries(speect ${PYTHON_LIBRARIES} ${SPCT_LINK_WITH})
+swig_link_libraries(speect ${PYTHON_LIBRARIES} ${SPCT_LIBRARIES_TARGET})
 
 # set the output directory
 set_target_properties(${SWIG_MODULE_speect_REAL_NAME}
   PROPERTIES
-  LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/../swig/python/speect
-  RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/../swig/python/speect
+  LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/swig/python/speect
+  RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/swig/python/speect
 )
-

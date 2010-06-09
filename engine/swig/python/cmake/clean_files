@@ -1,0 +1,8 @@
+#!/bin/sh
+
+
+rm -f *~
+
+
+# engineSWIGpython.cmake is auto generated
+rm -f engineSWIGpython.cmake

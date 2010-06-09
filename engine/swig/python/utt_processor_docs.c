@@ -24,69 +24,47 @@
 /************************************************************************************/
 /*                                                                                  */
 /* AUTHOR  : Aby Louw                                                               */
-/* DATE    : February 2010                                                          */
+/* DATE    : June 2010                                                              */
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* C convenience functions for SPlugin Python wrapper.                              */
+/* Python documentation strings for SUttProcessor.                                  */
+/*                                                                                  */
 /*                                                                                  */
 /*                                                                                  */
 /************************************************************************************/
 
-%define plugin_ctor_DOCSTRING
+%define UttProcessor_DOCSTRING
 """
-SPlugin(path)
-
-Plug-in objects encapsulate the loading/unloading and resource acquisition
-of *dynamic shared objects*.
-
-Load a plug-in from the given path. If the plug-in at the given
-path has already been loaded, then the plug-in's reference counter
-is increased and a pointer to the loaded plug-in is returned. This
-reduces the need for multiple redundant calls.
-
-If the given path does not include any path separators (just a file name)
-then the path is concatenated with the default plug-in path.
-
-:param path: The full path and name of the plug-in to load.
-:type path: string
-:return: Plug-in object
-:rtype: Swig Object of type SPlugin
-:raises: RuntimeError if Speect was unable to load the plug-in.
+An Utterance Processor processes an utterance by extracting information from it
+and then modifying it in some way.
 """
 %enddef
 
-%feature("autodoc", plugin_ctor_DOCSTRING) SPlugin;
+%feature("autodoc", UttProcessor_DOCSTRING) SUttProcessor;
 
 
-typedef struct
-{
-} SPlugin;
+%define UttProcessor_run_DOCSTRING
+"""
+run(utt)
+
+Execute the UttProcessor on the given utterance.
+
+:param utt: The utterance on which to execute the utterance processor.
+:type utt: SUtterance
+"""
+%enddef
+
+%feature("autodoc", UttProcessor_run_DOCSTRING) SUttProcessor::run;
 
 
-%types(SPlugin = SObject);
+%define UttProcessor_features_DOCSTRING
+"""
+Get the features that are defined for the utterance processor.
 
+:return: A map of the utterance processor features.
+:rtype: SMap
+"""
+%enddef
 
-%extend SPlugin
-{
-	SPlugin(const char *path, s_erc *error)
-	{
-		SPlugin *plugin;
-
-
-		plugin = s_pm_load_plugin(path, error);
-		if (*error != S_SUCCESS)
-			return NULL;
-
-		return plugin;
-	}
-
-	~SPlugin()
-	{
-		s_erc error;
-
-
-		S_CLR_ERR(&error);
-		S_DELETE($self, "~SPlugin()", &error);
-	}
-}
+%feature("autodoc", UttProcessor_features_DOCSTRING) features;

@@ -1,0 +1,128 @@
+/************************************************************************************/
+/* Copyright (c) 2009-2010 The Department of Arts and Culture,                      */
+/* The Government of the Republic of South Africa.                                  */
+/*                                                                                  */
+/* Contributors:  Meraka Institute, CSIR, South Africa.                             */
+/*                                                                                  */
+/* Permission is hereby granted, free of charge, to any person obtaining a copy     */
+/* of this software and associated documentation files (the "Software"), to deal    */
+/* in the Software without restriction, including without limitation the rights     */
+/* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell        */
+/* copies of the Software, and to permit persons to whom the Software is            */
+/* furnished to do so, subject to the following conditions:                         */
+/* The above copyright notice and this permission notice shall be included in       */
+/* all copies or substantial portions of the Software.                              */
+/*                                                                                  */
+/* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR       */
+/* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,         */
+/* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE      */
+/* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER           */
+/* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,    */
+/* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN        */
+/* THE SOFTWARE.                                                                    */
+/*                                                                                  */
+/************************************************************************************/
+/*                                                                                  */
+/* AUTHOR  : Richard Carlson, Aby Louw                                              */
+/* DATE    : March 2009                                                             */
+/*                                                                                  */
+/************************************************************************************/
+/*                                                                                  */
+/* The Speect Engine library SWIG/Python interface definition.                      */
+/*                                                                                  */
+/* speect.i is auto generated from config/speect.i.in, do not edit speect.i         */
+/*                                                                                  */
+/************************************************************************************/
+
+%module(docstring="Speect Engine library Python interface") speect
+
+
+/************************************************************************************/
+/*                                                                                  */
+/* SWIG includes.                                                                   */
+/*                                                                                  */
+/************************************************************************************/
+
+%include "typemaps.i"
+%include "exception.i"
+
+
+/************************************************************************************/
+/*                                                                                  */
+/* Speect Python typemaps.                                                          */
+/*                                                                                  */
+/************************************************************************************/
+
+%include "speect_py_typemaps.i"
+
+
+/************************************************************************************/
+/*                                                                                  */
+/* Speect Engine header.                                                            */
+/*                                                                                  */
+/************************************************************************************/
+
+%header
+%{
+#include "speect.h"
+%}
+
+/* enable autodoc */
+%feature("autodoc", "1");
+
+
+/************************************************************************************/
+/*                                                                                  */
+/* Speect Engine Python documentation strings.                                      */
+/*                                                                                  */
+/************************************************************************************/
+
+%include "misc_docs.c"
+%include "utterance_docs.c"
+%include "relation_docs.c"
+%include "map_docs.c"
+%include "item_docs.c"
+%include "voice_docs.c"
+%include "plugin_docs.c"
+%include "utt_processor_docs.c"
+%include "feat_processor_docs.c"
+
+
+/************************************************************************************/
+/*                                                                                  */
+/* Definition of functions that convert between Speect and Python objects.          */
+/* Must be before inclusion of common Speect Engine files.                          */
+/*                                                                                  */
+/*                       Speect (SObject) <-> Python (PyObject)                     */
+/*                                                                                  */
+/************************************************************************************/
+
+%include "primitives_python.c"
+
+
+/************************************************************************************/
+/*                                                                                  */
+/* Speect Engine library SWIG common interface definition.                          */
+/*                                                                                  */
+/************************************************************************************/
+
+%include "@SPCT_SWIG_COMMON_DIR@/speect_common.i"
+
+
+/************************************************************************************/
+/*                                                                                  */
+/* Speect Engine SWIG/Python specific interface definitions.                        */
+/*                                                                                  */
+/* Note that the file names must be unique with respect to the names                */
+/* as they are in speect_common.i                                                   */
+/*                                                                                  */
+/************************************************************************************/
+
+%include "iterator_python.c"
+%include "utterance_python.c"
+%include "relation_itr_python.c"
+%include "relation_python.c"
+%include "map_python.c"
+%include "item_python.c"
+%include "voice_python.c"
+

@@ -24,63 +24,37 @@
 /************************************************************************************/
 /*                                                                                  */
 /* AUTHOR  : Aby Louw                                                               */
-/* DATE    : March 2010                                                             */
+/* DATE    : June 2010                                                              */
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* C convenience functions for SFeatProcessor Python wrapper.                       */
+/* Python documentation strings for SPlugin.                                        */
 /*                                                                                  */
 /*                                                                                  */
 /*                                                                                  */
 /************************************************************************************/
 
-%define FeatProcessor_DOCSTRING
+%define plugin_ctor_DOCSTRING
 """
-A Feature Processor processes an item by extracting information from it
-and returning this extracted information.
+SPlugin(path)
+
+Plug-in objects encapsulate the loading/unloading and resource acquisition
+of *dynamic shared objects*.
+
+Load a plug-in from the given path. If the plug-in at the given
+path has already been loaded, then the plug-in's reference counter
+is increased and a pointer to the loaded plug-in is returned. This
+reduces the need for multiple redundant calls.
+
+If the given path does not include any path separators (just a file name)
+then the path is concatenated with the default plug-in path.
+
+:param path: The full path and name of the plug-in to load.
+:type path: string
+:return: Plug-in object
+:rtype: Swig Object of type SPlugin
+:raises: RuntimeError if Speect was unable to load the plug-in.
 """
 %enddef
 
-%feature("autodoc", FeatProcessor_DOCSTRING) SFeatProcessor;
-
-
-%define FeatProcessor_run_DOCSTRING
-"""
-run(item)
-
-Execute the FeatProcessor on the given item.
-
-:param item: The item on which to execute the feature processor.
-:type item: SItem
-:return: The extracted information.
-"""
-%enddef
-
-%feature("autodoc", FeatProcessor_run_DOCSTRING) SFeatProcessor::run;
-
-
-typedef struct
-{
-} SFeatProcessor;
-
-%nodefaultctor SFeatProcessor;
-
-%nodefaultdtor SFeatProcessor;
-
-
-%types(SFeatProcessor = SObject);
-
-%extend SFeatProcessor
-{
-	SObject *run(const SItem *item, s_erc *error)
-	{
-		SObject *featObject;
-
-
-		featObject = SFeatProcessorRun($self, item, error);
-		if (*error != S_SUCCESS)
-			return NULL;
-
-		return featObject;
-	}
-};
+%feature("autodoc", plugin_ctor_DOCSTRING) SPlugin;

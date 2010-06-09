@@ -28,47 +28,11 @@
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* C convenience functions for SUttProcessor Python wrapper.                        */
+/* SWIG common C convenience functions for SUttProcessor.                           */
 /*                                                                                  */
 /*                                                                                  */
 /*                                                                                  */
 /************************************************************************************/
-
-%define UttProcessor_DOCSTRING
-"""
-An Utterance Processor processes an utterance by extracting information from it
-and then modifying it in some way.
-"""
-%enddef
-
-%feature("autodoc", UttProcessor_DOCSTRING) SUttProcessor;
-
-
-%define UttProcessor_run_DOCSTRING
-"""
-run(utt)
-
-Execute the UttProcessor on the given utterance.
-
-:param utt: The utterance on which to execute the utterance processor.
-:type utt: SUtterance
-"""
-%enddef
-
-%feature("autodoc", UttProcessor_run_DOCSTRING) SUttProcessor::run;
-
-
-%define UttProcessor_features_DOCSTRING
-"""
-Get the features that are defined for the utterance processor.
-
-:return: A map of the utterance processor features.
-:rtype: SMap
-"""
-%enddef
-
-%feature("autodoc", UttProcessor_features_DOCSTRING) features;
-
 
 typedef struct
 {

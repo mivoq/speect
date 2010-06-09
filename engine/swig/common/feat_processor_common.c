@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2009-2010 The Department of Arts and Culture,                      */
+/* Copyright (c) 2010 The Department of Arts and Culture,                           */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -23,69 +23,40 @@
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* AUTHOR  : Richard Carlson, Aby Louw                                              */
-/* DATE    : March 2009                                                             */
+/* AUTHOR  : Aby Louw                                                               */
+/* DATE    : March 2010                                                             */
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* The Speect Engine library SWIG/Python interface definition.                      */
+/* SWIG common C convenience functions for SFeatProcessor.                          */
 /*                                                                                  */
 /*                                                                                  */
-/************************************************************************************/
-
-%module(docstring="Speect Engine library Python interface") speect
-
-%include "typemaps.i"
-%include "exception.i"
-%include "speect_typemaps.i"
-
-/************************************************************************************/
-/*                                                                                  */
-/* Speect Engine header.                                                            */
 /*                                                                                  */
 /************************************************************************************/
 
-%header
-%{
-#include "speect.h"
-%}
 
-%feature("autodoc", "1");
+typedef struct
+{
+} SFeatProcessor;
 
-/************************************************************************************/
-/*                                                                                  */
-/* Speect Python typemaps.                                                          */
-/*                                                                                  */
-/************************************************************************************/
+%nodefaultctor SFeatProcessor;
 
-%include "speect_py_typemaps.i"
+%nodefaultdtor SFeatProcessor;
 
 
-/************************************************************************************/
-/*                                                                                  */
-/* Miscellaneous C Speect functions.                                                */
-/*                                                                                  */
-/************************************************************************************/
+%types(SFeatProcessor = SObject);
 
-%include "misc.c"
+%extend SFeatProcessor
+{
+	SObject *run(const SItem *item, s_erc *error)
+	{
+		SObject *featObject;
 
 
-/************************************************************************************/
-/*                                                                                  */
-/* SObject wrapper functions                                                        */
-/*                                                                                  */
-/************************************************************************************/
+		featObject = SFeatProcessorRun($self, item, error);
+		if (*error != S_SUCCESS)
+			return NULL;
 
-%include "primitives.c"
-%include "iterator.c"
-%include "object.c"
-%include "utterance.c"
-%include "relation_itr.c"
-%include "relation.c"
-%include "map.c"
-%include "list.c"
-%include "item.c"
-%include "voice.c"
-%include "plugin.c"
-%include "utt_processor.c"
-%include "feat_processor.c"
+		return featObject;
+	}
+};

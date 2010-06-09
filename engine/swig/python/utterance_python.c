@@ -28,46 +28,66 @@
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* C convenience functions for SObject Python wrapper.                              */
+/* C convenience functions for SUtterance Python wrapper.                           */
+/*                                                                                  */
 /*                                                                                  */
 /*                                                                                  */
 /************************************************************************************/
 
-
-typedef struct
+%extend SUtterance
 {
-} SObject;
-
-
-%nodefaultctor SObject;
-
-%extend SObject
-{
-	~SObject()
+	s_bool __contains__(const char *name, s_erc *error)
 	{
+		s_bool is_present;
+
+
+		is_present = SUtteranceRelationIsPresent($self, name, error);
+		if (*error != S_SUCCESS)
+			return FALSE;
+
+		return is_present;
+	}
+
+
+	PMapIterator *__iter__()
+	{
+		PMapIterator *pitr;
+		SIterator *itr;
 		s_erc error;
 
+
 		S_CLR_ERR(&error);
-		S_DELETE($self, "~SObject()", &error);
-	}
-
-
-	s_bool is_type(const char *type, s_erc *error)
-	{
-		return SObjectIsType($self, type, error);
-	}
-
-
-	const char *get_type(s_erc *error)
-	{
-		const char *type;
-
-
-		type = SObjectType($self, error);
-		if (*error != S_SUCCESS)
+		itr = SMapIterator($self->relations, &error);
+		if (error != S_SUCCESS)
 			return NULL;
 
-		return type;
-	}
-};
+		itr = SIteratorFirst(itr);
+		pitr = make_PMapIterator(itr, &error);
+		if (error != S_SUCCESS)
+			return NULL;
 
+		return pitr;
+	}
+
+
+%pythoncode
+%{
+def __str__(self):
+    """
+    Get a string representation of the utterance.
+
+    :return: A string representation of the utterance.
+    :rtype: string
+    """
+
+    stri = "Utterance:\n"
+    for f in self.features:
+        stri += '    Feature: %20.20s => %s\n' %(f, repr(self.features[f]))
+
+    for r in self:
+        stri += self.relation_get(r).to_string(prefix="        ")
+
+    return stri
+%}
+
+};

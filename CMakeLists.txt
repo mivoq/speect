@@ -59,8 +59,7 @@ include(spctOS)
 # Build options
 include(spctBuild)
 
-# Custom functions
-include(custom)
+
 
 
 

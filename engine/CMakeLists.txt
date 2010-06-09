@@ -53,9 +53,6 @@ include(engineIniFile)
 # Initialization file loader
 include(engineIniLoader)
 
-# Create a uninstall target (make uninstall)
-include(engineUninstall)
-
 
 #------------------------------------------------------------------------------------#
 #    Speect Engine library variables  (used in platform abstraction configuration)   #

@@ -304,7 +304,7 @@ S_API void SJSONParserInit(SJSONParser **self, SDatasource *ds,
 		return;
 	}
 
-	s_mutex_unlock(&self->json_mutex);
+	s_mutex_unlock(&(*self)->json_mutex);
 }
 
 

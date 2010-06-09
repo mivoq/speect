@@ -1,8 +1,0 @@
-#!/bin/sh
-
-
-rm -f *~
-
-
-# engineSWIGcommon.cmake is auto generated
-rm -f engineSWIGcommon.cmake

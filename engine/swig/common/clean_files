@@ -52,9 +52,10 @@ fi
 
 echo "\t\tcleaning cmake"
 
-cd ./cmake/
-./clean_files
-cd ..
+if [ -d cmake ]
+then 
+    rm -fr cmake
+fi
 
 
 ########################################################################
@@ -69,3 +70,6 @@ cd ..
 ########################################################################
 
 rm -f *~
+
+# speect_common.i is auto generated
+rm -f speect_common.i

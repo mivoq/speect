@@ -27,10 +27,12 @@ set(SPCT_SWIG_COMMON_SRC_FILES
   "${CMAKE_SOURCE_DIR}/engine/swig/common/plugin_common.c"
   "${CMAKE_SOURCE_DIR}/engine/swig/common/relation_common.c"
   "${CMAKE_SOURCE_DIR}/engine/swig/common/relation_itr_common.c"
-  "${CMAKE_SOURCE_DIR}/engine/swig/common/speect_common.i"
   "${CMAKE_SOURCE_DIR}/engine/swig/common/speect_typemaps.i"
   "${CMAKE_SOURCE_DIR}/engine/swig/common/utterance_common.c"
   "${CMAKE_SOURCE_DIR}/engine/swig/common/utt_processor_common.c"
   "${CMAKE_SOURCE_DIR}/engine/swig/common/voice_common.c"
+
+# auto generated
+  "${CMAKE_BINARY_DIR}/engine/swig/common/speect_common.i"
 )
 

@@ -31,12 +31,14 @@ set(SPCT_SWIG_PYTHON_SRC_FILES
   "${CMAKE_SOURCE_DIR}/engine/swig/python/relation_docs.c"
   "${CMAKE_SOURCE_DIR}/engine/swig/python/relation_itr_python.c"
   "${CMAKE_SOURCE_DIR}/engine/swig/python/relation_python.c"
-  "${CMAKE_SOURCE_DIR}/engine/swig/python/speect.i"
   "${CMAKE_SOURCE_DIR}/engine/swig/python/speect_py_typemaps.i"
   "${CMAKE_SOURCE_DIR}/engine/swig/python/utterance_docs.c"
   "${CMAKE_SOURCE_DIR}/engine/swig/python/utterance_python.c"
   "${CMAKE_SOURCE_DIR}/engine/swig/python/utt_processor_docs.c"
   "${CMAKE_SOURCE_DIR}/engine/swig/python/voice_docs.c"
   "${CMAKE_SOURCE_DIR}/engine/swig/python/voice_python.c"
+
+# auto generated
+  "${CMAKE_BINARY_DIR}/engine/swig/python/speect.i"
 )
 

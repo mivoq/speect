@@ -53,7 +53,7 @@
 /*                                                                                  */
 /************************************************************************************/
 
-%include "speect_py_typemaps.i"
+%include "${CMAKE_SOURCE_DIR}/engine/swig/python/speect_py_typemaps.i"
 
 
 /************************************************************************************/
@@ -77,15 +77,15 @@
 /*                                                                                  */
 /************************************************************************************/
 
-%include "misc_docs.c"
-%include "utterance_docs.c"
-%include "relation_docs.c"
-%include "map_docs.c"
-%include "item_docs.c"
-%include "voice_docs.c"
-%include "plugin_docs.c"
-%include "utt_processor_docs.c"
-%include "feat_processor_docs.c"
+%include "${CMAKE_SOURCE_DIR}/engine/swig/python/misc_docs.c"
+%include "${CMAKE_SOURCE_DIR}/engine/swig/python/utterance_docs.c"
+%include "${CMAKE_SOURCE_DIR}/engine/swig/python/relation_docs.c"
+%include "${CMAKE_SOURCE_DIR}/engine/swig/python/map_docs.c"
+%include "${CMAKE_SOURCE_DIR}/engine/swig/python/item_docs.c"
+%include "${CMAKE_SOURCE_DIR}/engine/swig/python/voice_docs.c"
+%include "${CMAKE_SOURCE_DIR}/engine/swig/python/plugin_docs.c"
+%include "${CMAKE_SOURCE_DIR}/engine/swig/python/utt_processor_docs.c"
+%include "${CMAKE_SOURCE_DIR}/engine/swig/python/feat_processor_docs.c"
 
 
 /************************************************************************************/
@@ -97,7 +97,7 @@
 /*                                                                                  */
 /************************************************************************************/
 
-%include "primitives_python.c"
+%include "${CMAKE_SOURCE_DIR}/engine/swig/python/primitives_python.c"
 
 
 /************************************************************************************/
@@ -106,7 +106,7 @@
 /*                                                                                  */
 /************************************************************************************/
 
-%include "@SPCT_SWIG_COMMON_DIR@/speect_common.i"
+%include "${CMAKE_BINARY_DIR}/engine/swig/common/speect_common.i"
 
 
 /************************************************************************************/
@@ -118,11 +118,11 @@
 /*                                                                                  */
 /************************************************************************************/
 
-%include "iterator_python.c"
-%include "utterance_python.c"
-%include "relation_itr_python.c"
-%include "relation_python.c"
-%include "map_python.c"
-%include "item_python.c"
-%include "voice_python.c"
+%include "${CMAKE_SOURCE_DIR}/engine/swig/python/iterator_python.c"
+%include "${CMAKE_SOURCE_DIR}/engine/swig/python/utterance_python.c"
+%include "${CMAKE_SOURCE_DIR}/engine/swig/python/relation_itr_python.c"
+%include "${CMAKE_SOURCE_DIR}/engine/swig/python/relation_python.c"
+%include "${CMAKE_SOURCE_DIR}/engine/swig/python/map_python.c"
+%include "${CMAKE_SOURCE_DIR}/engine/swig/python/item_python.c"
+%include "${CMAKE_SOURCE_DIR}/engine/swig/python/voice_python.c"
 

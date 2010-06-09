@@ -51,9 +51,10 @@ fi
 
 echo "\t\tcleaning cmake"
 
-cd ./cmake/
-./clean_files
-cd ..
+if [ -d cmake ]
+then 
+    rm -fr cmake
+fi
 
 
 ########################################################################

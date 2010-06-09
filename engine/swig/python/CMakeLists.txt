@@ -80,7 +80,7 @@ set(CMAKE_C_FLAGS "")
 #------------------------------------------------------------------------------------#
 
 # add flags for Python Speect Engine wrapper generation
-set_source_files_properties(speect.i 
+set_source_files_properties(${CMAKE_BINARY_DIR}/engine/swig/python/speect.i 
   PROPERTIES 
   SWIG_FLAGS "-Wall"
   GENERATED TRUE
@@ -92,7 +92,7 @@ set_source_files_properties(speect.i
 #------------------------------------------------------------------------------------#
 
 # add flags for Python Speect Engine wrapper compilation
-set_source_files_properties(speectPYTHON_wrap.c 
+set_source_files_properties(${CMAKE_BINARY_DIR}/engine/swig/python/speectPYTHON_wrap.c 
   PROPERTIES 
   COMPILE_FLAGS "-fno-strict-aliasing -fwrapv -Wstrict-prototypes -Wall"
   GENERATED TRUE
@@ -114,7 +114,7 @@ set(CMAKE_SWIG_OUTDIR ${CMAKE_BINARY_DIR}/swig/python/speect)
 set(SWIG_MODULE_speect_EXTRA_DEPS "${SPCT_SWIG_PYTHON_DEPS}")
 
 # create the Python Speect Engine wrapper (C and Python files)
-swig_add_module(speect python speect.i)
+swig_add_module(speect python ${CMAKE_BINARY_DIR}/engine/swig/python/speect.i)
 
 # link with Python and Speect Engine
 swig_link_libraries(speect ${PYTHON_LIBRARIES} ${SPCT_LIBRARIES_TARGET})

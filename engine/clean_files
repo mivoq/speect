@@ -55,9 +55,9 @@ then
     rm -f SpeectConf.cmake
 fi
 
-if [ -f speect.ini ]
+if [ -f speect.conf ]
 then 
-    rm -f speect.ini
+    rm -f speect.conf
 fi
 
 if [ -f spct_debug.log ]

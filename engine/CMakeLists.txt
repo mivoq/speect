@@ -1,39 +1,14 @@
 ######################################################################################
 ##                                                                                  ##
 ## AUTHOR  : Aby Louw                                                               ##
-## DATE    : 9 May 2009                                                             ##
+## DATE    : 8 June 2010                                                            ##
 ##                                                                                  ##
 ######################################################################################
 ##                                                                                  ##
-## Main CMakeList for Speect                                                        ##
+## CMakeList for Speect Engine                                                      ##
 ##                                                                                  ##
 ##                                                                                  ##
 ######################################################################################
-
-
-#------------------------------------------------------------------------------------#
-#                                Build type                                          #
-#------------------------------------------------------------------------------------#
-
-if(NOT CMAKE_BUILD_TYPE)
-  set(CMAKE_BUILD_TYPE Debug CACHE STRING  #  set(CMAKE_BUILD_TYPE RelWithDebInfo CACHE STRING
-      "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel Profile."
-      FORCE)
-endif()
-
-# Restrict configuration types to the selected build type.
-# Note: This needs to be done before the project command
-set(CMAKE_CONFIGURATION_TYPES "${CMAKE_BUILD_TYPE}" CACHE INTERNAL "internal")
-
-
-#------------------------------------------------------------------------------------#
-#                               CMake settings                                       #
-#------------------------------------------------------------------------------------#
-
-message(STATUS "setting cmake flags")
-#set(CMAKE_VERBOSE_MAKEFILE "TRUE")
-cmake_minimum_required(VERSION 2.6 FATAL_ERROR)
-
 
 #------------------------------------------------------------------------------------#
 #                                Project name                                        #
@@ -43,12 +18,13 @@ message(STATUS "cmake for project \"Speect Engine\"")
 project(speect_engine C)
 
 # version 
-set(SPCT_VERSION_RELEASE "Lithium" CACHE STRING "Speect version codename" FORCE)
-set(SPCT_VERSION_MAJOR 0 CACHE STRING "Speect major version number" FORCE)
-set(SPCT_VERSION_MINOR 9 CACHE STRING "Speect minor version number" FORCE)
-set(SPCT_VERSION_PATCH 5 CACHE STRING "Speect patch number" FORCE)
+set(SPCT_VERSION_RELEASE "Beryllium" CACHE STRING "Speect version codename" FORCE)
+set(SPCT_VERSION_MAJOR 1 CACHE STRING "Speect major version number" FORCE)
+set(SPCT_VERSION_MINOR 0 CACHE STRING "Speect minor version number" FORCE)
+set(SPCT_VERSION_PATCH 0 CACHE STRING "Speect patch number" FORCE)
 set(SPCT_VERSION "${SPCT_VERSION_MAJOR}.${SPCT_VERSION_MINOR}.${SPCT_VERSION_PATCH}"
   CACHE STRING "Speect full version number" FORCE)
+
 mark_as_advanced(SPCT_VERSION_RELEASE)
 mark_as_advanced(SPCT_VERSION_MAJOR)
 mark_as_advanced(SPCT_VERSION_MINOR)
@@ -60,55 +36,58 @@ mark_as_advanced(SPCT_VERSION)
 #                             Get all CMake modules                                  #
 #------------------------------------------------------------------------------------#
 
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
-# Try to find the plug-in path
-include(plugin_path)
 
-# Our own CMake macros and functions
-include(custom)
+include(engineInfoFiles)
 
 # Lists of all the source files
-include(sources)
-
-# Build options
-include(options)
-
-# Compiler support
-include(compilers)
-
-# System tests
-include(system)
-
-# Thread support
-include(threads)
-
-# File path functions support
-include(path)
-
-# Dynamic shared objects support
-include(dll)
-
-# Memory mapped files support
-include(mmap)
-
-# Platform specific types support
-include(types)
+include(engineSources)
 
 # Version information
-include(version)
+include(engineVersion)
 
 # Create Speect initialization file (INI)
-include(inifile)
+include(engineIniFile)
 
 # Initialization file loader
-include(main_ini)
+include(engineIniLoader)
 
-# Uninstall target
-include(uninstall)
+# Create a uninstall target (make uninstall)
+include(engineUninstall)
 
-# Build types (warnings, debugging, profiling, compiler flags)
-include(build)
+
+#------------------------------------------------------------------------------------#
+#    Speect Engine library variables  (used in platform abstraction configuration)   #
+#------------------------------------------------------------------------------------#
+
+# Libraries that we always need to link against on this platform.
+# Platform abstractions can add extra libraries to this list.
+set(SPCT_PLATFORM_LIBS)
+
+# List of source files need to compile Speect Engine in this configuration on
+# this platform. Platform abstractions can add source files to this list.
+set(SPCT_LIBRARY_SOURCES)
+
+
+#------------------------------------------------------------------------------------#
+#                             Platform abstraction                                   #
+#------------------------------------------------------------------------------------#
+
+# Types
+include(engineAbstractionTypes)
+
+# File system paths 
+include(engineAbstractionPaths)
+
+# Threads support
+include(engineAbstractionThreads)
+
+# Dynamic shared objects support
+include(engineAbstractionDSO)
+
+# Memory mapped files support
+include(engineAbstractionMMap)
 
 
 #------------------------------------------------------------------------------------#
@@ -116,16 +95,18 @@ include(build)
 #------------------------------------------------------------------------------------#
 
 # All relevant variables must be set before here
-configure_file(${CMAKE_SOURCE_DIR}/config/spctconfig.h.in 
-  ${CMAKE_BINARY_DIR}/src/include/spctconfig.h)
+configure_file(${CMAKE_SOURCE_DIR}/engine/config/spctconfig.h.in 
+  ${CMAKE_BINARY_DIR}/engine/src/include/spctconfig.h)
 
 
 #------------------------------------------------------------------------------------#
-#                                 Main library                                       #
+#                              Speect Engine library                                 #
 #------------------------------------------------------------------------------------#
 
 # Library build configuration
-include(libspct)
+include(engineLibrary)
+
+# Addons/Plug-ins and examples can link with the SPCT_LIBRARIES target.
 
 
 #------------------------------------------------------------------------------------#
@@ -137,7 +118,7 @@ include(libspct)
 # can then be included in other CMake projects.
 # Other projects can just include the SpeectConf.cmake file.
 #
-include(speect_conf)
+include(engineCMakeConf)
 
 #------------------------------------------------------------------------------------#
 #                               examples/tests                                       #
@@ -157,3 +138,4 @@ endif(WANT_TESTS)
 #------------------------------------------------------------------------------------#
 
 add_subdirectory(swig)
+

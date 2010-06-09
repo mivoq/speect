@@ -39,7 +39,7 @@
 
 /**
  * @file win32_dll.h
- * DSO win 32 dll library calls.
+ * DSO WIN32 dll library calls.
  */
 
 

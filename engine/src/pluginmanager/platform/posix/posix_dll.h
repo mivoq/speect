@@ -28,18 +28,18 @@
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* Dynamic Shared Object's with dl library calls.                                   */
+/* Dynamic Shared Object's with dl (POSIX) library calls.                           */
 /*                                                                                  */
 /*                                                                                  */
 /************************************************************************************/
 
-#ifndef _SPCT_DSO_DL_H__
-#define _SPCT_DSO_DL_H__
+#ifndef _SPCT_DSO_POSIX_H__
+#define _SPCT_DSO_POSIX_H__
 
 
 /**
- * @file dl_dll.h
- * DSO dl library calls.
+ * @file posix_dll.h
+ * DSO POSIX shared object library calls.
  */
 
 
@@ -105,5 +105,5 @@ S_API void  s_dl_close(void *dso_handle, s_erc *error);
 S_END_C_DECLS
 
 
-#endif /* _SPCT_DSO_DL_H__ */
+#endif /* _SPCT_DSO_POSIX_H__ */
 

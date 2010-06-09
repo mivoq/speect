@@ -5,8 +5,8 @@ echo "\t\t\tin platform"
 
 ########################################################################
 
-echo "\t\t\tcleaning dl"
-cd ./dl/
+echo "\t\t\tcleaning posix"
+cd ./posix/
 ./clean_files
 cd ..
 

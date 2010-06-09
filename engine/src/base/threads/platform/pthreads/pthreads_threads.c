@@ -28,19 +28,10 @@
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* WIN32 threads.                                                                   */
+/* POSIX threads (phtreads).                                                        */
 /*                                                                                  */
 /*                                                                                  */
 /************************************************************************************/
-
-#ifndef _SPCT_WIN32_THREADS_H__
-#define _SPCT_WIN32_THREADS_H__
-
-
-/**
- * @file threads_win32.h
- * WIN32 threads.
- */
 
 
 /************************************************************************************/
@@ -49,16 +40,13 @@
 /*                                                                                  */
 /************************************************************************************/
 
-#include <windows.h>  /* Windows threads */
-#include "include/common.h"
-
-
-/************************************************************************************/
-/*                                                                                  */
-/* Begin external c declaration                                                     */
-/*                                                                                  */
-/************************************************************************************/
-S_BEGIN_C_DECLS
+#include <stdlib.h>
+#include <stdio.h>
+#include <errno.h>
+#include "base/utils/alloc.h"
+#include "base/utils/types.h"
+#include "base/errdbg/errdbg_utils.h"
+#include "base/threads/platform/pthreads/pthreads_threads.h"
 
 
 /************************************************************************************/
@@ -67,81 +55,96 @@ S_BEGIN_C_DECLS
 /*                                                                                  */
 /************************************************************************************/
 
-/* defines of the WIN32 thread wrapper functions */
+/*
+ * _S_THREAD_ERR_PRINT(ERR, FUNC, MSG)
+ *
+ * Print a thread error to stderr.
+ * ERR The error, of type s_erc.
+ * FUNC String function name in which the error occured.
+ * MSG String error message.
+ * FN String file name.
+ * LN Interger line number.
+ *
+ * Aborts after error.
+ *
+ */
 
-#define _S_MUTEX_INIT(M, __FILE__, __LINE__) s_win32_mutex_init(M, __FILE__, __LINE__)
-
-
-#define _S_MUTEX_DESTROY(M, __FILE__, __LINE__) s_win32_mutex_destroy(M, __FILE__, __LINE__)
-
-
-#define _S_MUTEX_LOCK(M, __FILE__, __LINE__) s_win32_mutex_lock(M, __FILE__, __LINE__)
-
-
-#define _S_MUTEX_UNLOCK(M, __FILE__, __LINE__) s_win32_mutex_unlock(M, __FILE__, __LINE__)
-
-
-#define _S_THREAD_ID() s_win32_thread_self()
+#define _S_THREAD_ERR_PRINT(ERR, FUNC, MSG, FN, LN)						\
+	do {																\
+		char *err_str = s_error_str(ERR);								\
+		fprintf(stderr, "[FATAL ERROR (%s) %lu] %s (in function '%s', %s, %d)\n", \
+				err_str, s_pthread_self(), MSG, FUNC, FN, LN);			\
+		S_FREE(err_str);												\
+		abort();														\
+	} while (0)
 
 
 /************************************************************************************/
 /*                                                                                  */
-/* Typedefs                                                                         */
+/* Function implementations                                                         */
 /*                                                                                  */
 /************************************************************************************/
 
-/*
- * s_mutex structure for win32 threads.
- */
-typedef struct win32_api_mutex_s s_mutex_t;
-
-
-/*
- * Structure of the win32 mutex. We replicate the API's of the pthread library,
- * therefore the need for this structure.
- */
-struct win32_api_mutex_s
+S_API void s_pthread_mutex_init(s_mutex_t *m)
 {
-	HANDLE mutex;         /* An opague handle to a mutex */
-	int    destroyed;     /* Destroyed flag              */
-	int    init;          /* Initialized flag            */
-	int    locked;        /* Locked flag                 */
-};
+	/* always returns 0 */
+	pthread_mutex_init(m, NULL);
+}
 
 
-/************************************************************************************/
-/*                                                                                  */
-/* Function prototypes                                                              */
-/*                                                                                  */
-/************************************************************************************/
-
-/* wrapper for win32 mutex_init */
-S_API void s_win32_mutex_init(s_mutex_t *m, const char *file_name, int line_number);
-
-
-/* wrapper for win32 mutex_destroy */
-S_API void s_win32_mutex_destroy(s_mutex_t *m, const char *file_name, int line_number);
+S_API void s_pthread_mutex_destroy(s_mutex_t *m, const char *file_name, int line_number)
+{
+	if (pthread_mutex_destroy(m) != 0)
+	{
+		_S_THREAD_ERR_PRINT(S_FAILURE,
+							"s_pthread_mutex_destroy",
+							"Failed to destroy mutex", file_name, line_number);
+	}
+}
 
 
-/* wrapper for win32 mutex_lock */
-S_API void s_win32_mutex_lock(s_mutex_t *m, const char *file_name, int line_number);
+S_API void s_pthread_mutex_lock(s_mutex_t *m, const char *file_name, int line_number)
+{
+	int rv;
+
+	rv = pthread_mutex_lock(m);
+
+	if (rv == 0)
+		return;
+
+	if (rv == EINVAL)
+	{
+		_S_THREAD_ERR_PRINT(S_FAILURE,
+							"s_pthread_mutex_lock",
+							"Failed to lock mutex, the mutex has not been properly initialized", file_name, line_number);
+	}
+	else if (rv == EDEADLK)
+	{
+		_S_THREAD_ERR_PRINT(S_FAILURE,
+							"s_pthread_mutex_lock",
+							"Failed to lock mutex, the mutex is already locked by the calling thread", file_name, line_number);
+	}
+	else
+	{
+		_S_THREAD_ERR_PRINT(S_FAILURE,
+							"s_pthread_mutex_lock",
+							"Failed to lock mutex, unknown error", file_name, line_number);
+	}
+}
 
 
-/* wrapper for win32 mutex_unlock */
-S_API void s_win32_mutex_unlock(s_mutex_t *m, const char *file_name, int line_number);
+S_API void s_pthread_mutex_unlock(s_mutex_t *m, const char *file_name, int line_number)
+{
+	if (pthread_mutex_unlock(m) != 0)
+	{
+		_S_THREAD_ERR_PRINT(S_FAILURE,
+							"s_pthread_mutex_unlock",
+							"Failed to unlock mutex", file_name, line_number);
+	}
+}
 
 
-/* wrapper for win32 thread id */
-S_API unsigned long s_win32_thread_self(void);
-
-
-/************************************************************************************/
-/*                                                                                  */
-/* End external c declaration                                                       */
-/*                                                                                  */
-/************************************************************************************/
-S_END_C_DECLS
-
-
-#endif /* _SPCT_WIN32_THREADS_H__ */
-
+S_API unsigned long s_pthread_self(void)
+{
+	return (unsigned long)pthread_self();
+}

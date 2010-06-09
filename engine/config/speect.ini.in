@@ -8,10 +8,10 @@
 
 [loggers] # error and debugging log files
 
-error_log = "@ERROR_LOG_FILE@"
-debug_log = "@DEBUG_LOG_FILE@"
+error_log = "@SPCT_ERROR_LOG_FILE@"
+debug_log = "@SPCT_DEBUG_LOG_FILE@"
 
 
 [paths] # default paths
 
-plug-ins = "@PLUGIN_PATH@"
+plug-ins = "@SPCT_PLUGIN_PATH@"

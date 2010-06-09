@@ -111,10 +111,6 @@
 
 #cmakedefine SPCT_USE_THREADS
 
-#cmakedefine SPCT_USE_POSIX_THREADS
-
-#cmakedefine SPCT_USE_WIN32_THREADS
-
 
 /************************************************************************************/
 /*                                                                                  */

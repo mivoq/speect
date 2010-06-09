@@ -49,7 +49,7 @@
 /*                                                                                  */
 /************************************************************************************/
 
-#include "pluginmanager/platform/@SPCT_DLL_SPECIFIC_IMPL_INCLUDES@"
+#include "pluginmanager/platform/@SPCT_DSO_SPECIFIC_IMPL_INCLUDES@"
 
 
 #endif /* _SPCT_DSO_LOADING_IMPL_H__ */

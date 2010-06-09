@@ -6,27 +6,34 @@
 ## not edit SpeectConf.cmake                                                        ##
 ##                                                                                  ##
 ## Include this file in other projects that want to link with Speect                ##
-## The link target is SPCT_LIBRARY_TARGET                                           ##
+## The following variables will be defined for your use:                            ##
+##                                                                                  ##
+##     SPCT_INCLUDE_DIRS  - path where speect.h is found                            ##
+##     SPCT_LIBRARIES     - Speect library link target                              ##
+##     SPCT_VERSION       - The version of Speect (x.y.z)                           ##
+##     SPCT_VERSION_MAJOR - The major version of Speect                             ##
+##     SPCT_VERSION_MINOR - The minor version of Speect                             ##
+##     SPCT_VERSION_PATCH - The patch version of Speect                             ##
 ##                                                                                  ##
 ######################################################################################
 
 
-set(SPEECT_INCLUDE_PATH "@SPCT_INCLUDE_DIRS@")
-set(SPEECT_VERSION_STRING @SPCT_VERSION@)
-set(SPEECT_VERSION_MAJOR @SPCT_VERSION_MAJOR@)
-set(SPEECT_VERSION_MINOR @SPCT_VERSION_MINOR@)
-set(SPEECT_VERSION_PATCH @SPCT_VERSION_PATCH@)
+set(SPCT_INCLUDE_DIRS "@SPCT_INCLUDE_DIRS@")
+set(SPCT_VERSION @SPCT_VERSION@)
+set(SPCT_VERSION_MAJOR @SPCT_VERSION_MAJOR@)
+set(SPCT_VERSION_MINOR @SPCT_VERSION_MINOR@)
+set(SPCT_VERSION_PATCH @SPCT_VERSION_PATCH@)
 
 
 #
 # SWIG Python Wrappers
 #
-set(SPEECT_WRAP_PYTHON "@SPEECT_WRAP_PYTHON@")
+set(WANT_PYTHON_WRAPPER "@WANT_PYTHON_WRAPPER@")
 
 #
 # SWIG interface includes
 #
-set(SPEECT_PYTHON_WRAPPER_INCLUDE_PATH "@CMAKE_SOURCE_DIR@/swig/python")
+set(SPEECT_PYTHON_WRAPPER_INCLUDE_PATH "@CMAKE_SOURCE_DIR@/engine/swig/python")
 
 
 #

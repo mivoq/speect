@@ -22,4 +22,11 @@ set(SPCT_VERSION_MINOR @SPCT_VERSION_MINOR@)
 set(SPCT_VERSION_PATCH @SPCT_VERSION_PATCH@)
 
 # All relevant variables must be set before here
-configure_file(config/SpeectConf.cmake.in ${CMAKE_INSTALL_PREFIX}/include/speect/engine/SpeectConf.cmake @ONLY)
+configure_file(@CMAKE_SOURCE_DIR@/engine/config/SpeectConf.cmake.in ${CMAKE_BINARY_DIR}/engine/cmake/SpeectConf.cmake @ONLY)
+
+# grabed signature from cmake_install.cmake
+if(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/speect/engine" TYPE FILE FILES "${CMAKE_BINARY_DIR}/engine/cmake/SpeectConf.cmake")
+endif(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
+
+

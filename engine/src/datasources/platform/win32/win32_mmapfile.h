@@ -28,18 +28,18 @@
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* POSIX memory mapped file.                                                        */
+/* WIN32 memory mapped file.                                                        */
 /*                                                                                  */
 /*                                                                                  */
 /************************************************************************************/
 
-#ifndef _SPCT_POSIX_MMAP_FILE_H__
-#define _SPCT_POSIX_MMAP_FILE_H__
+#ifndef _SPCT_WIN32_MMAP_FILE_H__
+#define _SPCT_WIN32_MMAP_FILE_H__
 
 
 /**
- * @file mmapfile_posix.h
- * File memory mapping POSIX library calls.
+ * @file win32_mmapfile.h
+ * File memory mapping WIN32 library calls.
  */
 
 
@@ -69,11 +69,11 @@ S_BEGIN_C_DECLS
 
 /* defines of the mmap wrapper functions */
 
-#define _S_MMAP_OPEN(FILENAME, MAP_SIZE, MEM, ERROR) \
-	s_posix_mmapfile_open(FILENAME, MAP_SIZE, MEM, ERROR)
+#define _S_MMAP_OPEN(FILENAME, MAP_SIZE, MEM, ERROR)		\
+	s_win32_mmapfile_open(FILENAME, MAP_SIZE, MEM, ERROR)
 
-#define _S_MMAP_CLOSE(HANDLE, MEM, ERROR) \
-	s_posix_mmapfile_close(HANDLE, MEM, ERROR)
+#define _S_MMAP_CLOSE(HANDLE, MEM, ERROR)		\
+	s_win32_mmapfile_close(HANDLE, MEM, ERROR)
 
 
 /************************************************************************************/
@@ -83,7 +83,7 @@ S_BEGIN_C_DECLS
 /************************************************************************************/
 
 /* Typedef of opaque memory map handle. */
-typedef struct s_mmapfile_posix_file_handle s_mmap_file_handle;
+typedef struct s_mmapfile_win32_file_handle s_mmap_file_handle;
 
 
 /************************************************************************************/
@@ -92,13 +92,13 @@ typedef struct s_mmapfile_posix_file_handle s_mmap_file_handle;
 /*                                                                                  */
 /************************************************************************************/
 
-/* POSIX wrapper to mmapfile_open */
-S_API s_mmap_file_handle *s_posix_mmapfile_open(const char *path, size_t *map_size,
+/* WIN32 wrapper to mmapfile_open */
+S_API s_mmap_file_handle *s_win32_mmapfile_open(const char *path, size_t *map_size,
 												uint8 **mem, s_erc *error);
 
 
-/* POSIX wrapper to mmapfile_close */
-S_API void s_posix_mmapfile_close(s_mmap_file_handle *handle, uint8 *mem, s_erc *error);
+/* WIN32 wrapper to mmapfile_close */
+S_API void s_win32_mmapfile_close(s_mmap_file_handle *handle, uint8 *mem, s_erc *error);
 
 
 /************************************************************************************/
@@ -109,5 +109,5 @@ S_API void s_posix_mmapfile_close(s_mmap_file_handle *handle, uint8 *mem, s_erc 
 S_END_C_DECLS
 
 
-#endif /* _SPCT_POSIX_MMAP_FILE_H__ */
+#endif /* _SPCT_WIN32_MMAP_FILE_H__ */
 

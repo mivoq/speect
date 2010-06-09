@@ -28,7 +28,7 @@
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* WIN32 memory mapped file.                                                        */
+/* POSIX memory mapped file.                                                        */
 /*                                                                                  */
 /*                                                                                  */
 /************************************************************************************/
@@ -40,9 +40,15 @@
 /*                                                                                  */
 /************************************************************************************/
 
-#include <windows.h>           /* Windows file memory mapping library */
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <sys/mman.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <errno.h>
 #include "base/utils/alloc.h"
-#include "datasources/platform/win32/mmapfile_win32.h"
+#include "base/strings/utf8.h"
+#include "datasources/platform/posix/posix_mmapfile.h"
 
 
 /************************************************************************************/
@@ -51,10 +57,10 @@
 /*                                                                                  */
 /************************************************************************************/
 
-struct s_mmapfile_win32_file_handle
+struct s_mmapfile_posix_file_handle
 {
-	HANDLE file;
-	HANDLE memory_map;
+	int file;
+	size_t map_size;
 };
 
 
@@ -64,124 +70,82 @@ struct s_mmapfile_win32_file_handle
 /*                                                                                  */
 /************************************************************************************/
 
-S_API s_mmap_file_handle *s_win32_mmapfile_open(const char *path, size_t *map_size,
+S_API s_mmap_file_handle *s_posix_mmapfile_open(const char *path, size_t *map_size,
 												uint8 **mem, s_erc *error)
 {
 	s_mmap_file_handle *handle;
-	HANDLE file;
-	HANDLE memory_map;
-	DWORD file_size;
-	UINT em;
-	DWORD last_error;
-	char errstr[65535];
+	int fd;
+	size_t msize;
+	long pg_size;
+	struct stat buf;
 
 
 	S_CLR_ERR(error);
-	em = SetErrorMode(SEM_FAILCRITICALERRORS);
-	SetLastError(0);
 
 	if (path == NULL)
 	{
 		S_CTX_ERR(error, S_ARGERROR,
-				  "s_win32_mmapfile_open",
+				  "s_posix_mmapfile_open",
 				  "Argument \"path\" is NULL");
-		SetLastError(0);
-		SetErrorMode(em);
 		return NULL;
 	}
 
 	if (map_size == NULL)
 	{
 		S_CTX_ERR(error, S_ARGERROR,
-				  "s_win32_mmapfile_open",
+				  "s_posix_mmapfile_open",
 				  "Argument \"map_size\" is NULL");
-		SetLastError(0);
-		SetErrorMode(em);
 		return NULL;
 	}
 
 	if (*mem == NULL)
 	{
 		S_CTX_ERR(error, S_ARGERROR,
-				  "s_win32_mmapfile_open",
+				  "s_posix_mmapfile_open",
 				  "Argument \"mem\" is NULL");
-		SetLastError(0);
-		SetErrorMode(em);
 		return NULL;
 	}
 
-	file = CreateFile(path, GENERIC_READ, FILE_SHARE_READ, NULL,
-					  OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
-
-	if (file == INVALID_HANDLE_VALUE)
+	if ((fd = open(path, O_RDONLY)) == -1)
 	{
-		last_error = GetLastError();
-		FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM, NULL,
-					  last_error, 0,
-					  errstr, sizeof(errstr), NULL);
 		S_CTX_ERR(error, S_FAILURE,
-				  "s_win32_mmapfile_open",
-				  "Call to \"CreateFile\" failed. Reported error \"%s\"",
-				  errstr);
-		SetLastError(0);
-		SetErrorMode(em);
+				  "s_posix_mmapfile_open",
+				  "Call to \"open\" failed. Reported error \"%s\".",
+				  s_strerror(errno));
 		return NULL;
 	}
 
-	file_size = GetFileSize(file, NULL);
-
-	if (file_size == INVALID_FILE_SIZE)
+	if ((fstat(fd, &buf)) == -1)
 	{
-		last_error = GetLastError();
-		FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM, NULL,
-					  last_error, 0,
-					  errstr, sizeof(errstr), NULL);
 		S_CTX_ERR(error, S_FAILURE,
-				  "s_win32_mmapfile_open",
-				  "Call to \"GetFileSize\" failed. Reported error \"%s\"",
-				  errstr);
-		CloseHandle(file);
-		SetLastError(0);
-		SetErrorMode(em);
+				  "s_posix_mmapfile_open",
+				  "Call to \"fstat\" failed. Reported error \"%s\".",
+				  s_strerror(errno));
+		close(fd);
 		return NULL;
 	}
 
-	*map_size = (size_t)file_size;
-
-	memory_map = CreateFileMapping(file, NULL, PAGE_READONLY, 0, 0, NULL);
-
-	if (memory_map == NULL)
+	pg_size = sysconf(_SC_PAGESIZE);
+	if (pg_size == -1)
 	{
-		last_error = GetLastError();
-		FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM, NULL,
-					  last_error, 0,
-					  errstr, sizeof(errstr), NULL);
 		S_CTX_ERR(error, S_FAILURE,
-				  "s_win32_mmapfile_open",
-				  "Call to \"CreateFileMapping\" failed. Reported error \"%s\"",
-				  errstr);
-		CloseHandle(file);
-		SetLastError(0);
-		SetErrorMode(em);
+				  "s_posix_mmapfile_open",
+				  "Call to \"sysconf(_SC_PAGESIZE)\" failed. Reported error \"%s\".",
+				  s_strerror(errno));
+		close(fd);
 		return NULL;
 	}
 
-	*mem = MapViewOfFile(memory_map, FILE_MAP_READ, 0, 0, 0);
+	msize = (buf.st_size + pg_size - 1) / pg_size * pg_size;
+	*mem = mmap(0, msize, PROT_READ, MAP_SHARED, fd, 0);
 
-	if (*mem == NULL)
+	if (*mem == MAP_FAILED)
 	{
-		last_error = GetLastError();
-		FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM, NULL,
-					  last_error, 0,
-					  errstr, sizeof(errstr), NULL);
 		S_CTX_ERR(error, S_FAILURE,
-				  "s_win32_mmapfile_open",
-				  "Call to \"MapViewOfFile\" failed. Reported error \"%s\"",
-				  errstr);
-		CloseHandle(memory_map);
-		CloseHandle(file);
-		SetLastError(0);
-		SetErrorMode(em);
+				  "s_posix_mmapfile_open",
+				  "Call to \"sysconf(_SC_PAGESIZE)\" failed. Reported error \"%s\".",
+				  s_strerror(errno));
+		close(fd);
 		return NULL;
 	}
 
@@ -189,91 +153,56 @@ S_API s_mmap_file_handle *s_win32_mmapfile_open(const char *path, size_t *map_si
 	if (handle == NULL)
 	{
 		S_FTL_ERR(error, S_MEMERROR,
-				  "s_win32_mmapfile_open",
+				  "s_posix_mmapfile_open",
 				  "Failed to allocate memory for \'s_mmap_file_handle\'");
-		CloseHandle(memory_map);
-		CloseHandle(file);
-		SetLastError(0);
-		SetErrorMode(em);
+		munmap(*mem, msize);
+		close(fd);
 		return NULL;
 	}
 
-	handle->file = file;
-	handle->memory_map = memory_map;
-	SetLastError(0);
-	SetErrorMode(em);
+	handle->file = fd;
+	handle->map_size = msize;
+	*map_size = msize;
+
 	return handle;
 }
 
 
-S_API void s_win32_mmapfile_close(s_mmap_file_handle *handle, uint8 *mem, s_erc *error)
+S_API void s_posix_mmapfile_close(s_mmap_file_handle *handle, uint8 *mem, s_erc *error)
 {
-	UINT em;
-	DWORD last_error;
-	char errstr[65535];
-
-
 	S_CLR_ERR(error);
-	em = SetErrorMode(SEM_FAILCRITICALERRORS);
-	SetLastError(0);
 
 	if (handle == NULL)
 	{
 		S_CTX_ERR(error, S_ARGERROR,
-				  "s_win32_mmapfile_close",
+				  "s_posix_mmapfile_close",
 				  "Argument \"handle\" is NULL");
-		SetLastError(0);
-		SetErrorMode(em);
 		return;
 	}
 
 	if (mem == NULL)
 	{
 		S_CTX_ERR(error, S_ARGERROR,
-				  "s_win32_mmapfile_close",
+				  "s_posix_mmapfile_close",
 				  "Argument \"mem\" is NULL");
-		SetLastError(0);
-		SetErrorMode(em);
 		return;
 	}
 
-	if (UnmapViewOfFile(mem) == 0)
+	if (munmap(mem, handle->map_size) == -1)
 	{
-		last_error = GetLastError();
-		FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM, NULL,
-					  last_error, 0,
-					  errstr, sizeof(errstr), NULL);
 		S_CTX_ERR(error, S_FAILURE,
-				  "s_win32_mmapfile_close",
-				  "Call to \"UnmapViewOfFile\" failed. Reported error \"%s\"",
-				  errstr);
+				  "s_posix_mmapfile_close",
+				  "Call to \"munmap\" failed. Reported error \"%s\".",
+				  s_strerror(errno));
 	}
 
-	if (CloseHandle(handle->memory_map) == 0)
+	if (close(handle->file) == -1)
 	{
-		last_error = GetLastError();
-		FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM, NULL,
-					  last_error, 0,
-					  errstr, sizeof(errstr), NULL);
 		S_CTX_ERR(error, S_FAILURE,
-				  "s_win32_mmapfile_close",
-				  "Call to \"CloseHandle\" for the memory map failed. Reported error \"%s\"",
-				  errstr);
-	}
-
-	if (CloseHandle(handle->file) == 0)
-	{
-		last_error = GetLastError();
-		FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM, NULL,
-					  last_error, 0,
-					  errstr, sizeof(errstr), NULL);
-		S_CTX_ERR(error, S_FAILURE,
-				  "s_win32_mmapfile_close",
-				  "Call to \"CloseHandle\" for the file failed. Reported error \"%s\"",
-				  errstr);
+				  "s_posix_mmapfile_close",
+				  "Call to \"close\" failed. Reported error \"%s\".",
+				  s_strerror(errno));
 	}
 
 	S_FREE(handle);
-	SetLastError(0);
-	SetErrorMode(em);
 }

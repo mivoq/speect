@@ -79,10 +79,12 @@ set(CMAKE_C_FLAGS "")
 #                                speect.i properties                                 #
 #------------------------------------------------------------------------------------#
 
+list(APPEND SPCT_SWIG_FLAGS -Wall -Werror)
+
 # add flags for Python Speect Engine wrapper generation
 set_source_files_properties(${CMAKE_BINARY_DIR}/engine/swig/python/speect.i 
   PROPERTIES 
-  SWIG_FLAGS "-Wall"
+  SWIG_FLAGS "${SPCT_SWIG_FLAGS}"
   GENERATED TRUE
 )
 

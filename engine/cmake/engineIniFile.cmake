@@ -14,4 +14,10 @@
 # configuration file
 #
 configure_file(${CMAKE_SOURCE_DIR}/engine/config/speect.ini.in 
-  ${SPCT_INI_FILE_PATH}/speect.conf)
+  ${CMAKE_BINARY_DIR}/speect.conf @ONLY)
+
+
+configure_file(${CMAKE_SOURCE_DIR}/engine/config/speect_ini_install.cmake.in 
+  ${CMAKE_BINARY_DIR}/engine/cmake/speect_ini_install.cmake @ONLY)
+
+install(SCRIPT ${CMAKE_BINARY_DIR}/engine/cmake/speect_ini_install.cmake)

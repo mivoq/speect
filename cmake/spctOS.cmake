@@ -19,6 +19,7 @@ if(WIN32)
 
   # True on windows systems, including win64.
   set(SPCT_WIN32 1)
+  set(SPCT_OS "SPCT_WIN32")
 endif(WIN32)
 
 
@@ -31,6 +32,7 @@ if(UNIX AND NOT APPLE)
   
   # Linux/Unix/CYGWIN/..
   set(SPCT_UNIX 1)
+  set(SPCT_OS "SPCT_UNIX")
 endif(UNIX AND NOT APPLE)
   
 #------------------------------------------------------------------------------------#
@@ -41,6 +43,7 @@ if(UNIX AND APPLE)
   
   # Apple Mac OSX. 
   set(SPCT_MACOSX 1)
+  set(SPCT_OS "SPCT_MACOSX")
   
   # This flag is required on some versions of Mac OS X to avoid linker
   # problems with global variables which are not explicitly initialised.

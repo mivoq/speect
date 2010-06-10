@@ -46,11 +46,28 @@
 
 /************************************************************************************/
 /*                                                                                  */
-/* Static variables                                                                 */
+/* Defines (done by CMake configuration)                                            */
 /*                                                                                  */
 /************************************************************************************/
 
-static const char *ini_file = "@SPCT_INI_FILE_PATH@/speect.conf";
+/* The initialization file path for a speect build */
+#define S_BUILD_INI_FILE "@SPCT_BUILD_INI_FILE@"
+
+/* The initialization file path for a speect installation,
+ * takes preferences over the build.
+ */
+#define S_INSTALL_INI_FILE "@SPCT_INSTALL_INI_FILE@"
+
+
+/************************************************************************************/
+/*                                                                                  */
+/* Static function prototypes                                                       */
+/*                                                                                  */
+/************************************************************************************/
+
+static const char *get_ini_file(s_erc *error);
+
+static s_bool file_exists(const char *path, const char *mode, s_erc *error);
 
 
 /************************************************************************************/
@@ -59,12 +76,21 @@ static const char *ini_file = "@SPCT_INI_FILE_PATH@/speect.conf";
 /*                                                                                  */
 /************************************************************************************/
 
+
 S_LOCAL s_ini_parser *_s_load_speect_ini(s_erc *error)
 {
 	s_ini_parser *spct_ini;
+	const char *ini_file;
 
 
 	S_CLR_ERR(error);
+	ini_file = get_ini_file(error);
+	if ((error != NULL) & (*error != S_SUCCESS))
+	{
+		S_ERR_PRINT(*error, "_s_load_speect_ini",
+					"Call to \"get_ini_file\" failed");
+		return NULL;
+	}
 
 	spct_ini = s_iniparser_load(ini_file);
 	if (spct_ini == NULL)
@@ -76,4 +102,89 @@ S_LOCAL s_ini_parser *_s_load_speect_ini(s_erc *error)
 	}
 
 	return spct_ini;
+}
+
+
+/************************************************************************************/
+/*                                                                                  */
+/* Static function implementations                                                  */
+/*                                                                                  */
+/************************************************************************************/
+
+/* Search for initialization file at the install and build locations,
+ * with the install location taking preference.
+ */
+static const char *get_ini_file(s_erc *error)
+{
+	s_bool file_ok;
+
+
+	S_CLR_ERR(error);
+
+	file_ok = file_exists(S_INSTALL_INI_FILE, "r", error);
+	if ((error != NULL) & (*error != S_SUCCESS))
+	{
+		S_ERR_PRINT(*error, "get_ini_file",
+					"Call to \"file_exists\" failed");
+		return NULL;
+	}
+
+	if (file_ok)
+		return S_INSTALL_INI_FILE;
+
+	file_ok = file_exists(S_BUILD_INI_FILE, "r", error);
+	if ((error != NULL) & (*error != S_SUCCESS))
+	{
+		S_ERR_PRINT(*error, "get_ini_file",
+					"Call to \"file_exists\" failed");
+		return NULL;
+	}
+
+	if (file_ok)
+		return S_BUILD_INI_FILE;
+
+	if (error != NULL)
+		S_NEW_ERR(error, S_FAILURE);
+
+	S_ERR_PRINT(S_FAILURE, "get_ini_file",
+				"Failed to find initialization file at '@SPCT_BUILD_INI_FILE@'"\
+				" or '@SPCT_INSTALL_INI_FILE@'");
+	return NULL;
+}
+
+
+/* same as s_file_exists in base/utils/path.c, but we cannot do
+ * logging as the loggers have not been initialized yet.
+ */
+static s_bool file_exists(const char *path, const char *mode, s_erc *error)
+{
+    FILE *file;
+
+
+	S_CLR_ERR(error);
+
+	if (path == NULL)
+	{
+		S_NEW_ERR(error, S_ARGERROR);
+		S_ERR_PRINT(S_ARGERROR, "file_exists",
+					"Argument \"path\" is NULL");
+		return FALSE;
+	}
+
+	if (mode == NULL)
+	{
+		S_NEW_ERR(error, S_ARGERROR);
+		S_ERR_PRINT(S_ARGERROR, "file_exists",
+					"Argument \"mode\" is NULL");
+		return FALSE;
+	}
+
+	file = fopen(path, mode);
+	if (file != NULL)
+    {
+        fclose(file);
+        return TRUE;
+    }
+
+    return FALSE;
 }

@@ -49,6 +49,40 @@
 /*                                                                                  */
 /************************************************************************************/
 
+S_API s_bool s_file_exists(const char *path, const char *mode, s_erc *error)
+{
+    FILE *file = NULL;
+
+
+	S_CLR_ERR(error);
+
+	if (path == NULL)
+	{
+		S_CTX_ERR(error, S_ARGERROR,
+				  "s_file_exists",
+				  "Argument \"path\" is NULL");
+		return FALSE;
+	}
+
+	if (mode == NULL)
+	{
+		S_CTX_ERR(error, S_ARGERROR,
+				  "s_file_exists",
+				  "Argument \"mode\" is NULL");
+		return FALSE;
+	}
+
+	file = fopen(path, mode);
+	if (file != NULL)
+    {
+        fclose(file);
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+
 /* wrappers to the file system path implementations */
 
 S_API char *s_path_combine(const char *base_path, const char *filename,

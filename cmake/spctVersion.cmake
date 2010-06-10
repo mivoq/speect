@@ -1,70 +1,53 @@
 ######################################################################################
 ##                                                                                  ##
 ## AUTHOR  : Aby Louw                                                               ##
-## DATE    : 7 June 2010                                                            ##
+## DATE    : 11 June 2010                                                           ##
 ##                                                                                  ##
 ######################################################################################
 ##                                                                                  ##
-## Main CMakeList for Speect                                                        ##
+## Speect version information                                                       ##
 ##                                                                                  ##
 ##                                                                                  ##
 ######################################################################################
+ 
+
+#------------------------------------------------------------------------------------#
+#                             Speect version codename                                #
+#------------------------------------------------------------------------------------#
+
+set(SPCT_VERSION_RELEASE "Beryllium" CACHE STRING "Speect version codename" FORCE)
+mark_as_advanced(SPCT_VERSION_RELEASE)
 
 
 #------------------------------------------------------------------------------------#
-#                                Build type                                          #
+#                           Speect major version number                              #
 #------------------------------------------------------------------------------------#
 
-if(NOT CMAKE_BUILD_TYPE)
-  set(CMAKE_BUILD_TYPE Debug CACHE STRING  #  set(CMAKE_BUILD_TYPE RelWithDebInfo CACHE STRING
-      "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel Profile."
-      FORCE)
-endif()
-
-# Restrict configuration types to the selected build type.
-# Note: This needs to be done before the project command
-set(CMAKE_CONFIGURATION_TYPES "${CMAKE_BUILD_TYPE}" CACHE INTERNAL "internal")
+set(SPCT_VERSION_MAJOR 1 CACHE STRING "Speect major version number" FORCE)
+mark_as_advanced(SPCT_VERSION_MAJOR)
 
 
 #------------------------------------------------------------------------------------#
-#                          CMake minimum version                                     #
+#                           Speect minor version number                              #
 #------------------------------------------------------------------------------------#
 
-cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
-
-
-#------------------------------------------------------------------------------------#
-#                             Get all CMake modules                                  #
-#------------------------------------------------------------------------------------#
-
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
+set(SPCT_VERSION_MINOR 0 CACHE STRING "Speect minor version number" FORCE)
+mark_as_advanced(SPCT_VERSION_MINOR)
 
 
 #------------------------------------------------------------------------------------#
-#                        Top level system checks and options                         #
+#                               Speect patch number                                  #
 #------------------------------------------------------------------------------------#
 
-# Version information
-include(spctVersion)
-
-# Build options
-include(spctOptions)
-
-# System tests/checks
-include(spctSystem)
-
-# Compiler options/tests
-include(spctCompilers)
-
-# Operating system checks
-include(spctOS)
-
-# Build options
-include(spctBuild)
-
-# Speect settings
-include(spctSettings)
+set(SPCT_VERSION_PATCH 0 CACHE STRING "Speect patch number" FORCE)
+mark_as_advanced(SPCT_VERSION_PATCH)
 
 
+#------------------------------------------------------------------------------------#
+#                     Speect version string "major.minor.patch"                      #
+#------------------------------------------------------------------------------------#
 
-add_subdirectory(engine)
+set(SPCT_VERSION "${SPCT_VERSION_MAJOR}.${SPCT_VERSION_MINOR}.${SPCT_VERSION_PATCH}"
+  CACHE STRING "Speect full version number" FORCE)
+mark_as_advanced(SPCT_VERSION)
+

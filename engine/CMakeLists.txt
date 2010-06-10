@@ -17,20 +17,6 @@
 message(STATUS "cmake for project \"Speect Engine\"")
 project(speect_engine C)
 
-# version 
-set(SPCT_VERSION_RELEASE "Beryllium" CACHE STRING "Speect version codename" FORCE)
-set(SPCT_VERSION_MAJOR 1 CACHE STRING "Speect major version number" FORCE)
-set(SPCT_VERSION_MINOR 0 CACHE STRING "Speect minor version number" FORCE)
-set(SPCT_VERSION_PATCH 0 CACHE STRING "Speect patch number" FORCE)
-set(SPCT_VERSION "${SPCT_VERSION_MAJOR}.${SPCT_VERSION_MINOR}.${SPCT_VERSION_PATCH}"
-  CACHE STRING "Speect full version number" FORCE)
-
-mark_as_advanced(SPCT_VERSION_RELEASE)
-mark_as_advanced(SPCT_VERSION_MAJOR)
-mark_as_advanced(SPCT_VERSION_MINOR)
-mark_as_advanced(SPCT_VERSION_PATCH)
-mark_as_advanced(SPCT_VERSION)
-
 
 #------------------------------------------------------------------------------------#
 #                             Get all CMake modules                                  #
@@ -38,8 +24,6 @@ mark_as_advanced(SPCT_VERSION)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
-
-include(engineInfoFiles)
 
 # Lists of all the source files
 include(engineSources)

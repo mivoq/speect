@@ -1,6 +1,14 @@
-macro(example nm)
-    add_our_executable(${nm} SPCT_LIBRARY_TARGET)
-endmacro(example nm)
+######################################################################################
+##                                                                                  ##
+## AUTHOR  : Aby Louw                                                               ##
+## DATE    : June 2010                                                              ##
+##                                                                                  ##
+######################################################################################
+##                                                                                  ##
+## CMakeList for Tokenizer examples                                                 ##
+##                                                                                  ##
+##                                                                                  ##
+######################################################################################
 
-example(file_tokenizer)
-example(string_tokenizer)
+speect_example(file_tokenizer)
+speect_example(string_tokenizer)

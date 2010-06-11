@@ -56,6 +56,24 @@ cd ..
 
 
 ########################################################################
+
+echo "--cleaning config--"
+
+cd ./config/
+./clean_files
+cd ..
+
+
+########################################################################
+
+# CMake config files for plug-ins
+if [ -d cmakeconf ]
+then 
+    rm -fr cmakeconf
+fi
+
+
+########################################################################
 # Add plug-in directories here if they have a 'clean_files' script, 
 # see the templates directory for examples
 ########################################################################

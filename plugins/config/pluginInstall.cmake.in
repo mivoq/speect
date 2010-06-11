@@ -1,0 +1,76 @@
+######################################################################################
+##                                                                                  ##
+## AUTHOR  : Aby Louw                                                               ##
+## DATE    : 11 June 2010                                                           ##
+##                                                                                  ##
+######################################################################################
+##                                                                                  ##
+## CMakeList for installation of Speect plug-ins                                    ##
+## Set as an install script by plugins/CMakeLists.txt                               ##
+##                                                                                  ##
+## plugInstall.cmake is auto generated from plugins/config/pluginInstall.cmake.in   ##
+## Do not edit plugInstall.cmake                                                    ##   
+##                                                                                  ##
+######################################################################################
+
+
+# Set the plug-in source and binary dirs, because the installation script does not
+# load the CMake cache variables.
+set(PLUGIN_SOURCE_DIR "@CMAKE_SOURCE_DIR@/plugins")
+set(PLUGIN_BINARY_DIR "@CMAKE_BINARY_DIR@/plugins")
+
+# set the list of Speect plug-ins that have been processed by 
+# the speect_plugin_create function in plugins/cmake/pluginFunctions.cmake
+set(PLUGIN_LIST @SPCT_PLUGIN_LIST@)
+list(LENGTH PLUGIN_LIST plugin_list_length)
+
+# iterate through the list to get each plug-ins header directories
+while(plugin_list_length GREATER 0)
+ 
+  # get and remove first element in list, number of dirs
+  list(GET PLUGIN_LIST 0 plugin_dir_length)
+  list(REMOVE_AT PLUGIN_LIST 0)
+
+  # get and remove first element in list, name of plug-in
+  list(GET PLUGIN_LIST 0 plugin_lowercase_name)
+  list(REMOVE_AT PLUGIN_LIST 0)
+
+  foreach(loop_var RANGE 1 ${plugin_dir_length})
+    # get and remove first element in list, directory
+    list(GET PLUGIN_LIST 0 plugin_dir)
+    list(REMOVE_AT PLUGIN_LIST 0)
+    
+    # match source dir
+    string(REGEX MATCH "${PLUGIN_SOURCE_DIR}/(.*)/src" result ${plugin_dir})
+    if(result)
+      string(REGEX REPLACE "${PLUGIN_SOURCE_DIR}/(.*)/src" "\\1" result ${plugin_dir})
+      set(install_headers_path "${CMAKE_INSTALL_PREFIX}/include/speect/plugins/${result}")
+      list(APPEND tmp_name ${install_headers_path})
+    endif(result)
+
+    # match binary dir
+    string(REGEX MATCH "${PLUGIN_BINARY_DIR}/(.*)/src" result ${plugin_dir})
+    if(result)
+      string(REGEX REPLACE "${PLUGIN_BINARY_DIR}/(.*)/src" "\\1" result ${plugin_dir})
+      set(install_headers_path "${CMAKE_INSTALL_PREFIX}/include/speect/plugins/${result}")
+      list(APPEND tmp_name ${install_headers_path})
+    endif(result)
+  endforeach(loop_var RANGE ${plugin_dir_length})
+
+  list(REMOVE_DUPLICATES tmp_name)
+  
+  # create the configuration CMake file
+  configure_file(${PLUGIN_SOURCE_DIR}/config/pluginConf.cmake.in 
+    ${PLUGIN_BINARY_DIR}/cmakeconf/installation/${plugin_lowercase_name}.cmake @ONLY)
+    
+  # install the configuration CMake file
+  if(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
+    file(INSTALL 
+      DESTINATION "${CMAKE_INSTALL_PREFIX}/include/speect/plugins/cmake" 
+      TYPE FILE 
+      FILES "${PLUGIN_BINARY_DIR}/cmakeconf/installation/${plugin_lowercase_name}.cmake")
+  endif(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
+  
+  
+  list(LENGTH PLUGIN_LIST plugin_list_length)
+endwhile(plugin_list_length GREATER 0)

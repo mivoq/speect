@@ -15,13 +15,16 @@
 #                           C header files path                                      #
 #------------------------------------------------------------------------------------#
 
-
 # Search for C header files in these directories.
-list(APPEND SPCT_INCLUDE_DIRS
+list(APPEND SPCT_INCLUDE_DIRS_TMP
   ${CMAKE_SOURCE_DIR}/engine/src
   ${CMAKE_BINARY_DIR}/engine/src)
 
-include_directories(${SPCT_INCLUDE_DIRS})
+include_directories(${SPCT_INCLUDE_DIRS_TMP})
+
+# set SPCT_INCLUDE_DIRS_TMP as SPCT_INCLUDE_DIRS in cache
+set(SPCT_INCLUDE_DIRS ${SPCT_INCLUDE_DIRS_TMP} 
+  CACHE INTERNAL "Speect Engine include directories" FORCE)
 
 
 #------------------------------------------------------------------------------------#
@@ -96,9 +99,9 @@ set_target_properties(SPCT_LIBRARIES
 
 target_link_libraries(SPCT_LIBRARIES ${SPCT_PLATFORM_LIBS})
 
-# Addons and examples should link with SPCT_LIBRARIES.
-set(SPCT_LIBRARIES_TARGET SPCT_LIBRARIES)
-
+# plug-ins and examples should link with SPCT_LIBRARIES_TARGET.
+set(SPCT_LIBRARIES_TARGET SPCT_LIBRARIES
+  CACHE INTERNAL "Speect Engine library target for internal plug-ins" FORCE)
 
 
 #------------------------------------------------------------------------------------#
@@ -111,6 +114,11 @@ if(SPCT_UNIX)
 
   # Install header files.  
   install(DIRECTORY "${CMAKE_SOURCE_DIR}/engine/src/"
+    DESTINATION include/speect/engine
+    FILES_MATCHING PATTERN "*.h"
+    PATTERN "platform" EXCLUDE)
+
+  install(DIRECTORY "${CMAKE_BINARY_DIR}/engine/src/"
     DESTINATION include/speect/engine
     FILES_MATCHING PATTERN "*.h"
     PATTERN "platform" EXCLUDE)

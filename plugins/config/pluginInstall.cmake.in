@@ -35,6 +35,9 @@ while(plugin_list_length GREATER 0)
   list(GET PLUGIN_LIST 0 plugin_lowercase_name)
   list(REMOVE_AT PLUGIN_LIST 0)
 
+  # clear tmp_name, the variable that holds the list of plug-in directories
+  unset(tmp_name)
+
   foreach(loop_var RANGE 1 ${plugin_dir_length})
     # get and remove first element in list, directory
     list(GET PLUGIN_LIST 0 plugin_dir)

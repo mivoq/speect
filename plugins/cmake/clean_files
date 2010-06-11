@@ -1,19 +1,6 @@
 #!/bin/sh
 
-echo ""
-
-########################################################################
-
-echo "--cleaning config--"
-
-cd ./config/
-./clean_files
-cd ..
-
-
-########################################################################
-
-
 rm -f *~
 
-echo ""
+# pluginInstall.cmake is auto generated from config/pluginInstall.cmake.in
+rm -f pluginInstall.cmake

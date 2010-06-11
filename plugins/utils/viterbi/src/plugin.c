@@ -45,6 +45,19 @@
 
 /************************************************************************************/
 /*                                                                                  */
+/* Defines                                                                          */
+/*                                                                                  */
+/************************************************************************************/
+
+/* Minimum major version of Speect Engine required for plug-in */
+#define SPCT_MAJOR_VERSION_MIN 1
+
+/* Minimum minor version of Speect Engine required for plug-in */
+#define SPCT_MINOR_VERSION_MIN 0
+
+
+/************************************************************************************/
+/*                                                                                  */
 /* Static variables                                                                 */
 /*                                                                                  */
 /************************************************************************************/
@@ -87,8 +100,8 @@ static const s_plugin_params plugin_params =
 
 	/* Speect ABI version (which plug-in was compiled with) */
 	{
-		0,
-		9
+		S_MAJOR_VERSION,
+		S_MINOR_VERSION
 	},
 
 	/* exit function pointer */
@@ -113,7 +126,7 @@ const s_plugin_params *s_plugin_init(const s_lib_version version, s_erc *error)
 	{
 		S_CTX_ERR(error, S_FAILURE,
 				  plugin_init_func,
-				  "Incorrect Speect Engine version, require '0.9.x'");
+				  "Incorrect Speect Engine version, require '1.0.x'");
 		return NULL;
 	}
 
@@ -168,11 +181,8 @@ const s_plugin_params *s_plugin_init(const s_lib_version version, s_erc *error)
 /* check the Speect Engine version */
 static s_bool version_ok(const s_lib_version version)
 {
-	/*
-	 * we want Speect Engine 0.9.x
-	 */
-	if ((version.major == 0)
-		&& (version.minor == 9))
+	if ((version.major >= SPCT_MAJOR_VERSION_MIN)
+		&& (version.minor >= SPCT_MINOR_VERSION_MIN))
 		return TRUE;
 
 	return FALSE;

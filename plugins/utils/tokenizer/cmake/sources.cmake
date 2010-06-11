@@ -1,11 +1,11 @@
 ######################################################################################
 ##                                                                                  ##
 ## AUTHOR  : Aby Louw                                                               ##
-## DATE    : 5 November 2009                                                        ##
+## DATE    : June 2010                                                              ##
 ##                                                                                  ##
 ######################################################################################
 ##                                                                                  ##
-## Template CMake source files for Speect plug-ins                                  ##
+## Source files for Tokenizer plug-in                                               ##
 ##                                                                                  ##
 ##                                                                                  ##
 ######################################################################################
@@ -13,7 +13,7 @@
 
 ######## source files ##################
 
-set(${PLUGIN_SONAME}_SRC_FILES
+speect_plugin_sources(
   src/plugin.c
   src/token.c
   src/tokenizer.c
@@ -24,7 +24,7 @@ set(${PLUGIN_SONAME}_SRC_FILES
 
 ######## header files ##################
 
-set(${PLUGIN_SONAME}_INCLUDE_FILES
+speect_plugin_headers(
   src/token.h
   src/tokenizer.h
   src/tokenizer_file.h

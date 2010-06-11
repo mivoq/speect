@@ -102,37 +102,37 @@
 
 
 /*
- * spct_EXPORTS
- * ------------
- * Cmake will define spct_EXPORTS when it configures to build a
+ * SPCT_LIBRARIES_EXPORTS
+ * ----------------------
+ * CMake will define SPCT_LIBRARIES_EXPORTS when it configures to build a
  * shared library. If you are going to use another build system
- * you need to define spct_EXPORTS when building a DLL.
+ * you need to define SPCT_LIBRARIES_EXPORTS when building a DLL.
  *
  * Now we use the generic helper definitions above to define
  * S_API and S_LOCAL. S_API is used for the public API symbols.
- * It either DLL imports or DLL exports (or does nothing for static build)
+ * It's either DLL imports or DLL exports (or does nothing for static build)
  * S_LOCAL is used for non-api symbols.
  *
  * SPCT_SRC
- * --------
- * Cmake defines SPCT_SRC when building Speect (instead of just using it).
+ * ------------------
+ * CMake defines SPCT_SRC when building Speect (instead of just using it).
  * If you are going to use another build system you need to define
  * SPCT_SRC when building Speect.
  *
  */
 
 
-#ifdef spct_EXPORTS
+#ifdef SPCT_LIBRARIES_EXPORTS
 #  ifdef SPCT_SRC
 #    define S_API SPCT_HELPER_DLL_EXPORT
 #  else /* !SPCT_SRC */
 #    define S_API SPCT_HELPER_DLL_IMPORT
 #  endif /* SPCT_SRC */
 #  define S_LOCAL SPCT_HELPER_DLL_LOCAL
-#else /* !spct_EXPORTS (static library) */
+#else /* !SPCT_LIBRARIES_EXPORTS (static library) */
 #  define S_API
 #  define S_LOCAL
-#endif /* SPCT_DLL */
+#endif /* SPCT_LIBRARIES_EXPORTS */
 
 
 /**

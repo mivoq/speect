@@ -65,7 +65,7 @@ int main()
 	/*
 	 * Write to data source
 	 */
-	SDatasourceWrite(ds, hello, sizeof(char), s_strsize(hello, &error), &error);
+	SDatasourceWrite(ds, text, sizeof(char), s_strsize(text, &error), &error);
 	if (S_CHK_ERR(&error, S_CONTERR,
 				  "main",
 				  "Failed to write to data source"))

@@ -1,1 +1,1 @@
-example(regexp_example)
+speect_example(regexp_example)

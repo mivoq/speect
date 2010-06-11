@@ -1,1 +1,1 @@
-example(datasource_example)
+speect_example(datasource_example)

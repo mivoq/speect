@@ -1,1 +1,1 @@
-example(mem_example)
+speect_example(mem_example)

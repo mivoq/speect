@@ -122,24 +122,14 @@ int main(void)
 	int i;
 	int *tmp;
 
-	/*
-	 * initialize the error and debugging system
-	 * with a log file and debugging level.
-	 * If Speect was not cmake configured with the
-	 * -DERROR_TO_FILE=1 switch (see README) then
-	 * a log file will not be created, regardless of
-	 * the log_file argument.
-	 */
-	s_errdbg_init("mylog.txt", "mylog.txt", S_DEBUG_, &error);
 
-	/*
-	 * Check error if any from s_errdbg_init, and set
-	 * a new error with a new context.
-	 */
-	if (S_CHK_ERR(&error, S_FAILURE,
-			 "main",
-			 "Failed to initialize errdbg module"))
-		return -1;
+	/* initialize speect */
+	error = speect_init();
+	if (error != S_SUCCESS)
+	{
+		printf("Failed to initialize Speect\n");
+		return 1;
+	}
 
 	for (i = 0; i < 3; i++)
 	{
@@ -149,7 +139,7 @@ int main(void)
 			S_CLR_ERR(&error);
 
 			/* change the debugging level */
-			s_errdbg_set_dbglevel(S_DEBUG_EXTENDED, &error);
+			s_errdbg_level(S_DBG_INFO, &error);
 
 			/* check error and continue it */
 			S_CHK_ERR(&error, S_CONTERR,
@@ -163,8 +153,8 @@ int main(void)
 					 "main",
 					 "Number is not valid"))
 			{
-				/* debug with S_DEBUG_EXTENDED level */
-				S_DEBUG(S_DEBUG_EXTENDED, "Found error with i = %d", 1);
+				/* debug with S_DBG_INFO level */
+				S_DEBUG(S_DBG_INFO, "Found error with i = %d", 1);
 
 				if (tmp != NULL)
 					S_FREE(tmp);
@@ -194,11 +184,11 @@ int main(void)
 					 "Number is not valid"))
 			{
 				/*
-				 * debug with S_DEBUG_VERBOSE level,
+				 * debug with S_DBG_TRACE level,
 				 * this debug will not do anything as it's level
 				 * is higher than the debug level set at i = 0
 				 */
-				S_DEBUG(S_DEBUG_VERBOSE, "Found error with i = %d", 1);
+				S_DEBUG(S_DBG_TRACE, "Found error with i = %d", 1);
 
 				if (tmp != NULL)
 					S_FREE(tmp);
@@ -209,21 +199,14 @@ int main(void)
 		}
 	}
 
-	/* clear the error variable */
-	S_CLR_ERR(&error);
 
-	/*
-	 * free all resources associated with the
-	 * error and debugging system, will also
-	 * close the log file if any.
-	 */
-	s_errdbg_quit(&error);
-
-	/* check for errors and continue the error with a new context */
-	if (S_CHK_ERR(&error, S_CONTERR,
-			 "main",
-			 "Failed to quit errdbg module"))
-		return -1;
+	/* quit speect */
+	error = speect_quit();
+	if (error != S_SUCCESS)
+	{
+		printf("Call to 'speect_quit' failed\n");
+		return 1;
+	}
 
 	return 0;
 }

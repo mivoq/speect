@@ -68,7 +68,6 @@ endif(WARN_DECL_AFTER_STMT)
 #------------------------------------------------------------------------------------#
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${WFLAGS}")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${WFLAGS}")
 
 
 #------------------------------------------------------------------------------------#
@@ -76,7 +75,6 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${WFLAGS}")
 #------------------------------------------------------------------------------------#
 
 set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -DSPCT_DEBUGMODE=1")
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DSPCT_DEBUGMODE=1")
 
 
 #------------------------------------------------------------------------------------#
@@ -87,13 +85,10 @@ list(APPEND CMAKE_BUILD_TYPES Profile)
 if(SPCT_GCC)
     set(CMAKE_C_FLAGS_PROFILE "-pg"
         CACHE STRING "profiling flags")
-    set(CMAKE_CXX_FLAGS_PROFILE "${CMAKE_C_FLAGS_PROFILE}"
-        CACHE STRING "profiling flags")
     set(CMAKE_EXE_LINKER_FLAGS_PROFILE "-pg"
         CACHE STRING "profiling flags")
     mark_as_advanced(
         CMAKE_C_FLAGS_PROFILE
-        CMAKE_CXX_FLAGS_PROFILE
         CMAKE_EXE_LINKER_FLAGS_PROFILE
         )
 endif(SPCT_GCC)

@@ -107,17 +107,20 @@ set(SPCT_LIBRARIES_TARGET SPCT_LIBRARIES)
 
 ###################################### UNIX #########################################
 
-# Install header files.  
 if(SPCT_UNIX)
+
+  # Install header files.  
   install(DIRECTORY "${CMAKE_SOURCE_DIR}/engine/src/"
     DESTINATION include/speect/engine
     FILES_MATCHING PATTERN "*.h"
     PATTERN "platform" EXCLUDE)
   
+  # Install library
   install(TARGETS SPCT_LIBRARIES
     DESTINATION "lib${LIB_SUFFIX}/speect/engine"
     EXPORT spctConfig 
     )
 
+  # export CMake config
   install(EXPORT spctConfig DESTINATION include/speect/engine)
 endif(SPCT_UNIX)

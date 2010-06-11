@@ -15,14 +15,15 @@
 ##                                                                                  ##
 ## Also installs log file place holders so that the directories are created.        ##
 ##                                                                                  ##
+## Note that this file will not be created unless it is a UNIX like system.         ##
+##                                                                                  ##
 ######################################################################################
 
 
 #------------------------------------------------------------------------------------#
-#                                  System type                                       #
+#                              Version info                                          #
 #------------------------------------------------------------------------------------#
 
-set(SPCT_OS "@SPCT_OS@")
 set(SPCT_VERSION_RELEASE "@SPCT_VERSION_RELEASE@")
 set(SPCT_VERSION "@SPCT_VERSION@")
 
@@ -31,13 +32,9 @@ set(SPCT_VERSION "@SPCT_VERSION@")
 #           Plug-in path, error log and debug log paths for installation             #
 #------------------------------------------------------------------------------------#
 
-######### UNIX ###########
-
-if(SPCT_OS STREQUAL "SPCT_UNIX")
-  set(SPCT_ERROR_LOG_FILE "/var/log/speect/error.log")
-  set(SPCT_DEBUG_LOG_FILE "/var/log/speect/debug.log")
-  set(SPCT_PLUGIN_PATH "@CMAKE_INSTALL_PREFIX@/lib@LIB_SUFFIX@/speect/plugins")
-endif(SPCT_OS STREQUAL "SPCT_UNIX")
+set(SPCT_ERROR_LOG_FILE "/var/log/speect/error.log")
+set(SPCT_DEBUG_LOG_FILE "/var/log/speect/debug.log")
+set(SPCT_PLUGIN_PATH "@CMAKE_INSTALL_PREFIX@/lib@LIB_SUFFIX@/speect/plugins")
 
 
 #------------------------------------------------------------------------------------#
@@ -55,35 +52,32 @@ configure_file(@CMAKE_SOURCE_DIR@/engine/config/error.log.in
 configure_file(@CMAKE_SOURCE_DIR@/engine/config/error.log.in
   ${CMAKE_BINARY_DIR}/engine/cmake/debug.log)
 
+
 #------------------------------------------------------------------------------------#
 #                               installation                                         #
 #------------------------------------------------------------------------------------#
 
-######### UNIX ###########
+# grabed signature from cmake_install.cmake
+if(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
+  file(INSTALL DESTINATION "/etc" TYPE FILE FILES "${CMAKE_BINARY_DIR}/engine/cmake/speect.conf")
+endif(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
 
-if(SPCT_OS STREQUAL "SPCT_UNIX")
-  # grabed signature from cmake_install.cmake
-  if(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
-    file(INSTALL DESTINATION "/etc" TYPE FILE FILES "${CMAKE_BINARY_DIR}/engine/cmake/speect.conf")
-  endif(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
+# log files
+if(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
+  file(INSTALL 
+    DESTINATION "/var/log/speect" 
+    TYPE FILE
+    FILES "${CMAKE_BINARY_DIR}/engine/cmake/error.log"
+    FILE_PERMISSIONS OWNER_WRITE OWNER_READ GROUP_WRITE GROUP_READ WORLD_WRITE WORLD_READ
+    )
+endif(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
 
-  # log files
-  if(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
-    file(INSTALL 
-      DESTINATION "/var/log/speect" 
-      TYPE FILE
-      FILES "${CMAKE_BINARY_DIR}/engine/cmake/error.log"
-      FILE_PERMISSIONS OWNER_WRITE OWNER_READ GROUP_WRITE GROUP_READ WORLD_WRITE WORLD_READ
-      )
-  endif(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
+if(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
+  file(INSTALL 
+    DESTINATION "/var/log/speect" 
+    TYPE FILE 
+    FILES "${CMAKE_BINARY_DIR}/engine/cmake/debug.log"
+    FILE_PERMISSIONS OWNER_WRITE OWNER_READ GROUP_WRITE GROUP_READ WORLD_WRITE WORLD_READ
+    )
+endif(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
 
-  if(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
-    file(INSTALL 
-      DESTINATION "/var/log/speect" 
-      TYPE FILE 
-      FILES "${CMAKE_BINARY_DIR}/engine/cmake/debug.log"
-      FILE_PERMISSIONS OWNER_WRITE OWNER_READ GROUP_WRITE GROUP_READ WORLD_WRITE WORLD_READ
-      )
-  endif(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
-
-endif(SPCT_OS STREQUAL "SPCT_UNIX")

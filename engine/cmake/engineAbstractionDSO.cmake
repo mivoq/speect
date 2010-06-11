@@ -77,11 +77,13 @@ configure_file(${CMAKE_SOURCE_DIR}/engine/config/dynamic_loading_impl.h.in
 #                               installation                                         #
 #------------------------------------------------------------------------------------#
 
-install(FILES ${CMAKE_SOURCE_DIR}/engine/src/pluginmanager/platform/${SPCT_DSO_SPECIFIC_IMPL_INCLUDES}
-        DESTINATION include/speect/engine/pluginmanager/platform/${SPCT_DSO_SPECIFIC_IMPL_DIR}/)
+if(SPCT_UNIX)
+  install(FILES ${CMAKE_SOURCE_DIR}/engine/src/pluginmanager/platform/${SPCT_DSO_SPECIFIC_IMPL_INCLUDES}
+    DESTINATION include/speect/engine/pluginmanager/platform/${SPCT_DSO_SPECIFIC_IMPL_DIR}/)
 
-install(FILES ${CMAKE_BINARY_DIR}/engine/src/pluginmanager/platform/dynamic_loading_impl.h
-        DESTINATION include/speect/engine/pluginmanager/platform)
+  install(FILES ${CMAKE_BINARY_DIR}/engine/src/pluginmanager/platform/dynamic_loading_impl.h
+    DESTINATION include/speect/engine/pluginmanager/platform)
+endif(SPCT_UNIX)
 
 
 #------------------------------------------------------------------------------------#

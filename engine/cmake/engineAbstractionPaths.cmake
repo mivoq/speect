@@ -71,11 +71,13 @@ configure_file(${CMAKE_SOURCE_DIR}/engine/config/path_impl.h.in
 #                               installation                                         #
 #------------------------------------------------------------------------------------#
 
-install(FILES ${CMAKE_SOURCE_DIR}/engine/src/base/utils/platform/${SPCT_PATH_SPECIFIC_IMPL}
-        DESTINATION include/speect/engine/base/utils/platform/${SPCT_PATH_SPECIFIC_IMPL_DIR}/)
+if(SPCT_UNIX)
+  install(FILES ${CMAKE_SOURCE_DIR}/engine/src/base/utils/platform/${SPCT_PATH_SPECIFIC_IMPL}
+    DESTINATION include/speect/engine/base/utils/platform/${SPCT_PATH_SPECIFIC_IMPL_DIR}/)
 
-install(FILES ${CMAKE_BINARY_DIR}/engine/src/base/utils/platform/path_impl.h
-        DESTINATION include/speect/engine/base/utils/platform)
+  install(FILES ${CMAKE_BINARY_DIR}/engine/src/base/utils/platform/path_impl.h
+    DESTINATION include/speect/engine/base/utils/platform)
+endif(SPCT_UNIX)
 
 
 #------------------------------------------------------------------------------------#

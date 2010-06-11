@@ -51,6 +51,21 @@
 
 /************************************************************************************/
 /*                                                                                  */
+/* Defines                                                                          */
+/*                                                                                  */
+/************************************************************************************/
+
+/* Minimum major version of Speect Engine ABI from plug-ins that will
+ * work with this version of Speect Engine */
+#define SPCT_MAJOR_VERSION_MIN 0
+
+/* Minimum minor version of Speect Engine ABI from plug-ins that will
+ * work with this version of Speect Engine */
+#define SPCT_MINOR_VERSION_MIN 8
+
+
+/************************************************************************************/
+/*                                                                                  */
 /* Static variables                                                                 */
 /*                                                                                  */
 /************************************************************************************/
@@ -521,11 +536,8 @@ static char *fix_path(const char *path, s_erc *error)
 /* check the Speect ABI version of plug-in */
 static s_bool version_ok(const s_version abi_version)
 {
-	/*
-	 * we want Speect Engine 0.9.x
-	 */
-	if ((abi_version.major == 0)
-		&& (abi_version.minor == 9))
+	if ((abi_version.major >= SPCT_MAJOR_VERSION_MIN)
+		&& (abi_version.minor >= SPCT_MINOR_VERSION_MIN))
 		return TRUE;
 
 	return FALSE;

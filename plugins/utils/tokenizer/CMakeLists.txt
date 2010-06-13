@@ -14,7 +14,7 @@
 #                             Define plug-in                                         #
 #------------------------------------------------------------------------------------#
 
-speect_plugin_definition(Tokenizer 0 9 0)
+speect_plugin_definition(Tokenizer 1 0 0)
 
 
 #------------------------------------------------------------------------------------#
@@ -37,12 +37,6 @@ speect_plugin_create()
 #------------------------------------------------------------------------------------#
 
 if(WANT_EXAMPLES)
-
-  if(NOT "${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_BINARY_DIR}")
-    file(COPY ${CMAKE_SOURCE_DIR}/plugins/utils/tokenizer/examples/test_file.txt
-      DESTINATION ${CMAKE_BINARY_DIR}/plugins/utils/tokenizer/examples)
-  endif(NOT "${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_BINARY_DIR}")
-
   add_subdirectory(examples)
 endif(WANT_EXAMPLES)
 

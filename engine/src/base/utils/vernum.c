@@ -45,6 +45,21 @@
 
 /************************************************************************************/
 /*                                                                                  */
+/* Defines                                                                          */
+/*                                                                                  */
+/************************************************************************************/
+
+/* Minimum major version of Speect Engine ABI from plug-ins that will
+ * work with this version of Speect Engine */
+#define SPCT_MAJOR_VERSION_MIN 1
+
+/* Minimum minor version of Speect Engine ABI from plug-ins that will
+ * work with this version of Speect Engine */
+#define SPCT_MINOR_VERSION_MIN 0
+
+
+/************************************************************************************/
+/*                                                                                  */
 /* Static variables                                                                 */
 /*                                                                                  */
 /************************************************************************************/
@@ -68,4 +83,36 @@ static const s_lib_version speect_version =
 S_API s_lib_version s_speect_version(void)
 {
 	return speect_version;
+}
+
+
+S_API s_bool s_lib_version_ok(uint8 major_min, uint8 minor_min)
+{
+	uint plugin_min_version;
+	uint speect_version;
+
+
+	plugin_min_version = 1000 * major_min + minor_min;
+	speect_version = 1000 * S_MAJOR_VERSION + S_MINOR_VERSION;
+
+	if (speect_version >= plugin_min_version)
+		return TRUE;
+
+	return FALSE;
+}
+
+
+S_LOCAL s_bool s_version_ok(const s_version version)
+{
+	uint plugin_version;
+	uint speect_min_version;
+
+
+	plugin_version = 1000 * version.major + version.minor;
+	speect_min_version = 1000 * SPCT_MAJOR_VERSION_MIN + SPCT_MINOR_VERSION_MIN;
+
+	if (plugin_version >= speect_min_version)
+		return TRUE;
+
+	return FALSE;
 }

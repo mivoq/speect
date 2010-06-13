@@ -71,14 +71,15 @@
 
 /**
  * @file vernum.h
- * Defined version numbering data structures.
+ * Defined version numbering data structures and functions.
  */
 
 
 /**
  * @ingroup SBaseUtils
  * @defgroup SVernum Version Numbers
- * Data structures for the storage of version information.
+ * Function relating to version information and data structures for
+ * the storage of version information.
  * @{
  */
 
@@ -163,6 +164,31 @@ typedef struct
  * @return Speect Engine version.
  */
 S_API s_lib_version s_speect_version(void);
+
+
+/**
+ * Query if this version of the Speect Engine is later or equal to the
+ * given version numbers (used by plug-ins to test for compatibility).
+ *
+ * @param major_min The <i> minimum </i> required major version of the
+ * Speect Engine.
+ * @param minor_min The <i> minimum </i> required minor version of the
+ * Speect Engine.
+ *
+ * @return TRUE if OK, else FALSE.
+ */
+S_API s_bool s_lib_version_ok(uint8 major_min, uint8 minor_min);
+
+
+/**
+ * Query if the given version number will work with this version of
+ * the Speect Engine (use internally to test if plug-ins will work).
+ *
+ * @param version The version to test.
+ *
+ * @return TRUE if OK, else FALSE.
+ */
+S_LOCAL s_bool s_version_ok(const s_version version);
 
 
 /************************************************************************************/

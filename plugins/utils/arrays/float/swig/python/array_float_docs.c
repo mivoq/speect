@@ -74,3 +74,6 @@ Return a count of the number of elements in the SArrayFloat object.
 :rtype: int
 """
 %enddef
+
+%feature("autodoc", count_DOCSTRING) count;
+

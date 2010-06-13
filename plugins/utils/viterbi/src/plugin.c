@@ -64,6 +64,8 @@
 
 static const char * const plugin_init_func = "SViterbi plug-in initialization";
 
+static const char * const plugin_reg_func = "SViterbi plug-in register";
+
 static const char * const plugin_exit_func = "SViterbi plug-in free";
 
 
@@ -73,7 +75,7 @@ static const char * const plugin_exit_func = "SViterbi plug-in free";
 /*                                                                                  */
 /************************************************************************************/
 
-static s_bool version_ok(const s_lib_version version);
+static void plugin_register_function(s_erc *error);
 
 static void plugin_exit_function(s_erc *error);
 
@@ -104,6 +106,9 @@ static const s_plugin_params plugin_params =
 		S_MINOR_VERSION
 	},
 
+	/* register function pointer */
+	plugin_register_function,
+
 	/* exit function pointer */
 	plugin_exit_function
 };
@@ -115,56 +120,16 @@ static const s_plugin_params plugin_params =
 /*                                                                                  */
 /************************************************************************************/
 
-const s_plugin_params *s_plugin_init(const s_lib_version version, s_erc *error)
+const s_plugin_params *s_plugin_init(s_erc *error)
 {
-	s_erc local_err = S_SUCCESS;
-
-
 	S_CLR_ERR(error);
 
-	if (!version_ok(version))
+	if (!s_lib_version_ok(SPCT_MAJOR_VERSION_MIN, SPCT_MINOR_VERSION_MIN))
 	{
 		S_CTX_ERR(error, S_FAILURE,
 				  plugin_init_func,
-				  "Incorrect Speect Engine version, require '1.0.x'");
-		return NULL;
-	}
-
-	/* register plug-in classes here */
-	_s_vit_candidate_class_reg(error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  plugin_init_func,
-				  "Failed to register SViterbiCandidate class"))
-		return NULL;
-
-	_s_vit_path_class_reg(error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  plugin_init_func,
-				  "Failed to register SViterbiPath class"))
-	{
-		_s_vit_candidate_class_free(&local_err);
-		return NULL;
-	}
-
-	_s_vit_point_class_reg(error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  plugin_init_func,
-				  "Failed to register SViterbiPoint class"))
-	{
-		_s_vit_path_class_free(&local_err);
-		_s_vit_candidate_class_free(&local_err);
-		return NULL;
-	}
-
-	_s_viterbi_class_reg(error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  plugin_init_func,
-				  "Failed to register SViterbi class"))
-	{
-		_s_vit_point_class_free(&local_err);
-		_s_vit_path_class_free(&local_err);
-		_s_vit_candidate_class_free(&local_err);
-
+				  "Incorrect Speect Engine version, require at least '%d.%d.x'",
+				  SPCT_MAJOR_VERSION_MIN, SPCT_MINOR_VERSION_MIN);
 		return NULL;
 	}
 
@@ -178,14 +143,52 @@ const s_plugin_params *s_plugin_init(const s_lib_version version, s_erc *error)
 /*                                                                                  */
 /************************************************************************************/
 
-/* check the Speect Engine version */
-static s_bool version_ok(const s_lib_version version)
+/* plug-in register function */
+static void plugin_register_function(s_erc *error)
 {
-	if ((version.major >= SPCT_MAJOR_VERSION_MIN)
-		&& (version.minor >= SPCT_MINOR_VERSION_MIN))
-		return TRUE;
+	s_erc local_err = S_SUCCESS;
 
-	return FALSE;
+
+	S_CLR_ERR(error);
+
+	/* register plug-in classes here */
+
+	_s_vit_candidate_class_reg(error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  plugin_reg_func,
+				  "Failed to register SViterbiCandidate class"))
+		return;
+
+	_s_vit_path_class_reg(error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  plugin_reg_func,
+				  "Failed to register SViterbiPath class"))
+	{
+		_s_vit_candidate_class_free(&local_err);
+		return;
+	}
+
+	_s_vit_point_class_reg(error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  plugin_reg_func,
+				  "Failed to register SViterbiPoint class"))
+	{
+		_s_vit_path_class_free(&local_err);
+		_s_vit_candidate_class_free(&local_err);
+		return;
+	}
+
+	_s_viterbi_class_reg(error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  plugin_reg_func,
+				  "Failed to register SViterbi class"))
+	{
+		_s_vit_point_class_free(&local_err);
+		_s_vit_path_class_free(&local_err);
+		_s_vit_candidate_class_free(&local_err);
+
+		return;
+	}
 }
 
 

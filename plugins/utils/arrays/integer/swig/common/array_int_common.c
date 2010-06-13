@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2009 The Department of Arts and Culture,                           */
+/* Copyright (c) 2010 The Department of Arts and Culture,                           */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -24,66 +24,93 @@
 /************************************************************************************/
 /*                                                                                  */
 /* AUTHOR  : Aby Louw                                                               */
-/* DATE    : December 2009                                                          */
+/* DATE    : February 2010                                                          */
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* SAudio wrapper functions.                                                        */
+/* SWIG common C convenience functions for SArrayInt.                               */
 /*                                                                                  */
 /*                                                                                  */
-/************************************************************************************/
-
-%module array_int
-
-
-/************************************************************************************/
-/*                                                                                  */
-/* Speect Engine header.                                                            */
 /*                                                                                  */
 /************************************************************************************/
 
-%header
+
+/************************************************************************************/
+/*                                                                                  */
+/* Typedef used in typemaps                                                         */
+/*                                                                                  */
+/************************************************************************************/
+
+
 %{
-#include "speect.h"
-#include "array_int.h"
+	typedef struct
+	{
+		int *ia_ip;
+		uint32 ia_count;
+	} int_array_t;
 %}
 
-%include "exception.i"
-%import speect.i
-%include "spct_int_array_typemap.i"
-
 
 /************************************************************************************/
 /*                                                                                  */
-/* Load the SArrayFloat plug-in                                                     */
+/* Extend the SArrayInt class                                                       */
 /*                                                                                  */
 /************************************************************************************/
-
-%init
-%{
+typedef struct
+{
+	%extend
 	{
-		s_erc rv = S_SUCCESS;
-		SPlugin *plugin;
+		const uint32 count;
+	}
+} SArrayInt;
 
 
-		plugin = s_pm_load_plugin("array-int.spi", &rv);
-		if (rv != S_SUCCESS)
-			SWIG_exception(SWIG_RuntimeError, "Failed to load SArrayInt plug-in");
+%types(SArrayInt = SObject, SObject*);
 
-	fail:
-		return;
+%extend SArrayInt
+{
+	SArrayInt(const sint32 *array, uint32 len, s_erc *error)
+	{
+		SArrayInt *tmp;
+
+
+		tmp = (SArrayInt*)S_NEW("SArrayInt", error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "SArrayInt()",
+					  "Failed to create new 'SArrayInt' object"))
+			return NULL;
+
+		tmp->count = len;
+		tmp->i = (sint32*)array;
+		return tmp;
+	}
+
+	~SArrayInt()
+	{
+		s_erc error;
+
+
+		S_CLR_ERR(&error);
+		S_DELETE($self, "~SArrayInt()", &error);
+	}
+
+	int_array_t get()
+	{
+		int_array_t tmp;
+
+
+		tmp.ia_ip = $self->i;
+		tmp.ia_count = $self->count;
+
+		return tmp;
+	}
+}
+
+%{
+
+	const uint32 SArrayInt_count_get(SArrayInt *array)
+	{
+		return (const uint32)array->count;
 	}
 %}
-
-
-/************************************************************************************/
-/*                                                                                  */
-/* SWIG/Python interface files.                                                     */
-/*                                                                                  */
-/************************************************************************************/
-
-/*
- * SAudio Python class
- */
-%include "array_int.c"
 

@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2009 The Department of Arts and Culture,                           */
+/* Copyright (c) 2010 The Department of Arts and Culture,                           */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -24,125 +24,72 @@
 /************************************************************************************/
 /*                                                                                  */
 /* AUTHOR  : Aby Louw                                                               */
-/* DATE    : December 2009                                                          */
+/* DATE    : February 2010                                                          */
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* C convenience functions for SArrayInt Python wrapper.                            */
-/*                                                                                  */
+/* Typemaps to convert types between Python list of integers and SArrayInt.         */
 /*                                                                                  */
 /*                                                                                  */
 /************************************************************************************/
 
-%define array_int_DOCSTRING
-"""
-SArrayInt(ilist)
 
-A native Speect class for containing an array (vector) of integer values.
-Create a new object, that contains an array of integer point values.
-
-:param ilist: A Python list containing only integer values.
-:type ilist: list
-:return: Newly created SArrayInt object.
-:rtype: SArrayInt
-"""
-%enddef
-
-%feature("autodoc", array_int_DOCSTRING) SArrayInt;
-
-
-%define get_DOCSTRING
-"""
-get()
-
-Return a copy of this SArrayInt object as a Python list of integer
-values.
-
-:return: Python list of integer values.
-:rtype: list
-"""
-%enddef
-
-%feature("autodoc", get_DOCSTRING) SArrayInt::get;
-
-
-%define count_DOCSTRING
-"""
-Return a count of the number of elements in the SArrayInt object.
-
-:return: Number of elements in the SArrayInt object.
-:rtype: int
-"""
-%enddef
-
-%feature("autodoc", count_DOCSTRING) count;
-
-
-%{
-	typedef struct
-	{
-		int *ia_ip;
-		uint32 ia_count;
-	} int_array_t;
-%}
-
-
-
-typedef struct
+%typemap(in) (const sint32 *array, uint32 len)
 {
-	%extend
+	int i;
+	int count;
+	sint32 *ip;
+
+
+	if (PyList_Check($input))
 	{
-		const uint32 count;
-	}
-} SArrayInt;
-
-
-%types(SArrayInt = SObject, SObject*);
-
-%extend SArrayInt
-{
-	SArrayInt(const sint32 *array, uint32 len, s_erc *error)
-	{
-		SArrayInt *tmp;
-
-
-		tmp = (SArrayInt*)S_NEW("SArrayInt", error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "SArrayInt()",
-					  "Failed to create new 'SArrayInt' object"))
+		count = PyList_Size($input);
+		ip = S_MALLOC(sint32, count);
+		if (ip == NULL)
+		{
+			PyErr_SetString(PyExc_RuntimeError,
+							"Failed to allocate memory for 'sint32*' object");
 			return NULL;
+		}
 
-		tmp->count = len;
-		tmp->i = (sint32*)array;
-		return tmp;
+		for (i = 0; i < count; i++)
+		{
+			PyObject *o = PyList_GetItem($input,i);
+			if (PyInt_Check(o))
+			{
+				ip[i] = (sint32)PyLong_AsLong(o);
+			}
+			else
+			{
+				PyErr_SetString(PyExc_TypeError,
+								"not an integer");
+				S_FREE(ip);
+				return NULL;
+			}
+		}
 	}
-
-	~SArrayInt()
+	else
 	{
-		s_erc error;
-
-
-		S_CLR_ERR(&error);
-		S_DELETE($self, "~SArrayInt()", &error);
+		PyErr_SetString(PyExc_TypeError,"not a list");
+		return NULL;
 	}
+	$1 = ip;
+	$2 = count;
+ }
 
-	int_array_t get()
+
+%typemap(out) int_array_t
+{
+	int_array_t ia;
+	int i;
+	PyObject *o;
+
+	ia = $1;
+
+	$result = PyList_New(ia.ia_count);
+	for (i = 0; i < ia.ia_count; i++)
 	{
-		int_array_t tmp;
-
-
-		tmp.ia_ip = $self->i;
-		tmp.ia_count = $self->count;
-
-		return tmp;
+		o = PyInt_FromLong((long)ia.ia_ip[i]);
+		PyList_SetItem($result,i,o);
 	}
-}
-
-%{
-
-	const uint32 SArrayInt_count_get(SArrayInt *array)
-	{
-		return (const uint32)array->count;
-	}
-%}
-
+ }

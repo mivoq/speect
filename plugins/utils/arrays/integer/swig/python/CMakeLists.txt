@@ -1,68 +1,54 @@
 ######################################################################################
 ##                                                                                  ##
 ## AUTHOR  : Aby Louw                                                               ##
-## DATE    : December 2009                                                          ##
+## DATE    : June 2010                                                              ##
 ##                                                                                  ##
 ######################################################################################
 ##                                                                                  ##
-## CMakeList for SAudio interface                                                   ##
+## CMakeList for SArrayInt Python interface                                         ##
 ##                                                                                  ##
 ##                                                                                  ##
 ######################################################################################
 
 
-# find swig
-find_package(SWIG REQUIRED)
+#------------------------------------------------------------------------------------#
+#                          Set the interface variables                               #
+#------------------------------------------------------------------------------------#
 
-# include swig
-include(${SWIG_USE_FILE})
+# class name
+set(swig_classname "SArrayInt")
 
-# find Python interpreter
-find_package(PythonLibs REQUIRED) # Note, currently PythonInterp does not look for Python 3
+# SWIG includes
+set(swig_includes "typemaps.i;exception.i")
 
-# add Python to includes
-include_directories(${PYTHON_INCLUDE_PATH})
+# C header files (speect.h is automatically included)
+set(swig_c_includes "array_int.h")
 
-# add Speect Engine includes
-include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+# Load the plug-in on initialization ? 
+set(swig_load_plugin 1)
 
-# clear SWIG flags, we don't need anything here
-set(CMAKE_SWIG_FLAGS "")
+# Include Python docstrings
+set(swig_python_docstrings "array_int_docs.c")
 
-# clear C flags, we don't want the same stuff as Speect
-set(CMAKE_C_FLAGS "")
+# Include Python typemaps
+set(swig_python_typemaps "array_int_py_typemap.i")
 
-# add flags for Python Speect Engine wrapper generation
-set_source_files_properties(array_int.i 
-  PROPERTIES 
-  SWIG_FLAGS "-Wall"
-  SWIG_FLAGS "-I${SPEECT_PYTHON_WRAPPER_INCLUDE_PATH}"
-)
+# Include SWIG common interface definition.
+set(swig_common "array_int_common.c")
 
-# add flags for Python Speect Engine wrapper compilation
-set_source_files_properties(array_intPYTHON_wrap.c 
-  PROPERTIES 
-  COMPILE_FLAGS "-fno-strict-aliasing -fwrapv -Wstrict-prototypes -Wall"
-  GENERATED TRUE
-)
+# Include SWIG Python interface definition.
+set(swig_python)
 
-# set ouput directory
-#message(STATUS "CMAKE_CURRENT_BIN_DIR = ${CMAKE_BINARY_DIR}")
-set(CMAKE_SWIG_OUTDIR "${PLUGINS_ENV_VAR}/../swig/python/speect")
 
-# create the Python Speect Engine wrapper (C and Python files)
-swig_add_module(array_int python array_int.i)
+#------------------------------------------------------------------------------------#
+#                          Create the interface file                                 #
+#------------------------------------------------------------------------------------#
 
-# link with Python and Speect Engine
-swig_link_libraries(array_int ${PYTHON_LIBRARIES} SPCT_LIBRARY_TARGET)
+speect_plugin_swig_python_interface()
 
-# set the output directory
-set_target_properties(${SWIG_MODULE_array_int_REAL_NAME}
-  PROPERTIES
-  LIBRARY_OUTPUT_DIRECTORY "${PLUGINS_ENV_VAR}/../swig/python/speect"
-  RUNTIME_OUTPUT_DIRECTORY "${PLUGINS_ENV_VAR}/../swig/python/speect"
-)
 
-#configure_file(${CMAKE_SOURCE_DIR}/swig/python/config/setup.py.in 
-#  ${CMAKE_BINARY_DIR}/swig/python/setup.py @only)
+#------------------------------------------------------------------------------------#
+#                        Generate the Python wrapper                                 #
+#------------------------------------------------------------------------------------#
 
+speect_plugin_swig_python_wrapper()

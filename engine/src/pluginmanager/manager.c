@@ -44,6 +44,7 @@
 #include "base/strings/strings.h"
 #include "base/strings/sprint.h"
 #include "base/utils/alloc.h"
+#include "base/utils/vernum.h"
 #include "containers/containers.h"
 #include "serialization/json/json_parse_config.h"
 #include "pluginmanager/manager.h"
@@ -55,13 +56,9 @@
 /*                                                                                  */
 /************************************************************************************/
 
-/* Minimum major version of Speect Engine ABI from plug-ins that will
- * work with this version of Speect Engine */
-#define SPCT_MAJOR_VERSION_MIN 0
-
-/* Minimum minor version of Speect Engine ABI from plug-ins that will
- * work with this version of Speect Engine */
-#define SPCT_MINOR_VERSION_MIN 8
+/* 128 plugins for now, used for cache initialization size (can grow
+ * but expensive) */
+#define SPCT_MAX_NUM_PLUGINS 128
 
 
 /************************************************************************************/
@@ -92,8 +89,6 @@ static void cache_add_plugin(SPlugin *plugin, const char *path, s_erc *error);
 static void cache_remove_plugin(SPlugin *plugin, s_erc *error);
 
 static char *fix_path(const char *path, s_erc *error);
-
-static s_bool version_ok(const s_version abi_version);
 
 
 /************************************************************************************/
@@ -342,7 +337,7 @@ S_LOCAL void _s_pm_init(s_erc *error)
 	}
 
 	/* 128 plugins for now */
-	SMapHashTableInit(&pluginCache, 128, error);
+	SMapHashTableInit(&pluginCache, SPCT_MAX_NUM_PLUGINS, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "_s_pm_init",
 				  "Failed to initialize SMapHashTable for plug-in cache"))
@@ -391,20 +386,20 @@ static void load_plugin(SPlugin *self, const char *path, s_erc *error)
 	/* path gets freed when SPlugin is deleted */
 	self->path = s_strdup(path, error);
 	if (S_CHK_ERR(error, S_CONTERR,
-				  "LoadPlugin",
+				  "load_plugin",
 				  "Call to \"s_strdup\" failed"))
 		return;
 
 	pluginDso = (SDso*)S_NEW("SDso", error);
 	if (S_CHK_ERR(error, S_CONTERR,
-				  "LoadPlugin",
+				  "load_plugin",
 				  "Failed to create new dynamic shared object for plug-in"))
 		return;
 
 
 	SDsoLoad(pluginDso, path, error);
 	if (S_CHK_ERR(error, S_CONTERR,
-				  "LoadPlugin",
+				  "load_plugin",
 				  "Failed to load plug-in dynamic shared object at \"%s\"",
 				  path))
 	{
@@ -418,7 +413,7 @@ static void load_plugin(SPlugin *self, const char *path, s_erc *error)
 	 */
 	*(void**)(&plugin_initialize) = SDsoGetSymbol(pluginDso, "s_plugin_init", error);
 	if (S_CHK_ERR(error, S_CONTERR,
-				  "LoadPlugin",
+				  "load_plugin",
 				  "Failed to get \'s_plugin_init\' symbol from plug-in at \"%s\"",
 				  path))
 	{
@@ -429,16 +424,16 @@ static void load_plugin(SPlugin *self, const char *path, s_erc *error)
 	if (plugin_initialize == NULL)
 	{
 		S_CTX_ERR(error, S_FAILURE,
-				  "LoadPlugin",
+				  "load_plugin",
 				  "Plug-in symbol \'s_plugin_init\' is NULL for plug-in at \"%s\"",
 				  path);
 		S_DELETE(pluginDso, "PluginLoad", error);
 		return;
 	}
 
-	self->plugin_info = (plugin_initialize)(s_speect_version(), error);
+	self->plugin_info = (plugin_initialize)(error);
 	if (S_CHK_ERR(error, S_CONTERR,
-				  "LoadPlugin",
+				  "load_plugin",
 				  "Call to \"s_plugin_init\" failed"))
 	{
 		S_DELETE(pluginDso, "PluginLoad", error);
@@ -448,24 +443,36 @@ static void load_plugin(SPlugin *self, const char *path, s_erc *error)
 	if (self->plugin_info == NULL)
 	{
 		S_CTX_ERR(error, S_FAILURE,
-				  "LoadPlugin",
-				  "Plug-in at \"%s\" failed to return s_plugin_params structure information",
+				  "load_plugin",
+				  "Plug-in at \"%s\" failed to return 's_plugin_params' structure information",
 				  path);
 		S_DELETE(pluginDso, "PluginLoad", error);
 		return;
 	}
 
-	if (!version_ok(self->plugin_info->s_abi))
+	if (!s_version_ok(self->plugin_info->s_abi))
 	{
-		s_lib_version s_version = s_speect_version();
-
-
 		S_CTX_ERR(error, S_FAILURE,
-				  "LoadPlugin",
-				  "Plug-in at \"%s\" is not compatible with this ABI version (%d.%d.%d) of the Speect Engine",
-				  path, s_version.major, s_version.minor, s_version.patch);
+				  "load_plugin",
+				  "Plug-in at \"%s\" (compiled ABI version %d.%d) is not compatible with this ABI version (%d.%d.%d) of the Speect Engine",
+				  path, self->plugin_info->s_abi.major, self->plugin_info->s_abi.minor,
+				  S_MAJOR_VERSION, S_MINOR_VERSION, S_PATCHLEVEL);
 		S_DELETE(pluginDso, "PluginLoad", error);
 		return;
+	}
+
+	/* call plug-in register function */
+	if (self->plugin_info->reg_func != NULL)
+	{
+		self->plugin_info->reg_func(error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "load_plugin",
+					  "Plug-in at \"%s\" failed to register",
+					  path))
+		{
+			S_DELETE(pluginDso, "load_plugin", error);
+			return;
+		}
 	}
 
 	self->library = pluginDso;
@@ -532,13 +539,3 @@ static char *fix_path(const char *path, s_erc *error)
 	return new_path;
 }
 
-
-/* check the Speect ABI version of plug-in */
-static s_bool version_ok(const s_version abi_version)
-{
-	if ((abi_version.major >= SPCT_MAJOR_VERSION_MIN)
-		&& (abi_version.minor >= SPCT_MINOR_VERSION_MIN))
-		return TRUE;
-
-	return FALSE;
-}

@@ -94,24 +94,43 @@ typedef struct s_plugin_params s_plugin_params;
 /**
  * Plug-in start-up function. This is the first function called when a
  * plug-in is loaded. It must @b always be called @c s_plugin_init, as
- * this is the symbol name that is looked for. The function is passed the
- * Speect Engine version and must return a #s_plugin_params structure that
- * must be filled in by the plug-in itself.
- * @param version The Speect Engine version.
+ * this is the symbol name that is looked for. The function must
+ * return a #s_plugin_params structure that must be filled in by the
+ * plug-in itself. The plug-in can check for version compatibility in
+ * this function with #s_lib_version_ok, or can call #s_speect_version
+ * to get the Speect Engine version and do version compatibility
+ * testing itself.
+ *
  * @param error Error code.
  * @return Pointer to the parameters that the plug-in must set, may be
  * statically allocated.
+ *
  * @note This function need not be re-entrant, and therefore not thread-safe.
  */
-typedef const s_plugin_params *(*s_plugin_init_fp)(const s_lib_version version,
-												   s_erc *error);
+typedef const s_plugin_params *(*s_plugin_init_fp)(s_erc *error);
+
+
+/**
+ * Plug-in register function. This is called after the plug-in is
+ * initialized (#s_plugin_init_fp) and has passed the version
+ * compatibility handshaking (#s_version_ok and
+ * #s_lib_version_ok). Plug-ins register their classes here, and can
+ * load any other required plug-ins, and/or do some initialization.
+ *.
+ * @param error Error code.
+ *
+ * @note This function need not be re-entrant, and therefore not thread-safe.
+ */
+typedef void (*s_plugin_reg_fp)(s_erc *error);
 
 
 /**
  * Plug-in exit function. This function is called just before the <i>dynamic
  * shared object</i> that this plug-in belongs to is unloaded. Any acquired
  * resources must be released in this function.
+ *
  * @param error Error code.
+ * @note This function need not be re-entrant, and therefore not thread-safe.
  */
 typedef void (*s_plugin_exit_fp)(s_erc *error);
 
@@ -147,6 +166,11 @@ struct s_plugin_params
 	 * Speect @c ABI version (which plug-in was compiled with)
 	 */
 	const s_version s_abi;
+
+	/**
+	 * Plug-in register function pointer.
+	 */
+	const s_plugin_reg_fp reg_func;
 
 	/**
 	 * Plug-in exit function pointer.

@@ -1,10 +1,19 @@
 #!/bin/sh
 
-echo ""
+echo "\tin python"
 
 ########################################################################
 
-echo "cleaning examples"
+echo "\tcleaning cmake"
+
+cd ./cmake/
+./clean_files
+cd ..
+
+
+########################################################################
+
+echo "\tcleaning examples"
 
 cd ./examples/
 ./clean_files
@@ -13,7 +22,7 @@ cd ..
 
 ########################################################################
 
-echo "cleaning speect"
+echo "\tcleaning speect"
 
 cd ./speect/
 ./clean_files

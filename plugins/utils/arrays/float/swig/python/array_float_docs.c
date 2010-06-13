@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2009 The Department of Arts and Culture,                           */
+/* Copyright (c) 2010 The Department of Arts and Culture,                           */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -24,11 +24,11 @@
 /************************************************************************************/
 /*                                                                                  */
 /* AUTHOR  : Aby Louw                                                               */
-/* DATE    : December 2009                                                          */
+/* DATE    : December 2010                                                          */
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* C convenience functions for SArrayFloat Python wrapper.                          */
+/* Python documentation strings for SArrayFloat.                                    */
 /*                                                                                  */
 /*                                                                                  */
 /*                                                                                  */
@@ -74,75 +74,3 @@ Return a count of the number of elements in the SArrayFloat object.
 :rtype: int
 """
 %enddef
-
-%feature("autodoc", count_DOCSTRING) count;
-
-
-%{
-	typedef struct
-	{
-		float *fa_fp;
-		uint32 fa_count;
-	} float_array_t;
-%}
-
-
-
-typedef struct
-{
-	%extend
-	{
-		const uint32 count;
-	}
-} SArrayFloat;
-
-
-%types(SArrayFloat = SObject, SObject*);
-
-%extend SArrayFloat
-{
-	SArrayFloat(const float *array, uint32 len, s_erc *error)
-	{
-		SArrayFloat *tmp;
-
-
-		tmp = (SArrayFloat*)S_NEW("SArrayFloat", error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "SArrayFloat()",
-					  "Failed to create new 'SArrayFloat' object"))
-			return NULL;
-
-		tmp->count = len;
-		tmp->f = (float*)array;
-		return tmp;
-	}
-
-	~SArrayFloat()
-	{
-		s_erc error;
-
-
-		S_CLR_ERR(&error);
-		S_DELETE($self, "~SArrayFloat()", &error);
-	}
-
-	float_array_t get()
-	{
-		float_array_t tmp;
-
-
-		tmp.fa_fp = $self->f;
-		tmp.fa_count = $self->count;
-
-		return tmp;
-	}
-}
-
-%{
-
-	const uint32 SArrayFloat_count_get(SArrayFloat *array)
-	{
-		return (const uint32)array->count;
-	}
-%}
-

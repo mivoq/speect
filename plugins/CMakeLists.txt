@@ -41,6 +41,17 @@ set(SPCT_PLUGIN_NAMES_LIST "" CACHE INTERNAL "List of lowercase Speect plug-in n
 
 
 #------------------------------------------------------------------------------------#
+#                           SWIG CMake modules/functions                             #
+#------------------------------------------------------------------------------------#
+
+# append plug-in SWIG Python functions
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/swig/cmake)
+
+# Functions, also includes SWIG langauge specific functions
+include(swigCommonFunctions)
+
+
+#------------------------------------------------------------------------------------#
 #                        Speect Plug-in directories                                  #
 #------------------------------------------------------------------------------------#
 

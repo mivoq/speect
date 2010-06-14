@@ -559,7 +559,7 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 				sylStructSegItem = SItemAddDaughter(sylStructSylItem, segmentItem, error);
 				if (S_CHK_ERR(error, S_CONTERR,
 							  "Run",
-							  "Call to \"SItemSetName/SObjectGetString\" failed"))
+							  "Call to \"SItemAddDaughter\" failed"))
 					goto quit_error;
 
 				phoneItr = SIteratorNext(phoneItr);

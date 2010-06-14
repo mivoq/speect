@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2009 The Department of Arts and Culture,                           */
+/* Copyright (c) 2010 The Department of Arts and Culture,                           */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -24,66 +24,116 @@
 /************************************************************************************/
 /*                                                                                  */
 /* AUTHOR  : Aby Louw                                                               */
-/* DATE    : December 2009                                                          */
+/* DATE    : February 2010                                                          */
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* SAudio wrapper functions.                                                        */
+/* SWIG common C convenience functions for STrackInt.                               */
 /*                                                                                  */
 /*                                                                                  */
-/************************************************************************************/
-
-%module track_int
-
-
-/************************************************************************************/
-/*                                                                                  */
-/* Speect Engine header.                                                            */
 /*                                                                                  */
 /************************************************************************************/
 
-%header
+
+/************************************************************************************/
+/*                                                                                  */
+/* Typedef used in typemaps                                                         */
+/*                                                                                  */
+/************************************************************************************/
+
+
 %{
-#include "speect.h"
-#include "track_int.h"
+	typedef struct
+	{
+		sint32 **ipp;
+		uint32  row_count;
+		uint32  col_count;
+		float  *times;
+	} int_track_t;
 %}
 
-%include "exception.i"
-%import speect.i
-%include "spct_int_track_typemap.i"
-
 
 /************************************************************************************/
 /*                                                                                  */
-/* Load the SArrayInt plug-in                                                       */
+/* Extend the STrackInt class                                                       */
 /*                                                                                  */
 /************************************************************************************/
 
-%init
-%{
+
+typedef struct
+{
+	%extend
 	{
-		s_erc rv = S_SUCCESS;
-		SPlugin *plugin;
+		const uint32 row_count;
+		const uint32 col_count;
+	}
+} STrackInt;
 
 
-		plugin = s_pm_load_plugin("track-int.spi", &rv);
-		if (rv != S_SUCCESS)
-			SWIG_exception(SWIG_RuntimeError, "Failed to load STrackInt plug-in");
+%types(STrackInt = SObject, SObject*);
 
-	fail:
-		return;
+%extend STrackInt
+{
+	STrackInt(const float *times, uint32 len, const sint32 **im,
+			  uint32 row_count, uint32 col_count, s_erc *error)
+	{
+		STrackInt *tmp;
+
+
+		if (len != row_count)
+		{
+			S_CTX_ERR(error, S_FAILURE,
+					  "STrackInt()",
+					  "times count and row count differ");
+			return NULL;
+		}
+
+		tmp = (STrackInt*)S_NEW("STrackInt", error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "STrackInt()",
+					  "Failed to create new 'STrackInt' object"))
+			return NULL;
+
+		tmp->time = (float*)times;
+		tmp->data->row_count = row_count;
+		tmp->data->col_count = col_count;
+		tmp->data->i = (sint32**)im;
+
+		return tmp;
+	}
+
+	~STrackInt()
+	{
+		s_erc error;
+
+
+		S_CLR_ERR(&error);
+		S_DELETE($self, "~STrackInt()", &error);
+	}
+
+	int_track_t get()
+	{
+		int_track_t tmp;
+
+
+		tmp.ipp = $self->data->i;
+		tmp.row_count = $self->data->row_count;
+		tmp.col_count = $self->data->col_count;
+		tmp.times = $self->time;
+
+		return tmp;
+	}
+}
+
+%{
+	const uint32 STrackInt_row_count_get(STrackInt *track)
+	{
+		return (const uint32)track->data->row_count;
+	}
+
+	const uint32 STrackInt_col_count_get(STrackInt *track)
+	{
+		return (const uint32)track->data->col_count;
 	}
 %}
-
-
-/************************************************************************************/
-/*                                                                                  */
-/* SWIG/Python interface files.                                                     */
-/*                                                                                  */
-/************************************************************************************/
-
-/*
- * SAudio Python class
- */
-%include "track_int.c"
 

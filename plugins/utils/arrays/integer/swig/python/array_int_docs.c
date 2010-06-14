@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2009 The Department of Arts and Culture,                           */
+/* Copyright (c) 2010 The Department of Arts and Culture,                           */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -24,7 +24,7 @@
 /************************************************************************************/
 /*                                                                                  */
 /* AUTHOR  : Aby Louw                                                               */
-/* DATE    : December 2009                                                          */
+/* DATE    : February 2010                                                          */
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */

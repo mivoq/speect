@@ -44,6 +44,9 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 #                        Top level system checks and options                         #
 #------------------------------------------------------------------------------------#
 
+# Custom CMake functions
+include(spctFunctions)
+
 # Version information
 include(spctVersion)
 
@@ -69,3 +72,4 @@ include(spctSettings)
 
 add_subdirectory(engine)
 add_subdirectory(plugins)
+add_subdirectory(swig)

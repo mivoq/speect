@@ -46,7 +46,7 @@
 
 /************************************************************************************/
 /*                                                                                  */
-/* Defines (done by CMake configuration)                                            */
+/* Defines (done by CMake configuration in speect/cmake/spctSettings.cmake)         */
 /*                                                                                  */
 /************************************************************************************/
 

@@ -12,26 +12,44 @@
 ## We do this because it seems that CMake does not load cache variables             ##
 ## for the install scripts (e.g SPCT_INCLUDE_DIRS, SPCT_VERSION, ...).              ##
 ##                                                                                  ##
+## Note that this script is only set if SPCT_UNIX is true.                          ##
+##                                                                                  ##
 ######################################################################################
 
 
+#------------------------------------------------------------------------------------#
+#                        Speect Engine include directories                           #
+#------------------------------------------------------------------------------------#
+
 set(SPCT_INCLUDE_DIRS "${CMAKE_INSTALL_PREFIX}/include/speect/engine/")
+
+
+#------------------------------------------------------------------------------------#
+#                        Speect Engine version info                                  #
+#------------------------------------------------------------------------------------#
+
 set(SPCT_VERSION @SPCT_VERSION@)
 set(SPCT_VERSION_MAJOR @SPCT_VERSION_MAJOR@)
 set(SPCT_VERSION_MINOR @SPCT_VERSION_MINOR@)
 set(SPCT_VERSION_PATCH @SPCT_VERSION_PATCH@)
 
+
+#------------------------------------------------------------------------------------#
+#                             Configure the file                                     #
+#------------------------------------------------------------------------------------#
+
 # All relevant variables must be set before here
-configure_file(@CMAKE_SOURCE_DIR@/engine/config/SpeectConf.cmake.in ${CMAKE_BINARY_DIR}/engine/cmake/SpeectConf.cmake @ONLY)
+configure_file(@CMAKE_SOURCE_DIR@/engine/config/SpeectConf.cmake.in 
+  ${CMAKE_BINARY_DIR}/engine/cmake/SpeectConf.cmake @ONLY)
 
 
+#------------------------------------------------------------------------------------#
+#                               installation                                         #
+#------------------------------------------------------------------------------------#
 
-# Only install if on UNIX
-if(SPCT_OS STREQUAL "SPCT_UNIX")
+# grabed signature from cmake_install.cmake
+if(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/speect/engine" TYPE FILE FILES "${CMAKE_BINARY_DIR}/engine/cmake/SpeectConf.cmake")
+endif(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
 
-  # grabed signature from cmake_install.cmake
-  if(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
-    file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/speect/engine" TYPE FILE FILES "${CMAKE_BINARY_DIR}/engine/cmake/SpeectConf.cmake")
-  endif(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
-endif(SPCT_OS STREQUAL "SPCT_UNIX")
 

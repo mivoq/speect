@@ -383,6 +383,90 @@ basic types if no external plug-ins are loaded.
 			return object;
 		}
 
+		if (PyObject_IsInstance(pobject, (PyObject*)&PyList_Type))
+		{
+			SList *list;
+			int count;
+			int i;
+
+
+			count = PyList_Size(pobject);
+			if (count == 0)
+				return NULL;
+
+			list = (SList*)S_NEW("SListList", error);
+			if (*error != S_SUCCESS)
+				goto slist_fail;
+
+			SListListInit(&list, error);
+			if (*error != S_SUCCESS)
+				goto slist_fail;
+
+			for (i = 0; i < count; i++)
+			{
+				PyObject *p = PyList_GetItem(pobject, i);
+
+
+				if (PyString_Check(p))
+				{
+					const char *tmp;
+					SObject *obj;
+
+
+					tmp = PyString_AsString(p);
+					obj = SObjectSetString(tmp, error);
+					if (*error != S_SUCCESS)
+						goto slist_fail;
+
+					SListAppend(list, obj, error);
+					if (*error != S_SUCCESS)
+						goto slist_fail;
+				}
+				else if (PyUnicode_Check(p))
+				{
+					const char *tmp;
+					SObject *obj;
+					PyObject *ustring;
+
+
+					ustring = PyUnicode_AsUTF8String(p);
+					if (ustring == NULL)
+					{
+						S_CTX_ERR(error, S_FAILURE,
+								  "pyobject_2_sobject",
+								  "Call to \"PyUnicode_AsUTF8String\" failed");
+						goto slist_fail;
+					}
+
+					tmp = PyString_AsString(p);
+					obj = SObjectSetString(tmp, error);
+					if (error != S_SUCCESS)
+						goto slist_fail;
+
+					SListAppend(list, obj, error);
+					if (*error != S_SUCCESS)
+						goto slist_fail;
+				}
+				else
+				{
+					PyErr_SetString(PyExc_TypeError,
+									"object in list is not str/unicode type");
+					goto slist_fail;
+				}
+			}
+
+			goto slist_good;
+
+		slist_fail:
+			if (list != NULL)
+				S_DELETE(list, "pyobject_2_sobject", error);
+		slist_good:
+			object = S_OBJECT(list);
+
+			return object;
+		}
+
+
 		/* Differs from speect.sobject_2_pyobject
 		 * Adds support for Python object
 		 *

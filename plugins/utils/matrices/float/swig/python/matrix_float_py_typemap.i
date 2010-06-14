@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2009 The Department of Arts and Culture,                           */
+/* Copyright (c) 2010 The Department of Arts and Culture,                           */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -24,66 +24,104 @@
 /************************************************************************************/
 /*                                                                                  */
 /* AUTHOR  : Aby Louw                                                               */
-/* DATE    : December 2009                                                          */
+/* DATE    : February 2010                                                          */
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* SAudio wrapper functions.                                                        */
-/*                                                                                  */
-/*                                                                                  */
-/************************************************************************************/
-
-%module matrix_float
-
-
-/************************************************************************************/
-/*                                                                                  */
-/* Speect Engine header.                                                            */
+/* Typemaps to convert types between Python list of lists of floats                 */
+/* and SMatrixFloat.                                                                */
 /*                                                                                  */
 /************************************************************************************/
 
-%header
-%{
-#include "speect.h"
-#include "matrix_float.h"
-%}
 
-%include "exception.i"
-%import speect.i
-%include "spct_float_matrix_typemap.i"
+%typemap(in) (const float **fm, uint32 row_count, uint32 col_count)
+{
+	int i;
+	int j;
+	int row_count;
+	int col_count;
+	float **fpp;
 
 
-/************************************************************************************/
-/*                                                                                  */
-/* Load the SArrayFloat plug-in                                                     */
-/*                                                                                  */
-/************************************************************************************/
-
-%init
-%{
+	if (PyList_Check($input))
 	{
-		s_erc rv = S_SUCCESS;
-		SPlugin *plugin;
+		row_count = PyList_Size($input);
+		fpp = S_MALLOC(float*, row_count);
+		if (fpp == NULL)
+		{
+			PyErr_SetString(PyExc_RuntimeError,
+							"Failed to allocate memory for 'float**' object");
+			return NULL;
+		}
 
+		for (i = 0; i < row_count; i++)
+		{
+			PyObject *o = PyList_GetItem($input,i);
+			if (PyList_Check(o))
+			{
+				col_count = PyList_Size(o);
+				fpp[i] = S_MALLOC(float, col_count);
+				if (fpp[i] == NULL)
+				{
+					PyErr_SetString(PyExc_RuntimeError,
+									"Failed to allocate memory for 'float*' object");
+					S_FREE(fpp); /* there will be some loss */
+					return NULL;
+				}
 
-		plugin = s_pm_load_plugin("matrix-float.spi", &rv);
-		if (rv != S_SUCCESS)
-			SWIG_exception(SWIG_RuntimeError, "Failed to load SMatrixFloat plug-in");
-
-	fail:
-		return;
+				for (j = 0; j < col_count; j++)
+				{
+					PyObject *p = PyList_GetItem(o,j);
+					if (PyFloat_Check(p))
+					{
+						fpp[i][j] = (float)PyFloat_AsDouble(p);
+					}
+					else
+					{
+						PyErr_SetString(PyExc_TypeError,
+										"not a float");
+						S_FREE(fpp); /* there will be some loss */
+						return NULL;
+					}
+				}
+			}
+			else
+			{
+				PyErr_SetString(PyExc_TypeError, "not a list of lists");
+				S_FREE(fpp); /* there will be some loss */
+				return NULL;
+			}
+		}
 	}
-%}
+	else
+	{
+		PyErr_SetString(PyExc_TypeError,"not a list");
+		return NULL;
+	}
+
+	$1 = fpp;
+	$2 = row_count;
+	$3 = col_count;
+}
 
 
-/************************************************************************************/
-/*                                                                                  */
-/* SWIG/Python interface files.                                                     */
-/*                                                                                  */
-/************************************************************************************/
+%typemap(out) float_matrix_t
+{
+    float_matrix_t fm;
+    int i;
+	int j;
+    PyObject *o;
 
-/*
- * SAudio Python class
- */
-%include "matrix_float.c"
+    fm = $1;
 
+    $result = PyList_New(fm.row_count);
+    for (i = 0; i < fm.row_count; i++)
+    {
+		o = PyList_New(fm.col_count);
+		for (j = 0; j < fm.col_count; j++)
+		{
+			PyList_SetItem(o,j,PyFloat_FromDouble((double)fm.fpp[i][j]));
+		}
+		PyList_SetItem($result,i,o);
+    }
+}

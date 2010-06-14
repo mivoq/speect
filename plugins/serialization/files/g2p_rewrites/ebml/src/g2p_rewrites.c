@@ -512,6 +512,9 @@ static SList *Apply(const SG2P *self, const char *word, s_erc *error)
 		}
 		else
 		{
+			rule_matches = FALSE;
+
+
 			/* iterate through rules searching for a match */
 			itr = SListIterator(rules, error);
 			if (S_CHK_ERR(error, S_CONTERR,
@@ -617,6 +620,227 @@ quit:
 }
 
 
+static const char *ApplyAt(const SG2P *self, const char *word, uint index, s_erc *error)
+{
+	SG2PRewrites *g2p = S_G2PREWRITES(self);
+	char *word_copy = NULL;
+	char *word_copy_orig = NULL;
+	char *word_left_context = NULL;
+	size_t word_size;
+	char alpha[4] = "\0";
+	uint32 character;
+	const SList *rules;
+	SIterator *itr;
+	const char *matched_phone;
+	s_bool rule_matches;
+	uint i;
+
+
+	S_CLR_ERR(error);
+
+	if (word == NULL)
+	{
+		S_CTX_ERR(error, S_ARGERROR,
+				  "ApplyAt",
+				  "Argument \"word\" is NULL");
+		return NULL;
+	}
+
+	if (g2p->rules == NULL)
+	{
+		S_CTX_ERR(error, S_FAILURE,
+				  "ApplyAt",
+				  "G2P Rewrites has no rules");
+		return NULL;
+	}
+
+	/* check that index is within word length */
+	word_size = s_strlen(word, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "ApplyAt",
+				  "Call to \"s_strlen\" failed"))
+		goto quit_error;
+
+	if (index > (word_size - 1))
+	{
+		S_CTX_ERR(error, S_FAILURE,
+				  "ApplyAt",
+				  "Given index, %d, is out of bounds (word length = %d)\n",
+				  index, word_size);
+		return NULL;
+	}
+
+	/* +2 for # at begin and end */
+	word_size = s_strzsize(word, error) + 2;
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "ApplyAt",
+				  "Call to \"s_strsize\" failed"))
+		goto quit_error;
+
+	/* add "#" at beginning and end of word */
+	word_copy = S_MALLOC(char, word_size);
+	if (word_copy == NULL)
+	{
+		S_FTL_ERR(error, S_MEMERROR,
+				  "ApplyAt",
+				  "Failed to allocate memory for 'char' object");
+		goto quit_error;
+	}
+
+	s_sprintf(word_copy, error, "#%s#", word);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "ApplyAt",
+				  "Call to \"s_sprintf\" failed"))
+		goto quit_error;
+
+	/*
+	 * if we have gzeros, then fix the word.
+	 */
+	if (g2p->zeros != NULL)
+	{
+		char *tmp_word;
+
+
+		tmp_word = s_add_gzeros(g2p, word_copy, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "ApplyAt",
+					  "Call to \"s_add_gzeros\" failed"))
+			goto quit_error;
+
+		S_FREE(word_copy);
+		word_copy = tmp_word;
+
+		/* get zeros fixed word size */
+		word_size = s_strzsize(word_copy, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "ApplyAt",
+					  "Call to \"s_strsize\" failed"))
+			goto quit_error;
+	}
+
+	word_copy_orig = word_copy;
+
+	/* make word left context holder */
+	word_left_context = S_CALLOC(char, word_size);
+	if (word_left_context == NULL)
+	{
+		S_FTL_ERR(error, S_MEMERROR,
+				  "ApplyAt",
+				  "Failed to allocate memory for 'char' object");
+		goto quit_error;
+	}
+
+	/* populate word left context with # of word */
+	s_setat(word_left_context, 0, s_getx(&word_copy, error), error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "ApplyAt",
+				  "Call to \"s_setat/s_getx\" failed"))
+		goto quit_error;
+
+	for (i = 0; i < index; i++)
+	{
+		/* populate from right to left, therefore 0 */
+		s_insert(word_left_context, 0, s_getx(&word_copy, error), error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "ApplyAt",
+					  "Call to \"s_setat/s_getx\" failed"))
+			goto quit_error;
+	}
+
+	character = s_getx(&word_copy, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "ApplyAt",
+				  "Call to \"s_getx\" failed"))
+		goto quit_error;
+
+	/* move character to alpha */
+	s_setc(alpha, character, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "ApplyAt",
+				  "Call to \"s_setc\" failed"))
+		goto quit_error;
+
+	/* get list of rules that match alpha */
+	rules = (SList*)SMapGetObjectDef(g2p->rules, alpha, NULL, error);
+	if (rules == NULL)
+	{
+		/* issue warning */
+		S_WARNING(S_FAILURE,
+				  "ApplyAt",
+				  "Failed to find a g2p rule for character '%s' of word '%s'",
+				  alpha, word);
+	}
+	else
+	{
+		rule_matches = FALSE;
+
+		/* iterate through rules searching for a match */
+		itr = SListIterator(rules, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "ApplyAt",
+					  "Call to \"SListIterator\" failed"))
+			goto quit_error;
+
+		while (itr != NULL)
+		{
+			const SG2PRewritesRule *thisRule;
+
+
+			thisRule = (const SG2PRewritesRule*)SListIteratorValue(itr, error);
+			if (S_CHK_ERR(error, S_CONTERR,
+						  "ApplyAt",
+						  "Call to \"SListIteratorValue\" failed"))
+				goto quit_error;
+
+			rule_matches = S_G2PREWRITES_RULE_CALL(thisRule, rule_matches)(thisRule,
+																		   &matched_phone,
+																		   word_left_context,
+																		   word_copy,
+																		   error);
+			if (S_CHK_ERR(error, S_CONTERR,
+						  "ApplyAt",
+						  "Call to method \"rule_matches\" failed"))
+				goto quit_error;
+
+			if (rule_matches)
+			{
+				S_DELETE(itr, "ApplyAt", error);
+				break;
+			}
+
+			itr = SIteratorNext(itr);
+		}
+
+		if (!rule_matches)
+		{
+			/* issue warning that we did not find a match */
+			S_WARNING(S_FAILURE,
+					  "ApplyAt",
+					  "Failed to find a g2p rule match for character '%s' of word '%s'",
+					  alpha, word);
+		}
+	}
+
+	/* got here so OK */
+	goto quit;
+
+	/* error clean up code */
+quit_error:
+	if (itr != NULL)
+		S_DELETE(itr, "ApplyAt", error);
+
+	/* normal cleanup code */
+quit:
+	if (word_copy_orig != NULL)
+		S_FREE(word_copy_orig);
+
+	if (word_left_context != NULL)
+		S_FREE(word_left_context);
+
+	return matched_phone;
+}
+
+
 /************************************************************************************/
 /*                                                                                  */
 /* SG2P class initialization                                                        */
@@ -645,5 +869,6 @@ static SG2PRewritesClass G2PRewritesClass =
 	GetLangCode,         /* get_lang_code   */
 	GetVersion,          /* get_version     */
 	GetFeature,          /* get_feature     */
-	Apply                /* apply           */
+	Apply,               /* apply           */
+	ApplyAt              /* apply_at        */
 };

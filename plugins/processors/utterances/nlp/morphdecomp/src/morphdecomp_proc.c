@@ -59,9 +59,10 @@ static SMorphDecompUttProcClass MorphDecompUttProcClass; /* SMorphDecompUttProcC
 /*                                                                                  */
 /************************************************************************************/
 
-static void s_get_lexical_objects(const SUttProcessor *self, SUtterance *utt,
-								  SG2P **g2p, SLexicon **lexicon, SAddendum **addendum,
-								  SSyllabification **syllab, s_erc *error);
+static void s_get_lexical_objects(SUtterance *utt, SG2P **g2p,
+								  SFeatProcessor **morphDecompFeatProc, s_erc *error);
+
+static const SItem *word_get_next_item(const SItem *wordItem, s_erc *error);
 
 
 /************************************************************************************/
@@ -97,9 +98,8 @@ S_LOCAL void _s_morphdecomp_utt_proc_class_free(s_erc *error)
 /*                                                                                  */
 /************************************************************************************/
 
-static void s_get_lexical_objects(const SUttProcessor *self, SUtterance *utt,
-								  SG2P **g2p, SLexicon **lexicon, SAddendum **addendum,
-								  SSyllabification **syllab, s_erc *error)
+static void s_get_lexical_objects(SUtterance *utt, SG2P **g2p,
+								  SFeatProcessor **morphDecompFeatProc, s_erc *error)
 {
 	const SVoice *voice;
 
@@ -118,36 +118,73 @@ static void s_get_lexical_objects(const SUttProcessor *self, SUtterance *utt,
 				  "Call to \"SVoiceGetData\" failed"))
 		return;
 
-	*lexicon = (SLexicon*)SVoiceGetData(voice , "lexicon", error);
+	*morphDecompFeatProc = (SFeatProcessor*)SVoiceGetFeatProc(voice, "morphdecomp", error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "s_get_lexical_objects",
-				  "Call to \"SVoiceGetData\" failed"))
-		return;
-
-	*addendum = (SAddendum*)SVoiceGetData(voice , "addendum", error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "s_get_lexical_objects",
-				  "Call to \"SVoiceGetData\" failed"))
-		return;
-
-	*syllab = (SSyllabification*)SMapGetObjectDef(self->features , "_syll_func", NULL,
-												  error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "s_get_lexical_objects",
-				  "Call to \"SMapGetObjectDef\" failed"))
+				  "Call to \"SVoiceGetFeatProc\" failed"))
 		return;
 
 	/* now check for least requirements */
-	if ((*addendum == NULL)
-		&& (*lexicon == NULL)
-		&& (*g2p == NULL))
+	if ((*g2p == NULL) || (*morphDecompFeatProc == NULL))
 	{
 		S_CTX_ERR(error, S_FAILURE,
 				  "s_get_lexical_objects",
-				  "No grapheme to phoneme conversion options (lexicon, addendum, g2p) "
-				  "found in voice");
+				  "No g2p or morphological decomposition feature processor found in voice");
 		return;
 	}
+}
+
+
+static const SItem *word_get_next_item(const SItem *wordItem, s_erc *error)
+{
+	const SItem *nextItem;
+	const SItem *syl;
+
+
+	S_CLR_ERR(error);
+	if (wordItem == NULL)
+		return NULL;
+
+	nextItem = SItemNext(wordItem, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "word_get_next_item",
+				  "Call to \"SItemNext\" failed"))
+		return NULL;
+
+	if (nextItem != NULL)
+		return nextItem;  /* easy */
+
+	/* now check syllables */
+	syl = s_path_to_item(wordItem, "R:SylStructure.parent", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "word_get_next_item",
+				  "Call to \"s_path_to_item\" failed"))
+		return NULL;
+
+	if (syl == NULL)
+	{
+		S_CTX_ERR(error, S_FAILURE,
+				  "word_get_next_item",
+				  "Failed to get item's syllable");
+		return NULL;
+	}
+
+	syl = SItemNext(syl, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "word_get_next_item",
+				  "Call to \"SItemNext\" failed"))
+		return NULL;
+
+	if (syl == NULL)
+		return NULL;
+
+	nextItem = SItemDaughter(syl, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "word_get_next_item",
+				  "Call to \"SItemDaughter\" failed"))
+		return NULL;
+
+	return nextItem;
 }
 
 
@@ -157,54 +194,6 @@ static void s_get_lexical_objects(const SUttProcessor *self, SUtterance *utt,
 /*                                                                                  */
 /************************************************************************************/
 
-/* we need to delete the syllabification function and plug-in if any */
-static void Destroy(void *obj, s_erc *error)
-{
-	SUttProcessor *self = obj;
-	const SObject *tmp;
-	SPlugin *sylPlugin;
-
-
-	S_CLR_ERR(error);
-
-	/* check if a syllabification plug-in is defined as a feature */
-	tmp = SMapGetObjectDef(self->features, "_syll_func_plugin", NULL, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "Destroy",
-				  "Call to \"SMapGetObjectDef\" failed"))
-		return;
-
-	if (tmp == NULL)
-		return;
-
-	/* unlink it */
-	sylPlugin = (SPlugin*)SMapObjectUnlink(self->features, "_syll_func_plugin", error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "Destroy",
-				  "Call to \"SMapObjectUnlink\" failed"))
-		return;
-
-	/* get the syllabification function */
-	tmp = SMapGetObjectDef(self->features, "_syll_func", NULL, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "Destroy",
-				  "Call to \"SMapGetObjectDef\" failed"))
-		return;
-
-	if (tmp != NULL)
-	{
-		SMapObjectDelete(self->features, "_syll_func", error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "Destroy",
-					  "Call to \"SMapObjectDelete\" failed"))
-			return;
-	}
-
-	/* delete the plug-in */
-	S_DELETE(sylPlugin, "Destroy", error);
-}
-
-
 static void Dispose(void *obj, s_erc *error)
 {
 	S_CLR_ERR(error);
@@ -212,128 +201,24 @@ static void Dispose(void *obj, s_erc *error)
 }
 
 
-static void Initialize(SUttProcessor *self, const SVoice *voice, s_erc *error)
-{
-	const SObject *tmp;
-	const SMap *syllInfo;
-	const char *plugin_name;
-	const char *class_name;
-	SPlugin *sylPlugin;
-	SSyllabification *syllab;
-
-
-	S_CLR_ERR(error);
-
-	/* check if a syllabification function is defined as a feature,
-	 * and if so, create the syllabification object */
-	tmp = SMapGetObjectDef(self->features, "syllabification function", NULL, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "Initialize",
-				  "Call to \"SMapGetObjectDef\" failed"))
-		return;
-
-	/* nothing, return */
-	if (tmp == NULL)
-		return;
-
-	syllInfo = S_CAST(tmp, SMap, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "Initialize",
-				  "Call to \"S_CAST (SMap)\" failed"))
-	{
-		/* this is here to silence the compiler's
-		 * messages about unused parameters */
-		voice = NULL;
-		return;
-	}
-
-	plugin_name = SMapGetString(syllInfo, "plug-in", error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "Initialize",
-				  "Call to \"SMapGetString\" failed"))
-		return;
-
-	if (plugin_name == NULL)
-		return;
-
-	class_name = SMapGetString(syllInfo, "class", error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "Initialize",
-				  "Call to \"SMapGetString\" failed"))
-		return;
-
-	if (class_name == NULL)
-		return;
-
-	/* load the plug-in */
-	sylPlugin = s_pm_load_plugin(plugin_name, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "Initialize",
-				  "Call to \"s_pm_load_plugin\" failed"))
-		return;
-
-	/* create a syllabification object */
-	syllab = (SSyllabification*)S_NEW(class_name, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "Initialize",
-				  "Failed to create new '%s' object", class_name))
-	{
-		S_DELETE(sylPlugin, "Initialize", error);
-		return;
-	}
-
-	/* add them to the features */
-	SMapSetObject(self->features, "_syll_func_plugin", S_OBJECT(sylPlugin), error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "Initialize",
-				  "Call to \"SMapSetObject\" failed"))
-	{
-		S_DELETE(syllab, "Initialize", error);
-		S_DELETE(sylPlugin, "Initialize", error);
-		return;
-	}
-
-	SMapSetObject(self->features, "_syll_func", S_OBJECT(syllab), error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "Initialize",
-				  "Call to \"SMapSetObject\" failed"))
-	{
-		/* plugin will be deleted when utt processor is deleted */
-		S_DELETE(syllab, "Initialize", error);
-		return;
-	}
-}
-
-
 static void Run(const SUttProcessor *self, SUtterance *utt,
 				s_erc *error)
 {
 	SG2P *g2p;
-	SLexicon *lexicon;
-	SAddendum *addendum;
-	SSyllabification *syllab;
+	SFeatProcessor *morphDecompFeatProc;
 	const SRelation *wordRel;
-	SRelation *syllableRel = NULL;
-	SRelation *sylStructRel = NULL;
-	SRelation *segmentRel = NULL;
-	SItem *wordItem;
-	char *downcase_word;
-	SList *phones;
-	s_bool syllabified;
-	SList *syllablesPhones;
-	SItem *sylStructureWordItem;
-	SItem *syllableItem;
-	SItem *sylStructSylItem;
-	SItem *segmentItem;
-	SItem *sylStructSegItem;
-	SIterator *sylItr = NULL;
-	SIterator *phoneItr = NULL;
-	const SObject *phone;
+	SRelation *morphRel = NULL;
+	SRelation *morphStructRel = NULL;
 	s_bool is_present;
+	const SItem *wordItem;
+	SMap *morphInfo = NULL;
+	char *downcase_word = NULL;
+	SIterator *morphItr = NULL;
+	SIterator *morphClassItr = NULL;
 
 
 	S_CLR_ERR(error);
-	s_get_lexical_objects(self, utt, &g2p, &lexicon, &addendum, &syllab, error);
+	s_get_lexical_objects(utt, &g2p, &morphDecompFeatProc, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Run",
 				  "Call to \"s_get_lexical_objects\" failed"))
@@ -360,31 +245,37 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 				  "Call to \"SUtteranceGetRelation\" failed"))
 		goto quit_error;
 
+	/* make sure the Segment relation exists*/
+	is_present = SUtteranceRelationIsPresent(utt, "Segment", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "Run",
+				  "Call to \"SUtteranceRelationIsPresent\" failed"))
+		goto quit_error;
+
+	if (!is_present)
+	{
+		S_CTX_ERR(error, S_FAILURE,
+				  "Run",
+				  "Failed to find 'Segment' relation in utterance");
+		goto quit_error;
+	}
+
 	/* create relations */
-	syllableRel = SUtteranceNewRelation(utt, "Syllable", error);
+	morphRel = SUtteranceNewRelation(utt, "Morphemes", error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Run",
 				  "Call to \"SUtteranceNewRelation\" failed"))
 		goto quit_error;
 
-	sylStructRel = SUtteranceNewRelation(utt, "SylStructure", error);
+	morphStructRel = SUtteranceNewRelation(utt, "MorphStruct", error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Run",
 				  "Call to \"SUtteranceNewRelation\" failed"))
 		goto quit_error;
 
-	segmentRel = SUtteranceNewRelation(utt, "Segment", error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "Run",
-				  "Call to \"SUtteranceNewRelation\" failed"))
-		goto quit_error;
 
-	/* start at the first item in the word relation, cast away
-	 * const, we want to add daughter items.
-	 * iterate over the word relation and fill in the
-	 * phones and the associated structure.
-	 */
-	wordItem = (SItem*)SRelationHead(wordRel, error);
+	/* iterate through words and get morphemes */
+	wordItem = SRelationHead(wordRel, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Run",
 				  "Call to \"SRelationHead\" failed"))
@@ -392,6 +283,13 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 
 	while (wordItem != NULL)
 	{
+		const SList *morphList;
+		const SList *classList;
+		SItem *morphStructureWordItem;
+		const SItem *segmentItem;
+		size_t word_size;
+		uint word_index_counter = 0;
+
 		/* get word and downcase it */
 		downcase_word = s_strlwr(s_strdup(SItemGetName(wordItem, error), error), error);
 		if (S_CHK_ERR(error, S_CONTERR,
@@ -399,180 +297,182 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 					  "Failed to down-case word item"))
 			goto quit_error;
 
-		phones = NULL;
-		syllabified = FALSE;
-
-		/* get phone sequence for word */
-		if (addendum != NULL)
-		{
-			phones = S_ADDENDUM_CALL(addendum, get_word)(addendum,
-														 downcase_word,
-														 NULL,
-														 &syllabified,
-														 error);
-			if (S_CHK_ERR(error, S_CONTERR,
-						  "Run",
-						  "Call to method \"get_word\" (SAddendum) failed"))
-				goto quit_error;
-		}
-
-		if ((phones == NULL) && (lexicon != NULL))
-		{
-			phones = S_LEXICON_CALL(lexicon, get_word)(lexicon,
-													   downcase_word,
-													   NULL,
-													   &syllabified,
-													   error);
-			if (S_CHK_ERR(error, S_CONTERR,
-						  "Run",
-						  "Call to method \"get_word\" (SLexicon) failed"))
-				goto quit_error;
-		}
-
-		if ((phones == NULL) && (g2p != NULL))
-		{
-			phones = S_G2P_CALL(g2p, apply)(g2p, downcase_word, error);
-			if (S_CHK_ERR(error, S_CONTERR,
-						  "Run",
-						  "Call to method \"apply\" (SG2P) failed"))
-				goto quit_error;
-		}
-
-		if (phones == NULL)
-		{
-			S_CTX_ERR(error, S_FAILURE,
+		word_size = s_strlen(downcase_word, error);
+		if (S_CHK_ERR(error, S_CONTERR,
 					  "Run",
-					  "Failed to get phone sequence for word '%s'", downcase_word);
-			S_FREE(downcase_word);
-			continue;
-		}
+					  "Call to \"s_strlen\" failed"))
+			goto quit_error;
 
-		S_FREE(downcase_word);
+		/* get first segment (phone) of this word */
+		segmentItem = s_path_to_item(wordItem, "R:SylStructure.daughter.daughter", error);
 
-		/* syllabify phone sequence */
-		if (syllabified == FALSE)
-		{
-			if (syllab != NULL)
-			{
-				syllablesPhones = S_SYLLABIFICATION_CALL(syllab, syllabify)(wordItem,
-																			phones,
-																			error);
-				if (S_CHK_ERR(error, S_CONTERR,
-							  "Run",
-							  "Call to method \"syllabify\" failed"))
-					goto quit_error;
+		/* get morphemes and their classes */
+		morphInfo = (SMap*)SFeatProcessorRun(morphDecompFeatProc, wordItem, error);
+		if (S_CHK_ERR(error, S_FAILURE,
+					  "Run",
+					  "Call to morphological decomposition feature processor failed"))
+			goto quit_error;
 
-				S_DELETE(phones, "Run", error);
-			}
-			else
-			{
-				syllablesPhones = (SList*)S_NEW("SListList", error);
-				if (S_CHK_ERR(error, S_CONTERR,
-							  "Run",
-							  "Failed to create new 'SList' object"))
-					goto quit_error;
+		/* morphemes */
+		morphList = (SList*)SMapGetObject(morphInfo, "morphemes", error);
 
-				SListListInit(&syllablesPhones, error);
-				if (S_CHK_ERR(error, S_CONTERR,
-							  "Run",
-							  "Failed to initialize new 'SList' object"))
-					goto quit_error;
+		/* and their classes */
+		classList = (SList*)SMapGetObject(morphInfo, "classes", error);
 
-				SListAppend(syllablesPhones, S_OBJECT(phones), error);
-				if (S_CHK_ERR(error, S_CONTERR,
-							  "Run",
-							  "Call to \"SListAppend\" failed"))
-					goto quit_error;
-			}
-		}
-		else
-			syllablesPhones = (SList*)phones;
 
-		/* create new syllable structure word item, shares content
+		/* create new morpheme structure word item, shares content
 		 * with word item.
 		 */
-		sylStructureWordItem = SRelationAppend(sylStructRel, wordItem, error);
+		morphStructureWordItem = SRelationAppend(morphStructRel, wordItem, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "Run",
 					  "Call to \"SRelationAppend\" failed"))
 			goto quit_error;
 
-		/* iterate over syllables */
-		sylItr = SListIterator(syllablesPhones, error);
+		/* iterate over morphemes and their classes */
+		morphItr = SListIterator(morphList, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "Run",
 					  "Call to \"SListIterator\" failed"))
 			goto quit_error;
 
-		while (sylItr != NULL)
+		morphClassItr = SListIterator(classList, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "Run",
+					  "Call to \"SListIterator\" failed"))
+			goto quit_error;
+
+		while ((morphItr != NULL) && (morphClassItr != NULL))
 		{
-			/* new item in syllable relation */
-			syllableItem = SRelationAppend(syllableRel, NULL, error);
+			SItem *morphemeItem;
+			SItem *morphStructMorphItem;
+			const SObject *morphemeName;
+			const SObject *morphemeClass;
+			const char *morpheme_graphemes;
+			size_t morpheme_graphemes_size;
+			uint i;
+
+
+			/* new item in morpheme relation */
+			morphemeItem = SRelationAppend(morphRel, NULL, error);
 			if (S_CHK_ERR(error, S_CONTERR,
 						  "Run",
 						  "Call to \"SRelationAppend\" failed"))
 				goto quit_error;
 
-			SItemSetName(syllableItem, "syl", error);
+			/* get morpheme name and set it in item */
+			morphemeName = SListIteratorValue(morphItr, error);
 			if (S_CHK_ERR(error, S_CONTERR,
 						  "Run",
-						  "Call to \"SItemSetName\" failed"))
+						  "Call to \"SListIteratorValue\" failed"))
 				goto quit_error;
 
-			/* daughter of above item, but in SylStructure */
-			sylStructSylItem = SItemAddDaughter(sylStructureWordItem, syllableItem, error);
+			SItemSetObject(morphemeItem, "name", morphemeName, error);
+			if (S_CHK_ERR(error, S_CONTERR,
+						  "Run",
+						  "Call to \"SItemSetObject\" failed"))
+				goto quit_error;
+
+			morpheme_graphemes = SObjectGetString(morphemeName, error);
+			if (S_CHK_ERR(error, S_CONTERR,
+						  "Run",
+						  "Call to \"SObjectGetString\" failed"))
+				goto quit_error;
+
+			morpheme_graphemes_size = s_strlen(morpheme_graphemes, error);
+			if (S_CHK_ERR(error, S_CONTERR,
+						  "Run",
+						  "Call to \"s_strlen\" failed"))
+				goto quit_error;
+
+			/* get morpheme class and set it in item */
+			morphemeClass = SListIteratorValue(morphClassItr, error);
+			if (S_CHK_ERR(error, S_CONTERR,
+						  "Run",
+						  "Call to \"SListIteratorValue\" failed"))
+				goto quit_error;
+
+			SItemSetObject(morphemeItem, "class", morphemeClass, error);
+			if (S_CHK_ERR(error, S_CONTERR,
+						  "Run",
+						  "Call to \"SItemSetObject\" failed"))
+				goto quit_error;
+
+			/* daughter of above item, but in MorphStructure */
+			morphStructMorphItem = SItemAddDaughter(morphStructureWordItem,
+													morphemeItem, error);
 			if (S_CHK_ERR(error, S_CONTERR,
 						  "Run",
 						  "Call to \"SItemAddDaughter\" failed"))
 				goto quit_error;
 
-			/* iterate over phones and add segments */
-			phoneItr = SListIterator((SList*)SListIteratorValue(sylItr, error), error);
-			if (S_CHK_ERR(error, S_CONTERR,
-						  "Run",
-						  "Call to \"SListIterator\" failed"))
-				goto quit_error;
-
-			while (phoneItr != NULL)
+			/* iterate through morpheme graphemes to get the mapping
+			 * to the segment items
+			 */
+			for (i = word_index_counter; i < morpheme_graphemes_size + word_index_counter; i++)
 			{
-				phone = SListIteratorValue(phoneItr, error);
+				const char *phone;
+				SItem *morphStructSegItem;
+
+
+				phone = S_G2P_CALL(g2p, apply_at)(g2p, downcase_word, i, error);
 				if (S_CHK_ERR(error, S_CONTERR,
 							  "Run",
-							  "Call to \"SListIterator\" failed"))
+							  "Call to method \"apply_at\" (SG2P) failed"))
 					goto quit_error;
 
-				segmentItem = SRelationAppend(segmentRel, NULL, error);
-				if (S_CHK_ERR(error, S_CONTERR,
-							  "Run",
-							  "Call to \"SRelationAppend\" failed"))
-					goto quit_error;
+				if (phone != NULL)
+				{
+					/* we have a match with segment, create a new daughter */
+					morphStructSegItem = SItemAddDaughter(morphStructMorphItem,
+														  segmentItem, error);
+					if (S_CHK_ERR(error, S_CONTERR,
+								  "Run",
+								  "Call to \"SItemAddDaughter\" failed"))
+						goto quit_error;
 
-				SItemSetName(segmentItem, SObjectGetString(phone, error), error);
-				if (S_CHK_ERR(error, S_CONTERR,
-							  "Run",
-							  "Call to \"SItemSetName/SObjectGetString\" failed"))
-					goto quit_error;
+					/* move segment item on */
+					segmentItem = word_get_next_item(segmentItem, error);
+					if (S_CHK_ERR(error, S_CONTERR,
+								  "Run",
+								  "Call to \"word_get_next_item\" failed"))
+						goto quit_error;
 
-				sylStructSegItem = SItemAddDaughter(sylStructSylItem, segmentItem, error);
-				if (S_CHK_ERR(error, S_CONTERR,
-							  "Run",
-							  "Call to \"SItemSetName/SObjectGetString\" failed"))
-					goto quit_error;
+					if ((segmentItem == NULL)
+						 && (i < morpheme_graphemes_size))
 
-				phoneItr = SIteratorNext(phoneItr);
+					{
+						S_CTX_ERR(error, S_FAILURE,
+								  "Run",
+								  "Expected more segments (phones) in word");
+						goto quit_error;
+					}
+				}
 			}
 
+			word_index_counter += morpheme_graphemes_size;
 
-			sylItr = SIteratorNext(sylItr);
+			morphItr = SIteratorNext(morphItr);
+			morphClassItr = SIteratorNext(morphClassItr);
 		}
 
-		S_DELETE(syllablesPhones, "Run", error);
+		if ((morphItr != NULL) && (morphClassItr != NULL))
+		{
+			S_CTX_ERR(error, S_FAILURE,
+					  "Run",
+					  "Number of morphemes and number of classes are not the same");
+			goto quit_error;
+		}
+
+		S_DELETE(morphInfo, "Run", error);
 
 		wordItem = SItemNext(wordItem, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "Run",
 					  "Call to \"SItemNext\" failed"))
 			goto quit_error;
+
+		S_FREE(downcase_word);
 	}
 
 	/* here all is OK */
@@ -581,35 +481,33 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 
 	/* error clean-up code */
 quit_error:
-	if (syllableRel != NULL)
+	if (morphRel != NULL)
 	{
-		SUtteranceDelRelation(utt, "Syllable", error);
+		SUtteranceDelRelation(utt, "Morphemes", error);
 		S_CHK_ERR(error, S_CONTERR,
 				  "Run",
 				  "Call to \"SUtteranceDelRelation\" failed");
 	}
 
-	if (sylStructRel != NULL)
-	{
-		SUtteranceDelRelation(utt, "SylStructure", error);
-		S_CHK_ERR(error, S_CONTERR,
-				  "Run",
-				  "Call to \"SUtteranceDelRelation\" failed");
-	}
+    if (morphStructRel != NULL)
+    {
+	    SUtteranceDelRelation(utt, "MorphStruct", error);
+	    S_CHK_ERR(error, S_CONTERR,
+		    	  "Run",
+		    	  "Call to \"SUtteranceDelRelation\" failed");
+    }
 
-	if (segmentRel != NULL)
-	{
-		SUtteranceDelRelation(utt, "Segment", error);
-		S_CHK_ERR(error, S_CONTERR,
-				  "Run",
-				  "Call to \"SUtteranceDelRelation\" failed");
-	}
+	if (morphInfo != NULL)
+		S_DELETE(morphInfo, "Run", error);
 
-	if (sylItr != NULL)
-		S_DELETE(sylItr, "Run", error);
+	if (downcase_word != NULL)
+		S_FREE(downcase_word);
 
-	if (phoneItr != NULL)
-		S_DELETE(phoneItr, "Run", error);
+	if (morphItr != NULL)
+		S_DELETE(morphItr, "Run", error);
+
+	if (morphClassItr != NULL)
+		S_DELETE(morphClassItr, "Run", error);
 
 	self = NULL;
 }
@@ -629,13 +527,13 @@ static SMorphDecompUttProcClass MorphDecompUttProcClass =
 		sizeof(SMorphDecompUttProc),
 		{ 0, 1},
 		NULL,            /* init    */
-		Destroy,         /* destroy */
+		NULL,            /* destroy */
 		Dispose,         /* dispose */
 		NULL,            /* compare */
 		NULL,            /* print   */
 		NULL,            /* copy    */
 	},
 	/* SUttProcessorClass */
-	Initialize,          /* initialize */
+	NULL,                /* initialize */
 	Run                  /* run        */
 };

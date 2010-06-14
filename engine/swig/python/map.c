@@ -147,11 +147,37 @@ typedef struct
 
 %types(SMap = SObject);
 
-%nodefaultctor SMap;
+/* %nodefaultctor SMap; */
 
 
 %extend SMap
 {
+	SMap(s_erc *error)
+	{
+		SMap *map;
+
+
+		map = S_MAP(S_NEW("SMapList", error));
+		if (*error != S_SUCCESS)
+			return NULL;
+
+		SMapListInit(&map, error);
+		if (*error != S_SUCCESS)
+			return NULL;
+
+		return map;
+	}
+
+
+	~SMap()
+	{
+		s_erc error;
+
+		S_CLR_ERR(&error);
+		S_DELETE($self, "~SMap()", &error);
+	}
+
+
 	const SObject *value_get(const char *key, s_erc *error)
 	{
 		const SObject *value;

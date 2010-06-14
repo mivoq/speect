@@ -2,10 +2,53 @@
 
 echo "\t\tin python"
 
+
 ########################################################################
 
+if [ -f Makefile ]
+then 
+    echo "\t\trunning make clean"
+    make clean
+    rm -f  Makefile 
+fi
+
+########################################################################
+
+echo "\t\tcleaning cmake files"
+
+if [ -f CMakeCache.txt ]
+then 
+    rm -f  CMakeCache.txt 
+fi
+
+if [ -d CMakeFiles ]
+then 
+    rm -fr CMakeFiles
+fi
+
+if [ -f cmake_install.cmake ]
+then 
+    rm -f cmake_install.cmake
+fi
+
+if [ -f cmake_uninstall.cmake ]
+then 
+    rm -f cmake_uninstall.cmake
+fi
+
+if [ -f CTestTestfile.cmake ]
+then 
+    rm -f CTestTestfile.cmake
+fi
+
+if [ -f install_manifest.txt ]
+then 
+    rm -f install_manifest.txt
+fi
+
+
+########################################################################
+
+
 rm -f *~
-rm -fr CMakeFiles
-rm -f CMakeCache.txt
-rm -f cmake_install.cmake
-rm -f Makefile
+

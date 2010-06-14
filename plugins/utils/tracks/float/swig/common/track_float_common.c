@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2009 The Department of Arts and Culture,                           */
+/* Copyright (c) 2010 The Department of Arts and Culture,                           */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -24,66 +24,116 @@
 /************************************************************************************/
 /*                                                                                  */
 /* AUTHOR  : Aby Louw                                                               */
-/* DATE    : December 2009                                                          */
+/* DATE    : February 2010                                                          */
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* SAudio wrapper functions.                                                        */
+/* SWIG common C convenience functions for STrackFloat.                             */
 /*                                                                                  */
 /*                                                                                  */
-/************************************************************************************/
-
-%module track_float
-
-
-/************************************************************************************/
-/*                                                                                  */
-/* Speect Engine header.                                                            */
 /*                                                                                  */
 /************************************************************************************/
 
-%header
+
+/************************************************************************************/
+/*                                                                                  */
+/* Typedef used in typemaps                                                         */
+/*                                                                                  */
+/************************************************************************************/
+
+
 %{
-#include "speect.h"
-#include "track_float.h"
+	typedef struct
+	{
+		float **fpp;
+		uint32  row_count;
+		uint32  col_count;
+		float  *times;
+	} float_track_t;
 %}
 
-%include "exception.i"
-%import speect.i
-%include "spct_float_track_typemap.i"
-
 
 /************************************************************************************/
 /*                                                                                  */
-/* Load the SArrayFloat plug-in                                                     */
+/* Extend the STrackFloat class                                                     */
 /*                                                                                  */
 /************************************************************************************/
 
-%init
-%{
+
+typedef struct
+{
+	%extend
 	{
-		s_erc rv = S_SUCCESS;
-		SPlugin *plugin;
+		const uint32 row_count;
+		const uint32 col_count;
+	}
+} STrackFloat;
 
 
-		plugin = s_pm_load_plugin("track-float.spi", &rv);
-		if (rv != S_SUCCESS)
-			SWIG_exception(SWIG_RuntimeError, "Failed to load STrackFloat plug-in");
+%types(STrackFloat = SObject, SObject*);
 
-	fail:
-		return;
+%extend STrackFloat
+{
+	STrackFloat(const float *times, uint32 len, const float **fm,
+				uint32 row_count, uint32 col_count, s_erc *error)
+	{
+		STrackFloat *tmp;
+
+
+		if (len != row_count)
+		{
+			S_CTX_ERR(error, S_FAILURE,
+					  "STrackFloat()",
+					  "times count and row count differ");
+			return NULL;
+		}
+
+		tmp = (STrackFloat*)S_NEW("STrackFloat", error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "STrackFloat()",
+					  "Failed to create new 'STrackFloat' object"))
+			return NULL;
+
+		tmp->time = (float*)times;
+		tmp->data->row_count = row_count;
+		tmp->data->col_count = col_count;
+		tmp->data->f = (float**)fm;
+
+		return tmp;
+	}
+
+	~STrackFloat()
+	{
+		s_erc error;
+
+
+		S_CLR_ERR(&error);
+		S_DELETE($self, "~STrackFloat()", &error);
+	}
+
+	float_track_t get()
+	{
+		float_track_t tmp;
+
+
+		tmp.fpp = $self->data->f;
+		tmp.row_count = $self->data->row_count;
+		tmp.col_count = $self->data->col_count;
+		tmp.times = $self->time;
+
+		return tmp;
+	}
+}
+
+%{
+	const uint32 STrackFloat_row_count_get(STrackFloat *track)
+	{
+		return (const uint32)track->data->row_count;
+	}
+
+	const uint32 STrackFloat_col_count_get(STrackFloat *track)
+	{
+		return (const uint32)track->data->col_count;
 	}
 %}
-
-
-/************************************************************************************/
-/*                                                                                  */
-/* SWIG/Python interface files.                                                     */
-/*                                                                                  */
-/************************************************************************************/
-
-/*
- * SAudio Python class
- */
-%include "track_float.c"
 

@@ -1,36 +1,25 @@
 ######################################################################################
 ##                                                                                  ##
 ## AUTHOR  : Aby Louw                                                               ##
-## DATE    : 5 November 2009                                                        ##
+## DATE    : June 2010                                                              ##
 ##                                                                                  ##
 ######################################################################################
 ##                                                                                  ##
-## Template CMakeList for Speect Plug-ins                                           ##
+## CMakeList for STrackFloat plug-in                                                ##
 ##                                                                                  ##
 ##                                                                                  ##
 ######################################################################################
 
 #------------------------------------------------------------------------------------#
-#                                Project name                                        #
+#                             Define plug-in                                         #
 #------------------------------------------------------------------------------------#
 
-message(STATUS "cmake for project \"Float Track\"")
-project(speect_track_float_plugin C)
-
-# Plug-in shared object name
-set(PLUGIN_SONAME track-float)
-
-set(${PLUGIN_SONAME}_VERSION_MAJOR 0)
-set(${PLUGIN_SONAME}_VERSION_MINOR 9)
-set(${PLUGIN_SONAME}_VERSION_PATCH 0)
-set(${PLUGIN_SONAME}_VERSION "${${PLUGIN_SONAME}_VERSION_MAJOR}.${${PLUGIN_SONAME}_VERSION_MINOR}.${${PLUGIN_SONAME}_VERSION_PATCH}")
+speect_plugin_definition(Track_Float 1 0 0)
 
 
 #------------------------------------------------------------------------------------#
-#                             Get all CMake modules                                  #
+#                               Source files                                         #
 #------------------------------------------------------------------------------------#
-
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
 # Lists of all the source files
 include(sources)
@@ -40,31 +29,19 @@ include(sources)
 #                      Include floating point matrix class                           #
 #------------------------------------------------------------------------------------#
 
-include(matrix-float)
+include(matrix_float)
 
 
 #------------------------------------------------------------------------------------#
-#                        Plug-in shared object                                       #
+#                            Plug-in shared object                                   #
 #------------------------------------------------------------------------------------#
 
-# Library build configuration
-include(plugin)
-
-# add dependency 
-add_dependencies(${PLUGIN_SONAME}_plugin matrix-float_plugin)
-   
-      
-#------------------------------------------------------------------------------------#
-#                        Create a plug-in cmake config file                          #
-#------------------------------------------------------------------------------------#
-
-include(plugin_conf)
+speect_plugin_create()
 
 
 #------------------------------------------------------------------------------------#
 #                              SWIG wrappers                                         #
 #------------------------------------------------------------------------------------#
 
-if(SPEECT_WRAP_PYTHON)
-  add_subdirectory(swig)
-endif(SPEECT_WRAP_PYTHON)
+add_subdirectory(swig)
+

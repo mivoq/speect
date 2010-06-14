@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2009 The Department of Arts and Culture,                           */
+/* Copyright (c) 2010 The Department of Arts and Culture,                           */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -24,66 +24,104 @@
 /************************************************************************************/
 /*                                                                                  */
 /* AUTHOR  : Aby Louw                                                               */
-/* DATE    : December 2009                                                          */
+/* DATE    : February 2010                                                          */
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* SAudio wrapper functions.                                                        */
+/* SWIG common C convenience functions for SMatrixInt.                              */
 /*                                                                                  */
 /*                                                                                  */
-/************************************************************************************/
-
-%module matrix_int
-
-
-/************************************************************************************/
-/*                                                                                  */
-/* Speect Engine header.                                                            */
 /*                                                                                  */
 /************************************************************************************/
 
-%header
+
+/************************************************************************************/
+/*                                                                                  */
+/* Typedef used in typemaps                                                         */
+/*                                                                                  */
+/************************************************************************************/
+
+
 %{
-#include "speect.h"
-#include "matrix_int.h"
+	typedef struct
+	{
+		sint32 **ipp;
+		uint32   row_count;
+		uint32   col_count;
+	} int_matrix_t;
 %}
 
-%include "exception.i"
-%import speect.i
-%include "spct_int_matrix_typemap.i"
-
 
 /************************************************************************************/
 /*                                                                                  */
-/* Load the SArrayInt plug-in                                                       */
+/* Extend the SMatrixFloat class                                                    */
 /*                                                                                  */
 /************************************************************************************/
 
-%init
-%{
+
+typedef struct
+{
+	%extend
 	{
-		s_erc rv = S_SUCCESS;
-		SPlugin *plugin;
+		const uint32 row_count;
+		const uint32 col_count;
+	}
+} SMatrixInt;
 
 
-		plugin = s_pm_load_plugin("matrix-int.spi", &rv);
-		if (rv != S_SUCCESS)
-			SWIG_exception(SWIG_RuntimeError, "Failed to load SMatrixInt plug-in");
+%types(SMatrixInt = SObject, SObject*);
 
-	fail:
-		return;
+%extend SMatrixInt
+{
+	SMatrixInt(const sint32 **im, uint32 row_count, uint32 col_count, s_erc *error)
+	{
+		SMatrixInt *tmp;
+
+
+		tmp = (SMatrixInt*)S_NEW("SMatrixInt", error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "SMatrixInt()",
+					  "Failed to create new 'SMatrixInt' object"))
+			return NULL;
+
+		tmp->row_count = row_count;
+		tmp->col_count = col_count;
+		tmp->i = (sint32**)im;
+
+		return tmp;
+	}
+
+	~SMatrixInt()
+	{
+		s_erc error;
+
+
+		S_CLR_ERR(&error);
+		S_DELETE($self, "~SMatrixInt()", &error);
+	}
+
+	int_matrix_t get()
+	{
+		int_matrix_t tmp;
+
+
+		tmp.ipp = $self->i;
+		tmp.row_count = $self->row_count;
+		tmp.col_count = $self->col_count;
+
+		return tmp;
+	}
+}
+
+%{
+	const uint32 SMatrixInt_row_count_get(SMatrixInt *matrix)
+	{
+		return (const uint32)matrix->row_count;
+	}
+
+	const uint32 SMatrixInt_col_count_get(SMatrixInt *matrix)
+	{
+		return (const uint32)matrix->col_count;
 	}
 %}
-
-
-/************************************************************************************/
-/*                                                                                  */
-/* SWIG/Python interface files.                                                     */
-/*                                                                                  */
-/************************************************************************************/
-
-/*
- * SAudio Python class
- */
-%include "matrix_int.c"
 

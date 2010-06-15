@@ -15,9 +15,6 @@
 #                          Set the interface variables                               #
 #------------------------------------------------------------------------------------#
 
-# class name
-set(swig_classname "SArrayInt")
-
 # SWIG includes
 set(swig_includes "typemaps.i;exception.i")
 

@@ -469,15 +469,6 @@ S_LOCAL void _s_serialize_init(s_erc *error)
 		return;
 	}
 
-	SMapListInit(&objectTable, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "_s_serialize_init",
-				  "Failed to initialize object table map"))
-	{
-		initialized = FALSE;
-		return;
-	}
-
 	fileTable = S_MAP(S_NEW("SMapList", error));
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "_s_serialize_init",
@@ -485,16 +476,6 @@ S_LOCAL void _s_serialize_init(s_erc *error)
 	{
 		S_DELETE(objectTable, "_s_serialize_init", error);
 		initialized = FALSE;
-		return;
-	}
-
-	SMapListInit(&fileTable, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "_s_serialize_init",
-				  "Failed to initialize file table map"))
-	{
-		initialized = FALSE;
-		S_DELETE(objectTable, "_s_serialize_init", error);
 		return;
 	}
 }
@@ -556,12 +537,6 @@ static void add_object_class(const SSerializedObjectClass* serializedObjectClass
 			if (S_CHK_ERR(error, S_CONTERR,
 						  "add_object_class",
 						  "Failed to create a new map object"))
-				return;
-
-			SMapListInit((SMap**)&objectType, error);
-			if (S_CHK_ERR(error, S_CONTERR,
-						  "add_object_class",
-						  "Failed to initialize new map object"))
 				return;
 
 			/* add it to the objectTable map */

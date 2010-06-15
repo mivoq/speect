@@ -355,12 +355,7 @@ static void InitUttProcessor(void *obj, s_erc *error)
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "InitUttProcessor",
 				  "Failed to create new map-list features"))
-		return;
-
-	SMapListInit(&(self->features), error);
-	S_CHK_ERR(error, S_CONTERR,
-		      "InitUttProcessor",
-		      "Failed to initialize new map-list features");
+		self->features = NULL;
 }
 
 

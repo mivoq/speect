@@ -422,22 +422,10 @@ static void InitItmContent(void *obj, s_erc *error)
 				  "Failed to create features map"))
 		return;
 
-	SMapListInit(&(self->features), error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "InitItmContent",
-				  "Failed to initialize features map"))
-		return;
-
 	self->relations = S_MAP(S_NEW("SMapList", error));
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "InitItmContent",
 				  "Failed to create relations map"))
-		return;
-
-	SMapListInit(&(self->relations), error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "InitItmContent",
-				  "Failed to initialize relations map"))
 		return;
 
 	/* so that it will only be deleted with S_FORCE_DELETE */

@@ -78,12 +78,6 @@ S_LOCAL SMap *_s_load_voice_feature_processors(const SMap *voiceConfig,
 				  "Failed to create new map for voice feature-processors"))
 		return NULL;
 
-	SMapListInit(&featProcessors, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "_s_load_voice_feature_processors",
-				  "Failed to initialize new map for voice feature-processors"))
-		return NULL;
-
 	/* look for "feature-processors" key in voiceConfig map */
 	key_present = SMapObjectPresent(voiceConfig, "feature-processors", error);
 	if (S_CHK_ERR(error, S_CONTERR,

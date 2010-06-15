@@ -66,12 +66,6 @@ S_LOCAL SMap *_s_get_voice_features(const SMap *voiceConfig, s_erc *error)
 				  "Failed to create new map for voice features"))
 		return NULL;
 
-	SMapListInit(&features, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "_s_get_voice_features",
-				  "Failed to initialize new map for voice features"))
-		return NULL;
-
 	/* look for "features" key in voiceConfig map */
 	key_present = SMapObjectPresent(voiceConfig, "features", error);
 	if (S_CHK_ERR(error, S_CONTERR,

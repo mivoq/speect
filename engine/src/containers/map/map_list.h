@@ -115,19 +115,6 @@ typedef SMapClass SMapListClass;
 /************************************************************************************/
 
 /**
- * Initialize a SMapList data container.
- * @public @memberof SMapList
- *
- * @param self The SMapList (as an #SMap) to initialize.
- * @param error Error code.
- *
- * @note If this function fails the map will be deleted and the @c
- * self pointer will be set to @c NULL.
- */
-S_API void SMapListInit(SMap **self, s_erc *error);
-
-
-/**
  * Add the SMapList class to the object system.
  * @private
  * @param error Error code.

@@ -66,12 +66,6 @@ S_LOCAL SMap *_s_load_voice_data_config(const SMap *voiceConfig, s_erc *error)
 				  "Failed to create new map for voice data"))
 		return NULL;
 
-	SMapListInit(&data, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "_s_load_voice_data",
-				  "Failed to initialize new map for voice data"))
-		return NULL;
-
 	/* look for "data" key in voiceConfig map */
 	key_present = SMapObjectPresent(voiceConfig, "data", error);
 	if (S_CHK_ERR(error, S_CONTERR,

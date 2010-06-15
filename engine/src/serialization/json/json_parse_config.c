@@ -599,12 +599,6 @@ static void s_json_callback_start_map(void *ctx, s_erc *error)
 				  "Failed to create map-list object"))
 		return;
 
-	SMapListInit(&lMap, error);
-	if (S_CHK_ERR(error, S_FAILURE,
-				  "s_json_callback_start_map",
-				  "Failed to initialize map-list object"))
-		return;
-
 	SListPush(context->containers, S_OBJECT(lMap), error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "s_json_callback_start_map",

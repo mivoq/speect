@@ -78,12 +78,6 @@ S_LOCAL void _s_load_voice_utterance_processors(const SMap *voiceConfig, SVoice 
 				  "Failed to create new map for voice utterance-processors"))
 		return;
 
-	SMapListInit(&uttProcessors, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "_s_load_voice_utterance_processors",
-				  "Failed to initialize new map for voice utterance-processors"))
-		return;
-
 	/* look for "utterance-processors" key in voiceConfig map */
 	key_present = SMapObjectPresent(voiceConfig, "utterance-processors", error);
 	if (S_CHK_ERR(error, S_CONTERR,

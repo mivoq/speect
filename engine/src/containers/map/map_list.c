@@ -95,49 +95,6 @@ static void s_map_list_del_function(void *le, s_erc *error);
 
 /************************************************************************************/
 /*                                                                                  */
-/*  Function implementations                                                        */
-/*                                                                                  */
-/************************************************************************************/
-
-S_API void SMapListInit(SMap **self, s_erc *error)
-{
-	SMapList *mapList;
-
-
-	S_CLR_ERR(error);
-
-	if (*self == NULL)
-	{
-		S_CTX_ERR(error, S_ARGERROR,
-			  "SMapListInit",
-			  "Argument \"self\" is NULL");
-		return;
-	}
-
-	mapList = S_CAST(*self, SMapList, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-		      "SMapListInit",
-		      "Argument \"self\" is not of SMapList type"))
-	{
-		S_DELETE(*self, "SMapListInit", error);
-		*self = NULL;
-		return;
-	}
-
-	mapList->list = s_list_new(&s_map_list_compare_keys,
-				&s_map_list_del_function, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "SMapListInit",
-				  "Failed to create list for SMapList"))
-	{
-		S_DELETE(*self, "SMapListInit", error);
-		*self = NULL;
-	}
-}
-
-
-/************************************************************************************/
-/*                                                                                  */
 /* Class registration                                                               */
 /*                                                                                  */
 /************************************************************************************/
@@ -217,7 +174,12 @@ static void InitMapList(void *obj, s_erc *error)
 
 
 	S_CLR_ERR(error);
-	self->list = NULL;
+	self->list = s_list_new(&s_map_list_compare_keys,
+							&s_map_list_del_function, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "InitMapList",
+				  "Failed to create 's_list' object"))
+		self->list = NULL;
 }
 
 
@@ -535,11 +497,6 @@ static SMap *MapListCopy(SMap *dst, const SMap *src, s_erc *error)
 			return NULL;
 
 		dst = S_MAP(mapDst);
-		SMapListInit(&dst, error);
-		if (S_CHK_ERR(error, S_FAILURE,
-			      "MapListCopy",
-			      "Failed to initialize new list map"))
-			return NULL;
 	}
 
 

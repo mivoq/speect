@@ -279,31 +279,10 @@ S_LOCAL void _s_vm_init(s_erc *error)
 		return;
 	}
 
-	SMapListInit(&dataTypes, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "_s_vm_init",
-				  "Failed to initialize map for data cache"))
-	{
-		s_mutex_destroy(&vm_mutex);
-		initialized = FALSE;
-		return;
-	}
-
 	dataIdentity = S_MAP(S_NEW("SMapList", error));
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "_s_vm_init",
 				  "Failed to create new map for data identity"))
-	{
-		s_mutex_destroy(&vm_mutex);
-		initialized = FALSE;
-		S_DELETE(dataTypes, "_s_vm_init", error);
-		return;
-	}
-
-	SMapListInit(&dataIdentity, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "_s_vm_init",
-				  "Failed to initialize map for data identity"))
 	{
 		s_mutex_destroy(&vm_mutex);
 		initialized = FALSE;

@@ -706,22 +706,10 @@ static void InitUtterance(void *obj, s_erc *error)
 				  "Failed to create new map-list features"))
 		return;
 
-	SMapListInit(&(self->features), error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "InitUtterance",
-				  "Failed to initialize new map-list features"))
-		return;
-
 	self->relations = S_MAP(S_NEW("SMapList", error));
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "InitUtterance",
 				  "Failed to create new map-list relations"))
-		return;
-
-	SMapListInit(&(self->relations), error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "InitUtterance",
-				  "Failed to initialize new map-list relations"))
 		return;
 
 	/* item id's */

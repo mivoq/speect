@@ -589,15 +589,6 @@ S_API void SVoiceSetData(SVoice *self, const char *key,
 		return;
 	}
 
-	SMapListInit(&dataObjectMap, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "SVoiceSetData",
-				  "Failed to initialize new data object map"))
-	{
-		s_mutex_unlock(&self->voice_mutex);
-		return;
-	}
-
 	/* add dummy entries */
 	SMapSetString(dataObjectMap, "format", "NULL", error);
 	if (S_CHK_ERR(error, S_CONTERR,
@@ -1647,12 +1638,6 @@ static void sync_data_config(SVoice *self, SMap *dataConfig, s_erc *error)
 				  "Failed to create a new data config map object"))
 		return;
 
-	SMapListInit(&newDataConfig, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "sync_data_config",
-				  "Failed to initialize a new data config map object"))
-		return;
-
 	/* iterate through given map */
 	itr = SMapIterator(dataConfig, error);
 	if (S_CHK_ERR(error, S_CONTERR,
@@ -2248,12 +2233,6 @@ static void InitVoice(void *obj, s_erc *error)
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "InitVoice",
 				  "Failed to create new data objects map"))
-		return;
-
-	SMapListInit(&(self->data->dataObjects), error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "InitVoice",
-				  "Failed to initialize new data objects map"))
 		return;
 
 	s_mutex_init(&self->voice_mutex);

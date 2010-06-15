@@ -41,19 +41,7 @@
 /************************************************************************************/
 
 #include "track_float.h"
-
-
-/************************************************************************************/
-/*                                                                                  */
-/* Defines                                                                          */
-/*                                                                                  */
-/************************************************************************************/
-
-/* Minimum major version of Speect Engine required for plug-in */
-#define SPCT_MAJOR_VERSION_MIN 1
-
-/* Minimum minor version of Speect Engine required for plug-in */
-#define SPCT_MINOR_VERSION_MIN 0
+#include "plugin_info.h"
 
 
 /************************************************************************************/
@@ -61,12 +49,6 @@
 /* Static variables                                                                 */
 /*                                                                                  */
 /************************************************************************************/
-
-static const char * const plugin_init_func = "STrackFloat plug-in initialization";
-
-static const char * const plugin_reg_func = "STrackFloat plug-in register";
-
-static const char * const plugin_exit_func = "STrackFloat plug-in free";
 
 static SPlugin *matrixFloatPlugin = NULL;
 
@@ -91,15 +73,15 @@ static void plugin_exit_function(s_erc *error);
 static const s_plugin_params plugin_params =
 {
 	/* plug-in name */
-	"STrackFloat",
+	SPCT_PLUGIN_NAME,
 
 	/* description */
-	"A track class, for storing time aligned floating point coefficients",
+	SPCT_PLUGIN_DESCRIPTION,
 
 	/* version */
 	{
-		0,
-		2
+		SPCT_PLUGIN_VERSION_MAJOR,
+		SPCT_PLUGIN_VERSION_MINOR
 	},
 
 	/* Speect ABI version (which plug-in was compiled with) */
@@ -129,7 +111,7 @@ const s_plugin_params *s_plugin_init(s_erc *error)
 	if (!s_lib_version_ok(SPCT_MAJOR_VERSION_MIN, SPCT_MINOR_VERSION_MIN))
 	{
 		S_CTX_ERR(error, S_FAILURE,
-				  plugin_init_func,
+				  SPCT_PLUGIN_INIT_STR,
 				  "Incorrect Speect Engine version, require at least '%d.%d.x'",
 				  SPCT_MAJOR_VERSION_MIN, SPCT_MINOR_VERSION_MIN);
 		return NULL;
@@ -155,17 +137,17 @@ static void plugin_register_function(s_erc *error)
 	/* load floating point matrix plug-in */
 	matrixFloatPlugin = s_pm_load_plugin("matrix_float.spi", error);
 	if (S_CHK_ERR(error, S_CONTERR,
-				  plugin_init_func,
+				  SPCT_PLUGIN_REG_STR,
 				  "Call to \"s_pm_load_plugin\" failed"))
 		return;
 
 	/* register plug-in classes here */
 	_s_track_float_class_reg(error);
 	if (S_CHK_ERR(error, S_CONTERR,
-				  plugin_init_func,
-				  "Failed to register STrackFloat class"))
+				  SPCT_PLUGIN_REG_STR,
+				  SPCT_PLUGIN_REG_FAIL_STR))
 	{
-		S_DELETE(matrixFloatPlugin, plugin_init_func, error);
+		S_DELETE(matrixFloatPlugin, SPCT_PLUGIN_REG_STR, error);
 		return;
 	}
 }
@@ -182,8 +164,8 @@ static void plugin_exit_function(s_erc *error)
 	/* free plug-in classes here */
 	_s_track_float_class_free(error);
 	if (S_CHK_ERR(error, S_CONTERR,
-				  plugin_exit_func,
-				  "Failed to free STrackFloat class"))
+				  SPCT_PLUGIN_EXIT_STR,
+				  SPCT_PLUGIN_EXIT_FAIL_STR))
 		if (error != NULL)
 			local_err = *error;
 
@@ -192,5 +174,5 @@ static void plugin_exit_function(s_erc *error)
 		&& (local_err != S_SUCCESS))
 		*error = local_err;
 
-	S_DELETE(matrixFloatPlugin, plugin_exit_func, error);
+	S_DELETE(matrixFloatPlugin, SPCT_PLUGIN_EXIT_STR, error);
 }

@@ -41,32 +41,7 @@
 /************************************************************************************/
 
 #include "matrix_int.h"
-
-
-/************************************************************************************/
-/*                                                                                  */
-/* Defines                                                                          */
-/*                                                                                  */
-/************************************************************************************/
-
-/* Minimum major version of Speect Engine required for plug-in */
-#define SPCT_MAJOR_VERSION_MIN 1
-
-/* Minimum minor version of Speect Engine required for plug-in */
-#define SPCT_MINOR_VERSION_MIN 0
-
-
-/************************************************************************************/
-/*                                                                                  */
-/* Static variables                                                                 */
-/*                                                                                  */
-/************************************************************************************/
-
-static const char * const plugin_init_func = "SMatrixInt plug-in initialization";
-
-static const char * const plugin_reg_func = "SMatrixInt plug-in register";
-
-static const char * const plugin_exit_func = "SMatrixInt plug-in free";
+#include "plugin_info.h"
 
 
 /************************************************************************************/
@@ -89,16 +64,15 @@ static void plugin_exit_function(s_erc *error);
 static const s_plugin_params plugin_params =
 {
 	/* plug-in name */
-	"SMatrixInt",
+	SPCT_PLUGIN_NAME,
 
 	/* description */
-	"A simple integer (signed) matrix class which allows us to use integer "
-	" matrices as SObjects",
+	SPCT_PLUGIN_DESCRIPTION,
 
 	/* version */
 	{
-		0,
-		2
+		SPCT_PLUGIN_VERSION_MAJOR,
+		SPCT_PLUGIN_VERSION_MINOR
 	},
 
 	/* Speect ABI version (which plug-in was compiled with) */
@@ -128,7 +102,7 @@ const s_plugin_params *s_plugin_init(s_erc *error)
 	if (!s_lib_version_ok(SPCT_MAJOR_VERSION_MIN, SPCT_MINOR_VERSION_MIN))
 	{
 		S_CTX_ERR(error, S_FAILURE,
-				  plugin_init_func,
+				  SPCT_PLUGIN_INIT_STR,
 				  "Incorrect Speect Engine version, require at least '%d.%d.x'",
 				  SPCT_MAJOR_VERSION_MIN, SPCT_MINOR_VERSION_MIN);
 		return NULL;
@@ -153,8 +127,8 @@ static void plugin_register_function(s_erc *error)
 
 	_s_matrix_int_class_reg(error);
 	S_CHK_ERR(error, S_CONTERR,
-				  plugin_reg_func,
-				  "Failed to register SMatrixInt class");
+			  SPCT_PLUGIN_REG_STR,
+			  SPCT_PLUGIN_REG_FAIL_STR);
 }
 
 
@@ -166,6 +140,6 @@ static void plugin_exit_function(s_erc *error)
 	/* free plug-in classes here */
 	_s_matrix_int_class_free(error);
 	S_CHK_ERR(error, S_CONTERR,
-			  plugin_exit_func,
-			  "Failed to free SMatrixInt class");
+			  SPCT_PLUGIN_EXIT_STR,
+			  SPCT_PLUGIN_EXIT_FAIL_STR);
 }

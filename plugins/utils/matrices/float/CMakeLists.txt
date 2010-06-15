@@ -14,7 +14,20 @@
 #                             Define plug-in                                         #
 #------------------------------------------------------------------------------------#
 
-speect_plugin_definition(Matrix_Float 1 0 0)
+speect_plugin_definition(Matrix_Float "SMatrixFloat" 1 0 0)
+
+
+#------------------------------------------------------------------------------------#
+#                        Configure plugin_info.h.in                                  #
+#------------------------------------------------------------------------------------#
+
+set(description "A simple floating point matrix class which allows us to use floating point matrices as SObjects")
+
+# Minimum required Speect Engine version 
+set(major_min 1)
+set(minor_min 0)
+
+speect_plugin_configure_info(${description} ${major_min} ${minor_min})
 
 
 #------------------------------------------------------------------------------------#

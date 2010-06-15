@@ -14,7 +14,20 @@
 #                             Define plug-in                                         #
 #------------------------------------------------------------------------------------#
 
-speect_plugin_definition(Track_Int 1 0 0)
+speect_plugin_definition(Track_Int "STrackInt" 1 0 0)
+
+
+#------------------------------------------------------------------------------------#
+#                        Configure plugin_info.h.in                                  #
+#------------------------------------------------------------------------------------#
+
+set(description "A track class, for storing time aligned floating point coefficients")
+
+# Minimum required Speect Engine version 
+set(major_min 1)
+set(minor_min 0)
+
+speect_plugin_configure_info(${description} ${major_min} ${minor_min})
 
 
 #------------------------------------------------------------------------------------#
@@ -29,7 +42,7 @@ include(sources)
 #                      Include floating point matrix class                           #
 #------------------------------------------------------------------------------------#
 
-include(matrix_int)
+speect_include_plugin(Matrix_Int 1 0)
 
 
 #------------------------------------------------------------------------------------#

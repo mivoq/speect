@@ -14,7 +14,20 @@
 #                             Define plug-in                                         #
 #------------------------------------------------------------------------------------#
 
-speect_plugin_definition(Viterbi 1 0 0)
+speect_plugin_definition(Viterbi "SViterbi" 1 0 0)
+
+
+#------------------------------------------------------------------------------------#
+#                        Configure plugin_info.h.in                                  #
+#------------------------------------------------------------------------------------#
+
+set(description "A viterbi class that implements a viterbi search")
+
+# Minimum required Speect Engine version 
+set(major_min 1)
+set(minor_min 0)
+
+speect_plugin_configure_info(${description} ${major_min} ${minor_min})
 
 
 #------------------------------------------------------------------------------------#

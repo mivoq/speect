@@ -41,32 +41,7 @@
 /************************************************************************************/
 
 #include "viterbi.h"
-
-
-/************************************************************************************/
-/*                                                                                  */
-/* Defines                                                                          */
-/*                                                                                  */
-/************************************************************************************/
-
-/* Minimum major version of Speect Engine required for plug-in */
-#define SPCT_MAJOR_VERSION_MIN 1
-
-/* Minimum minor version of Speect Engine required for plug-in */
-#define SPCT_MINOR_VERSION_MIN 0
-
-
-/************************************************************************************/
-/*                                                                                  */
-/* Static variables                                                                 */
-/*                                                                                  */
-/************************************************************************************/
-
-static const char * const plugin_init_func = "SViterbi plug-in initialization";
-
-static const char * const plugin_reg_func = "SViterbi plug-in register";
-
-static const char * const plugin_exit_func = "SViterbi plug-in free";
+#include "plugin_info.h"
 
 
 /************************************************************************************/
@@ -89,15 +64,15 @@ static void plugin_exit_function(s_erc *error);
 static const s_plugin_params plugin_params =
 {
 	/* plug-in name */
-	"A viterbi class",
+	SPCT_PLUGIN_NAME,
 
 	/* description */
-	"A viterbi class that implements a viterbi search",
+	SPCT_PLUGIN_DESCRIPTION,
 
 	/* version */
 	{
-		0,
-		2
+		SPCT_PLUGIN_VERSION_MAJOR,
+		SPCT_PLUGIN_VERSION_MINOR
 	},
 
 	/* Speect ABI version (which plug-in was compiled with) */
@@ -127,7 +102,7 @@ const s_plugin_params *s_plugin_init(s_erc *error)
 	if (!s_lib_version_ok(SPCT_MAJOR_VERSION_MIN, SPCT_MINOR_VERSION_MIN))
 	{
 		S_CTX_ERR(error, S_FAILURE,
-				  plugin_init_func,
+				  SPCT_PLUGIN_INIT_STR,
 				  "Incorrect Speect Engine version, require at least '%d.%d.x'",
 				  SPCT_MAJOR_VERSION_MIN, SPCT_MINOR_VERSION_MIN);
 		return NULL;
@@ -155,13 +130,13 @@ static void plugin_register_function(s_erc *error)
 
 	_s_vit_candidate_class_reg(error);
 	if (S_CHK_ERR(error, S_CONTERR,
-				  plugin_reg_func,
+				  SPCT_PLUGIN_REG_STR,
 				  "Failed to register SViterbiCandidate class"))
 		return;
 
 	_s_vit_path_class_reg(error);
 	if (S_CHK_ERR(error, S_CONTERR,
-				  plugin_reg_func,
+				  SPCT_PLUGIN_REG_STR,
 				  "Failed to register SViterbiPath class"))
 	{
 		_s_vit_candidate_class_free(&local_err);
@@ -170,7 +145,7 @@ static void plugin_register_function(s_erc *error)
 
 	_s_vit_point_class_reg(error);
 	if (S_CHK_ERR(error, S_CONTERR,
-				  plugin_reg_func,
+				  SPCT_PLUGIN_REG_STR,
 				  "Failed to register SViterbiPoint class"))
 	{
 		_s_vit_path_class_free(&local_err);
@@ -180,7 +155,7 @@ static void plugin_register_function(s_erc *error)
 
 	_s_viterbi_class_reg(error);
 	if (S_CHK_ERR(error, S_CONTERR,
-				  plugin_reg_func,
+				  SPCT_PLUGIN_REG_STR,
 				  "Failed to register SViterbi class"))
 	{
 		_s_vit_point_class_free(&local_err);
@@ -204,25 +179,25 @@ static void plugin_exit_function(s_erc *error)
 
 	_s_viterbi_class_free(error);
 	if (S_CHK_ERR(error, S_CONTERR,
-				  plugin_exit_func,
+				  SPCT_PLUGIN_EXIT_STR,
 				  "Failed to free SViterbi class"))
 		local_err = *error;
 
 	_s_vit_point_class_free(error);
 	if (S_CHK_ERR(error, S_CONTERR,
-				  plugin_exit_func,
+				  SPCT_PLUGIN_EXIT_STR,
 				  "Failed to free SViterbiPoint class"))
 		local_err = *error;
 
 	_s_vit_path_class_free(error);
 	if (S_CHK_ERR(error, S_CONTERR,
-				  plugin_exit_func,
+				  SPCT_PLUGIN_EXIT_STR,
 				  "Failed to free SViterbiPath class"))
 		local_err = *error;
 
 	_s_vit_candidate_class_free(error);
 	if (S_CHK_ERR(error, S_CONTERR,
-				  plugin_exit_func,
+				  SPCT_PLUGIN_EXIT_STR,
 				  "Failed to free SViterbiCandidate class"))
 		local_err = *error;
 

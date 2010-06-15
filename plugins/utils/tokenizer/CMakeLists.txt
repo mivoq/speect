@@ -14,7 +14,20 @@
 #                             Define plug-in                                         #
 #------------------------------------------------------------------------------------#
 
-speect_plugin_definition(Tokenizer 1 0 0)
+speect_plugin_definition(Tokenizer "Tokenizers" 1 0 0)
+
+
+#------------------------------------------------------------------------------------#
+#                        Configure plugin_info.h.in                                  #
+#------------------------------------------------------------------------------------#
+
+set(description "A file and string tokenizer")
+
+# Minimum required Speect Engine version 
+set(major_min 1)
+set(minor_min 0)
+
+speect_plugin_configure_info(${description} ${major_min} ${minor_min})
 
 
 #------------------------------------------------------------------------------------#

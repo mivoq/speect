@@ -394,12 +394,6 @@ static SList *MapHashTableValKeys(const SMap *self, s_erc *error)
 				  "Failed to create new SList container for keys"))
 		return NULL;
 
-	SListListInit(&keys, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "MapHashTableValKeys",
-				  "Call to \"SListListInit\" failed"))
-		return NULL;
-
 	hte = s_hash_table_first(hashTable->table, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "MapHashTableValKeys",

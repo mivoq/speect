@@ -145,16 +145,6 @@ S_LOCAL SMap *_s_load_voice_feature_processors(const SMap *voiceConfig,
 			S_DELETE(featProcessors, "_s_load_voice_feature_processors", error);
 			return NULL;
 		}
-
-		SListListInit(&featProcPlugins, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "_s_load_voice_feature_processors",
-					  "Failed to initialize new list for voice feature-processors plug-ins"))
-		{
-			S_DELETE(itr, "_s_load_voice_feature_processors", error);
-			S_DELETE(featProcessors, "_s_load_voice_feature_processors", error);
-			return NULL;
-		}
 	}
 	else
 		featProcPlugins = NULL;

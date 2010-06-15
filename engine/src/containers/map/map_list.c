@@ -457,12 +457,6 @@ static SList *MapListValKeys(const SMap *self, s_erc *error)
 		      "Failed to create new SList container for keys"))
 		return NULL;
 
-	SListListInit(&keys, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-		      "MapListValKeys",
-		      "Call to \"SListListInit\" failed"))
-		return NULL;
-
 	for (itr = s_list_first(mapList->list, error);
 	     itr != NULL;
 	     itr = s_list_element_next(itr, error))

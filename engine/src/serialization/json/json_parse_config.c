@@ -154,7 +154,6 @@ S_API SMap *s_json_parse_config_file(const char *path, s_erc *error)
 	SDatasource *ds;
 	s_json_context *context;
 	SJSONParser *JSON;
-	SListList *lList;
 	SMap *retVal;
 
 
@@ -176,43 +175,20 @@ S_API SMap *s_json_parse_config_file(const char *path, s_erc *error)
 		return NULL;
 	}
 
-	lList = (SListList*)S_NEW("SListList", error);
+	context->containers = (SList*)S_NEW("SListList", error);
 	if (S_CHK_ERR(error, S_FAILURE,
 				  "s_json_parse_config_file",
-				  "Failed to create list-list object"))
+				  "Failed to create 'SListList' object"))
 	{
 		S_DELETE(ds, "s_json_parse_config_file", error);
 		S_FREE(context);
 		return NULL;
 	}
 
-	context->containers = S_LIST(lList);
-	SListListInit(&(context->containers), error);
+	context->keys = (SList*)S_NEW("SListList", error);
 	if (S_CHK_ERR(error, S_FAILURE,
 				  "s_json_parse_config_file",
-				  "Failed to initialize list-list object"))
-	{
-		S_DELETE(ds, "s_json_parse_config_file", error);
-		S_FREE(context);
-		return NULL;
-	}
-
-	lList = (SListList*)S_NEW("SListList", error);
-	if (S_CHK_ERR(error, S_FAILURE,
-				  "s_json_parse_config_file",
-				  "Failed to create list-list object"))
-	{
-		S_DELETE(ds, "s_json_parse_config_file", error);
-		S_DELETE(context->containers, "s_json_parse_config_file", error);
-		S_FREE(context);
-		return NULL;
-	}
-
-	context->keys = S_LIST(lList);
-	SListListInit(&(context->keys), error);
-	if (S_CHK_ERR(error, S_FAILURE,
-				  "s_json_parse_config_file",
-				  "Failed to initialize list-list object"))
+				  "Failed to create 'SListList' object"))
 	{
 		S_DELETE(ds, "s_json_parse_config_file", error);
 		S_DELETE(context->containers, "s_json_parse_config_file", error);
@@ -674,12 +650,6 @@ static void s_json_callback_start_array(void *ctx, s_erc *error)
 	if (S_CHK_ERR(error, S_FAILURE,
 				  "s_json_callback_start_array",
 				  "Failed to create list-list object"))
-		return;
-
-	SListListInit(&newArray, error);
-	if (S_CHK_ERR(error, S_FAILURE,
-				  "s_json_callback_start_array",
-				  "Failed to initialize list-list object"))
 		return;
 
 	SListPush(context->containers, S_OBJECT(newArray), error);

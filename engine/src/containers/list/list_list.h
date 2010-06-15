@@ -136,21 +136,6 @@ typedef SListClass SListListClass;
 /************************************************************************************/
 
 /**
- * Initialize an #SListList data container.
- * @public @memberof SListList
- *
- * @param self The SListList (as an #SList) to initialize.
- * @param error Error code.
- *
- * @return Pointer to newly initialized value-list list container.
- *
- * @note If this function fails the list will be deleted and the @c
- * self pointer will be set to @c NULL.
- */
-S_API void SListListInit(SList **self, s_erc *error);
-
-
-/**
  * Add the #SListList class to the object system.
  * @private @memberof SListList
  * @param error Error code.

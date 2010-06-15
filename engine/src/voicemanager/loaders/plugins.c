@@ -81,12 +81,6 @@ S_LOCAL SList *_s_load_voice_plugins(const SMap *voiceConfig, s_erc *error)
 					  "Failed to create new list for loaded voice plug-ins"))
 			return NULL;
 
-		SListListInit(&pluginLoadedList, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "_s_load_voice_plugins",
-					  "Failed to initialize new list for loaded voice plug-ins"))
-			return NULL;
-
 		return pluginLoadedList;
 	}
 
@@ -106,12 +100,6 @@ S_LOCAL SList *_s_load_voice_plugins(const SMap *voiceConfig, s_erc *error)
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "_s_load_voice_plugins",
 				  "Failed to create new list for loaded voice plug-ins"))
-		return NULL;
-
-	SListListInit(&pluginLoadedList, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "_s_load_voice_plugins",
-				  "Failed to initialize new list for loaded voice plug-ins"))
 		return NULL;
 
 	itr = SListIterator(pluginList, error);

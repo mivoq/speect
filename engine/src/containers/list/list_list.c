@@ -104,50 +104,6 @@ static void s_list_list_del_function(void *le, s_erc *error);
 
 /************************************************************************************/
 /*                                                                                  */
-/*  Function implementations                                                        */
-/*                                                                                  */
-/************************************************************************************/
-
-S_API void SListListInit(SList **self, s_erc *error)
-{
-	SListList *listList;
-
-
-	S_CLR_ERR(error);
-
-	if (*self == NULL)
-	{
-		S_CTX_ERR(error, S_ARGERROR,
-				  "SListListInit",
-				  "Argument \"self\" is NULL");
-		return;
-	}
-
-	listList = S_CAST(*self, SListList, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "SListListInit",
-				  "Argument \"self\" is not of SListList type"))
-	{
-		S_DELETE(*self, "SListListInit", error);
-		*self = NULL;
-		return;
-	}
-
-
-	listList->list = s_list_new(NULL, &s_list_list_del_function,
-								error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "SListListInit",
-				  "Failed to create doubly linked list for SListList"))
-	{
-		S_DELETE(*self, "SListListInit", error);
-		*self = NULL;
-	}
-}
-
-
-/************************************************************************************/
-/*                                                                                  */
 /* Class registration                                                               */
 /*                                                                                  */
 /************************************************************************************/
@@ -194,7 +150,13 @@ static void InitListList(void *obj, s_erc *error)
 
 
 	S_CLR_ERR(error);
-	self->list = NULL;
+
+	self->list = s_list_new(NULL, &s_list_list_del_function,
+							error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "InitListList",
+				  "Failed to create new 's_list' object"))
+		self->list = NULL;
 }
 
 
@@ -457,11 +419,6 @@ static SList *ListListCopy(SList *dst, const SList *src, s_erc *error)
 			return NULL;
 
 		dst = S_LIST(listDst);
-		SListListInit(&dst, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "ListListCopy",
-					  "Failed to initialize new 'SListList' object"))
-			return NULL;
 	}
 
 
@@ -552,22 +509,19 @@ static SObject *ListListPop(SList *self, s_erc *error)
 }
 
 
-static SList *ListListReverse(SList *self, s_erc *error)
+static void ListListReverse(SList *self, s_erc *error)
 {
 	SListList *lList = (SListList*)self;
 
 
 	S_CLR_ERR(error);
 	if (lList->list == NULL)
-		return NULL;
+		return;
 
 	s_list_reverse(lList->list, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "ListListReverse",
-				  "Call to s_list_reverse failed"))
-		return NULL;
-
-	return (SList*)lList;
+	S_CHK_ERR(error, S_CONTERR,
+			  "ListListReverse",
+			  "Call to s_list_reverse failed");
 }
 
 

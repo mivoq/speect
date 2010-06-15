@@ -146,16 +146,6 @@ S_LOCAL void _s_load_voice_utterance_processors(const SMap *voiceConfig, SVoice 
 			S_DELETE(uttProcessors, "_s_load_voice_utterance_processors", error);
 			return;
 		}
-
-		SListListInit(&uttProcPlugins, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "_s_load_voice_utterance_processors",
-					  "Failed to initialize new list for voice utterance-processors plug-ins"))
-		{
-			S_DELETE(itr, "_s_load_voice_utterance_processors", error);
-			S_DELETE(uttProcessors, "_s_load_voice_utterance_processors", error);
-			return;
-		}
 	}
 	else
 		uttProcPlugins = NULL;

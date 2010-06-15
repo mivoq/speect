@@ -65,13 +65,6 @@ int main()
 				  "Failed to create new list"))
 		goto quit;
 
-	/* initialize list */
-	SListListInit(&list, &error);
-	if (S_CHK_ERR(&error, S_CONTERR,
-				  "main",
-				  "Failed to initialize new list"))
-		goto quit;
-
 	/*
 	 * get iterator to list, should be NULL as there are no objects
 	 * in the list

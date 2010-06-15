@@ -508,11 +508,8 @@ S_API SObject *SListPop(SList *self, s_erc *error)
 }
 
 
-S_API SList *SListReverse(SList *self, s_erc *error)
+S_API void SListReverse(SList *self, s_erc *error)
 {
-	SList *tmp;
-
-
 	S_CLR_ERR(error);
 
 	if (self == NULL)
@@ -520,7 +517,7 @@ S_API SList *SListReverse(SList *self, s_erc *error)
 		S_CTX_ERR(error, S_ARGERROR,
 				  "SListReverse",
 				  "Argument \"self\" is NULL");
-		return NULL;
+		return;
 	}
 
 	if (!S_LIST_METH_VALID(self, reverse))
@@ -528,19 +525,16 @@ S_API SList *SListReverse(SList *self, s_erc *error)
 		S_WARNING(S_METHINVLD,
 				  "SListReverse",
 				  "List method \"reverse\" not implemented");
-		return self;
+		return;
 	}
 
 	S_LOCK_CONTAINER;
-	tmp = S_LIST_CALL(self, reverse)(self, error);
+	S_LIST_CALL(self, reverse)(self, error);
 	S_UNLOCK_CONTAINER;
 
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "SListReverse",
-				  "Call to class method \"reverse\" failed"))
-		return self;
-
-	return tmp;
+	S_CHK_ERR(error, S_CONTERR,
+			  "SListReverse",
+			  "Call to class method \"reverse\" failed");
 }
 
 

@@ -210,8 +210,10 @@ typedef struct
 	/**
 	 * @protected IsEmpty function pointer.
 	 * Test to see if the given list is empty.
+	 *
 	 * @param self The list container.
 	 * @param error Error code.
+	 *
 	 * @return #TRUE if empty else, #FALSE.
 	 */
 	s_bool         (*is_empty)     (const SList *self, s_erc *error);
@@ -219,8 +221,10 @@ typedef struct
 	/**
 	 * @protected Size function pointer.
 	 * Return the number of #SObject in the list.
+	 *
 	 * @param self The list container.
 	 * @param error Error code.
+	 *
 	 * @return The number of #SObject objects in the list.
 	 */
 	size_t         (*size)         (const SList *self, s_erc *error);
@@ -228,6 +232,7 @@ typedef struct
 	/**
 	 * @protected Append function pointer.
 	 * Append an #SObject to end of list.
+	 *
 	 * @param self The list container.
 	 * @param object #SObject to append to end of list.
 	 * @param error Error code.
@@ -237,6 +242,7 @@ typedef struct
 	/**
 	 * @protected Prepend function pointer.
 	 * Prepend #SObject to beginning of list.
+	 *
 	 * @param self The list container.
 	 * @param object #SObject to prepend to beginning of list.
 	 * @param error Error code.
@@ -247,11 +253,13 @@ typedef struct
 	 * @protected InsertBefore function pointer.
 	 * Insert an #SObject before the one currently pointed to by
 	 * the iterator.
-	 * @note Iterator will point to inserted item on successful insertion.
+	 *
 	 * @param self The list container.
 	 * @param itr Iterator to current list object.
 	 * @param object #SObject to insert.
 	 * @param error Error code.
+	 *
+	 * @note Iterator will point to inserted item on successful insertion.
 	 */
 	void           (*insert_before)(SList *self, SIterator *itr, const SObject *object,
 									s_erc *error);
@@ -260,11 +268,13 @@ typedef struct
 	 * @protected InsertAfter function pointer.
 	 * Insert #SObject after the one currently pointed to by
 	 * the iterator.
-	 * @note Iterator will point to inserted item on successful insertion.
+	 *
 	 * @param self The list container.
 	 * @param itr Iterator to current list object.
 	 * @param object #SObject to insert.
 	 * @param error Error code.
+	 *
+	 * @note Iterator will point to inserted item on successful insertion.
 	 */
 	void           (*insert_after) (SList *self, SIterator *itr, const SObject *object,
 									s_erc *error);
@@ -306,6 +316,7 @@ typedef struct
 	/**
 	 * @protected Push function pointer.
 	 * Push #SObject into end of list.
+	 *
 	 * @param self The list container.
 	 * @param object #SObject to push into end of list.
 	 * @param error Error code.
@@ -315,9 +326,12 @@ typedef struct
 	/**
 	 * @protected Pop function pointer.
 	 * Pop #SObject from end of SList.
+	 *
 	 * @param self The list container.
 	 * @param error Error code.
+	 *
 	 * @return #SObject popped from end of list.
+	 *
 	 * @note The #SObject is unlinked from the list and it's memory
 	 * is the responsibility of the caller.
 	 */
@@ -325,33 +339,39 @@ typedef struct
 
 	/**
 	 * @protected Reverse function pointer.
-	 * Reverse the order of the elements in the list.
+	 * Reverse the order of the elements in the list in place.
+	 *
 	 * @param self The list container to reverse.
 	 * @param error Error code.
-	 * @return Reversed list.
 	 */
-	SList         *(*reverse)      (SList *self, s_erc *error);
+	void           (*reverse)      (SList *self, s_erc *error);
 
 	/**
 	 * @protected Nth function pointer.
 	 * Return a pointer to the nth #SObject in the list.
+	 *
 	 * @param self The list container.
 	 * @param n Index of the #SObject.
-	 * @note Indexing starts at 0.
 	 * @param error Error code.
+	 *
 	 * @return #SObject at index @c n.
+	 *
+	 * @note Indexing starts at 0.
 	 */
 	const SObject *(*nth)          (SList *self, uint32 n, s_erc *error);
 
 	/**
 	 * @protected ValPresent function pointer.
 	 * Test if the given #SObject in the list.
+	 *
 	 * @param self The list container.
 	 * @param object The #SObject to test for.
 	 * @param error Error code.
+	 *
+	 * @return #TRUE or #FALSE.
+	 *
 	 * @note The #SObjectClass::compare function must be implemented for the given
 	 * object type (class).
-	 * @return #TRUE or #FALSE.
 	 */
 	s_bool         (*val_present)  (const SList *self, const SObject *object,
 									s_erc *error);
@@ -359,8 +379,10 @@ typedef struct
 	/**
 	 * @protected Iterator function pointer.
 	 * Get an iterator to the list container.
+	 *
 	 * @param self The list container.
 	 * @param error Error code.
+	 *
 	 * @return Iterator to the list container.
 	 */
 	SIterator     *(*iterator)     (const SList *self, s_erc *error);
@@ -369,21 +391,26 @@ typedef struct
 	/**
 	 * @protected Value function pointer.
 	 * Get the #SObject value associated with the given iterator.
+	 *
 	 * @param iterator Pointer to iterator to the list.
 	 * @param error Error code.
+	 *
 	 * @return Pointer to the #SObject value of the given iterator.
 	 */
 	const SObject *(*value)        (const SIterator *iterator, s_erc *error);
 
 	/**
 	 * @protected Unlink function pointer.
-	 * Unlink the #SObject value associated with the given iterator from
-	 * the container.
-	 * @note The iterator is still valid, but does not point to any @a current
-	 * data.
+	 * Unlink the #SObject value associated with the given iterator
+	 * from the container.
+	 *
 	 * @param iterator Pointer to iterator to the map.
 	 * @param error Error code.
+	 *
 	 * @return Pointer to the #SObject value of the given iterator.
+	 *
+	 * @note The iterator is still valid, but does not point to any @a
+	 * current data.
 	 */
 	SObject       *(*unlink)       (SIterator *iterator, s_erc *error);
 } SListClass;
@@ -404,8 +431,10 @@ typedef struct
 /**
  * Test to see if the given list is empty.
  * @public @memberof SList
+ *
  * @param self The list container.
  * @param error Error code.
+ *
  * @return #TRUE if empty else, #FALSE.
  */
 S_API s_bool SListIsEmpty(const SList *self, s_erc *error);
@@ -414,8 +443,10 @@ S_API s_bool SListIsEmpty(const SList *self, s_erc *error);
 /**
  * Return the number of #SObject in the list.
  * @public @memberof SList
+ *
  * @param self The list container.
  * @param error Error code.
+ *
  * @return The number of #SObject objects in the list.
  */
 S_API size_t SListSize(const SList *self, s_erc *error);
@@ -451,6 +482,7 @@ S_API s_bool SListValPresent(const SList *self, const SObject *object, s_erc *er
 /**
  * Append an #SObject to end of list.
  * @public @memberof SList
+ *
  * @param self The list container.
  * @param object #SObject to append to end of list.
  * @param error Error code.
@@ -461,6 +493,7 @@ S_API void SListAppend(SList *self, const SObject *object, s_erc *error);
 /**
  * Prepend #SObject to beginning of list.
  * @public @memberof SList
+ *
  * @param self The list container.
  * @param object #SObject to prepend to beginning of list.
  * @param error Error code.
@@ -521,6 +554,7 @@ S_API void SListInsertAfter(SList *self, SIterator *itr, const SObject *object,
  @endverbatim
  *
  * @public @memberof SList
+ *
  * @param self The list container that @c with is merged with.
  * @param with The list to merge with @c self.
  * @param error Error code.
@@ -557,6 +591,7 @@ S_API SList *SListCopy(SList *dst, const SList *src, s_erc *error);
 /**
  * Push #SObject into end of list.
  * @public @memberof SList
+ *
  * @param self The list container.
  * @param object #SObject to push into end of list.
  * @param error Error code.
@@ -567,23 +602,25 @@ S_API void SListPush(SList *self, const SObject *object, s_erc *error);
 /**
  * Pop #SObject from end of SList.
  * @public @memberof SList
+ *
  * @param self The list container.
  * @param error Error code.
  * @return #SObject popped from end of list.
- * @note The #SObject is unlinked from the list it's memory
+ *
+ * @note The #SObject is unlinked from the list and it's memory
  * is the responsibility of the caller.
  */
 S_API SObject *SListPop(SList *self, s_erc *error);
 
 
 /**
- * Reverse the order of the elements in the list.
+ * Reverse the order of the elements in the list in place.
  * @public @memberof SList
+ *
  * @param self The list container to reverse.
  * @param error Error code.
- * @return Reversed list.
  */
-S_API SList *SListReverse(SList *self, s_erc *error);
+S_API void SListReverse(SList *self, s_erc *error);
 
 
 /**

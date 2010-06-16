@@ -46,9 +46,19 @@
 /**
  * @ingroup SMap
  * @defgroup SMapHashTable HashTable
- * Hash table, map data container implementation.
+ * Hash table, map data container implementation. When a new
+ * SMapHashTable is created, @c S_NEW("SMapHashTable"), it's size is
+ * initialized to 128. Resizing the hash table (#SMapHashTableResize)
+ * @e before any objects are added is a comparatively cheap operation
+ * compared to growing the table.
+ *
  * @note The SMapHashTable's iterator (#SMapIterator) can @b only
- * iterate in a forward direction.
+ * iterate in a forward direction and does @b not implement
+ * <ul>
+ *  <li> #SIteratorClass::last (#SIteratorLast), and </li>
+ *  <li> #SIteratorClass::prev (#SIteratorPrev). </li>
+ * </ul>
+ *
  * @{
  */
 
@@ -133,23 +143,40 @@ typedef SMapClass SMapHashTableClass;
 /************************************************************************************/
 
 /**
- * Initialize a SMapHashTable data container.
+ * Resize a SMapHashTable's hash table.
+ * Resize the hash table to a specific size. When a new SMapHashTable
+ * is created with @c S_NEW("SMapHashTable"), the hash table's size is
+ * set to contain 128 elements. This function is useful if a rough
+ * estimate of the number of objects that will be contained
+ * in the map is known beforehand, as it can save some
+ * memory, and growing a table is an relatively expensive
+ * operation. Resizing a SMapHashTable @e before any objects are added
+ * is comparatively cheap.
+ *
+ *
+ * The hash table can be resized to any size as long as it can still
+ * contain all the existing objects in it. There are a few outcomes
+ * based on the given size and the elements contained in the hash table:
+ *
+ * <ul>
+ * <li> <tt> size = -1 </tt>, the hash table is resized to the
+ * minimum possible size (power of 2) that will still contain all
+ * elements.</li>
+ * <li> <tt> size = 0 </tt>, nothing is done and the function
+ * returns.</li>
+ * <li> <tt> size <= number_of_objects </tt>, nothing is done and
+ * the function returns.</li>
+ * <li> In all other cases the hash table is resized to closest power
+ * of 2 bigger than <tt>size</tt>.
+ </li></ul></p>
+ *
  * @public @memberof SMapHashTable
  *
- * @param self The SMapHashTable (as an #SMap) to initialize.
- * @param size Initial size of table. The initial size of the table must be
- * chosen with care as resizing a table is an expensive operation.
+ * @param self The SMapHashTable to resize.
+ * @param size The new size of table.
  * @param error Error code.
- *
- * @note The #SMapHashTable iterator does @b not implement
- * <ul>
- *  <li> #SIteratorClass::last (#SIteratorLast), and </li>
- *  <li> #SIteratorClass::prev (#SIteratorPrev). </li>
- * </ul>
- * @note If this function fails the hash table will be deleted and the @c
- * self pointer will be set to @c NULL.
  */
-S_API void SMapHashTableInit(SMap **self, size_t size, s_erc *error);
+S_API void SMapHashTableResize(SMapHashTable *self, sint32 size, s_erc *error);
 
 
 /**

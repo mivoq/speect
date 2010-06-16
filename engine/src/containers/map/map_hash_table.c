@@ -50,6 +50,16 @@
 
 /************************************************************************************/
 /*                                                                                  */
+/* Defines                                                                          */
+/*                                                                                  */
+/************************************************************************************/
+
+/* initial size of SMapHashTable when created with S_NEW */
+#define S_MAP_HASH_TABLE_INIT_SIZE 128
+
+
+/************************************************************************************/
+/*                                                                                  */
 /*  Static variables                                                                */
 /*                                                                                  */
 /************************************************************************************/
@@ -72,41 +82,35 @@ void s_hash_table_delete_kv_pair(void *key, void *data, s_erc *error);
 /*                                                                                  */
 /************************************************************************************/
 
-S_API void SMapHashTableInit(SMap **self, size_t size, s_erc *error)
+
+S_API void SMapHashTableResize(SMapHashTable *self, sint32 size, s_erc *error)
 {
-	SMapHashTable *mapHashTable;
-
-
 	S_CLR_ERR(error);
 
-	if (*self == NULL)
+	if (self == NULL)
 	{
 		S_CTX_ERR(error, S_ARGERROR,
-				  "SMapHashTableInit",
+				  "SMapHashTableResize",
 				  "Argument \"self\" is NULL");
 		return;
 	}
 
-	mapHashTable = S_CAST(*self, SMapHashTable, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "SMapHashTableInit",
-				  "Argument \"self\" is not of SMapHashTable type"))
+	if (size == -1)
 	{
-		S_DELETE(*self, "SMapHashTableInit", error);
-		*self = NULL;
+		s_hash_table_resize(self->table, -1, error);
+	}
+	else if (size > 0)
+	{
+		s_hash_table_resize(self->table,  ceil(s_log2(size)), error);
+	}
+	else
+	{
 		return;
 	}
 
-
-	mapHashTable->table = s_hash_table_new(s_hash_table_delete_kv_pair,
-										   ceil(s_log2(size)), error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "SMapHashTableInit",
-				  "Failed to create hash table for SMapHashTable"))
-	{
-		S_DELETE(*self, "SMapHashTableInit", error);
-		*self = NULL;
-	}
+	S_CHK_ERR(error, S_CONTERR,
+			  "SMapHashTableResize",
+			  "Call to \"s_hash_table_resize\" failed");
 }
 
 
@@ -162,7 +166,12 @@ static void InitMapHashTable(void *obj, s_erc *error)
 
 
 	S_CLR_ERR(error);
-	self->table = NULL;
+	self->table = s_hash_table_new(s_hash_table_delete_kv_pair,
+								   ceil(s_log2(S_MAP_HASH_TABLE_INIT_SIZE)),
+								   error);
+	S_CHK_ERR(error, S_CONTERR,
+			  "InitMapHashTable",
+			  "Failed to create 's_hash_table' for SMapHashTable");
 }
 
 
@@ -485,11 +494,14 @@ static SMap *MapHashTableCopy(SMap *dst, const SMap *src, s_erc *error)
 			return NULL;
 
 		dst = S_MAP(mapDst);
-		SMapHashTableInit(&dst, MapHashTableSize(src, error), error);
+		SMapHashTableResize(mapDst, MapHashTableSize(src, error), error);
 		if (S_CHK_ERR(error, S_FAILURE,
 					  "MapHashTableCopy",
-					  "Failed to initialize new hash table map"))
+					  "Failed to resize new hash table map"))
+		{
+			S_DELETE(mapDst, "MapHashTableCopy", error);
 			return NULL;
+		}
 	}
 
 	hte = s_hash_table_first(mapSrc->table, error);

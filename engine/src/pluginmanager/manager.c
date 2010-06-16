@@ -337,11 +337,12 @@ S_LOCAL void _s_pm_init(s_erc *error)
 	}
 
 	/* 128 plugins for now */
-	SMapHashTableInit(&pluginCache, SPCT_MAX_NUM_PLUGINS, error);
+	SMapHashTableResize(S_MAPHASHTABLE(pluginCache), SPCT_MAX_NUM_PLUGINS, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "_s_pm_init",
-				  "Failed to initialize SMapHashTable for plug-in cache"))
+				  "Failed to resize SMapHashTable for plug-in cache"))
 	{
+		S_DELETE(pluginCache, "_s_pm_init", error);
 		s_mutex_destroy(&pm_mutex);
 		initialized = FALSE;
 		return;

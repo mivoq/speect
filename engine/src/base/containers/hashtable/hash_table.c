@@ -224,7 +224,10 @@ S_API void s_hash_table_resize(s_hash_table **self, sint32 size,
 
 		len = ((ulong)1<<size);
 
-		(*self)->table = S_REALLOC((*self)->table, s_hash_element*, len);
+		/* there is supposed to be nothing in here */
+		S_FREE((*self)->table);
+
+		(*self)->table = S_MALLOC(s_hash_element*, len);
 		if ((*self)->table == NULL)
 		{
 			S_FTL_ERR(error, S_MEMERROR,

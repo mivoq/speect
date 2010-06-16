@@ -204,47 +204,48 @@ S_API void s_hash_table_delete(s_hash_table *self, s_erc *error)
 /*
  * Resize a hash table.
  */
-S_API void s_hash_table_resize(s_hash_table **self, sint32 size,
+S_API void s_hash_table_resize(s_hash_table *self, sint32 size,
 							   s_erc *error)
 {
 	S_CLR_ERR(error);
 
-	if (((*self) == NULL)
+	if ((self == NULL)
 		|| (size == 0)
 		|| (size < -1)
-		|| (size == ((sint32)(*self)->logsize)))
+		|| (size == ((sint32)self->logsize)))
 		return;
 
-	/* if there are no elements in the table we can do it quite fast */
-	if ((*self)->count == 0)
+	/* if there are no elements in the table we can do it quite fast,
+	 * this is almost the same as s_hash_table_new.
+	 */
+	if (self->count == 0)
 	{
 		ulong len;
 		ulong i;
+		s_hash_element **newtable;
 
 
 		len = ((ulong)1<<size);
 
-		/* there is supposed to be nothing in here */
-		S_FREE((*self)->table);
-
-		(*self)->table = S_MALLOC(s_hash_element*, len);
-		if ((*self)->table == NULL)
+		newtable = S_MALLOC(s_hash_element*, len);
+		if (newtable == NULL)
 		{
 			S_FTL_ERR(error, S_MEMERROR,
 					  "s_hash_table_resize",
 					  "Failed to reallocate memory for hash table elements");
-
-			S_FREE((*self));
 			return;
 		}
 
 		for (i = 0; i < len; i++)
-			(*self)->table[i] = NULL;
+			newtable[i] = NULL;
 
-		(*self)->logsize = size;
-		(*self)->mask = len-1;
-		(*self)->count = 0;
-		(*self)->apos = 0;
+		S_FREE(self->table);
+		self->table = newtable;
+
+		self->logsize = size;
+		self->mask = len-1;
+		self->count = 0;
+		self->apos = 0;
 
 		return;
 	}
@@ -255,21 +256,15 @@ S_API void s_hash_table_resize(s_hash_table **self, sint32 size,
 		 * Resize hash table to minimum size that can accommodate
 		 * elements already	in table.
 		 */
-		uint32 logsize = (uint32)ceil(s_log2((*self)->count));
+		uint32 logsize = (uint32)ceil(s_log2(self->count));
 
 
-		_s_hash_table_resize((*self), logsize, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "s_hash_table_resize",
-					  "Call to \"_s_hash_table_resize\" failed"))
-		{
-			s_erc local_err = S_SUCCESS;
-
-
-			s_hash_table_delete((*self), &local_err);
-		}
+		_s_hash_table_resize(self, logsize, error);
+		S_CHK_ERR(error, S_CONTERR,
+				  "s_hash_table_resize",
+				  "Call to \"_s_hash_table_resize\" failed");
 	}
-	else if ((1<<size) < ((sint32)((*self)->count)))
+	else if ((1<<size) < ((sint32)(self->count)))
 	{
 		/* don't do anything if new size cannot accommodate
 		 * elements already	in table.
@@ -278,16 +273,10 @@ S_API void s_hash_table_resize(s_hash_table **self, sint32 size,
 	}
 	else
 	{
-		_s_hash_table_resize((*self), (uint32)size, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "s_hash_table_resize",
-					  "Call to \"_s_hash_table_resize\" failed"))
-		{
-			s_erc local_err = S_SUCCESS;
-
-
-			s_hash_table_delete((*self), &local_err);
-		}
+		_s_hash_table_resize(self, (uint32)size, error);
+		S_CHK_ERR(error, S_CONTERR,
+				  "s_hash_table_resize",
+				  "Call to \"_s_hash_table_resize\" failed");
 	}
 }
 

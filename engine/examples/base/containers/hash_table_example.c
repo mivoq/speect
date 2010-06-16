@@ -198,7 +198,7 @@ int main()
 	}
 
 	/* resize hash table to 2^8 */
-	s_hash_table_resize(&ht_ptr, 8, &error);
+	s_hash_table_resize(ht_ptr, 8, &error);
 	if (S_CHK_ERR(&error, S_CONTERR,
 				  "main",
 				  "Call to \"s_hash_table_resize\" failed"))
@@ -218,7 +218,7 @@ int main()
 	}
 
 	/* resize hash table to minimum allowed size */
-	s_hash_table_resize(&ht_ptr, -1, &error);
+	s_hash_table_resize(ht_ptr, -1, &error);
 	if (S_CHK_ERR(&error, S_CONTERR,
 				  "main",
 				  "Call to \"s_hash_table_resize\" failed"))

@@ -256,12 +256,10 @@ S_API uint32 s_hash_table_size(s_hash_table *self, s_erc *error);
  * @param size Required size of the table (2 <sup>size</sup>).
  * @param error Error code.
  *
- * @note When an error occurs with the resizing the hash table is
- * deleted, @c error is set and @c self is set to @c NULL.
  * @note This function is relatively slow, as rehashing a table takes
  * time. However, if there are no elements in the list it is quite fast.
  */
-S_API void s_hash_table_resize(s_hash_table **self, sint32 size,
+S_API void s_hash_table_resize(s_hash_table *self, sint32 size,
 							   s_erc *error);
 
 

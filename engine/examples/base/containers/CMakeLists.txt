@@ -1,0 +1,1 @@
+speect_example(hash_table_example)

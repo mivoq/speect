@@ -81,7 +81,12 @@ S_BEGIN_C_DECLS
 /************************************************************************************/
 
 /**
- * The s_hash_table element free function typedef.
+ * @name Typedefs
+ * @{
+ */
+
+/**
+ * The s_hash_table element free function callback typedef.
  * A pointer to a function that frees the dynamically allocated
  * memory of a hash table element.
  *
@@ -109,6 +114,9 @@ typedef struct s_hash_element s_hash_element;
  */
 typedef struct s_hash_table s_hash_table;
 
+/**
+ * @}
+ */
 
 /************************************************************************************/
 /*                                                                                  */
@@ -127,7 +135,7 @@ typedef struct s_hash_table s_hash_table;
  * Creates a new hash table and initializes the size of the table to 2
  * <sup>size</sup>.
  *
- * @param free_func A memory free function. Used to free element data
+ * @param free_func A memory free callback function. Used to free element data
  * from the hash table.
  * @param size The initial size of the table will be 2 <sup>size</sup>.
  * @param error Error code.
@@ -209,7 +217,7 @@ S_API void s_hash_element_delete(s_hash_element *self, s_erc *error);
 
 
 /**
- * @name Size
+ * @name Size/Resize
  * @{
  */
 
@@ -223,6 +231,38 @@ S_API void s_hash_element_delete(s_hash_element *self, s_erc *error);
  * @return Returns the number of elements of the hash table.
  */
 S_API uint32 s_hash_table_size(s_hash_table *self, s_erc *error);
+
+
+/**
+ * Resize the hash table to a specific size. The hash table can be
+ * resized to any size as long as it can still contain all the
+ * existing elements in it.  There are a few outcomes based on the
+ * given size and the elements contained in the hash table:
+ *
+ * <ul>
+ * <li> <tt> size = -1 </tt>, the hash table is resized to the
+ * minimum possible size (power of 2) that will still contain all
+ * elements.</li>
+ * <li> <tt> size = 0 </tt>, nothing is done and the function
+ * returns.</li>
+ * <li> <tt> 2 <sup>size</sup> @b < number_of_elements </tt>, nothing is done and
+ * the function returns.</li>
+ * <li> <tt> 2 <sup>size</sup> = 2<sup>current_size</sup> </tt>, nothing is done and
+ * the function returns.</li>
+ * <li> In all other cases the hash table is resized to <tt> 2
+ * <sup>size</sup> </tt>. </li></ul></p>
+ *
+ * @param self The hash table.
+ * @param size Required size of the table (2 <sup>size</sup>).
+ * @param error Error code.
+ *
+ * @note When an error occurs with the resizing the hash table is
+ * deleted, @c error is set and @c self is set to @c NULL.
+ * @note This function is relatively slow, as rehashing a table takes
+ * time. However, if there are no elements in the list it is quite fast.
+ */
+S_API void s_hash_table_resize(s_hash_table **self, sint32 size,
+							   s_erc *error);
 
 
 /**
@@ -360,7 +400,10 @@ S_API void s_hash_element_set_data(s_hash_element *self, void *data, s_erc *erro
  * ( @a x is the average length of the list when you look for an
  * item that exists.  When the item does not exists, the average
  * length is (number of items)/(number of buckets).)
- * @note The caller is responsible for the memory of the returned buffer.
+ * @note The caller is responsible for the memory of the returned
+ * buffer.
+ *
+ * @example hash_table_example.c
  */
 S_API char *s_hash_table_stats(s_hash_table *self, s_erc *error);
 

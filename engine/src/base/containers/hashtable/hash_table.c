@@ -50,6 +50,7 @@
 #include "base/utils/alloc.h"
 #include "base/strings/sprint.h"
 #include "base/strings/strings.h"
+#include "base/utils/math.h"
 
 
 /************************************************************************************/
@@ -92,7 +93,7 @@ struct s_hash_element
 /*                                                                                  */
 /************************************************************************************/
 
-static void _s_hash_table_grow(s_hash_table *self, s_erc *error);
+static void _s_hash_table_resize(s_hash_table *self, uint32 size_hint, s_erc *error);
 
 static s_bool _s_hash_table_n_bucket(s_hash_table *self, s_erc *error);
 
@@ -201,6 +202,94 @@ S_API void s_hash_table_delete(s_hash_table *self, s_erc *error)
 
 
 /*
+ * Resize a hash table.
+ */
+S_API void s_hash_table_resize(s_hash_table **self, sint32 size,
+							   s_erc *error)
+{
+	S_CLR_ERR(error);
+
+	if (((*self) == NULL)
+		|| (size == 0)
+		|| (size < -1)
+		|| (size == ((sint32)(*self)->logsize)))
+		return;
+
+	/* if there are no elements in the table we can do it quite fast */
+	if ((*self)->count == 0)
+	{
+		ulong len;
+		ulong i;
+
+
+		len = ((ulong)1<<size);
+
+		(*self)->table = S_REALLOC((*self)->table, s_hash_element*, len);
+		if ((*self)->table == NULL)
+		{
+			S_FTL_ERR(error, S_MEMERROR,
+					  "s_hash_table_resize",
+					  "Failed to reallocate memory for hash table elements");
+
+			S_FREE((*self));
+			return;
+		}
+
+		for (i = 0; i < len; i++)
+			(*self)->table[i] = NULL;
+
+		(*self)->logsize = size;
+		(*self)->mask = len-1;
+		(*self)->count = 0;
+		(*self)->apos = 0;
+
+		return;
+	}
+
+	if (size == -1)
+	{
+		/*
+		 * Resize hash table to minimum size that can accommodate
+		 * elements already	in table.
+		 */
+		uint32 logsize = (uint32)ceil(s_log2((*self)->count));
+
+
+		_s_hash_table_resize((*self), logsize, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "s_hash_table_resize",
+					  "Call to \"_s_hash_table_resize\" failed"))
+		{
+			s_erc local_err = S_SUCCESS;
+
+
+			s_hash_table_delete((*self), &local_err);
+		}
+	}
+	else if ((1<<size) < ((sint32)((*self)->count)))
+	{
+		/* don't do anything if new size cannot accommodate
+		 * elements already	in table.
+		 */
+		return;
+	}
+	else
+	{
+		_s_hash_table_resize((*self), (uint32)size, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "s_hash_table_resize",
+					  "Call to \"_s_hash_table_resize\" failed"))
+		{
+			s_erc local_err = S_SUCCESS;
+
+
+			s_hash_table_delete((*self), &local_err);
+		}
+	}
+}
+
+
+/*
  * Add an hash element to a table.
  */
 S_API void s_hash_table_add(s_hash_table *self, void *key, size_t key_length,
@@ -250,8 +339,7 @@ S_API void s_hash_table_add(s_hash_table *self, void *key, size_t key_length,
 	/* make the hash table bigger if it is getting full */
 	if (++self->count > (uint32)1<<(self->logsize))
 	{
-		_s_hash_table_grow(self, error);
-
+		_s_hash_table_resize(self, 0, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "s_hash_table_add",
 					  "Failed to grow table while adding element"))
@@ -319,10 +407,14 @@ S_API void s_hash_element_delete(s_hash_element *self, s_erc *error)
 
 	S_CLR_ERR(error);
 
-	if ((self == NULL)
-		|| (self->table == NULL)
-		|| (self->table->free_func == NULL))
+	if (self == NULL)
 		return;
+
+	if (self->table == NULL)
+	{
+		S_FREE(self);
+		return;
+	}
 
 	/* set table position */
 	self->table->apos = (self->hval&(self->table->mask));
@@ -343,10 +435,13 @@ S_API void s_hash_element_delete(s_hash_element *self, s_erc *error)
 	/* decrement count */
 	--(self->table->count);
 
-	(self->table->free_func)(self->key, self->data, error);
-	S_CHK_ERR(error, S_CONTERR,
-			  "s_hash_element_delete",
-			  "Call to hash table free function failed");
+	if (self->table->free_func != NULL)
+	{
+		(self->table->free_func)(self->key, self->data, error);
+		S_CHK_ERR(error, S_CONTERR,
+				  "s_hash_element_delete",
+				  "Call to hash table free function failed");
+	}
 
 	S_FREE(self);
 }
@@ -630,13 +725,10 @@ S_API uint32 s_hash_table_size(s_hash_table *self, s_erc *error)
 /************************************************************************************/
 
 /*
- * private function, grow hash table, this is slow.
- * s_hash_table_grow - Double the size of a hash table.
- * Allocate a new, 2x bigger array,
- * move everything from the old array to the new array,
- * then free the old array.
+ * private function, grow/shrink hash table, this is slow.
+ * s_hash_table_shrink
  */
-static void _s_hash_table_grow(s_hash_table *self, s_erc *error)
+static void _s_hash_table_resize(s_hash_table *self, uint32 size_hint, s_erc *error)
 {
 	register uint32 newsize;
 	register uint32 newmask;
@@ -647,7 +739,11 @@ static void _s_hash_table_grow(s_hash_table *self, s_erc *error)
 
 	S_CLR_ERR(error);
 
-	newsize = (uint32)1<<(++self->logsize);
+	if (size_hint == 0)
+		newsize = (uint32)1<<(self->logsize + 1);
+	else
+		newsize = (uint32)1<<size_hint;
+
 	newmask = newsize-1;
 	oldtab = self->table;
 	newtab = S_MALLOC(s_hash_element *,newsize);
@@ -668,7 +764,7 @@ static void _s_hash_table_grow(s_hash_table *self, s_erc *error)
 	self->mask = newmask;
 
 	/* Walk through old table putting entries in new table */
-	for (i = newsize>>1; i--;)
+	for (i = 1<<(self->logsize); i--;)
 	{
 		register s_hash_element  *this_element;
 		register s_hash_element  *that;
@@ -683,6 +779,11 @@ static void _s_hash_table_grow(s_hash_table *self, s_erc *error)
 			*newplace = that;
 		}
 	}
+
+	if (size_hint == 0)
+		self->logsize++;
+	else
+		self->logsize = size_hint;
 
 	/* position the hash table on some existing item */
 	s_hash_table_first(self, error);

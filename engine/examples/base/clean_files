@@ -5,6 +5,14 @@ echo "\t\tin base"
 
 ########################################################################
 
+echo "\t\tcleaning containers"
+cd ./errdbg/
+./clean_files
+cd ..
+
+
+########################################################################
+
 echo "\t\tcleaning errdbg"
 cd ./errdbg/
 ./clean_files

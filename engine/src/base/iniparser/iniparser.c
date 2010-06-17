@@ -375,9 +375,9 @@ S_API const char *s_iniparser_get_string(const s_ini_parser *inip,
 }
 
 
-S_API int s_iniparser_getint(const s_ini_parser *inip,
-							 const char *key,
-							 int def)
+S_API int s_iniparser_get_int(const s_ini_parser *inip,
+							  const char *key,
+							  int def)
 {
     const char *str;
 
@@ -391,9 +391,9 @@ S_API int s_iniparser_getint(const s_ini_parser *inip,
 }
 
 
-S_API double s_iniparser_getdouble(const s_ini_parser *inip,
-								   const char *key,
-								   double def)
+S_API double s_iniparser_get_double(const s_ini_parser *inip,
+									const char *key,
+									double def)
 {
     const char *str;
 
@@ -407,9 +407,9 @@ S_API double s_iniparser_getdouble(const s_ini_parser *inip,
 }
 
 
-S_API s_bool s_iniparser_getboolean(const s_ini_parser *inip,
-									const char *key,
-									s_bool def)
+S_API s_bool s_iniparser_get_boolean(const s_ini_parser *inip,
+									 const char *key,
+									 s_bool def)
 {
     const char *c;
 	s_bool ret = FALSE;

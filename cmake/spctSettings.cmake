@@ -43,3 +43,34 @@ mark_as_advanced(SPCT_ERROR_LOG_FILE)
 
 set(SPCT_DEBUG_LOG_FILE "${CMAKE_BINARY_DIR}/spct_debug.log")
 mark_as_advanced(SPCT_DEBUG_LOG_FILE)
+
+
+#------------------------------------------------------------------------------------#
+#                             Speect object casting                                  #
+#------------------------------------------------------------------------------------#
+
+# SAFE_CAST is a CMake option in speect/cmake/spctOptions.cmake
+if(SAFE_CAST)
+  set(SPCT_DO_SAFE_CAST 1)
+else(SAFE_CAST)
+  unset(SPCT_DO_SAFE_CAST)
+endif(SAFE_CAST)
+
+#------------------------------------------------------------------------------------#
+#                             Speect Error handling                                  #
+#------------------------------------------------------------------------------------#
+
+# ERROR_ABORT_FATAL is a CMake option in speect/cmake/spctOptions.cmake
+if(ERROR_ABORT_FATAL)
+  set(SPCT_ERROR_ABORT_FATAL 1)
+else(ERROR_ABORT_FATAL)
+  unset(SPCT_ERROR_ABORT_FATAL)
+endif(ERROR_ABORT_FATAL)
+
+
+#  is a CMake option in speect/cmake/spctOptions.cmake
+if(ERROR_HANDLING)
+  set(SPCT_ERROR_HANDLING 1)
+else(ERROR_HANDLING)
+  unset(SPCT_ERROR_HANDLING)
+endif(ERROR_HANDLING)

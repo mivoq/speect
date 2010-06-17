@@ -61,11 +61,11 @@ option(WARN_DECL_AFTER_STMT "Warn about declarations after statements (GCC)." of
 # Abort on fatal errors (Default OFF)
 option(ERROR_ABORT_FATAL "Abort on fatal errors." off)
 
-# Include funtion names, file names and line numbers in error logs (Default ON)
-option(ERROR_VERBOSE "Include funtion names, file names and line numbers in error logs. " on)
-
 # Do safe cast of objects, slower than non-safe cast (Default ON)
 option(SAFE_CAST "Do safe cast of objects, slower than non-safe cast." on)
+
+# Use Speect's error handling facilities (Default ON)
+option(ERROR_HANDLING "Speect error handling facilities." on)
 
 
 #------------------------------------------------------------------------------------#

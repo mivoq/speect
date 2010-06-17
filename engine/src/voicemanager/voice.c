@@ -742,10 +742,10 @@ S_API void SVoiceLoadData(SVoice *self, s_erc *error)
 	/*
 	 * now iterate through data config and load everything
 	 */
-	itr = SMapIterator(self->data->dataConfig, error);
+	itr = S_ITERATOR_GET(self->data->dataConfig, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "SVoiceLoadData",
-				  "Call to \"SMapIterator\" failed"))
+				  "Call to \"S_ITERATOR_GET\" failed"))
 	{
 		S_DELETE(itr, "SVoiceLoadData", error);
 		S_FREE(voice_base_path);
@@ -757,10 +757,10 @@ S_API void SVoiceLoadData(SVoice *self, s_erc *error)
 		char *combined_path;
 
 
-		data_name = SMapIteratorKey(itr, error);
+		data_name = SIteratorKey(itr, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "SVoiceLoadData",
-					  "Call to \"SMapIteratorKey\" failed"))
+					  "Call to \"SIteratorKey\" failed"))
 		{
 			S_DELETE(itr, "SVoiceLoadData", error);
 			S_FREE(voice_base_path);
@@ -1639,10 +1639,10 @@ static void sync_data_config(SVoice *self, SMap *dataConfig, s_erc *error)
 		return;
 
 	/* iterate through given map */
-	itr = SMapIterator(dataConfig, error);
+	itr = S_ITERATOR_GET(dataConfig, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "sync_data_config",
-				  "Call to \"SMapIterator\" failed"))
+				  "Call to \"S_ITERATOR_GET\" failed"))
 	{
 		S_DELETE(newDataConfig, "sync_data_config", error);
 		return;
@@ -1650,7 +1650,7 @@ static void sync_data_config(SVoice *self, SMap *dataConfig, s_erc *error)
 
 	while (itr)
 	{
-		data_name = SMapIteratorKey(itr, error);
+		data_name = SIteratorKey(itr, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "sync_data_config",
 					  "Call to \"SIteratorKey\" failed"))
@@ -1770,10 +1770,10 @@ static void sync_data_config(SVoice *self, SMap *dataConfig, s_erc *error)
 	 * now iterate through current data config and delete everything
 	 * that is left over.
 	 */
-	itr = SMapIterator(self->data->dataConfig, error);
+	itr = S_ITERATOR_GET(self->data->dataConfig, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "sync_data_config",
-				  "Call to \"SMapIterator\" failed"))
+				  "Call to \"S_ITERATOR_GET\" failed"))
 	{
 		S_DELETE(newDataConfig, "sync_data_config", error);
 		return;
@@ -1784,7 +1784,7 @@ static void sync_data_config(SVoice *self, SMap *dataConfig, s_erc *error)
 		SObject *toUnload;
 
 
-		data_name = SMapIteratorKey(itr, error);
+		data_name = SIteratorKey(itr, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "sync_data_config",
 					  "Call to \"SIteratorKey\" failed"))
@@ -2174,18 +2174,18 @@ static void unload_voice_plugins(SList *plugins, s_erc *error)
 
 	S_CLR_ERR(error);
 
-	itr = SListIterator(plugins, error);
+	itr = S_ITERATOR_GET(plugins, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "unload_voice_plugins",
-				  "Call to \"SListIterator\" failed"))
+				  "Call to \"S_ITERATOR_GET\" failed"))
 		return;
 
 	while (itr != NULL)
 	{
-		plugin = SListIteratorUnlink(itr, error);
+		plugin = SIteratorUnlink(itr, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "unload_voice_plugins",
-					  "Call to \"SListIterator\" failed"))
+					  "Call to \"SIteratorUnlink\" failed"))
 		{
 			S_DELETE(itr, "unload_voice_plugins", error);
 			return;
@@ -2276,10 +2276,10 @@ static void DestroyVoice(void *obj, s_erc *error)
 		/*
 		 * now iterate through data config and delete everything
 		 */
-		itr = SMapIterator(self->data->dataConfig, error);
+		itr = S_ITERATOR_GET(self->data->dataConfig, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "DestroyVoice",
-					  "Call to \"SMapIterator\" failed"))
+					  "Call to \"S_ITERATOR_GET\" failed"))
 		{
 			S_DELETE(itr, "DestroyVoice", error);
 			S_DELETE(self->data->dataConfig, "DestroyVoice", error);
@@ -2295,10 +2295,10 @@ static void DestroyVoice(void *obj, s_erc *error)
 
 		while (itr)
 		{
-			data_name = SMapIteratorKey(itr, error);
+			data_name = SIteratorKey(itr, error);
 			if (S_CHK_ERR(error, S_CONTERR,
 						  "DestroyVoice",
-						  "Call to \"SMapIteratorKey\" failed"))
+						  "Call to \"SIteratorKey\" failed"))
 			{
 				S_DELETE(itr, "DestroyVoice", error);
 				S_DELETE(self->data->dataConfig, "DestroyVoice", error);
@@ -2402,10 +2402,10 @@ static SUtterance *SynthUtt(const SVoice *self, const char *utt_type,
 	}
 
 	/* run utterance processors on utterance */
-	itr = SListIterator(uttType, error);
+	itr = S_ITERATOR_GET(uttType, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "SynthUtt",
-				  "Call to \"SListIterator\" failed"))
+				  "Call to \"S_ITERATOR_GET\" failed"))
 	{
 		S_DELETE(utt, "SynthUtt", error);
 		return NULL;
@@ -2414,7 +2414,7 @@ static SUtterance *SynthUtt(const SVoice *self, const char *utt_type,
 	for (/* NOP */; itr != NULL; itr = SIteratorNext(itr))
 	{
 		/* get utterance processor name */
-		utt_processor_name = SObjectGetString(SListIteratorValue(itr, error), error);
+		utt_processor_name = SObjectGetString(SIteratorObject(itr, error), error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "SynthUtt",
 					  "Failed to get utterance processor name"))
@@ -2488,16 +2488,16 @@ static void ReSynthUtt(const SVoice *self, const char *utt_type,
 		return;
 
 	/* run utterance processors on utterance */
-	itr = SListIterator(uttType, error);
+	itr = S_ITERATOR_GET(uttType, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "ReSynthUtt",
-				  "Call to \"SListIterator\" failed"))
+				  "Call to \"S_ITERATOR_GET\" failed"))
 		return;
 
 	for (/* NOP */; itr != NULL; itr = SIteratorNext(itr))
 	{
 		/* get utterance processor name */
-		utt_processor_name = SObjectGetString(SListIteratorValue(itr, error), error);
+		utt_processor_name = SObjectGetString(SIteratorObject(itr, error), error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "ReSynthUtt",
 					  "Failed to get utterance processor name"))

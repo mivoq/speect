@@ -119,10 +119,10 @@ S_LOCAL void _s_load_voice_utterance_processors(const SMap *voiceConfig, SVoice 
 	 * utterance-processors and add their features (if any), and add
 	 * them to the uttProcessors map
 	 */
-	itr = SMapIterator(voiceConfigUttProcessors, error);
+	itr = S_ITERATOR_GET(voiceConfigUttProcessors, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "_s_load_voice_utterance_processors",
-				  "Call to \"SMapIterator\" failed"))
+				  "Call to \"S_ITERATOR_GET\" failed"))
 	{
 		S_DELETE(uttProcessors, "_s_load_voice_utterance_processors", error);
 		return;
@@ -147,10 +147,10 @@ S_LOCAL void _s_load_voice_utterance_processors(const SMap *voiceConfig, SVoice 
 	while (itr)
 	{
 		/* the utterance-processor name */
-		uttproc_name = SMapIteratorKey(itr, error);
+		uttproc_name = SIteratorKey(itr, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "_s_load_voice_utterance_processors",
-					  "Call to \"SMapIteratorKey\" failed"))
+					  "Call to \"SIteratorKey\" failed"))
 		{
 			S_DELETE(itr, "_s_load_voice_utterance_processors", error);
 			S_DELETE(uttProcessors, "_s_load_voice_utterance_processors", error);
@@ -159,10 +159,10 @@ S_LOCAL void _s_load_voice_utterance_processors(const SMap *voiceConfig, SVoice 
 		}
 
 		/* the utterance-processor info (SMap) */
-		tmp = SMapIteratorValue(itr, error);
+		tmp = SIteratorObject(itr, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "_s_load_voice_utterance_processors",
-					  "Call to \"SMapIteratorValue\" failed"))
+					  "Call to \"SIteratorObject\" failed"))
 		{
 			S_DELETE(itr, "_s_load_voice_utterance_processors", error);
 			S_DELETE(uttProcessors, "_s_load_voice_utterance_processors", error);

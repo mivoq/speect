@@ -102,10 +102,10 @@ S_LOCAL SList *_s_load_voice_plugins(const SMap *voiceConfig, s_erc *error)
 				  "Failed to create new list for loaded voice plug-ins"))
 		return NULL;
 
-	itr = SListIterator(pluginList, error);
+	itr = S_ITERATOR_GET(pluginList, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "_s_load_voice_plugins",
-				  "Call to \"SListIterator\" failed"))
+				  "Call to \"S_ITERATOR_GET\" failed"))
 	{
 		S_DELETE(pluginLoadedList, "_s_load_voice_plugins", error);
 		return NULL;
@@ -113,10 +113,10 @@ S_LOCAL SList *_s_load_voice_plugins(const SMap *voiceConfig, s_erc *error)
 
 	while (itr)
 	{
-		tmp = SListIteratorValue(itr, error);
+		tmp = SIteratorObject(itr, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "_s_load_voice_plugins",
-					  "Call to \"SListIteratorValue\" failed"))
+					  "Call to \"SIteratorObject\" failed"))
 		{
 			S_DELETE(itr, "_s_load_voice_plugins", error);
 			S_DELETE(pluginLoadedList, "_s_load_voice_plugins", error);

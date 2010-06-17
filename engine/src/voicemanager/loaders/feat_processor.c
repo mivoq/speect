@@ -118,10 +118,10 @@ S_LOCAL SMap *_s_load_voice_feature_processors(const SMap *voiceConfig,
 	 * feature-processors and add their features (if any), and add
 	 * them to the featProcessors map
 	 */
-	itr = SMapIterator(voiceConfigFeatProcessors, error);
+	itr = S_ITERATOR_GET(voiceConfigFeatProcessors, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "_s_load_voice_feature_processors",
-				  "Call to \"SMapIterator\" failed"))
+				  "Call to \"S_ITERATOR_GET\" failed"))
 	{
 		S_DELETE(featProcessors, "_s_load_voice_feature_processors", error);
 		return NULL;
@@ -146,10 +146,10 @@ S_LOCAL SMap *_s_load_voice_feature_processors(const SMap *voiceConfig,
 	while (itr)
 	{
 		/* the feature-processor name */
-		featproc_name = SMapIteratorKey(itr, error);
+		featproc_name = SIteratorKey(itr, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "_s_load_voice_feature_processors",
-					  "Call to \"SMapIteratorKey\" failed"))
+					  "Call to \"SIteratorKey\" failed"))
 		{
 			S_DELETE(itr, "_s_load_voice_feature_processors", error);
 			S_DELETE(featProcessors, "_s_load_voice_feature_processors", error);
@@ -158,10 +158,10 @@ S_LOCAL SMap *_s_load_voice_feature_processors(const SMap *voiceConfig,
 		}
 
 		/* the feature-processor info (SMap) */
-		tmp = SMapIteratorValue(itr, error);
+		tmp = SIteratorObject(itr, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "_s_load_voice_feature_processors",
-					  "Call to \"SMapIteratorValue\" failed"))
+					  "Call to \"SIteratorObject\" failed"))
 		{
 			S_DELETE(itr, "_s_load_voice_feature_processors", error);
 			S_DELETE(featProcessors, "_s_load_voice_feature_processors", error);

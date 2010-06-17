@@ -69,7 +69,7 @@ int main()
 	 * get iterator to list, should be NULL as there are no objects
 	 * in the list
 	 */
-	itr = SListIterator(list, &error);
+	itr = S_ITERATOR_GET(list, &error);
 	if (S_CHK_ERR(&error, S_CONTERR,
 				  "main",
 				  "Failed to get iterator to list"))
@@ -128,7 +128,7 @@ int main()
 	 * get iterator to list, should not be NULL as there are now
 	 * objects in the list
 	 */
-	itr = SListIterator(list, &error);
+	itr = S_ITERATOR_GET(list, &error);
 	if (S_CHK_ERR(&error, S_CONTERR,
 				  "main",
 				  "Failed to get iterator to list"))
@@ -141,7 +141,7 @@ int main()
 		const SObject *tmp;
 
 
-		tmp = SListIteratorValue(itr, &error);
+		tmp = SIteratorObject(itr, &error);
 		if (S_CHK_ERR(&error,  S_CONTERR,
 					  "main",
 					  "Failed to get list iterator object"))

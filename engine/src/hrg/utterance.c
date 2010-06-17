@@ -735,10 +735,10 @@ static void DestroyUtt(void *obj, s_erc *error)
 	S_DELETE(self->features, "DestroyUtt", error);
 
 	/* Relations don't delete their contents (no dispose) */
-	itr = SMapIterator(self->relations, error);
+	itr = S_ITERATOR_GET(self->relations, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "DestroyUtt",
-				  "Call to \"SMapIterator\" failed"))
+				  "Call to \"S_ITERATOR_GET\" failed"))
 	{
 		S_DELETE(self->relations, "DestroyUtt", error);
 		s_mutex_unlock(&(self->utt_mutex));
@@ -748,7 +748,7 @@ static void DestroyUtt(void *obj, s_erc *error)
 
 	while (itr)
 	{
-		rel = S_RELATION(SMapIteratorUnlink(itr, error));
+		rel = S_RELATION(SIteratorUnlink(itr, error));
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "DestroyUtt",
 					  "Call to \"SMapIteratorUnlink\" failed"))

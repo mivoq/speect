@@ -80,30 +80,6 @@ S_BEGIN_C_DECLS
 /************************************************************************************/
 
 /**
- * @def TRUE
- * Definition of the TRUE value. TRUE = 1.
- * @hideinitializer
- */
-#ifndef TRUE
-# define TRUE 1
-#elif TRUE != 1
-# error "TRUE != 1, Speect requires TRUE == 1"
-#endif
-
-
-/**
- * @def FALSE
- * Definition of the FALSE value. FALSE = 1.
- * @hideinitializer
- */
-#ifndef FALSE
-# define FALSE 0
-#elif FALSE != 0
-# error "FALSE != 0, Speect requires FALSE == 0"
-#endif
-
-
-/**
  * @typedef s_bool
  * Type definition of a boolean type.
  */

@@ -132,6 +132,39 @@
 #endif /* SPCT_WIN32 */
 
 
+/* make sure these are defined if building Speect */
+/**
+ * @def TRUE
+ * Definition of the TRUE value. TRUE = 1.
+ * @hideinitializer
+ */
+
+/**
+ * @def FALSE
+ * Definition of the FALSE value. FALSE = 0.
+ * @hideinitializer
+ */
+#ifdef SPCT_SRC /* defined by compiler when building Speect */
+#  undef TRUE
+#  undef FALSE
+#  define TRUE 1
+#  define FALSE 0
+#else /* ! SPCT_SRC */
+
+/* when only using Speect */
+#  ifndef TRUE
+#    define TRUE 1
+#  elif TRUE != 1
+#    error "TRUE != 1, Speect requires TRUE == 1"
+#  endif
+#  ifndef FALSE
+#    define FALSE 0
+#  elif FALSE != 0
+#    error "FALSE != 0, Speect requires FALSE == 0"
+#  endif
+#endif /* SPCT_SRC */
+
+
 /************************************************************************************/
 /*                                                                                  */
 /* Macros                                                                           */

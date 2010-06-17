@@ -136,7 +136,7 @@ S_BEGIN_C_DECLS
 /**
  * @hideinitializer
  * Get an iterator to the given #SContainer object. If
- * #SPCT_DO_SAFE_CAST is defined then the given object, will be safely
+ * @c SPCT_DO_SAFE_CAST is defined then the given object, will be safely
  * cast to #SContainer and, if successful, #SContainerGetIterator
  * called. Otherwise this is just a wrapper with an unsafe cast to
  * #SContainerGetIterator.

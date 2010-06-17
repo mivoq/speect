@@ -177,6 +177,13 @@
  *
  */
 
+
+/**
+ * @example errdbg_example.c
+ * Error and debugging examples.
+ */
+
+
 /************************************************************************************/
 /*                                                                                  */
 /* Modules used                                                                     */
@@ -208,7 +215,6 @@ S_BEGIN_C_DECLS
  * @def S_NEW_ERR
  * Set a new error with no context.
  * See @ref S_NEW_ERR_DETAIL "description".
- * @example errdbg_example.c
  */
 #define S_NEW_ERR(ERROR, ERROR_CODE)			\
 	do {						\

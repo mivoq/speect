@@ -50,6 +50,13 @@
  */
 
 
+/**
+ * @example create_utt_example.c
+ * An example of some of the <tt>Heterogeneous Relation Graphs</tt>
+ * classes and functions.
+ */
+
+
 /************************************************************************************/
 /*                                                                                  */
 /*  Include files in hrg                                                            */

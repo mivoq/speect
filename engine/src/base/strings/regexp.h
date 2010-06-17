@@ -149,7 +149,12 @@
  * </table>
  *
  * @{
+ */
+
+
+/**
  * @example regexp_example.c
+ * Regular expressions examples.
  */
 
 

@@ -55,6 +55,12 @@
  */
 
 
+/**
+ * @example hash_table_example.c
+ * A simple hash table example.
+ */
+
+
 /************************************************************************************/
 /*                                                                                  */
 /* Modules used                                                                     */
@@ -401,7 +407,6 @@ S_API void s_hash_element_set_data(s_hash_element *self, void *data, s_erc *erro
  * @note The caller is responsible for the memory of the returned
  * buffer.
  *
- * @example hash_table_example.c
  */
 S_API char *s_hash_table_stats(s_hash_table *self, s_erc *error);
 

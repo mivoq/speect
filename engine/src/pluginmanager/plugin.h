@@ -113,10 +113,10 @@ typedef const s_plugin_params *(*s_plugin_init_fp)(s_erc *error);
 /**
  * Plug-in register function. This is called after the plug-in is
  * initialized (#s_plugin_init_fp) and has passed the version
- * compatibility handshaking (#s_version_ok and
- * #s_lib_version_ok). Plug-ins register their classes here, and can
- * load any other required plug-ins, and/or do some initialization.
- *.
+ * compatibility handshaking (#s_version_ok and #s_lib_version_ok).
+ * Plug-ins register their classes here, and can load any other
+ * required plug-ins, and/or do some initialization.
+ *
  * @param error Error code.
  *
  * @note This function need not be re-entrant, and therefore not thread-safe.

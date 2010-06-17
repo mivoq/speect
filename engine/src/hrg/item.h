@@ -131,9 +131,7 @@
  * (string/object) set of features. An Item can have a list of daughter items as
  * well. Items can be shared between relations.
  * @{
- * @example create_utt_example.c
  */
-
 
 
 /************************************************************************************/

@@ -80,7 +80,12 @@
  * @defgroup SFileSource File Data Source
  * A file used as a data source.
  * @{
+ */
+
+
+/**
  * @example datasource_example.c
+ * An example of writing to a file using a data source.
  */
 
 

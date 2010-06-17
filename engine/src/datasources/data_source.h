@@ -82,7 +82,6 @@
  * Provides a generic interface to different data sources, where a data
  * source can be anything that can be read from and/or written to.
  * @{
- * @example datasource_example.c
  */
 
 

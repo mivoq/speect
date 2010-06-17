@@ -50,7 +50,12 @@
  * Defines macros for use in memory allocation and deallocation. These macros
  * wrap the standard @c malloc, @c calloc, @c realloc and @c free functions.
  * @{
+ */
+
+
+/**
  * @example mem_example.c
+ * Some memory handling examples.
  */
 
 

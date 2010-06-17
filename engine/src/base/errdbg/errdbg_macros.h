@@ -216,11 +216,15 @@ S_BEGIN_C_DECLS
  * Set a new error with no context.
  * See @ref S_NEW_ERR_DETAIL "description".
  */
-#define S_NEW_ERR(ERROR, ERROR_CODE)			\
-	do {						\
-		if ((ERROR) != NULL)			\
-			(*(ERROR)) = ERROR_CODE;	\
+#ifdef SPCT_ERROR_HANDLING
+#  define S_NEW_ERR(ERROR, ERROR_CODE)			\
+	do {										\
+		if ((ERROR) != NULL)					\
+			(*(ERROR)) = ERROR_CODE;			\
 	} while(0)
+#else /* ! SPCT_ERROR_HANDLING */
+# define S_NEW_ERR
+#endif /* SPCT_ERROR_HANDLING */
 
 
 /**
@@ -230,11 +234,15 @@ S_BEGIN_C_DECLS
  * Clear the given error.
  * See @ref S_CLR_ERR_DETAIL "description".
  */
-#define S_CLR_ERR(ERROR)			\
-	do {					\
+#ifdef SPCT_ERROR_HANDLING
+#  define S_CLR_ERR(ERROR)			\
+	do {							\
 		if ((ERROR) != NULL)		\
 			(*(ERROR)) = S_SUCCESS;	\
 	} while(0)
+#else /* ! SPCT_ERROR_HANDLING */
+# define S_CLR_ERR
+#endif /* SPCT_ERROR_HANDLING */
 
 
 /**
@@ -244,7 +252,11 @@ S_BEGIN_C_DECLS
  * Set a new error with a context.
  * See @ref S_CTX_ERR_DETAIL "description".
  */
-#define S_CTX_ERR (*_s_err(__FILE__, __LINE__))
+#ifdef SPCT_ERROR_HANDLING
+#  define S_CTX_ERR (*_s_err(__FILE__, __LINE__))
+#else /* ! SPCT_ERROR_HANDLING */
+#  define S_CTX_ERR 1 ? 0 : _s_err_dummy
+#endif /* SPCT_ERROR_HANDLING */
 
 
 /**
@@ -265,10 +277,14 @@ S_BEGIN_C_DECLS
  * @ingroup SErrDbgMacros
  * @hideinitializer
  * @def S_CHK_ERR
- * Check for an error.
+ * Check if an error has been set.
  * See @ref S_CHK_ERR_DETAIL "description".
  */
-#define S_CHK_ERR (*_s_check_err(__FILE__, __LINE__))
+#ifdef SPCT_ERROR_HANDLING
+#  define S_CHK_ERR (*_s_check_err(__FILE__, __LINE__))
+#else /* ! SPCT_ERROR_HANDLING */
+#  define S_CHK_ERR 1 ? 0 : _s_err_dummy
+#endif /* SPCT_ERROR_HANDLING */
 
 
 /**
@@ -279,7 +295,11 @@ S_BEGIN_C_DECLS
  * See @ref S_WARNING_DETAIL "description".
  * @todo add example
  */
-#define S_WARNING (*_s_warn(__FILE__, __LINE__))
+#ifdef SPCT_ERROR_HANDLING
+#  define S_WARNING (*_s_warn(__FILE__, __LINE__))
+#else /* ! SPCT_ERROR_HANDLING */
+#  define S_CHK_ERR 1 ? 0 : _s_warn_dummy
+#endif /* SPCT_ERROR_HANDLING */
 
 
 /**

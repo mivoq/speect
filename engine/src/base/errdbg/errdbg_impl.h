@@ -130,6 +130,32 @@ S_API void s_errdbg_level(s_dbg_lvl level, s_erc *error);
 /************************************************************************************/
 
 /**
+ * A dummy function, does nothing. Replaces #_s_err, #_s_fatal_err,
+ * and #_s_check_err when error handling is turned off.
+ * @private
+ *
+ * @note Even though it replaces above mentioned, it never gets called
+ * because the macros become <c> if (0 && _s_err_dummy) </c>
+ * which @e always evaluates to @c FALSE @e before calling @c _s_err_dummy
+ */
+S_API int _s_err_dummy(s_erc *error_code, s_erc this_error,
+					   const char *function_name, const char *fmt, ...);
+
+
+/**
+ * A dummy warning function, does nothing. Replaces #_s_warn when
+ * error handling is turned off.
+ * @private
+ *
+ * @note Even though it replaces above mentioned, it never gets called
+ * because the macros become <c> if (0 && _s_warn_dummy) </c>
+ * which @e always evaluates to @c FALSE @e before calling @c _s_warn_dummy
+ */
+S_API int _s_warn_dummy(s_erc this_error, const char *function_name,
+						const char *fmt, ...);
+
+
+/**
  * @private
  */
 S_API void (*_s_err(const char *file_name, int line))(s_erc *error_code,

@@ -28,7 +28,7 @@
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* An iterator for abstract data containers.                                        */
+/* An abstract iterator for data containers.                                        */
 /*                                                                                  */
 /*                                                                                  */
 /************************************************************************************/
@@ -58,88 +58,6 @@ static SIteratorClass IteratorClass; /* Iterator class declaration. */
 /* Function implementations                                                         */
 /*                                                                                  */
 /************************************************************************************/
-
-S_API SIterator *SIteratorFirst(SIterator *self)
-{
-	SIterator *firstI;
-	s_erc local_err;
-
-
-	S_CLR_ERR(&local_err);
-
-	if (self == NULL)
-	{
-		S_CTX_ERR(&local_err, S_ARGERROR,
-				  "SIteratorFirst",
-				  "Argument \"self\" is NULL");
-		return NULL;
-	}
-
-	if (!S_ITERATOR_METH_VALID(self, first))
-	{
-		S_CTX_ERR(&local_err, S_METHINVLD,
-				  "SIteratorFirst",
-				  "Iterator method \"first\" not implemented");
-		S_DELETE(self, "SIteratorFirst", &local_err);
-		return NULL;
-	}
-
-	firstI = S_ITERATOR_CALL(self, first)(self, &local_err);
-	if (S_CHK_ERR(&local_err, S_CONTERR,
-				  "SIteratorFirst",
-				  "Call to class method \"first\" failed"))
-	{
-		S_DELETE(self, "SIteratorFirst", &local_err);
-		return NULL;
-	}
-
-	if (firstI == NULL)
-		S_DELETE(self, "SIteratorFirst", &local_err);
-
-	return firstI;
-}
-
-
-S_API SIterator *SIteratorLast(SIterator *self)
-{
-	SIterator *lastI;
-	s_erc local_err;
-
-
-	S_CLR_ERR(&local_err);
-
-	if (self == NULL)
-	{
-		S_CTX_ERR(&local_err, S_ARGERROR,
-				  "SIteratorLast",
-				  "Argument \"self\" is NULL");
-		return NULL;
-	}
-
-	if (!S_ITERATOR_METH_VALID(self, last))
-	{
-		S_CTX_ERR(&local_err, S_METHINVLD,
-				  "SIteratorLast",
-				  "Iterator method \"last\" not implemented");
-		S_DELETE(self, "SIteratorLast", &local_err);
-		return NULL;
-	}
-
-	lastI = S_ITERATOR_CALL(self, last)(self, &local_err);
-	if (S_CHK_ERR(&local_err, S_CONTERR,
-				  "SIteratorLast",
-				  "Call to class method \"last\" failed"))
-	{
-		S_DELETE(self, "SIteratorLast", &local_err);
-		return NULL;
-	}
-
-	if (lastI == NULL)
-		S_DELETE(self, "SIteratorLast", &local_err);
-
-	return lastI;
-}
-
 
 S_API SIterator *SIteratorNext(SIterator *self)
 {
@@ -182,44 +100,102 @@ S_API SIterator *SIteratorNext(SIterator *self)
 }
 
 
-S_API SIterator *SIteratorPrev(SIterator *self)
+S_API const char *SIteratorKey(SIterator *self, s_erc *error)
 {
-	SIterator *prevI;
-	s_erc local_err;
+	const char *key;
 
 
-	S_CLR_ERR(&local_err);
+	S_CLR_ERR(error);
 
 	if (self == NULL)
 	{
-		S_CTX_ERR(&local_err, S_ARGERROR,
-				  "SIteratorPrev",
+		S_CTX_ERR(error, S_ARGERROR,
+				  "SIteratorKey",
 				  "Argument \"self\" is NULL");
 		return NULL;
 	}
 
-	if (!S_ITERATOR_METH_VALID(self, next))
+	if (!S_ITERATOR_METH_VALID(self, key))
 	{
-		S_CTX_ERR(&local_err, S_METHINVLD,
-				  "SIteratorPrev",
-				  "Iterator method \"prev\" not implemented");
-		S_DELETE(self, "SIteratorPrev", &local_err);
+		S_CTX_ERR(error, S_METHINVLD,
+				  "SIteratorKey",
+				  "Iterator method \"key\" not implemented");
 		return NULL;
 	}
 
-	prevI = S_ITERATOR_CALL(self, prev)(self, &local_err);
-	if (S_CHK_ERR(&local_err, S_CONTERR,
-				  "SIteratorPrev",
-				  "Call to class method \"prev\" failed"))
+	key = S_ITERATOR_CALL(self, key)(self, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "SIteratorKey",
+				  "Call to class method \"key\" failed"))
+		return NULL;
+
+	return key;
+}
+
+
+S_API const SObject *SIteratorObject(SIterator *self, s_erc *error)
+{
+	const SObject *obj;
+
+
+	S_CLR_ERR(error);
+
+	if (self == NULL)
 	{
-		S_DELETE(self, "SIteratorPrev", &local_err);
+		S_CTX_ERR(error, S_ARGERROR,
+				  "SIteratorObject",
+				  "Argument \"self\" is NULL");
 		return NULL;
 	}
 
-	if (prevI == NULL)
-		S_DELETE(self, "SIteratorPrev", &local_err);
+	if (!S_ITERATOR_METH_VALID(self, object))
+	{
+		S_CTX_ERR(error, S_METHINVLD,
+				  "SIteratorObject",
+				  "Iterator method \"object\" not implemented");
+		return NULL;
+	}
 
-	return prevI;
+	obj = S_ITERATOR_CALL(self, object)(self, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "SIteratorObject",
+				  "Call to class method \"object\" failed"))
+		return NULL;
+
+	return obj;
+}
+
+
+S_API SObject *SIteratorUnlink(SIterator *self, s_erc *error)
+{
+	SObject *obj;
+
+
+	S_CLR_ERR(error);
+
+	if (self == NULL)
+	{
+		S_CTX_ERR(error, S_ARGERROR,
+				  "SIteratorUnlink",
+				  "Argument \"self\" is NULL");
+		return NULL;
+	}
+
+	if (!S_ITERATOR_METH_VALID(self, unlink))
+	{
+		S_CTX_ERR(error, S_METHINVLD,
+				  "SIteratorUnlink",
+				  "Iterator method \"unlink\" not implemented");
+		return NULL;
+	}
+
+	obj = S_ITERATOR_CALL(self, unlink)(self, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "SIteratorUnlink",
+				  "Call to class method \"unlink\" failed"))
+		return NULL;
+
+	return obj;
 }
 
 
@@ -245,16 +221,6 @@ S_LOCAL void _s_iterator_class_add(s_erc *error)
 /*                                                                                  */
 /************************************************************************************/
 
-static void InitIterator(void *obj, s_erc *error)
-{
-	SIterator *self = obj;
-
-
-	S_CLR_ERR(error);
-	self->myContainer = NULL;
-}
-
-
 static void DisposeIterator(void *obj, s_erc *error)
 {
 	S_CLR_ERR(error);
@@ -275,7 +241,7 @@ static SIteratorClass IteratorClass =
 		"SIterator",
 		sizeof(SIterator),
 		{ 0, 1},
-		InitIterator,      /* init    */
+		NULL,              /* init    */
 		NULL,              /* destroy */
 		DisposeIterator,   /* dispose */
 		NULL,              /* compare */
@@ -283,9 +249,9 @@ static SIteratorClass IteratorClass =
 		NULL,              /* copy    */
 	},
 	/* SIteratorClass */
-	NULL,                  /* first   */
-	NULL,                  /* last    */
 	NULL,                  /* next    */
-	NULL                   /* prev    */
+	NULL,                  /* key     */
+	NULL,                  /* object  */
+	NULL                   /* unlink  */
 };
 

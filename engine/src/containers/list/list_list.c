@@ -306,8 +306,6 @@ static void ListListInsertBefore(SList *self, SIterator *itr,
 		SObjectDecRef(tmp);
 		return;
 	}
-
-	listItr->p_itr = inserted_element;
 }
 
 
@@ -356,7 +354,7 @@ static void ListListMerge(SList *self, const SList *with, s_erc *error)
 	SObject *tmp;
 
 
-	itr = SListIterator(with, error);
+	itr = SContainerGetIterator(S_CONTAINER(with), error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "ListListMerge",
 				  "Failed to get an iterator to \'with\' list container"))
@@ -368,10 +366,10 @@ static void ListListMerge(SList *self, const SList *with, s_erc *error)
 		 * get object of "with", cast away const as we
 		 * want to increase the ref count
 		 */
-		tmp = (SObject*)SListIteratorValue(itr, error);
+		tmp = (SObject*)SIteratorObject(itr, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "ListListMerge",
-					  "Call to \"SListIteratorValue\" for \'with\' list container failed"))
+					  "Call to \"SIteratorObject\" for \'with\' list container failed"))
 		{
 			S_DELETE(itr, "ListListMerge", error);
 			return;
@@ -601,82 +599,25 @@ static s_bool ListListValPresent(const SList *self, const SObject *val, s_erc *e
 }
 
 
-static SIterator *ListListIterator(const SList *self, s_erc *error)
+static SIterator *ListListIterator(const SContainer *self, s_erc *error)
 {
-	SListList *lList = (SListList*)self;
-	SIterator *itr;
+	SListListIterator *itr;
 
 
 	S_CLR_ERR(error);
 
-	itr = S_ITERATOR(S_NEW("SListListIterator", error));
+	itr = (SListListIterator*)S_NEW("SListListIterator", error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "ListListIterator",
 				  "Failed to create new iterator"))
 		return NULL;
 
-	SListListIteratorInit(&itr, lList, error);
+	SListListIteratorInit(&itr, S_LISTLIST(self), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "ListListIterator",
 			  "Failed to initialize iterator");
 
-	return itr;
-}
-
-
-static const SObject *ListListVal(const SIterator *iterator, s_erc *error)
-{
-	const SListListIterator *self;
-	const SObject *tmp;
-
-
-	S_CLR_ERR(error);
-
-	/* must cast this one to make sure */
-	self = S_CAST(iterator, SListListIterator, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "ListListVal",
-				  "Failed to cast SIterator to SListListIterator"))
-		return NULL;
-
-
-	tmp = s_list_element_get((s_list_element*)self->c_itr, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "ListListVal",
-				  "Call to s_list_element_get failed"))
-		return NULL;
-
-	return tmp;
-}
-
-
-static SObject *ListListUnlink(SIterator *iterator, s_erc *error)
-{
-	SListListIterator *self;
-	SObject *tmp;
-
-	S_CLR_ERR(error);
-
-	/* must cast this one */
-	self = S_CAST(iterator, SListListIterator, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "ListListUnlink",
-				  "Failed to cast SIterator to SListListIterator"))
-		return NULL;
-
-	if (self->c_itr == NULL)
-		return NULL;
-
-	tmp = s_list_element_unlink((s_list_element*)self->c_itr, error);
-	self->c_itr = NULL;
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "ListListVal",
-				  "Call to \"s_list_element_unlink\" failed"))
-		return NULL;
-
-	/* remove reference to this container */
-	SObjectDecRef(tmp);
-	return tmp;
+	return S_ITERATOR(itr);
 }
 
 
@@ -702,7 +643,7 @@ static SListListClass ListListClass =
 			NULL,                  /* copy    */
 		},
 		/* SContainerClass */
-		/* No methods */
+		ListListIterator,          /* get_iterator */
 	},
 	/* SListClass */
 	ListListIsEmpty,                /* is_empty      */
@@ -717,8 +658,5 @@ static SListListClass ListListClass =
 	ListListPop,                    /* pop           */
 	ListListReverse,                /* reverse       */
 	ListListNth,                    /* nth           */
-	ListListValPresent,             /* val_present   */
-	ListListIterator,               /* iterator      */
-	ListListVal,                    /* value         */
-	ListListUnlink                  /* unlink        */
+	ListListValPresent              /* val_present   */
 };

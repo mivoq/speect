@@ -538,124 +538,25 @@ static SMap *MapListCopy(SMap *dst, const SMap *src, s_erc *error)
 }
 
 
-static SIterator *MapListIterator(const SMap *self, s_erc *error)
+static SIterator *MapListIterator(const SContainer *self, s_erc *error)
 {
-	SMapList *mapList = (SMapList*)self;
-	SIterator *itr;
+	SMapListIterator *itr;
 
 
 	S_CLR_ERR(error);
 
-	itr = S_ITERATOR(S_NEW("SMapListIterator", error));
+	itr = (SMapListIterator*)S_NEW("SMapListIterator", error);
 	if (S_CHK_ERR(error, S_CONTERR,
 		      "MapListIterator",
 		      "Failed to create new iterator"))
 		return NULL;
 
-	SMapListIteratorInit(&itr, mapList, error);
+	SMapListIteratorInit(&itr, S_MAPLIST(self), error);
 	S_CHK_ERR(error, S_CONTERR,
 		      "MapHashTableIterator",
 		      "Failed to initialize iterator");
 
-	return itr;
-}
-
-
-static const char *MapListKey(const SIterator *iterator, s_erc *error)
-{
-	const SMapListIterator *self;
-	s_kvp *tmp;
-
-
-	S_CLR_ERR(error);
-
-	/* must cast this one */
-	self = S_CAST(iterator, SMapListIterator, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-		      "MapListKey",
-		      "Failed to cast SIterator to SMapListIterator"))
-		return NULL;
-
-
-	tmp = (s_kvp*)s_list_element_get((s_list_element*)self->c_itr, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-		      "MapListKey",
-		      "Call to s_list_element_get failed"))
-		return NULL;
-
-	if (tmp == NULL)
-		return NULL;
-
-	return tmp->key;
-}
-
-
-static const SObject *MapListVal(const SIterator *iterator, s_erc *error)
-{
-	const SMapListIterator *self;
-	s_kvp *tmp;
-
-
-	S_CLR_ERR(error);
-
-	/* must cast this one */
-	self = S_CAST(iterator, SMapListIterator, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-		      "MapListVal",
-		      "Failed to cast SIterator to SMapListIterator"))
-		return NULL;
-
-
-	tmp = (s_kvp*)s_list_element_get((s_list_element*)self->c_itr, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-		      "MapListVal",
-		      "Call to s_list_element_get failed"))
-		return NULL;
-
-	if (tmp == NULL)
-		return NULL;
-
-	return tmp->val;
-}
-
-
-static SObject *MapListUnlink(SIterator *iterator, s_erc *error)
-{
-	SMapListIterator *self;
-	s_kvp *tmp;
-	char *key;
-	SObject *val;
-
-	S_CLR_ERR(error);
-
-	/* must cast this one */
-	self = S_CAST(iterator, SMapListIterator, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-		      "MapListUnlink",
-		      "Failed to cast SIterator to SMapListIterator"))
-		return NULL;
-
-	if (self->c_itr == NULL)
-		return NULL;
-
-	tmp = s_list_element_unlink((s_list_element*)self->c_itr, error);
-	self->c_itr = NULL;
-
-	if (S_CHK_ERR(error, S_CONTERR,
-		      "MapListUnlink",
-		      "Call to s_list_element_unlink failed"))
-		return NULL;
-
-	val = (SObject*)tmp->val;
-
-	/* remove reference to this container */
-	SObjectDecRef(val);
-
-	key = (char*)tmp->key;
-	S_FREE(key);
-	S_FREE(tmp);
-
-	return val;
+	return S_ITERATOR(itr);
 }
 
 
@@ -681,7 +582,7 @@ static SMapListClass MapListClass =
 			NULL,           /* copy    */
 		},
 		/* SContainerClass */
-		/* No methods */
+		MapListIterator,    /* get_iterator */
 	},
 	/* SMapClass */
 	MapListValGet,            /* val_get      */
@@ -691,11 +592,7 @@ static SMapListClass MapListClass =
 	MapListValPresent,        /* val_present  */
 	MapListValKeys,           /* val_keys     */
 	MapListSize,              /* size         */
-	MapListCopy,              /* copy         */
-	MapListIterator,          /* iterator     */
-	MapListKey,               /* key          */
-	MapListVal,               /* value        */
-	MapListUnlink             /* unlink       */
+	MapListCopy               /* copy         */
 };
 
 

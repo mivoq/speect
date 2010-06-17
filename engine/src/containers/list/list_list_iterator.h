@@ -74,18 +74,16 @@ S_BEGIN_C_DECLS
  * SListListIterator definition.
  * @private
  *
- * The extra pointers (n_itr, p_itr) are required so that we can
- * unlink elements from the container while also still being able to
- * iterate over the container.
+ * The extra pointer, @c n_itr, is required so that we can unlink
+ * elements from the container while also still being able to iterate
+ * over the container.
  */
 typedef struct
 {
 	SIterator             obj;       /*!< Inherit from SIterator.               */
 	const s_list_element *c_itr;     /*!< Pointer to current list element.      */
 	const s_list_element *n_itr;     /*!< Pointer to next list element.         */
-	const s_list_element *p_itr;     /*!< Pointer to prev list element.         */
 } SListListIterator;
-
 
 
 /************************************************************************************/
@@ -98,14 +96,18 @@ typedef struct
  * Initialize an SListListIterator with the given SListList.
  * @private @memberof SIterator
  *
- * @param self The SListListIterator (as an #SIterator) to initialize.
- * @param list The list-list of the given iterator.
+ * @param self The #SListListIterator to initialize.
+ * @param list The #SListList of the given iterator.
  * @param error Error code.
  *
- * @note If this function fails the iterator will be deleted and the @c
- * self pointer will be set to @c NULL.
+ * @note The iterator will be deleted and @c self set to @c NULL if:
+ * <ul>
+ *  <li> this function fails, or
+ *  <li> the given list is empty.
+ * </ul>
  */
-S_LOCAL void SListListIteratorInit(SIterator **self, SListList *list, s_erc *error);
+S_LOCAL void SListListIteratorInit(SListListIterator **self,
+								   SListList *list, s_erc *error);
 
 
 /**

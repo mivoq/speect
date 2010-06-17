@@ -46,6 +46,22 @@
 
 /************************************************************************************/
 /*                                                                                  */
+/*  Data types (as defined in map_list.c)                                           */
+/*                                                                                  */
+/************************************************************************************/
+
+/**
+ * Definition of key-value pair.
+ */
+typedef struct s_kvp_s
+{
+	const char    *key;    /*!< key   */
+	const SObject *val;    /*!< value */
+} s_kvp;
+
+
+/************************************************************************************/
+/*                                                                                  */
 /* SMapListIteratorClass definition                                                 */
 /*                                                                                  */
 /************************************************************************************/
@@ -100,9 +116,9 @@ static SMapListIteratorClass MapListIteratorClass;
 /*                                                                                  */
 /************************************************************************************/
 
-S_LOCAL void SMapListIteratorInit(SIterator **self, SMapList *map, s_erc *error)
+S_LOCAL void SMapListIteratorInit(SMapListIterator **self, SMapList *map, s_erc *error)
 {
-	SMapListIterator *mapListItr;
+	size_t map_size;
 
 
 	S_CLR_ERR(error);
@@ -125,17 +141,36 @@ S_LOCAL void SMapListIteratorInit(SIterator **self, SMapList *map, s_erc *error)
 		return;
 	}
 
-	mapListItr = S_CAST(*self, SMapListIterator, error);
+	map_size = SMapSize(S_MAP(map), error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "SMapListIteratorInit",
-				  "Argument \"self\" is not of SMapListIterator type"))
-	{
-		S_DELETE(*self, "SMapListIteratorInit", error);
-		*self = NULL;
-		return;
-	}
+				  "Call to \"SMapSize\" failed"))
+		goto clean_up;
 
-	(*self)->myContainer = S_CONTAINER(map);
+	if (map_size == 0)
+		goto clean_up;
+
+	/* get first element of list and set as current element */
+	(*self)->c_itr = s_list_first(map->list, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "SMapListIteratorInit",
+				  "Failed to find first element of list"))
+		goto clean_up;
+
+	/* get next element of list */
+	(*self)->n_itr = s_list_element_next((s_list_element*)(*self)->c_itr, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "SMapListIteratorInit",
+				  "Failed to get next element of list"))
+		goto clean_up;
+
+	/* all OK */
+	return;
+
+	/* clean up code */
+clean_up:
+	S_DELETE(*self, "SMapListIteratorInit", error);
+	*self = NULL;
 }
 
 
@@ -169,7 +204,6 @@ static void InitMapListIterator(void *obj, s_erc *error)
 	S_CLR_ERR(error);
 	mapItr->c_itr = NULL;
 	mapItr->n_itr = NULL;
-	mapItr->p_itr = NULL;
 }
 
 
@@ -180,105 +214,15 @@ static void DisposeMapListIterator(void *obj, s_erc *error)
 }
 
 
-static SIterator *First(SIterator *self, s_erc *error)
-{
-	SMapListIterator *mapItr = S_MAPLIST_ITER(self);
-	s_bool list_is_empty;
-
-
-	S_CLR_ERR(error);
-	mapItr->c_itr = s_list_first(S_MAPLIST(self->myContainer)->list, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "First",
-				  "Failed to find first element of list"))
-		return self;
-
-	list_is_empty = s_list_isempty(S_MAPLIST(self->myContainer)->list, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "First",
-				  "Call to s_list_isempty failed"))
-		return self;
-
-	if (mapItr->c_itr == NULL)
-	{
-		if (list_is_empty == FALSE)
-		{
-			S_CTX_ERR(error, S_FAILURE,
-					  "First",
-					  "Failed to move to first element of list");
-			return self;
-		}
-		else
-		{
-			return NULL;
-		}
-	}
-
-	mapItr->p_itr = NULL;
-	mapItr->n_itr = s_list_element_next((s_list_element*)mapItr->c_itr, error);
-	S_CHK_ERR(error, S_CONTERR,
-			  "First",
-			  "Failed to move to next element of list");
-
-	return self;
-}
-
-
-static SIterator *Last(SIterator *self, s_erc *error)
-{
-	SMapListIterator *mapItr = S_MAPLIST_ITER(self);
-	s_bool list_is_empty;
-
-
-	S_CLR_ERR(error);
-	mapItr->c_itr = s_list_last(S_MAPLIST(self->myContainer)->list, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "Last",
-				  "Failed to find last element of list"))
-		return self;
-
-	list_is_empty = s_list_isempty(S_MAPLIST(self->myContainer)->list, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "Last",
-				  "Call to s_list_isempty failed"))
-		return self;
-
-	if (mapItr->c_itr == NULL)
-	{
-		if (list_is_empty == FALSE)
-		{
-			S_CTX_ERR(error, S_FAILURE,
-					  "Last",
-					  "Failed to move to last element of list");
-			return self;
-		}
-		else
-		{
-			return NULL;
-		}
-	}
-
-	mapItr->n_itr = NULL;
-	mapItr->p_itr = s_list_element_prev((s_list_element*)mapItr->c_itr, error);
-	S_CHK_ERR(error, S_CONTERR,
-			  "Last",
-			  "Failed to move to prev element of list");
-
-	return self;
-}
-
-
 static SIterator *Next(SIterator *self, s_erc *error)
 {
 	SMapListIterator *mapItr = S_MAPLIST_ITER(self);
 
 
 	S_CLR_ERR(error);
-
 	if (mapItr->n_itr == NULL)
 		return NULL;
 
-	mapItr->p_itr = mapItr->c_itr;
 	mapItr->c_itr = mapItr->n_itr;
 	mapItr->n_itr = s_list_element_next((s_list_element*)mapItr->n_itr, error);
 	S_CHK_ERR(error, S_CONTERR,
@@ -289,23 +233,102 @@ static SIterator *Next(SIterator *self, s_erc *error)
 }
 
 
-static SIterator *Prev(SIterator *self, s_erc *error)
+static const char *Key(SIterator *self, s_erc *error)
 {
-	SMapListIterator *mapItr = S_MAPLIST_ITER(self);
+	const SMapListIterator *mapItr;
+	const s_kvp *tmp;
 
 
 	S_CLR_ERR(error);
-	if (mapItr->p_itr == NULL)
+
+	/* must cast this one to make sure */
+	mapItr = S_CAST(self, SMapListIterator, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "Key",
+				  "Failed to cast SIterator to SMapListIterator"))
 		return NULL;
 
-	mapItr->n_itr = mapItr->c_itr;
-	mapItr->c_itr = mapItr->p_itr;
-	mapItr->p_itr = s_list_element_prev((s_list_element*)mapItr->p_itr, error);
-	S_CHK_ERR(error, S_CONTERR,
-			  "Prev",
-			  "Failed to move to prev element of list");
+	tmp = s_list_element_get((s_list_element*)mapItr->c_itr, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "Key",
+				  "Call to \"s_list_element_get\" failed"))
+		return NULL;
 
-	return self;
+	if (tmp == NULL)
+		return NULL;
+
+	return tmp->key;
+}
+
+
+static const SObject *Object(SIterator *self, s_erc *error)
+{
+	SMapListIterator *mapItr;
+	const s_kvp *tmp;
+
+
+	S_CLR_ERR(error);
+
+	/* must cast this one to make sure */
+	mapItr = S_CAST(self, SMapListIterator, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "Object",
+				  "Failed to cast SIterator to SMapListIterator"))
+		return NULL;
+
+	tmp = s_list_element_get((s_list_element*)mapItr->c_itr, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "Object",
+				  "Call to \"s_list_element_get\" failed"))
+		return NULL;
+
+	if (tmp == NULL)
+		return NULL;
+
+	return tmp->val;
+}
+
+
+static SObject *Unlink(SIterator *self, s_erc *error)
+{
+	SMapListIterator *mapItr;
+	SObject *obj;
+	s_kvp *tmp;
+	char *key;
+
+
+	S_CLR_ERR(error);
+
+	/* must cast this one to make sure */
+	mapItr = S_CAST(self, SMapListIterator, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "Unlink",
+				  "Failed to cast SIterator to SMapListIterator"))
+		return NULL;
+
+	if (mapItr->c_itr == NULL)
+		return NULL;
+
+	tmp = s_list_element_unlink((s_list_element*)mapItr->c_itr, error);
+	mapItr->c_itr = NULL;
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "Unlink",
+				  "Call to \"s_list_element_unlink\" failed"))
+		return NULL;
+
+	obj = S_OBJECT(tmp->val);
+
+	/* remove the object's reference to the container */
+	SObjectDecRef(obj);
+
+	/* free the key */
+	key = (char*)tmp->key;
+	S_FREE(key);
+
+	/* free key-value pair container */
+	S_FREE(tmp);
+
+	return obj;
 }
 
 
@@ -330,9 +353,8 @@ static SMapListIteratorClass MapListIteratorClass =
 		NULL,                     /* copy    */
 	},
 	/* SIteratorClass */
-	First,                        /* first   */
-	Last,                         /* last    */
 	Next,                         /* next    */
-	Prev                          /* prev    */
+	Key,                          /* key     */
+	Object,                       /* object  */
+	Unlink                        /* unlink  */
 };
-

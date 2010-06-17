@@ -72,6 +72,27 @@ S_BEGIN_C_DECLS
 
 /************************************************************************************/
 /*                                                                                  */
+/* Macros                                                                           */
+/*                                                                                  */
+/************************************************************************************/
+
+/**
+ * @hideinitializer
+ * Return the given parent/child class object of an #SMapList type as an
+ * SMapList object.
+ *
+ * @param SELF The given object.
+ *
+ * @return Given object as #SMapList* type.
+ *
+ * @note This casting is not safety checked.
+ */
+#define S_MAPLIST(SELF)    ((SMapList *)(SELF))
+
+
+
+/************************************************************************************/
+/*                                                                                  */
 /* SMapList definition                                                              */
 /*                                                                                  */
 /************************************************************************************/

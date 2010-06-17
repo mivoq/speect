@@ -73,6 +73,10 @@ S_BEGIN_C_DECLS
 /**
  * SMapHashTableIterator definition.
  * @private
+ *
+ * The extra pointer, @c n_itr, is required so that we can unlink
+ * elements from the container while also still being able to iterate
+ * over the container.
  */
 typedef struct
 {
@@ -92,14 +96,18 @@ typedef struct
  * Initialize an SMapHashTableIterator with the given SMapHashTable.
  * @private @memberof SIterator
  *
- * @param self The SMapHashTableIterator (as an #SIterator) to initialize.
+ * @param self The SMapHashTableIterator to initialize.
  * @param map The hash table map of the given iterator.
  * @param error Error code.
  *
- * @note If this function fails the iterator will be deleted and the @c
- * self pointer will be set to @c NULL.
+ * @note The iterator will be deleted and @c self set to @c NULL if:
+ * <ul>
+ *  <li> this function fails, or
+ *  <li> the given map is empty.
+ * </ul>
  */
-S_LOCAL void SMapHashTableIteratorInit(SIterator **self, SMapHashTable *map, s_erc *error);
+S_LOCAL void SMapHashTableIteratorInit(SMapHashTableIterator **self, SMapHashTable *map,
+									   s_erc *error);
 
 
 /**

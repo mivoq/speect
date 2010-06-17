@@ -44,13 +44,9 @@
 
 
 /**
- * @ingroup Speect
- * @defgroup SContainers Containers
- * Container abstract data type, stores a collections of other objects.
- * @todo explain concurrency
+ * @ingroup SContainer
  * @{
  */
-
 
 
 /************************************************************************************/

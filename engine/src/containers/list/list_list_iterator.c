@@ -65,16 +65,6 @@ typedef SIteratorClass SListListIteratorClass;
 
 /**
  * @hideinitializer
- * Return the given object as an #SListList object.
- * @param SELF The given object.
- * @return Given object as #SListList* type.
- * @note This casting is not safety checked.
- */
-#define S_LISTLIST(SELF)    ((SListList *)(SELF))
-
-
-/**
- * @hideinitializer
  * @private
  * Return the given object as an iterator object.
  * @param SELF The given object.
@@ -82,36 +72,6 @@ typedef SIteratorClass SListListIteratorClass;
  * @note This casting is not safety checked.
  */
 #define S_LISTLIST_ITER(SELF)    ((SListListIterator *)(SELF))
-
-
-/**
- * @hideinitializer
- * @private
- * Call the given function method of the given #SListListIterator,
- * see full description #S_LISTLIST_ITER_CALL for usage.
- * @param SELF The given #SListListIterator*.
- * @param FUNC The function method of the given object to call.
- * @note This casting is not safety checked.
- * @note Example usage: @code S_LISTLIST_ITER_CALL(self, func)(param1, param2, ..., paramN); @endcode
- * where @c param1, @c param2, ..., @c paramN are the parameters passed to the object function
- * @c func.
- */
-#define S_LISTLIST_ITER_CALL(SELF, FUNC)					\
-	((SListListIteratorClass *)S_OBJECT_CLS(SELF))->FUNC
-
-
-/**
- * @hideinitializer
- * @private
- * Test if the given function method of the given #SListListIterator
- * can be called.
- * @param SELF The given #SListListIterator*.
- * @param FUNC The function method of the given object to check.
- * @return #TRUE if function can be called, otherwise #FALSE.
- * @note This casting is not safety checked.
- */
-#define S_LISTLIST_ITER_METH_VALID(SELF, FUNC)		\
-	S_LISTLIST_ITER_CALL(SELF, FUNC) ? TRUE : FALSE
 
 
 /************************************************************************************/
@@ -129,9 +89,9 @@ static SListListIteratorClass ListListIteratorClass; /* ListListIterator class d
 /*                                                                                  */
 /************************************************************************************/
 
-S_LOCAL void SListListIteratorInit(SIterator **self, SListList *list, s_erc *error)
+S_LOCAL void SListListIteratorInit(SListListIterator **self, SListList *list, s_erc *error)
 {
-	SListListIterator *listListItr;
+	s_bool list_is_empty;
 
 
 	S_CLR_ERR(error);
@@ -149,22 +109,39 @@ S_LOCAL void SListListIteratorInit(SIterator **self, SListList *list, s_erc *err
 		S_CTX_ERR(error, S_ARGERROR,
 				  "SListListIteratorInit",
 				  "Argument \"list\" is NULL");
-		S_DELETE(*self, "SListListIteratorInit", error);
-		*self = NULL;
-		return;
+		goto clean_up;
 	}
 
-	listListItr = S_CAST(*self, SListListIterator, error);
+	list_is_empty = SListIsEmpty(S_LIST(list), error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "SListListIteratorInit",
-				  "Argument \"self\" is not of SListListIterator type"))
-	{
-		S_DELETE(*self, "SListListIteratorInit", error);
-		*self = NULL;
-		return;
-	}
+				  "Call to \"SListIsEmpty\" failed"))
+		goto clean_up;
 
-	(*self)->myContainer = S_CONTAINER(list);
+	if (list_is_empty)
+		goto clean_up;
+
+	/* get first element of list and set as current element */
+	(*self)->c_itr = s_list_first(list->list, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "SListListIteratorInit",
+				  "Failed to find first element of list"))
+		goto clean_up;
+
+	/* get next element of list */
+	(*self)->n_itr = s_list_element_next((s_list_element*)(*self)->c_itr, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "SListListIteratorInit",
+				  "Failed to get next element of list"))
+		goto clean_up;
+
+	/* all OK */
+	return;
+
+	/* clean up code */
+clean_up:
+	S_DELETE(*self, "SListListIteratorInit", error);
+	*self = NULL;
 }
 
 
@@ -197,7 +174,6 @@ static void InitListListIterator(void *obj, s_erc *error)
 	S_CLR_ERR(error);
 	listItr->c_itr = NULL;
 	listItr->n_itr = NULL;
-	listItr->p_itr = NULL;
 }
 
 
@@ -205,94 +181,6 @@ static void DisposeListListIterator(void *obj, s_erc *error)
 {
 	S_CLR_ERR(error);
 	SObjectDecRef(obj);
-}
-
-
-static SIterator *First(SIterator *self, s_erc *error)
-{
-	SListListIterator *listItr = S_LISTLIST_ITER(self);
-	s_bool list_is_empty;
-
-
-	S_CLR_ERR(error);
-	listItr->c_itr = s_list_first(S_LISTLIST(self->myContainer)->list, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "First",
-				  "Failed to find first element of list"))
-		return self;
-
-	list_is_empty = s_list_isempty(S_LISTLIST(self->myContainer)->list, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "First",
-				  "Call to \"s_list_isempty\" failed"))
-		return self;
-
-	if (listItr->c_itr == NULL)
-	{
-		if (list_is_empty == FALSE)
-		{
-			S_CTX_ERR(error, S_FAILURE,
-					  "First",
-					  "Failed to move to first element of list");
-			return self;
-		}
-		else
-		{
-			return NULL;
-		}
-	}
-
-	listItr->p_itr = NULL;
-	listItr->n_itr = s_list_element_next((s_list_element*)listItr->c_itr, error);
-	S_CHK_ERR(error, S_CONTERR,
-			  "First",
-			  "Failed to get next element of list");
-
-	return self;
-}
-
-
-static SIterator *Last(SIterator *self, s_erc *error)
-{
-	SListListIterator *listItr = S_LISTLIST_ITER(self);
-	s_bool list_is_empty;
-
-
-	S_CLR_ERR(error);
-	listItr->c_itr = s_list_last(S_LISTLIST(self->myContainer)->list, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "Last",
-				  "Failed to find last element of list"))
-		return self;
-
-	list_is_empty = s_list_isempty(S_LISTLIST(self->myContainer)->list, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "Last",
-				  "Call to s_list_isempty failed"))
-		return self;
-
-	if (listItr->c_itr == NULL)
-	{
-		if (list_is_empty == FALSE)
-		{
-			S_CTX_ERR(error, S_FAILURE,
-					  "Last",
-					  "Failed to move to last element of list");
-			return self;
-		}
-		else if (listItr->c_itr == NULL)
-		{
-			return NULL;
-		}
-	}
-
-	listItr->n_itr = NULL;
-	listItr->p_itr = s_list_element_prev((s_list_element*)listItr->c_itr, error);
-	S_CHK_ERR(error, S_CONTERR,
-			  "Last",
-			  "Failed to get previous element of list");
-
-	return self;
 }
 
 
@@ -305,7 +193,6 @@ static SIterator *Next(SIterator *self, s_erc *error)
 	if (listItr->n_itr == NULL)
 		return NULL;
 
-	listItr->p_itr = listItr->c_itr;
 	listItr->c_itr = listItr->n_itr;
 	listItr->n_itr = s_list_element_next((s_list_element*)listItr->n_itr, error);
 	S_CHK_ERR(error, S_CONTERR,
@@ -316,23 +203,60 @@ static SIterator *Next(SIterator *self, s_erc *error)
 }
 
 
-static SIterator *Prev(SIterator *self, s_erc *error)
+static const SObject *Object(SIterator *self, s_erc *error)
 {
-	SListListIterator *listItr = S_LISTLIST_ITER(self);
+	SListListIterator *listItr;
+	const SObject *tmp;
 
 
 	S_CLR_ERR(error);
-	if (listItr->p_itr == NULL)
+
+	/* must cast this one to make sure */
+	listItr = S_CAST(self, SListListIterator, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "Object",
+				  "Failed to cast SIterator to SListListIterator"))
 		return NULL;
 
-	listItr->n_itr = listItr->c_itr;
-	listItr->c_itr = listItr->p_itr;
-	listItr->p_itr = s_list_element_prev((s_list_element*)listItr->p_itr, error);
-	S_CHK_ERR(error, S_CONTERR,
-			  "Prev",
-			  "Failed to move to prev element of list");
+	tmp = s_list_element_get((s_list_element*)listItr->c_itr, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "Object",
+				  "Call to \"s_list_element_get\" failed"))
+		return NULL;
 
-	return self;
+	return tmp;
+}
+
+
+static SObject *Unlink(SIterator *self, s_erc *error)
+{
+	SListListIterator *listItr;
+	SObject *tmp;
+
+
+	S_CLR_ERR(error);
+
+	/* must cast this one to make sure */
+	listItr = S_CAST(self, SListListIterator, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "Unlink",
+				  "Failed to cast SIterator to SListListIterator"))
+		return NULL;
+
+	if (listItr->c_itr == NULL)
+		return NULL;
+
+	tmp = s_list_element_unlink((s_list_element*)listItr->c_itr, error);
+	listItr->c_itr = NULL;
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "Unlink",
+				  "Call to \"s_list_element_unlink\" failed"))
+		return NULL;
+
+	/* remove the object's reference to the container */
+	SObjectDecRef(tmp);
+
+	return tmp;
 }
 
 
@@ -357,9 +281,9 @@ static SListListIteratorClass ListListIteratorClass =
 		NULL,                     /* copy    */
 	},
 	/* SIteratorClass */
-	First,                        /* first   */
-	Last,                         /* last    */
 	Next,                         /* next    */
-	Prev                          /* prev    */
+	NULL,                         /* key     */
+	Object,                       /* object  */
+	Unlink                        /* unlink  */
 };
 

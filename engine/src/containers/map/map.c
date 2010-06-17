@@ -1014,149 +1014,6 @@ S_API SMap *SMapCopy(SMap *dst, const SMap *src, s_erc *error)
 }
 
 
-
-/**** iterator ****/
-
-S_API SIterator *SMapIterator(const SMap *self, s_erc *error)
-{
-	SIterator *itr;
-
-
-	S_CLR_ERR(error);
-
-	if (self == NULL)
-	{
-		S_CTX_ERR(error, S_ARGERROR,
-				  "SMapIterator",
-				  "Argument \"self\" is NULL");
-		return NULL;
-	}
-
-	if (!S_MAP_METH_VALID(self, iterator))
-	{
-		S_WARNING(S_METHINVLD,
-				  "SMapIterator",
-				  "Map method \"iterator\" not implemented");
-		return NULL;
-	}
-
-
-	S_LOCK_CONTAINER;
-	itr = S_MAP_CALL(self, iterator)(self, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "SMapIterator",
-				  "Call to class method \"iterator\" failed"))
-	{
-		S_UNLOCK_CONTAINER;
-		return NULL;
-	}
-
-	itr = SIteratorFirst(itr);
-	S_UNLOCK_CONTAINER;
-
-	return itr;
-}
-
-
-S_API const char *SMapIteratorKey(const SIterator *iterator, s_erc *error)
-{
-	const char *key;
-
-
-	S_CLR_ERR(error);
-
-	if (iterator == NULL)
-	{
-		S_CTX_ERR(error, S_ARGERROR,
-				  "SMapIteratorKey",
-				  "Argument \"iterator\" is NULL");
-		return NULL;
-	}
-
-	if (!S_MAP_METH_VALID(iterator->myContainer, key))
-	{
-		S_WARNING(S_METHINVLD,
-				  "SMapIteratorKey",
-				  "Map method \"key\" not implemented");
-		return NULL;
-	}
-
-	key = S_MAP_CALL(iterator->myContainer, key)(iterator, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "SMapIterator",
-				  "Call to class method \"key\" failed"))
-		return NULL;
-
-	return key;
-}
-
-
-S_API const SObject *SMapIteratorValue(const SIterator *iterator, s_erc *error)
-{
-	const SObject *tmp;
-
-
-	S_CLR_ERR(error);
-
-	if (iterator == NULL)
-	{
-		S_CTX_ERR(error, S_ARGERROR,
-				  "SMapIteratorValue",
-				  "Argument \"iterator\" is NULL");
-		return NULL;
-	}
-
-	if (!S_MAP_METH_VALID(iterator->myContainer, value))
-	{
-		S_WARNING(S_METHINVLD,
-				  "SMapIteratorValue",
-				  "Map method \"value\" not implemented");
-		return NULL;
-	}
-
-	tmp = S_MAP_CALL(iterator->myContainer, value)(iterator, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "SMapIteratorValue",
-				  "Call to class method \"value\" failed"))
-		return NULL;
-
-	return tmp;
-}
-
-
-S_API SObject *SMapIteratorUnlink(SIterator *iterator, s_erc *error)
-{
-	SObject *tmp;
-
-
-	S_CLR_ERR(error);
-
-	if (iterator == NULL)
-	{
-		S_CTX_ERR(error, S_ARGERROR,
-				  "SMapIteratorUnlink",
-				  "Argument \"iterator\" is NULL");
-		return NULL;
-	}
-
-	if (!S_MAP_METH_VALID(iterator->myContainer, unlink))
-	{
-		S_WARNING(S_METHINVLD,
-				  "SMapIteratorUnlink",
-				  "Map method \"unlink\" not implemented");
-		return NULL;
-	}
-
-	tmp = S_MAP_CALL(iterator->myContainer, unlink)(iterator, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "SMapIteratorUnlink",
-				  "Call to class method \"unlink\" failed"))
-		return NULL;
-
-	return tmp;
-}
-
-
 /************************************************************************************/
 /*                                                                                  */
 /* Class registration                                                               */
@@ -1208,7 +1065,7 @@ static SMapClass MapClass =
 			NULL,              /* copy    */
 		},
 		/* SContainerClass */
-		/* No methods */
+		NULL,                  /* get_iterator */
 	},
 	/* SMapClass */
 	NULL,                          /* val_get      */
@@ -1218,9 +1075,5 @@ static SMapClass MapClass =
 	NULL,                          /* val_present  */
 	NULL,                          /* val_keys     */
 	NULL,                          /* size         */
-	NULL,                          /* copy         */
-	NULL,                          /* iterator     */
-	NULL,                          /* key          */
-	NULL,                          /* value        */
-	NULL                           /* unlink       */
+	NULL                           /* copy         */
 };

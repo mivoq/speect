@@ -44,11 +44,10 @@
 
 
 /**
- * @ingroup SContainers
+ * @ingroup SContainer
  * @defgroup SIterator Iterator
- * An abstract iterator for data containers. Any child class of #SContainer can
- * also derived an iterator from #SIterator.
- * @example list_iteration_example.c
+ * An abstract iterator for data containers. Any child class of #SContainer should
+ * also derive an iterator from #SIterator.
  * @{
  */
 
@@ -63,7 +62,6 @@
 #include "base/utils/types.h"
 #include "base/objsystem/objsystem.h"
 #include "base/errdbg/errdbg.h"
-#include "containers/container.h"
 
 
 /************************************************************************************/
@@ -147,7 +145,7 @@ S_BEGIN_C_DECLS
 /**
  * @ingroup SIterator
  * The SIterator structure.
- * An iterator for container data types.
+ * An abstract iterator for container data types.
  * @extends SObject
  */
 typedef struct
@@ -156,11 +154,6 @@ typedef struct
 	 * @protected Inherit from #SObject.
 	 */
 	SObject     obj;
-
-	/**
-	 * @protected Container object of iterator instance.
-	 */
-	SContainer *myContainer;
 } SIterator;
 
 
@@ -184,42 +177,6 @@ typedef struct
 
 	/* Class methods */
 	/**
-	 * @protected First iterator function pointer.
-	 * Return an iterator to the first object of the container
-	 * associated with the given iterator.
-	 *
-	 * @param self The given iterator.
-	 * @param error Error code.
-	 *
-	 * @return Iterator to the first object of the container. If there
-	 * are no objects in the container, then @c NULL must be
-	 * returned so that #SIteratorFirst can delete the iterator.
-	 *
-	 * @note If an error occurs then @c error must be set so that
-	 * #SIteratorFirst can catch the error and delete the
-	 * iterator.
-	 */
-	SIterator  *(*first)    (SIterator *self, s_erc *error);
-
-	/**
-	 * @protected Last iterator function pointer.
-	 * Return an iterator to the last object of the container
-	 * associated with the given iterator.
-	 *
-	 * @param self The given iterator.
-	 * @param error Error code.
-	 *
-	 * @return Iterator to the last object of the container. If there
-	 * are no objects in the container, then @c NULL must be
-	 * returned so that #SIteratorLast can delete the iterator.
-	 *
-	 * @note If an error occurs then @c error must be set so that
-	 * #SIteratorLast can catch the error and delete the
-	 * iterator.
-	 */
-	SIterator  *(*last)     (SIterator *self, s_erc *error);
-
-	/**
 	 * @protected Next iterator function pointer.
 	 * Return an iterator to the next object of the container
 	 * associated with the given iterator.
@@ -235,24 +192,51 @@ typedef struct
 	 * #SIteratorNext can catch the error and delete the
 	 * iterator.
 	 */
-	SIterator  *(*next)     (SIterator *self, s_erc *error);
+	SIterator     *(*next)   (SIterator *self, s_erc *error);
 
 	/**
-	 * @protected Prev iterator function pointer.
-	 * Return an iterator to the previous object of the container
-	 * associated with the given iterator.
+	 * @protected Key iterator function pointer.
+	 * Return the key that is pointed to by the iterator.
+	 * This is only useful for mapping type containers and does not
+	 * need to be implemented by other types of containers.
 	 *
 	 * @param self The given iterator.
 	 * @param error Error code.
-	 * @return Iterator to the previous object of the container. If
-	 * there are no more objects in the container, then @c NULL must
-	 * be returned so that #SIteratorPrev can delete the iterator.
 	 *
-	 * @note If an error occurs then @c error must be set so that
-	 * #SIteratorPrev can catch the error and delete the
-	 * iterator.
+	 * @return The key pointed to by the iterator.
 	 */
-	SIterator  *(*prev)     (SIterator *self, s_erc *error);
+	const char    *(*key)    (SIterator *self, s_erc *error);
+
+	/**
+	 * @protected Object iterator function pointer.
+	 * Return the object that is pointed to by the iterator.
+	 *
+	 * @param self The given iterator.
+	 * @param error Error code.
+	 *
+	 * @return The object pointed to by the iterator. This object can
+	 * be anything and depends on the specific container iterator
+	 * implementation.
+	 */
+	const SObject *(*object) (SIterator *self, s_erc *error);
+
+	/**
+	 * @protected Unlink function pointer.
+	 * Unlink the object from the container, and return it.
+	 *
+	 * @param self The given iterator.
+	 * @param error Error code.
+	 *
+	 * @return The unlinked object pointed to by the iterator. This
+	 * object can be anything and depends on the specific container
+	 * iterator implementation.
+	 *
+	 * @note The iterator is still valid, but does not point to
+	 * any @a objects in the container.
+	 * @note The caller is responsible for the memory of the returned
+	 * object.
+	 */
+	SObject       *(*unlink) (SIterator *iterator, s_erc *error);
 } SIteratorClass;
 
 
@@ -261,29 +245,6 @@ typedef struct
 /* Function prototypes                                                              */
 /*                                                                                  */
 /************************************************************************************/
-
-
-/**
- * @name Forward Iteration
- * @{
- */
-
-
-/**
- * Return an iterator to the first object of the container associated
- * with the given iterator.
- * @public @memberof SIterator
- *
- * @param self The given iterator.
- *
- * @return Iterator to the first object of the container. If there are
- * no objects in the container, the iterator will be deleted and
- * @c NULL will be returned.
- *
- * @note If an error occurred, then the iterator @c self will be
- * deleted, the error will be logged and @c NULL will be returned.
- */
-S_API SIterator *SIteratorFirst(SIterator *self);
 
 
 /**
@@ -304,53 +265,48 @@ S_API SIterator *SIteratorNext(SIterator *self);
 
 
 /**
- * @}
+ * Return the key that is pointed to by the iterator.
+ * This is only useful for mapping type containers (e.g. @ref SMap)
+ * and will return @c NULL for any other type of container.
+ *
+ * @param self The given iterator.
+ * @param error Error code.
+ *
+ * @return The key pointed to by the iterator.
  */
+const char *SIteratorKey(SIterator *self, s_erc *error);
 
 
 /**
- * @name Reverse Iteration
- * @{
- */
-
-
-/**
- * Return an iterator to the last object of the container associated
- * with the given iterator.
+ * Return the object that is pointed to by the iterator.
  * @public @memberof SIterator
  *
  * @param self The given iterator.
+ * @param error Error code.
  *
- * @return Iterator to the last object of the container. If there are
- * no objects in the container, the iterator will be deleted and
- * @c NULL will be returned.
- *
- * @note If an error occurred, then the iterator @c self will be
- * deleted, the error will be logged and @c NULL will be returned.
+ * @return The object pointed to by the iterator. This object can be
+ * anything and depends on the specific container iterator
+ * implementation.
  */
-S_API SIterator *SIteratorLast(SIterator *self);
+S_API const SObject *SIteratorObject(SIterator *self, s_erc *error);
 
 
 /**
- * Return an iterator to the previous object of the container
- * associated with the given iterator.
- * @public @memberof SIterator
+ * Unlink the object from the container, and return it.
  *
  * @param self The given iterator.
+ * @param error Error code.
  *
- * @return Iterator to the previous object of the container. If there
- * are no more objects in the container, the iterator will be deleted
- * and @c NULL will be returned.
+ * @return The unlinked object pointed to by the iterator. This
+ * object can be anything and depends on the specific container
+ * iterator implementation.
  *
- * @note If an error occurred, then the iterator @c self will be
- * deleted, the error will be logged and @c NULL will be returned.
+ * @note The iterator is still valid, but does not point to
+ * any objects in the container.
+ * @note The caller is responsible for the memory of the returned
+ * object.
  */
-S_API SIterator *SIteratorPrev(SIterator *self);
-
-
-/**
- * @}
- */
+S_API SObject *SIteratorUnlink(SIterator *self, s_erc *error);
 
 
 /**

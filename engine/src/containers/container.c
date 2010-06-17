@@ -55,6 +55,69 @@ static SContainerClass ContainerClass; /* Container class declaration. */
 
 /************************************************************************************/
 /*                                                                                  */
+/* Function implementations                                                         */
+/*                                                                                  */
+/************************************************************************************/
+
+S_API SIterator *SContainerGetIterator(const SContainer *self, s_erc *error)
+{
+	SIterator *itr;
+
+
+	S_CLR_ERR(error);
+	if (self == NULL)
+	{
+		S_CTX_ERR(error, S_ARGERROR,
+				  "SContainerGetIterator",
+				  "Argument \"self\" is NULL");
+		return NULL;
+	}
+
+	if (!S_CONTAINER_METH_VALID(self, get_iterator))
+	{
+		S_CTX_ERR(error, S_METHINVLD,
+				  "SContainerGetIterator",
+				  "Container method \"get_iterator\" not implemented");
+		return NULL;
+	}
+
+	S_LOCK_CONTAINER;
+	itr = S_CONTAINER_CALL(self, get_iterator)(self, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "SContainerGetIterator",
+				  "Call to class method \"get_iterator\" failed"))
+	{
+		S_UNLOCK_CONTAINER;
+		return NULL;
+	}
+
+	S_UNLOCK_CONTAINER;
+
+	return itr;
+}
+
+
+/* private */
+/* helper function, see S_ITERATOR_GET macro in container.h */
+S_API SIterator *_s_container_get_iterator_check(const void *self, s_erc *error)
+{
+	const SContainer *tmp;
+
+
+	S_CLR_ERR(error);
+
+	tmp = S_CAST(S_OBJECT(self), SContainer, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "_s_container_get_iterator_check",
+				  "Failed to cast given object to 'SContainer'"))
+		return NULL;
+
+	return SContainerGetIterator(S_CONTAINER(self), error);
+}
+
+
+/************************************************************************************/
+/*                                                                                  */
 /* Class registration                                                               */
 /*                                                                                  */
 /************************************************************************************/
@@ -131,9 +194,8 @@ static SContainerClass ContainerClass =
 		NULL,              /* compare */
 		NULL,              /* print   */
 		NULL,              /* copy    */
-	}
+	},
 	/* SContainerClass */
-
-	/* No class methods, child classes supply methods. */
+	NULL                   /* get_iterator */
 };
 

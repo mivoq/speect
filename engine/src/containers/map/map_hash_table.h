@@ -52,13 +52,6 @@
  * @e before any objects are added is a comparatively cheap operation
  * compared to growing the table.
  *
- * @note The SMapHashTable's iterator (#SMapIterator) can @b only
- * iterate in a forward direction and does @b not implement
- * <ul>
- *  <li> #SIteratorClass::last (#SIteratorLast), and </li>
- *  <li> #SIteratorClass::prev (#SIteratorPrev). </li>
- * </ul>
- *
  * @{
  */
 
@@ -90,9 +83,13 @@ S_BEGIN_C_DECLS
 
 /**
  * @hideinitializer
- * Return the given parent/child class object of an #SMapHashTable type as an SListList object.
+ * Return the given parent/child class object of an #SMapHashTable
+ * type as an SMapHashTable object.
+ *
  * @param SELF The given object.
+ *
  * @return Given object as #SMapHashTable* type.
+ *
  * @note This casting is not safety checked.
  */
 #define S_MAPHASHTABLE(SELF)    ((SMapHashTable *)(SELF))
@@ -130,8 +127,8 @@ typedef struct
 /************************************************************************************/
 
 /**
- * Typedef for key-value hash table map container class struct. Same as #SMapClass as
- * we are not adding any new methods.
+ * Typedef for key-value hash table map container class struct. Same
+ * as #SMapClass as we are not adding any new methods.
  */
 typedef SMapClass SMapHashTableClass;
 

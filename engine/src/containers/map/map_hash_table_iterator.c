@@ -100,10 +100,10 @@ static SMapHashTableIteratorClass MapHashTableIteratorClass;
 /*                                                                                  */
 /************************************************************************************/
 
-S_LOCAL void SMapHashTableIteratorInit(SIterator **self, SMapHashTable *map,
+S_LOCAL void SMapHashTableIteratorInit(SMapHashTableIterator **self, SMapHashTable *map,
 									   s_erc *error)
 {
-	SMapHashTableIterator *mapHashTableItr;
+	size_t map_size;
 
 
 	S_CLR_ERR(error);
@@ -126,17 +126,36 @@ S_LOCAL void SMapHashTableIteratorInit(SIterator **self, SMapHashTable *map,
 		return;
 	}
 
-	mapHashTableItr = S_CAST(*self, SMapHashTableIterator, error);
+	map_size = SMapSize(S_MAP(map), error);
 	if (S_CHK_ERR(error, S_CONTERR,
-				  "SMapHashTableInit",
-				  "Argument \"self\" is not of SMapHashTableIterator type"))
-	{
-		S_DELETE(*self, "SMapHashTableIteratorInit", error);
-		*self = NULL;
-		return;
-	}
+				  "SMapHashTableIteratorInit",
+				  "Call to \"SMapSize\" failed"))
+		goto clean_up;
 
-	(*self)->myContainer = S_CONTAINER(map);
+	if (map_size == 0)
+		goto clean_up;
+
+	/* get first element of hash table and set as current element */
+	(*self)->c_itr = s_hash_table_first(map->table, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "SMapHashTableIteratorInit",
+				  "Failed to find first element of hash table"))
+		goto clean_up;
+
+	/* get next element of hash table */
+	(*self)->n_itr = s_hash_element_next((s_hash_element*)(*self)->c_itr, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "SMapHashTableIteratorInit",
+				  "Failed to find next element of hash table"))
+		goto clean_up;
+
+	/* all OK */
+	return;
+
+	/* clean up code */
+clean_up:
+	S_DELETE(*self, "SMapListIteratorInit", error);
+	*self = NULL;
 }
 
 
@@ -180,52 +199,6 @@ static void DisposeMapHashTableIterator(void *obj, s_erc *error)
 }
 
 
-static SIterator *First(SIterator *self, s_erc *error)
-{
-	SMapHashTableIterator *mapItr = S_MAPHASHTABLE_ITER(self);
-	s_hash_element *hte;
-	uint32 table_size;
-
-
-	S_CLR_ERR(error);
-
-	hte = s_hash_table_first(S_MAPHASHTABLE(self->myContainer)->table, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "First",
-				  "Failed to find first element of hash table"))
-		return self;
-
-	table_size = s_hash_table_size(S_MAPHASHTABLE(self->myContainer)->table, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "First",
-				  "Failed to get hash table size"))
-		return self;
-
-	if (hte == NULL)
-	{
-		if (table_size != 0)
-		{
-			S_CTX_ERR(error, S_FAILURE,
-					  "First",
-					  "Failed to move to first element of hash table");
-			return self;
-		}
-		else
-		{
-			return NULL;
-		}
-	}
-
-	mapItr->c_itr = hte;
-	mapItr->n_itr = s_hash_element_next((s_hash_element*)mapItr->c_itr, error);
-	S_CHK_ERR(error, S_CONTERR,
-		      "First",
-		      "Failed to find next element of hash table");
-
-	return self;
-}
-
-
 static SIterator *Next(SIterator *self, s_erc *error)
 {
 	SMapHashTableIterator *mapItr = S_MAPHASHTABLE_ITER(self);
@@ -242,6 +215,112 @@ static SIterator *Next(SIterator *self, s_erc *error)
 		      "Failed to find next element of hash table");
 
 	return self;
+}
+
+
+static const char *Key(SIterator *self, s_erc *error)
+{
+	const SMapHashTableIterator *mapItr;
+	const char *key;
+
+
+	S_CLR_ERR(error);
+
+	/* must cast this one to make sure */
+	mapItr = S_CAST(self, SMapHashTableIterator, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "Key",
+				  "Failed to cast SIterator to SMapHashTableIterator"))
+		return NULL;
+
+	key = (const char *)s_hash_element_key((s_hash_element*)mapItr->c_itr, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "Key",
+				  "Failed to get key from hash table element"))
+		return NULL;
+
+	return key;
+}
+
+
+static const SObject *Object(SIterator *self, s_erc *error)
+{
+	SMapHashTableIterator *mapItr;
+	const SObject *obj;
+
+
+	S_CLR_ERR(error);
+
+	/* must cast this one to make sure */
+	mapItr = S_CAST(self, SMapHashTableIterator, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "Object",
+				  "Failed to cast SIterator to SMapHashTableIterator"))
+		return NULL;
+
+	obj = (const SObject*)s_hash_element_get_data((s_hash_element*)mapItr->c_itr, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "Object",
+				  "Failed to get value from hash table element"))
+		return NULL;
+
+	return obj;
+}
+
+
+static SObject *Unlink(SIterator *self, s_erc *error)
+{
+	SMapHashTableIterator *mapItr;
+	s_hash_element *hte;
+	char *key;
+	SObject *val;
+	s_erc local_err = S_SUCCESS;
+
+
+	S_CLR_ERR(error);
+
+	/* must cast this one to make sure */
+	mapItr = S_CAST(self, SMapHashTableIterator, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "Unlink",
+				  "Failed to cast SIterator to SMapHashTableIterator"))
+		return NULL;
+
+	if (mapItr->c_itr == NULL)
+		return NULL;
+
+	hte = (s_hash_element*)mapItr->c_itr;
+	mapItr->c_itr = NULL;
+
+	key = (char*)s_hash_element_key(hte, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "Unlink",
+				  "Call to \"s_hash_element_key\" failed"))
+		local_err = *error;
+
+	if (key != NULL)
+		S_FREE(key);
+
+	val = (SObject*)s_hash_element_get_data(hte, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "Unlink",
+				  "Call to \"s_hash_element_get_data\" failed"))
+		local_err = *error;
+
+	/* remove reference to this container */
+	if (val != NULL)
+		SObjectDecRef(val);
+
+	s_hash_element_unlink(hte, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "Unlink",
+				  "Call to \"s_hash_element_unlink\" failed"))
+		local_err = *error;
+
+	if ((local_err != S_SUCCESS) && (*error == S_SUCCESS))
+		*error = local_err;
+
+	return val;
 }
 
 
@@ -266,10 +345,10 @@ static SMapHashTableIteratorClass MapHashTableIteratorClass =
 		NULL,                        /* copy    */
 	},
 	/* SIteratorClass */
-	First,                           /* first   */
-	NULL,                            /* last    */
-	Next,                            /* next    */
-	NULL                             /* prev    */
+	Next,                         /* next    */
+	Key,                          /* key     */
+	Object,                       /* object  */
+	Unlink                        /* unlink  */
 };
 
 

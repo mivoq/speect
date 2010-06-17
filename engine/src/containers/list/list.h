@@ -84,12 +84,26 @@
 
 
 /**
- * @ingroup SContainers
+ * @ingroup SContainer
  * @defgroup SList List
  * A list class, an abstract data structure that implements an ordered
  * collection of values (#SObject), where the same value may occur
  * more than once.
+ *
+ * The iterator (@ref SIterator) implementation of #SList objects
+ * returns the elements (as #SObject) of the list for the
+ * #SIteratorObject, and #SIteratorUnlink calls. The #SIteratorKey
+ * method is not implemented and will set an error and return @c NULL
+ * if called for SList type iterators.
+ *
  * @{
+ */
+
+
+/**
+ * @example list_iteration_example.c
+ * An example of adding objects to an #SList and also iterating over
+ * the list.
  */
 
 
@@ -258,23 +272,19 @@ typedef struct
 	 * @param itr Iterator to current list object.
 	 * @param object #SObject to insert.
 	 * @param error Error code.
-	 *
-	 * @note Iterator will point to inserted item on successful insertion.
 	 */
 	void           (*insert_before)(SList *self, SIterator *itr, const SObject *object,
 									s_erc *error);
 
 	/**
 	 * @protected InsertAfter function pointer.
-	 * Insert #SObject after the one currently pointed to by
+	 * Insert an #SObject after the one currently pointed to by
 	 * the iterator.
 	 *
 	 * @param self The list container.
 	 * @param itr Iterator to current list object.
 	 * @param object #SObject to insert.
 	 * @param error Error code.
-	 *
-	 * @note Iterator will point to inserted item on successful insertion.
 	 */
 	void           (*insert_after) (SList *self, SIterator *itr, const SObject *object,
 									s_erc *error);
@@ -375,44 +385,6 @@ typedef struct
 	 */
 	s_bool         (*val_present)  (const SList *self, const SObject *object,
 									s_erc *error);
-
-	/**
-	 * @protected Iterator function pointer.
-	 * Get an iterator to the list container.
-	 *
-	 * @param self The list container.
-	 * @param error Error code.
-	 *
-	 * @return Iterator to the list container.
-	 */
-	SIterator     *(*iterator)     (const SList *self, s_erc *error);
-
-
-	/**
-	 * @protected Value function pointer.
-	 * Get the #SObject value associated with the given iterator.
-	 *
-	 * @param iterator Pointer to iterator to the list.
-	 * @param error Error code.
-	 *
-	 * @return Pointer to the #SObject value of the given iterator.
-	 */
-	const SObject *(*value)        (const SIterator *iterator, s_erc *error);
-
-	/**
-	 * @protected Unlink function pointer.
-	 * Unlink the #SObject value associated with the given iterator
-	 * from the container.
-	 *
-	 * @param iterator Pointer to iterator to the map.
-	 * @param error Error code.
-	 *
-	 * @return Pointer to the #SObject value of the given iterator.
-	 *
-	 * @note The iterator is still valid, but does not point to any @a
-	 * current data.
-	 */
-	SObject       *(*unlink)       (SIterator *iterator, s_erc *error);
 } SListClass;
 
 
@@ -647,30 +619,8 @@ S_API const SObject *SListNth(SList *self, uint32 n, s_erc *error);
 
 
 /**
- * Get an iterator to the list container.
- * @public @memberof SList
- *
- * @param self The list container.
- * @param error Error code.
- *
- * @return Iterator to the list container. If there are
- * no objects in the list, then @c NULL will be returned.
- *
- * @note The iterator is initialized to the @e first item of the list
- * container.
+ * See also #SIterator.
  */
-S_API SIterator *SListIterator(const SList *self, s_erc *error);
-
-
-/**
- * Get the #SObject value associated with the given iterator.
- * @public @memberof SList
- * @param iterator Pointer to iterator to the list.
- * @param error Error code.
- * @return Pointer to the #SObject value of the given iterator.
- */
-S_API const SObject *SListIteratorValue(const SIterator *iterator, s_erc *error);
-
 
 /**
  * @}
@@ -684,19 +634,8 @@ S_API const SObject *SListIteratorValue(const SIterator *iterator, s_erc *error)
 
 
 /**
- * Unlink the #SObject value associated with the given iterator from
- * the container.
- * @public @memberof SList
- *
- * @param iterator Pointer to iterator to the map.
- * @param error Error code.
- *
- * @return Pointer to the #SObject value of the given iterator.
- *
- * @note The iterator is still valid, but does not point to any @e
- * current data.
+ * See #SIterator.
  */
-S_API SObject *SListIteratorUnlink(SIterator *iterator, s_erc *error);
 
 
 /**

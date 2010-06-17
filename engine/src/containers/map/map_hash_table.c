@@ -564,130 +564,26 @@ static SMap *MapHashTableCopy(SMap *dst, const SMap *src, s_erc *error)
 }
 
 
-static SIterator *MapHashTableIterator(const SMap *self, s_erc *error)
+static SIterator *MapHashTableIterator(const SContainer *self, s_erc *error)
 {
-	SMapHashTable *hashTable = (SMapHashTable*)self;
-	SIterator *itr;
+	SMapHashTableIterator *itr;
 
 
 	S_CLR_ERR(error);
 
-	itr = S_ITERATOR(S_NEW("SMapHashTableIterator", error));
+	itr = (SMapHashTableIterator*)S_NEW("SMapHashTableIterator", error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "MapHashTableIterator",
 				  "Failed to create new iterator"))
 		return NULL;
 
-	SMapHashTableIteratorInit(&itr, hashTable, error);
+	SMapHashTableIteratorInit(&itr, S_MAPHASHTABLE(self), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "MapHashTableIterator",
 			  "Failed to initialize iterator");
 
-	return itr;
+	return S_ITERATOR(itr);
 }
-
-
-static const char *MapHashTableKey(const SIterator *iterator, s_erc *error)
-{
-	const SMapHashTableIterator *self;
-	const char *key;
-
-
-	S_CLR_ERR(error);
-
-	/* must cast this one */
-	self = S_CAST(iterator, SMapHashTableIterator, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "MapHashTableKey",
-				  "Failed to cast SIterator to SMapHashTableIterator"))
-		return NULL;
-
-	key = (const char *)s_hash_element_key((s_hash_element*)self->c_itr, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "MapHashTableKey",
-				  "Failed to get key from hash table element"))
-		return NULL;
-
-	return key;
-}
-
-
-static const SObject *MapHashTableVal(const SIterator *iterator, s_erc *error)
-{
-	const SMapHashTableIterator *self;
-	const SObject *val;
-
-
-	S_CLR_ERR(error);
-
-	/* must cast this one */
-	self = S_CAST(iterator, SMapHashTableIterator, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "MapHashTableVal",
-				  "Failed to cast SIterator to SMapHashTableIterator"))
-		return NULL;
-
-	val = (const SObject*)s_hash_element_get_data((s_hash_element*)self->c_itr, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "MapHashTableVal",
-				  "Failed to get value from hash table element"))
-		return NULL;
-
-	return val;
-}
-
-
-static SObject *MapHashTableUnlink(SIterator *iterator, s_erc *error)
-{
-	SMapHashTableIterator *self;
-	s_hash_element *hte;
-	char *key;
-	SObject *val;
-	s_erc local_err = S_SUCCESS;
-
-
-	S_CLR_ERR(error);
-
-	/* must cast this one */
-	self = S_CAST(iterator, SMapHashTableIterator, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "MapHashTableUnlink",
-				  "Failed to cast SIterator to SMapHashTableIterator"))
-		return NULL;
-
-	hte = (s_hash_element*)self->c_itr;
-
-	key = (char*)s_hash_element_key(hte, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "MapHashTableUnlink",
-				  "Call to \"s_hash_element_key\" failed"))
-		local_err = *error;
-
-	if (key != NULL)
-		S_FREE(key);
-
-	val = (SObject*)s_hash_element_get_data(hte, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "MapHashTableUnlink",
-				  "Call to \"s_hash_element_get_data\" failed"))
-		local_err = *error;
-
-	/* remove reference to this container */
-	if (val != NULL)
-		SObjectDecRef(val);
-
-	s_hash_element_unlink(hte, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "MapHashTableUnlink",
-				  "Call to \"s_hash_element_unlink\" failed"))
-		local_err = *error;
-
-	if ((local_err != S_SUCCESS) && (*error == S_SUCCESS))
-		*error = local_err;
-
-	return val;
-}
-
 
 
 /************************************************************************************/
@@ -712,7 +608,7 @@ static SMapHashTableClass MapHashTableClass =
 			NULL,                /* copy    */
 		},
 		/* SContainerClass */
-		/* No methods */
+		MapHashTableIterator,    /* get_iterator */
 	},
 	/* SMapClass */
 	MapHashTableValGet,            /* val_get      */
@@ -722,9 +618,5 @@ static SMapHashTableClass MapHashTableClass =
 	MapHashTableValPresent,        /* val_present  */
 	MapHashTableValKeys,           /* val_keys     */
 	MapHashTableSize,              /* size         */
-	MapHashTableCopy,              /* copy         */
-	MapHashTableIterator,          /* iterator     */
-	MapHashTableKey,               /* key          */
-	MapHashTableVal,               /* value        */
-	MapHashTableUnlink             /* unlink       */
+	MapHashTableCopy               /* copy         */
 };

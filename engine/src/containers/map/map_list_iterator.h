@@ -74,13 +74,16 @@ S_BEGIN_C_DECLS
 /**
  * SMapListIterator definition.
  * @private
+ *
+ * The extra pointer, @c n_itr, is required so that we can unlink
+ * elements from the container while also still being able to iterate
+ * over the container.
  */
 typedef struct SMapListIterator_s
 {
 	SIterator             obj;       /*!< Inherit from SIterator.               */
 	const s_list_element *c_itr;     /*!< Pointer to current list element.      */
 	const s_list_element *n_itr;     /*!< Pointer to next list element.         */
-	const s_list_element *p_itr;     /*!< Pointer to prev list element.         */
 } SMapListIterator;
 
 
@@ -94,14 +97,17 @@ typedef struct SMapListIterator_s
  * Initialize an SMapListIterator with the given SMapList.
  * @private @memberof SIterator
  *
- * @param self The SMapListIterator (as an #SIterator) to initialize.
+ * @param self The SMapListIterator to initialize.
  * @param map The list map of the given iterator.
  * @param error Error code.
  *
- * @note If this function fails the iterator will be deleted and the @c
- * self pointer will be set to @c NULL.
+ * @note The iterator will be deleted and @c self set to @c NULL if:
+ * <ul>
+ *  <li> this function fails, or
+ *  <li> the given map is empty.
+ * </ul>
  */
-S_LOCAL void SMapListIteratorInit(SIterator **self, SMapList *map, s_erc *error);
+S_LOCAL void SMapListIteratorInit(SMapListIterator **self, SMapList *map, s_erc *error);
 
 
 /**

@@ -84,10 +84,19 @@
 
 
 /**
- * @ingroup SContainers
+ * @ingroup SContainer
  * @defgroup SMap Map
- * A map class, an abstract data type composed of a collection of unique keys (strings) and a
- * collection of values (#SObject), where each key is associated with one value.
+ * A map class, an abstract data type composed of a collection of
+ * unique keys (strings) and a collection of values (#SObject), where
+ * each key is associated with one value.
+ *
+ * The iterator (@ref SIterator) implementation of #SMap objects
+ * returns a element (as #SObject) of the list for the
+ * #SIteratorObject call. When a key-value pair is unlinked from the
+ * list with #SIteratorUnlink, the key is freed, and the value is
+ * returned (as #SObject). The SMap iterator implements the
+ * #SIteratorKey call and returns the key of a key-value pair.
+ *
  * @{
  */
 
@@ -212,9 +221,11 @@ typedef struct
 	/**
 	 * @protected ValGet function pointer.
 	 * Get the #SObject of the named key.
+	 *
 	 * @param self The key-value map.
 	 * @param key The string key of the object to get.
 	 * @param error Error code.
+	 *
 	 * @return Pointer to the #SObject of the named key.
 	 */
 	const SObject *(*val_get)    (const SMap *self, const char *key, s_erc *error);
@@ -235,8 +246,10 @@ typedef struct
 
 	/**
 	 * @protected ValDelete function pointer.
-	 * Delete named key-value pair from the map. Key is removed (freed) from list
-	 * and value deleted if it doesn't have any references.
+	 * Delete named key-value pair from the map. Key is removed
+	 * (freed) from list and value deleted if it doesn't have any
+	 * references.
+	 *
 	 * @param self The key-value map.
 	 * @param key The string key of the object to delete.
 	 * @param error Error code.
@@ -245,11 +258,13 @@ typedef struct
 
 	/**
 	 * @protected ValUnlink function pointer.
-	 * Remove named key-value pair from the map. Key is removed (freed) from list
-	 * and value object is returned.
+	 * Remove named key-value pair from the map. Key is removed
+	 * (freed) from list and value object is returned.
+	 *
 	 * @param self The key-value map.
 	 * @param key The string key of the object to unlink.
 	 * @param error Error code.
+	 *
 	 * @return #SObject of named key.
 	 */
 	SObject       *(*val_unlink) (SMap *self, const char *key, s_erc *error);
@@ -257,9 +272,11 @@ typedef struct
 	/**
 	 * @protected ValPresent function pointer.
 	 * Query the presence of a named key-value pair in the map.
+	 *
 	 * @param self The key-value map.
 	 * @param key The string key of the object's presence to query.
 	 * @param error Error code.
+	 *
 	 * @return #TRUE or #FALSE.
 	 */
 	s_bool         (*val_present)(const SMap *self, const char *key, s_erc *error);
@@ -267,74 +284,45 @@ typedef struct
 	/**
 	 * @protected ValKeys function pointer.
 	 * Get a list of the keys in the map container.
+	 *
 	 * @param self The key-value map.
 	 * @param error Error code.
-	 * @return #SList of keys in container, or @a NULL if the container is empty. The
-	 * list objects (keys) are string objects and are accessed with #SObjectGetString.
-	 * @note The caller is responsible for the memory of the returned #SList object.
+	 *
+	 * @return #SList of keys in container, or @a NULL if the
+	 * container is empty. The list objects (keys) are string objects
+	 * and are accessed with #SObjectGetString.
+	 *
+	 * @note The caller is responsible for the memory of the returned
+	 * #SList object.
 	 */
 	SList         *(*val_keys)   (const SMap *self, s_erc *error);
 
 	/**
 	 * @protected Size function pointer.
 	 * Get the number of key-value pairs in the map.
+	 *
 	 * @param self The key-value map.
 	 * @param error Error code.
+	 *
 	 * @return The number of key-value pairs in the map.
 	 */
 	size_t         (*size)       (const SMap *self, s_erc *error);
 
 	/**
 	 * @protected Copy (shallow) function pointer.
-	 * Copy the key-value pairs from @a src to @a dst. If @a dst does not exist a new one
-	 * will be created.
-	 * @note Values in dst with the same named keys as in src will be overwritten with
-	 * the values in src.
+	 * Copy the key-value pairs from @a src to @a dst. If @a dst does
+	 * not exist a new one will be created.
+	 *
 	 * @param dst Pointer to destination key-value map.
 	 * @param src Pointer to source key-value map.
 	 * @param error Error code.
+	 *
 	 * @return Pointer to destination key-value map.
+	 *
+	 * @note Values in @a dst with the same named keys as in @a src
+	 * will be overwritten with the values in @a src.
 	 */
 	SMap          *(*copy)       (SMap *dst, const SMap *src, s_erc *error);
-
-	/**
-	 * @protected Iterator function pointer.
-	 * Get an iterator to the map.
-	 * @param self Key-value map.
-	 * @param error Error code.
-	 * @return Pointer to iterator to the map.
-	 */
-	SIterator     *(*iterator)   (const SMap *self, s_erc *error);
-
-	/**
-	 * @protected Key function pointer.
-	 * Get the key associated with the given iterator.
-	 * @param iterator Pointer to iterator to the map.
-	 * @param error Error code.
-	 * @return Pointer to the key of the given iterator.
-	 */
-	const char    *(*key)        (const SIterator *iterator, s_erc *error);
-
-	/**
-	 * @protected Value function pointer.
-	 * Get the #SObject value associated with the given iterator.
-	 * @param iterator Pointer to iterator to the map.
-	 * @param error Error code.
-	 * @return Pointer to the #SObject value of the given iterator.
-	 */
-	const SObject *(*value)      (const SIterator *iterator, s_erc *error);
-
-	/**
-	 * @protected Unlink function pointer.
-	 * Unlink the #SObject value associated with the given iterator from
-	 * the container and removed the key (freed).
-	 * @note The iterator is still valid, but does not point to any @a current
-	 * data.
-	 * @param iterator Pointer to iterator to the map.
-	 * @param error Error code.
-	 * @return Pointer to the #SObject value of the given iterator.
-	 */
-	SObject       *(*unlink)     (SIterator *iterator, s_erc *error);
 } SMapClass;
 
 
@@ -353,9 +341,11 @@ typedef struct
 /**
  * Get the signed integer value of the named key.
  * @public @memberof SMap
+ *
  * @param self The key-value map.
  * @param key The string key of the value to get.
  * @param error Error code.
+ *
  * @return The signed integer value of the named key.
  */
 S_API sint32 SMapGetInt(const SMap *self, const char *key, s_erc *error);
@@ -364,9 +354,11 @@ S_API sint32 SMapGetInt(const SMap *self, const char *key, s_erc *error);
 /**
  * Get the float value of the named key.
  * @public @memberof SMap
+ *
  * @param self The key-value map.
  * @param key The string key of the value to get.
  * @param error Error code.
+ *
  * @return The float value of the named key.
  */
 S_API float SMapGetFloat(const SMap *self, const char *key, s_erc *error);
@@ -375,9 +367,11 @@ S_API float SMapGetFloat(const SMap *self, const char *key, s_erc *error);
 /**
  * Get the string value of the named key.
  * @public @memberof SMap
+ *
  * @param self The key-value map.
  * @param key The string key of the value to get.
  * @param error Error code.
+ *
  * @return Pointer to the string of the named key.
  */
 S_API const char *SMapGetString(const SMap *self, const char *key, s_erc *error);
@@ -386,9 +380,11 @@ S_API const char *SMapGetString(const SMap *self, const char *key, s_erc *error)
 /**
  * Get the object of the named key.
  * @public @memberof SMap
+ *
  * @param self The key-value map.
  * @param key The string key of the object to get.
  * @param error Error code.
+ *
  * @return Pointer to the object of the named key.
  */
 S_API const SObject *SMapGetObject(const SMap *self, const char *key, s_erc *error);
@@ -397,11 +393,16 @@ S_API const SObject *SMapGetObject(const SMap *self, const char *key, s_erc *err
 /**
  * Get a list of the keys in the map container.
  * @public @memberof SMap
+ *
  * @param self The key-value map.
  * @param error Error code.
- * @return #SList of keys in container, or @a NULL if the container is empty. The
- * list objects (keys) are string objects and are accessed with #SObjectGetString.
- * @note The caller is responsible for the memory of the returned #SList object.
+ *
+ * @return #SList of keys in container, or @a NULL if the container is
+ * empty. The list objects (keys) are string objects and are accessed
+ * with #SObjectGetString.
+ *
+ * @note The caller is responsible for the memory of the returned
+ * #SList object.
  */
 S_API SList *SMapGetKeys(const SMap *self, s_erc *error);
 
@@ -418,27 +419,32 @@ S_API SList *SMapGetKeys(const SMap *self, s_erc *error);
 
 
 /**
- * Get the signed integer value of the named key. If the named key is not found then
- * use the given default.
+ * Get the signed integer value of the named key. If the named key is
+ * not found then use the given default.
  * @public @memberof SMap
+ *
  * @param self The key-value map.
  * @param key The string key of the value to get.
  * @param def Default value to return if named key is not found.
  * @param error Error code.
- * @return The signed integer value of the named key, or given default value.
+ *
+ * @return The signed integer value of the named key, or given default
+ * value.
  */
 S_API sint32 SMapGetIntDef(const SMap *self, const char *key,
 						   sint32 def, s_erc *error);
 
 
 /**
- * Get the float value of the named key. If the named key is not found then
- * use the given default.
+ * Get the float value of the named key. If the named key is not found
+ * then use the given default.
  * @public @memberof SMap
+ *
  * @param self The key-value map.
  * @param key The string key of the value to get.
  * @param def Default value to return if named key is not found.
  * @param error Error code.
+ *
  * @return The float value of the named key, or given default value.
  */
 S_API float SMapGetFloatDef(const SMap *self, const char *key,
@@ -446,28 +452,34 @@ S_API float SMapGetFloatDef(const SMap *self, const char *key,
 
 
 /**
- * Get the string value of the named key. If the named key is not found then
- * use the given default.
+ * Get the string value of the named key. If the named key is not
+ * found then use the given default.
  * @public @memberof SMap
+ *
  * @param self The key-value map.
  * @param key The string key of the value to get.
  * @param def Default value to return if named key is not found.
  * @param error Error code.
- * @return Pointer to the string of the named key, or given default value.
+ *
+ * @return Pointer to the string of the named key, or given default
+ * value.
  */
 S_API const char *SMapGetStringDef(const SMap *self, const char *key,
 								   const char *def, s_erc *error);
 
 
 /**
- * Get the #SObject of the named key. If the named key is not found then
- * use the given default.
+ * Get the #SObject of the named key. If the named key is not found
+ * then use the given default.
  * @public @memberof SMap
+ *
  * @param self The key-value map.
  * @param key The string key of the object to get.
  * @param def Default value to return if named key is not found.
  * @param error Error code.
- * @return Pointer to the #SObject of the named key, or given default value.
+ *
+ * @return Pointer to the #SObject of the named key, or given default
+ * value.
  */
 S_API const SObject *SMapGetObjectDef(const SMap *self, const char *key,
 									  const SObject *def, s_erc *error);
@@ -485,9 +497,10 @@ S_API const SObject *SMapGetObjectDef(const SMap *self, const char *key,
 
 
 /**
- * Set the value of the named key as a signed integer value. If the named key already exists
- * then it's data will be replaced.
+ * Set the value of the named key as a signed integer value. If the
+ * named key already exists then it's data will be replaced.
  * @public @memberof SMap
+ *
  * @param self The key-value map.
  * @param key The string key of the value to set.
  * @param i The signed integer value of the named key.
@@ -497,9 +510,10 @@ S_API void SMapSetInt(SMap *self, const char *key, sint32 i, s_erc *error);
 
 
 /**
- * Set the value of the named key as a float value. If the named key already exists
- * then it's data will be replaced.
+ * Set the value of the named key as a float value. If the named key
+ * already exists then it's data will be replaced.
  * @public @memberof SMap
+ *
  * @param self The key-value map.
  * @param key The string key of the value to set.
  * @param f The float value of the named key.
@@ -509,9 +523,10 @@ S_API void SMapSetFloat(SMap *self, const char *key, float f, s_erc *error);
 
 
 /**
- * Set the value of the named key as a string value. If the named key already exists
- * then it's data will be replaced.
+ * Set the value of the named key as a string value. If the named key
+ * already exists then it's data will be replaced.
  * @public @memberof SMap
+ *
  * @param self The key-value map.
  * @param key The string key of the value to set.
  * @param s Pointer to the string value of the named key.
@@ -521,9 +536,11 @@ S_API void SMapSetString(SMap *self, const char *key, const char *s, s_erc *erro
 
 
 /**
- * Set the value of the named key as an #SObject. If the named key already exists
- * then it's #SObject will be deleted (if not referenced) and replaced.
+ * Set the value of the named key as an #SObject. If the named key
+ * already exists then it's #SObject will be deleted (if not
+ * referenced) and replaced.
  * @public @memberof SMap
+ *
  * @param self The key-value map.
  * @param key The string key of the object to set.
  * @param object Pointer to the #SObject of the named key.
@@ -544,8 +561,9 @@ S_API void SMapSetObject(SMap *self, const char *key, const SObject *object, s_e
 
 
 /**
- * Delete the named key-value pair from the map. Key is removed from list and value deleted
- * if it doesn't have any references.
+ * Delete the named key-value pair from the map. Key is removed from
+ * list and value deleted if it doesn't have any references.
+ *
  * @public @memberof SMap
  * @param self The key-value map.
  * @param key The string key of the value to delete.
@@ -555,12 +573,14 @@ S_API void SMapObjectDelete(SMap *self, const char *key, s_erc *error);
 
 
 /**
- * Remove named key-value pair from the map. Key is removed (free'd) from list
- * and value object is returned.
+ * Remove named key-value pair from the map. Key is removed (free'd)
+ * from list and value object is returned.
  * @public @memberof SMap
+ *
  * @param self The key-value map.
  * @param key The string key of the value to unlink.
  * @param error Error code.
+ *
  * @return #SObject of named key.
  */
 S_API SObject *SMapObjectUnlink(SMap *self, const char *key, s_erc *error);
@@ -580,9 +600,11 @@ S_API SObject *SMapObjectUnlink(SMap *self, const char *key, s_erc *error);
 /**
  * Query the presence of a named key-value pair in the map.
  * @public @memberof SMap
+ *
  * @param self The key-value map.
  * @param key The string key of the object's presence to query.
  * @param error Error code.
+ *
  * @return #TRUE or #FALSE.
  */
 S_API s_bool SMapObjectPresent(const SMap *self, const char *key, s_erc *error);
@@ -591,8 +613,10 @@ S_API s_bool SMapObjectPresent(const SMap *self, const char *key, s_erc *error);
 /**
  * Get the number of key-value pairs in the container.
  * @public @memberof SMap
+ *
  * @param self The key-value map.
  * @param error Error code.
+ *
  * @return The number of key-value pairs in the container.
  */
 S_API size_t SMapSize(const SMap *self, s_erc *error);
@@ -625,69 +649,6 @@ S_API size_t SMapSize(const SMap *self, s_erc *error);
  * overwritten with the values in src.
  */
 S_API SMap *SMapCopy(SMap *dst, const SMap *src, s_erc *error);
-
-
-/**
- * @}
- */
-
-
-/**
- * @name Iterator
- * @{
- */
-
-
-/**
- * Get an iterator to the map.
- * @public @memberof SMap
- *
- * @param self Key-value map.
- * @param error Error code.
- *
- * @return Pointer to iterator to the map. If there are
- * no objects in the map, then @c NULL will be returned.
- *
- * @note The iterator is initialized to the first key-val pair of
-  * the map container.
- */
-S_API SIterator *SMapIterator(const SMap *self, s_erc *error);
-
-
-/**
- * Get the key associated with the given iterator.
- * @public @memberof SMap
- * @param iterator Pointer to iterator to the map.
- * @param error Error code.
- * @return Pointer to the key of the given iterator.
- */
-S_API const char *SMapIteratorKey(const SIterator *iterator, s_erc *error);
-
-
-/**
- * Get the #SObject value associated with the given iterator.
- * @public @memberof SMap
- * @param iterator Pointer to iterator to the map.
- * @param error Error code.
- * @return Pointer to the #SObject value of the given iterator.
- */
-S_API const SObject *SMapIteratorValue(const SIterator *iterator, s_erc *error);
-
-
-/**
- * Unlink the #SObject value associated with the given iterator from
- * the container and removed the key (free).
- * @public @memberof SMap
- *
- * @param iterator Pointer to iterator to the map.
- * @param error Error code.
- *
- * @return Pointer to the #SObject value of the given iterator.
- *
- * @note The iterator is still valid, but does not point to any @a
- * current data.
- */
-S_API SObject *SMapIteratorUnlink(SIterator *iterator, s_erc *error);
 
 
 /**

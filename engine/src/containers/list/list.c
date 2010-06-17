@@ -638,112 +638,6 @@ S_API s_bool SListValPresent(const SList *self, const SObject *object, s_erc *er
 }
 
 
-S_API SIterator *SListIterator(const SList *self, s_erc *error)
-{
-	SIterator *itr;
-
-
-	S_CLR_ERR(error);
-
-	if (self == NULL)
-	{
-		S_CTX_ERR(error, S_ARGERROR,
-				  "SListIterator",
-				  "Argument \"self\" is NULL");
-		return NULL;
-	}
-
-	if (!S_LIST_METH_VALID(self, iterator))
-	{
-		S_WARNING(S_METHINVLD,
-				  "SListIterator",
-				  "List method \"iterator\" not implemented");
-		return NULL;
-	}
-
-	S_LOCK_CONTAINER;
-	itr = S_LIST_CALL(self, iterator)(self, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "SListIterator",
-				  "Call to class method \"iterator\" failed"))
-	{
-		S_UNLOCK_CONTAINER;
-		return NULL;
-	}
-
-	itr = SIteratorFirst(itr);
-	S_UNLOCK_CONTAINER;
-
-	return itr;
-}
-
-
-S_API const SObject *SListIteratorValue(const SIterator *iterator, s_erc *error)
-{
-	const SObject *val;
-
-
-	S_CLR_ERR(error);
-
-	if (iterator == NULL)
-	{
-		S_CTX_ERR(error, S_ARGERROR,
-				  "SListIteratorValue",
-				  "Argument \"iterator\" is NULL");
-		return NULL;
-	}
-
-	if (!S_LIST_METH_VALID(iterator->myContainer, value))
-	{
-		S_WARNING(S_METHINVLD,
-				  "SListIteratorValue",
-				  "List method \"value\" not implemented");
-		return NULL;
-	}
-
-	val = S_LIST_CALL(iterator->myContainer, value)(iterator, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "SListIteratorValue",
-				  "Call to class method \"value\" failed"))
-		return NULL;
-
-	return val;
-}
-
-
-S_API SObject *SListIteratorUnlink(SIterator *iterator, s_erc *error)
-{
-	SObject *tmp;
-
-
-	S_CLR_ERR(error);
-
-	if (iterator == NULL)
-	{
-		S_CTX_ERR(error, S_ARGERROR,
-				  "SListIteratorUnlink",
-				  "Argument \"iterator\" is NULL");
-		return NULL;
-	}
-
-	if (!S_LIST_METH_VALID(iterator->myContainer, unlink))
-	{
-		S_WARNING(S_METHINVLD,
-				  "SListIteratorUnlink",
-				  "List method \"unlink\" not implemented");
-		return NULL;
-	}
-
-	tmp = S_LIST_CALL(iterator->myContainer, unlink)(iterator, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "SListIteratorUnlink",
-				  "Call to class method \"unlink\" failed"))
-		return NULL;
-
-	return tmp;
-}
-
-
 /************************************************************************************/
 /*                                                                                  */
 /* Class registration                                                               */
@@ -795,7 +689,7 @@ static SListClass ListClass =
 			NULL,              /* copy    */
 		},
 		/* SContainerClass */
-		/* No methods */
+		NULL,                  /* get_iterator */
 	},
 	/* SListClass */
 	NULL,              /* is_empty      */
@@ -810,8 +704,5 @@ static SListClass ListClass =
 	NULL,              /* pop           */
 	NULL,              /* reverse       */
 	NULL,              /* nth           */
-	NULL,              /* val_present   */
-	NULL,              /* iterator      */
-	NULL,              /* value         */
-	NULL               /* unlink        */
+	NULL               /* val_present   */
 };

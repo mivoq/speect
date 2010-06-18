@@ -34,19 +34,46 @@
 /*                                                                                  */
 /************************************************************************************/
 
+%header
+%{
+#include "pyobject.h"
+%}
+
 
 /*
  * Do not delete these delimiters, required for SWIG
  */
 %inline
 %{
+	static void initialize_spyobject_module(void)
+	{
+		static int initialized = 0;
+		s_erc rv = S_SUCCESS;
+
+
+		if (initialized != 0)
+			return;
+
+		rv = SPyObjectModuleInit();
+		if (rv != S_SUCCESS)
+			SWIG_exception(SWIG_RuntimeError, "Failed to initialize SPyObjectModule");
+
+		initialized++;
+
+	fail:
+		return;
+	}
+
+
 	PyObject *sobject_2_pyobject(const SObject *object, s_erc *error, s_bool own)
 	{
 		PyObject *pobject;
 		const char *type;
 		int s_comp;
-		swig_type_info *info;
+		swig_type_info *info = NULL;
 
+
+		printf("hello world\n");
 
 		if (object == NULL)
 			Py_RETURN_NONE;
@@ -126,10 +153,13 @@
 
 		if (s_comp == 0)
 		{
+			initialize_spyobject_module();
+
+
 			/* note that the get method implementation of the
 			 * SPyObject increased the reference count of the returned
 			 * python object */
-			pobject = (PyObject*)SObjectGetVoid(object, error);
+			pobject = SPyObjectGet(S_PYOBJECT(object), error);
 			if (*error != S_SUCCESS)
 				return NULL;
 
@@ -139,6 +169,7 @@
 			return pobject;
 		}
 
+#if 0
 		/* cycle through object inheritance hierarchy,
 		 * maybe we find something
 		 */
@@ -221,7 +252,7 @@
 
 			} while (c != NULL);
 		}
-
+#endif
 		if (info != NULL)
 		{
 			if (own == TRUE)
@@ -339,14 +370,12 @@
 			return object;
 		}
 
-		/* Differs from speect.sobject_2_pyobject
-		 * Adds support for Python object
-		 *
-		 * Not a simple object, make a SPyObject SVoid type
-		 * Needs speect.pyobject module to work.
-		 *
+		/*
+		 * Not a simple object, make a SPyObject type SObject.
 		 */
-		object = SObjectSetVoid("SPyObject", (void*)pobject, error);
+		initialize_spyobject_module();
+
+		object = SPyObjectSet(pobject, error);
 		if (*error != S_SUCCESS)
 			return NULL;
 

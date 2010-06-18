@@ -1,3 +1,14 @@
+######################################################################################
+##                                                                                  ##
+## AUTHOR  : Aby Louw                                                               ##
+## DATE    : 11 June 2010                                                           ##
+##                                                                                  ##
+######################################################################################
+##                                                                                  ##
+## CMakeList for utils plug-ins                                                     ##
+##                                                                                  ##
+##                                                                                  ##
+######################################################################################
 
 #------------------------------------------------------------------------------------#
 #                        Plug-in directories                                         #
@@ -9,6 +20,6 @@ add_subdirectory(tokenizer)
 add_subdirectory(viterbi)
 add_subdirectory(cost_function)
 
-if(SPEECT_WRAP_PYTHON)
-  add_subdirectory(python_object)
-endif(SPEECT_WRAP_PYTHON)
+#if(WANT_PYTHON_WRAPPER)
+#  add_subdirectory(python_object)
+#endif(WANT_PYTHON_WRAPPER)

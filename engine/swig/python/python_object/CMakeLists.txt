@@ -1,0 +1,77 @@
+######################################################################################
+##                                                                                  ##
+## AUTHOR  : Aby Louw                                                               ##
+## DATE    : 5 November 2009                                                        ##
+##                                                                                  ##
+######################################################################################
+##                                                                                  ##
+## Template CMakeList for Speect Plug-ins                                           ##
+##                                                                                  ##
+##                                                                                  ##
+######################################################################################
+
+#------------------------------------------------------------------------------------#
+#                                Project name                                        #
+#------------------------------------------------------------------------------------#
+
+message(STATUS "cmake for project \"Python Object\"")
+project(speect_swig_python_object C)
+
+
+#------------------------------------------------------------------------------------#
+#                                SWIG stuff                                          #
+#------------------------------------------------------------------------------------#
+
+find_package(SWIG REQUIRED)
+
+add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/swigpyrun.h 
+  COMMAND ${SWIG_EXECUTABLE} -python -external-runtime 
+  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+  COMMENT "Generating SWIG run-time functions header"
+  VERBATIM
+  )
+
+
+
+#------------------------------------------------------------------------------------#
+#                         Add Python libraries and includes                          #
+#------------------------------------------------------------------------------------#
+
+# find Python 
+find_package(PythonLibs REQUIRED) # Note, currently PythonLibs does not look for Python 3
+
+# add Python to includes
+include_directories(${PYTHON_INCLUDE_PATH})
+
+# include Speect Engine
+include_directories(${SPCT_INCLUDE_DIRS})
+
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+include_directories(${CMAKE_CURRENT_BINARY_DIR})
+
+#------------------------------------------------------------------------------------#
+#                              Source files                                          #
+#------------------------------------------------------------------------------------#
+
+list(APPEND SPCT_SWIG_PYOBJECT_SOURCES 
+  "${CMAKE_CURRENT_SOURCE_DIR}/pyobject.c"
+  "${CMAKE_CURRENT_SOURCE_DIR}/py_funcs.c"
+  "${CMAKE_CURRENT_BINARY_DIR}/swigpyrun.h"
+  )
+
+add_library(SPCT_SWIG_PYOBJECT_LIBRARY ${SPCT_SWIG_PYOBJECT_SOURCES})
+
+set_target_properties(SPCT_SWIG_PYOBJECT_LIBRARY
+  PROPERTIES
+  VERSION "${SPCT_VERSION_MAJOR}.${SPCT_VERSION_MINOR}.${SPCT_VERSION_PATCH}"
+  SOVERSION "${SPCT_VERSION_MAJOR}"
+  COMPILE_FLAGS "${SPCT_LIBRARY_CFLAGS} -DSPCT_SRC ${static_flag}"
+  LINK_FLAGS "${SPCT_LIBRARY_LINK_FLAGS}"
+  OUTPUT_NAME ${SPCT_SWIG_PYOBJECT_LIBRARY}
+  LIBRARY_OUTPUT_DIRECTORY ${SPCT_LIBRARY_OUTPUT_PATH}
+  RUNTIME_OUTPUT_DIRECTORY ${SPCT_LIBRARY_OUTPUT_PATH}
+#  DEBUG_POSTFIX "-debug"
+#  PROFILE_POSTFIX "-profile"
+  )
+
+target_link_libraries(SPCT_SWIG_PYOBJECT_LIBRARY ${SPCT_LIBRARIES_TARGET} ${PYTHON_LIBRARIES})

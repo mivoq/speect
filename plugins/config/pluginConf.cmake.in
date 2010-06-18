@@ -7,11 +7,18 @@
 ##                                                                                  ##
 ######################################################################################
 
+
 # @plugin_lowercase_name@ include directories
 set(@plugin_lowercase_name@_include_path "@tmp_name@")
+
 
 # When included in other plug-in CMakeLists.txt, the above
 # header directories will be appended to the plug-ins dirs.
 list(APPEND ${plugin_lowercase_name}_INCLUDE_DIRS
   ${@plugin_lowercase_name@_include_path}
   )
+
+
+# @plugin_lowercase_name@ version
+set(@plugin_lowercase_name@_VERSION_MAJOR @tmp_version_major@)
+set(@plugin_lowercase_name@_VERSION_MINOR @tmp_version_minor@)

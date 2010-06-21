@@ -78,9 +78,6 @@ version number, patch number, release name).
 
 		rv = speect_init();
 		if (rv != S_SUCCESS)
-			SWIG_exception(SWIG_RuntimeError, "Failed to initialize Speect Engine");
-
-	fail:
-		return;
+			SWIG_Error(SWIG_RuntimeError, "Failed to initialize Speect Engine");
 	}
 %}

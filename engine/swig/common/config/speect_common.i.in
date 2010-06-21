@@ -102,6 +102,9 @@
 /* SMap */
 %include "${CMAKE_SOURCE_DIR}/engine/swig/common/map_common.c"
 
+/* SList */
+%include "${CMAKE_SOURCE_DIR}/engine/swig/common/list_common.c"
+
 /* SItem */
 %include "${CMAKE_SOURCE_DIR}/engine/swig/common/item_common.c"
 

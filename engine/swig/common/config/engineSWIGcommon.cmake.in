@@ -22,6 +22,7 @@ set(SPCT_SWIG_COMMON_SRC_FILES
   "${CMAKE_SOURCE_DIR}/engine/swig/common/item_common.c"
   "${CMAKE_SOURCE_DIR}/engine/swig/common/iterator_common.c"
   "${CMAKE_SOURCE_DIR}/engine/swig/common/map_common.c"
+  "${CMAKE_SOURCE_DIR}/engine/swig/common/list_common.c"
   "${CMAKE_SOURCE_DIR}/engine/swig/common/misc_common.c"
   "${CMAKE_SOURCE_DIR}/engine/swig/common/object_common.c"
   "${CMAKE_SOURCE_DIR}/engine/swig/common/plugin_common.c"

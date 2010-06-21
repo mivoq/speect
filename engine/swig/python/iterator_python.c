@@ -34,6 +34,7 @@
 /*                                                                                  */
 /************************************************************************************/
 
+
 %extend PMapIterator
 {
 	PMapIterator *__iter__()
@@ -44,7 +45,6 @@
 	PyObject *next()
 	{
 		const char *key;
-		size_t slen;
 		s_erc error;
 		PyObject *pobject;
 
@@ -56,22 +56,21 @@
 			return NULL;
 		}
 
-		key = SMapIteratorKey($self->itr, &error);
+		key = SIteratorKey($self->itr, &error);
 		if (error != S_SUCCESS)
 		{
-			PyErr_SetString(PyExc_RuntimeError, "Call to \"SMapIteratorKey\" failed");
-			return NULL;
-		}
-
-		slen = s_strsize(key, &error);
-		if (error != S_SUCCESS)
-		{
-			PyErr_SetString(PyExc_RuntimeError, "Call to \"s_strsize\" failed");
+			PyErr_SetString(PyExc_RuntimeError, "Call to \"SIteratorKey\" failed");
 			return NULL;
 		}
 
 		$self->itr = SIteratorNext($self->itr);
-		pobject = PyString_FromStringAndSize(key, slen);
+		pobject = s_set_pyobject_str(key, &error);
+		if (error != S_SUCCESS)
+		{
+			PyErr_SetString(PyExc_RuntimeError, "Call to \"s_set_pyobject_str\" failed");
+			return NULL;
+		}
+
 		return pobject;
 	}
 };
@@ -98,7 +97,7 @@
 			return NULL;
 		}
 
-		iObject = SListIteratorValue($self->itr, &error);
+		iObject = SIteratorObject($self->itr, &error);
 		if (error != S_SUCCESS)
 		{
 			PyErr_SetString(PyExc_RuntimeError, "Call to \"SListIteratorValue\" failed");
@@ -106,7 +105,7 @@
 		}
 
 		$self->itr = SIteratorNext($self->itr);
-		pobject = sobject_2_pyobject(iObject, &error, FALSE);
+		pobject = s_sobject_2_pyobject(iObject, FALSE, &error);
 		if (error != S_SUCCESS)
 			return NULL;
 

@@ -46,7 +46,7 @@
 		if (*error != S_SUCCESS)
 			return NULL;
 
-		object = sobject_2_pyobject(mapObject, error, FALSE);
+		object = s_sobject_2_pyobject(mapObject, FALSE, error);
 		if (*error != S_SUCCESS)
 			return NULL;
 
@@ -72,7 +72,7 @@
 		SObject *newObject;
 
 
-		newObject = pyobject_2_sobject(val, error);
+		newObject = s_pyobject_2_sobject(val, error);
 		if (*error != S_SUCCESS)
 			return;
 
@@ -109,11 +109,9 @@
 
 
 		S_CLR_ERR(&error);
-		itr = SMapIterator($self, &error);
+		itr = S_ITERATOR_GET($self, &error);
 		if (error != S_SUCCESS)
 			return NULL;
-
-		itr = SIteratorFirst(itr);
 		pitr = make_PMapIterator(itr, &error);
 		if (error != S_SUCCESS)
 			return NULL;
@@ -145,9 +143,9 @@ def __str__(self):
             first = False
             count -= 1
             if count != 0:
-                stri += '%s : %s,' %(ik, repr(self[ik]))
+                stri += '\'%s\' : %s,' %(ik, repr(self[ik]))
             else:
-                stri += '%s : %s' %(ik, repr(self[ik]))
+                stri += '\'%s\' : %s' %(ik, repr(self[ik]))
 
         if  num_features > 0:
             stri += '    }\n'

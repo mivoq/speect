@@ -48,11 +48,10 @@
 		if (*error != S_SUCCESS)
 			return NULL;
 
-		pdata = sobject_2_pyobject(sdata, error, FALSE);
+		pdata = s_sobject_2_pyobject(sdata, FALSE, error);
 		if (*error != S_SUCCESS)
 			return NULL;
 
 		return pdata;
 	}
 };
-

@@ -60,7 +60,7 @@
 		if (*error != S_SUCCESS)
 			return NULL;
 
-		pfeature = sobject_2_pyobject(sfeature, error, FALSE);
+		pfeature = s_sobject_2_pyobject(sfeature, FALSE, error);
 		if (*error != S_SUCCESS)
 			return NULL;
 
@@ -78,7 +78,7 @@
 		if (*error != S_SUCCESS)
 			return NULL;
 
-		pfeature = sobject_2_pyobject(sfeature, error, TRUE);
+		pfeature = s_sobject_2_pyobject(sfeature, TRUE, error);
 		if (*error != S_SUCCESS)
 		{
 			S_DELETE(sfeature, "SItem::path_to_derived_feature()", error);
@@ -99,7 +99,7 @@
 		if (*error != S_SUCCESS)
 			return NULL;
 
-		object = sobject_2_pyobject(feature, error, FALSE);
+		object = s_sobject_2_pyobject(feature, FALSE, error);
 		if (*error != S_SUCCESS)
 			return NULL;
 
@@ -112,7 +112,7 @@
 		SObject *newObject;
 
 
-		newObject = pyobject_2_sobject(val, error);
+		newObject = s_pyobject_2_sobject(val, error);
 		if (*error != S_SUCCESS)
 			return;
 
@@ -149,11 +149,10 @@
 
 
 		S_CLR_ERR(&error);
-		itr = SMapIterator($self->content->features, &error);
+		itr = S_ITERATOR_GET($self->content->features, &error);
 		if (error != S_SUCCESS)
 			return NULL;
 
-		itr = SIteratorFirst(itr);
 		pitr = make_PMapIterator(itr, &error);
 		if (error != S_SUCCESS)
 			return NULL;

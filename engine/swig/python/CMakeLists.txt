@@ -10,6 +10,16 @@
 ##                                                                                  ##
 ######################################################################################
 
+#------------------------------------------------------------------------------------#
+#                Speect SWIG Python native interface library                         #
+#------------------------------------------------------------------------------------#
+
+set(SPCT_SWIG_PYTHON_NATIVE_LIBRARY spct_swig_python_native)
+add_subdirectory(native)
+set(SPCT_SWIG_PYTHON_NATIVE_LIBRARY_TARGET SPCT_SWIG_PYTHON_NATIVE_LIBRARY)
+
+# include Speect SWIG Python native headers
+include_directories(${CMAKE_SOURCE_DIR}/engine/swig/python/native)
 
 #------------------------------------------------------------------------------------#
 #             Speect Engine SWIG Python source files list                            #
@@ -45,7 +55,7 @@ list(APPEND SPCT_SWIG_PYTHON_DEPS
 ###################################### SWIG ##########################################
 
 find_package(SWIG REQUIRED)
-include(${SWIG_USE_FILE})
+include(${SWIG_USE_FILE})  # UseSWIG.cmake, provides swig functions
 
 
 #################################### Python ##########################################
@@ -57,6 +67,10 @@ include_directories(${PYTHON_INCLUDE_DIRS})    # PYTHON_INCLUDE_PATH (deprecated
 #################################### Speect ##########################################
 
 include_directories(${SPCT_INCLUDE_DIRS})
+
+#################################### SPyObjectModule #################################
+
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/python_object)
 
 
 #------------------------------------------------------------------------------------#
@@ -96,7 +110,7 @@ set_source_files_properties(${CMAKE_BINARY_DIR}/engine/swig/python/speect.i
 # add flags for Python Speect Engine wrapper compilation
 set_source_files_properties(${CMAKE_BINARY_DIR}/engine/swig/python/speectPYTHON_wrap.c 
   PROPERTIES 
-  COMPILE_FLAGS "-fno-strict-aliasing -fwrapv -Wstrict-prototypes -Wall"
+  COMPILE_FLAGS "-fno-strict-aliasing -fwrapv -Wstrict-prototypes -Wall -DSWIG_TYPE_TABLE=speect"
   GENERATED TRUE
 )
 
@@ -119,7 +133,10 @@ set(SWIG_MODULE_speect_EXTRA_DEPS "${SPCT_SWIG_PYTHON_DEPS}")
 swig_add_module(speect python ${CMAKE_BINARY_DIR}/engine/swig/python/speect.i)
 
 # link with Python and Speect Engine
-swig_link_libraries(speect ${PYTHON_LIBRARIES} ${SPCT_LIBRARIES_TARGET})
+swig_link_libraries(speect 
+  ${PYTHON_LIBRARIES} 
+  ${SPCT_LIBRARIES_TARGET} 
+  ${SPCT_SWIG_PYTHON_NATIVE_LIBRARY_TARGET})
 
 # set the output directory
 set_target_properties(${SWIG_MODULE_speect_REAL_NAME}

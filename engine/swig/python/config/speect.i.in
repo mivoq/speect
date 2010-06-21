@@ -65,6 +65,7 @@
 %header
 %{
 #include "speect.h"
+#include "py_native.h"
 %}
 
 /* enable autodoc */
@@ -81,23 +82,12 @@
 %include "${CMAKE_SOURCE_DIR}/engine/swig/python/utterance_docs.c"
 %include "${CMAKE_SOURCE_DIR}/engine/swig/python/relation_docs.c"
 %include "${CMAKE_SOURCE_DIR}/engine/swig/python/map_docs.c"
+%include "${CMAKE_SOURCE_DIR}/engine/swig/python/list_docs.c"
 %include "${CMAKE_SOURCE_DIR}/engine/swig/python/item_docs.c"
 %include "${CMAKE_SOURCE_DIR}/engine/swig/python/voice_docs.c"
 %include "${CMAKE_SOURCE_DIR}/engine/swig/python/plugin_docs.c"
 %include "${CMAKE_SOURCE_DIR}/engine/swig/python/utt_processor_docs.c"
 %include "${CMAKE_SOURCE_DIR}/engine/swig/python/feat_processor_docs.c"
-
-
-/************************************************************************************/
-/*                                                                                  */
-/* Definition of functions that convert between Speect and Python objects.          */
-/* Must be before inclusion of common Speect Engine files.                          */
-/*                                                                                  */
-/*                       Speect (SObject) <-> Python (PyObject)                     */
-/*                                                                                  */
-/************************************************************************************/
-
-%include "${CMAKE_SOURCE_DIR}/engine/swig/python/primitives_python.c"
 
 
 /************************************************************************************/
@@ -123,6 +113,8 @@
 %include "${CMAKE_SOURCE_DIR}/engine/swig/python/relation_itr_python.c"
 %include "${CMAKE_SOURCE_DIR}/engine/swig/python/relation_python.c"
 %include "${CMAKE_SOURCE_DIR}/engine/swig/python/map_python.c"
+%include "${CMAKE_SOURCE_DIR}/engine/swig/python/list_python.c"
 %include "${CMAKE_SOURCE_DIR}/engine/swig/python/item_python.c"
 %include "${CMAKE_SOURCE_DIR}/engine/swig/python/voice_python.c"
+%include "${CMAKE_SOURCE_DIR}/engine/swig/python/native_python.c"
 

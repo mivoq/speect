@@ -24,10 +24,10 @@ set(SPCT_SWIG_PYTHON_SRC_FILES
   "${CMAKE_SOURCE_DIR}/engine/swig/python/iterator_python.c"
   "${CMAKE_SOURCE_DIR}/engine/swig/python/map_docs.c"
   "${CMAKE_SOURCE_DIR}/engine/swig/python/map_python.c"
+  "${CMAKE_SOURCE_DIR}/engine/swig/python/list_docs.c"
+  "${CMAKE_SOURCE_DIR}/engine/swig/python/list_python.c"
   "${CMAKE_SOURCE_DIR}/engine/swig/python/misc_docs.c"
   "${CMAKE_SOURCE_DIR}/engine/swig/python/plugin_docs.c"
-  "${CMAKE_SOURCE_DIR}/engine/swig/python/primitives_docs.c"
-  "${CMAKE_SOURCE_DIR}/engine/swig/python/primitives_python.c"
   "${CMAKE_SOURCE_DIR}/engine/swig/python/relation_docs.c"
   "${CMAKE_SOURCE_DIR}/engine/swig/python/relation_itr_python.c"
   "${CMAKE_SOURCE_DIR}/engine/swig/python/relation_python.c"
@@ -37,6 +37,7 @@ set(SPCT_SWIG_PYTHON_SRC_FILES
   "${CMAKE_SOURCE_DIR}/engine/swig/python/utt_processor_docs.c"
   "${CMAKE_SOURCE_DIR}/engine/swig/python/voice_docs.c"
   "${CMAKE_SOURCE_DIR}/engine/swig/python/voice_python.c"
+  "${CMAKE_SOURCE_DIR}/engine/swig/python/native_python.c"
 
 # auto generated
   "${CMAKE_BINARY_DIR}/engine/swig/python/speect.i"

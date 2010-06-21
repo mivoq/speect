@@ -223,7 +223,7 @@ S_BEGIN_C_DECLS
 			(*(ERROR)) = ERROR_CODE;			\
 	} while(0)
 #else /* ! SPCT_ERROR_HANDLING */
-# define S_NEW_ERR
+# define S_NEW_ERR(ERROR, ERROR_CODE) ((void) 0)
 #endif /* SPCT_ERROR_HANDLING */
 
 
@@ -241,7 +241,7 @@ S_BEGIN_C_DECLS
 			(*(ERROR)) = S_SUCCESS;	\
 	} while(0)
 #else /* ! SPCT_ERROR_HANDLING */
-# define S_CLR_ERR
+# define S_CLR_ERR(ERROR) ((void) 0)
 #endif /* SPCT_ERROR_HANDLING */
 
 
@@ -298,7 +298,7 @@ S_BEGIN_C_DECLS
 #ifdef SPCT_ERROR_HANDLING
 #  define S_WARNING (*_s_warn(__FILE__, __LINE__))
 #else /* ! SPCT_ERROR_HANDLING */
-#  define S_CHK_ERR 1 ? 0 : _s_warn_dummy
+#  define S_WARNING 1 ? 0 : _s_warn_dummy
 #endif /* SPCT_ERROR_HANDLING */
 
 

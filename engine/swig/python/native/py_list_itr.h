@@ -78,7 +78,7 @@ S_BEGIN_C_DECLS
  * Initialize an SListPyIterator with the given SListPy.
  * @private @memberof SIterator
  *
- * @param self The SListPyIterator (as an #SIterator) to initialize.
+ * @param self The SListPyIterator to initialize.
  * @param list The Python list of the given iterator.
  * @param error Error code.
  *

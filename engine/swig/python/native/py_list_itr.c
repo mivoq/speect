@@ -340,18 +340,10 @@ static SIterator *Next(SIterator *self, s_erc *error)
 
 static const SObject *Object(SIterator *self, s_erc *error)
 {
-	SListPyIterator *pyItr;
+	SListPyIterator *pyItr = S_LISTPY_ITER(self);
 
 
 	S_CLR_ERR(error);
-
-	/* must cast this one to make sure */
-	pyItr = S_CAST(self, SListPyIterator, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "Object",
-				  "Failed to cast SIterator to SListPyIterator"))
-		return NULL;
-
 	pyItr->sobject = s_pyobject_2_sobject(pyItr->c_itr, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Object",
@@ -364,19 +356,11 @@ static const SObject *Object(SIterator *self, s_erc *error)
 
 static SObject *Unlink(SIterator *self, s_erc *error)
 {
-	SListPyIterator *pyItr;
+	SListPyIterator *pyItr = S_LISTPY_ITER(self);
 	SObject *tmp;
 
 
 	S_CLR_ERR(error);
-
-	/* must cast this one to make sure */
-	pyItr = S_CAST(self, SListPyIterator, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "Unlink",
-				  "Failed to cast SIterator to SListPyIterator"))
-		return NULL;
-
 	if (pyItr->c_itr == NULL)
 		return NULL;
 

@@ -158,10 +158,9 @@ static void InitListPy(void *obj, s_erc *error)
 
 	S_CLR_ERR(error);
 	self->pyObject = (SPyObject*)S_NEW("SPyObject", error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "InitListPy",
-				  "Failed to create new 'SPyObject' object"))
-		return;
+	S_CHK_ERR(error, S_CONTERR,
+			  "InitListPy",
+			  "Failed to create new 'SPyObject' object");
 }
 
 

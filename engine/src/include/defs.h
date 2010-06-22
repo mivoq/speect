@@ -173,22 +173,39 @@
 
 /**
  * @def S_CONCAT(A,B)
+ * @hideinitializer
  * Concatenate two strings.
+ *
  * @param A String A
  * @param B String B to concatenate to string A.
+ *
  * @return Concatenated strings A and B.
- * @hideinitializer
  */
 #define S_MAKECONCAT(A,B) A ## B
 #define S_CONCAT(A,B) S_MAKECONCAT(A,B)
 
 
 /**
- * @def S_VOIDPTR(PTR)
- * Cast a pointer to a a pointer of type void.
- * @param PTR Pointer to cast to void pointer.
- * @return @code (void*)PTR @endcode
+ * @def S_TOSTRING(S)
  * @hideinitializer
+ * Return a string of the given argument.
+ *
+ * @param S Argument to turn into a string.
+ *
+ * @return @code "S" @endcode
+ */
+#define S_TOSTRING(S) # S
+
+
+/**
+ * @def S_VOIDPTR(PTR)
+ * @hideinitializer
+ *
+ * Cast a pointer to a a pointer of type void.
+ *
+ * @param PTR Pointer to cast to void pointer.
+ *
+ * @return @code (void*)PTR @endcode
  */
 #define S_VOIDPTR(PTR) ((void*)PTR)
 

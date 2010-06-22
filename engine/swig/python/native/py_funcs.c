@@ -56,7 +56,7 @@
 /* enum for SObject types */
 typedef enum
 {
-	S_TYPE_SINT = 0,     /*!< SInt, signed integer value.                */
+	S_TYPE_SSINT = 0,    /*!< SInt, signed integer value.                */
 	S_TYPE_SFLOAT,       /*!< SFloat, floating point value.              */
 	S_TYPE_SSTRING,      /*!< SString, string value (char*).             */
 	S_TYPE_SPYOBJECT,    /*!< SPyObject, Python object.                  */
@@ -79,6 +79,9 @@ typedef struct
 typedef enum
 {
 	S_TYPE_INT = 0,     /*!< int, signed integer value.                */
+#if PY_VERSION_HEX < 0x03000000 /* Python 2.x */
+	S_TYPE_LONG,        /*!< long, long int.				 		   */
+#endif /* PY_VERSION_HEX < 0x03000000 */
 	S_TYPE_FLOAT,       /*!< float, floating point value.              */
 	S_TYPE_STRING,      /*!< string, string value (char*).			   */
 #if PY_VERSION_HEX < 0x03000000 /* Python 2.x */
@@ -108,7 +111,7 @@ typedef struct
 /* a list of Speect object types with there enum types */
 static const s_sobject_defs sobject_type_list[] =
 {
-	{ "SInt", S_TYPE_SINT },
+	{ "SInt", S_TYPE_SSINT },
 	{ "SFloat", S_TYPE_SFLOAT },
 	{ "SString", S_TYPE_SSTRING },
 	{ "SPyObject", S_TYPE_SPYOBJECT },
@@ -122,6 +125,9 @@ static const s_sobject_defs sobject_type_list[] =
 static const s_pobject_defs pobject_type_list[] =
 {
 	{ "int", S_TYPE_INT },
+#if PY_VERSION_HEX < 0x03000000 /* Python 2.x */
+	{ "long", S_TYPE_LONG },
+#endif /* PY_VERSION_HEX < 0x03000000 */
 	{ "float", S_TYPE_FLOAT },
 	{ "str", S_TYPE_STRING },
 #if PY_VERSION_HEX < 0x03000000 /* Python 2.x */
@@ -146,7 +152,7 @@ static swig_type_info *SObject_p_swig_type_info = NULL;
 /* Python -> Speect */
 static s_sobject_type get_sobject_type(const SObject *object, s_erc *error);
 
-static PyObject *sint_2_pyobject(const SObject *object, s_erc *error);
+static PyObject *ssint_2_pyobject(const SObject *object, s_erc *error);
 
 static PyObject *sfloat_2_pyobject(const SObject *object, s_erc *error);
 
@@ -158,7 +164,7 @@ static PyObject *swig_2_pyobject(const SObject *object, s_bool own, s_erc *error
 /* Speect -> Python */
 static s_pobject_type get_pobject_type(PyObject *object, s_erc *error);
 
-static SObject *pyobject_2_sint(PyObject *pobject, s_erc *error);
+static SObject *pyobject_2_ssint(PyObject *pobject, s_erc *error);
 
 static SObject *pyobject_2_sfloat(PyObject *pobject, s_erc *error);
 
@@ -203,12 +209,12 @@ S_API PyObject *s_sobject_2_pyobject(const SObject *object, s_bool own, s_erc *e
 
 	switch(type)
 	{
-	case S_TYPE_SINT:
+	case S_TYPE_SSINT:
 	{
-		pobject = sint_2_pyobject(object, error);
+		pobject = ssint_2_pyobject(object, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "s_sobject_2_pyobject",
-					  "Call to \"sint_2_pyobject\" failed"))
+					  "Call to \"ssint_2_pyobject\" failed"))
 			return NULL;
 
 		goto check_owner;
@@ -328,14 +334,26 @@ S_API SObject *s_pyobject_2_sobject(PyObject *pobject, s_erc *error)
 	{
 	case S_TYPE_INT:
 	{
-		object = pyobject_2_sint(pobject, error);
+		object = pyobject_2_ssint(pobject, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "s_pyobject_2_sobject",
-					  "Call to \"pyobject_2_sint\" failed"))
+					  "Call to \"pyobject_2_ssint\" failed"))
 			return NULL;
 
 		return object;
 	}
+#if PY_VERSION_HEX < 0x03000000 /* Python 2.x, also uses pyobject_2_ssint */
+	case S_TYPE_LONG:
+	{
+		object = pyobject_2_ssint(pobject, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "s_pyobject_2_sobject",
+					  "Call to \"pyobject_2_ssint\" failed"))
+			return NULL;
+
+		return object;
+	}
+#endif /* PY_VERSION_HEX < 0x03000000 */
 	case S_TYPE_FLOAT:
 	{
 		object = pyobject_2_sfloat(pobject, error);
@@ -535,7 +553,6 @@ S_API char *s_get_pyobject_str(PyObject *pobject, s_erc *error)
 		return NULL;
 #else /* ! PY_VERSION_HEX >= 0x03000000 */
 	strObject = PyObject_Unicode(pobject);
-	Py_XDECREF(strObject);
 	if (strObject == NULL)
 	{
 		S_CTX_ERR(error, S_FAILURE,
@@ -695,7 +712,7 @@ static s_pobject_type get_pobject_type(PyObject *object, s_erc *error)
 
 
 
-static PyObject *sint_2_pyobject(const SObject *object, s_erc *error)
+static PyObject *ssint_2_pyobject(const SObject *object, s_erc *error)
 {
 	sint32 val;
 	PyObject *pobject;
@@ -705,7 +722,7 @@ static PyObject *sint_2_pyobject(const SObject *object, s_erc *error)
 
 	val = SObjectGetInt(object, error);
 	if (S_CHK_ERR(error, S_CONTERR,
-				  "sint_2_pyobject",
+				  "ssint_2_pyobject",
 				  "Call to \"SObjectGetInt\" failed"))
 		return NULL;
 
@@ -717,7 +734,7 @@ static PyObject *sint_2_pyobject(const SObject *object, s_erc *error)
 		if (py_error)
 		{
 			S_CTX_ERR(error, S_FAILURE,
-					  "sint_2_pyobject",
+					  "ssint_2_pyobject",
 					  "Call to \"PyLong_FromLong\" failed. Reported error: %s",
 					  py_error);
 			S_FREE(py_error);
@@ -725,7 +742,7 @@ static PyObject *sint_2_pyobject(const SObject *object, s_erc *error)
 		else
 		{
 			S_CTX_ERR(error, S_FAILURE,
-					  "sint_2_pyobject",
+					  "ssint_2_pyobject",
 					  "Call to \"PyLong_FromLong\" failed");
 		}
 	}
@@ -924,7 +941,7 @@ static PyObject *swig_2_pyobject(const SObject *object, s_bool own, s_erc *error
 }
 
 
-static SObject *pyobject_2_sint(PyObject *pobject, s_erc *error)
+static SObject *pyobject_2_ssint(PyObject *pobject, s_erc *error)
 {
 	SObject *object;
 	sint32 val;
@@ -934,7 +951,7 @@ static SObject *pyobject_2_sint(PyObject *pobject, s_erc *error)
 	val = (sint32)PyLong_AsLong(pobject);
 	object = SObjectSetInt(val, error);
 	if (S_CHK_ERR(error, S_CONTERR,
-				  "pyobject_2_sint",
+				  "pyobject_2_ssint",
 				  "Call to \"SObjectSetInt\" failed"))
 		return NULL;
 

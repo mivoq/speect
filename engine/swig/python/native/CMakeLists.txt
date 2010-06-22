@@ -68,6 +68,8 @@ list(APPEND SPCT_SWIG_PYTHON_NATIVE_SOURCES
   "${CMAKE_CURRENT_SOURCE_DIR}/py_native.c"
   "${CMAKE_CURRENT_SOURCE_DIR}/py_list.c"
   "${CMAKE_CURRENT_SOURCE_DIR}/py_list_itr.c"
+  "${CMAKE_CURRENT_SOURCE_DIR}/py_map.c"
+  "${CMAKE_CURRENT_SOURCE_DIR}/py_map_itr.c"
   "${CMAKE_CURRENT_BINARY_DIR}/swigpyrun.h"
   )
 

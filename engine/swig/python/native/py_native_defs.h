@@ -136,6 +136,61 @@ typedef struct
 
 /************************************************************************************/
 /*                                                                                  */
+/* SMapPy definition                                                                */
+/*                                                                                  */
+/************************************************************************************/
+
+/**
+ * The SMapPy structure.
+ * Inherits and implements #SMap wrappers for Python dictionaries.
+ * @extends SMap
+ */
+typedef struct
+{
+	/**
+	 * @protected Inherit from #SMap.
+	 */
+	SMap       obj;
+
+	/**
+	 * @protected Python object interface.
+	 */
+	SPyObject *pyObject;
+
+	/**
+	 * @protected Temporary object for @c const calls.
+	 */
+	SObject   *tmp;
+} SMapPy;
+
+
+/************************************************************************************/
+/*                                                                                  */
+/* SMapPyIterator definition                                                        */
+/*                                                                                  */
+/************************************************************************************/
+
+/**
+ * SMapPyIterator definition.
+ * @private
+ *
+ * The extra pointer, @c n_itr, is required so that we can unlink
+ * elements from the container while also still being able to iterate
+ * over the container.
+ */
+typedef struct
+{
+	SIterator   obj;       /*!< Inherit from SIterator.               */
+	PyObject   *iterator;  /*!< Python iterator object.				  */
+	PyObject   *c_itr;     /*!< Pointer to current map element.       */
+	PyObject   *n_itr;     /*!< Pointer to next map element.          */
+	SObject    *sobject;   /*!< Pointer to Object method's tmp value. */
+	char       *key;       /*!< Pointer to Key method's tmp value.    */
+} SMapPyIterator;
+
+
+/************************************************************************************/
+/*                                                                                  */
 /* End external c declaration                                                       */
 /*                                                                                  */
 /************************************************************************************/

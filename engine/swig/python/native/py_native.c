@@ -91,6 +91,18 @@ S_API s_erc s_python_native_objects_init(void)
 				  "Failed to initialize SListPyIterator"))
 		return local_err;
 
+	_s_map_py_class_reg(&local_err);
+	if (S_CHK_ERR(&local_err, S_CONTERR,
+				  "s_python_native_objects_init",
+				  "Failed to initialize SMapPy"))
+		return local_err;
+
+	_s_map_py_iterator_class_reg(&local_err);
+	if (S_CHK_ERR(&local_err, S_CONTERR,
+				  "s_python_native_objects_init",
+				  "Failed to initialize SMapPyIterator"))
+		return local_err;
+
 	return S_SUCCESS;
 }
 

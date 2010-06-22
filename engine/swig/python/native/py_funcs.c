@@ -60,6 +60,8 @@ typedef enum
 	S_TYPE_SFLOAT,       /*!< SFloat, floating point value.              */
 	S_TYPE_SSTRING,      /*!< SString, string value (char*).             */
 	S_TYPE_SPYOBJECT,    /*!< SPyObject, Python object.                  */
+	S_TYPE_SLISTPY,      /*!< SListPy, Python list.                      */
+	S_TYPE_SMAPPY,       /*!< SMapPy, Python dictionary.                 */
 	S_TYPE_SUNKNOWN,     /*!< Unknown type (not primitive), use SObject. */
 	S_TYPE_SERROR        /*!< error, should not get here.                */
 } s_sobject_type;
@@ -110,6 +112,8 @@ static const s_sobject_defs sobject_type_list[] =
 	{ "SFloat", S_TYPE_SFLOAT },
 	{ "SString", S_TYPE_SSTRING },
 	{ "SPyObject", S_TYPE_SPYOBJECT },
+	{ "SListPy", S_TYPE_SLISTPY },
+	{ "SMapPy", S_TYPE_SMAPPY },
 	{ NULL, S_TYPE_UNKNOWN }
 };
 
@@ -232,6 +236,26 @@ S_API PyObject *s_sobject_2_pyobject(const SObject *object, s_bool own, s_erc *e
 	case S_TYPE_SPYOBJECT:
 	{
 		pobject = SPyObjectGet(S_PYOBJECT(object), error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "s_sobject_2_pyobject",
+					  "Call to \"SPyObjectGet\" failed"))
+			return NULL;
+
+		goto check_owner;
+	}
+	case S_TYPE_SLISTPY:
+	{
+		pobject = SPyObjectGet(((SListPy*)object)->pyObject, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "s_sobject_2_pyobject",
+					  "Call to \"SPyObjectGet\" failed"))
+			return NULL;
+
+		goto check_owner;
+	}
+	case S_TYPE_SMAPPY:
+	{
+		pobject = SPyObjectGet(((SMapPy*)object)->pyObject, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "s_sobject_2_pyobject",
 					  "Call to \"SPyObjectGet\" failed"))
@@ -362,16 +386,16 @@ S_API SObject *s_pyobject_2_sobject(PyObject *pobject, s_erc *error)
 	}
 	case S_TYPE_DICT:
 	{
-		object = S_NEW("SListPy", error);
+		object = S_NEW("SMapPy", error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "s_pyobject_2_sobject",
-					  "Failed to create new 'SListPy' object"))
+					  "Failed to create new 'SMapPy' object"))
 			return NULL;
 
-		SListPyInit((SListPy**)&object, pobject, error);
+		SMapPyInit((SMapPy**)&object, pobject, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "s_pyobject_2_sobject",
-					  "Call to \"SListPyInit\" failed"))
+					  "Call to \"SMapPyInit\" failed"))
 			return NULL;
 
 		return object;

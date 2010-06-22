@@ -28,18 +28,32 @@
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* Native interfaces for Speect <-> Python objects.                                 */
+/* SMap wrappers for Python dictionaries.                                           */
 /*                                                                                  */
 /*                                                                                  */
 /************************************************************************************/
 
-#ifndef _SPCT_PYTHON_NATIVE_H__
-#define _SPCT_PYTHON_NATIVE_H__
+#ifndef _SPCT_PY_MAP_H__
+#define _SPCT_PY_MAP_H__
 
 
 /**
- * @file py_native.h
- * Native interfaces for Speect <-> Python objects.
+ * @file py_map.h
+ * SMap wrappers for Python dictionaries.
+ */
+
+
+/**
+ * @ingroup SPyObject
+ * @defgroup SMapPy Python Dictionary
+ * SMap wrapper for Python dictionaries.
+ * SMapPy must be initialized with the Python dictionary object with
+ * #SMapPyInit.
+ * @note SMapPy does not implement the following SMap methods:
+ * <ul>
+ * <li> #SMapCopy </li>
+ * </ul>
+ * @{
  */
 
 
@@ -49,15 +63,8 @@
 /*                                                                                  */
 /************************************************************************************/
 
-#include "Python.h"
-#include "speect.h"
-#include "py_native_defs.h"        /* Python Native type definitions.          */
-#include "py_funcs.h"              /* Misc conversion functions.               */
-#include "py_object.h"             /* SPyObject Speect Python object wrapper.  */
-#include "py_list.h"               /* SListPy Speect Python list wrapper.      */
-#include "py_list_itr.h"           /* Speect Python list iterator wrapper.     */
-#include "py_map.h"                /* SMapPy Speect Python dict wrapper.       */
-#include "py_map_itr.h"            /* Speect Python dict iterator wrapper.     */
+#include "py_object.h"
+#include "py_native.h"
 
 
 /************************************************************************************/
@@ -70,17 +77,74 @@ S_BEGIN_C_DECLS
 
 /************************************************************************************/
 /*                                                                                  */
-/*  Function prototypes                                                             */
+/* Macros                                                                           */
 /*                                                                                  */
 /************************************************************************************/
 
 /**
- * Initialize the Python object wrapper's module with the Speect
- * Engine.
+ * @hideinitializer
+ * Return the given parent/child class object of an #SMapPy
+ * type as an SMapPy object.
  *
- * @return Error code.
+ * @param SELF The given object.
+ *
+ * @return Given object as #SMapPy* type.
+ *
+ * @note This casting is not safety checked.
  */
-S_API s_erc s_python_native_objects_init(void);
+#define S_MAPPY(SELF)    ((SMapPy *)(SELF))
+
+
+/************************************************************************************/
+/*                                                                                  */
+/* SMapPy definition (in py_native_defs.h)                                          */
+/*                                                                                  */
+/************************************************************************************/
+
+
+/************************************************************************************/
+/*                                                                                  */
+/* SMapHashTableClass definition                                                    */
+/*                                                                                  */
+/************************************************************************************/
+
+/**
+ * Typedef for Python dictionaries wrappers class struct. Same as #SMapClass as
+ * we are not adding any new methods.
+ */
+typedef SMapClass SMapPyClass;
+
+
+/************************************************************************************/
+/*                                                                                  */
+/*  Function prototypes                                                             */
+/*                                                                                  */
+/************************************************************************************/
+
+
+/**
+ * Initialize an #SMapPy data container.
+ * @public @memberof SMapPy
+ *
+ * @param self The SMapPy to initialize.
+ * @param object The Python dictionary to which this SMap is a wrapper.
+ * @param error Error code.
+ *
+ * @return Pointer to newly initialized Python dictionary container.
+ *
+ * @note If this function fails the list will be deleted and the @c
+ * self pointer will be set to @c NULL.
+ */
+S_API void SMapPyInit(SMapPy **self, PyObject *object, s_erc *error);
+
+
+/**
+ * Register the #SMapPy class to the object system.
+ * @private @memberof SListPy
+ *
+ * @param error Error code.
+ */
+S_LOCAL void _s_map_py_class_reg(s_erc *error);
 
 
 /************************************************************************************/
@@ -96,4 +160,4 @@ S_END_C_DECLS
  * end documentation
  */
 
-#endif /* _SPCT_PYTHON_NATIVE_H__ */
+#endif /* _SPCT_PY_MAP_H__ */

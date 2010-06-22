@@ -5,26 +5,41 @@
 ##                                                                                  ##
 ######################################################################################
 ##                                                                                  ##
-## CMake custom functions for Speect plug-ins                                       ##
+## CMake custom functions/macros for Speect plug-ins:                               ##
 ##                                                                                  ##
+##   speect_plugin_definition       (Define a plug-in)                              ## 
+##   speect_plugin_sources          (Add plug-in source files)                      ##
+##   speect_plugin_headers          (Add plug-in header files)                      ##
+##   speect_plugin_create           (Create the plug-in shared object)              ##
+##   speect_plugin_configure_info   (Configure a plug-in header with information)   ##
+##   speect_include_plugin          (Include another plug-in in the build)          ##
+##                                                                                  ##
+## See the documentation at each function/macro below.                              ##
 ##                                                                                  ##
 ######################################################################################
+
 
 #------------------------------------------------------------------------------------#
 #                             Define a plug-in                                       #
 #------------------------------------------------------------------------------------#
 #
-# speect_plugin_definition(name version_major version_minor version_patch)
+# speect_plugin_definition(name classname version_major version_minor version_patch)
 #
 # Define a plug-in. The plug-in name is lowercased and the project name is 
 # set to "speect_lowercase_name_plugin" with the C language. The plug-in library's
 # name will be "lowercase_name.spi" with links to:
 #                  "lowercase_name.spi.version_major"
 #                  "lowercase_name.spi.version_major.version_minor.version_patch"
+#
+# The class name is used in the documentation strings 
+# (for example "SArrayFloat plug-in initialization")
 # 
+
 # The plug-in's "cmake" directory will be added to CMAKE_MODULE_PATH
 #
 # :param name: The name of the plug-in.
+# :type name: string
+# :param name: The name of the class that the plug-in implements
 # :type name: string
 # :param version_major: The major version number of the plug-in.
 # :type version_major: int
@@ -33,15 +48,18 @@
 # :param version_patch: The patch number of the plug-in.
 # :type version_patch: int
 #
-# For example: speect_plugin_definition(Viterbi 0 9 5)
+# For example: speect_plugin_definition(Viterbi "SViterbi" 0 9 5)
 # will create a plug-in viterbi.spi that points to viterbi.spi.0 which in tern
 # points to viterbi.spi.0.9.5
 #
 
-macro(speect_plugin_definition name version_major version_minor version_patch)
+macro(speect_plugin_definition name classname version_major version_minor version_patch)
   message(STATUS "cmake for project \"${name}\"")
 
   string(TOLOWER "${name}" plugin_lowercase_name)
+
+  # used in plugin_info.h.in if required
+  string(TOUPPER "${name}" plugin_uppercase_name)
 
   # look if a plug-in with the same name is in the list of
   # plug-in names
@@ -63,6 +81,12 @@ macro(speect_plugin_definition name version_major version_minor version_patch)
   set(${plugin_lowercase_name}_VERSION_MINOR ${version_minor})
   set(${plugin_lowercase_name}_VERSION_PATCH ${version_patch})
   set(${plugin_lowercase_name}_VERSION "${version_major}.${version_minor}.${version_patch}")
+
+  # class name
+  set(plugin_class_name ${classname})
+
+  # for SWIG if needed
+  set(swig_classname ${plugin_class_name})
 
   list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 endmacro(speect_plugin_definition)
@@ -222,6 +246,8 @@ function(speect_plugin_create)
     list(APPEND PLUGIN_INFO 
       ${num_dirs} 
       ${plugin_lowercase_name} 
+      ${${plugin_lowercase_name}_VERSION_MAJOR}
+      ${${plugin_lowercase_name}_VERSION_MINOR}
       ${${plugin_lowercase_name}_INCLUDE_DIRS}
       )
 
@@ -235,6 +261,9 @@ function(speect_plugin_create)
   ################################# Config file ########################################
 
   set(tmp_name ${${plugin_lowercase_name}_INCLUDE_DIRS})
+  set(tmp_version_major ${${plugin_lowercase_name}_VERSION_MAJOR})
+  set(tmp_version_minor ${${plugin_lowercase_name}_VERSION_MINOR})
+
   list(REMOVE_DUPLICATES tmp_name)
   configure_file(${CMAKE_SOURCE_DIR}/plugins/config/pluginConf.cmake.in 
     ${CMAKE_BINARY_DIR}/plugins/cmakeconf/${plugin_lowercase_name}.cmake @ONLY)
@@ -242,3 +271,74 @@ function(speect_plugin_create)
  
 endfunction(speect_plugin_create)
 
+
+#------------------------------------------------------------------------------------#
+#                   Configure a plug-in header with information                      #
+#------------------------------------------------------------------------------------#
+#
+# speect_plugin_configure_info(description major_min minor_min)
+#
+# Configure the plug-in information header, plugin_info.h, with the provided information.
+#
+# :param description: A short description of the plug-in.
+# :type description: string
+# :param major_min: The minimum major version of the Speect Engine with which this
+#                   plug-in will work.
+# :type major_min: int
+# :param minor_min: The minimum minor version of the Speect Engine with which this
+#                   plug-in will work.
+# :type minor_min: int
+#
+
+macro(speect_plugin_configure_info description major_min minor_min)
+
+  # plug-in description
+  set(plugin_description "${description}")
+
+  # Speect Engine minimum versions
+  set(plugin_speect_major_min ${major_min})
+  set(plugin_speect_minor_min ${minor_min})
+
+  # plug-in versions
+  set(plugin_major ${${plugin_lowercase_name}_VERSION_MAJOR})
+  set(plugin_minor ${${plugin_lowercase_name}_VERSION_MINOR})
+  
+  configure_file(${CMAKE_SOURCE_DIR}/plugins/config/plugin_info.h.in
+    ${CMAKE_CURRENT_BINARY_DIR}/src/plugin_info.h @ONLY)
+endmacro(speect_plugin_configure_info)
+
+
+#------------------------------------------------------------------------------------#
+#                   Include another plug-in in the build                             #
+#------------------------------------------------------------------------------------#
+#
+# speect_include_plugin(name major_min minor_min)
+#
+# Include another plug-in in the build of this one. This macro will load the plug-in's
+# CMake configuration, which contains the header files to include, as well as version info.
+# A fatal error will be thrown if the given major and minor version numbers are greater 
+# than the requested plug-in's versions.
+#
+# :param name: The name of the requested plug-in to include.
+# :type description: string
+# :param major_min: The minimum major version of the requested plug-in with which 
+#                   this plug-in will work.
+# :type major_min: int
+# :param minor_min: The minimum minor version of the requested plug-in with which 
+#                   this plug-in will work.
+# :type minor_min: int
+#
+
+macro(speect_include_plugin name major_min minor_min)
+
+  string(TOLOWER "${name}" include_lowercase_name)
+  include(${include_lowercase_name})
+  
+  math(EXPR min_required "${major_min}*1000 + ${minor_min}")
+  math(EXPR have_version "${${include_lowercase_name}_VERSION_MAJOR}*1000 + ${${include_lowercase_name}_VERSION_MINOR}")
+
+  if(min_required GREATER have_version)
+    message(FATAL_ERROR "Requested plug-in's (${name}) version, ${${include_lowercase_name}_VERSION_MAJOR}.${${include_lowercase_name}_VERSION_MINOR}, is less than minimum required, ${major_min}.${minor_min}")
+  endif(min_required GREATER have_version)
+
+endmacro(speect_include_plugin)

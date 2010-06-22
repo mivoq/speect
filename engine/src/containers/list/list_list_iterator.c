@@ -205,19 +205,11 @@ static SIterator *Next(SIterator *self, s_erc *error)
 
 static const SObject *Object(SIterator *self, s_erc *error)
 {
-	SListListIterator *listItr;
+	SListListIterator *listItr = S_LISTLIST_ITER(self);
 	const SObject *tmp;
 
 
 	S_CLR_ERR(error);
-
-	/* must cast this one to make sure */
-	listItr = S_CAST(self, SListListIterator, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "Object",
-				  "Failed to cast SIterator to SListListIterator"))
-		return NULL;
-
 	tmp = s_list_element_get((s_list_element*)listItr->c_itr, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Object",
@@ -230,18 +222,11 @@ static const SObject *Object(SIterator *self, s_erc *error)
 
 static SObject *Unlink(SIterator *self, s_erc *error)
 {
-	SListListIterator *listItr;
+	SListListIterator *listItr = S_LISTLIST_ITER(self);
 	SObject *tmp;
 
 
 	S_CLR_ERR(error);
-
-	/* must cast this one to make sure */
-	listItr = S_CAST(self, SListListIterator, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "Unlink",
-				  "Failed to cast SIterator to SListListIterator"))
-		return NULL;
 
 	if (listItr->c_itr == NULL)
 		return NULL;

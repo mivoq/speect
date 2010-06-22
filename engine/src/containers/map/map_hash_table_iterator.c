@@ -220,19 +220,11 @@ static SIterator *Next(SIterator *self, s_erc *error)
 
 static const char *Key(SIterator *self, s_erc *error)
 {
-	const SMapHashTableIterator *mapItr;
+	SMapHashTableIterator *mapItr = S_MAPHASHTABLE_ITER(self);
 	const char *key;
 
 
 	S_CLR_ERR(error);
-
-	/* must cast this one to make sure */
-	mapItr = S_CAST(self, SMapHashTableIterator, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "Key",
-				  "Failed to cast SIterator to SMapHashTableIterator"))
-		return NULL;
-
 	key = (const char *)s_hash_element_key((s_hash_element*)mapItr->c_itr, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Key",
@@ -245,18 +237,11 @@ static const char *Key(SIterator *self, s_erc *error)
 
 static const SObject *Object(SIterator *self, s_erc *error)
 {
-	SMapHashTableIterator *mapItr;
+	SMapHashTableIterator *mapItr = S_MAPHASHTABLE_ITER(self);
 	const SObject *obj;
 
 
 	S_CLR_ERR(error);
-
-	/* must cast this one to make sure */
-	mapItr = S_CAST(self, SMapHashTableIterator, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "Object",
-				  "Failed to cast SIterator to SMapHashTableIterator"))
-		return NULL;
 
 	obj = (const SObject*)s_hash_element_get_data((s_hash_element*)mapItr->c_itr, error);
 	if (S_CHK_ERR(error, S_CONTERR,
@@ -270,7 +255,7 @@ static const SObject *Object(SIterator *self, s_erc *error)
 
 static SObject *Unlink(SIterator *self, s_erc *error)
 {
-	SMapHashTableIterator *mapItr;
+	SMapHashTableIterator *mapItr = S_MAPHASHTABLE_ITER(self);
 	s_hash_element *hte;
 	char *key;
 	SObject *val;
@@ -278,13 +263,6 @@ static SObject *Unlink(SIterator *self, s_erc *error)
 
 
 	S_CLR_ERR(error);
-
-	/* must cast this one to make sure */
-	mapItr = S_CAST(self, SMapHashTableIterator, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "Unlink",
-				  "Failed to cast SIterator to SMapHashTableIterator"))
-		return NULL;
 
 	if (mapItr->c_itr == NULL)
 		return NULL;

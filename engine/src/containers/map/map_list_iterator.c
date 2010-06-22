@@ -235,19 +235,11 @@ static SIterator *Next(SIterator *self, s_erc *error)
 
 static const char *Key(SIterator *self, s_erc *error)
 {
-	const SMapListIterator *mapItr;
+	SMapListIterator *mapItr = S_MAPLIST_ITER(self);
 	const s_kvp *tmp;
 
 
 	S_CLR_ERR(error);
-
-	/* must cast this one to make sure */
-	mapItr = S_CAST(self, SMapListIterator, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "Key",
-				  "Failed to cast SIterator to SMapListIterator"))
-		return NULL;
-
 	tmp = s_list_element_get((s_list_element*)mapItr->c_itr, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Key",
@@ -263,19 +255,11 @@ static const char *Key(SIterator *self, s_erc *error)
 
 static const SObject *Object(SIterator *self, s_erc *error)
 {
-	SMapListIterator *mapItr;
+	SMapListIterator *mapItr = S_MAPLIST_ITER(self);
 	const s_kvp *tmp;
 
 
 	S_CLR_ERR(error);
-
-	/* must cast this one to make sure */
-	mapItr = S_CAST(self, SMapListIterator, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "Object",
-				  "Failed to cast SIterator to SMapListIterator"))
-		return NULL;
-
 	tmp = s_list_element_get((s_list_element*)mapItr->c_itr, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Object",
@@ -291,21 +275,13 @@ static const SObject *Object(SIterator *self, s_erc *error)
 
 static SObject *Unlink(SIterator *self, s_erc *error)
 {
-	SMapListIterator *mapItr;
+	SMapListIterator *mapItr = S_MAPLIST_ITER(self);
 	SObject *obj;
 	s_kvp *tmp;
 	char *key;
 
 
 	S_CLR_ERR(error);
-
-	/* must cast this one to make sure */
-	mapItr = S_CAST(self, SMapListIterator, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "Unlink",
-				  "Failed to cast SIterator to SMapListIterator"))
-		return NULL;
-
 	if (mapItr->c_itr == NULL)
 		return NULL;
 

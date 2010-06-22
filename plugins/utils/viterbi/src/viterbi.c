@@ -600,15 +600,9 @@ static void Init(void *obj, s_erc *error)
 	self->cand_prune_envelope_width = -1.0;
 
 	self->features = (SMap*)S_NEW("SMapList", error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "Init",
-				  "Failed to create new 'SMap' object"))
-		return;
-
-	SMapListInit(&(self->features), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "Init",
-			  "Failed to initialize new 'SMap' object");
+			  "Failed to create new 'SMap' object");
 }
 
 

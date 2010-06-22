@@ -35,6 +35,14 @@ while(plugin_list_length GREATER 0)
   list(GET PLUGIN_LIST 0 plugin_lowercase_name)
   list(REMOVE_AT PLUGIN_LIST 0)
 
+  # get and remove first element in list, major version
+  list(GET PLUGIN_LIST 0 tmp_version_major)
+  list(REMOVE_AT PLUGIN_LIST 0)
+
+  # get and remove first element in list, minor version
+  list(GET PLUGIN_LIST 0 tmp_version_minor)
+  list(REMOVE_AT PLUGIN_LIST 0)
+
   # clear tmp_name, the variable that holds the list of plug-in directories
   unset(tmp_name)
 

@@ -56,7 +56,7 @@ include(swigCommonFunctions)
 #------------------------------------------------------------------------------------#
 
 add_subdirectory(utils)
-#add_subdirectory(linguistic)
+add_subdirectory(linguistic)
 #add_subdirectory(acoustic)
 #add_subdirectory(serialization)
 #add_subdirectory(processors)

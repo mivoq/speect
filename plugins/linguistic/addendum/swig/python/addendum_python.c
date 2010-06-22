@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2009 The Department of Arts and Culture,                           */
+/* Copyright (c) 2010 The Department of Arts and Culture,                           */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -24,122 +24,122 @@
 /************************************************************************************/
 /*                                                                                  */
 /* AUTHOR  : Aby Louw                                                               */
-/* DATE    : December 2009                                                          */
+/* DATE    : June 2010                                                              */
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* A addendum class plugin.                                                         */
+/* C convenience functions for SAddendum iterator Python wrapper.                   */
 /*                                                                                  */
 /*                                                                                  */
-/************************************************************************************/
-
-
-/************************************************************************************/
-/*                                                                                  */
-/* Modules used                                                                     */
 /*                                                                                  */
 /************************************************************************************/
-
-#include "addendum.h"
-#include "plugin_info.h"
 
 
 /************************************************************************************/
 /*                                                                                  */
-/* Static function prototypes                                                       */
+/* Inline helper functions                                                          */
 /*                                                                                  */
 /************************************************************************************/
 
-static void plugin_register_function(s_erc *error);
+%inline
+%{
+	PyObject *_addendum_get_word(const SAddendum *self, const char *word,
+				     const SMap *features, s_erc *error)
+	{
+		PyObject *tuple;
+		SList *wordlist;
+		PyObject *object;
+		s_bool syllabified = FALSE;
 
-static void plugin_exit_function(s_erc *error);
+
+		wordlist = S_ADDENDUM_CALL(self, get_word)(self, word, features,
+			   			 	   &syllabified, error);
+		if (*error != S_SUCCESS)
+			return NULL;
+
+		tuple = PyTuple_New(2);
+		if (tuple == NULL)
+		{
+			S_CTX_ERR(error, S_FAILURE,
+				  "_addendum_get_word",
+				  "Call to \"PyTuple_New\" failed");
+			return NULL;
+		}
+
+		object = s_sobject_2_pyobject(S_OBJECT(wordlist), TRUE, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+		              "_addendum_get_word",
+			      "Call to \"s_sobject_2_pobject\" failed"))
+		{
+			Py_XDECREF(tuple);
+			return NULL;
+		}
+
+		PyTuple_SET_ITEM(tuple, 0, object);
+
+		if (syllabified)
+		{
+			object = Py_True;
+			Py_XINCREF(object);
+			PyTuple_SET_ITEM(tuple, 1, object);
+		}
+		else
+		{
+			object = Py_False;
+			Py_XINCREF(object);
+			PyTuple_SET_ITEM(tuple, 1, object);
+		}
+
+		return tuple;
+	}
+%}
 
 
 /************************************************************************************/
 /*                                                                                  */
-/* Plug-in parameters                                                               */
+/* Extend the SAddendum class                                                       */
 /*                                                                                  */
 /************************************************************************************/
 
-static const s_plugin_params plugin_params =
+%extend SAddendum
 {
-	/* plug-in name */
-	SPCT_PLUGIN_NAME,
+%pythoncode
+%{
+def get_word(self, word, features):
+    """
+    get_word(word, features)
 
-	/* description */
-	SPCT_PLUGIN_DESCRIPTION,
+    Get a word from the addendum.
 
-	/* version */
-	{
-		SPCT_PLUGIN_VERSION_MAJOR,
-		SPCT_PLUGIN_VERSION_MINOR
-	},
+    :param word: The word to get.
+    :type word: string
+    :param features: Specific features which might distinguish the word if multiple
+                     entries of the word exists in the addendum. If ``None`` then the
+                     first entry of the word is returned.
+    :type features: dict
+    :return: The return value is dependant on the word definition in the addendum, and can be:
 
-	/* Speect ABI version (which plug-in was compiled with) */
-	{
-		S_MAJOR_VERSION,
-		S_MINOR_VERSION
-	},
+                 * A list of phones for the given word (no syllables were defined in the addendum).
+                 * A list of syllables, where the syllables are lists of phones.
+                 * ``None`` if word was not found in the addendum.
 
-	/* register function pointer */
-	plugin_register_function,
+             As well as ``bool`` value, specifying if the returned list is phones or syllables.
+             If ``True`` then syllables were returned, else if ``False`` a list of phones were
+             returned.
 
-	/* exit function pointer */
-	plugin_exit_function
+             For example::
+
+                 list, syllabified = myaddendum.get_word(\"hello\", None)
+
+    :rtype: list, bool
+    """
+    wlist, syllabified = _addendum_get_word(self, word, features)
+
+    return wlist, syllabified
+%}
 };
 
 
-/************************************************************************************/
-/*                                                                                  */
-/* Function implementations                                                         */
-/*                                                                                  */
-/************************************************************************************/
-
-const s_plugin_params *s_plugin_init(s_erc *error)
-{
-	S_CLR_ERR(error);
-
-	if (!s_lib_version_ok(SPCT_MAJOR_VERSION_MIN, SPCT_MINOR_VERSION_MIN))
-	{
-		S_CTX_ERR(error, S_FAILURE,
-				  SPCT_PLUGIN_INIT_STR,
-				  "Incorrect Speect Engine version, require at least '%d.%d.x'",
-				  SPCT_MAJOR_VERSION_MIN, SPCT_MINOR_VERSION_MIN);
-		return NULL;
-	}
-
-	return &plugin_params;
-}
 
 
-/************************************************************************************/
-/*                                                                                  */
-/* Static function implementations                                                  */
-/*                                                                                  */
-/************************************************************************************/
 
-/* plug-in register function */
-static void plugin_register_function(s_erc *error)
-{
-	S_CLR_ERR(error);
-
-	/* register plug-in classes here */
-
-	_s_addendum_class_reg(error);
-	S_CHK_ERR(error, S_CONTERR,
-			  SPCT_PLUGIN_REG_STR,
-			  SPCT_PLUGIN_REG_FAIL_STR);
-}
-
-
-/* plug-in exit function */
-static void plugin_exit_function(s_erc *error)
-{
-	S_CLR_ERR(error);
-
-	/* free plug-in classes here */
-	_s_addendum_class_free(error);
-	S_CHK_ERR(error, S_CONTERR,
-			  SPCT_PLUGIN_EXIT_STR,
-			  SPCT_PLUGIN_EXIT_FAIL_STR);
-}

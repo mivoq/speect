@@ -58,7 +58,6 @@ static SAddendumClass AddendumClass; /* SAddendum class declaration. */
 /*                                                                                  */
 /************************************************************************************/
 
-
 /* local functions to register and free classes */
 S_LOCAL void _s_addendum_class_reg(s_erc *error)
 {

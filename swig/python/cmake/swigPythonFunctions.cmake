@@ -27,7 +27,7 @@
 # :type swig_classname: string
 # :param swig_includes: SWIG includes (e.g. typemaps.i, exception.i, ...)
 # :type swig_includes: CMake list
-# :param swig_c_includes: C header files (speect.h is automatically included)
+# :param swig_c_includes: C header files (speect.h and py_native.h are automatically included)
 # :type swig_c_includes: CMake list
 # :param swig_load_plugin: Whether to load the plug-in on initialization.
 # :type swig_load_plugin: bool (0 or 1)
@@ -68,10 +68,11 @@ macro(speect_plugin_swig_python_interface)
     file(APPEND ${filename} "\n")
   endif(swig_includes)
   
-  # C header files (speect.h is always included) 
+  # C header files (speect.h and py_native.h are always included) 
   file(APPEND ${filename} "/* Speect Engine header & plug-in headers. */\n")
   file(APPEND ${filename} "%header\n%{\n")
   file(APPEND ${filename} "#include \"speect.h\"\n") # speect.h
+  file(APPEND ${filename} "#include \"py_native.h\"\n") # py_native.h
   foreach(include_file ${swig_c_includes})
     file(APPEND ${filename} "#include \"${include_file}\"\n")
  #   list(APPEND swig_deps ${include_file})
@@ -132,8 +133,8 @@ macro(speect_plugin_swig_python_interface)
   if(swig_python)
     file(APPEND ${filename} "/* ${swig_classname} SWIG Python interface definition. */\n")
     foreach(include_file ${swig_python})
-      file(APPEND ${filename} "%include \"${CMAKE_CURRENT_SOURCE_DIR}/python/${include_file}\"\n")
-      list(APPEND swig_deps ${CMAKE_CURRENT_SOURCE_DIR}/python/${include_file})
+      file(APPEND ${filename} "%include \"${CMAKE_CURRENT_SOURCE_DIR}/${include_file}\"\n")
+      list(APPEND swig_deps ${CMAKE_CURRENT_SOURCE_DIR}/${include_file})
     endforeach(include_file ${swig_python})
     file(APPEND ${filename} "\n")
   endif(swig_python)
@@ -176,6 +177,9 @@ macro(speect_plugin_swig_python_wrapper)
   # include Speect 
   include_directories(${SPCT_INCLUDE_DIRS})
 
+  # include Speect Python native 
+  include_directories(${SPCT_PYTHON_NATIVE_INCLUDE_DIRS})
+
   # clear C flags, we don't want the same stuff as Speect
   set(CMAKE_C_FLAGS "")
 
@@ -196,7 +200,10 @@ macro(speect_plugin_swig_python_wrapper)
   swig_add_module(${plugin_lowercase_name} python ${CMAKE_CURRENT_BINARY_DIR}/${plugin_lowercase_name}.i)
 
   # link with Python and Speect Engine
-  swig_link_libraries(${plugin_lowercase_name} ${PYTHON_LIBRARIES} ${SPCT_LIBRARIES_TARGET})
+  swig_link_libraries(${plugin_lowercase_name} 
+    ${PYTHON_LIBRARIES} 
+    ${SPCT_LIBRARIES_TARGET}
+    ${SPCT_PYTHON_NATIVE_LIBRARY_TARGET})
 
   # set the output directory
   set_target_properties(${SWIG_MODULE_${plugin_lowercase_name}_REAL_NAME}

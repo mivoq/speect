@@ -14,12 +14,11 @@
 #                Speect SWIG Python native interface library                         #
 #------------------------------------------------------------------------------------#
 
-set(SPCT_SWIG_PYTHON_NATIVE_LIBRARY spct_swig_python_native)
 add_subdirectory(native)
-set(SPCT_SWIG_PYTHON_NATIVE_LIBRARY_TARGET SPCT_SWIG_PYTHON_NATIVE_LIBRARY)
 
 # include Speect SWIG Python native headers
-include_directories(${CMAKE_SOURCE_DIR}/engine/swig/python/native)
+include_directories(${SPCT_PYTHON_NATIVE_INCLUDE_DIRS})
+
 
 #------------------------------------------------------------------------------------#
 #             Speect Engine SWIG Python source files list                            #
@@ -136,7 +135,7 @@ swig_add_module(speect python ${CMAKE_BINARY_DIR}/engine/swig/python/speect.i)
 swig_link_libraries(speect 
   ${PYTHON_LIBRARIES} 
   ${SPCT_LIBRARIES_TARGET} 
-  ${SPCT_SWIG_PYTHON_NATIVE_LIBRARY_TARGET})
+  ${SPCT_PYTHON_NATIVE_LIBRARY_TARGET})
 
 # set the output directory
 set_target_properties(${SWIG_MODULE_speect_REAL_NAME}

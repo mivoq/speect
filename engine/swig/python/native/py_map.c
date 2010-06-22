@@ -277,7 +277,7 @@ static void MapPyValSet(SMap *self, const char *key, const SObject *val,
 				  "Call to \"s_set_pyobject_str\" failed"))
 		goto error;
 
-	if (!PyObject_SetItem(S_PY_DICT(pMap), pKey, pobject))
+	if (PyObject_SetItem(S_PY_DICT(pMap), pKey, pobject) == -1)
 	{
 		char *py_error = s_get_python_error_str();
 
@@ -338,7 +338,7 @@ static void MapPyValDelete(SMap *self, const char *key, s_erc *error)
 				  "Call to \"s_set_pyobject_str\" failed"))
 		return;
 
-	if (!PyObject_DelItem(S_PY_DICT(pMap), pKey))
+	if (PyObject_DelItem(S_PY_DICT(pMap), pKey) == -1)
 	{
 		char *py_error = s_get_python_error_str();
 
@@ -407,7 +407,7 @@ static SObject *MapPyValUnlink(SMap *self, const char *key, s_erc *error)
 		goto error;
 	}
 
-	if (!PyObject_DelItem(S_PY_DICT(pMap), pKey))
+	if (PyObject_DelItem(S_PY_DICT(pMap), pKey) == -1)
 	{
 		char *py_error = s_get_python_error_str();
 

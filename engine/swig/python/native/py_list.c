@@ -244,7 +244,7 @@ static void ListPyAppend(SList *self, const SObject *object, s_erc *error)
 		goto error;
 
 	/* append */
-	if (!PyList_Append(S_PY_LIST(pList), pobject))
+	if (PyList_Append(S_PY_LIST(pList), pobject) != 0)
 	{
 		char *py_error = s_get_python_error_str();
 
@@ -311,7 +311,7 @@ static void ListPyPrepend(SList *self, const SObject *object, s_erc *error)
 		goto error;
 
 	/* prepend, 0 inserts at beginning of list */
-	if (!PyList_Insert(S_PY_LIST(pList), 0, pobject))
+	if (PyList_Insert(S_PY_LIST(pList), 0, pobject) != 0)
 	{
 		char *py_error = s_get_python_error_str();
 
@@ -378,7 +378,7 @@ static void ListPyPush(SList *self, const SObject *object, s_erc *error)
 		goto error;
 
 	/* append does the same as push */
-	if (!PyList_Append(S_PY_LIST(pList), pobject))
+	if (PyList_Append(S_PY_LIST(pList), pobject) != 0)
 	{
 		char *py_error = s_get_python_error_str();
 
@@ -470,7 +470,7 @@ static SObject *ListPyPop(SList *self, s_erc *error)
 		return NULL;
 
 	/* now, delete last item in list */
-	if (!PySequence_DelItem(S_PY_LIST(pList), size - 1))
+	if (PySequence_DelItem(S_PY_LIST(pList), size - 1) == -1)
 	{
 		char *py_error = s_get_python_error_str();
 
@@ -510,7 +510,7 @@ static void ListPyReverse(SList *self, s_erc *error)
 	S_CHECK_PY_LIST(pList, "ListPyReverse");
 
 
-	if (!PyList_Reverse(S_PY_LIST(pList)))
+	if (PyList_Reverse(S_PY_LIST(pList)) != 0)
 	{
 		char *py_error = s_get_python_error_str();
 

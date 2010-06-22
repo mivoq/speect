@@ -91,3 +91,14 @@ set_target_properties(SPCT_SWIG_PYTHON_NATIVE_LIBRARY
 target_link_libraries(SPCT_SWIG_PYTHON_NATIVE_LIBRARY 
   ${SPCT_LIBRARIES_TARGET} 
   ${PYTHON_LIBRARIES})
+
+
+#------------------------------------------------------------------------------------#
+#                               examples/tests                                       #
+#------------------------------------------------------------------------------------#
+
+set(SPCT_SWIG_PYTHON_NATIVE_LIBRARY_TARGET SPCT_SWIG_PYTHON_NATIVE_LIBRARY)
+
+if(WANT_EXAMPLES)
+  add_subdirectory(examples)
+endif(WANT_EXAMPLES)

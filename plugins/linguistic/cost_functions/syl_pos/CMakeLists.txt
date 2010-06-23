@@ -5,32 +5,34 @@
 ##                                                                                  ##
 ######################################################################################
 ##                                                                                  ##
-## Template CMakeList for Speect Plug-ins                                           ##
+## CMakeList for Syllable Position Cost Function plug-in                            ##
 ##                                                                                  ##
 ##                                                                                  ##
 ######################################################################################
 
 #------------------------------------------------------------------------------------#
-#                                Project name                                        #
+#                             Define plug-in                                         #
 #------------------------------------------------------------------------------------#
 
-message(STATUS "cmake for project \"Syllable position cost function\"")
-project(speect_syl_pos_cost_function_plugin C)
-
-# Plug-in shared object name
-set(PLUGIN_SONAME score_syl_pos)
-
-set(${PLUGIN_SONAME}_VERSION_MAJOR 0)
-set(${PLUGIN_SONAME}_VERSION_MINOR 9)
-set(${PLUGIN_SONAME}_VERSION_PATCH 0)
-set(${PLUGIN_SONAME}_VERSION "${${PLUGIN_SONAME}_VERSION_MAJOR}.${${PLUGIN_SONAME}_VERSION_MINOR}.${${PLUGIN_SONAME}_VERSION_PATCH}")
+speect_plugin_definition(Score_Syl_Pos "SSylPosCostFunc" 1 0 0)
 
 
 #------------------------------------------------------------------------------------#
 #                             Get all CMake modules                                  #
 #------------------------------------------------------------------------------------#
 
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+set(description "A syllable position (initial, medial, final) cost function class used in unit selection")
+
+# Minimum required Speect Engine version 
+set(major_min 1)
+set(minor_min 0)
+
+speect_plugin_configure_info(${description} ${major_min} ${minor_min})
+
+
+#------------------------------------------------------------------------------------#
+#                               Source files                                         #
+#------------------------------------------------------------------------------------#
 
 # Lists of all the source files
 include(sources)
@@ -44,20 +46,8 @@ include(cost_function)
 
 
 #------------------------------------------------------------------------------------#
-#                        Plug-in shared object                                       #
+#                            Plug-in shared object                                   #
 #------------------------------------------------------------------------------------#
 
-# Library build configuration
-include(plugin)
-
-# add dependency 
-add_dependencies(${PLUGIN_SONAME}_plugin cost_function_plugin)
- 
-
-#------------------------------------------------------------------------------------#
-#                        Create a plug-in cmake config file                          #
-#------------------------------------------------------------------------------------#
-
-include(plugin_conf)
-
+speect_plugin_create()
 

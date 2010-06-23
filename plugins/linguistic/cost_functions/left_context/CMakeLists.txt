@@ -14,7 +14,7 @@
 #                             Define plug-in                                         #
 #------------------------------------------------------------------------------------#
 
-speect_plugin_definition(Left_Context_Cost "SLeftContextCostFunc" 1 0 0)
+speect_plugin_definition(Score_Left_Context "SLeftContextCostFunc" 1 0 0)
 
 
 #------------------------------------------------------------------------------------#

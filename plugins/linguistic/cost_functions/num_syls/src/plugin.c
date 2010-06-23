@@ -41,6 +41,7 @@
 /************************************************************************************/
 
 #include "num_syls.h"
+#include "plugin_info.h"
 
 
 /************************************************************************************/
@@ -48,10 +49,6 @@
 /* Static variables                                                                 */
 /*                                                                                  */
 /************************************************************************************/
-
-static const char * const plugin_init_func = "SNumSylsCostFunc plug-in initialization";
-
-static const char * const plugin_exit_func = "SNumSylsCostFunc plug-in free";
 
 static SPlugin *costFuncPlugin = NULL;
 
@@ -62,7 +59,7 @@ static SPlugin *costFuncPlugin = NULL;
 /*                                                                                  */
 /************************************************************************************/
 
-static s_bool version_ok(const s_lib_version version);
+static void plugin_register_function(s_erc *error);
 
 static void plugin_exit_function(s_erc *error);
 
@@ -76,22 +73,25 @@ static void plugin_exit_function(s_erc *error);
 static const s_plugin_params plugin_params =
 {
 	/* plug-in name */
-	"SNumSylsCostFunc",
+	SPCT_PLUGIN_NAME,
 
 	/* description */
-	"A number of syllables cost function class used in unit selection",
+	SPCT_PLUGIN_DESCRIPTION,
 
 	/* version */
 	{
-		0,
-		2
+		SPCT_PLUGIN_VERSION_MAJOR,
+		SPCT_PLUGIN_VERSION_MINOR
 	},
 
 	/* Speect ABI version (which plug-in was compiled with) */
 	{
-		0,
-		9
+		S_MAJOR_VERSION,
+		S_MINOR_VERSION
 	},
+
+	/* register function pointer */
+	plugin_register_function,
 
 	/* exit function pointer */
 	plugin_exit_function
@@ -104,32 +104,16 @@ static const s_plugin_params plugin_params =
 /*                                                                                  */
 /************************************************************************************/
 
-const s_plugin_params *s_plugin_init(const s_lib_version version, s_erc *error)
+const s_plugin_params *s_plugin_init(s_erc *error)
 {
 	S_CLR_ERR(error);
 
-	if (!version_ok(version))
+	if (!s_lib_version_ok(SPCT_MAJOR_VERSION_MIN, SPCT_MINOR_VERSION_MIN))
 	{
 		S_CTX_ERR(error, S_FAILURE,
-				  plugin_init_func,
-				  "Incorrect Speect Engine version, require '0.9.x'");
-		return NULL;
-	}
-
-	/* load cost function plug-in */
-	costFuncPlugin = s_pm_load_plugin("cost_function.spi", error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  plugin_init_func,
-				  "Call to \"s_pm_load_plugin\" failed"))
-		return NULL;
-
-	/* register plug-in classes here */
-	_s_num_syls_class_reg(error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  plugin_init_func,
-				  "Failed to register SNumSylsCostFunc class"))
-	{
-		S_DELETE(costFuncPlugin, plugin_init_func, error);
+				  SPCT_PLUGIN_INIT_STR,
+				  "Incorrect Speect Engine version, require at least '%d.%d.x'",
+				  SPCT_MAJOR_VERSION_MIN, SPCT_MINOR_VERSION_MIN);
 		return NULL;
 	}
 
@@ -143,17 +127,27 @@ const s_plugin_params *s_plugin_init(const s_lib_version version, s_erc *error)
 /*                                                                                  */
 /************************************************************************************/
 
-/* check the Speect Engine version */
-static s_bool version_ok(const s_lib_version version)
+/* plug-in register function */
+static void plugin_register_function(s_erc *error)
 {
-	/*
-	 * we want Speect Engine 0.9.x
-	 */
-	if ((version.major == 0)
-		&& (version.minor == 9))
-		return TRUE;
+	S_CLR_ERR(error);
 
-	return FALSE;
+	/* load cost function plug-in */
+	costFuncPlugin = s_pm_load_plugin("cost_function.spi", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  SPCT_PLUGIN_REG_STR,
+				  "Call to \"s_pm_load_plugin\" failed"))
+		return;
+
+	/* register plug-in classes here */
+	_s_num_syls_class_reg(error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  SPCT_PLUGIN_REG_STR,
+				  SPCT_PLUGIN_REG_FAIL_STR))
+	{
+		S_DELETE(costFuncPlugin, SPCT_PLUGIN_REG_STR, error);
+		return;
+	}
 }
 
 
@@ -165,8 +159,8 @@ static void plugin_exit_function(s_erc *error)
 	/* free plug-in classes here */
 	_s_num_syls_class_free(error);
 	S_CHK_ERR(error, S_CONTERR,
-			  plugin_exit_func,
-			  "Failed to free SNumSylsCostFunc class");
+			  SPCT_PLUGIN_EXIT_STR,
+			  SPCT_PLUGIN_EXIT_FAIL_STR);
 
-	S_DELETE(costFuncPlugin, plugin_init_func, error);
+	S_DELETE(costFuncPlugin, SPCT_PLUGIN_EXIT_STR, error);
 }

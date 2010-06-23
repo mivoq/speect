@@ -21,6 +21,7 @@ then
     rm -f Makefile
 fi
 
+echo ""
 
 ########################################################################
 # Add plug-in directories here if they have a 'clean_files' script, 

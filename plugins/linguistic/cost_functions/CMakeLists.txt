@@ -1,11 +1,23 @@
+######################################################################################
+##                                                                                  ##
+## AUTHOR  : Aby Louw                                                               ##
+## DATE    : 11 June 2010                                                           ##
+##                                                                                  ##
+######################################################################################
+##                                                                                  ##
+## CMakeList for cost function (unit selection) plug-ins                            ##
+##                                                                                  ##
+##                                                                                  ##
+######################################################################################
 
 #------------------------------------------------------------------------------------#
 #                        Plug-in directories                                         #
 #------------------------------------------------------------------------------------#
+
 add_subdirectory(left_context)
-#add_subdirectory(num_syls)
-#add_subdirectory(right_context)
-#add_subdirectory(syl_pos)
-#add_subdirectory(word_pos)
+add_subdirectory(num_syls)
+add_subdirectory(right_context)
+add_subdirectory(syl_pos)
+add_subdirectory(word_pos)
 
 

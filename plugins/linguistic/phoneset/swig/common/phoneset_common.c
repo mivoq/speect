@@ -28,7 +28,7 @@
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* C convenience functions for SAddendum Python wrapper.                            */
+/* SWIG common C convenience functions for SPhoneset.                               */
 /*                                                                                  */
 /*                                                                                  */
 /*                                                                                  */
@@ -37,131 +37,166 @@
 
 /************************************************************************************/
 /*                                                                                  */
-/* Inline helper functions                                                          */
+/* Extend the SPhoneset class                                                       */
 /*                                                                                  */
 /************************************************************************************/
 
-%inline
-%{
-	PyObject *_addendum_get_word(const SAddendum *self, const char *word,
-								 PyObject *features, s_erc *error)
+typedef struct
+{
+	SMap *features;
+} SPhoneset;
+
+%nodefaultctor SPhoneset;
+
+%types(SPhoneset = SObject, SObject*);
+
+%extend SPhoneset
+{
+	const char *name(s_erc *error)
 	{
-		PyObject *tuple;
-		SList *wordlist;
-		PyObject *object;
-		s_bool syllabified = FALSE;
-		SObject *feats;
+		const char *name;
 
 
 		S_CLR_ERR(error);
-		if (!S_ADDENDUM_METH_VALID(self, get_word))
+		if (!S_PHONESET_METH_VALID($self, get_name))
 		{
 			S_CTX_ERR(error, S_METHINVLD,
-					  "_addendum_get_word",
-					  "Addendum method \"get_word\" not implemented");
+					  "name",
+					  "Phoneset method \"get_name\" not implemented");
 			return NULL;
 		}
 
-		feats = s_pyobject_2_sobject(features, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "_addendum_get_word",
-					  "Call to \"s_pyobject_2_sobject\" failed"))
-			return NULL;
-
-		wordlist = S_ADDENDUM_CALL(self, get_word)(self, word, S_MAP(feats),
-												   &syllabified, error);
+		name = S_PHONESET_CALL($self, get_name)($self, error);
 		if (*error != S_SUCCESS)
-		{
-			S_DELETE(feats, "_addendum_get_word", error);
 			return NULL;
-		}
 
-		S_DELETE(feats, "_addendum_get_word", error);
-		tuple = PyTuple_New(2);
-		if (tuple == NULL)
-		{
-			S_CTX_ERR(error, S_FAILURE,
-				  "_addendum_get_word",
-				  "Call to \"PyTuple_New\" failed");
-			return NULL;
-		}
-
-		object = s_sobject_2_pyobject(S_OBJECT(wordlist), TRUE, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-		              "_addendum_get_word",
-			      "Call to \"s_sobject_2_pobject\" failed"))
-		{
-			Py_XDECREF(tuple);
-			return NULL;
-		}
-
-		PyTuple_SET_ITEM(tuple, 0, object);
-
-		if (syllabified)
-		{
-			object = Py_True;
-			Py_XINCREF(object);
-			PyTuple_SET_ITEM(tuple, 1, object);
-		}
-		else
-		{
-			object = Py_False;
-			Py_XINCREF(object);
-			PyTuple_SET_ITEM(tuple, 1, object);
-		}
-
-		return tuple;
+		return name;
 	}
-%}
 
 
-/************************************************************************************/
-/*                                                                                  */
-/* Extend the SAddendum class                                                       */
-/*                                                                                  */
-/************************************************************************************/
+	const char *description(s_erc *error)
+	{
+		const char *description;
 
-%extend SAddendum
-{
-%pythoncode
-%{
-def get_word(self, word, features):
-    """
-    get_word(word, features)
 
-    Get a word from the addendum.
+		S_CLR_ERR(error);
+		if (!S_PHONESET_METH_VALID($self, get_description))
+		{
+			S_CTX_ERR(error, S_METHINVLD,
+					  "description",
+					  "Phoneset method \"get_description\" not implemented");
+			return NULL;
+		}
 
-    :param word: The word to get.
-    :type word: string
-    :param features: Specific features which might distinguish the word if multiple
-                     entries of the word exists in the addendum. If ``None`` then the
-                     first entry of the word is returned.
-    :type features: dict
-    :return: The return value is dependant on the word definition in the addendum, and can be:
+		description = S_PHONESET_CALL($self, get_description)($self, error);
+		if (*error != S_SUCCESS)
+			return NULL;
 
-                 * A list of phones for the given word (no syllables were defined in the addendum).
-                 * A list of syllables, where the syllables are lists of phones.
-                 * ``None`` if word was not found in the addendum.
+		return description;
+	}
 
-             As well as a ``bool`` value, specifying if the returned list is phones or syllables.
-             If ``True`` then syllables were returned, else if ``False`` a list of phones were
-             returned.
 
-             For example::
+	const char *language(s_erc *error)
+	{
+		const char *language;
 
-                 list, syllabified = myaddendum.get_word(\"hello\", None)
 
-    :rtype: list, bool
-    """
-    tmp_tuple = _addendum_get_word(self, word, features)
-    wlist = tmp_tuple[0]
-    syllabified = tmp_tuple[1]
+		S_CLR_ERR(error);
+		if (!S_PHONESET_METH_VALID($self, get_language))
+		{
+			S_CTX_ERR(error, S_METHINVLD,
+					  "language",
+					  "Phoneset method \"get_language\" not implemented");
+			return NULL;
+		}
 
-    return wlist, syllabified
-%}
+		language = S_PHONESET_CALL($self, get_language)($self, error);
+		if (*error != S_SUCCESS)
+			return NULL;
+
+		return language;
+	}
+
+
+	const char *lang_code(s_erc *error)
+	{
+		const char *lang_code;
+
+
+		S_CLR_ERR(error);
+		if (!S_PHONESET_METH_VALID($self, get_lang_code))
+		{
+			S_CTX_ERR(error, S_METHINVLD,
+					  "lang_code",
+					  "Phoneset method \"get_lang_code\" not implemented");
+			return NULL;
+		}
+
+		lang_code = S_PHONESET_CALL($self, get_lang_code)($self, error);
+		if (*error != S_SUCCESS)
+			return NULL;
+
+		return lang_code;
+	}
+
+
+	s_version *version(s_erc *error)
+	{
+		S_CLR_ERR(error);
+		if (!S_PHONESET_METH_VALID($self, get_version))
+		{
+			S_CTX_ERR(error, S_METHINVLD,
+					  "version",
+					  "Phoneset method \"get_version\" not implemented");
+			return NULL;
+		}
+
+		return (s_version*)S_PHONESET_CALL($self, get_version)($self, error);
+	}
+
+
+	s_bool phone_has_feature(const char *phone, const char *feature, s_erc *error)
+	{
+		s_bool has_feature;
+
+
+		S_CLR_ERR(error);
+		if (!S_PHONESET_METH_VALID($self, phone_has_feature))
+		{
+			S_CTX_ERR(error, S_METHINVLD,
+					  "phone_has_feature",
+					  "Phoneset method \"phone_has_feature\" not implemented");
+			return FALSE;
+		}
+
+		has_feature = S_PHONESET_CALL($self, phone_has_feature)($self, phone, feature, error);
+		if (*error != S_SUCCESS)
+			return FALSE;
+
+		return has_feature;
+	}
+
+
+	s_bool has_phone(const char *phone, s_erc *error)
+	{
+		s_bool has_phone;
+
+
+		S_CLR_ERR(error);
+		if (!S_PHONESET_METH_VALID($self, has_phone))
+		{
+			S_CTX_ERR(error, S_METHINVLD,
+					  "phone_has_feature",
+					  "Phoneset method \"has_phone\" not implemented");
+			return FALSE;
+		}
+
+		has_phone = S_PHONESET_CALL($self, has_phone)($self, phone, error);
+		if (*error != S_SUCCESS)
+			return FALSE;
+
+		return has_phone;
+	}
 };
-
-
-
 
 

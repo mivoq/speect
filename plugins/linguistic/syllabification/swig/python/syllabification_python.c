@@ -28,7 +28,7 @@
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* C convenience functions for SAddendum Python wrapper.                            */
+/* C convenience functions for SSyllabification Python wrapper.                     */
 /*                                                                                  */
 /*                                                                                  */
 /*                                                                                  */
@@ -43,121 +43,92 @@
 
 %inline
 %{
-	PyObject *_addendum_get_word(const SAddendum *self, const char *word,
-								 PyObject *features, s_erc *error)
+	PyObject *_syllabification_syllibify(const SSyllabification *self, const SItem *word,
+										 PyObject *phoneList, s_erc *error)
 	{
-		PyObject *tuple;
-		SList *wordlist;
-		PyObject *object;
-		s_bool syllabified = FALSE;
-		SObject *feats;
+		PyObject *list;
+		SList *sylList;
+		SObject *phList;
 
 
 		S_CLR_ERR(error);
-		if (!S_ADDENDUM_METH_VALID(self, get_word))
+		if (!S_SYLLABIFICATION_METH_VALID(self, syllabify))
 		{
 			S_CTX_ERR(error, S_METHINVLD,
-					  "_addendum_get_word",
-					  "Addendum method \"get_word\" not implemented");
+					  "_syllabification_syllibify",
+					  "Syllabification method \"syllabify\" not implemented");
 			return NULL;
 		}
 
-		feats = s_pyobject_2_sobject(features, error);
+		phList = s_pyobject_2_sobject(phoneList, error);
 		if (S_CHK_ERR(error, S_CONTERR,
-					  "_addendum_get_word",
+					  "_syllabification_syllibify",
 					  "Call to \"s_pyobject_2_sobject\" failed"))
 			return NULL;
 
-		wordlist = S_ADDENDUM_CALL(self, get_word)(self, word, S_MAP(feats),
-												   &syllabified, error);
+		sylList = S_SYLLABIFICATION_CALL(self, syllabify)(word, S_LIST(phList), error);
 		if (*error != S_SUCCESS)
 		{
-			S_DELETE(feats, "_addendum_get_word", error);
+			S_DELETE(phList, "_syllabification_syllibify", error);
 			return NULL;
 		}
 
-		S_DELETE(feats, "_addendum_get_word", error);
-		tuple = PyTuple_New(2);
-		if (tuple == NULL)
-		{
-			S_CTX_ERR(error, S_FAILURE,
-				  "_addendum_get_word",
-				  "Call to \"PyTuple_New\" failed");
-			return NULL;
-		}
-
-		object = s_sobject_2_pyobject(S_OBJECT(wordlist), TRUE, error);
+		S_DELETE(phList, "_syllabification_syllibify", error);
+		list = s_sobject_2_pyobject(S_OBJECT(sylList), TRUE, error);
 		if (S_CHK_ERR(error, S_CONTERR,
-		              "_addendum_get_word",
-			      "Call to \"s_sobject_2_pobject\" failed"))
-		{
-			Py_XDECREF(tuple);
+		              "_syllabification_syllibify",
+					  "Call to \"s_sobject_2_pobject\" failed"))
 			return NULL;
-		}
 
-		PyTuple_SET_ITEM(tuple, 0, object);
-
-		if (syllabified)
-		{
-			object = Py_True;
-			Py_XINCREF(object);
-			PyTuple_SET_ITEM(tuple, 1, object);
-		}
-		else
-		{
-			object = Py_False;
-			Py_XINCREF(object);
-			PyTuple_SET_ITEM(tuple, 1, object);
-		}
-
-		return tuple;
+		return list;
 	}
 %}
 
 
 /************************************************************************************/
 /*                                                                                  */
-/* Extend the SAddendum class                                                       */
+/* Extend the SSyllabification class                                                */
 /*                                                                                  */
 /************************************************************************************/
 
-%extend SAddendum
+typedef struct
+{
+} SSyllabification;
+
+%nodefaultctor SSyllabification;
+
+%types(SSyllabification = SObject);
+
+%extend SSyllabification
 {
 %pythoncode
 %{
-def get_word(self, word, features):
+def syllabify(self, word, phone_list):
     """
-    get_word(word, features)
+    syllabify(word, phone_list):
 
-    Get a word from the addendum.
+    Syllabify the given phone list of the given word item. The word must be an
+    ``SItem`` type so that the syllabification algorithm has access to any
+    voice features it requires.
 
-    :param word: The word to get.
-    :type word: string
-    :param features: Specific features which might distinguish the word if multiple
-                     entries of the word exists in the addendum. If ``None`` then the
-                     first entry of the word is returned.
-    :type features: dict
-    :return: The return value is dependant on the word definition in the addendum, and can be:
+    :param word: The word item.
+    :type word: SItem
+    :param phone_list: The list of phones for the given word item.
+    :type phone_list: list
+    :return: A List of lists where the primary list are syllables and the secondary
+             lists are the phones in the syllables. For example, for the word *mathematics*,
+             the phonelist is ::
 
-                 * A list of phones for the given word (no syllables were defined in the addendum).
-                 * A list of syllables, where the syllables are lists of phones.
-                 * ``None`` if word was not found in the addendum.
+                 [m , ae , th, ax, m, ae, t, ih, k, s]
 
-             As well as a ``bool`` value, specifying if the returned list is phones or syllables.
-             If ``True`` then syllables were returned, else if ``False`` a list of phones were
-             returned.
+             and the returned list is::
 
-             For example::
+                 [[m, ae], [th, ax], [m, ae], [t, ih, k, s]]
 
-                 list, syllabified = myaddendum.get_word(\"hello\", None)
-
-    :rtype: list, bool
+    :rtype: list
     """
-    tmp_tuple = _addendum_get_word(self, word, features)
-    wlist = tmp_tuple[0]
-    syllabified = tmp_tuple[1]
 
-    return wlist, syllabified
+    return _syllabification_syllibify(self, word, phone_list)
 %}
 };
 

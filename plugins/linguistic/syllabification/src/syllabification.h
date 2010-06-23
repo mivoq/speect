@@ -158,8 +158,8 @@ typedef struct
 	 * @param phoneList The list of phones for the given word item.
 	 * @param error Error code.
 	 *
-	 * @return A List of lists where the primary list is syllables and
-	 * the secondary lists are the phones in the syllables. for example :
+	 * @return A List of lists where the primary list are syllables and
+	 * the secondary lists are the phones in the syllables. For example :
 	 * for mathematics phonelist is : @code (m , ae , th, ax, m, ae, t, ih, k, s) @endcode,
 	 * the returned list is : @code ((m, ae), (th, ax), (m, ae), (t, ih, k, s)) @endcode
 	 *

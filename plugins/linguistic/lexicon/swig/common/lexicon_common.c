@@ -28,7 +28,7 @@
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* C convenience functions for SAddendum Python wrapper.                            */
+/* SWIG common C convenience functions for SLexicon.                                */
 /*                                                                                  */
 /*                                                                                  */
 /*                                                                                  */
@@ -37,131 +37,121 @@
 
 /************************************************************************************/
 /*                                                                                  */
-/* Inline helper functions                                                          */
+/* Extend the SLexicon class                                                        */
 /*                                                                                  */
 /************************************************************************************/
 
-%inline
-%{
-	PyObject *_addendum_get_word(const SAddendum *self, const char *word,
-								 PyObject *features, s_erc *error)
+typedef struct
+{
+	SMap *features;
+} SLexicon;
+
+%nodefaultctor SLexicon;
+
+%types(SLexicon = SObject, SObject*);
+
+%extend SLexicon
+{
+	const char *name(s_erc *error)
 	{
-		PyObject *tuple;
-		SList *wordlist;
-		PyObject *object;
-		s_bool syllabified = FALSE;
-		SObject *feats;
+		const char *name;
 
 
 		S_CLR_ERR(error);
-		if (!S_ADDENDUM_METH_VALID(self, get_word))
+		if (!S_LEXICON_METH_VALID($self, get_name))
 		{
 			S_CTX_ERR(error, S_METHINVLD,
-					  "_addendum_get_word",
-					  "Addendum method \"get_word\" not implemented");
+					  "name",
+					  "Lexicon method \"get_name\" not implemented");
 			return NULL;
 		}
 
-		feats = s_pyobject_2_sobject(features, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "_addendum_get_word",
-					  "Call to \"s_pyobject_2_sobject\" failed"))
-			return NULL;
-
-		wordlist = S_ADDENDUM_CALL(self, get_word)(self, word, S_MAP(feats),
-												   &syllabified, error);
+		name = S_LEXICON_CALL($self, get_name)($self, error);
 		if (*error != S_SUCCESS)
-		{
-			S_DELETE(feats, "_addendum_get_word", error);
 			return NULL;
-		}
 
-		S_DELETE(feats, "_addendum_get_word", error);
-		tuple = PyTuple_New(2);
-		if (tuple == NULL)
-		{
-			S_CTX_ERR(error, S_FAILURE,
-				  "_addendum_get_word",
-				  "Call to \"PyTuple_New\" failed");
-			return NULL;
-		}
-
-		object = s_sobject_2_pyobject(S_OBJECT(wordlist), TRUE, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-		              "_addendum_get_word",
-			      "Call to \"s_sobject_2_pobject\" failed"))
-		{
-			Py_XDECREF(tuple);
-			return NULL;
-		}
-
-		PyTuple_SET_ITEM(tuple, 0, object);
-
-		if (syllabified)
-		{
-			object = Py_True;
-			Py_XINCREF(object);
-			PyTuple_SET_ITEM(tuple, 1, object);
-		}
-		else
-		{
-			object = Py_False;
-			Py_XINCREF(object);
-			PyTuple_SET_ITEM(tuple, 1, object);
-		}
-
-		return tuple;
+		return name;
 	}
-%}
 
 
-/************************************************************************************/
-/*                                                                                  */
-/* Extend the SAddendum class                                                       */
-/*                                                                                  */
-/************************************************************************************/
-
-%extend SAddendum
-{
-%pythoncode
-%{
-def get_word(self, word, features):
-    """
-    get_word(word, features)
-
-    Get a word from the addendum.
-
-    :param word: The word to get.
-    :type word: string
-    :param features: Specific features which might distinguish the word if multiple
-                     entries of the word exists in the addendum. If ``None`` then the
-                     first entry of the word is returned.
-    :type features: dict
-    :return: The return value is dependant on the word definition in the addendum, and can be:
-
-                 * A list of phones for the given word (no syllables were defined in the addendum).
-                 * A list of syllables, where the syllables are lists of phones.
-                 * ``None`` if word was not found in the addendum.
-
-             As well as a ``bool`` value, specifying if the returned list is phones or syllables.
-             If ``True`` then syllables were returned, else if ``False`` a list of phones were
-             returned.
-
-             For example::
-
-                 list, syllabified = myaddendum.get_word(\"hello\", None)
-
-    :rtype: list, bool
-    """
-    tmp_tuple = _addendum_get_word(self, word, features)
-    wlist = tmp_tuple[0]
-    syllabified = tmp_tuple[1]
-
-    return wlist, syllabified
-%}
-};
+	const char *description(s_erc *error)
+	{
+		const char *description;
 
 
+		S_CLR_ERR(error);
+		if (!S_LEXICON_METH_VALID($self, get_description))
+		{
+			S_CTX_ERR(error, S_METHINVLD,
+					  "description",
+					  "Lexicon method \"get_description\" not implemented");
+			return NULL;
+		}
+
+		description = S_LEXICON_CALL($self, get_description)($self, error);
+		if (*error != S_SUCCESS)
+			return NULL;
+
+		return description;
+	}
 
 
+	const char *language(s_erc *error)
+	{
+		const char *language;
+
+
+		S_CLR_ERR(error);
+		if (!S_LEXICON_METH_VALID($self, get_language))
+		{
+			S_CTX_ERR(error, S_METHINVLD,
+					  "language",
+					  "Lexicon method \"get_language\" not implemented");
+			return NULL;
+		}
+
+		language = S_LEXICON_CALL($self, get_language)($self, error);
+		if (*error != S_SUCCESS)
+			return NULL;
+
+		return language;
+	}
+
+
+	const char *lang_code(s_erc *error)
+	{
+		const char *lang_code;
+
+
+		S_CLR_ERR(error);
+		if (!S_LEXICON_METH_VALID($self, get_lang_code))
+		{
+			S_CTX_ERR(error, S_METHINVLD,
+					  "lang_code",
+					  "Lexicon method \"get_lang_code\" not implemented");
+			return NULL;
+		}
+
+		lang_code = S_LEXICON_CALL($self, get_lang_code)($self, error);
+		if (*error != S_SUCCESS)
+			return NULL;
+
+		return lang_code;
+	}
+
+
+	s_version *version(s_erc *error)
+	{
+		S_CLR_ERR(error);
+		if (!S_LEXICON_METH_VALID($self, get_version))
+		{
+			S_CTX_ERR(error, S_METHINVLD,
+					  "version",
+					  "Lexicon method \"get_version\" not implemented");
+			return NULL;
+		}
+
+		return (s_version*)S_LEXICON_CALL($self, get_version)($self, error);
+	}
+}
 

@@ -5,7 +5,7 @@
 ##                                                                                  ##
 ######################################################################################
 ##                                                                                  ##
-## CMakeList for SPhoneset Python interface                                         ##
+## CMakeList for SLexicon Python interface                                          ##
 ##                                                                                  ##
 ##                                                                                  ##
 ######################################################################################
@@ -19,19 +19,19 @@
 set(swig_includes "typemaps.i;exception.i")
 
 # C header files (speect.h is automatically included)
-set(swig_c_includes "phoneset.h")
+set(swig_c_includes "lexicon.h")
 
 # Load the plug-in on initialization ? 
 set(swig_load_plugin 1)
 
 # Include Python docstrings
-set(swig_python_docstrings "phoneset_docs.c")
+set(swig_python_docstrings "lexicon_docs.c")
 
 # Include SWIG common interface definition.
-set(swig_common "phoneset_common.c")
+set(swig_common "lexicon_common.c")
 
 # Include SWIG Python interface definition.
-set(swig_python "phoneset_python.c")
+set(swig_python "lexicon_python.c")
 
 
 #------------------------------------------------------------------------------------#

@@ -28,145 +28,99 @@
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* SWIG common C convenience functions for SAddendum.                               */
+/* Python documentation strings for SLexicon.                                       */
 /*                                                                                  */
 /*                                                                                  */
 /*                                                                                  */
 /************************************************************************************/
 
 
-/************************************************************************************/
-/*                                                                                  */
-/* Extend the SAddendum class                                                       */
-/*                                                                                  */
-/************************************************************************************/
+%define lexicon_DOCSTRING
+"""
+A lexicon class, for accessing a defined lexicon.
+"""
+%enddef
 
-typedef struct
-{
-	SMap *features;
-} SAddendum;
-
-%nodefaultctor SAddendum;
-
-%types(SAddendum = SObject, SObject*);
-
-%extend SAddendum
-{
-	const char *name(s_erc *error)
-	{
-		const char *name;
+%feature("autodoc", lexicon_DOCSTRING) SLexicon;
 
 
-		S_CLR_ERR(error);
-		if (!S_ADDENDUM_METH_VALID($self, get_name))
-		{
-			S_CTX_ERR(error, S_METHINVLD,
-					  "name",
-					  "Addendum method \"get_name\" not implemented");
-			return NULL;
-		}
+%define lexicon_name_DOCSTRING
+"""
+name()
 
-		name = S_ADDENDUM_CALL($self, get_name)($self, error);
-		if (*error != S_SUCCESS)
-			return NULL;
+Get the name of the lexicon.
 
-		return name;
-	}
+:return: The lexicon name.
+:rtype: string
+"""
+%enddef
+
+%feature("autodoc", lexicon_name_DOCSTRING) SLexicon::name;
 
 
-	const char *description(s_erc *error)
-	{
-		const char *description;
+%define lexicon_description_DOCSTRING
+"""
+description()
+
+Get a description of the lexicon.
+
+:return: The lexicon description.
+:rtype: string
+"""
+%enddef
+
+%feature("autodoc", lexicon_description_DOCSTRING) SLexicon::description;
 
 
-		S_CLR_ERR(error);
-		if (!S_ADDENDUM_METH_VALID($self, get_description))
-		{
-			S_CTX_ERR(error, S_METHINVLD,
-					  "description",
-					  "Addendum method \"get_description\" not implemented");
-			return NULL;
-		}
+%define lexicon_language_DOCSTRING
+"""
+language()
 
-		description = S_ADDENDUM_CALL($self, get_description)($self, error);
-		if (*error != S_SUCCESS)
-			return NULL;
+Get the lexicon language.
 
-		return description;
-	}
+:return: The lexicon language.
+:rtype: string
+"""
+%enddef
+
+%feature("autodoc", lexicon_language_DOCSTRING) SLexicon::language;
 
 
-	const char *language(s_erc *error)
-	{
-		const char *language;
+%define lexicon_lang_code_DOCSTRING
+"""
+lang_code()
+
+Get the lexicon's ``ISO 639-2`` language code.
+
+:return: The ``ISO 639-2`` language code of the lexicon.
+:rtype: string
+"""
+%enddef
+
+%feature("autodoc", lexicon_lang_code_DOCSTRING) SLexicon::lang_code;
 
 
-		S_CLR_ERR(error);
-		if (!S_ADDENDUM_METH_VALID($self, get_language))
-		{
-			S_CTX_ERR(error, S_METHINVLD,
-					  "language",
-					  "Addendum method \"get_language\" not implemented");
-			return NULL;
-		}
+%define lexicon_version_DOCSTRING
+"""
+version()
 
-		language = S_ADDENDUM_CALL($self, get_language)($self, error);
-		if (*error != S_SUCCESS)
-			return NULL;
+Get the lexicon's version.
 
-		return language;
-	}
+:return: The version of the lexicon (major, minor).
+:rtype: tuple
+"""
+%enddef
+
+%feature("autodoc", lexicon_version_DOCSTRING) SLexicon::version;
 
 
-	const char *lang_code(s_erc *error)
-	{
-		const char *lang_code;
+%define lexicon_features_DOCSTRING
+"""
+Get the features that are defined for the lexicon.
 
+:return: A map of the lexicon features.
+:rtype: SMap
+"""
+%enddef
 
-		S_CLR_ERR(error);
-		if (!S_ADDENDUM_METH_VALID($self, get_lang_code))
-		{
-			S_CTX_ERR(error, S_METHINVLD,
-					  "lang_code",
-					  "Addendum method \"get_lang_code\" not implemented");
-			return NULL;
-		}
-
-		lang_code = S_ADDENDUM_CALL($self, get_lang_code)($self, error);
-		if (*error != S_SUCCESS)
-			return NULL;
-
-		return lang_code;
-	}
-
-
-	s_version *version(s_erc *error)
-	{
-		S_CLR_ERR(error);
-		if (!S_ADDENDUM_METH_VALID($self, get_version))
-		{
-			S_CTX_ERR(error, S_METHINVLD,
-					  "version",
-					  "Addendum method \"get_version\" not implemented");
-			return NULL;
-		}
-
-		return (s_version*)S_ADDENDUM_CALL($self, get_version)($self, error);
-	}
-
-
-	void add_word(const char *word, SMap *features, s_erc *error)
-	{
-		S_CLR_ERR(error);
-		if (!S_ADDENDUM_METH_VALID($self, add_word))
-		{
-			S_CTX_ERR(error, S_METHINVLD,
-					  "add_word",
-					  "Addendum method \"add_word\" not implemented");
-			return;
-		}
-
-		S_ADDENDUM_CALL($self, add_word)($self, word, features, error);
-	}
-}
-
+%feature("autodoc", lexicon_features_DOCSTRING) features;

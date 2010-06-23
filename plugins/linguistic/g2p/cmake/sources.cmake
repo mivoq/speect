@@ -5,7 +5,7 @@
 ##                                                                                  ##
 ######################################################################################
 ##                                                                                  ##
-## Template CMake source files for Speect plug-ins                                  ##
+## Source files for G2P plug-in                                                     ##
 ##                                                                                  ##
 ##                                                                                  ##
 ######################################################################################
@@ -13,16 +13,15 @@
 
 ######## source files ##################
 
-set(${PLUGIN_SONAME}_SRC_FILES
+speect_plugin_sources(
   src/plugin.c
-  src/g2p.c
- 
+  src/g2p.c 
   )
  
 
 ######## header files ##################
 
-set(${PLUGIN_SONAME}_INCLUDE_FILES
+speect_plugin_headers(
   src/g2p.h
   )
 

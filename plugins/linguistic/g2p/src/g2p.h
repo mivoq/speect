@@ -287,6 +287,27 @@ typedef struct
 	 */
 	SList           *(*apply)              (const SG2P *self, const char *word,
 											s_erc *error);
+
+	/**
+	 * Apply the g2p to the grapheme at given index in the given word
+	 * to get a phone. This function can be seen as a single step of
+	 * the #SG2PClass::apply function. It returns the phone of the
+	 * grapheme at the index.
+	 *
+	 * @param self The given g2p.
+	 * @param word The word.
+	 * @param index The index of the grapheme, in the word, for which
+	 * the phone is required (indexing starts at @c 0).
+	 * @param error Error code.
+	 *
+	 * @return The phone of the grapheme at the index in the word.
+	 *
+	 * @note The returned phone can be @c NULL, this is not
+	 * necessarily an error.
+	 */
+	const char      *(*apply_at)           (const SG2P *self, const char *word,
+											uint index, s_erc *error);
+
 } SG2PClass;
 
 

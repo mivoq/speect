@@ -5,59 +5,49 @@
 ##                                                                                  ##
 ######################################################################################
 ##                                                                                  ##
-## Template CMakeList for Speect Plug-ins                                           ##
+## CMakeList for Syllabification plug-in                                            ##
 ##                                                                                  ##
 ##                                                                                  ##
 ######################################################################################
 
 #------------------------------------------------------------------------------------#
-#                                Project name                                        #
+#                             Define plug-in                                         #
 #------------------------------------------------------------------------------------#
 
-message(STATUS "cmake for project \"Syllabification\"")
-project(speect_syllabification_plugin C)
-
-# Plug-in shared object name
-set(PLUGIN_SONAME syllabification)
-
-set(${PLUGIN_SONAME}_VERSION_MAJOR 0)
-set(${PLUGIN_SONAME}_VERSION_MINOR 9)
-set(${PLUGIN_SONAME}_VERSION_PATCH 0)
-set(${PLUGIN_SONAME}_VERSION "${${PLUGIN_SONAME}_VERSION_MAJOR}.${${PLUGIN_SONAME}_VERSION_MINOR}.${${PLUGIN_SONAME}_VERSION_PATCH}")
+speect_plugin_definition(Syllabification "SSyllabification" 1 0 0)
 
 
 #------------------------------------------------------------------------------------#
-#                             Get all CMake modules                                  #
+#                        Configure plugin_info.h.in                                  #
 #------------------------------------------------------------------------------------#
 
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+set(description "An abstract syllabification class that syllabifies a phone list into a list of syllables which intern consists of a list of phones for that syllable")
+
+# Minimum required Speect Engine version 
+set(major_min 1)
+set(minor_min 0)
+
+speect_plugin_configure_info(${description} ${major_min} ${minor_min})
+
+
+#------------------------------------------------------------------------------------#
+#                               Source files                                         #
+#------------------------------------------------------------------------------------#
 
 # Lists of all the source files
 include(sources)
 
 
 #------------------------------------------------------------------------------------#
-#                        Plug-in shared object                                       #
+#                            Plug-in shared object                                   #
 #------------------------------------------------------------------------------------#
 
-# Library build configuration
-include(plugin)
-
-
-#------------------------------------------------------------------------------------#
-#                        Create a plug-in cmake config file                          #
-#------------------------------------------------------------------------------------#
-
-include(plugin_conf)
+speect_plugin_create()
 
 
 #------------------------------------------------------------------------------------#
-#                                   examples                                         #
+#                              SWIG wrappers                                         #
 #------------------------------------------------------------------------------------#
 
-#if(WANT_EXAMPLES)
-#  add_subdirectory(examples)
-#endif(WANT_EXAMPLES)
-
-
+add_subdirectory(swig)
 

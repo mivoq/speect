@@ -28,145 +28,141 @@
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* SWIG common C convenience functions for SAddendum.                               */
+/* Python documentation strings for SG2P.                                           */
 /*                                                                                  */
 /*                                                                                  */
 /*                                                                                  */
 /************************************************************************************/
 
 
-/************************************************************************************/
-/*                                                                                  */
-/* Extend the SAddendum class                                                       */
-/*                                                                                  */
-/************************************************************************************/
+%define g2p_DOCSTRING
+"""
+An g2p (grapheme-to-phoneme) class.
+"""
+%enddef
 
-typedef struct
-{
-	SMap *features;
-} SAddendum;
-
-%nodefaultctor SAddendum;
-
-%types(SAddendum = SObject, SObject*);
-
-%extend SAddendum
-{
-	const char *name(s_erc *error)
-	{
-		const char *name;
+%feature("autodoc", g2p_DOCSTRING) SG2P;
 
 
-		S_CLR_ERR(error);
-		if (!S_ADDENDUM_METH_VALID($self, get_name))
-		{
-			S_CTX_ERR(error, S_METHINVLD,
-					  "name",
-					  "Addendum method \"get_name\" not implemented");
-			return NULL;
-		}
+%define g2p_name_DOCSTRING
+"""
+name()
 
-		name = S_ADDENDUM_CALL($self, get_name)($self, error);
-		if (*error != S_SUCCESS)
-			return NULL;
+Get the name of the g2p.
 
-		return name;
-	}
+:return: The g2p name.
+:rtype: string
+"""
+%enddef
+
+%feature("autodoc", g2p_name_DOCSTRING) SG2P::name;
 
 
-	const char *description(s_erc *error)
-	{
-		const char *description;
+%define g2p_description_DOCSTRING
+"""
+description()
+
+Get a description of the g2p.
+
+:return: The g2p description.
+:rtype: string
+"""
+%enddef
+
+%feature("autodoc", g2p_description_DOCSTRING) SG2P::description;
 
 
-		S_CLR_ERR(error);
-		if (!S_ADDENDUM_METH_VALID($self, get_description))
-		{
-			S_CTX_ERR(error, S_METHINVLD,
-					  "description",
-					  "Addendum method \"get_description\" not implemented");
-			return NULL;
-		}
+%define g2p_language_DOCSTRING
+"""
+language()
 
-		description = S_ADDENDUM_CALL($self, get_description)($self, error);
-		if (*error != S_SUCCESS)
-			return NULL;
+Get the g2p language.
 
-		return description;
-	}
+:return: The g2p language.
+:rtype: string
+"""
+%enddef
+
+%feature("autodoc", g2p_language_DOCSTRING) SG2P::language;
 
 
-	const char *language(s_erc *error)
-	{
-		const char *language;
+%define g2p_lang_code_DOCSTRING
+"""
+lang_code()
+
+Get the g2p's ``ISO 639-2`` language code.
+
+:return: The ``ISO 639-2`` language code of the g2p.
+:rtype: string
+"""
+%enddef
+
+%feature("autodoc", g2p_lang_code_DOCSTRING) SG2P::lang_code;
 
 
-		S_CLR_ERR(error);
-		if (!S_ADDENDUM_METH_VALID($self, get_language))
-		{
-			S_CTX_ERR(error, S_METHINVLD,
-					  "language",
-					  "Addendum method \"get_language\" not implemented");
-			return NULL;
-		}
+%define g2p_version_DOCSTRING
+"""
+version()
 
-		language = S_ADDENDUM_CALL($self, get_language)($self, error);
-		if (*error != S_SUCCESS)
-			return NULL;
+Get the g2p's version.
 
-		return language;
-	}
+:return: The version of the g2p (major, minor).
+:rtype: tuple
+"""
+%enddef
+
+%feature("autodoc", g2p_version_DOCSTRING) SG2P::version;
 
 
-	const char *lang_code(s_erc *error)
-	{
-		const char *lang_code;
+%define g2p_apply_DOCSTRING
+"""
+apply(word)
+
+Apply the g2p to the given word to get a phone list.
+
+:param word: The word to convert to a phone list.
+:type word: string
+:return: A list of phones for the given word or ``None`` if the
+	     g2p failed. If the g2p failed a warning will be set in the
+	     error log.
+:rtype: list
+"""
+%enddef
+
+%feature("autodoc", g2p_apply_DOCSTRING) SG2P::apply;
 
 
-		S_CLR_ERR(error);
-		if (!S_ADDENDUM_METH_VALID($self, get_lang_code))
-		{
-			S_CTX_ERR(error, S_METHINVLD,
-					  "lang_code",
-					  "Addendum method \"get_lang_code\" not implemented");
-			return NULL;
-		}
+%define g2p_apply_at_DOCSTRING
+"""
+apply_at(word, index)
 
-		lang_code = S_ADDENDUM_CALL($self, get_lang_code)($self, error);
-		if (*error != S_SUCCESS)
-			return NULL;
-
-		return lang_code;
-	}
+Apply the g2p to the grapheme at given index in the given word
+to get a phone. This method can be seen as a single step of
+the ``SG2P::apply`` method. It returns the phone of the grapheme at
+the index.
 
 
-	s_version *version(s_erc *error)
-	{
-		S_CLR_ERR(error);
-		if (!S_ADDENDUM_METH_VALID($self, get_version))
-		{
-			S_CTX_ERR(error, S_METHINVLD,
-					  "version",
-					  "Addendum method \"get_version\" not implemented");
-			return NULL;
-		}
+:param word: The word to get a phone from at the given grapheme index.
+:type word: string
+:param index: The index of the grapheme, in the word, for which
+	          the phone is requested.
+:return: The phone of the grapheme at the index in the word.
+:rtype: string
+:note: Indexing starts at 0.
+:note: The returned phone can be ``None``, this is not necessarily an error.
+"""
+%enddef
 
-		return (s_version*)S_ADDENDUM_CALL($self, get_version)($self, error);
-	}
+%feature("autodoc", g2p_apply_at_DOCSTRING) SG2P::apply_at;
 
 
-	void add_word(const char *word, SMap *features, s_erc *error)
-	{
-		S_CLR_ERR(error);
-		if (!S_ADDENDUM_METH_VALID($self, add_word))
-		{
-			S_CTX_ERR(error, S_METHINVLD,
-					  "add_word",
-					  "Addendum method \"add_word\" not implemented");
-			return;
-		}
+%define g2p_features_DOCSTRING
+"""
+Get the features that are defined for the g2p.
 
-		S_ADDENDUM_CALL($self, add_word)($self, word, features, error);
-	}
-}
+:return: A map of the g2p features.
+:rtype: SMap
+"""
+%enddef
 
+%feature("autodoc", g2p_features_DOCSTRING) features;

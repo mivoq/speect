@@ -286,7 +286,7 @@ typedef struct
 	 * @param error Error code.
 	 *
 	 * @return @c TRUE if the feature is defined for the given phone,
-	 * else @c FALSE. If the given phone is not in the phoneset the @c
+	 * else @c FALSE. If the given phone is not in the phoneset then @c
 	 * FALSE is returned.
 	 */
 	s_bool           (*phone_has_feature)  (const SPhoneset *self, const char *phone,

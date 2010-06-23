@@ -168,5 +168,6 @@ static SG2PClass G2PClass =
 	NULL,             /* get_lang_code   */
 	NULL,             /* get_version     */
 	NULL,             /* get_feature     */
-	NULL              /* apply           */
+	NULL,             /* apply           */
+	NULL              /* apply_at        */
 };

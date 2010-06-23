@@ -28,7 +28,7 @@
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* C convenience functions for SAddendum Python wrapper.                            */
+/* C convenience functions for SPhoneset Python wrapper.                            */
 /*                                                                                  */
 /*                                                                                  */
 /*                                                                                  */
@@ -43,121 +43,107 @@
 
 %inline
 %{
-	PyObject *_addendum_get_word(const SAddendum *self, const char *word,
-								 PyObject *features, s_erc *error)
+	PyObject *_get_phone_features(const SPhoneset *self, const char *phone,
+								  s_erc *error)
 	{
-		PyObject *tuple;
-		SList *wordlist;
-		PyObject *object;
-		s_bool syllabified = FALSE;
-		SObject *feats;
+		const SList *phoneFeatures;
+		PyObject *pyList;
 
 
 		S_CLR_ERR(error);
-		if (!S_ADDENDUM_METH_VALID(self, get_word))
+		if (!S_PHONESET_METH_VALID(self, get_phone_features))
 		{
 			S_CTX_ERR(error, S_METHINVLD,
-					  "_addendum_get_word",
-					  "Addendum method \"get_word\" not implemented");
+					  "_get_phone_features",
+					  "Phoneset method \"get_phone_features\" not implemented");
 			return NULL;
 		}
 
-		feats = s_pyobject_2_sobject(features, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "_addendum_get_word",
-					  "Call to \"s_pyobject_2_sobject\" failed"))
-			return NULL;
-
-		wordlist = S_ADDENDUM_CALL(self, get_word)(self, word, S_MAP(feats),
-												   &syllabified, error);
+		phoneFeatures = S_PHONESET_CALL(self, get_phone_features)(self, phone, error);
 		if (*error != S_SUCCESS)
-		{
-			S_DELETE(feats, "_addendum_get_word", error);
 			return NULL;
-		}
 
-		S_DELETE(feats, "_addendum_get_word", error);
-		tuple = PyTuple_New(2);
-		if (tuple == NULL)
-		{
-			S_CTX_ERR(error, S_FAILURE,
-				  "_addendum_get_word",
-				  "Call to \"PyTuple_New\" failed");
-			return NULL;
-		}
-
-		object = s_sobject_2_pyobject(S_OBJECT(wordlist), TRUE, error);
+		/* false because Python does not own the list */
+		pyList = s_sobject_2_pyobject(S_OBJECT(phoneFeatures), FALSE, error);
 		if (S_CHK_ERR(error, S_CONTERR,
-		              "_addendum_get_word",
-			      "Call to \"s_sobject_2_pobject\" failed"))
+		              "_get_phone_features",
+					  "Call to \"s_sobject_2_pobject\" failed"))
+			return NULL;
+
+		return pyList;
+	}
+
+
+	PyObject *_get_phone_list(const SPhoneset *self, s_erc *error)
+	{
+		SList *phoneList;
+		PyObject *pyList;
+
+
+		S_CLR_ERR(error);
+		if (!S_PHONESET_METH_VALID(self, get_phone_list))
 		{
-			Py_XDECREF(tuple);
+			S_CTX_ERR(error, S_METHINVLD,
+					  "_get_phone_list",
+					  "Phoneset method \"get_phone_list\" not implemented");
 			return NULL;
 		}
 
-		PyTuple_SET_ITEM(tuple, 0, object);
+		phoneList = S_PHONESET_CALL(self, get_phone_list)(self, error);
+		if (*error != S_SUCCESS)
+			return NULL;
 
-		if (syllabified)
-		{
-			object = Py_True;
-			Py_XINCREF(object);
-			PyTuple_SET_ITEM(tuple, 1, object);
-		}
-		else
-		{
-			object = Py_False;
-			Py_XINCREF(object);
-			PyTuple_SET_ITEM(tuple, 1, object);
-		}
+		/* true because Python does own the list */
+		pyList = s_sobject_2_pyobject(S_OBJECT(phoneList), TRUE, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+		              "_get_phone_list",
+					  "Call to \"s_sobject_2_pobject\" failed"))
+			return NULL;
 
-		return tuple;
+		return pyList;
 	}
 %}
 
 
 /************************************************************************************/
 /*                                                                                  */
-/* Extend the SAddendum class                                                       */
+/* Extend the SPhoneset class                                                       */
 /*                                                                                  */
 /************************************************************************************/
 
-%extend SAddendum
+%extend SPhoneset
 {
 %pythoncode
 %{
-def get_word(self, word, features):
+def get_phone_features(self, phone):
     """
-    get_word(word, features)
-
-    Get a word from the addendum.
-
-    :param word: The word to get.
+    get_phone_features(phone)
+    
+    Get a list of the given phone's features.
+    
+    :param phone: The phone for which the feature list is requested.
     :type word: string
-    :param features: Specific features which might distinguish the word if multiple
-                     entries of the word exists in the addendum. If ``None`` then the
-                     first entry of the word is returned.
-    :type features: dict
-    :return: The return value is dependant on the word definition in the addendum, and can be:
-
-                 * A list of phones for the given word (no syllables were defined in the addendum).
-                 * A list of syllables, where the syllables are lists of phones.
-                 * ``None`` if word was not found in the addendum.
-
-             As well as a ``bool`` value, specifying if the returned list is phones or syllables.
-             If ``True`` then syllables were returned, else if ``False`` a list of phones were
-             returned.
-
-             For example::
-
-                 list, syllabified = myaddendum.get_word(\"hello\", None)
-
-    :rtype: list, bool
+    :return: A list of named features which are the features of the
+             phones, or ``None`` if the phone is not in the phoneset.
+    :rtype: list
+    :note: The returned list *must* be considered constant in the C sence, and
+           not modified in any way.
     """
-    tmp_tuple = _addendum_get_word(self, word, features)
-    wlist = tmp_tuple[0]
-    syllabified = tmp_tuple[1]
 
-    return wlist, syllabified
+    return _get_phone_features(self, phone)
+
+
+def get_phone_list(self):
+    """
+    get_phone_list()
+
+    Get a list of phones defined in the phoneset.
+
+    :return:  A list of named phones defined in the phoneset.
+    :rtype: list
+    """
+
+    return _get_phone_list(self)
 %}
 };
 

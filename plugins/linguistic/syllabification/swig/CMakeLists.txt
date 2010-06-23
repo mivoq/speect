@@ -1,27 +1,22 @@
 ######################################################################################
 ##                                                                                  ##
 ## AUTHOR  : Aby Louw                                                               ##
-## DATE    : 5 November 2009                                                        ##
+## DATE    : December 2009                                                          ##
 ##                                                                                  ##
 ######################################################################################
 ##                                                                                  ##
-## Source files for Syllabification plug-in                                         ##
+## CMakeList for SG2P SWIG Wrappers                                                 ##
 ##                                                                                  ##
 ##                                                                                  ##
 ######################################################################################
 
 
-######## source files ##################
+#------------------------------------------------------------------------------------#
+#                   Include wrappers for different languages                         #
+#------------------------------------------------------------------------------------#
 
-speect_plugin_sources(
-  src/plugin.c
-  src/syllabification.c
-  )
- 
+if(WANT_PYTHON_WRAPPER)
+  add_subdirectory(python)
+endif(WANT_PYTHON_WRAPPER)
 
-######## header files ##################
-
-speect_plugin_headers(
-  src/syllabification.h 
-  )
 

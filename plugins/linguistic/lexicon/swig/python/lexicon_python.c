@@ -28,7 +28,7 @@
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* C convenience functions for SAddendum Python wrapper.                            */
+/* C convenience functions for SLexicon Python wrapper.                             */
 /*                                                                                  */
 /*                                                                                  */
 /*                                                                                  */
@@ -43,8 +43,8 @@
 
 %inline
 %{
-	PyObject *_addendum_get_word(const SAddendum *self, const char *word,
-								 PyObject *features, s_erc *error)
+	PyObject *_lexicon_get_word(const SLexicon *self, const char *word,
+								PyObject *features, s_erc *error)
 	{
 		PyObject *tuple;
 		SList *wordlist;
@@ -54,42 +54,42 @@
 
 
 		S_CLR_ERR(error);
-		if (!S_ADDENDUM_METH_VALID(self, get_word))
+		if (!S_LEXICON_METH_VALID(self, get_word))
 		{
 			S_CTX_ERR(error, S_METHINVLD,
-					  "_addendum_get_word",
-					  "Addendum method \"get_word\" not implemented");
+					  "_lexicon_get_word",
+					  "Lexicon method \"get_word\" not implemented");
 			return NULL;
 		}
 
 		feats = s_pyobject_2_sobject(features, error);
 		if (S_CHK_ERR(error, S_CONTERR,
-					  "_addendum_get_word",
+					  "_lexicon_get_word",
 					  "Call to \"s_pyobject_2_sobject\" failed"))
 			return NULL;
 
-		wordlist = S_ADDENDUM_CALL(self, get_word)(self, word, S_MAP(feats),
-												   &syllabified, error);
+		wordlist = S_LEXICON_CALL(self, get_word)(self, word, S_MAP(feats),
+												  &syllabified, error);
 		if (*error != S_SUCCESS)
 		{
-			S_DELETE(feats, "_addendum_get_word", error);
+			S_DELETE(feats, "_lexicon_get_word", error);
 			return NULL;
 		}
 
-		S_DELETE(feats, "_addendum_get_word", error);
+		S_DELETE(feats, "_lexicon_get_word", error);
 		tuple = PyTuple_New(2);
 		if (tuple == NULL)
 		{
 			S_CTX_ERR(error, S_FAILURE,
-				  "_addendum_get_word",
-				  "Call to \"PyTuple_New\" failed");
+					  "_lexicon_get_word",
+					  "Call to \"PyTuple_New\" failed");
 			return NULL;
 		}
 
 		object = s_sobject_2_pyobject(S_OBJECT(wordlist), TRUE, error);
 		if (S_CHK_ERR(error, S_CONTERR,
-		              "_addendum_get_word",
-			      "Call to \"s_sobject_2_pobject\" failed"))
+		              "_lexicon_get_word",
+					  "Call to \"s_sobject_2_pobject\" failed"))
 		{
 			Py_XDECREF(tuple);
 			return NULL;
@@ -117,11 +117,11 @@
 
 /************************************************************************************/
 /*                                                                                  */
-/* Extend the SAddendum class                                                       */
+/* Extend the SLexicon class                                                        */
 /*                                                                                  */
 /************************************************************************************/
 
-%extend SAddendum
+%extend SLexicon
 {
 %pythoncode
 %{
@@ -129,19 +129,19 @@ def get_word(self, word, features):
     """
     get_word(word, features)
 
-    Get a word from the addendum.
+    Get a word from the lexicon.
 
     :param word: The word to get.
     :type word: string
     :param features: Specific features which might distinguish the word if multiple
-                     entries of the word exists in the addendum. If ``None`` then the
+                     entries of the word exists in the lexicon. If ``None`` then the
                      first entry of the word is returned.
     :type features: dict
-    :return: The return value is dependant on the word definition in the addendum, and can be:
+    :return: The return value is dependant on the word definition in the lexicon, and can be:
 
-                 * A list of phones for the given word (no syllables were defined in the addendum).
+                 * A list of phones for the given word (no syllables were defined in the lexicon).
                  * A list of syllables, where the syllables are lists of phones.
-                 * ``None`` if word was not found in the addendum.
+                 * ``None`` if word was not found in the lexicon.
 
              As well as a ``bool`` value, specifying if the returned list is phones or syllables.
              If ``True`` then syllables were returned, else if ``False`` a list of phones were
@@ -149,11 +149,11 @@ def get_word(self, word, features):
 
              For example::
 
-                 list, syllabified = myaddendum.get_word(\"hello\", None)
+                 list, syllabified = mylexicon.get_word(\"hello\", None)
 
     :rtype: list, bool
     """
-    tmp_tuple = _addendum_get_word(self, word, features)
+    tmp_tuple = _lexicon_get_word(self, word, features)
     wlist = tmp_tuple[0]
     syllabified = tmp_tuple[1]
 

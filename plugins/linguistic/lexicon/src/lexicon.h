@@ -287,7 +287,7 @@ typedef struct
 	 * list was defined in the lexicon), and @c syllabified will be @c FALSE.
 	 * @retval syllables A list of syllables, where the syllables are
 	 * lists of phones, and @c syllabified will be @c TRUE.
-	 * @retval NULL If word was not found in the lexicon, or error
+	 * @retval @c NULL If word was not found in the lexicon, or error
 	 * occurred.
 	 *
 	 * @note The caller is responsible for the memory of the returned

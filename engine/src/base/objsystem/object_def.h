@@ -197,7 +197,7 @@ struct SObjectClass
 	const char *name;
 
 	/**
-	 * @protected he size of the objects of this class, in bytes (sizeoff).
+	 * @protected The size of the objects of this class, in bytes (sizeoff).
 	 */
 	size_t      size;
 

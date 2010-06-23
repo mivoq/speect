@@ -107,6 +107,11 @@ typedef struct
 	 * @protected Python object interface.
 	 */
 	SPyObject *pyObject;
+
+	/**
+	 * @protected Pointer to Nth method's tmp value.
+	 */
+	SObject   *tmp;
 } SListPy;
 
 

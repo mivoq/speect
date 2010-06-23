@@ -157,6 +157,7 @@ static void InitListPy(void *obj, s_erc *error)
 
 
 	S_CLR_ERR(error);
+	self->tmp = NULL;
 	self->pyObject = (SPyObject*)S_NEW("SPyObject", error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "InitListPy",
@@ -170,6 +171,9 @@ static void DestroyListPy(void *obj, s_erc *error)
 
 
 	S_CLR_ERR(error);
+
+	if (self->tmp != NULL)
+		S_DELETE(self->tmp, "DestroyListPy", error);
 
 	if (self->pyObject != NULL)
 		S_DELETE(self->pyObject, "DestroyListPy", error);
@@ -354,6 +358,237 @@ failure:
 }
 
 
+static SList *ListPyCopy(SList *dst, const SList *src, s_erc *error)
+{
+	SObject *tmp;
+	SListPy *pList = (SListPy*)src;
+	s_bool made_new = FALSE;
+	PyObject *pyIterator;
+	PyObject *pyItem;
+	uint32 counter;
+	char *py_error;
+
+
+	S_CLR_ERR(error);
+	S_CHECK_PY_LIST(pList, "ListPyCopy");
+
+
+	if (dst == NULL)
+	{
+		size_t size;
+		PyObject *pyList;
+		SListPy *listDst;
+
+
+		size = SListSize(src, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "ListPyCopy",
+					  "Call to \"SListSize\" failed"))
+			return NULL;
+
+		if (size == 0)
+			return NULL;
+
+		made_new = TRUE;
+		pyList = PyList_New(size);
+		if (pyList == NULL)
+		{
+			py_error = s_get_python_error_str();
+
+			if (py_error)
+			{
+				S_CTX_ERR(error, S_FAILURE,
+						  "ListPyCopy",
+						  "Call to \"PyList_New\" failed. Reported error: %s",
+						  py_error);
+				S_FREE(py_error);
+			}
+			else
+			{
+				S_CTX_ERR(error, S_FAILURE,
+						  "ListPyCopy",
+						  "Call to \"PyList_New\" failed");
+			}
+
+			return NULL;
+		}
+
+		/* create SListPy wrapper */
+		listDst = (SListPy*)S_NEW("SListPy", error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "ListPyCopy",
+					  "Failed to create new 'SListPy' object"))
+		{
+			Py_XDECREF(pyList);
+			return NULL;
+		}
+
+		/* initialize with Python list */
+		SListPyInit(&listDst, pyList, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "ListPyCopy",
+					  "Call to \"SListPyInit\" failed"))
+		{
+			Py_XDECREF(pyList);
+			return NULL;
+		}
+
+		/* we are finished with the Python list, it is
+		 * in the wrapper now.
+		 */
+		Py_XDECREF(pyList);
+
+		dst = S_LIST(listDst);
+	}
+
+
+	/* iterate through the Python list */
+	pyIterator = PyObject_GetIter(S_PY_LIST(pList));
+	if (pyIterator == NULL)
+	{
+		py_error = s_get_python_error_str();
+
+		if (py_error)
+		{
+			S_CTX_ERR(error, S_FAILURE,
+					  "ListPyCopy",
+					  "Call to \"PyObject_GetIter\" failed. Reported error: %s",
+					  py_error);
+			S_FREE(py_error);
+		}
+		else
+		{
+			S_CTX_ERR(error, S_FAILURE,
+					  "ListPyCopy",
+					  "Call to \"PyObject_GetIter\" failed");
+		}
+
+		if (made_new)
+			S_DELETE(dst, "ListPyCopy", error);
+
+		return NULL;
+	}
+
+	counter = 0;
+	while (pyItem = PyIter_Next(pyIterator))
+	{
+		/* check for iteration errors */
+		py_error = s_get_python_error_str();
+		if (py_error)
+		{
+			S_CTX_ERR(error, S_FAILURE,
+					  "ListPyCopy",
+					  "Call to \"PyIter_Next\" failed. Reported error: %s",
+					  py_error);
+			S_FREE(py_error);
+
+			if (made_new)
+			{
+				S_DELETE(dst, "ListPyCopy", error);
+			}
+			else
+			{
+				S_CTX_ERR(error, S_FAILURE,
+						  "ListPyCopy",
+						  "Iteration failed, destination list might be corrupted.");
+			}
+
+			Py_XDECREF(pyItem);
+			Py_XDECREF(pyIterator);
+			return NULL;
+		}
+
+		/* if it's a new list we have a shortcut */
+		if (made_new)
+		{
+			/* PyList_SetItem "steals" reference, so we don't decrement
+			 * it, except on error.
+			 */
+			if (PyList_SetItem(S_PY_LIST(S_LISTPY(dst)), counter++, pyItem) != 0)
+			{
+				py_error = s_get_python_error_str();
+
+				if (py_error)
+				{
+					S_CTX_ERR(error, S_FAILURE,
+							  "ListPyCopy",
+							  "Call to \"PyList_SetItem\" failed. Reported error: %s",
+							  py_error);
+					S_FREE(py_error);
+				}
+				else
+				{
+					S_CTX_ERR(error, S_FAILURE,
+							  "ListPyCopy",
+							  "Call to \"PyList_SetItem\" failed");
+				}
+
+				S_DELETE(dst, "ListPyCopy", error);
+				Py_XDECREF(pyItem);
+				Py_XDECREF(pyIterator);
+
+				return NULL;
+			}
+		}
+		else
+		{
+			/* create Speect Object */
+			tmp = s_pyobject_2_sobject(pyItem, error);
+			Py_XDECREF(pyItem);
+			if (S_CHK_ERR(error, S_CONTERR,
+						  "ListPyCopy",
+						  "Call to \"s_pyobject_2_sobject\" failed"))
+			{
+				Py_XDECREF(pyIterator);
+				return NULL;
+			}
+
+			SListAppend(dst, tmp, error);
+			if (S_CHK_ERR(error, S_CONTERR,
+						  "ListPyCopy",
+						  "Call to \"SListAppend\" failed"))
+			{
+				Py_XDECREF(pyIterator);
+				return NULL;
+			}
+		}
+	}
+
+	Py_DECREF(pyIterator);
+
+	/* check for iteration errors */
+	py_error = s_get_python_error_str();
+	if (py_error)
+	{
+		S_CTX_ERR(error, S_FAILURE,
+				  "ListPyCopy",
+				  "Call to \"PyIter_Next\" failed. Reported error: %s",
+				  py_error);
+		S_FREE(py_error);
+
+		if (made_new)
+		{
+			S_DELETE(dst, "ListPyCopy", error);
+		}
+		else
+		{
+			S_CTX_ERR(error, S_FAILURE,
+					  "ListPyCopy",
+					  "Iteration failed, destination list might be corrupted.");
+		}
+
+		return NULL;
+	}
+
+	/* all ok */
+	return dst;
+
+	/* for S_CHECK_PY_LIST */
+failure:
+	return NULL;
+}
+
+
 static void ListPyPush(SList *self, const SObject *object, s_erc *error)
 {
 	SObject *tmp;
@@ -464,6 +699,12 @@ static SObject *ListPyPop(SList *self, s_erc *error)
 
 	/* get the Speect object */
 	tmp = s_pyobject_2_sobject(pobject, error);
+
+	/* we are finished with this reference, s_pyobject_2_sobject returned
+	 * a new reference
+	 */
+	Py_XDECREF(pobject);
+
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "ListPyPop",
 				  "Call to \"s_pyobject_2_sobject\" failed"))
@@ -535,6 +776,36 @@ static void ListPyReverse(SList *self, s_erc *error)
 	/* for S_CHECK_PY_LIST */
 failure:
 	return;
+}
+
+
+static const SObject *ListPyNth(SList *self, uint32 n, s_erc *error)
+{
+	SListPy *pList = (SListPy*)self;
+	PyObject *pobject;
+
+
+	S_CLR_ERR(error);
+	S_CHECK_PY_LIST(pList, "ListPyNth");
+
+	if (pList->tmp != NULL)
+		S_DELETE(pList->tmp, "ListPyNth", error);
+
+	/* borrowed reference. */
+	pobject = PyList_GetItem(S_PY_LIST(pList), n);
+
+	/* get the Speect object */
+	pList->tmp = s_pyobject_2_sobject(pobject, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "ListPyNth",
+				  "Call to \"s_pyobject_2_sobject\" failed"))
+		return NULL;
+
+	return (const SObject*)pList->tmp;
+
+	/* for S_CHECK_PY_LIST */
+failure:
+	return NULL;
 }
 
 
@@ -653,10 +924,10 @@ static SListPyClass ListPyClass =
 	NULL,                         /* insert_before */
 	NULL,                         /* insert_after  */
 	NULL,                         /* merge         */
-	NULL,                         /* copy          */
+	ListPyCopy,                   /* copy          */
 	ListPyPush,                   /* push          */
 	ListPyPop,                    /* pop           */
 	ListPyReverse,                /* reverse       */
-	NULL,                         /* nth           */
+	ListPyNth,                    /* nth           */
 	ListPyValPresent              /* val_present   */
 };

@@ -54,8 +54,6 @@
  * <li> #SListInsertBefore </li>
  * <li> #SListInsertAfter </li>
  * <li> #SListMerge </li>
- * <li> #SListCopy </li>
- * <li> #SListNth </li>
  * </ul>
  * @{
  */
@@ -137,6 +135,9 @@ typedef SListClass SListPyClass;
  *
  * @note If this function fails the list will be deleted and the @c
  * self pointer will be set to @c NULL.
+ * @note This function does not take hold of the Python object's
+ * reference, therefore a call to <c> Py_DECREF(object) </c> is
+ * required after this function.
  */
 S_API void SListPyInit(SListPy **self, PyObject *object, s_erc *error);
 

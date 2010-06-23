@@ -5,33 +5,34 @@
 ##                                                                                  ##
 ######################################################################################
 ##                                                                                  ##
-## Template CMakeList for Speect Plug-ins                                           ##
+## CMakeList for F0 Distance Cost Function plug-in                                  ##
 ##                                                                                  ##
 ##                                                                                  ##
 ######################################################################################
 
 #------------------------------------------------------------------------------------#
-#                                Project name                                        #
+#                             Define plug-in                                         #
 #------------------------------------------------------------------------------------#
 
-message(STATUS "cmake for project \"F0 distance cost function\"")
-project(speect_f0_dist_cost_function_plugin C)
-
-# Plug-in shared object name
-set(PLUGIN_SONAME score_f0_dist)
-
-
-set(${PLUGIN_SONAME}_VERSION_MAJOR 0)
-set(${PLUGIN_SONAME}_VERSION_MINOR 9)
-set(${PLUGIN_SONAME}_VERSION_PATCH 0)
-set(${PLUGIN_SONAME}_VERSION "${${PLUGIN_SONAME}_VERSION_MAJOR}.${${PLUGIN_SONAME}_VERSION_MINOR}.${${PLUGIN_SONAME}_VERSION_PATCH}")
+speect_plugin_definition(Score_F0_Dist "SF0DistCostFunc" 1 0 0)
 
 
 #------------------------------------------------------------------------------------#
 #                             Get all CMake modules                                  #
 #------------------------------------------------------------------------------------#
 
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+set(description "An F0 distance cost function class used in unit selection")
+
+# Minimum required Speect Engine version 
+set(major_min 1)
+set(minor_min 0)
+
+speect_plugin_configure_info(${description} ${major_min} ${minor_min})
+
+
+#------------------------------------------------------------------------------------#
+#                               Source files                                         #
+#------------------------------------------------------------------------------------#
 
 # Lists of all the source files
 include(sources)
@@ -43,29 +44,17 @@ include(sources)
 
 include(cost_function)
 
+
 #------------------------------------------------------------------------------------#
 #                        Include matrix float class                                  #
 #------------------------------------------------------------------------------------#
 
-include(matrix-float)
+include(matrix_float)
 
 
 #------------------------------------------------------------------------------------#
-#                        Plug-in shared object                                       #
+#                            Plug-in shared object                                   #
 #------------------------------------------------------------------------------------#
 
-# Library build configuration
-include(plugin)
-
-# add dependencies
-add_dependencies(${PLUGIN_SONAME}_plugin cost_function_plugin)
-add_dependencies(${PLUGIN_SONAME}_plugin matrix-float_plugin)
-  
-
-#------------------------------------------------------------------------------------#
-#                        Create a plug-in cmake config file                          #
-#------------------------------------------------------------------------------------#
-
-include(plugin_conf)
-
+speect_plugin_create()
 

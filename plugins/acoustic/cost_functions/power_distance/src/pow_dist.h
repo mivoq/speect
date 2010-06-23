@@ -68,7 +68,7 @@ S_BEGIN_C_DECLS
 /************************************************************************************/
 
 /**
- * The left context cost function structure. Does not add any
+ * The power distance cost function structure. Does not add any
  * new members to #SCostFunction, therefore exactly the same.
  */
 typedef SCostFunction SPowDistCostFunc;
@@ -81,7 +81,7 @@ typedef SCostFunction SPowDistCostFunc;
 /************************************************************************************/
 
 /**
- * The left context cost function class structure. Does not add any
+ * The power distance cost function class structure. Does not add any
  * new methods to #SCostFunctionClass, therefore exactly the same.
  */
 typedef SCostFunctionClass SPowDistCostFuncClass;

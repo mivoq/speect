@@ -85,7 +85,7 @@ S_LOCAL void _s_py_funcs_initialize(s_erc *error);
  * @param error Error code.
  *
  * @return A Python PyObject object wrapper for the Speect SObject
- * object.
+ * object (new reference).
  */
 S_API PyObject *s_sobject_2_pyobject(const SObject *object, s_bool own,
 									 s_erc *error);
@@ -102,6 +102,8 @@ S_API PyObject *s_sobject_2_pyobject(const SObject *object, s_bool own,
  *
  * @note The caller is responsible for the memory of the returned
  * Speect SObject.
+ * @note This function does @b not take hold the Python object
+ * reference.
  */
 S_API SObject *s_pyobject_2_sobject(PyObject *pobject, s_erc *error);
 
@@ -116,6 +118,8 @@ S_API SObject *s_pyobject_2_sobject(PyObject *pobject, s_erc *error);
  *
  * @note The caller is responsible for the memory of the
  * returned @e C string.
+ * @note This function does @b not take hold the Python object
+ * reference.
  */
 S_API char *s_get_pyobject_str(PyObject *pobject, s_erc *error);
 

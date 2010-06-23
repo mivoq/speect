@@ -233,6 +233,11 @@ static SList *create_and_populate_py_list(s_erc *error)
 				  "Call to \"SListPyInit\" failed"))
 		goto error;
 
+	/* we are finished with the Python list, it is
+	 * in the wrapper now.
+	 */
+	Py_XDECREF(list);
+
 	/* all ok */
 	return S_LIST(pyList);
 

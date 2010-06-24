@@ -5,7 +5,7 @@
 ##                                                                                  ##
 ######################################################################################
 ##                                                                                  ##
-## Template CMake source files for Speect plug-ins                                  ##
+## Source files for Audio RIFF formatter plug-in                                    ##
 ##                                                                                  ##
 ##                                                                                  ##
 ######################################################################################
@@ -13,7 +13,7 @@
 
 ######## source files ##################
 
-set(${PLUGIN_SONAME}_SRC_FILES
+speect_plugin_sources(
   src/plugin.c
   src/serialized_audio.c
   src/write.c
@@ -22,7 +22,7 @@ set(${PLUGIN_SONAME}_SRC_FILES
 
 ######## header files ##################
 
-set(${PLUGIN_SONAME}_INCLUDE_FILES
+speect_plugin_headers(
   src/serialized_audio.h
   )
 

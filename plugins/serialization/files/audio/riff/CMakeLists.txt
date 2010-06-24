@@ -12,26 +12,28 @@
 
 
 #------------------------------------------------------------------------------------#
-#                                Project name                                        #
+#                             Define plug-in                                         #
 #------------------------------------------------------------------------------------#
 
-message(STATUS "cmake for project \"Audio riff (Microsoft wav)\"")
-project(speect_audio_riff_plugin C)
-
-# Plug-in shared object name
-set(PLUGIN_SONAME audio-riff)
-
-set(${PLUGIN_SONAME}_VERSION_MAJOR 0)
-set(${PLUGIN_SONAME}_VERSION_MINOR 9)
-set(${PLUGIN_SONAME}_VERSION_PATCH 0)
-set(${PLUGIN_SONAME}_VERSION "${${PLUGIN_SONAME}_VERSION_MAJOR}.${${PLUGIN_SONAME}_VERSION_MINOR}.${${PLUGIN_SONAME}_VERSION_PATCH}")
+speect_plugin_definition(Audio_RIFF "SRIFFAudioFile" 1 0 0)
 
 
 #------------------------------------------------------------------------------------#
-#                             Get all CMake modules                                  #
+#                        Configure plugin_info.h.in                                  #
 #------------------------------------------------------------------------------------#
 
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+set(description "Write SAudio to riff (Microsoft wav) formatted files")
+
+# Minimum required Speect Engine version 
+set(major_min 1)
+set(minor_min 0)
+
+speect_plugin_configure_info(${description} ${major_min} ${minor_min})
+
+
+#------------------------------------------------------------------------------------#
+#                               Source files                                         #
+#------------------------------------------------------------------------------------#
 
 # Lists of all the source files
 include(sources)
@@ -45,28 +47,16 @@ include(audio)
 
 
 #------------------------------------------------------------------------------------#
-#                        Plug-in shared object                                       #
+#                            Plug-in shared object                                   #
 #------------------------------------------------------------------------------------#
 
-# Library build configuration
-include(plugin)
+speect_plugin_create()
 
-# add dependency
-add_dependencies(${PLUGIN_SONAME}_plugin audio_plugin)
-
-#------------------------------------------------------------------------------------#
-#                                   examples                                         #
-#------------------------------------------------------------------------------------#
-
-#if(WANT_EXAMPLES)
-#  add_subdirectory(examples)
-#endif(WANT_EXAMPLES)
 
 
 #------------------------------------------------------------------------------------#
 #                              SWIG wrappers                                         #
 #------------------------------------------------------------------------------------#
 
-if(SPEECT_WRAP_PYTHON)
-  add_subdirectory(swig)
-endif(SPEECT_WRAP_PYTHON)
+add_subdirectory(swig)
+

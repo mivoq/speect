@@ -95,7 +95,7 @@ S_BEGIN_C_DECLS
  * @param FUNC The function method of the given object to call.
  *
  * @note This casting is not safety checked.
- * @note Example usage: @code S_AUDIO_DB_CALL(self, func)(param1, param2, ..., paramN); @endcode
+ * @note Example usage: @code S_AUDIO_CALL(self, func)(param1, param2, ..., paramN); @endcode
  * where @c param1, @c param2, ..., @c paramN are the parameters passed to the object function
  * @c func.
  */
@@ -116,7 +116,7 @@ S_BEGIN_C_DECLS
  * @note This casting is not safety checked.
  */
 #define S_AUDIO_METH_VALID(SELF, FUNC)		\
-	S_AUDIO_DB_CALL(SELF, FUNC) ? TRUE : FALSE
+	S_AUDIO_CALL(SELF, FUNC) ? TRUE : FALSE
 
 
 

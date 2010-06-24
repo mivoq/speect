@@ -5,7 +5,7 @@
 ##                                                                                  ##
 ######################################################################################
 ##                                                                                  ##
-## Template CMakeList for Speect Plug-ins                                           ##
+## CMakeList for Spectral Distance Cost Function plug-in                            ##
 ##                                                                                  ##
 ##                                                                                  ##
 ######################################################################################
@@ -14,23 +14,25 @@
 #                                Project name                                        #
 #------------------------------------------------------------------------------------#
 
-message(STATUS "cmake for project \"RELP unit synthesis\"")
-project(speect_relp_synthesis_plugin C)
-
-# Plug-in shared object name
-set(PLUGIN_SONAME relp-synthesis)
-
-set(${PLUGIN_SONAME}_VERSION_MAJOR 0)
-set(${PLUGIN_SONAME}_VERSION_MINOR 9)
-set(${PLUGIN_SONAME}_VERSION_PATCH 0)
-set(${PLUGIN_SONAME}_VERSION "${${PLUGIN_SONAME}_VERSION_MAJOR}.${${PLUGIN_SONAME}_VERSION_MINOR}.${${PLUGIN_SONAME}_VERSION_PATCH}")
+speect_plugin_definition(RELP_Synthesis "SRelp" 1 0 0)
 
 
 #------------------------------------------------------------------------------------#
 #                             Get all CMake modules                                  #
 #------------------------------------------------------------------------------------#
 
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+set(description "Generates a waveform from a unit relation with units that contain residuals and lpc coefficients")
+
+# Minimum required Speect Engine version 
+set(major_min 1)
+set(minor_min 0)
+
+speect_plugin_configure_info(${description} ${major_min} ${minor_min})
+
+
+#------------------------------------------------------------------------------------#
+#                               Source files                                         #
+#------------------------------------------------------------------------------------#
 
 # Lists of all the source files
 include(sources)
@@ -40,38 +42,15 @@ include(sources)
 #                                   Includes                                         #
 #------------------------------------------------------------------------------------#
 
-include(window-func)
+include(window_func)
 include(audio)
-include(array-int)
-include(track-float)
+include(array_int)
+include(track_float)
 
 
 #------------------------------------------------------------------------------------#
 #                        Plug-in shared object                                       #
 #------------------------------------------------------------------------------------#
 
-# Library build configuration
-include(plugin)
-
-# add dependencies
-add_dependencies(${PLUGIN_SONAME}_plugin window-func_plugin)
-add_dependencies(${PLUGIN_SONAME}_plugin audio_plugin)
-add_dependencies(${PLUGIN_SONAME}_plugin array-int_plugin)
-add_dependencies(${PLUGIN_SONAME}_plugin track-float_plugin)
- 
-
-#------------------------------------------------------------------------------------#
-#                        Create a plug-in cmake config file                          #
-#------------------------------------------------------------------------------------#
-
-include(plugin_conf)
-
-
-#------------------------------------------------------------------------------------#
-#                                   examples                                         #
-#------------------------------------------------------------------------------------#
-
-#if(WANT_EXAMPLES)
-#  add_subdirectory(examples)
-#endif(WANT_EXAMPLES)
+speect_plugin_create()
 

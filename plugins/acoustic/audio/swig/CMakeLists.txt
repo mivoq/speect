@@ -5,7 +5,7 @@
 ##                                                                                  ##
 ######################################################################################
 ##                                                                                  ##
-## CMakeList for Plugin SWIG Wrappers                                               ##
+## CMakeList for SArrayFloat SWIG Wrappers                                          ##
 ##                                                                                  ##
 ##                                                                                  ##
 ######################################################################################
@@ -15,8 +15,8 @@
 #                   Include wrappers for different languages                         #
 #------------------------------------------------------------------------------------#
 
-option(PLUGIN_WRAP_PYTHON "Create plug-in Python wrappers" on)
-
-if(PLUGIN_WRAP_PYTHON)
+if(WANT_PYTHON_WRAPPER)
   add_subdirectory(python)
-endif(PLUGIN_WRAP_PYTHON)
+endif(WANT_PYTHON_WRAPPER)
+
+

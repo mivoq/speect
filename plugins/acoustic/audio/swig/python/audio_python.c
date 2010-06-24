@@ -34,131 +34,43 @@
 /*                                                                                  */
 /************************************************************************************/
 
-%define audio_DOCSTRING
-"""
-A container class for audio objects. Provides a Speect native class for creating/adding audio
-objects. The audio samples are internally represented as floats.
-"""
-%enddef
 
-%feature("autodoc", audio_DOCSTRING) SAudio;
-
-
-%define num_samples_DOCSTRING
-"""
-num_samples()
-
-Return the number of samples of this audio object.
-
-:return: Number of samples of this audio object.
-:rtype: int
-"""
-%enddef
-
-%feature("autodoc", num_samples_DOCSTRING) SAudio::num_samples;
-
-
-%define sample_rate_DOCSTRING
-"""
-sample_rate()
-
-Return the sample rate of the samples of this audio object.
-
-:return: Sample rate of this audio object (Hertz).
-:rtype: int
-"""
-%enddef
-
-%feature("autodoc", sample_rate_DOCSTRING) SAudio::sample_rate;
-
-
-%include "cstring.i"
-
-%cstring_output_allocate_size(char **s, int *slen, free(*$1));
+/************************************************************************************/
+/*                                                                                  */
+/* Extend the SUtterance class                                                      */
+/*                                                                                  */
+/************************************************************************************/
 
 %pythoncode
 %{
-import ossaudiodev
-
-def utt_play(self):
+def _saudio_utt_play(self):
     """
     Play utterance waveform. Will do nothing
     if the utterance does not have an "audio"
     feature.
 
-    :note: This function tries to open ``/dev/dsp1``
-           and write 16bit little endian values to it.
+    :note: Uses SAudio.play() internally. 
     """
 
     audio = self.features["audio"]
     if audio is None:
         return
 
-    waveform = audio.get_audio_waveform()
-
-    dsp = ossaudiodev.open("/dev/dsp", "w")
-    dsp.setparameters(ossaudiodev.AFMT_S16_LE,
-                      1,
-                      waveform["samplerate"],
-                      True)
-
-    dsp.writeall(waveform["samples"])
-    dsp.close()
-
-setattr(speect.SUtterance, "play", utt_play)
-%}
-
-%inline
-%{
-	void saudio_samples(char **s, int *slen, const SAudio *audio, s_erc *error)
-	{
-		sint16 *samples;
-		uint32 counter;
+    audio.play()
 
 
-		samples = S_CALLOC(sint16, audio->num_samples);
-		if (samples == NULL)
-		{
-			S_FTL_ERR(error, S_MEMERROR,
-					  "saudio_samples",
-					  "Failed to allocate audio samples");
-			return;
-		}
-
-		for (counter = 0; counter < audio->num_samples; counter++)
-			samples[counter] = (sint16)audio->samples[counter];
-
-		*slen = audio->num_samples * sizeof(sint16);
-		*s = (char*)samples;
-	}
+setattr(speect.SUtterance, "play", _saudio_utt_play)
 %}
 
 
-typedef struct
-{
-} SAudio;
-
-
-%types(SAudio = SObject);
-
-%nodefaultctor SAudio;
-
-%nodefaultdtor SAudio;
+/************************************************************************************/
+/*                                                                                  */
+/* Extend the SAudio class                                                          */
+/*                                                                                  */
+/************************************************************************************/
 
 %extend SAudio
-{
-	uint32 num_samples()
-	{
-		return $self->num_samples;
-	}
-
-
-	uint32 sample_rate()
-	{
-		return $self->sample_rate;
-	}
-
-
+{	
 %pythoncode
 %{
 def get_audio_waveform(self):
@@ -168,7 +80,6 @@ def get_audio_waveform(self):
         {'sampletype': 'int16', 
          'samplerate': 16000,
          'samples': '...bytestring...samples....'}
-
 
     :return: Audio waveform.
     :rtype: dict
@@ -185,5 +96,45 @@ def get_audio_waveform(self):
         "samples" : samples
         }
     return wave_dict
+
+
+def play(self):
+    """
+    Play the audio waveform (supports only 'posix' and 'nt' systems).
+
+    :note: On 'posix' systems, this function tries to 
+           open an audio device (environment variable ``AUDIODEV``,
+           or fallback ``/dev/dsp``) and write 16 bit *little endian*
+           values to it.
+    """
+
+    import os
+    
+    opsys = os.name
+    
+    if opsys not in ("posix", "nt"):
+        print "SAudio.play() currently works only on" + \
+            " \"posix\" and \"nt\" compatible systems"
+        raise EnvironmentError
+
+    waveform = self.get_audio_waveform()
+
+    if opsys == "posix":
+        import ossaudiodev
+
+        dsp = ossaudiodev.open(mode="w")
+        dsp.setparameters(ossaudiodev.AFMT_S16_LE,
+                          1,
+                          waveform["samplerate"],
+                          True)
+        dsp.writeall(waveform["samples"])
+        dsp.close()
+    
+    else:     # nt (win)
+        import winsound
+        
+        winsound.PlaySound(waveform["samples"], winsound.SND_MEMORY)
+
 %}
-}
+};
+

@@ -1,68 +1,51 @@
 ######################################################################################
 ##                                                                                  ##
 ## AUTHOR  : Aby Louw                                                               ##
-## DATE    : December 2009                                                          ##
+## DATE    : June 2010                                                              ##
 ##                                                                                  ##
 ######################################################################################
 ##                                                                                  ##
-## CMakeList for SAudio interface                                                   ##
+## CMakeList for SAudio Python interface                                            ##
 ##                                                                                  ##
 ##                                                                                  ##
 ######################################################################################
 
 
-# find swig
-find_package(SWIG REQUIRED)
+#------------------------------------------------------------------------------------#
+#                          Set the interface variables                               #
+#------------------------------------------------------------------------------------#
 
-# include swig
-include(${SWIG_USE_FILE})
+# SWIG includes
+set(swig_includes "typemaps.i;exception.i")
 
-# find Python interpreter
-find_package(PythonLibs REQUIRED) # Note, currently PythonInterp does not look for Python 3
+# C header files (speect.h is automatically included)
+set(swig_c_includes "audio.h")
 
-# add Python to includes
-include_directories(${PYTHON_INCLUDE_PATH})
+# Load the plug-in on initialization ? 
+set(swig_load_plugin 1)
 
-# add Speect Engine includes
-include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+# Include Python docstrings
+set(swig_python_docstrings "audio_docs.c")
 
-# clear SWIG flags, we don't need anything here
-set(CMAKE_SWIG_FLAGS "")
+# Include Python typemaps
+set(swig_python_typemaps)
 
-# clear C flags, we don't want the same stuff as Speect
-set(CMAKE_C_FLAGS "")
+# Include SWIG common interface definition.
+set(swig_common "audio_common.c")
 
-# add flags for Python Speect Engine wrapper generation
-set_source_files_properties(audio.i 
-  PROPERTIES 
-  SWIG_FLAGS "-Wall"
-  SWIG_FLAGS "-I${SPEECT_PYTHON_WRAPPER_INCLUDE_PATH}"
-)
+# Include SWIG Python interface definition.
+set(swig_python "audio_python.c")
 
-# add flags for Python Speect Engine wrapper compilation
-set_source_files_properties(audioPYTHON_wrap.c 
-  PROPERTIES 
-  COMPILE_FLAGS "-fno-strict-aliasing -fwrapv -Wstrict-prototypes -Wall"
-  GENERATED TRUE
-)
 
-# set ouput directory
-#message(STATUS "CMAKE_CURRENT_BIN_DIR = ${CMAKE_BINARY_DIR}")
-set(CMAKE_SWIG_OUTDIR "${PLUGINS_ENV_VAR}/../swig/python/speect")
+#------------------------------------------------------------------------------------#
+#                          Create the interface file                                 #
+#------------------------------------------------------------------------------------#
 
-# create the Python Speect Engine wrapper (C and Python files)
-swig_add_module(audio python audio.i)
+speect_plugin_swig_python_interface()
 
-# link with Python and Speect Engine
-swig_link_libraries(audio ${PYTHON_LIBRARIES} SPCT_LIBRARY_TARGET)
 
-# set the output directory
-set_target_properties(${SWIG_MODULE_audio_REAL_NAME}
-  PROPERTIES
-  LIBRARY_OUTPUT_DIRECTORY "${PLUGINS_ENV_VAR}/../swig/python/speect"
-  RUNTIME_OUTPUT_DIRECTORY "${PLUGINS_ENV_VAR}/../swig/python/speect"
-)
+#------------------------------------------------------------------------------------#
+#                        Generate the Python wrapper                                 #
+#------------------------------------------------------------------------------------#
 
-#configure_file(${CMAKE_SOURCE_DIR}/swig/python/config/setup.py.in 
-#  ${CMAKE_BINARY_DIR}/swig/python/setup.py @only)
-
+speect_plugin_swig_python_wrapper()

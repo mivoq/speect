@@ -28,140 +28,124 @@
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* A Residual excited linear prediction (RELP) waveform generator.                  */
+/* SWIG common C convenience functions for SAudio.                                  */
 /*                                                                                  */
 /*                                                                                  */
-/************************************************************************************/
-
-
-/************************************************************************************/
-/*                                                                                  */
-/* Modules used                                                                     */
 /*                                                                                  */
 /************************************************************************************/
-
-#include "relp.h"
-#include "plugin_info.h"
 
 
 /************************************************************************************/
 /*                                                                                  */
-/* Static variables                                                                 */
+/* SWIG helper functions                                                            */
 /*                                                                                  */
 /************************************************************************************/
 
-/* we use a few plug-ins but only need to load the audio plug-in */
-static SPlugin *audioPlugin = NULL;
+%include "cstring.i"
 
-
-/************************************************************************************/
-/*                                                                                  */
-/* Static function prototypes                                                       */
-/*                                                                                  */
-/************************************************************************************/
-
-static void plugin_register_function(s_erc *error);
-
-static void plugin_exit_function(s_erc *error);
+%cstring_output_allocate_size(char **s, int *slen, free(*$1));
 
 
 /************************************************************************************/
 /*                                                                                  */
-/* Plug-in parameters                                                               */
+/* SAudio helper functions                                                          */
 /*                                                                                  */
 /************************************************************************************/
 
-static const s_plugin_params plugin_params =
+%inline
+%{
+	void saudio_samples(char **s, int *slen, const SAudio *audio, s_erc *error)
+	{
+		sint16 *samples;
+		uint32 counter;
+
+
+		samples = S_CALLOC(sint16, audio->num_samples);
+		if (samples == NULL)
+		{
+			S_FTL_ERR(error, S_MEMERROR,
+					  "saudio_samples",
+					  "Failed to allocate audio samples");
+			return;
+		}
+
+		for (counter = 0; counter < audio->num_samples; counter++)
+			samples[counter] = (sint16)audio->samples[counter];
+
+		*slen = audio->num_samples * sizeof(sint16);
+		*s = (char*)samples;
+	}
+%}
+
+
+/************************************************************************************/
+/*                                                                                  */
+/* Extend the SAudio class                                                          */
+/*                                                                                  */
+/************************************************************************************/
+
+
+typedef struct
 {
-	/* plug-in name */
-	SPCT_PLUGIN_NAME,
+} SAudio;
 
-	/* description */
-	SPCT_PLUGIN_DESCRIPTION,
+%types(SAudio = SObject);
 
-	/* version */
+%nodefaultctor SAudio;
+
+%nodefaultdtor SAudio;
+
+%extend SAudio
+{
+	void resize(uint32 new_size, s_erc *error)
 	{
-		SPCT_PLUGIN_VERSION_MAJOR,
-		SPCT_PLUGIN_VERSION_MINOR
-	},
+		S_CLR_ERR(error);
 
-	/* Speect ABI version (which plug-in was compiled with) */
+		if (!S_AUDIO_METH_VALID($self, resize))
+		{
+			S_CTX_ERR(error, S_METHINVLD,
+					  "resize",
+					  "Audio method \"resize\" not implemented");
+			return;
+		}
+
+		S_AUDIO_CALL($self, resize)($self, new_size, error);
+		S_CHK_ERR(error, S_CONTERR,
+				  "resize",
+				  "Call to Audio method \"resize\" failed");
+		return;
+	}
+
+
+	void scale(float factor, s_erc *error)
 	{
-		S_MAJOR_VERSION,
-		S_MINOR_VERSION
-	},
+		S_CLR_ERR(error);
 
-	/* register function pointer */
-	plugin_register_function,
+		if (!S_AUDIO_METH_VALID($self, scale))
+		{
+			S_CTX_ERR(error, S_METHINVLD,
+					  "scale",
+					  "Audio method \"scale\" not implemented");
+			return;
+		}
 
-	/* exit function pointer */
-	plugin_exit_function
+		S_AUDIO_CALL($self, scale)($self, factor, error);
+		S_CHK_ERR(error, S_CONTERR,
+				  "scale",
+				  "Call to Audio method \"scale\" failed");
+		return;
+	}
+
+
+	uint32 num_samples()
+	{
+		return $self->num_samples;
+	}
+
+
+	uint32 sample_rate()
+	{
+		return $self->sample_rate;
+	}
 };
 
-
-/************************************************************************************/
-/*                                                                                  */
-/* Function implementations                                                         */
-/*                                                                                  */
-/************************************************************************************/
-
-const s_plugin_params *s_plugin_init(s_erc *error)
-{
-	S_CLR_ERR(error);
-
-	if (!s_lib_version_ok(SPCT_MAJOR_VERSION_MIN, SPCT_MINOR_VERSION_MIN))
-	{
-		S_CTX_ERR(error, S_FAILURE,
-				  SPCT_PLUGIN_INIT_STR,
-				  "Incorrect Speect Engine version, require at least '%d.%d.x'",
-				  SPCT_MAJOR_VERSION_MIN, SPCT_MINOR_VERSION_MIN);
-		return NULL;
-	}
-
-	return &plugin_params;
-}
-
-
-/************************************************************************************/
-/*                                                                                  */
-/* Static function implementations                                                  */
-/*                                                                                  */
-/************************************************************************************/
-
-/* plug-in register function */
-static void plugin_register_function(s_erc *error)
-{
-	S_CLR_ERR(error);
-
-	/* load audio function plug-in */
-	audioPlugin = s_pm_load_plugin("audio.spi", error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  SPCT_PLUGIN_REG_STR,
-				  "Call to \"s_pm_load_plugin\" failed"))
-		return;
-
-	/* register plug-in classes here */
-	_s_relp_class_reg(error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  SPCT_PLUGIN_REG_STR,
-				  SPCT_PLUGIN_REG_FAIL_STR))
-	{
-		S_DELETE(audioPlugin, SPCT_PLUGIN_REG_STR, error);
-		return;
-	}
-}
-
-
-/* plug-in exit function */
-static void plugin_exit_function(s_erc *error)
-{
-	S_CLR_ERR(error);
-
-	/* free plug-in classes here */
-	_s_relp_class_free(error);
-	S_CHK_ERR(error, S_CONTERR,
-			  SPCT_PLUGIN_EXIT_STR,
-			  SPCT_PLUGIN_EXIT_FAIL_STR);
-
-	S_DELETE(audioPlugin, SPCT_PLUGIN_EXIT_STR, error);
-}

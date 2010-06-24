@@ -12,7 +12,5 @@ rm -f  Makefile
 
 ########################################################################
 
-rm -f example_write.c
-rm -f example_read.c
 rm -f ebml_test.bin
 rm -f *~

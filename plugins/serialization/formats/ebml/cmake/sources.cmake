@@ -5,7 +5,7 @@
 ##                                                                                  ##
 ######################################################################################
 ##                                                                                  ##
-## Template CMake source files for Speect plug-ins                                  ##
+## Source files for EBML serialization plug-in                                      ##
 ##                                                                                  ##
 ##                                                                                  ##
 ######################################################################################
@@ -13,7 +13,7 @@
 
 ######## source files ##################
 
-set(${PLUGIN_SONAME}_SRC_FILES
+speect_plugin_sources(
   src/ebml_read.c
   src/ebml_write.c
   src/plugin.c
@@ -22,7 +22,7 @@ set(${PLUGIN_SONAME}_SRC_FILES
 
 ######## header files ##################
 
-set(${PLUGIN_SONAME}_INCLUDE_FILES
+speect_plugin_headers(
   src/ebml_read.h
   src/ebml_write.h
   src/ebml_def.h

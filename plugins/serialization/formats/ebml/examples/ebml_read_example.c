@@ -29,16 +29,13 @@
 /************************************************************************************/
 /*                                                                                  */
 /* Simple EBML reading example.                                                     */
-/* example_read.c is automatically created from example_read.c.in                   */
+/*                                                                                  */
 /*                                                                                  */
 /************************************************************************************/
 
 #include <stdio.h>
 #include "speect.h"
 #include "ebml_read.h"
-
-
-static const char *ebml_plugin_path = "@PLUGIN_TARGET_NAME@";
 
 
 int main()
@@ -66,10 +63,10 @@ int main()
 	/*
 	 * load the ebml plug-in
 	 */
-	plugin = s_pm_load_plugin(ebml_plugin_path, &error);
+	plugin = s_pm_load_plugin("ebml.spi", &error);
 	if (S_CHK_ERR(&error, S_CONTERR,
 				  "main",
-				  "Failed to load plug-in at '%s'", ebml_plugin_path))
+				  "Failed to load plug-in at 'ebml.spi'"))
 	{
 		printf("failed to load plug-in\n");
 		goto quit;

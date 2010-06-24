@@ -5,70 +5,57 @@
 ##                                                                                  ##
 ######################################################################################
 ##                                                                                  ##
-## CMakeList for Speect EBML Plug-in                                                ##
+## CMakeList for EBML serialization Plug-in                                         ##
 ##                                                                                  ##
 ##                                                                                  ##
 ######################################################################################
 
 #------------------------------------------------------------------------------------#
-#                                Project name                                        #
+#                             Define plug-in                                         #
 #------------------------------------------------------------------------------------#
 
-message(STATUS "cmake for project \"Speect Ebml Plug-in\"")
-project(speect_ebml_plugin C)
-
-# Plug-in shared object name
-set(PLUGIN_SONAME ebml)
-
-set(${PLUGIN_SONAME}_VERSION_MAJOR 0)
-set(${PLUGIN_SONAME}_VERSION_MINOR 9)
-set(${PLUGIN_SONAME}_VERSION_PATCH 0)
-set(${PLUGIN_SONAME}_VERSION "${${PLUGIN_SONAME}_VERSION_MAJOR}.${${PLUGIN_SONAME}_VERSION_MINOR}.${${PLUGIN_SONAME}_VERSION_PATCH}")
+speect_plugin_definition(EBML "SEbmlRead/SEbmlWrite" 1 0 0)
 
 
 #------------------------------------------------------------------------------------#
-#                             Get all CMake modules                                  #
+#                        Configure plugin_info.h.in                                  #
 #------------------------------------------------------------------------------------#
 
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+set(description "Reader and writer classes for EBML data sources")
+
+# Minimum required Speect Engine version 
+set(major_min 1)
+set(minor_min 0)
+
+speect_plugin_configure_info(${description} ${major_min} ${minor_min})
+
+
+#------------------------------------------------------------------------------------#
+#                               Source files                                         #
+#------------------------------------------------------------------------------------#
 
 # Lists of all the source files
 include(sources)
 
 
 #------------------------------------------------------------------------------------#
-#                        Plug-in shared object                                       #
+#                            Plug-in shared object                                   #
 #------------------------------------------------------------------------------------#
 
-# Library build configuration
-include(plugin)
-
-
-#------------------------------------------------------------------------------------#
-#                        Create a plug-in cmake config file                          #
-#------------------------------------------------------------------------------------#
-
-include(plugin_conf)
-
-#------------------------------------------------------------------------------------#
-#                                   examples                                         #
-#------------------------------------------------------------------------------------#
-
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/examples/example_read.c.in 
-  ${CMAKE_CURRENT_BINARY_DIR}/examples/example_read.c @ONLY)
-
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/examples/example_write.c.in 
-  ${CMAKE_CURRENT_BINARY_DIR}/examples/example_write.c @ONLY)
-
-if(WANT_EXAMPLES)
-  add_subdirectory(examples)
-endif(WANT_EXAMPLES)
+speect_plugin_create()
 
 
 #------------------------------------------------------------------------------------#
 #                              SWIG wrappers                                         #
 #------------------------------------------------------------------------------------#
 
-if(SPEECT_WRAP_PYTHON)
-  add_subdirectory(swig)
-endif(SPEECT_WRAP_PYTHON)
+add_subdirectory(swig)
+
+
+#------------------------------------------------------------------------------------#
+#                               examples/tests                                       #
+#------------------------------------------------------------------------------------#
+
+if(WANT_EXAMPLES)
+  add_subdirectory(examples)
+endif(WANT_EXAMPLES)

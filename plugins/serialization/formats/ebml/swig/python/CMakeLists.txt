@@ -1,68 +1,48 @@
 ######################################################################################
 ##                                                                                  ##
 ## AUTHOR  : Aby Louw                                                               ##
-## DATE    : December 2009                                                          ##
+## DATE    : June 2010                                                              ##
 ##                                                                                  ##
 ######################################################################################
 ##                                                                                  ##
-## CMakeList for EBML reader/writer Python classes                                  ##
+## CMakeList for SEbmlRead & SEbmlWrite Python interface                            ##
 ##                                                                                  ##
 ##                                                                                  ##
 ######################################################################################
 
 
-# find swig
-find_package(SWIG REQUIRED)
+#------------------------------------------------------------------------------------#
+#                          Set the interface variables                               #
+#------------------------------------------------------------------------------------#
 
-# include swig
-include(${SWIG_USE_FILE})
+# SWIG includes
+set(swig_includes "typemaps.i;exception.i")
 
-# find Python interpreter
-find_package(PythonLibs REQUIRED) # Note, currently PythonInterp does not look for Python 3
+# C header files (speect.h is automatically included)
+set(swig_c_includes "ebml_def.h;ebml.h;ebml_id.h;ebml_read.h;ebml_write.h")
 
-# add Python to includes
-include_directories(${PYTHON_INCLUDE_PATH})
+# Load the plug-in on initialization ? 
+set(swig_load_plugin 1)
 
-# add Speect Engine includes
-include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+# Include Python docstrings
+set(swig_python_docstrings "ebml_writer_docs.c;ebml_reader_docs.c")
 
-# clear SWIG flags, we don't need anything here
-set(CMAKE_SWIG_FLAGS "")
+# Include SWIG common interface definition.
+set(swig_common "ebml_writer_common.c;ebml_reader_common.c")
 
-# clear C flags, we don't want the same stuff as Speect
-set(CMAKE_C_FLAGS "")
+# Include SWIG Python interface definition.
+set(swig_python "ebml_writer_python.c;ebml_reader_python.c")
 
-# add flags for Python Speect Engine wrapper generation
-set_source_files_properties(ebml.i 
-  PROPERTIES 
-  SWIG_FLAGS "-Wall"
-  SWIG_FLAGS "-I${SPEECT_PYTHON_WRAPPER_INCLUDE_PATH}"
-)
 
-# add flags for Python Speect Engine wrapper compilation
-set_source_files_properties(ebmlPYTHON_wrap.c 
-  PROPERTIES 
-  COMPILE_FLAGS "-fno-strict-aliasing -fwrapv -Wstrict-prototypes -Wall"
-  GENERATED TRUE
-)
+#------------------------------------------------------------------------------------#
+#                          Create the interface file                                 #
+#------------------------------------------------------------------------------------#
 
-# set ouput directory
-#message(STATUS "CMAKE_CURRENT_BIN_DIR = ${CMAKE_BINARY_DIR}")
-set(CMAKE_SWIG_OUTDIR "${PLUGINS_ENV_VAR}/../swig/python/speect")
+speect_plugin_swig_python_interface()
 
-# create the Python Speect Engine wrapper (C and Python files)
-swig_add_module(ebml python ebml.i)
 
-# link with Python and Speect Engine
-swig_link_libraries(ebml ${PYTHON_LIBRARIES} SPCT_LIBRARY_TARGET)
+#------------------------------------------------------------------------------------#
+#                        Generate the Python wrapper                                 #
+#------------------------------------------------------------------------------------#
 
-# set the output directory
-set_target_properties(${SWIG_MODULE_ebml_REAL_NAME}
-  PROPERTIES
-  LIBRARY_OUTPUT_DIRECTORY "${PLUGINS_ENV_VAR}/../swig/python/speect"
-  RUNTIME_OUTPUT_DIRECTORY "${PLUGINS_ENV_VAR}/../swig/python/speect"
-)
-
-#configure_file(${CMAKE_SOURCE_DIR}/swig/python/config/setup.py.in 
-#  ${CMAKE_BINARY_DIR}/swig/python/setup.py @only)
-
+speect_plugin_swig_python_wrapper()

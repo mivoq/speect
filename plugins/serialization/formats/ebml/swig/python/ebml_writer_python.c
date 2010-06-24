@@ -23,72 +23,62 @@
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* AUTHOR  : Aby Louw                                                               */
+/* AUTHOR  : Richard Carlson, Aby Louw                                              */
 /* DATE    : December 2009                                                          */
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* An EBML reader/writer Python class.                                              */
+/* C convenience functions for SEbmlWrite Python wrapper.                           */
 /*                                                                                  */
 /*                                                                                  */
-/************************************************************************************/
-
-%module ebml
-
-
-/************************************************************************************/
-/*                                                                                  */
-/* Speect Engine header.                                                            */
 /*                                                                                  */
 /************************************************************************************/
-
-%header
-%{
-#include "speect.h"
-#include "ebml.h"
-%}
-
-%include "exception.i"
-%import speect.i
 
 
 /************************************************************************************/
 /*                                                                                  */
-/* Load the Speect EBML plug-in                                                     */
+/* Extend the SEbmlRead class                                                       */
 /*                                                                                  */
 /************************************************************************************/
 
-%init
-%{
+%extend SEbmlWrite
+{
+	void write_object(PyObject *val, uint32 id, s_erc *error)
 	{
-		s_erc rv = S_SUCCESS;
-		SPlugin *plugin;
+		SObject *object;
+		s_erc local_err = S_SUCCESS;
 
 
-		plugin = s_pm_load_plugin("ebml.spi", &rv);
-		if (rv != S_SUCCESS)
-			SWIG_exception(SWIG_RuntimeError, "Failed to load Speect EBML plug-in");
+		S_CLR_ERR(error);
+		object = s_pyobject_2_sobject(val, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "write_object",
+					  "Call to \"s_pyobject_2_sobject\" failed"))
+			return;
 
-	fail:
-		return;
+		S_EBMLWRITE_CALL($self, write_object)($self, id, object, &local_err);
+		S_CHK_ERR(&local_err, S_CONTERR,
+				  "write_object",
+				  "Call to SEbmlWrite method \"write_object\" failed");
+
+		/* if it's a primitive type we must delete it, as the Speect
+		 * Python native library does not wrap the primitives, it
+		 * creates new Speect objects.
+		 */
+
+		if ((PyObject_IsInstance(val, (PyObject*)&PyInt_Type))
+			|| (PyObject_IsInstance(val, (PyObject*)&PyFloat_Type))
+			|| (PyObject_IsInstance(val, (PyObject*)&PyString_Type))
+			|| (PyObject_IsInstance(val, (PyObject*)&PyUnicode_Type)))
+		{
+			S_DELETE(object, "write_object", error);
+		}
+
+		if ((error != NULL)
+			&& (local_err != S_SUCCESS)
+			&& (*error == S_SUCCESS))
+		{
+			*error = local_err;
+		}
 	}
-%}
-
-
-/************************************************************************************/
-/*                                                                                  */
-/* SWIG/Python interface files.                                                     */
-/*                                                                                  */
-/************************************************************************************/
-
-/*
- * SEbmlRead Python class
- */
-%include "ebml_reader.c"
-
-/*
- * SEbmlWrite Python class
- */
-%include "ebml_writer.c"
-
-
+};

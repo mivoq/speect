@@ -5,36 +5,37 @@
 ##                                                                                  ##
 ######################################################################################
 ##                                                                                  ##
-## Template CMakeList for Speect Plug-ins                                           ##
+## CMakeList for SG2PRewrites Plug-in                                               ##
 ##                                                                                  ##
 ##                                                                                  ##
 ######################################################################################
 
 #------------------------------------------------------------------------------------#
-#                                Project name                                        #
+#                             Define plug-in                                         #
 #------------------------------------------------------------------------------------#
 
-message(STATUS "cmake for project \"G2P Rewrites\"")
-project(speect_g2p_rewrites_plugin C)
-
-# Plug-in shared object name
-set(PLUGIN_SONAME g2p_rewrites)
-
-set(${PLUGIN_SONAME}_VERSION_MAJOR 0)
-set(${PLUGIN_SONAME}_VERSION_MINOR 9)
-set(${PLUGIN_SONAME}_VERSION_PATCH 0)
-set(${PLUGIN_SONAME}_VERSION "${${PLUGIN_SONAME}_VERSION_MAJOR}.${${PLUGIN_SONAME}_VERSION_MINOR}.${${PLUGIN_SONAME}_VERSION_PATCH}")
+speect_plugin_definition(G2P_Rewrites "SG2PRewrites" 1 0 0)
 
 
 #------------------------------------------------------------------------------------#
-#                             Get all CMake modules                                  #
+#                        Configure plugin_info.h.in                                  #
 #------------------------------------------------------------------------------------#
 
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+set(description "A G2P (grapheme-to-phoneme) rewrites class implementation, with rewrite rules")
+
+# Minimum required Speect Engine version 
+set(major_min 1)
+set(minor_min 0)
+
+speect_plugin_configure_info(${description} ${major_min} ${minor_min})
+
+
+#------------------------------------------------------------------------------------#
+#                               Source files                                         #
+#------------------------------------------------------------------------------------#
 
 # Lists of all the source files
 include(sources)
-
 
 
 #------------------------------------------------------------------------------------#
@@ -46,22 +47,23 @@ include(ebml)
 
 
 #------------------------------------------------------------------------------------#
-#                        Plug-in shared object                                       #
+#                            Plug-in shared object                                   #
 #------------------------------------------------------------------------------------#
 
-# Library build configuration
-include(plugin)
+speect_plugin_create()
 
-# add dependencies
-add_dependencies(${PLUGIN_SONAME}_plugin g2p_plugin)
-add_dependencies(${PLUGIN_SONAME}_plugin ebml_plugin)
- 
 
 #------------------------------------------------------------------------------------#
-#                                   examples                                         #
+#                              SWIG wrappers                                         #
+#------------------------------------------------------------------------------------#
+
+add_subdirectory(swig)
+
+
+#------------------------------------------------------------------------------------#
+#                                 examples/tests                                     #
 #------------------------------------------------------------------------------------#
 
 if(WANT_EXAMPLES)
   add_subdirectory(examples)
 endif(WANT_EXAMPLES)
-

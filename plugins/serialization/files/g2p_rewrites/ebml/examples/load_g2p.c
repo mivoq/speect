@@ -63,10 +63,10 @@ static void print_list(const SList *list, char *buf, s_erc *error)
 				  "Call to \"s_strcat\" failed"))
 		return;
 
-	itr = SListIterator(list, error);
+	itr = S_ITERATOR_GET(list, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "print_list",
-				  "Call to \"SListIterator\" failed"))
+				  "Call to \"S_ITERATOR_GET\" failed"))
 		return;
 
 	for (/* NOP */; itr != NULL; itr = SIteratorNext(itr), --list_size)
@@ -75,10 +75,10 @@ static void print_list(const SList *list, char *buf, s_erc *error)
 		const SObject *tmp;
 
 
-		tmp = SListIteratorValue(itr, error);
+		tmp = SIteratorObject(itr, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "print_list",
-					  "Call to \"SListIteratorValue\" failed"))
+					  "Call to \"SIteratorObject\" failed"))
 		{
 			S_DELETE(itr, "print_list", error);
 			return;

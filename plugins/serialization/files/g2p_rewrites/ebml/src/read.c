@@ -412,12 +412,14 @@ static void read_g2p_rewrites_rules(SG2PRewrites *g2p, SEbmlRead *ebmlReader, s_
 		return;
 
 	/* 64 should be enough for graphemes */
-	SMapHashTableInit(&(g2p->rules), 64, error);
+	SMapHashTableResize(S_MAPHASHTABLE(g2p->rules), 64, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "read_g2p_rewrites_rules",
-				  "Failed to initialize new 'SMap' object"))
+				  "Call to \"SMapHashTableResize\" failed"))
+	{
+		S_DELETE(g2p->rules, "read_g2p_rewrites_rules", error);
 		return;
-
+	}
 
 	while (1)
 	{
@@ -458,12 +460,6 @@ static void read_g2p_rewrites_rules(SG2PRewrites *g2p, SEbmlRead *ebmlReader, s_
 			if (S_CHK_ERR(error, S_CONTERR,
 						  "read_g2p_rewrites_rules",
 						  "Failed to create new 'SList' object"))
-				return;
-
-			SListListInit(&graphemeRuleList, error);
-			if (S_CHK_ERR(error, S_CONTERR,
-						  "read_g2p_rewrites_rules",
-						  "Failed to initialize new 'SList' object"))
 				return;
 
 			/* add it to the rules SMap */
@@ -625,12 +621,6 @@ static void read_g2p_rewrites_zeros(SG2PRewrites *g2p, SEbmlRead *ebmlReader, s_
 				  "Failed to create new 'SList' object"))
 		return;
 
-	SListListInit(&tmpZeros, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "read_g2p_rewrites_zeros",
-				  "Failed to initialize new 'SList' object"))
-		return;
-
 	while (1)
 	{
 		container_exhausted = S_EBMLREAD_CALL(ebmlReader, container_at_end)(ebmlReader, error);
@@ -760,10 +750,10 @@ static void read_g2p_rewrites_zeros(SG2PRewrites *g2p, SEbmlRead *ebmlReader, s_
 		return;
 	}
 
-	itr = SListIterator(tmpZeros, error);
+	itr = S_ITERATOR_GET(tmpZeros, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "read_g2p_rewrites_zeros",
-				  "Call to \"SListIterator\" failed"))
+				  "Call to \"S_ITERATOR_GET\" failed"))
 	{
 		S_DELETE(tmpZeros, "read_g2p_rewrites_zeros", error);
 		return;
@@ -777,10 +767,10 @@ static void read_g2p_rewrites_zeros(SG2PRewrites *g2p, SEbmlRead *ebmlReader, s_
 		const char *replacement;
 
 
-		symbol = SObjectGetString(SListIteratorValue(itr, error), error);
+		symbol = SObjectGetString(SIteratorObject(itr, error), error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "read_g2p_rewrites_zeros",
-					  "Call to \"SListIterator\" failed"))
+					  "Call to \"SIteratorObject/SObjectGetString\" failed"))
 		{
 			S_DELETE(tmpZeros, "read_g2p_rewrites_zeros", error);
 			S_DELETE(itr, "read_g2p_rewrites_zeros", error);
@@ -807,10 +797,10 @@ static void read_g2p_rewrites_zeros(SG2PRewrites *g2p, SEbmlRead *ebmlReader, s_
 			return;
 		}
 
-		replacement = SObjectGetString(SListIteratorValue(itr, error), error);
+		replacement = SObjectGetString(SIteratorObject(itr, error), error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "read_g2p_rewrites_zeros",
-					  "Call to \"SListIterator\" failed"))
+					  "Call to \"SListIterator/SObjectGetString\" failed"))
 		{
 			S_DELETE(tmpZeros, "read_g2p_rewrites_zeros", error);
 			S_DELETE(itr, "read_g2p_rewrites_zeros", error);

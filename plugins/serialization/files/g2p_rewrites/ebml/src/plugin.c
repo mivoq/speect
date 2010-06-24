@@ -41,6 +41,7 @@
 /************************************************************************************/
 
 #include "serialized_g2p_rewrites.h"
+#include "plugin_info.h"
 
 
 /************************************************************************************/
@@ -48,10 +49,6 @@
 /* Static variables                                                                 */
 /*                                                                                  */
 /************************************************************************************/
-
-static const char * const plugin_init_func = "SG2PRewrites plug-in initialization";
-
-static const char * const plugin_exit_func = "SG2PRewrites plug-in free";
 
 static SPlugin *g2pPlugin = NULL;
 
@@ -64,7 +61,7 @@ static SPlugin *ebmlPlugin = NULL;
 /*                                                                                  */
 /************************************************************************************/
 
-static s_bool version_ok(const s_lib_version version);
+static void plugin_register_function(s_erc *error);
 
 static void plugin_exit_function(s_erc *error);
 
@@ -78,22 +75,25 @@ static void plugin_exit_function(s_erc *error);
 static const s_plugin_params plugin_params =
 {
 	/* plug-in name */
-	"A G2P rewrites class",
+	SPCT_PLUGIN_NAME,
 
 	/* description */
-	"A G2P (grapheme-to-phoneme) rewrites class implementation, with rewrite rules",
+	SPCT_PLUGIN_DESCRIPTION,
 
 	/* version */
 	{
-		0,
-		2
+		SPCT_PLUGIN_VERSION_MAJOR,
+		SPCT_PLUGIN_VERSION_MINOR
 	},
 
 	/* Speect ABI version (which plug-in was compiled with) */
 	{
-		0,
-		9
+		S_MAJOR_VERSION,
+		S_MINOR_VERSION
 	},
+
+	/* register function pointer */
+	plugin_register_function,
 
 	/* exit function pointer */
 	plugin_exit_function
@@ -106,74 +106,18 @@ static const s_plugin_params plugin_params =
 /*                                                                                  */
 /************************************************************************************/
 
-const s_plugin_params *s_plugin_init(const s_lib_version version, s_erc *error)
+const s_plugin_params *s_plugin_init(s_erc *error)
 {
 	S_CLR_ERR(error);
 
-	if (!version_ok(version))
+	if (!s_lib_version_ok(SPCT_MAJOR_VERSION_MIN, SPCT_MINOR_VERSION_MIN))
 	{
 		S_CTX_ERR(error, S_FAILURE,
-				  plugin_init_func,
-				  "Incorrect Speect Engine version, require '0.9.x'");
+				  SPCT_PLUGIN_INIT_STR,
+				  "Incorrect Speect Engine version, require at least '%d.%d.x'",
+				  SPCT_MAJOR_VERSION_MIN, SPCT_MINOR_VERSION_MIN);
 		return NULL;
 	}
-
-	/* load plug-ins */
-	g2pPlugin = s_pm_load_plugin("g2p.spi", error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  plugin_init_func,
-				  "Call to \"s_pm_load_plugin\" failed"))
-		return NULL;
-
-	ebmlPlugin = s_pm_load_plugin("ebml.spi", error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  plugin_init_func,
-				  "Call to \"s_pm_load_plugin\" failed"))
-	{
-		S_DELETE(g2pPlugin, plugin_init_func, error);
-		return NULL;
-	}
-
-	/* register plug-in classes here */
-	_s_g2p_rewrites_rule_class_reg(error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  plugin_init_func,
-				  "Failed to register SG2PRewritesRule class"))
-	{
-		S_DELETE(g2pPlugin, plugin_init_func, error);
-		S_DELETE(ebmlPlugin, plugin_init_func, error);
-		return NULL;
-	}
-
-	_s_g2p_rewrites_class_reg(error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  plugin_init_func,
-				  "Failed to register SG2PRewrites class"))
-	{
-		s_erc local_err = S_SUCCESS;
-
-
-		_s_g2p_rewrites_rule_class_free(&local_err);
-		S_DELETE(g2pPlugin, plugin_init_func, error);
-		S_DELETE(ebmlPlugin, plugin_init_func, error);
-		return NULL;
-	}
-
-	_s_serialized_ebml_g2p_rewrites_reg(error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  plugin_init_func,
-				  "Failed to register SEBMLG2PRewritesFile class"))
-	{
-		s_erc local_err = S_SUCCESS;
-
-
-		S_DELETE(g2pPlugin, plugin_init_func, error);
-		S_DELETE(ebmlPlugin, plugin_init_func, error);
-		_s_g2p_rewrites_rule_class_free(&local_err);
-		_s_g2p_rewrites_class_free(&local_err);
-		return NULL;
-	}
-
 
 	return &plugin_params;
 }
@@ -185,17 +129,68 @@ const s_plugin_params *s_plugin_init(const s_lib_version version, s_erc *error)
 /*                                                                                  */
 /************************************************************************************/
 
-/* check the Speect Engine version */
-static s_bool version_ok(const s_lib_version version)
+/* plug-in register function */
+static void plugin_register_function(s_erc *error)
 {
-	/*
-	 * we want Speect Engine 0.9.x
-	 */
-	if ((version.major == 0)
-		&& (version.minor == 9))
-		return TRUE;
+	S_CLR_ERR(error);
 
-	return FALSE;
+	/* load plug-ins */
+	g2pPlugin = s_pm_load_plugin("g2p.spi", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  SPCT_PLUGIN_REG_STR,
+				  "Call to \"s_pm_load_plugin\" failed"))
+		return;
+
+	ebmlPlugin = s_pm_load_plugin("ebml.spi", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  SPCT_PLUGIN_REG_STR,
+				  "Call to \"s_pm_load_plugin\" failed"))
+	{
+		S_DELETE(g2pPlugin, SPCT_PLUGIN_REG_STR, error);
+		return;
+	}
+
+	/* register plug-in classes here */
+	_s_g2p_rewrites_rule_class_reg(error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  SPCT_PLUGIN_REG_STR,
+				  "Failed to register SG2PRewritesRule class"))
+	{
+		S_DELETE(g2pPlugin, SPCT_PLUGIN_REG_STR, error);
+		S_DELETE(ebmlPlugin, SPCT_PLUGIN_REG_STR, error);
+		return;
+	}
+
+	_s_g2p_rewrites_class_reg(error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  SPCT_PLUGIN_REG_STR,
+			  SPCT_PLUGIN_REG_FAIL_STR))
+	{
+		s_erc local_err = S_SUCCESS;
+
+
+		_s_g2p_rewrites_rule_class_free(&local_err);
+		S_DELETE(g2pPlugin, SPCT_PLUGIN_REG_STR, error);
+		S_DELETE(ebmlPlugin, SPCT_PLUGIN_REG_STR, error);
+		return;
+	}
+
+	_s_serialized_ebml_g2p_rewrites_reg(error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  SPCT_PLUGIN_REG_STR,
+				  "Failed to register SEBMLG2PRewritesFile class"))
+	{
+		s_erc local_err = S_SUCCESS;
+
+
+		S_DELETE(g2pPlugin, SPCT_PLUGIN_REG_STR, error);
+		S_DELETE(ebmlPlugin, SPCT_PLUGIN_REG_STR, error);
+		_s_g2p_rewrites_rule_class_free(&local_err);
+		_s_g2p_rewrites_class_free(&local_err);
+		return;
+	}
+
+
 }
 
 
@@ -210,22 +205,22 @@ static void plugin_exit_function(s_erc *error)
 	/* free plug-in classes here */
 	_s_serialized_ebml_g2p_rewrites_free(error);
 	if (S_CHK_ERR(error, S_CONTERR,
-				  plugin_exit_func,
+				  SPCT_PLUGIN_EXIT_STR,
 				  "Failed to free SEBMLG2PRewritesFile class"))
 		if (error != NULL)
 			local_err = *error;
 
 	_s_g2p_rewrites_rule_class_free(error);
 	if (S_CHK_ERR(error, S_CONTERR,
-				  plugin_exit_func,
+				  SPCT_PLUGIN_EXIT_STR,
 				  "Failed to free SG2PRewritesRule class"))
 		if (error != NULL)
 			local_err = *error;
 
 	_s_g2p_rewrites_class_free(error);
 	if (S_CHK_ERR(error, S_CONTERR,
-				  plugin_exit_func,
-				  "Failed to free SG2PRewrites class"))
+				  SPCT_PLUGIN_EXIT_STR,
+				  SPCT_PLUGIN_EXIT_FAIL_STR))
 		if (error != NULL)
 			local_err = *error;
 
@@ -234,6 +229,6 @@ static void plugin_exit_function(s_erc *error)
 		&& (local_err != S_SUCCESS))
 		*error = local_err;
 
-	S_DELETE(g2pPlugin, plugin_exit_func, error);
-	S_DELETE(ebmlPlugin, plugin_exit_func, error);
+	S_DELETE(g2pPlugin, SPCT_PLUGIN_EXIT_STR, error);
+	S_DELETE(ebmlPlugin, SPCT_PLUGIN_EXIT_STR, error);
 }

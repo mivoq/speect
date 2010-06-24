@@ -1,6 +1,20 @@
-macro(example nm)
-    add_our_executable(${nm} SPCT_LIBRARY_TARGET)
-endmacro(example nm)
+######################################################################################
+##                                                                                  ##
+## AUTHOR  : Aby Louw                                                               ##
+## DATE    : June 2010                                                              ##
+##                                                                                  ##
+######################################################################################
+##                                                                                  ##
+## CMakeList for EBML G2P Rewrites examples                                         ##
+##                                                                                  ##
+##                                                                                  ##
+######################################################################################
 
-example(load_g2p)
+speect_example(load_g2p)
+
+if(NOT "${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_BINARY_DIR}")
+  file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/lwazi_english_g2p.spct
+    DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/)
+endif(NOT "${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_BINARY_DIR}")
+
 

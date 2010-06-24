@@ -184,11 +184,11 @@ S_LOCAL SAddendumJSON *s_read_addendum_json(const char *path, s_erc *error)
 				  "Failed to create new 'SMapHashTable' object"))
 		goto quit_error;
 
-	/* initialize with the read size */
-	SMapHashTableInit(&(addendum->entries), entries_size, error);
+	/* resize with the read size */
+	SMapHashTableResize(S_MAPHASHTABLE(addendum->entries), entries_size, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "s_read_addendum_json",
-				  "Call to \"SMapHashTableInit\" failed"))
+				  "Call to \"SMapHashTableResize\" failed"))
 		goto quit_error;
 
 	/* copy the entries from the read JSON to the addendum (from

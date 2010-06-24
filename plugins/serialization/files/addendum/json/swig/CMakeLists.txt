@@ -1,30 +1,22 @@
 ######################################################################################
 ##                                                                                  ##
 ## AUTHOR  : Aby Louw                                                               ##
-## DATE    : 5 November 2009                                                        ##
+## DATE    : December 2009                                                          ##
 ##                                                                                  ##
 ######################################################################################
 ##                                                                                  ##
-## Source files for Addendum JSON formatter plug-in                                 ##
+## CMakeList for SAddendumJSON SWIG Wrappers                                        ##
 ##                                                                                  ##
 ##                                                                                  ##
 ######################################################################################
 
 
-######## source files ##################
+#------------------------------------------------------------------------------------#
+#                   Include wrappers for different languages                         #
+#------------------------------------------------------------------------------------#
 
-speect_plugin_sources(
-  src/plugin.c
-  src/addendum_json.c
-  src/serialized_addendum.c
-  src/read.c
-  )
- 
+if(WANT_PYTHON_WRAPPER)
+  add_subdirectory(python)
+endif(WANT_PYTHON_WRAPPER)
 
-######## header files ##################
-
-speect_plugin_headers(
-  src/addendum_json.h
-  src/serialized_addendum.h
-  )
 

@@ -39,7 +39,7 @@
 #include "addendum.h"
 
 
-static const char *addendum_json_plugin_path = "addendum-json.spi";
+static const char *addendum_json_plugin_path = "addendum_json.spi";
 static const char *test_word = "aby"; /* word lookup to test in addendum */
 
 static const char * const test_word_phones[] =
@@ -72,10 +72,10 @@ static void print_list(const SList *list, char *buf, s_erc *error)
 				  "Call to \"s_strcat\" failed"))
 		return;
 
-	itr = SListIterator(list, error);
+	itr = S_ITERATOR_GET(list, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "print_list",
-				  "Call to \"SListIterator\" failed"))
+				  "Call to \"S_ITERATOR_GET\" failed"))
 		return;
 
 	for (/* NOP */; itr != NULL; itr = SIteratorNext(itr), --list_size)
@@ -84,10 +84,10 @@ static void print_list(const SList *list, char *buf, s_erc *error)
 		const SObject *tmp;
 
 
-		tmp = SListIteratorValue(itr, error);
+		tmp = SIteratorObject(itr, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "print_list",
-					  "Call to \"SListIteratorValue\" failed"))
+					  "Call to \"SIteratorObject\" failed"))
 		{
 			S_DELETE(itr, "print_list", error);
 			return;
@@ -209,23 +209,11 @@ static void create_new_entry(SAddendum *addendum, s_erc *error)
 				  "Failed to create new 'SMapList' object"))
 		goto quit_error;
 
-	SMapListInit(&features, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "create_new_entry",
-				  "Failed to initialize new 'SMapList' object"))
-		goto quit_error;
-
 	/* now create a phones list */
 	phones = (SList*)S_NEW("SListList", error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "create_new_entry",
 				  "Failed to create new 'SListList' object"))
-		goto quit_error;
-
-	SListListInit(&phones, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "create_new_entry",
-				  "Failed to initialize new 'SListList' object"))
 		goto quit_error;
 
 	SMapSetObject(features, "phones", S_OBJECT(phones), error);

@@ -128,6 +128,9 @@ def syllabify(self, word, phone_list):
     :rtype: list
     """
 
+    if not isinstance(phone_list, list):
+        raise TypeError("Argument \"phone_list\" must be is list type")
+
     return _syllabification_syllibify(self, word, phone_list)
 %}
 };

@@ -50,7 +50,8 @@
 		SList *wordlist;
 		PyObject *object;
 		s_bool syllabified = FALSE;
-		SObject *feats;
+		SObject *feats = NULL;
+		s_bool have_features = FALSE;
 
 
 		S_CLR_ERR(error);
@@ -62,21 +63,31 @@
 			return NULL;
 		}
 
-		feats = s_pyobject_2_sobject(features, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "_lexicon_get_word",
-					  "Call to \"s_pyobject_2_sobject\" failed"))
-			return NULL;
-
+		if (features != NULL)
+		{
+			have_features = TRUE;
+			feats = s_pyobject_2_sobject(features, error);
+			if (S_CHK_ERR(error, S_CONTERR,
+						  "_lexicon_get_word",
+						  "Call to \"s_pyobject_2_sobject\" failed"))
+				return NULL;
+		}
+		
 		wordlist = S_LEXICON_CALL(self, get_word)(self, word, S_MAP(feats),
 												  &syllabified, error);
 		if (*error != S_SUCCESS)
 		{
-			S_DELETE(feats, "_lexicon_get_word", error);
+			if (have_features)
+				S_DELETE(feats, "_lexicon_get_word", error);
 			return NULL;
 		}
+		
+		if (have_features)
+			S_DELETE(feats, "_lexicon_get_word", error);
 
-		S_DELETE(feats, "_lexicon_get_word", error);
+		if (wordlist == NULL)
+			Py_RETURN_NONE;
+
 		tuple = PyTuple_New(2);
 		if (tuple == NULL)
 		{
@@ -154,8 +165,12 @@ def get_word(self, word, features):
     :rtype: list, bool
     """
     tmp_tuple = _lexicon_get_word(self, word, features)
-    wlist = tmp_tuple[0]
-    syllabified = tmp_tuple[1]
+    if tmp_tuple is not None:
+        wlist = tmp_tuple[0]
+        syllabified = tmp_tuple[1]
+    else:
+        wlist = None
+        syllabified = False
 
     return wlist, syllabified
 %}

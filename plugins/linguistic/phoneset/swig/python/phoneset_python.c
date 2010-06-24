@@ -130,6 +130,8 @@ def get_phone_features(self, phone):
            not modified in any way.
     """
 
+    if phone == None:
+        raise TypeError("Argument \"phone\" can not be 'None'")
     return _get_phone_features(self, phone)
 
 

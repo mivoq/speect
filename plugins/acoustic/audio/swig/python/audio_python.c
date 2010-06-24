@@ -113,9 +113,8 @@ def play(self):
     opsys = os.name
     
     if opsys not in ("posix", "nt"):
-        print "SAudio.play() currently works only on" + \
-            " \"posix\" and \"nt\" compatible systems"
-        raise EnvironmentError
+        raise EnvironmentError("SAudio.play() currently works only on" + \
+                               " \"posix\" and \"nt\" compatible systems")
 
     waveform = self.get_audio_waveform()
 

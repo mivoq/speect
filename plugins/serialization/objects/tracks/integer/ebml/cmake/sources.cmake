@@ -5,7 +5,7 @@
 ##                                                                                  ##
 ######################################################################################
 ##                                                                                  ##
-## Template CMake source files for Speect plug-ins                                  ##
+## Source files for EBML Track_Int formatter plug-in                                ##
 ##                                                                                  ##
 ##                                                                                  ##
 ######################################################################################
@@ -13,18 +13,17 @@
 
 ######## source files ##################
 
-set(${PLUGIN_SONAME}_SRC_FILES
+speect_plugin_sources(
   src/read.c
   src/write.c
   src/serialized_int_track.c
   src/plugin.c
-
   )
  
 
 ######## header files ##################
 
-set(${PLUGIN_SONAME}_INCLUDE_FILES
+speect_plugin_headers(
   src/serialized_int_track.h
   src/element_id.h
   )

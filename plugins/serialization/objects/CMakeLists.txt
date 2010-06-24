@@ -1,12 +1,24 @@
+######################################################################################
+##                                                                                  ##
+## AUTHOR  : Aby Louw                                                               ##
+## DATE    : 11 June 2010                                                           ##
+##                                                                                  ##
+######################################################################################
+##                                                                                  ##
+## CMakeList for serialization plug-ins                                             ##
+##                                                                                  ##
+##                                                                                  ##
+######################################################################################
 
 #------------------------------------------------------------------------------------#
 #                        Plug-in directories                                         #
 #------------------------------------------------------------------------------------#
+
 add_subdirectory(arrays)
 add_subdirectory(matrices)
 add_subdirectory(primitives)
 add_subdirectory(tracks)
 
-if(SPEECT_WRAP_PYTHON)
-  add_subdirectory(python_object)
-endif(SPEECT_WRAP_PYTHON)
+if(WANT_PYTHON_WRAPPER)
+  add_subdirectory(pyobject)
+endif(WANT_PYTHON_WRAPPER)

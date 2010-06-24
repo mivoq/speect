@@ -63,9 +63,9 @@ cd ..
 
 ########################################################################
 
-echo "--cleaning python_object--"
+echo "--cleaning pyobject--"
 
-cd ./python_object/
+cd ./pyobject/
 ./clean_files
 cd ..
 

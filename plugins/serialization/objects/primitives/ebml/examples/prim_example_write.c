@@ -28,17 +28,15 @@
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* Simple EBML writing example.                                                     */
-/* example_write.c is automatically created from example_write.c.in                 */
+/* EBML example of writing Speect primitive data types (SSint, SFloat and           */
+/* SString) as SObjects.                                                            */
+/*                                                                                  */
 /*                                                                                  */
 /************************************************************************************/
 
 #include <stdio.h>
 #include "speect.h"
 #include "ebml_write.h"
-
-
-static const char *plugin_path = "prim-ebml.spi";
 
 
 int main()
@@ -65,12 +63,12 @@ int main()
 	}
 
 	/*
-	 * load the prim-ebml plug-in
+	 * load the prim_ebml plug-in
 	 */
-	plugin = s_pm_load_plugin(plugin_path, &error);
+	plugin = s_pm_load_plugin("prim_ebml.spi", &error);
 	if (S_CHK_ERR(&error, S_CONTERR,
 				  "main",
-				  "Failed to load plug-in at '%s'", plugin_path))
+				  "Failed to load plug-in at 'prim_ebml.spi'"))
 	{
 		printf("failed to load plug-in\n");
 		goto quit;

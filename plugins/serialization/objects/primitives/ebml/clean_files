@@ -24,16 +24,6 @@ fi
 
 ########################################################################
 
-echo "cleaning cmake files"
-
-rm -f  CMakeCache.txt 
-rm -fr CMakeFiles 
-rm -f  cmake_install.cmake
-rm -f  CTestTestfile.cmake
-
-
-########################################################################
-
 echo "cleaning cmake"
 
 cd ./cmake/
@@ -61,18 +51,18 @@ cd ..
 
 ########################################################################
 
-echo "cleaning lib"
+echo "cleaning src"
 
-cd ./lib/
+cd ./src/
 ./clean_files
 cd ..
 
 
 ########################################################################
 
-echo "cleaning src"
+echo "cleaning swig"
 
-cd ./src/
+cd ./swig/
 ./clean_files
 cd ..
 

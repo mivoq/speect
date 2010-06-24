@@ -5,68 +5,57 @@
 ##                                                                                  ##
 ######################################################################################
 ##                                                                                  ##
-## Template CMakeList for Speect Plug-ins                                           ##
+## CMakeList for EBML Matrix_Int formatter plug-in                                ##
 ##                                                                                  ##
 ##                                                                                  ##
 ######################################################################################
 
 #------------------------------------------------------------------------------------#
-#                                Project name                                        #
+#                             Define plug-in                                         #
 #------------------------------------------------------------------------------------#
 
-message(STATUS "cmake for project \"Integer Matrix Ebml\"")
-project(speect_matrix_int_ebml_plugin C)
-
-# Plug-in shared object name
-set(PLUGIN_SONAME matrix-int-ebml)
-
-set(${PLUGIN_SONAME}_VERSION_MAJOR 0)
-set(${PLUGIN_SONAME}_VERSION_MINOR 9)
-set(${PLUGIN_SONAME}_VERSION_PATCH 0)
-set(${PLUGIN_SONAME}_VERSION "${${PLUGIN_SONAME}_VERSION_MAJOR}.${${PLUGIN_SONAME}_VERSION_MINOR}.${${PLUGIN_SONAME}_VERSION_PATCH}")
+speect_plugin_definition(Matrix_Int_EBML "SEbmlMatrixInt" 1 0 0)
 
 
 #------------------------------------------------------------------------------------#
-#                             Get all CMake modules                                  #
+#                        Configure plugin_info.h.in                                  #
 #------------------------------------------------------------------------------------#
 
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+set(description "SSerializedObjectClass implementation for integer matrix data types in EBML format")
+
+# Minimum required Speect Engine version 
+set(major_min 1)
+set(minor_min 0)
+
+speect_plugin_configure_info(${description} ${major_min} ${minor_min})
+
+
+#------------------------------------------------------------------------------------#
+#                               Source files                                         #
+#------------------------------------------------------------------------------------#
 
 # Lists of all the source files
 include(sources)
 
 
 #------------------------------------------------------------------------------------#
-#                     Include matrix-int and ebml plug-in                            #
+#                     Include matrix_int and ebml plug-in                            #
 #------------------------------------------------------------------------------------#
 
-include(matrix-int)
+include(matrix_int)
 include(ebml)
 
 
 #------------------------------------------------------------------------------------#
-#                        Plug-in shared object                                       #
+#                            Plug-in shared object                                   #
 #------------------------------------------------------------------------------------#
 
-# Library build configuration
-include(plugin)
-
-# add dependencies
-add_dependencies(${PLUGIN_SONAME}_plugin matrix-int_plugin)
-add_dependencies(${PLUGIN_SONAME}_plugin ebml_plugin)
-  
-
-#------------------------------------------------------------------------------------#
-#                        Create a plug-in cmake config file                          #
-#------------------------------------------------------------------------------------#
-
-include(plugin_conf)
+speect_plugin_create()
 
 
 #------------------------------------------------------------------------------------#
-#                                   examples                                         #
+#                              SWIG wrappers                                         #
 #------------------------------------------------------------------------------------#
 
-#if(WANT_EXAMPLES)
-#  add_subdirectory(examples)
-#endif(WANT_EXAMPLES)
+add_subdirectory(swig)
+

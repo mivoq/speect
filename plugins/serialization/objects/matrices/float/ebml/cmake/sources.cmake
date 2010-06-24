@@ -5,7 +5,7 @@
 ##                                                                                  ##
 ######################################################################################
 ##                                                                                  ##
-## Template CMake source files for Speect plug-ins                                  ##
+## Source files for EBML Matrix_Float formatter plug-in                             ##
 ##                                                                                  ##
 ##                                                                                  ##
 ######################################################################################
@@ -13,18 +13,17 @@
 
 ######## source files ##################
 
-set(${PLUGIN_SONAME}_SRC_FILES
+speect_plugin_sources(
   src/read.c
   src/write.c
   src/serialized_float_matrix.c
   src/plugin.c
-
   )
  
 
 ######## header files ##################
 
-set(${PLUGIN_SONAME}_INCLUDE_FILES
+speect_plugin_headers(
   src/serialized_float_matrix.h
   src/element_id.h
   )

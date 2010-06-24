@@ -11,57 +11,57 @@
 ######################################################################################
 
 #------------------------------------------------------------------------------------#
-#                                Project name                                        #
+#                             Define plug-in                                         #
 #------------------------------------------------------------------------------------#
 
-message(STATUS "cmake for project \"Speect Primitives Ebml\"")
-project(speect_primitives_ebml_plugin C)
-
-# Plug-in shared object name
-set(PLUGIN_SONAME prim-ebml)
-
-set(${PLUGIN_SONAME}_VERSION_MAJOR 0)
-set(${PLUGIN_SONAME}_VERSION_MINOR 9)
-set(${PLUGIN_SONAME}_VERSION_PATCH 0)
-set(${PLUGIN_SONAME}_VERSION "${${PLUGIN_SONAME}_VERSION_MAJOR}.${${PLUGIN_SONAME}_VERSION_MINOR}.${${PLUGIN_SONAME}_VERSION_PATCH}")
+speect_plugin_definition(Prim_EBML "SEbmlPrimitives" 1 0 0)
 
 
 #------------------------------------------------------------------------------------#
-#                             Get all CMake modules                                  #
+#                        Configure plugin_info.h.in                                  #
 #------------------------------------------------------------------------------------#
 
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+set(description "Ebml serialization for Speect primitives data types")
+
+# Minimum required Speect Engine version 
+set(major_min 1)
+set(minor_min 0)
+
+speect_plugin_configure_info(${description} ${major_min} ${minor_min})
+
+
+#------------------------------------------------------------------------------------#
+#                               Source files                                         #
+#------------------------------------------------------------------------------------#
 
 # Lists of all the source files
 include(sources)
 
 
 #------------------------------------------------------------------------------------#
-#                               Include ebml                                         #
+#                              Include ebml plug-in                                  #
 #------------------------------------------------------------------------------------#
 
 include(ebml)
 
-#------------------------------------------------------------------------------------#
-#                        Plug-in shared object                                       #
-#------------------------------------------------------------------------------------#
-
-# Library build configuration
-include(plugin)
-
-# add dependency
-add_dependencies(${PLUGIN_SONAME}_plugin ebml_plugin)
-  
 
 #------------------------------------------------------------------------------------#
-#                                   examples                                         #
+#                            Plug-in shared object                                   #
 #------------------------------------------------------------------------------------#
 
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/examples/prim_example_read.c.in 
-  ${CMAKE_CURRENT_BINARY_DIR}/examples/prim_example_read.c @ONLY)
+speect_plugin_create()
 
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/examples/prim_example_write.c.in 
-  ${CMAKE_CURRENT_BINARY_DIR}/examples/prim_example_write.c @ONLY)
+
+#------------------------------------------------------------------------------------#
+#                              SWIG wrappers                                         #
+#------------------------------------------------------------------------------------#
+
+add_subdirectory(swig)
+
+
+#------------------------------------------------------------------------------------#
+#                                 examples/tests                                     #
+#------------------------------------------------------------------------------------#
 
 if(WANT_EXAMPLES)
   add_subdirectory(examples)

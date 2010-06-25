@@ -5,7 +5,7 @@
 ##                                                                                  ##
 ######################################################################################
 ##                                                                                  ##
-## CMakeList for cost function (unit selection) plug-ins                            ##
+## CMakeList for linguistic cost function (unit selection) plug-ins                 ##
 ##                                                                                  ##
 ##                                                                                  ##
 ######################################################################################

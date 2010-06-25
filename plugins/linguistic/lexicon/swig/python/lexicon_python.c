@@ -136,7 +136,7 @@
 {
 %pythoncode
 %{
-def get_word(self, word, features):
+def get_word(self, word, features=None):
     """
     get_word(word, features)
 

@@ -49,6 +49,14 @@
 
 
 		S_CLR_ERR(error);
+		if (path == NULL)
+		{
+			S_CTX_ERR(error, S_ARGERROR,
+					  "_addendum_json_load",
+					  "Argument \"path\" is NULL");
+			return NULL;
+		}
+
 		loadedAddendum = SObjectLoad(path, "spct_addendum", error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "_addendum_json_load",

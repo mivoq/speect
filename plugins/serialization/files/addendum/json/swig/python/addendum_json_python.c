@@ -55,6 +55,8 @@ def load_addendum_json(path):
     :return: The loaded addendum at the given path.
     :rtype: ``SAddendum``
     """
+    if not isinstance(path, str):
+        raise TypeError("Argument \"path\" must be a string")
 
     return _addendum_json_load(path)
 

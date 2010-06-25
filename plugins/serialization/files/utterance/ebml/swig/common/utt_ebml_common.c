@@ -28,74 +28,68 @@
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* C convenience functions for saving/loading utterances in EBML format.            */
+/* SWIG common C convenience functions for SUtterance EBML.                         */
 /*                                                                                  */
 /*                                                                                  */
 /*                                                                                  */
 /************************************************************************************/
 
-%define sutterance_ebml_save_DOCSTRING
-"""
-save_ebml(path)
 
-Save the utterance to a file in the EBML format.
+/************************************************************************************/
+/*                                                                                  */
+/* Inline helper functions                                                          */
+/*                                                                                  */
+/************************************************************************************/
 
-:param path: Full path and file name of the file where the utterance should be saved to.
-:type path: string
-:note: All the features in the utterance (including in the relations and items) must
-       have appropriate EBML format serialization formatters registered.
-"""
-%enddef
-
-%feature("autodoc", sutterance_ebml_save_DOCSTRING) sutterance_ebml_save;
-
-
-%define sutterance_ebml_load_DOCSTRING
-"""
-load_ebml(path)
-
-Load the utterance from a file in the EBML format.
-
-:param path: Full path and file name of the file where the utterance should be loaded from.
-:type path: string
-:note: All the features in the utterance (including in the relations and items) must
-       have appropriate EBML format serialization formatters registered.
-"""
-%enddef
-
-%feature("autodoc", sutterance_ebml_load_DOCSTRING) sutterance_ebml_load;
-
-
-/*
- * Do not delete these delimiters, required for SWIG
- */
 %inline
 %{
-	void sutterance_ebml_save(SUtterance *utt, const char *path, s_erc *error)
+	void _save_utterance_ebml(SUtterance *utt, const char *path, s_erc *error)
 	{
+		S_CLR_ERR(error);
+		if (utt == NULL)
+		{
+			S_CTX_ERR(error, S_ARGERROR,
+					  "_save_utterance_ebml",
+					  "Argument \"utt\" is NULL");
+			return;
+		}
+
+		if (path == NULL)
+		{
+			S_CTX_ERR(error, S_ARGERROR,
+					  "_save_utterance_ebml",
+					  "Argument \"path\" is NULL");
+			return;
+		}
+
 		SObjectSave(S_OBJECT(utt), path, "spct_utt", error);
+		S_CHK_ERR(error, S_CONTERR,
+				  "_save_utterance_ebml",
+				  "Call to \"SObjectSave\" failed");
 	}
 
 
-	SUtterance *sutterance_ebml_load(const char *path, s_erc *error)
+	SUtterance *_load_utterance_ebml(const char *path, s_erc *error)
 	{
 		SObject *loadedUtt;
 
+
+		S_CLR_ERR(error);
+		if (path == NULL)
+		{
+			S_CTX_ERR(error, S_ARGERROR,
+					  "_load_utterance_ebml",
+					  "Argument \"path\" is NULL");
+			return NULL;
+		}
+
 		loadedUtt = SObjectLoad(path, "spct_utt", error);
-		if (*error != S_SUCCESS)
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "_load_utterance_ebml",
+					  "Call to \"SObjectLoad\" failed"))
 			return NULL;
 
 		return S_UTTERANCE(loadedUtt);
 	}
-/*
- * Do not delete this delimiter, required for SWIG
- */
 %}
 
-
-%pythoncode
-%{
-# add the functions to the Speect SUtterance class
-setattr(speect.SUtterance, "load_ebml", staticmethod(sutterance_ebml_load))
-setattr(speect.SUtterance, "save_ebml", sutterance_ebml_save)
-%}

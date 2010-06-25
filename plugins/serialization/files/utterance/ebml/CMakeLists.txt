@@ -12,64 +12,58 @@
 
 
 #------------------------------------------------------------------------------------#
-#                                Project name                                        #
+#                             Define plug-in                                         #
 #------------------------------------------------------------------------------------#
 
-message(STATUS "cmake for project \"Speect Utterance EBML\"")
-project(speect_utterance_ebml_plugin C)
-
-# Plug-in shared object name
-set(PLUGIN_SONAME utt-ebml)
-
-set(${PLUGIN_SONAME}_VERSION_MAJOR 0)
-set(${PLUGIN_SONAME}_VERSION_MINOR 9)
-set(${PLUGIN_SONAME}_VERSION_PATCH 0)
-set(${PLUGIN_SONAME}_VERSION "${${PLUGIN_SONAME}_VERSION_MAJOR}.${${PLUGIN_SONAME}_VERSION_MINOR}.${${PLUGIN_SONAME}_VERSION_PATCH}")
+speect_plugin_definition(Utt_EBML "SEbmlUttFile" 1 0 0)
 
 
 #------------------------------------------------------------------------------------#
-#                             Get all CMake modules                                  #
+#                        Configure plugin_info.h.in                                  #
 #------------------------------------------------------------------------------------#
 
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+set(description "Load/Save Speect utterances in EBML format from/to files")
+
+# Minimum required Speect Engine version 
+set(major_min 1)
+set(minor_min 0)
+
+speect_plugin_configure_info(${description} ${major_min} ${minor_min})
+
+
+#------------------------------------------------------------------------------------#
+#                               Source files                                         #
+#------------------------------------------------------------------------------------#
 
 # Lists of all the source files
 include(sources)
 
 
 #------------------------------------------------------------------------------------#
-#                          Include ebml and ebml primitives                          #
+#                                 Include ebml                                       #
 #------------------------------------------------------------------------------------#
 
 include(ebml)
 
 
 #------------------------------------------------------------------------------------#
-#                        Plug-in shared object                                       #
+#                            Plug-in shared object                                   #
 #------------------------------------------------------------------------------------#
 
-# Library build configuration
-include(plugin)
-
-
-# add dependencies
-add_dependencies(${PLUGIN_SONAME}_plugin ebml_plugin)
-add_dependencies(${PLUGIN_SONAME}_plugin prim-ebml_plugin)  # not included but loaded
-  
-
-#------------------------------------------------------------------------------------#
-#                                   examples                                         #
-#------------------------------------------------------------------------------------#
-
-if(WANT_EXAMPLES)
-  add_subdirectory(examples)
-endif(WANT_EXAMPLES)
+speect_plugin_create()
 
 
 #------------------------------------------------------------------------------------#
 #                              SWIG wrappers                                         #
 #------------------------------------------------------------------------------------#
 
-if(SPEECT_WRAP_PYTHON)
-  add_subdirectory(swig)
-endif(SPEECT_WRAP_PYTHON)
+add_subdirectory(swig)
+
+
+#------------------------------------------------------------------------------------#
+#                                 examples/tests                                     #
+#------------------------------------------------------------------------------------#
+
+if(WANT_EXAMPLES)
+  add_subdirectory(examples)
+endif(WANT_EXAMPLES)

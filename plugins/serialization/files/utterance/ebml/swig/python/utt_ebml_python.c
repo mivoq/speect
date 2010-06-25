@@ -28,71 +28,61 @@
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* Loading/Saving SUtterances in EBML format.                                       */
+/* C convenience functions for SUtterance EBML class Python wrapper.                */
 /*                                                                                  */
 /*                                                                                  */
-/************************************************************************************/
-
-%module utt_ebml
-
-
-/************************************************************************************/
-/*                                                                                  */
-/* Speect Engine header.                                                            */
 /*                                                                                  */
 /************************************************************************************/
 
-%header
+
+/************************************************************************************/
+/*                                                                                  */
+/* Extend the SUtterance class                                                      */
+/*                                                                                  */
+/************************************************************************************/
+
+%pythoncode
 %{
-#include "speect.h"
+import speect
+
+def load_utt_ebml(path):
+    """
+    load_ebml(path)
+
+    Load an utterance from a file in the EBML format.
+
+    :param path: Full path and file name of the file where the utterance
+                 should be loaded from.
+    :type path: string
+    :rtype: ``SUtterance``
+    :note: All the features in the utterance (including in the relations and items) must
+           have appropriate EBML format serialization formatters registered.
+    """
+    if not isinstance(path, str):
+        raise TypeError("Argument \"path\" must be a string")
+
+    return _load_utterance_ebml(path)
+
+
+def save_utt_ebml(self, path):
+    """
+    save_ebml(path)
+
+    Save the utterance to a file in the EBML format.
+
+    :param path: Full path and file name of the file where the utterance
+                 should be saved to.
+    :type path: string
+    :note: All the features in the utterance (including in the relations and items) must
+           have appropriate EBML format serialization formatters registered.
+    """
+    if not isinstance(path, str):
+        raise TypeError("Argument \"path\" must be a string")
+
+    return _save_utterance_ebml(self, path)
+
+
+# add the functions to the Speect SUtterance class
+setattr(speect.SUtterance, "load_ebml", staticmethod(load_utt_ebml))
+setattr(speect.SUtterance, "save_ebml", save_utt_ebml)
 %}
-
-%include "exception.i"
-%import speect.i
-
-
-/************************************************************************************/
-/*                                                                                  */
-/* Load the Speect EBML primitives and EBML utterance plug-ins                      */
-/*                                                                                  */
-/************************************************************************************/
-
-%init
-%{
-	{
-		s_erc rv = S_SUCCESS;
-		SPlugin *uttEBMLPlugin;
-		SPlugin *primEBMLPlugin;
-
-
-		uttEBMLPlugin = s_pm_load_plugin("utt-ebml.spi", &rv);
-		if (rv != S_SUCCESS)
-			SWIG_exception(SWIG_RuntimeError, "Failed to load Speect utterance EBML plug-in");
-
-		primEBMLPlugin = s_pm_load_plugin("prim-ebml.spi", &rv);
-		if (rv != S_SUCCESS)
-		{
-			S_DELETE(uttEBMLPlugin, "utt_ebml.i init", &rv);
-			SWIG_exception(SWIG_RuntimeError, "Failed to load Speect primitives EBML plug-in");
-			return;
-		}
-
-	fail:
-		return;
-	}
-%}
-
-
-/************************************************************************************/
-/*                                                                                  */
-/* SWIG/Python interface files.                                                     */
-/*                                                                                  */
-/************************************************************************************/
-
-/*
- * Utterance loading/saving in EBML format
- */
-%include "utt_ebml.c"
-
-
-

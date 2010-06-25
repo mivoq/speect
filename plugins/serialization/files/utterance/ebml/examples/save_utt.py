@@ -35,42 +35,35 @@
 
 from __future__ import print_function
 import speect
-import utt_ebml
+import speect.utt_ebml
 
 
 def runme():
     # create the utterance
     utt = speect.SUtterance()
 
-    # crate a "Word" relation
-    relWord = speect.SRelation()
+    # create a "Word" relation
+    relWord = speect.SRelation(utt, "Word")
 
-    # connect it to the utterance
-    utt.relations["Word"] = relWord
-
-    # append an item to the Word relation
+     # append an item to the Word relation
     item = relWord.append()
 
     # give the item a name
-    item.features["name"] = speect.SString("toplevel")
+    item["name"] = "toplevel"
 
     # create a daughter item
     idaughter = item.add_daughter()
 
     # and give it a name
-    idaughter.features["name"] = speect.SString("lowerlevel")
+    idaughter["name"] = "lowerlevel"
 
-    # create a Syllable relation,
-    # note that this is a different way of doing it
-    utt.relations["Syllable"] = speect.SRelation()
-
-    # get a handle to the Syllable relation
-    relSyll = utt.relations["Syllable"]
+    # create a Syllable relation
+    relSyll = speect.SRelation(utt, "Syllable")
 
     # append an item to the Syllable relation,
     # which shares it's content with the daughter
     # item in the Word relation
-    item = relSyll.append(to_share=idaughter)
+    item = relSyll.append(idaughter)
 
     # print the utterance 
     print(utt)
@@ -82,4 +75,3 @@ def runme():
 # main function
 if __name__ == '__main__':
     runme()
-    speect.py_speect_quit()

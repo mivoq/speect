@@ -5,6 +5,14 @@ echo "\tin swig"
 
 ########################################################################
 
+echo "\tcleaning common"
+cd ./common/
+./clean_files
+cd ..
+
+
+########################################################################
+
 echo "\tcleaning python"
 cd ./python/
 ./clean_files

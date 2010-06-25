@@ -276,24 +276,24 @@ static void write_utt_features(SEbmlWrite *ebmlWriter, const SUtterance *utt,
 		goto quit_error;
 
 	/* get an iterator to the utterance features */
-	itr = SMapIterator(utt->features, error);
+	itr = S_ITERATOR_GET(utt->features, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "write_utt_features",
-				  "Call to \"SMapIterator\" failed"))
+				  "Call to \"S_ITERATOR_GET\" failed"))
 		goto quit_error;
 
 	for (/* NOP */; itr != NULL; itr = SIteratorNext(itr))
 	{
-		feat_name = SMapIteratorKey(itr, error);
+		feat_name = SIteratorKey(itr, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "write_utt_features",
-					  "Call to \"SMapIteratorKey\" failed"))
+					  "Call to \"SIteratorKey\" failed"))
 			goto quit_error;
 
-		featObject = SMapIteratorValue(itr, error);
+		featObject = SIteratorObject(itr, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "write_utt_features",
-					  "Call to \"SMapIteratorValue\" failed"))
+					  "Call to \"SIteratorObject\" failed"))
 			goto quit_error;
 
 		write_feature(ebmlWriter,
@@ -376,25 +376,25 @@ static void write_this_content(SEbmlWrite *ebmlWriter, const SItem *item,
 			goto quit_error;
 
 		/* iterate through item content features and write them */
-		itr = SMapIterator(itmContent->features, error);
+		itr = S_ITERATOR_GET(itmContent->features, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "write_this_content",
-					  "Call to \"SMapIterator\" failed"))
+					  "Call to \"S_ITERATOR_GET\" failed"))
 			goto quit_error;
 
 
 		for (/* NOP */; itr != NULL; itr = SIteratorNext(itr))
 		{
-			feat_name = SMapIteratorKey(itr, error);
+			feat_name = SIteratorKey(itr, error);
 			if (S_CHK_ERR(error, S_CONTERR,
 						  "write_this_content",
-						  "Call to \"SMapIteratorKey\" failed"))
+						  "Call to \"SIteratorKey\" failed"))
 				goto quit_error;
 
-			featObject = SMapIteratorValue(itr, error);
+			featObject = SIteratorObject(itr, error);
 			if (S_CHK_ERR(error, S_CONTERR,
 						  "write_this_content",
-						  "Call to \"SMapIteratorValue\" failed"))
+						  "Call to \"SIteratorObject\" failed"))
 				goto quit_error;
 
 			write_feature(ebmlWriter,
@@ -569,10 +569,10 @@ static s_hash_table *write_item_contents(SEbmlWrite *ebmlWriter, const SUtteranc
 		goto quit_error;
 
 	/* iterate through the relations and add item contents	 */
-	itr = SMapIterator(utt->relations, error);
+	itr = S_ITERATOR_GET(utt->relations, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "write_item_contents",
-				  "Call to \"SMapIterator\" failed"))
+				  "Call to \"S_ITERATOR_GET\" failed"))
 		goto quit_error;
 
 
@@ -583,10 +583,10 @@ static s_hash_table *write_item_contents(SEbmlWrite *ebmlWriter, const SUtteranc
 		const SItem *relHeadItem;
 
 
-		rel = (SRelation*)SMapIteratorValue(itr, error);
+		rel = (SRelation*)SIteratorObject(itr, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "write_item_contents",
-					  "Call to \"SMapIteratorValue\" failed"))
+					  "Call to \"SIteratorObject\" failed"))
 			goto quit_error;
 
 		relHeadItem = SRelationHead(rel, error);
@@ -998,10 +998,10 @@ static void write_utt_relations(SEbmlWrite *ebmlWriter, const SUtterance *utt,
 		goto quit_error;
 
 	/* iterate through the relations */
-	itr = SMapIterator(utt->relations, error);
+	itr = S_ITERATOR_GET(utt->relations, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "write_utt_relations",
-				  "Call to \"SMapIterator\" failed"))
+				  "Call to \"S_ITERATOR_GET\" failed"))
 		goto quit_error;
 
 	for (/* NOP */; itr != NULL; itr = SIteratorNext(itr))
@@ -1011,10 +1011,10 @@ static void write_utt_relations(SEbmlWrite *ebmlWriter, const SUtterance *utt,
 		const SRelation *rel;
 
 
-		rel = (SRelation*)SMapIteratorValue(itr, error);
+		rel = (SRelation*)SIteratorObject(itr, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "write_utt_relations",
-					  "Call to \"SMapIteratorValue\" failed"))
+					  "Call to \"SIteratorObject\" failed"))
 			goto quit_error;
 
 		relHeadItem = SRelationHead(rel, error);

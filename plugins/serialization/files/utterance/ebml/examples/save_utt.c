@@ -38,13 +38,13 @@
 #include "speect.h"
 
 
-static const char *utt_plugin_path = "utt-ebml.spi";
+static const char *utt_plugin_path = "utt_ebml.spi";
 
 
 int main()
 {
 	s_erc error = S_SUCCESS;
-	SUtterance *utt;
+	SUtterance *utt = NULL;
 	SRelation *rel;
 	SItem *item;
 	SItem *item_daughter;
@@ -102,7 +102,6 @@ int main()
 
 	/* create an item, NULL shared contents */
 	item = SRelationAppend(rel, NULL, &error);
-	rel = NULL; /* clear rel */
 	if (S_CHK_ERR(&error, S_CONTERR,
 				  "main",
 				  "Failed to create new item"))
@@ -138,7 +137,6 @@ int main()
 
 	/* create an item, with shared contents */
 	item = SRelationAppend(rel, item_daughter, &error);
-	rel = NULL;
 	if (S_CHK_ERR(&error, S_CONTERR,
 				  "main",
 				  "Failed to create new item"))
@@ -153,9 +151,6 @@ int main()
 
 
 quit:
-	if (rel != NULL)
-		S_FORCE_DELETE(rel, "main", &error);
-
 	/*
 	 * utterance will delete the
 	 * relations which in turn will

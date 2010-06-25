@@ -38,13 +38,13 @@
 #include "speect.h"
 
 
-static const char *utt_plugin_path = "utt-ebml.spi";
+static const char *utt_plugin_path = "utt_ebml.spi";
 
 
 int main()
 {
 	s_erc error = S_SUCCESS;
-	SUtterance *utt;
+	SUtterance *utt = NULL;
 	SPlugin *uttEBMLplugin = NULL;
 
 

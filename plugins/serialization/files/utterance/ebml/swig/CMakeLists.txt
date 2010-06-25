@@ -5,7 +5,7 @@
 ##                                                                                  ##
 ######################################################################################
 ##                                                                                  ##
-## CMakeList for Plugin SWIG Wrappers                                               ##
+## CMakeList for SUtterance EBML SWIG Wrappers                                      ##
 ##                                                                                  ##
 ##                                                                                  ##
 ######################################################################################
@@ -15,6 +15,7 @@
 #                   Include wrappers for different languages                         #
 #------------------------------------------------------------------------------------#
 
-if(PLUGIN_WRAP_PYTHON)
+if(WANT_PYTHON_WRAPPER)
   add_subdirectory(python)
-endif(PLUGIN_WRAP_PYTHON)
+endif(WANT_PYTHON_WRAPPER)
+

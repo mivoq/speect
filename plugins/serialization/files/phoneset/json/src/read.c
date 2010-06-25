@@ -185,11 +185,14 @@ S_LOCAL SPhonesetJSON *s_read_phoneset_json(const char *path, s_erc *error)
 		goto quit_error;
 
 	/* initialize with the read size */
-	SMapHashTableInit(&(phoneset->phones), entries_size, error);
+	SMapHashTableResize(S_MAPHASHTABLE(phoneset->phones), entries_size, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "s_read_phoneset_json",
-				  "Call to \"SMapHashTableInit\" failed"))
+				  "Call to \"SMapHashTableResize\" failed"))
+	{
+		S_DELETE(phoneset->phones, "s_read_phoneset_json", error);
 		goto quit_error;
+	}
 
 	/* copy the entries from the read JSON to the phoneset (from
 	 * SMapList to SMapHashTable)

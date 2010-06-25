@@ -51,18 +51,18 @@ cd ..
 
 ########################################################################
 
-echo "cleaning lib"
+echo "cleaning src"
 
-cd ./lib/
+cd ./src/
 ./clean_files
 cd ..
 
 
 ########################################################################
 
-echo "cleaning src"
+echo "cleaning swig"
 
-cd ./src/
+cd ./swig/
 ./clean_files
 cd ..
 

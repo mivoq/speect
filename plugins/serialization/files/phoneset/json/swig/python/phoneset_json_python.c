@@ -28,119 +28,39 @@
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* Example loading a phoneset and looking up a phone feature.                       */
+/* C convenience functions for SPhonesetJSON Python wrapper.                        */
+/*                                                                                  */
 /*                                                                                  */
 /*                                                                                  */
 /************************************************************************************/
 
 
-#include <stdio.h>
-#include "speect.h"
-#include "phoneset.h"
+/************************************************************************************/
+/*                                                                                  */
+/* Extend the SPhoneset class                                                       */
+/*                                                                                  */
+/************************************************************************************/
 
+%pythoncode
+%{
+import phoneset
 
-static const char *phoneset_json_plugin_path = "phoneset_json.spi";
+def load_phoneset_json(path):
+    """
+    Load the JSON format phoneset at the given file path.
 
-static const char *test_phone = "E_ri";
-static const char *test_phone_feature_true = "vowel";
-static const char *test_phone_feature_false = "place_post-alveolar";
+    :param path: The full path and filename of the JSON
+                 format phoneset to load.
+    :type path: string
+    :return: The loaded phoneset at the given path.
+    :rtype: ``SPhoneset``
+    """
+    if not isinstance(path, str):
+        raise TypeError("Argument \"path\" must be a string")
 
+    return _phoneset_json_load(path)
 
-
-int main()
-{
-	s_erc error = S_SUCCESS;
-	SPhoneset *phoneset = NULL;
-	SPlugin *phonesetJSONPlugin = NULL;
-	s_bool is_true;
-
-
-	S_CLR_ERR(&error);
-
-	/*
-	 * initialize speect
-	 */
-	error = speect_init();
-	if (error != S_SUCCESS)
-	{
-		printf("Failed to initialize Speect\n");
-		return 1;
-	}
-
-	/*
-	 * load the phoneset-json plug-in
-	 */
-	phonesetJSONPlugin = s_pm_load_plugin(phoneset_json_plugin_path, &error);
-	if (S_CHK_ERR(&error, S_CONTERR,
-				  "main",
-				  "Failed to load plug-in at '%s'", phoneset_json_plugin_path))
-	{
-		printf("failed to load plug-in\n");
-		goto quit;
-	}
-	else
-	{
-		printf("plug-in loaded\n");
-	}
-
-	/* load phoneset */
-	phoneset = (SPhoneset*)SObjectLoad("phoneset_example.txt", "spct_phoneset", &error);
-	if (S_CHK_ERR(&error, S_CONTERR,
-				  "main",
-				  "Failed to load phoneset"))
-		goto quit;
-
-	is_true = S_PHONESET_CALL(phoneset, has_phone)(phoneset, test_phone, &error);
-	if (S_CHK_ERR(&error, S_CONTERR,
-				  "main",
-				  "Call to method \"has_phone\" failed"))
-		goto quit;
-
-	printf("tested if phoneset has phone '%s', answer = '%s' (should be TRUE)\n",
-		   test_phone, is_true? "TRUE" : "FALSE");
-
-	is_true = S_PHONESET_CALL(phoneset, phone_has_feature)(phoneset, test_phone,
-														   test_phone_feature_true,
-														   &error);
-	if (S_CHK_ERR(&error, S_CONTERR,
-				  "main",
-				  "Call to method \"phone_has_feature\" failed"))
-		goto quit;
-
-	printf("tested if phoneset phone '%s' has feature '%s', answer = '%s' (should be TRUE)\n",
-		   test_phone, test_phone_feature_true, is_true? "TRUE" : "FALSE");
-
-	is_true = S_PHONESET_CALL(phoneset, phone_has_feature)(phoneset, test_phone,
-														   test_phone_feature_false,
-														   &error);
-	if (S_CHK_ERR(&error, S_CONTERR,
-				  "main",
-				  "Call to method \"phone_has_feature\" failed"))
-		goto quit;
-
-	printf("tested if phoneset phone '%s' has feature '%s', answer = '%s' (should be FALSE)\n",
-		   test_phone, test_phone_feature_false, is_true? "TRUE" : "FALSE");
-
-
-quit:
-	if (phoneset != NULL)
-		S_DELETE(phoneset, "main", &error);
-
-	/* unload plug-ins by deleting them */
-	if (phonesetJSONPlugin != NULL)
-		S_DELETE(phonesetJSONPlugin, "main", &error);
-
-	/*
-	 * quit speect
-	 */
-	error = speect_quit();
-	if (error != S_SUCCESS)
-	{
-		printf("Call to 'speect_quit' failed\n");
-		return 1;
-	}
-
-	return 0;
-}
+setattr(phoneset.SPhoneset, "load_json", staticmethod(load_phoneset_json))
+%}
 
 

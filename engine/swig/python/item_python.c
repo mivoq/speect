@@ -50,6 +50,32 @@
 	}
 
 
+	int __len__(s_erc *error)
+	{
+		size_t num_feats;
+
+
+		num_feats = SMapSize($self->content->features, error);
+		if (*error != S_SUCCESS)
+			return 0;
+
+		return (int)num_feats;
+	}
+
+
+	s_bool __contains__(const char *feat_name, s_erc *error)
+	{
+		s_bool is_present;
+
+
+		is_present = SItemFeatureIsPresent($self, feat_name, error);
+		if (*error != S_SUCCESS)
+			return FALSE;
+
+		return is_present;
+	}
+
+
 	PyObject *path_to_feature(const char *path, s_erc *error)
 	{
 		const SObject *sfeature;

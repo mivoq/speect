@@ -184,11 +184,15 @@ S_LOCAL SLexiconJSON *s_read_lexicon_json(const char *path, s_erc *error)
 		goto quit_error;
 
 	/* initialize with the read size */
-	SMapHashTableInit(&(lex->entries), entries_size, error);
+	SMapHashTableResize(S_MAPHASHTABLE(lex->entries), entries_size,
+						error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "s_read_lexicon_json",
-				  "Call to \"SMapHashTableInit\" failed"))
+				  "Call to \"SMapHashTableResize\" failed"))
+	{
+		S_DELETE(lex->entries, "s_read_lexicon_json", error);
 		goto quit_error;
+	}
 
 	/* copy the entries from the read JSON to the lexicon (from
 	 * SMapList to SMapHashTable)

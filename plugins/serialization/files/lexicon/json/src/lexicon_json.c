@@ -109,10 +109,10 @@ static s_bool check_if_match(const SMap *singleEntry, const SMap *features, s_er
 
 	S_CLR_ERR(error);
 
-	itr = SMapIterator(features, error);
+	itr = S_ITERATOR_GET(features, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "check_if_match",
-				  "Call to \"SMapIterator\" failed"))
+				  "Call to \"S_ITERATOR_GET\" failed"))
 		return FALSE;
 
 	for (/* NOP */; itr != NULL; itr = SIteratorNext(itr))
@@ -123,20 +123,20 @@ static s_bool check_if_match(const SMap *singleEntry, const SMap *features, s_er
 		s_bool match;
 
 
-		key = SMapIteratorKey(itr, error);
+		key = SIteratorKey(itr, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "check_if_match",
-					  "Call to \"SMapIteratorKey\" failed"))
+					  "Call to \"SIteratorKey\" failed"))
 		{
 			S_DELETE(itr, "check_if_match", error);
 			return FALSE;
 		}
 
 
-		featuresObject = SMapIteratorValue(itr, error);
+		featuresObject = SIteratorObject(itr, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "check_if_match",
-					  "Call to \"SMapIteratorValue\" failed"))
+					  "Call to \"SIteratorObject\" failed"))
 		{
 			S_DELETE(itr, "check_if_match", error);
 			return FALSE;
@@ -257,18 +257,18 @@ static const SList *get_word_info(const SObject *wordEntries, const SMap *featur
 				  "Retrieved lexicon entry for word is not a list object"))
 		return NULL;
 
-	itr = SListIterator(wordEntryList, error);
+	itr = S_ITERATOR_GET(wordEntryList, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "get_word_info",
-				  "Call to \"SListIterator\" failed"))
+				  "Call to \"S_ITERATOR_GET\" failed"))
 		return NULL;
 
 	for (/* NOP */; itr != NULL; itr = SIteratorNext(itr))
 	{
-		singleEntryObject = SListIteratorValue(itr, error);
+		singleEntryObject = SIteratorObject(itr, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "get_word_info",
-					  "Call to \"SListIteratorValue\" failed"))
+					  "Call to \"SIteratorObject\" failed"))
 		{
 			S_DELETE(itr, "get_word_info", error);
 			return NULL;

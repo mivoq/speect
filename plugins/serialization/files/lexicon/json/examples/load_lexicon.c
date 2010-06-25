@@ -39,7 +39,7 @@
 #include "lexicon.h"
 
 
-static const char *lexicon_json_plugin_path = "lexicon-json.spi";
+static const char *lexicon_json_plugin_path = "lexicon_json.spi";
 static const char *test_word = "counterrevolutionary"; /* word lookup to test in lexicon */
 
 
@@ -64,10 +64,10 @@ static void print_list(const SList *list, char *buf, s_erc *error)
 				  "Call to \"s_strcat\" failed"))
 		return;
 
-	itr = SListIterator(list, error);
+	itr = S_ITERATOR_GET(list, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "print_list",
-				  "Call to \"SListIterator\" failed"))
+				  "Call to \"S_ITERATOR_GET\" failed"))
 		return;
 
 	for (/* NOP */; itr != NULL; itr = SIteratorNext(itr), --list_size)
@@ -76,10 +76,10 @@ static void print_list(const SList *list, char *buf, s_erc *error)
 		const SObject *tmp;
 
 
-		tmp = SListIteratorValue(itr, error);
+		tmp = SIteratorObject(itr, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "print_list",
-					  "Call to \"SListIteratorValue\" failed"))
+					  "Call to \"SIteratorObject\" failed"))
 		{
 			S_DELETE(itr, "print_list", error);
 			return;
@@ -206,7 +206,7 @@ int main()
 	}
 
 	/* load lexicon */
-	lex = (SLexicon*)SObjectLoad("lwazi_english_lexicon.txt", "spct_lexicon", &error);
+	lex = (SLexicon*)SObjectLoad("lexicon_example.txt", "spct_lexicon", &error);
 	if (S_CHK_ERR(&error, S_CONTERR,
 				  "main",
 				  "Failed to load lexicon"))

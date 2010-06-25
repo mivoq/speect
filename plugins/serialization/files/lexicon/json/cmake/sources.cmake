@@ -5,7 +5,7 @@
 ##                                                                                  ##
 ######################################################################################
 ##                                                                                  ##
-## Template CMake source files for Speect plug-ins                                  ##
+## Source files for Lexicon JSON formatter plug-in                                  ##
 ##                                                                                  ##
 ##                                                                                  ##
 ######################################################################################
@@ -13,7 +13,7 @@
 
 ######## source files ##################
 
-set(${PLUGIN_SONAME}_SRC_FILES
+speect_plugin_sources(
   src/plugin.c
   src/lexicon_json.c
   src/serialized_lex.c
@@ -23,7 +23,7 @@ set(${PLUGIN_SONAME}_SRC_FILES
 
 ######## header files ##################
 
-set(${PLUGIN_SONAME}_INCLUDE_FILES
+speect_plugin_headers(
   src/lexicon_json.h
   src/serialized_lex.h
   )

@@ -1,17 +1,22 @@
 ######################################################################################
 ##                                                                                  ##
 ## AUTHOR  : Aby Louw                                                               ##
-## DATE    : 11 June 2010                                                           ##
+## DATE    : December 2009                                                          ##
 ##                                                                                  ##
 ######################################################################################
 ##                                                                                  ##
-## CMakeList for lexicon serialization plug-ins                                     ##
+## CMakeList for SLexiconJSON SWIG Wrappers                                         ##
 ##                                                                                  ##
 ##                                                                                  ##
 ######################################################################################
 
+
 #------------------------------------------------------------------------------------#
-#                        Plug-in directories                                         #
+#                   Include wrappers for different languages                         #
 #------------------------------------------------------------------------------------#
 
-add_subdirectory(json)
+if(WANT_PYTHON_WRAPPER)
+  add_subdirectory(python)
+endif(WANT_PYTHON_WRAPPER)
+
+

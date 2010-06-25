@@ -57,7 +57,6 @@
 			return NULL;
 		}
 
-		/* save audio */
 		g2pRewrites = SObjectLoad(path, "spct_g2p_rewrites", error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "_load_g2p_rewrites_ebml",

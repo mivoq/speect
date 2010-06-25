@@ -476,12 +476,6 @@ static void read_halfphone_db_features(SHalfphoneDBEbml *db, SEbmlRead *ebmlRead
 					  "read_halfphone_db_features",
 					  "Failed to create new 'SMapList' object"))
 			goto quit_error;;
-
-		SMapListInit(&(baseDB->features), error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "read_halfphone_db_features",
-					  "Failed to initialize new 'SMapList' object"))
-			goto quit_error;
 	}
 
 	while (1)
@@ -785,11 +779,14 @@ static void set_unit(SHalfphoneDBEbml *db, SItem *unit, s_erc *error)
 					  "Failed to create new 'SMapHashTable' object"))
 			return;
 
-		SMapHashTableInit(&unitContainer, 10, error); /* it will resize if needed */
+		SMapHashTableResize(S_MAPHASHTABLE(unitContainer), 10, error); /* it will resize if	needed */
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "set_unit",
-					  "Failed to initialize new 'SMapHashTable' object"))
+					  "Call to \"SMapHashTableResize\" failed"))
+		{
+			S_DELETE(unitContainer, "set_unit", error);
 			return;
+		}
 
 		/* add it to the catalogue */
 		SMapSetObject(db->catalogue, unit_name, S_OBJECT(unitContainer), error);
@@ -880,15 +877,6 @@ static void set_unit(SHalfphoneDBEbml *db, SItem *unit, s_erc *error)
 				return;
 			}
 
-			SListListInit(&leftRightContext, error);
-			if (S_CHK_ERR(error, S_CONTERR,
-						  "set_unit",
-						  "Failed to initialize new 'SListList' object"))
-			{
-				S_FREE(context);
-				return;
-			}
-
 			SMapSetObject(unitContainer, context, S_OBJECT(leftRightContext), error);
 			if (S_CHK_ERR(error, S_CONTERR,
 						  "set_unit",
@@ -932,12 +920,6 @@ static void set_unit(SHalfphoneDBEbml *db, SItem *unit, s_erc *error)
 						  "Failed to create new 'SListList' object"))
 				return;
 
-			SListListInit(&leftContext, error);
-			if (S_CHK_ERR(error, S_CONTERR,
-						  "set_unit",
-						  "Failed to initialize new 'SListList' object"))
-				return;
-
 			SMapSetObject(unitContainer, unit_left_context, S_OBJECT(leftContext), error);
 			if (S_CHK_ERR(error, S_CONTERR,
 						  "set_unit",
@@ -970,12 +952,6 @@ static void set_unit(SHalfphoneDBEbml *db, SItem *unit, s_erc *error)
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "set_unit",
 					  "Failed to create new 'SListList' object"))
-			return;
-
-		SListListInit(&allUnits, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "set_unit",
-					  "Failed to initialize new 'SListList' object"))
 			return;
 
 		SMapSetObject(unitContainer, "all-units", S_OBJECT(allUnits), error);

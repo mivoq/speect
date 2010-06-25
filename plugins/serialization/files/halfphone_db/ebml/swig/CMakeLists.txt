@@ -1,31 +1,22 @@
 ######################################################################################
 ##                                                                                  ##
 ## AUTHOR  : Aby Louw                                                               ##
-## DATE    : 5 November 2009                                                        ##
+## DATE    : December 2009                                                          ##
 ##                                                                                  ##
 ######################################################################################
 ##                                                                                  ##
-## Source files for HalfphoneDB EBML formatter plug-in                              ##
+## CMakeList for SHalfphoneDBEbml SWIG Wrappers                                     ##
 ##                                                                                  ##
 ##                                                                                  ##
 ######################################################################################
 
 
-######## source files ##################
+#------------------------------------------------------------------------------------#
+#                   Include wrappers for different languages                         #
+#------------------------------------------------------------------------------------#
 
-speect_plugin_sources(
-  src/plugin.c
-  src/halfphone_db_ebml.c
-  src/serialized_halfphone_db.c
-  src/read.c
-  )
- 
+if(WANT_PYTHON_WRAPPER)
+  add_subdirectory(python)
+endif(WANT_PYTHON_WRAPPER)
 
-######## header files ##################
-
-speect_plugin_headers(
-  src/halfphone_db_ebml.h
-  src/serialized_halfphone_db.h
-  src/element_id.h
-  )
 

@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2009 The Department of Arts and Culture,                           */
+/* Copyright (c) 2010 The Department of Arts and Culture,                           */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -24,85 +24,47 @@
 /************************************************************************************/
 /*                                                                                  */
 /* AUTHOR  : Aby Louw                                                               */
-/* DATE    : December 2009                                                          */
+/* DATE    : June 2010                                                              */
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* Example loading an ebml halfphone database.                                      */
+/* SWIG common C convenience functions for SHalfphoneDBEbml.                        */
+/*                                                                                  */
 /*                                                                                  */
 /*                                                                                  */
 /************************************************************************************/
 
 
-#include <stdio.h>
-#include "speect.h"
-#include "halfphone_db.h"
+/************************************************************************************/
+/*                                                                                  */
+/* Inline helper functions                                                          */
+/*                                                                                  */
+/************************************************************************************/
 
-
-static const char *halfphone_db_ebml_plugin = "halfphoneDB-ebml.spi";
-
-
-int main()
-{
-	s_erc error = S_SUCCESS;
-	SHalfphoneDB *db = NULL;
-	SPlugin *plugin = NULL;
-
-
-	S_CLR_ERR(&error);
-
-	/*
-	 * initialize speect
-	 */
-	error = speect_init();
-	if (error != S_SUCCESS)
+%inline
+%{
+	SHalfphoneDB *_haflphone_db_ebml_load(const char *path, s_erc *error)
 	{
-		printf("Failed to initialize Speect\n");
-		return 1;
+		SObject *loadedDB;
+
+
+		S_CLR_ERR(error);
+
+		if (path == NULL)
+		{
+			S_CTX_ERR(error, S_ARGERROR,
+					  "_haflphone_db_ebml_load",
+					  "Argument \"path\" is NULL");
+			return NULL;
+		}
+
+		loadedDB = SObjectLoad(path, "spct_halfphone_db", error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "haflphone_db_ebml_load",
+					  "Call to \"SObjectLoad\" failed"))
+			return NULL;
+
+		return S_HALFPHONE_DB(loadedDB);
 	}
-
-	/*
-	 * load the plug-in
-	 */
-	plugin = s_pm_load_plugin(halfphone_db_ebml_plugin, &error);
-	if (S_CHK_ERR(&error, S_CONTERR,
-				  "main",
-				  "Failed to load plug-in at '%s'", halfphone_db_ebml_plugin))
-	{
-		printf("failed to load plug-in\n");
-		goto quit;
-	}
-	else
-	{
-		printf("plug-in loaded\n");
-	}
-
-	/* load database */
-	db = (SHalfphoneDB*)SObjectLoad("lwazi_english_db.spct", "spct_halfphone_db", &error);
-	if (S_CHK_ERR(&error, S_CONTERR,
-				  "main",
-				  "Failed to load database"))
-		goto quit;
-
-quit:
-	if (db != NULL)
-		S_DELETE(db, "main", &error);
-
-	/* unload plug-ins by deleting them */
-	if (plugin != NULL)
-		S_DELETE(plugin, "main", &error);
-
-	/*
-	 * quit speect
-	 */
-	error = speect_quit();
-	if (error != S_SUCCESS)
-	{
-		printf("Call to 'speect_quit' failed\n");
-		return 1;
-	}
-
-	return 0;
-}
-
+%}
 

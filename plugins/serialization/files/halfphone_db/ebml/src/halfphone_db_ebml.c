@@ -115,11 +115,14 @@ static void Init(void *obj, s_erc *error)
 				  "Failed to create new 'SMapHashTable' object"))
 		return;
 
-	SMapHashTableInit(&(self->catalogue), 100, error); /* working on about (50 phones * 2) */
+	SMapHashTableResize(S_MAPHASHTABLE(self->catalogue), 100, error); /* working on about (50 phones * 2) */
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Init",
-				  "Failed to initialize new 'SMapHashTable' object"))
+				  "Call to \"SMapHashTableResize\" failed"))
+	{
+		S_DELETE(self->catalogue, "Init", error);
 		return;
+	}
 
 	/* create a relation to hold all units */
 	self->units = (SRelation*)S_NEW("SRelation", error);

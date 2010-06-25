@@ -57,13 +57,9 @@
 
 
 		S_CLR_ERR(&error);
-		printf("going to try and get iterator\n");
 		itr = S_ITERATOR_GET($self->relations, &error);
 		if (error != S_SUCCESS)
 			return NULL;
-
-		printf("got iterator!\n");
-
 
 		pitr = make_PMapIterator(itr, &error);
 		if (error != S_SUCCESS)
@@ -84,7 +80,6 @@ def __str__(self):
     """
 
     stri = "Utterance:\n"
-    print "trying to get iterator"
     for f in self.features:
         stri += '    Feature: %20.20s => %s\n' %(f, repr(self.features[f]))
 

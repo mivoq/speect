@@ -117,19 +117,19 @@ static void create_cost_functions(const SList *costFunctions, const SVoice *voic
 
 	S_CLR_ERR(error);
 
-	itr = SListIterator(costFunctions, error);
+	itr = S_ITERATOR_GET(costFunctions, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "create_cost_functions",
-				  "Call to \"SListIterator\" failed"))
+				  "Call to \"S_ITERATOR_GET\" failed"))
 		return;
 
 	counter = 0;
 	while (itr != NULL)
 	{
-		costFuncMap = S_CAST(SListIteratorValue(itr, error), SMap, error);
+		costFuncMap = S_CAST(SIteratorObject(itr, error), SMap, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "create_cost_functions",
-					  "Call to \"SListIteratorValue/S_CAST (SMap)\" failed"))
+					  "Call to \"SIteratorObject/S_CAST (SMap)\" failed"))
 		{
 			S_DELETE(itr, "create_cost_functions", error);
 			return;
@@ -283,20 +283,20 @@ static void process_cost_functions(const SList *costFunctions, const SItem *head
 
 	S_CLR_ERR(error);
 
-	itr = SListIterator(costFunctions, error);
+	itr = S_ITERATOR_GET(costFunctions, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "process_cost_functions",
-				  "Call to \"SListIterator\" failed"))
+				  "Call to \"S_ITERATOR_GET\" failed"))
 		return;
 
 	counter = 0;
 	while (itr != NULL)
 	{
 		/* get cost function map */
-		costFuncMap = (const SMap*)SListIteratorValue(itr, error);
+		costFuncMap = (const SMap*)SIteratorObject(itr, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "process_cost_functions",
-					  "Call to \"SListIteratorValue\" failed"))
+					  "Call to \"SIteratorObject\" failed"))
 		{
 			S_DELETE(itr, "process_cost_functions", error);
 			return;

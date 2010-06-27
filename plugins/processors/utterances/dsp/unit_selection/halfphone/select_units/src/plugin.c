@@ -41,6 +41,7 @@
 /************************************************************************************/
 
 #include "select_units.h"
+#include "plugin_info.h"
 
 
 /************************************************************************************/
@@ -48,10 +49,6 @@
 /* Static variables                                                                 */
 /*                                                                                  */
 /************************************************************************************/
-
-static const char * const plugin_init_func = "SSelectUnitsUttProc plug-in initialization";
-
-static const char * const plugin_exit_func = "SSelectUnitsUttProc plug-in free";
 
 static SPlugin *viterbiPlugin = NULL;
 
@@ -62,7 +59,7 @@ static SPlugin *viterbiPlugin = NULL;
 /*                                                                                  */
 /************************************************************************************/
 
-static s_bool version_ok(const s_lib_version version);
+static void plugin_register_function(s_erc *error);
 
 static void plugin_exit_function(s_erc *error);
 
@@ -76,22 +73,25 @@ static void plugin_exit_function(s_erc *error);
 static const s_plugin_params plugin_params =
 {
 	/* plug-in name */
-	"Unit selector utterance processor",
+	SPCT_PLUGIN_NAME,
 
 	/* description */
-	"An utterance processor to select the halfphone units relation stream",
+	SPCT_PLUGIN_DESCRIPTION,
 
 	/* version */
 	{
-		0,
-		1
+		SPCT_PLUGIN_VERSION_MAJOR,
+		SPCT_PLUGIN_VERSION_MINOR
 	},
 
 	/* Speect ABI version (which plug-in was compiled with) */
 	{
-		0,
-		9
+		S_MAJOR_VERSION,
+		S_MINOR_VERSION
 	},
+
+	/* register function pointer */
+	plugin_register_function,
 
 	/* exit function pointer */
 	plugin_exit_function
@@ -104,31 +104,16 @@ static const s_plugin_params plugin_params =
 /*                                                                                  */
 /************************************************************************************/
 
-const s_plugin_params *s_plugin_init(const s_lib_version version, s_erc *error)
+const s_plugin_params *s_plugin_init(s_erc *error)
 {
 	S_CLR_ERR(error);
 
-	if (!version_ok(version))
+	if (!s_lib_version_ok(SPCT_MAJOR_VERSION_MIN, SPCT_MINOR_VERSION_MIN))
 	{
 		S_CTX_ERR(error, S_FAILURE,
-				  plugin_init_func,
-				  "Incorrect Speect Engine version, require '0.9.x'");
-		return NULL;
-	}
-
-	viterbiPlugin = s_pm_load_plugin("viterbi.spi", error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  plugin_init_func,
-				  "Call to \"s_pm_load_plugin\" failed"))
-		return NULL;
-
-	/* register plug-in classes here */
-	_s_select_units_utt_proc_class_reg(error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  plugin_init_func,
-				  "Failed to register SSelectUnitsUttProc class"))
-	{
-		S_DELETE(viterbiPlugin, plugin_init_func, error);
+				  SPCT_PLUGIN_INIT_STR,
+				  "Incorrect Speect Engine version, require at least '%d.%d.x'",
+				  SPCT_MAJOR_VERSION_MIN, SPCT_MINOR_VERSION_MIN);
 		return NULL;
 	}
 
@@ -142,17 +127,26 @@ const s_plugin_params *s_plugin_init(const s_lib_version version, s_erc *error)
 /*                                                                                  */
 /************************************************************************************/
 
-/* check the Speect Engine version */
-static s_bool version_ok(const s_lib_version version)
+/* plug-in register function */
+static void plugin_register_function(s_erc *error)
 {
-	/*
-	 * we want Speect Engine 0.9.x
-	 */
-	if ((version.major == 0)
-		&& (version.minor == 9))
-		return TRUE;
+	S_CLR_ERR(error);
 
-	return FALSE;
+	viterbiPlugin = s_pm_load_plugin("viterbi.spi", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  SPCT_PLUGIN_REG_STR,
+				  "Call to \"s_pm_load_plugin\" failed"))
+		return;
+
+	/* register plug-in classes here */
+	_s_select_units_utt_proc_class_reg(error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  SPCT_PLUGIN_REG_STR,
+				  SPCT_PLUGIN_REG_FAIL_STR))
+	{
+		S_DELETE(viterbiPlugin, SPCT_PLUGIN_REG_STR, error);
+		return;
+	}
 }
 
 
@@ -164,8 +158,8 @@ static void plugin_exit_function(s_erc *error)
 	/* free plug-in classes here */
 	_s_select_units_utt_proc_class_free(error);
 	S_CHK_ERR(error, S_CONTERR,
-			  plugin_exit_func,
-			  "Failed to free SSelectUnitsUttProc class");
+			  SPCT_PLUGIN_EXIT_STR,
+			  SPCT_PLUGIN_EXIT_FAIL_STR);
 
-	S_DELETE(viterbiPlugin, plugin_exit_func, error);
+	S_DELETE(viterbiPlugin, SPCT_PLUGIN_EXIT_STR, error);
 }

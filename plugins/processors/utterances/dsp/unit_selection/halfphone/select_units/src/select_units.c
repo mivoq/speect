@@ -128,20 +128,20 @@ static float run_cost_functions(const SList *costFunctions,
 	if (costFunctions == NULL)
 		return 0;
 
-	itr = SListIterator(costFunctions, error);
+	itr = S_ITERATOR_GET(costFunctions, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "run_cost_functions",
-				  "Call to \"SListIterator\" failed"))
+				  "Call to \"S_ITERATOR_GET\" failed"))
 		return 0;
 
 	counter = 0;
 	while (itr != NULL)
 	{
 		/* get cost function map */
-		costFuncMap = (const SMap*)SListIteratorValue(itr, error);
+		costFuncMap = (const SMap*)SIteratorObject(itr, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "run_cost_functions",
-					  "Call to \"SListIteratorValue\" failed"))
+					  "Call to \"SIteratorObject\" failed"))
 		{
 			S_DELETE(itr, "run_cost_functions", error);
 			return total_cost;
@@ -470,10 +470,10 @@ static SViterbiCandidate *get_candidates(const SItem *s, SMap *features, s_erc *
 		goto quit_error;
 	}
 
-	itr = SListIterator(candidateList, error);
+	itr = S_ITERATOR_GET(candidateList, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "get_candidates",
-				  "Call to \"SListIterator\" failed"))
+				  "Call to \"S_ITERATOR_GET\" failed"))
 		goto quit_error;
 
 	/* now create the candidate list */
@@ -488,10 +488,10 @@ static SViterbiCandidate *get_candidates(const SItem *s, SMap *features, s_erc *
 		candidate->next = allCandidates;
 		allCandidates = candidate;
 
-		candidateItem = (SItem*)SListIteratorValue(itr, error);
+		candidateItem = (SItem*)SIteratorObject(itr, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "get_candidates",
-					  "Call to \"SListIteratorValue\" failed"))
+					  "Call to \"SIteratorObject\" failed"))
 			goto quit_error;
 
 		candidate->name = (SObject*)candidateItem;  /* candidate */

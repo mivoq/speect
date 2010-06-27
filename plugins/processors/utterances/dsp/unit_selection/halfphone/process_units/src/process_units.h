@@ -45,30 +45,6 @@
  */
 
 
-/**
- * @ingroup SUttProc
- * @defgroup SUttProcNormalization Normalization
- * A Normalization utterance processor.
- *
- * Depends on the presence of the @e Token relation in the utterance
- * and creates the @e Word relation.
- *
- * The @e Token relation's items are normalized, and for each word of
- * a token item's normalized name feature a daughter item is created.
- * For each of these daughter item's a new item is created in the @e
- * Word relation, this word item shares it's content with the daughter
- * items of the @e Token relation.
- *
- * If the <i> word-normalization </i> feature processor is
- * present in the voice of the utterance then the @e Token relation's
- * items are sent to it, one after the other, and the <i>
- * word-normalization </i> feature processor must normalize and set
- * the correct item's in the @e Word relation, which will have been
- * created.
- * @{
- */
-
-
 /************************************************************************************/
 /*                                                                                  */
 /* Modules used                                                                     */

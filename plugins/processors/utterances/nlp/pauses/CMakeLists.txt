@@ -5,32 +5,34 @@
 ##                                                                                  ##
 ######################################################################################
 ##                                                                                  ##
-## Template CMakeList for Speect Plug-ins                                           ##
+## CMakeList for Pauses utterance processor plug-in                                 ##
 ##                                                                                  ##
 ##                                                                                  ##
 ######################################################################################
 
 #------------------------------------------------------------------------------------#
-#                                Project name                                        #
+#                             Define plug-in                                         #
 #------------------------------------------------------------------------------------#
 
-message(STATUS "cmake for project \"Pauses Utterance Processor\"")
-project(speect_pauses_uttproc_plugin C)
-
-# Plug-in shared object name
-set(PLUGIN_SONAME pauses_uttproc)
-
-set(${PLUGIN_SONAME}_VERSION_MAJOR 0)
-set(${PLUGIN_SONAME}_VERSION_MINOR 9)
-set(${PLUGIN_SONAME}_VERSION_PATCH 0)
-set(${PLUGIN_SONAME}_VERSION "${${PLUGIN_SONAME}_VERSION_MAJOR}.${${PLUGIN_SONAME}_VERSION_MINOR}.${${PLUGIN_SONAME}_VERSION_PATCH}")
+speect_plugin_definition(Pauses_UttProc "SPausesUttProc" 1 0 0)
 
 
 #------------------------------------------------------------------------------------#
-#                             Get all CMake modules                                  #
+#                        Configure plugin_info.h.in                                  #
 #------------------------------------------------------------------------------------#
 
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+set(description "A pause insertion utterance processor class that inserts pauses into the Segment relation based on the phrase breaks in the Phrase relation")
+
+# Minimum required Speect Engine version 
+set(major_min 1)
+set(minor_min 0)
+
+speect_plugin_configure_info(${description} ${major_min} ${minor_min})
+
+
+#------------------------------------------------------------------------------------#
+#                               Source files                                         #
+#------------------------------------------------------------------------------------#
 
 # Lists of all the source files
 include(sources)
@@ -47,19 +49,5 @@ include(phoneset)
 #                        Plug-in shared object                                       #
 #------------------------------------------------------------------------------------#
 
-# Library build configuration
-include(plugin)
-
-# add dependency
-add_dependencies(${PLUGIN_SONAME}_plugin phoneset_plugin)
-
-
-#------------------------------------------------------------------------------------#
-#                                   examples                                         #
-#------------------------------------------------------------------------------------#
-
-#if(WANT_EXAMPLES)
-#  add_subdirectory(examples)
-#endif(WANT_EXAMPLES)
-
+speect_plugin_create()
 

@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2009 The Department of Arts and Culture,                           */
+/* Copyright (c) 2010 The Department of Arts and Culture,                           */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -24,11 +24,11 @@
 /************************************************************************************/
 /*                                                                                  */
 /* AUTHOR  : Aby Louw                                                               */
-/* DATE    : December 2009                                                          */
+/* DATE    : February 2010                                                          */
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* A Phrasing utterance processor.                                                  */
+/* A syllable tone, post lex, utterance processor.                                  */
 /*                                                                                  */
 /*                                                                                  */
 /************************************************************************************/
@@ -40,7 +40,7 @@
 /*                                                                                  */
 /************************************************************************************/
 
-#include "phrasify_proc.h"
+#include "syltone.h"
 #include "plugin_info.h"
 
 
@@ -124,7 +124,7 @@ static void plugin_register_function(s_erc *error)
 	S_CLR_ERR(error);
 
     /* register plug-in classes here */
-	_s_phrasing_utt_proc_class_reg(error);
+	_s_syltone_utt_proc_class_reg(error);
 	S_CHK_ERR(error, S_CONTERR,
 			  SPCT_PLUGIN_REG_STR,
 			  SPCT_PLUGIN_REG_FAIL_STR);
@@ -137,7 +137,7 @@ static void plugin_exit_function(s_erc *error)
 	S_CLR_ERR(error);
 
 	/* free plug-in classes here */
-	_s_phrasing_utt_proc_class_free(error);
+	_s_syltone_utt_proc_class_free(error);
 	S_CHK_ERR(error, S_CONTERR,
 			  SPCT_PLUGIN_EXIT_STR,
 			  SPCT_PLUGIN_EXIT_FAIL_STR);

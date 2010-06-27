@@ -28,10 +28,27 @@
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* A Phrasing utterance processor.                                                  */
+/* A MorphDecomp utterance processor.                                               */
 /*                                                                                  */
 /*                                                                                  */
 /************************************************************************************/
+
+#ifndef _SPCT_PLUGIN_UTTPROCESSOR_MORPHDECOMP_H__
+#define _SPCT_PLUGIN_UTTPROCESSOR_MORPHDECOMP_H__
+
+
+/**
+ * @file tokenizer_proc.h
+ * A MorphDecomp utterance processor.
+ */
+
+
+/**
+ * @ingroup SUttProc
+ * @defgroup SUttProcMorphDecomp MorphDecomp
+ * A Morphological Decomposition utterance processor.
+ * @{
+ */
 
 
 /************************************************************************************/
@@ -40,105 +57,74 @@
 /*                                                                                  */
 /************************************************************************************/
 
-#include "phrasify_proc.h"
-#include "plugin_info.h"
+#include "speect.h"
 
 
 /************************************************************************************/
 /*                                                                                  */
-/* Static function prototypes                                                       */
+/* Begin external c declaration                                                     */
 /*                                                                                  */
 /************************************************************************************/
-
-static void plugin_register_function(s_erc *error);
-
-static void plugin_exit_function(s_erc *error);
+S_BEGIN_C_DECLS
 
 
 /************************************************************************************/
 /*                                                                                  */
-/* Plug-in parameters                                                               */
+/* Typedef                                                                          */
 /*                                                                                  */
 /************************************************************************************/
 
-static const s_plugin_params plugin_params =
-{
-	/* plug-in name */
-	SPCT_PLUGIN_NAME,
+/**
+ * Typedef of the MorphDecomp utterance processor. Does not add any
+ * new members, therefore exactly the same as #SUttProcessor.
+ */
+typedef SUttProcessor SMorphDecompUttProc;
 
-	/* description */
-	SPCT_PLUGIN_DESCRIPTION,
 
-	/* version */
-	{
-		SPCT_PLUGIN_VERSION_MAJOR,
-		SPCT_PLUGIN_VERSION_MINOR
-	},
-
-	/* Speect ABI version (which plug-in was compiled with) */
-	{
-		S_MAJOR_VERSION,
-		S_MINOR_VERSION
-	},
-
-	/* register function pointer */
-	plugin_register_function,
-
-	/* exit function pointer */
-	plugin_exit_function
-};
+/**
+ * Typedef of the MorphDecomp utterance processor class. Does not add any
+ * new methods, therefore exactly the same as #SUttProcessor.
+ */
+typedef SUttProcessorClass SMorphDecompUttProcClass;
 
 
 /************************************************************************************/
 /*                                                                                  */
-/* Function implementations                                                         */
+/* Plug-in class registration/free                                                  */
 /*                                                                                  */
 /************************************************************************************/
 
-const s_plugin_params *s_plugin_init(s_erc *error)
-{
-	S_CLR_ERR(error);
+/**
+ * Register the #SMorphDecompUttProc plug-in class with the Speect Engine
+ * object system.
+ * @private
+ *
+ * @param error Error code.
+ */
+S_LOCAL void _s_morphdecomp_utt_proc_class_reg(s_erc *error);
 
-	if (!s_lib_version_ok(SPCT_MAJOR_VERSION_MIN, SPCT_MINOR_VERSION_MIN))
-	{
-		S_CTX_ERR(error, S_FAILURE,
-				  SPCT_PLUGIN_INIT_STR,
-				  "Incorrect Speect Engine version, require at least '%d.%d.x'",
-				  SPCT_MAJOR_VERSION_MIN, SPCT_MINOR_VERSION_MIN);
-		return NULL;
-	}
 
-	return &plugin_params;
-}
+/**
+ * Free the #SMorphDecompUttProc plug-in class from the Speect Engine
+ * object system.
+ * @private
+ *
+ * @param error Error code.
+ */
+S_LOCAL void _s_morphdecomp_utt_proc_class_free(s_erc *error);
 
 
 /************************************************************************************/
 /*                                                                                  */
-/* Static function implementations                                                  */
+/* End external c declaration                                                       */
 /*                                                                                  */
 /************************************************************************************/
-
-/* plug-in register function */
-static void plugin_register_function(s_erc *error)
-{
-	S_CLR_ERR(error);
-
-    /* register plug-in classes here */
-	_s_phrasing_utt_proc_class_reg(error);
-	S_CHK_ERR(error, S_CONTERR,
-			  SPCT_PLUGIN_REG_STR,
-			  SPCT_PLUGIN_REG_FAIL_STR);
-}
+S_END_C_DECLS
 
 
-/* plug-in exit function */
-static void plugin_exit_function(s_erc *error)
-{
-	S_CLR_ERR(error);
+/**
+ * @}
+ * end documentation
+ */
 
-	/* free plug-in classes here */
-	_s_phrasing_utt_proc_class_free(error);
-	S_CHK_ERR(error, S_CONTERR,
-			  SPCT_PLUGIN_EXIT_STR,
-			  SPCT_PLUGIN_EXIT_FAIL_STR);
-}
+#endif /* _SPCT_PLUGIN_UTTPROCESSOR_MORPHDECOMP_H__ */

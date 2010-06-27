@@ -5,7 +5,7 @@
 ##                                                                                  ##
 ######################################################################################
 ##                                                                                  ##
-## CMakeList for Normalizer utterance processor plug-in                             ##
+## CMakeList for Syllable tone utterance processor plug-in                          ##
 ##                                                                                  ##
 ##                                                                                  ##
 ######################################################################################
@@ -14,14 +14,14 @@
 #                             Define plug-in                                         #
 #------------------------------------------------------------------------------------#
 
-speect_plugin_definition(Normalization_UttProc "SNormalizationUttProc" 1 0 0)
+speect_plugin_definition(SylTone_UttProc "SSylToneUttProc" 1 0 0)
 
 
 #------------------------------------------------------------------------------------#
 #                        Configure plugin_info.h.in                                  #
 #------------------------------------------------------------------------------------#
 
-set(description "An Utterance Processor class that normalizes the tokens in the utterance Token relation and creates the Word relation with these normalized items")
+set(description "An utterance processor that gets a syllable's tone from the last 'phone' in the syllable, which is actually a tone specification.")
 
 # Minimum required Speect Engine version 
 set(major_min 1)

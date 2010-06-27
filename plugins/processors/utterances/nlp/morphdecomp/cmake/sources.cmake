@@ -5,7 +5,7 @@
 ##                                                                                  ##
 ######################################################################################
 ##                                                                                  ##
-## Source files for Pauses utterance processor plug-in                              ##
+## Source files for Morphdecomp utterance processor plug-in                         ##
 ##                                                                                  ##
 ##                                                                                  ##
 ######################################################################################
@@ -15,13 +15,13 @@
 
 speect_plugin_sources(
   src/plugin.c
-  src/pauses_proc.c
+  src/morphdecomp_proc.c
   )
  
 
 ######## header files ##################
 
 speect_plugin_headers(
-  src/pauses_proc.h
+  src/morphdecomp_proc.h
   )
 

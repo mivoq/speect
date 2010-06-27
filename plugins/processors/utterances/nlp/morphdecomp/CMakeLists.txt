@@ -5,7 +5,7 @@
 ##                                                                                  ##
 ######################################################################################
 ##                                                                                  ##
-## CMakeList for Normalizer utterance processor plug-in                             ##
+## CMakeList for Morphdecomp utterance processor plug-in                             ##
 ##                                                                                  ##
 ##                                                                                  ##
 ######################################################################################
@@ -14,20 +14,27 @@
 #                             Define plug-in                                         #
 #------------------------------------------------------------------------------------#
 
-speect_plugin_definition(Normalization_UttProc "SNormalizationUttProc" 1 0 0)
+speect_plugin_definition(Morphdecom_UttProc "SMorphdecomUttProc" 1 0 0)
 
 
 #------------------------------------------------------------------------------------#
 #                        Configure plugin_info.h.in                                  #
 #------------------------------------------------------------------------------------#
 
-set(description "An Utterance Processor class that normalizes the tokens in the utterance Token relation and creates the Word relation with these normalized items")
+set(description "An Utterance Processor class that does the morphological decomposition of the words in the Word relation. Creates Morphemes and MorphStruct relations")
 
 # Minimum required Speect Engine version 
 set(major_min 1)
 set(minor_min 0)
 
 speect_plugin_configure_info(${description} ${major_min} ${minor_min})
+
+
+#------------------------------------------------------------------------------------#
+#                                 Include g2p                                        #
+#------------------------------------------------------------------------------------#
+
+include(g2p)
 
 
 #------------------------------------------------------------------------------------#

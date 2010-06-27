@@ -72,9 +72,18 @@ cd ..
 
 ########################################################################
 
-echo "--cleaning sylltone--"
+echo "--cleaning syltone--"
 
-cd ./sylltone/
+cd ./syltone/
+./clean_files
+cd ..
+
+
+########################################################################
+
+echo "--cleaning morphdecomp--"
+
+cd ./morphdecomp/
 ./clean_files
 cd ..
 

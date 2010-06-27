@@ -475,12 +475,6 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 							  "Failed to create new 'SList' object"))
 					goto quit_error;
 
-				SListListInit(&syllablesPhones, error);
-				if (S_CHK_ERR(error, S_CONTERR,
-							  "Run",
-							  "Failed to initialize new 'SList' object"))
-					goto quit_error;
-
 				SListAppend(syllablesPhones, S_OBJECT(phones), error);
 				if (S_CHK_ERR(error, S_CONTERR,
 							  "Run",
@@ -501,10 +495,10 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 			goto quit_error;
 
 		/* iterate over syllables */
-		sylItr = SListIterator(syllablesPhones, error);
+		sylItr = S_ITERATOR_GET(syllablesPhones, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "Run",
-					  "Call to \"SListIterator\" failed"))
+					  "Call to \"S_ITERATOR_GET\" failed"))
 			goto quit_error;
 
 		while (sylItr != NULL)
@@ -530,18 +524,18 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 				goto quit_error;
 
 			/* iterate over phones and add segments */
-			phoneItr = SListIterator((SList*)SListIteratorValue(sylItr, error), error);
+			phoneItr = S_ITERATOR_GET((SList*)SIteratorObject(sylItr, error), error);
 			if (S_CHK_ERR(error, S_CONTERR,
 						  "Run",
-						  "Call to \"SListIterator\" failed"))
+						  "Call to \"S_ITERATOR_GET/SIteratorObject\" failed"))
 				goto quit_error;
 
 			while (phoneItr != NULL)
 			{
-				phone = SListIteratorValue(phoneItr, error);
+				phone = SIteratorObject(phoneItr, error);
 				if (S_CHK_ERR(error, S_CONTERR,
 							  "Run",
-							  "Call to \"SListIterator\" failed"))
+							  "Call to \"SIteratorObject\" failed"))
 					goto quit_error;
 
 				segmentItem = SRelationAppend(segmentRel, NULL, error);

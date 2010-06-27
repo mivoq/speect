@@ -10,6 +10,7 @@
 ##   speect_plugin_definition       (Define a plug-in)                              ## 
 ##   speect_plugin_sources          (Add plug-in source files)                      ##
 ##   speect_plugin_headers          (Add plug-in header files)                      ##
+##   speect_plugin_include_dirs     (Add plug-in include directories)               ##
 ##   speect_plugin_create           (Create the plug-in shared object)              ##
 ##   speect_plugin_configure_info   (Configure a plug-in header with information)   ##
 ##   speect_include_plugin          (Include another plug-in in the build)          ##
@@ -129,6 +130,26 @@ macro(speect_plugin_headers)
     list(APPEND ${plugin_lowercase_name}_INCLUDE_FILES ${arg})
   endforeach(arg ${ARGN})
 endmacro(speect_plugin_headers)
+    
+
+#------------------------------------------------------------------------------------#
+#                          Add plug-in include directories                           #
+#------------------------------------------------------------------------------------#
+#
+# speect_plugin_include_dirs(directories)
+#
+# Appends the given list of directories to the plug-in include directories variable, 
+# lowercase_name_INCLUDE_DIRS.
+#
+# :param directories: A list of directories to append to lowercase_name_INCLUDE_DIRS
+# :type headers_list: CMake list
+#
+
+macro(speect_plugin_include_dirs)
+  foreach(arg ${ARGN})
+    list(APPEND ${plugin_lowercase_name}_INCLUDE_DIRS ${arg})
+  endforeach(arg ${ARGN})
+endmacro(speect_plugin_include_dirs)
     
 
 #------------------------------------------------------------------------------------#

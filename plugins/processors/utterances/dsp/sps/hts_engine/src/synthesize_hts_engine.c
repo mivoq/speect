@@ -299,10 +299,10 @@ static void get_trees_pdfs(const SList *trees, const SList *pdfs,
 		return;
 	}
 
-	itr = SListIterator(trees, error);
+	itr = S_ITERATOR_GET(trees, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "get_trees_pdfs",
-				  "Call to \"SListIterator\" failed"))
+				  "Call to \"S_ITERATOR_GET\" failed"))
 	{
 		S_FREE(*ctrees);
 		return;
@@ -314,10 +314,10 @@ static void get_trees_pdfs(const SList *trees, const SList *pdfs,
 		const char *tmp;
 
 
-		tmp = SObjectGetString(SListIteratorValue(itr, error), error);
+		tmp = SObjectGetString(SIteratorObject(itr, error), error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "get_trees_pdfs",
-					  "Call to \"SListIteratorValue/SObjectGetString\" failed"))
+					  "Call to \"SIteratorObject/SObjectGetString\" failed"))
 		{
 			S_FREE(*ctrees);
 			return;
@@ -349,10 +349,10 @@ static void get_trees_pdfs(const SList *trees, const SList *pdfs,
 		return;
 	}
 
-	itr = SListIterator(pdfs, error);
+	itr = S_ITERATOR_GET(pdfs, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "get_trees_pdfs",
-				  "Call to \"SListIterator\" failed"))
+				  "Call to \"S_ITERATOR_GET\" failed"))
 	{
 		S_FREE(*ctrees);
 		S_FREE(*cpdfs);
@@ -365,10 +365,10 @@ static void get_trees_pdfs(const SList *trees, const SList *pdfs,
 		const char *tmp;
 
 
-		tmp = SObjectGetString(SListIteratorValue(itr, error), error);
+		tmp = SObjectGetString(SIteratorObject(itr, error), error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "get_trees_pdfs",
-					  "Call to \"SListIteratorValue/SObjectGetString\" failed"))
+					  "Call to \"SIteratorObject/SObjectGetString\" failed"))
 		{
 			S_FREE(*ctrees);
 			S_FREE(*cpdfs);
@@ -419,10 +419,10 @@ static void get_windows(const SList *windows, char ***cwindows,
 		return;
 	}
 
-	itr = SListIterator(windows, error);
+	itr = S_ITERATOR_GET(windows, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "get_windows",
-				  "Call to \"SListIterator\" failed"))
+				  "Call to \"S_ITERATOR_GET\" failed"))
 	{
 		S_FREE(*cwindows);
 		return;
@@ -434,10 +434,10 @@ static void get_windows(const SList *windows, char ***cwindows,
 		const char *tmp;
 
 
-		tmp = SObjectGetString(SListIteratorValue(itr, error), error);
+		tmp = SObjectGetString(SIteratorObject(itr, error), error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "get_windows",
-					  "Call to \"SListIteratorValue/SObjectGetString\" failed"))
+					  "Call to \"SIteratorObject/SObjectGetString\" failed"))
 		{
 			S_FREE(*cwindows);
 			return;

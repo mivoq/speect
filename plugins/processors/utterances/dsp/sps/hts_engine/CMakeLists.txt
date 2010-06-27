@@ -5,66 +5,52 @@
 ##                                                                                  ##
 ######################################################################################
 ##                                                                                  ##
-## Template CMakeList for Speect Plug-ins                                           ##
+## CMakeList for HTS Engine synthesis utterance processor plug-in                   ##
 ##                                                                                  ##
 ##                                                                                  ##
 ######################################################################################
 
 #------------------------------------------------------------------------------------#
-#                                Project name                                        #
+#                             Define plug-in                                         #
 #------------------------------------------------------------------------------------#
 
-message(STATUS "cmake for project \"HTS Engine synthesis utterance Processor\"")
-project(speect_hts_engine_synth_uttproc_plugin C)
-
-# Plug-in shared object name
-set(PLUGIN_SONAME hts_engine_synth_uttproc)
-
-set(${PLUGIN_SONAME}_VERSION_MAJOR 0)
-set(${PLUGIN_SONAME}_VERSION_MINOR 9)
-set(${PLUGIN_SONAME}_VERSION_PATCH 0)
-set(${PLUGIN_SONAME}_VERSION "${${PLUGIN_SONAME}_VERSION_MAJOR}.${${PLUGIN_SONAME}_VERSION_MINOR}.${${PLUGIN_SONAME}_VERSION_PATCH}")
+speect_plugin_definition(HTS_Engine_Synth_UttProc "SHTSEngineSynthUttProc" 1 0 0)
 
 
 #------------------------------------------------------------------------------------#
-#                             Get all CMake modules                                  #
+#                        Configure plugin_info.h.in                                  #
 #------------------------------------------------------------------------------------#
 
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+set(description "An utterance processor to do HTS Engine synthesis of a segment relation stream.")
+
+# Minimum required Speect Engine version 
+set(major_min 1)
+set(minor_min 0)
+
+speect_plugin_configure_info(${description} ${major_min} ${minor_min})
+
+
+#------------------------------------------------------------------------------------#
+#                        Include audio and HTS Engine                                #
+#------------------------------------------------------------------------------------#
+
+include(audio)
+
+speect_plugin_include_dirs(${HTS_ENGINE_INCLUDE})
+
+
+#------------------------------------------------------------------------------------#
+#                               Source files                                         #
+#------------------------------------------------------------------------------------#
 
 # Lists of all the source files
 include(sources)
 
 
 #------------------------------------------------------------------------------------#
-#                                   Includes                                         #
-#------------------------------------------------------------------------------------#
-
-include(audio)
-
-list(APPEND ${PLUGIN_SONAME}_INCLUDE_DIRS
-  ${HTS_ENGINE_INCLUDE}
-  )
-
-
-#------------------------------------------------------------------------------------#
 #                        Plug-in shared object                                       #
 #------------------------------------------------------------------------------------#
 
-# Library build configuration
-include(plugin)
-
-target_link_libraries(${PLUGIN_SONAME}_plugin ${HTS_ENGINE_LIB})
-
-# add dependencies
-add_dependencies(${PLUGIN_SONAME}_plugin audio_plugin)
-
-#------------------------------------------------------------------------------------#
-#                                   examples                                         #
-#------------------------------------------------------------------------------------#
-
-#if(WANT_EXAMPLES)
-#  add_subdirectory(examples)
-#endif(WANT_EXAMPLES)
+speect_plugin_create()
 
 

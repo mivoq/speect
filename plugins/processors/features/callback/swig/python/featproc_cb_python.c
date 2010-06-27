@@ -206,6 +206,8 @@
 
 %pythoncode
 %{
+import speect
+
 def callback(callback_function):
     """
     callback(callback_function)
@@ -226,6 +228,10 @@ def callback(callback_function):
     """
   
     return _s_featproc_cb_new(callback_function)
+
+
+# add the functions to the Speect SFeatProcessor class
+setattr(speect.SFeatProcessor, "callback", staticmethod(callback))
 %}
 
 

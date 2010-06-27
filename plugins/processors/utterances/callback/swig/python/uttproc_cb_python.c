@@ -34,86 +34,15 @@
 /*                                                                                  */
 /************************************************************************************/
 
-%define suttproc_cb_new_DOCSTRING
-"""
-callback(callback_function)
 
-Create a new utterance processor that has a Python function as a callback. When
-this newly created utterance processor's ``run`` method is called, the Python
-function will be called with the arguments as supplied to the utterance processor.
-The Python callback must take one argument, an utterance (:class:`speect.SUtterance`),
-and must not return anything. The utterance can be modified in place.
-
-
-:param callback_function: A Python function that will be used as a callback
-                          function when this utterance processor's ``run`` method
-                          is called.
-:type callback_function: A callable function
-"""
-%enddef
-
-%feature("autodoc", suttproc_cb_new_DOCSTRING) suttproc_cb_new;
-
-
-
-%include "exception.i"
+/************************************************************************************/
+/*                                                                                  */
+/* Inline helper functions                                                          */
+/*                                                                                  */
+/************************************************************************************/
 
 %inline
 %{
-	static char *get_python_err(void)
-	{
-		PyObject *pyErr;
-		PyObject *ptype;
-		PyObject *pvalue;
-		PyObject *ptraceback;
-		PyObject *errorStr;
-		const char *perror;
-		char *rerror;
-		s_erc error;
-
-
-		S_CLR_ERR(&error);
-		pyErr = PyErr_Occurred();
-		if (pyErr == NULL)
-		{
-			rerror = s_strdup("No error", &error);
-			return rerror;
-		}
-
-		PyErr_Fetch(&ptype, &pvalue, &ptraceback);
-		if (ptype == NULL)
-		{
-			rerror = s_strdup("Unknown error", &error);
-			return rerror;
-		}
-
-		PyErr_NormalizeException(&ptype, &pvalue, &ptraceback);
-		if (ptype == NULL)
-		{
-			rerror = s_strdup("Unknown error", &error);
-			return rerror;
-		}
-
-		errorStr = PyObject_Str(ptype);
-		if (errorStr == NULL)
-		{
-			rerror = s_strdup("Unknown error", &error);
-			return rerror;
-		}
-
-		perror = PyString_AsString(errorStr);
-		if (perror == NULL)
-		{
-			rerror = s_strdup("Unknown error", &error);
-			return rerror;
-		}
-
-		rerror = s_strdup(perror, &error);
-		Py_XDECREF(errorStr);
-		return rerror;
-	}
-
-
 	/*
 	 * Function that executes the Python callback
 	 * by calling PyObject_CallObject
@@ -133,15 +62,34 @@ and must not return anything. The utterance can be modified in place.
 		 * not own the SObject/PyObject
 		 */
 		pyUtt = SWIG_NewPointerObj((void*)utt, SWIGTYPE_p_SUtterance, 0);
+		if (pyUtt == NULL)
+		{
+			S_CTX_ERR(error, S_FAILURE,
+					  "execute_python_callback",
+					  "Call to \"SWIG_NewPointerObj\" failed");
+			return;
+		}
 
 		/* create argument list */
 		arglist = Py_BuildValue("(O)", pyUtt);
 		if (arglist == NULL) /* callback function failed */
 		{
-			S_CTX_ERR(error, S_FAILURE,
-					  "execute_python_callback",
-					  "Call to \"Py_BuildValue\" failed");
-			return;
+			char *py_error = s_get_python_error_str();
+
+			if (py_error)
+			{
+				S_CTX_ERR(error, S_FAILURE,
+						  "execute_python_callback",
+						  "Call to \"Py_BuildValue\" failed. Reported error: %s",
+						  py_error);
+				S_FREE(py_error);
+			}
+			else
+			{
+				S_CTX_ERR(error, S_FAILURE,
+						  "execute_python_callback",
+						  "Call to \"Py_BuildValue\" failed");
+			}
 		}
 
 		/* call Python and execute the function */
@@ -155,7 +103,7 @@ and must not return anything. The utterance can be modified in place.
 			char *py_error;
 
 
-			py_error = get_python_err();
+			py_error = s_get_python_error_str();
 			if (py_error != NULL)
 			{
 				S_CTX_ERR(error, S_FAILURE,
@@ -172,7 +120,7 @@ and must not return anything. The utterance can be modified in place.
 		}
 
 		/* this should be None */
-		Py_CLEAR(result);
+		Py_DECREF(result);
 	}
 
 
@@ -188,11 +136,11 @@ and must not return anything. The utterance can be modified in place.
 		/* decrement the reference count, we don't need
 		 * this function anymore
 		 */
-		Py_XDECREF(callback_func);
+		Py_DECREF(callback_func);
 	}
 
 
-	SUttProcessor *suttproc_cb_new(PyObject *callback_func, s_erc *error)
+	SUttProcessor *_s_uttproc_cb_new(PyObject *callback_func, s_erc *error)
 	{
 		SUttProcessorCB *uttProcPy;
 
@@ -201,7 +149,7 @@ and must not return anything. The utterance can be modified in place.
 		if (!PyCallable_Check(callback_func))
 		{
 			S_CTX_ERR(error, S_FAILURE,
-					  "suttproc_cb_new",
+					  "_s_uttproc_cb_new",
 					  "Given callback function failed \"PyCallable_Check\"");
 			return NULL;
 		}
@@ -215,7 +163,7 @@ and must not return anything. The utterance can be modified in place.
 		if (!S_UTTPROCESSOR_CB_METH_VALID(uttProcPy, set_callback))
 		{
 			S_CTX_ERR(error, S_FAILURE,
-					  "suttproc_cb_new",
+					  "_s_uttproc_cb_new",
 					  "SUttProcessorCB method \"set_callback\" not implemented");
 			S_DELETE(uttProcPy, "py_suttproc_cb_new", error);
 			return NULL;
@@ -237,15 +185,40 @@ and must not return anything. The utterance can be modified in place.
 
 		return S_UTTPROCESSOR(uttProcPy);
 	}
-/*
- * Do not delete this delimiter, required for SWIG
- */
 %}
+
+
+/************************************************************************************/
+/*                                                                                  */
+/* Extend the SUttProcessor class                                                   */
+/*                                                                                  */
+/************************************************************************************/
 
 %pythoncode
 %{
+import speect
+
+def callback(callback_function):
+    """
+    callback(callback_function)
+
+    Create a new utterance processor that has a Python function as a callback. When
+    this newly created feature processor's ``run`` method is called, the Python
+    function will be called with the arguments as supplied to the utterance processor.
+    The Python callback must take one argument, an utterance (:class:`speect.SUtterance`),
+    and must not return anything. The utterance can be modified in place.
+
+    :param callback_function: A Python function that will be used as a callback
+                              function when this utterance processor's ``run`` method
+                              is called.
+    :type callback_function: A callable function
+    """
+
+
+    return _s_uttproc_cb_new(callback_function)
+
 
 # add the functions to the Speect SUttProcessor class
-setattr(speect.SUttProcessor, "callback", staticmethod(suttproc_cb_new))
-
+setattr(speect.SUttProcessor, "callback", staticmethod(callback))
 %}
+

@@ -21,7 +21,7 @@ speect_plugin_definition(Lexlookup_UttProc "SLexlookupUttProc" 1 0 0)
 #                        Configure plugin_info.h.in                                  #
 #------------------------------------------------------------------------------------#
 
-set(description "n Utterance Processor class that does the lexical lookup (addendum, lexicon, g2p) of the words in the Word relation. Creates SylStructure, Syllable, and Phone relations")
+set(description "An Utterance Processor class that does the lexical lookup (addendum, lexicon, g2p) of the words in the Word relation. Creates SylStructure, Syllable, and Phone relations")
 
 # Minimum required Speect Engine version 
 set(major_min 1)

@@ -5,7 +5,7 @@
 ##                                                                                  ##
 ######################################################################################
 ##                                                                                  ##
-## Source files for Feature Processor CallbackPhoneset plug-in                      ##                                                                                  ##
+## Source files for Feature Processor Callback plug-in                              ##                                                                                  ##
 ##                                                                                  ##
 ######################################################################################
 
@@ -15,7 +15,6 @@
 speect_plugin_sources(
   src/plugin.c
   src/featproc_callback.c
- 
   )
  
 

@@ -5,24 +5,22 @@
 ##                                                                                  ##
 ######################################################################################
 ##                                                                                  ##
-## Template CMake source files for Speect plug-ins                                  ##
-##                                                                                  ##
+## Source files for Utterance Processor Callback plug-in                            ##                                                                                  ##
 ##                                                                                  ##
 ######################################################################################
 
 
 ######## source files ##################
 
-set(${PLUGIN_SONAME}_SRC_FILES
+speect_plugin_sources(
   src/plugin.c
   src/uttproc_callback.c
- 
   )
  
 
 ######## header files ##################
 
-set(${PLUGIN_SONAME}_INCLUDE_FILES
+speect_plugin_headers(
   src/uttproc_callback.h
   )
 

@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2009 The Department of Arts and Culture,                           */
+/* Copyright (c) 2010 The Department of Arts and Culture,                           */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -24,7 +24,7 @@
 /************************************************************************************/
 /*                                                                                  */
 /* AUTHOR  : Aby Louw                                                               */
-/* DATE    : December 2009                                                          */
+/* DATE    : June 2010                                                              */
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
@@ -34,194 +34,15 @@
 /*                                                                                  */
 /************************************************************************************/
 
-%define sfeatproc_cb_new_DOCSTRING
-"""
-callback(callback_function)
 
-Create a new feature processor that has a Python function as a callback. When
-this newly created feature processor's ``run`` method is called, the Python
-function will be called with the arguments as supplied to the feature processor.
-The Python callback must take one argument, an item (:class:`speect.SItem`),
-and return a single object, which will be considered the extracted feature. The
-input item argument must be considered as constant (in the C sense) and not
-modified in any way.
+/************************************************************************************/
+/*                                                                                  */
+/* Inline helper functions                                                          */
+/*                                                                                  */
+/************************************************************************************/
 
-:param callback_function: A Python function that will be used as a callback
-                          function when this feature processor's ``run`` method
-                          is called.
-:type callback_function: A callable function
-:return: Extracted feature.
-"""
-%enddef
-
-%feature("autodoc", sfeatproc_cb_new_DOCSTRING) sfeatproc_cb_new;
-
-
-
-%include "exception.i"
-
-
-/*
- * Do not delete these delimiters, required for SWIG
- */
 %inline
 %{
-	/*
-	 * FIXME: fpc_pyobject_2_sobject come from
-	 * speect/engine/swig/python/primitives.c (as pyobject_2_sobject)
-	 * Don't know how to include it here.
-	 */
-
-	SObject *fpc_pyobject_2_sobject(PyObject *pobject, s_erc *error)
-	{
-		SObject *object;
-		int res;
-		void *argp;
-
-
-		if (pobject == Py_None)
-			return NULL;
-
-		res = SWIG_ConvertPtr(pobject, &argp,SWIGTYPE_p_SObject, SWIG_POINTER_DISOWN|0);
-		if (SWIG_IsOK(res))
-		{
-			/* it's a speect object */
-			object = (SObject*)argp;
-			return object;
-		}
-
-		/* it's a python object */
-		if (PyObject_IsInstance(pobject, (PyObject*)&PyInt_Type))
-		{
-			sint32 tmp;
-
-
-			tmp = (sint32)PyLong_AsLong(pobject);
-			object = SObjectSetInt(tmp, error);
-			if (*error != S_SUCCESS)
-				return NULL;
-
-			return object;
-		}
-
-		if (PyObject_IsInstance(pobject, (PyObject*)&PyFloat_Type))
-		{
-			float tmp;
-
-
-			tmp = (float)PyFloat_AsDouble(pobject);
-			object = SObjectSetFloat(tmp, error);
-			if (*error != S_SUCCESS)
-				return NULL;
-
-			return object;
-		}
-
-		if (PyObject_IsInstance(pobject, (PyObject*)&PyString_Type))
-		{
-			const char *tmp;
-
-
-			tmp = PyString_AsString(pobject);
-			object = SObjectSetString(tmp, error);
-			if (*error != S_SUCCESS)
-				return NULL;
-
-			return object;
-		}
-
-		if (PyObject_IsInstance(pobject, (PyObject*)&PyUnicode_Type))
-		{
-			PyObject *ustring;
-			const char *tmp;
-
-
-			ustring = PyUnicode_AsUTF8String(pobject);
-			if (ustring == NULL)
-			{
-				S_CTX_ERR(error, S_FAILURE,
-						  "fpc_pyobject_2_sobject",
-						  "Call to \"PyUnicode_AsUTF8String\" failed");
-				return NULL;
-			}
-
-			tmp = PyString_AsString(ustring);
-			object = SObjectSetString(tmp, error);
-			if (*error != S_SUCCESS)
-				return NULL;
-
-			Py_XDECREF(ustring);
-			return object;
-		}
-
-		/*
-		 * Not a simple object, make a SPyObject SVoid type, note
-		 * that the SPyObject plug-in must be loaded for this to work,
-		 *
-		 * >>> import speect.pyobject
-		 *
-		 */
-		object = SObjectSetVoid("SPyObject", (void*)pobject, error);
-		if (*error != S_SUCCESS)
-			return NULL;
-
-		return object;
-	}
-
-
-	static char *get_python_err(void)
-	{
-		PyObject *pyErr;
-		PyObject *ptype;
-		PyObject *pvalue;
-		PyObject *ptraceback;
-		PyObject *errorStr;
-		const char *perror;
-		char *rerror;
-		s_erc error;
-
-
-		S_CLR_ERR(&error);
-		pyErr = PyErr_Occurred();
-		if (pyErr == NULL)
-		{
-			rerror = s_strdup("No error", &error);
-			return rerror;
-		}
-
-		PyErr_Fetch(&ptype, &pvalue, &ptraceback);
-		if (ptype == NULL)
-		{
-			rerror = s_strdup("Unknown error", &error);
-			return rerror;
-		}
-
-		PyErr_NormalizeException(&ptype, &pvalue, &ptraceback);
-		if (ptype == NULL)
-		{
-			rerror = s_strdup("Unknown error", &error);
-			return rerror;
-		}
-
-		errorStr = PyObject_Str(ptype);
-		if (errorStr == NULL)
-		{
-			rerror = s_strdup("Unknown error", &error);
-			return rerror;
-		}
-
-		perror = PyString_AsString(errorStr);
-		if (perror == NULL)
-		{
-			rerror = s_strdup("Unknown error", &error);
-			return rerror;
-		}
-
-		rerror = s_strdup(perror, &error);
-		Py_XDECREF(errorStr);
-		return rerror;
-	}
-
 
 	/*
 	 * Function that executes the Python callback
@@ -239,18 +60,37 @@ modified in any way.
 		func = (PyObject*)sfunction;
 
 		/* Create a PyObject from the SObject, flag = 0 (Python does
-		 * not own the SObject/PyObject
+		 * not own the pyItem
 		 */
-		pyItem = SWIG_NewPointerObj((void*)item, SWIGTYPE_p_SItem, 0);
+		pyItem = SWIG_NewPointerObj(S_VOIDPTR(item), SWIGTYPE_p_SItem, 0);
+		if (pyItem == NULL)
+		{
+			S_CTX_ERR(error, S_FAILURE,
+					  "execute_python_callback",
+					  "Call to \"SWIG_NewPointerObj\" failed");
+			return NULL;
+		}
 
 		/* create argument list */
 		arglist = Py_BuildValue("(O)", pyItem);
 		if (arglist == NULL) /* callback function failed */
 		{
-			S_CTX_ERR(error, S_FAILURE,
-					  "execute_python_callback",
-					  "Call to \"Py_BuildValue\" failed");
-			return NULL;
+			char *py_error = s_get_python_error_str();
+
+			if (py_error)
+			{
+				S_CTX_ERR(error, S_FAILURE,
+						  "execute_python_callback",
+						  "Call to \"Py_BuildValue\" failed. Reported error: %s",
+						  py_error);
+				S_FREE(py_error);
+			}
+			else
+			{
+				S_CTX_ERR(error, S_FAILURE,
+						  "execute_python_callback",
+						  "Call to \"Py_BuildValue\" failed");
+			}
 		}
 
 		/* call Python and execute the function */
@@ -264,7 +104,7 @@ modified in any way.
 			char *py_error;
 
 
-			py_error = get_python_err();
+			py_error = s_get_python_error_str();
 			if (py_error != NULL)
 			{
 				S_CTX_ERR(error, S_FAILURE,
@@ -283,14 +123,12 @@ modified in any way.
 		}
 
 		/* convert result to Speect object */
-		retval = fpc_pyobject_2_sobject(result, error);
+		retval = s_pyobject_2_sobject(result, error);
+		Py_DECREF(result);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "execute_python_callback",
 					  "Call to \"fpc_pyobject_2_sobject\" failed"))
 			retval = NULL;
-
-		/* we don't need the result object anymore */
-		Py_CLEAR(result);
 
 		return retval;
 	}
@@ -308,11 +146,11 @@ modified in any way.
 		/* decrement the reference count, we don't need
 		 * this function anymore
 		 */
-		Py_XDECREF(callback_func);
+		Py_DECREF(callback_func);
 	}
 
 
-	SFeatProcessor *sfeatproc_cb_new(PyObject *callback_func, s_erc *error)
+	SFeatProcessor *_s_featproc_cb_new(PyObject *callback_func, s_erc *error)
 	{
 		SFeatProcessorCB *featProcPy;
 
@@ -321,7 +159,7 @@ modified in any way.
 		if (!PyCallable_Check(callback_func))
 		{
 			S_CTX_ERR(error, S_FAILURE,
-					  "sfeatproc_cb_new",
+					  "_s_featproc_cb_new",
 					  "Given callback function failed \"PyCallable_Check\"");
 			return NULL;
 		}
@@ -335,7 +173,7 @@ modified in any way.
 		if (!S_FEATPROCESSOR_CB_METH_VALID(featProcPy, set_callback))
 		{
 			S_CTX_ERR(error, S_FAILURE,
-					  "sfeatproc_cb_new",
+					  "_s_featproc_cb_new",
 					  "SFeatProcessorCB method \"set_callback\" not implemented");
 			S_DELETE(featProcPy, "sfeatproc_cb_new", error);
 			return NULL;
@@ -348,7 +186,7 @@ modified in any way.
 														  error);
 		if (*error != S_SUCCESS)
 		{
-			S_DELETE(featProcPy, "sfeatproc_cb_new", error);
+			S_DELETE(featProcPy, "_s_featproc_cb_new", error);
 			return NULL;
 		}
 
@@ -357,16 +195,41 @@ modified in any way.
 
 		return S_FEATPROCESSOR(featProcPy);
 	}
-/*
- * Do not delete this delimiter, required for SWIG
- */
 %}
 
+
+/************************************************************************************/
+/*                                                                                  */
+/* Extend the SFeatProcessor class                                                  */
+/*                                                                                  */
+/************************************************************************************/
 
 %pythoncode
 %{
+def callback(callback_function):
+    """
+    callback(callback_function)
 
-# add the functions to the Speect SFeatProcessor class
-setattr(speect.SFeatProcessor, "callback", staticmethod(sfeatproc_cb_new))
-
+    Create a new feature processor that has a Python function as a callback. When
+    this newly created feature processor's ``run`` method is called, the Python
+    function will be called with the arguments as supplied to the feature processor.
+    The Python callback must take one argument, an item (:class:`speect.SItem`),
+    and return a single object, which will be considered the extracted feature. The
+    input item argument must be considered as constant (in the C sense) and not
+    modified in any way.
+    
+    :param callback_function: A Python function that will be used as a callback
+                              function when this feature processor's ``run`` method
+                              is called.
+    :type callback_function: A callable function
+    :return: Extracted feature.
+    """
+  
+    return _s_featproc_cb_new(callback_function)
 %}
+
+
+
+
+
+

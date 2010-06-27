@@ -5,7 +5,7 @@
 ##                                                                                  ##
 ######################################################################################
 ##                                                                                  ##
-## Template CMakeList for Speect Plug-ins                                           ##
+## CMakeList for Lwazi Zul syllabification plug-in                                  ##
 ##                                                                                  ##
 ##                                                                                  ##
 ######################################################################################
@@ -14,30 +14,24 @@
 #                                Project name                                        #
 #------------------------------------------------------------------------------------#
 
-message(STATUS "cmake for project \"isiZulu Lwazi Syllabification\"")
-project(speect_syll_zul_lwazi_plugin C)
-
-# Plug-in shared object name
-set(PLUGIN_SONAME syll_zul_lwazi)
-
-set(${PLUGIN_SONAME}_VERSION_MAJOR 0)
-set(${PLUGIN_SONAME}_VERSION_MINOR 9)
-set(${PLUGIN_SONAME}_VERSION_PATCH 0)
-set(${PLUGIN_SONAME}_VERSION "${${PLUGIN_SONAME}_VERSION_MAJOR}.${${PLUGIN_SONAME}_VERSION_MINOR}.${${PLUGIN_SONAME}_VERSION_PATCH}")
+speect_plugin_definition(Syll_Zul_Lwazi "SSyllabZulLwazi" 1 0 0)
 
 
 #------------------------------------------------------------------------------------#
-#                             Get all CMake modules                                  #
+#                        Configure plugin_info.h.in                                  #
 #------------------------------------------------------------------------------------#
 
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+set(description "An isiZulu syllabification class implementation for the Lwazi project")
 
-# Lists of all the source files
-include(sources)
+# Minimum required Speect Engine version 
+set(major_min 1)
+set(minor_min 0)
+
+speect_plugin_configure_info(${description} ${major_min} ${minor_min})
 
 
 #------------------------------------------------------------------------------------#
-#                          Include syllabification                                   #
+#                            Include lexical plug-ins                                #
 #------------------------------------------------------------------------------------#
 
 include(syllabification)
@@ -45,22 +39,16 @@ include(phoneset)
 
 
 #------------------------------------------------------------------------------------#
+#                               Source files                                         #
+#------------------------------------------------------------------------------------#
+
+# Lists of all the source files
+include(sources)
+
+
+#------------------------------------------------------------------------------------#
 #                        Plug-in shared object                                       #
 #------------------------------------------------------------------------------------#
 
-# Library build configuration
-include(plugin)
-
-# add dependency
-add_dependencies(${PLUGIN_SONAME}_plugin syllabification_plugin)
-add_dependencies(${PLUGIN_SONAME}_plugin phoneset_plugin)
-
-
-#------------------------------------------------------------------------------------#
-#                                   examples                                         #
-#------------------------------------------------------------------------------------#
-
-#if(WANT_EXAMPLES)
-#  add_subdirectory(examples)
-#endif(WANT_EXAMPLES)
+speect_plugin_create()
 

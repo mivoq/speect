@@ -227,25 +227,12 @@ static SList *Syllabify(const SItem *word, const SList *phoneList, s_erc *error)
 				  "Failed to create new 'SList' object"))
 		goto quit_error;
 
-	SListListInit(&syllables, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "Syllabify",
-				  "Failed to initialize new 'SList' object"))
-		goto quit_error;
-
 	/* create syllable */
 	syl = (SList*)S_NEW("SListList", error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Syllabify",
 				  "Failed to create new 'SList' object"))
 		goto quit_error;
-
-	SListListInit(&syl, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "Syllabify",
-				  "Failed to initialize new 'SList' object"))
-		goto quit_error;
-
 
 	SListPush(syllables, S_OBJECT(syl), error);
 	if (S_CHK_ERR(error, S_CONTERR,
@@ -319,12 +306,6 @@ static SList *Syllabify(const SItem *word, const SList *phoneList, s_erc *error)
 					if (S_CHK_ERR(error, S_CONTERR,
 								  "Syllabify",
 								  "Failed to create new 'SList' object"))
-						goto quit_error;
-
-					SListListInit(&syl, error);
-					if (S_CHK_ERR(error, S_CONTERR,
-								  "Syllabify",
-								  "Failed to initialize new 'SList' object"))
 						goto quit_error;
 
 					SListPush(syllables, S_OBJECT(syl), error);
@@ -435,12 +416,6 @@ static SList *Syllabify(const SItem *word, const SList *phoneList, s_erc *error)
 									  "Failed to create new 'SList' object"))
 							goto quit_error;
 
-						SListListInit(&syl, error);
-						if (S_CHK_ERR(error, S_CONTERR,
-									  "Syllabify",
-									  "Failed to initialize new 'SList' object"))
-							goto quit_error;
-
 						SListPush(syllables, S_OBJECT(syl), error);
 						if (S_CHK_ERR(error, S_CONTERR,
 									  "Syllabify",
@@ -473,12 +448,6 @@ static SList *Syllabify(const SItem *word, const SList *phoneList, s_erc *error)
 				if (S_CHK_ERR(error, S_CONTERR,
 							  "Syllabify",
 							  "Failed to create new 'SList' object"))
-					goto quit_error;
-
-				SListListInit(&syl, error);
-				if (S_CHK_ERR(error, S_CONTERR,
-							  "Syllabify",
-							  "Failed to initialize new 'SList' object"))
 					goto quit_error;
 
 				SListPush(syllables, S_OBJECT(syl), error);

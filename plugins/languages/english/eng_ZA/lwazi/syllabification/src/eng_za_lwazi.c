@@ -465,18 +465,18 @@ static s_bool test_phone_cluster(const SPhoneset *phoneset, const char *cluster,
 				  "Call to \"S_CAST (SList)\" failed"))
 		return FALSE;
 
-	itr = SListIterator(clusterList, error);
+	itr = S_ITERATOR_GET(clusterList, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "test_phone_cluster",
-				  "Call to \"SListIterator\" failed"))
+				  "Call to \"S_ITERATOR_GET\" failed"))
 		return FALSE;
 
 	while (itr != NULL)
 	{
-		tmp = SListIteratorValue(itr, error);
+		tmp = SIteratorObject(itr, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "test_phone_cluster",
-					  "Call to \"SListIteratorValue\" failed"))
+					  "Call to \"SIteratorObject\" failed"))
 			return FALSE;
 
 		wellformed = SObjectGetString(tmp, error);
@@ -614,12 +614,6 @@ static void pop_CV(SList *syllables, SList **syl, s_erc *error)
 				  "Failed to create new 'SList' object"))
 		return;
 
-	SListListInit(&nextSyl, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "pop_CV",
-				  "Failed to initialize new 'SList' object"))
-		return;
-
 	SListPush(nextSyl, SListPop((*syl), error), error); /* V */
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "pop_CV",
@@ -662,12 +656,6 @@ static void pop_CCV(SList *syllables, SList **syl, s_erc *error)
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "pop_CCV",
 				  "Failed to create new 'SList' object"))
-		return;
-
-	SListListInit(&nextSyl, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "pop_CCV",
-				  "Failed to initialize new 'SList' object"))
 		return;
 
 	SListPush(nextSyl, SListPop((*syl), error), error); /* V */
@@ -718,12 +706,6 @@ static void pop_CCCV(SList *syllables, SList **syl, s_erc *error)
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "pop_CCV",
 				  "Failed to create new 'SList' object"))
-		return;
-
-	SListListInit(&nextSyl, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "pop_CCV",
-				  "Failed to initialize new 'SList' object"))
 		return;
 
 	SListPush(nextSyl, SListPop((*syl), error), error); /* V */
@@ -1472,12 +1454,6 @@ static void process_VV(SList *syllables, SList **syl,
 				  "Failed to create new 'SListList' object"))
 		return;
 
-	SListListInit(&nextSyl, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "process_VV",
-				  "Failed to initialize new 'SListList' object"))
-		return;
-
 	SListPush(nextSyl, SListPop((*syl), error), error); /* V */
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "process_VV",
@@ -1686,25 +1662,12 @@ static SList *Syllabify(const SItem *word, const SList *phoneList, s_erc *error)
 				  "Failed to create new 'SList' object"))
 		goto quit_error;
 
-	SListListInit(&syllables, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "Syllabify",
-				  "Failed to initialize new 'SList' object"))
-		goto quit_error;
-
 	/* create syllable */
 	syl = (SList*)S_NEW("SListList", error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Syllabify",
 				  "Failed to create new 'SList' object"))
 		goto quit_error;
-
-	SListListInit(&syl, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "Syllabify",
-				  "Failed to initialize new 'SList' object"))
-		goto quit_error;
-
 
 	SListPush(syllables, S_OBJECT(syl), error);
 	if (S_CHK_ERR(error, S_CONTERR,
@@ -1957,8 +1920,6 @@ static SList *Syllabify(const SItem *word, const SList *phoneList, s_erc *error)
 					  "Call to \"SListSize\" failed"))
 			goto quit_error;
 	}
-
-
 
 	/* check if there are any phones in the last syllable */
 	list_size = SListSize(syl, error);

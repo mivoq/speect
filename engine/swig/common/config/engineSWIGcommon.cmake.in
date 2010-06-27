@@ -18,7 +18,6 @@
 #------------------------------------------------------------------------------------#
 
 set(SPCT_SWIG_COMMON_SRC_FILES
-  "${CMAKE_SOURCE_DIR}/engine/swig/common/feat_processor_common.c"
   "${CMAKE_SOURCE_DIR}/engine/swig/common/item_common.c"
   "${CMAKE_SOURCE_DIR}/engine/swig/common/iterator_common.c"
   "${CMAKE_SOURCE_DIR}/engine/swig/common/map_common.c"

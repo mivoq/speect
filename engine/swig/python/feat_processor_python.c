@@ -28,7 +28,7 @@
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* SWIG common C convenience functions for SFeatProcessor.                          */
+/* C convenience functions for SFeatProcessor Python wrapper.                       */
 /*                                                                                  */
 /*                                                                                  */
 /*                                                                                  */
@@ -43,20 +43,28 @@ typedef struct
 
 %nodefaultdtor SFeatProcessor;
 
-
 %types(SFeatProcessor = SObject);
 
 %extend SFeatProcessor
 {
-	SObject *run(const SItem *item, s_erc *error)
+	PyObject *run(const SItem *item, s_erc *error)
 	{
 		SObject *featObject;
+		PyObject *pobject;
 
 
 		featObject = SFeatProcessorRun($self, item, error);
 		if (*error != S_SUCCESS)
 			return NULL;
 
-		return featObject;
+		/* Python owns it, TRUE */
+		pobject = s_sobject_2_pyobject(featObject, TRUE, error);
+		if (*error != S_SUCCESS)
+		{
+			S_DELETE(featObject, "SFeatProcessor::run", error);
+			return NULL;
+		}
+
+		return pobject;
 	}
 };

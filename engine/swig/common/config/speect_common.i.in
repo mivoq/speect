@@ -117,5 +117,3 @@
 /* SUttProcessor */
 %include "${CMAKE_SOURCE_DIR}/engine/swig/common/utt_processor_common.c"
 
-/* SFeatProcessor */
-%include "${CMAKE_SOURCE_DIR}/engine/swig/common/feat_processor_common.c"

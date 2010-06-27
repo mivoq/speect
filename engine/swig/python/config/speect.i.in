@@ -114,6 +114,7 @@
 %include "${CMAKE_SOURCE_DIR}/engine/swig/python/relation_python.c"
 %include "${CMAKE_SOURCE_DIR}/engine/swig/python/map_python.c"
 %include "${CMAKE_SOURCE_DIR}/engine/swig/python/list_python.c"
+%include "${CMAKE_SOURCE_DIR}/engine/swig/python/feat_processor_python.c"
 %include "${CMAKE_SOURCE_DIR}/engine/swig/python/item_python.c"
 %include "${CMAKE_SOURCE_DIR}/engine/swig/python/voice_python.c"
 %include "${CMAKE_SOURCE_DIR}/engine/swig/python/native_python.c"

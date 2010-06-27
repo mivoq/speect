@@ -1,7 +1,19 @@
+######################################################################################
+##                                                                                  ##
+## AUTHOR  : Aby Louw                                                               ##
+## DATE    : 11 June 2010                                                           ##
+##                                                                                  ##
+######################################################################################
+##                                                                                  ##
+## CMakeList for nlp feature processors plug-ins                                    ##
+##                                                                                  ##
+##                                                                                  ##
+######################################################################################
 
 #------------------------------------------------------------------------------------#
 #                        Plug-in directories                                         #
 #------------------------------------------------------------------------------------#
+
 add_subdirectory(segment_duration)
 add_subdirectory(segment_end)
 add_subdirectory(segment_mid)
@@ -45,3 +57,7 @@ add_subdirectory(phrase_pos_utt_rev)
 add_subdirectory(utt_num_syls)
 add_subdirectory(utt_num_words)
 add_subdirectory(utt_num_phrases)
+
+if(HTS_ENGINE_INCLUDE AND HTS_ENGINE_LIB)
+  add_subdirectory(hts_labels)
+endif(HTS_ENGINE_INCLUDE AND HTS_ENGINE_LIB)

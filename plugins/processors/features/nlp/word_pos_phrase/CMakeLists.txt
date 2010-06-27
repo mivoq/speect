@@ -5,32 +5,34 @@
 ##                                                                                  ##
 ######################################################################################
 ##                                                                                  ##
-## Template CMakeList for Speect Plug-ins                                           ##
+## Source files for Word position in phrase feature processor plug-in               ##
 ##                                                                                  ##
 ##                                                                                  ##
 ######################################################################################
 
 #------------------------------------------------------------------------------------#
-#                                Project name                                        #
+#                             Define plug-in                                         #
 #------------------------------------------------------------------------------------#
 
-message(STATUS "cmake for project \"Word Pos Phrase Feature Processor\"")
-project(speect_word_pos_phrase_featproc_plugin C)
-
-# Plug-in shared object name
-set(PLUGIN_SONAME word_pos_phrase_featproc)
-
-set(${PLUGIN_SONAME}_VERSION_MAJOR 0)
-set(${PLUGIN_SONAME}_VERSION_MINOR 9)
-set(${PLUGIN_SONAME}_VERSION_PATCH 0)
-set(${PLUGIN_SONAME}_VERSION "${${PLUGIN_SONAME}_VERSION_MAJOR}.${${PLUGIN_SONAME}_VERSION_MINOR}.${${PLUGIN_SONAME}_VERSION_PATCH}")
+speect_plugin_definition(Word_Pos_Phrase_FeatProc "SWordPosPhraseFeatProc" 1 0 0)
 
 
 #------------------------------------------------------------------------------------#
-#                             Get all CMake modules                                  #
+#                        Configure plugin_info.h.in                                  #
 #------------------------------------------------------------------------------------#
 
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+set(description "The position of the given word in it's phrase.")
+
+# Minimum required Speect Engine version 
+set(major_min 1)
+set(minor_min 0)
+
+speect_plugin_configure_info(${description} ${major_min} ${minor_min})
+
+
+#------------------------------------------------------------------------------------#
+#                               Source files                                         #
+#------------------------------------------------------------------------------------#
 
 # Lists of all the source files
 include(sources)
@@ -40,15 +42,5 @@ include(sources)
 #                        Plug-in shared object                                       #
 #------------------------------------------------------------------------------------#
 
-# Library build configuration
-include(plugin)
-
-
-#------------------------------------------------------------------------------------#
-#                                   examples                                         #
-#------------------------------------------------------------------------------------#
-
-#if(WANT_EXAMPLES)
-#  add_subdirectory(examples)
-#endif(WANT_EXAMPLES)
+speect_plugin_create()
 

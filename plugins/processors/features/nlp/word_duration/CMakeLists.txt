@@ -5,50 +5,42 @@
 ##                                                                                  ##
 ######################################################################################
 ##                                                                                  ##
-## Template CMakeList for Speect Plug-ins                                           ##
+## CMakeList for Word duration feature processor plug-in                            ##
 ##                                                                                  ##
 ##                                                                                  ##
 ######################################################################################
 
 #------------------------------------------------------------------------------------#
-#                                Project name                                        #
+#                             Define plug-in                                         #
 #------------------------------------------------------------------------------------#
 
-message(STATUS "cmake for project \"Word Duration Feature Processor\"")
-project(speect_word_duration_featproc_plugin C)
-
-# Plug-in shared object name
-set(PLUGIN_SONAME word_duration_featproc)
-
-set(${PLUGIN_SONAME}_VERSION_MAJOR 0)
-set(${PLUGIN_SONAME}_VERSION_MINOR 9)
-set(${PLUGIN_SONAME}_VERSION_PATCH 0)
-set(${PLUGIN_SONAME}_VERSION "${${PLUGIN_SONAME}_VERSION_MAJOR}.${${PLUGIN_SONAME}_VERSION_MINOR}.${${PLUGIN_SONAME}_VERSION_PATCH}")
+speect_plugin_definition(Word_Dur_FeatProc "SWordDurFeatProc" 1 0 0)
 
 
 #------------------------------------------------------------------------------------#
-#                             Get all CMake modules                                  #
+#                        Configure plugin_info.h.in                                  #
 #------------------------------------------------------------------------------------#
 
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+set(description "The duration of the given word item is calculated as the end of last daughter syllable minus the end of previous word item's last daughter syllable. If no end duration feature 'end' is found in either of the items NULL is returned.")
+
+# Minimum required Speect Engine version 
+set(major_min 1)
+set(minor_min 0)
+
+speect_plugin_configure_info(${description} ${major_min} ${minor_min})
+
+
+#------------------------------------------------------------------------------------#
+#                               Source files                                         #
+#------------------------------------------------------------------------------------#
 
 # Lists of all the source files
 include(sources)
 
 
 #------------------------------------------------------------------------------------#
-#                        Plug-in shared object                                       #
+#                            Plug-in shared object                                   #
 #------------------------------------------------------------------------------------#
 
-# Library build configuration
-include(plugin)
-
-
-#------------------------------------------------------------------------------------#
-#                                   examples                                         #
-#------------------------------------------------------------------------------------#
-
-#if(WANT_EXAMPLES)
-#  add_subdirectory(examples)
-#endif(WANT_EXAMPLES)
+speect_plugin_create()
 

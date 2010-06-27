@@ -41,19 +41,7 @@
 /************************************************************************************/
 
 #include "syl_vowel.h"
-
-
-/************************************************************************************/
-/*                                                                                  */
-/* Static variables                                                                 */
-/*                                                                                  */
-/************************************************************************************/
-
-static const char * const plugin_init_func = "SSylVowelFeatProc plug-in initialization";
-
-static const char * const plugin_exit_func = "SSylVowelFeatProc plug-in free";
-
-static SPlugin *phonesetPlugin = NULL;
+#include "plugin_info.h"
 
 
 /************************************************************************************/
@@ -62,7 +50,7 @@ static SPlugin *phonesetPlugin = NULL;
 /*                                                                                  */
 /************************************************************************************/
 
-static s_bool version_ok(const s_lib_version version);
+static void plugin_register_function(s_erc *error);
 
 static void plugin_exit_function(s_erc *error);
 
@@ -76,23 +64,25 @@ static void plugin_exit_function(s_erc *error);
 static const s_plugin_params plugin_params =
 {
 	/* plug-in name */
-	"Syllable vowel feature processor",
+	SPCT_PLUGIN_NAME,
 
 	/* description */
-	"Get the vowel of the given syllable (first vowel, if more than one), or return "
-	"\"novowel\" if none.",
+	SPCT_PLUGIN_DESCRIPTION,
 
 	/* version */
 	{
-		0,
-		1
+		SPCT_PLUGIN_VERSION_MAJOR,
+		SPCT_PLUGIN_VERSION_MINOR
 	},
 
 	/* Speect ABI version (which plug-in was compiled with) */
 	{
-		0,
-		9
+		S_MAJOR_VERSION,
+		S_MINOR_VERSION
 	},
+
+	/* register function pointer */
+	plugin_register_function,
 
 	/* exit function pointer */
 	plugin_exit_function
@@ -105,32 +95,16 @@ static const s_plugin_params plugin_params =
 /*                                                                                  */
 /************************************************************************************/
 
-const s_plugin_params *s_plugin_init(const s_lib_version version, s_erc *error)
+const s_plugin_params *s_plugin_init(s_erc *error)
 {
 	S_CLR_ERR(error);
 
-	if (!version_ok(version))
+	if (!s_lib_version_ok(SPCT_MAJOR_VERSION_MIN, SPCT_MINOR_VERSION_MIN))
 	{
 		S_CTX_ERR(error, S_FAILURE,
-				  plugin_init_func,
-				  "Incorrect Speect Engine version, require '0.9.x'");
-		return NULL;
-	}
-
-	/* load plug-ins */
-	phonesetPlugin = s_pm_load_plugin("phoneset.spi", error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  plugin_init_func,
-				  "Failed to load phoneset plug-in at 'phoneset.spi'"))
-		return NULL;
-
-	/* register plug-in classes here */
-	_s_syl_vowel_class_reg(error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  plugin_init_func,
-				  "Failed to register SSylVowelFeatProc class"))
-	{
-		S_DELETE(phonesetPlugin, plugin_init_func, error);
+				  SPCT_PLUGIN_INIT_STR,
+				  "Incorrect Speect Engine version, require at least '%d.%d.x'",
+				  SPCT_MAJOR_VERSION_MIN, SPCT_MINOR_VERSION_MIN);
 		return NULL;
 	}
 
@@ -144,17 +118,18 @@ const s_plugin_params *s_plugin_init(const s_lib_version version, s_erc *error)
 /*                                                                                  */
 /************************************************************************************/
 
-/* check the Speect Engine version */
-static s_bool version_ok(const s_lib_version version)
+/* plug-in register function */
+static void plugin_register_function(s_erc *error)
 {
-	/*
-	 * we want Speect Engine 0.9.x
-	 */
-	if ((version.major == 0)
-		&& (version.minor == 9))
-		return TRUE;
+	S_CLR_ERR(error);
 
-	return FALSE;
+	/* register plug-in classes here */
+
+	/* register plug-in classes here */
+	_s_syl_vowel_class_reg(error);
+	S_CHK_ERR(error, S_CONTERR,
+			  SPCT_PLUGIN_REG_STR,
+			  SPCT_PLUGIN_REG_FAIL_STR);
 }
 
 
@@ -166,9 +141,6 @@ static void plugin_exit_function(s_erc *error)
 	/* free plug-in classes here */
 	_s_syl_vowel_class_free(error);
 	S_CHK_ERR(error, S_CONTERR,
-			  plugin_exit_func,
-			  "Failed to free SSylVowelFeatProc class");
-
-	/* unload plug-ins */
-	S_DELETE(phonesetPlugin, plugin_exit_func, error);
+			  SPCT_PLUGIN_EXIT_STR,
+			  SPCT_PLUGIN_EXIT_FAIL_STR);
 }

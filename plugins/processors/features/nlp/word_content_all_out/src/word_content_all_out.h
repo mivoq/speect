@@ -74,7 +74,7 @@ S_BEGIN_C_DECLS
 /************************************************************************************/
 
 /**
- * The word content all in feature processor structure. Does not add any
+ * The word content all out feature processor structure. Does not add any
  * new members, therefore exactly the same as #SFeatProcessor.
  */
 typedef SFeatProcessor SWordContentAllOutFeatProc;
@@ -87,7 +87,7 @@ typedef SFeatProcessor SWordContentAllOutFeatProc;
 /************************************************************************************/
 
 /**
- * Typedef of the word content all in feature processor class. Does not add any
+ * Typedef of the word content all out feature processor class. Does not add any
  * new methods, therefore exactly the same as #SFeatProcessorClass.
  */
 typedef SFeatProcessorClass SWordContentAllOutFeatProcClass;

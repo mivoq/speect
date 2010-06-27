@@ -5,7 +5,7 @@
 ##                                                                                  ##
 ######################################################################################
 ##                                                                                  ##
-## Template CMake source files for Speect plug-ins                                  ##
+## Source files for Word content all out feature processor plug-in                  ##
 ##                                                                                  ##
 ##                                                                                  ##
 ######################################################################################
@@ -13,16 +13,15 @@
 
 ######## source files ##################
 
-set(${PLUGIN_SONAME}_SRC_FILES
+speect_plugin_sources(
   src/plugin.c
   src/word_content_all_out.c
- 
   )
  
 
 ######## header files ##################
 
-set(${PLUGIN_SONAME}_INCLUDE_FILES
+speect_plugin_headers(
   src/word_content_all_out.h
   )
 

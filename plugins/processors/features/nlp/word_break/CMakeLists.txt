@@ -5,32 +5,34 @@
 ##                                                                                  ##
 ######################################################################################
 ##                                                                                  ##
-## Template CMakeList for Speect Plug-ins                                           ##
+## CMakeList for Word break feature processor plug-in                               ##
 ##                                                                                  ##
 ##                                                                                  ##
 ######################################################################################
 
 #------------------------------------------------------------------------------------#
-#                                Project name                                        #
+#                             Define plug-in                                         #
 #------------------------------------------------------------------------------------#
 
-message(STATUS "cmake for project \"Word Break Feature Processor\"")
-project(speect_word_break_featproc_plugin C)
-
-# Plug-in shared object name
-set(PLUGIN_SONAME word_break_featproc)
-
-set(${PLUGIN_SONAME}_VERSION_MAJOR 0)
-set(${PLUGIN_SONAME}_VERSION_MINOR 9)
-set(${PLUGIN_SONAME}_VERSION_PATCH 0)
-set(${PLUGIN_SONAME}_VERSION "${${PLUGIN_SONAME}_VERSION_MAJOR}.${${PLUGIN_SONAME}_VERSION_MINOR}.${${PLUGIN_SONAME}_VERSION_PATCH}")
+speect_plugin_definition(Word_Break_FeatProc "SWordBreakFeatProc" 1 0 0)
 
 
 #------------------------------------------------------------------------------------#
-#                             Get all CMake modules                                  #
+#                        Configure plugin_info.h.in                                  #
 #------------------------------------------------------------------------------------#
 
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+set(description "The phrase break level after this word. Non-phrase final words return 0. Phrase final words return the break level, with greater breaks being on a higher level")
+
+# Minimum required Speect Engine version 
+set(major_min 1)
+set(minor_min 0)
+
+speect_plugin_configure_info(${description} ${major_min} ${minor_min})
+
+
+#------------------------------------------------------------------------------------#
+#                               Source files                                         #
+#------------------------------------------------------------------------------------#
 
 # Lists of all the source files
 include(sources)
@@ -40,15 +42,5 @@ include(sources)
 #                        Plug-in shared object                                       #
 #------------------------------------------------------------------------------------#
 
-# Library build configuration
-include(plugin)
-
-
-#------------------------------------------------------------------------------------#
-#                                   examples                                         #
-#------------------------------------------------------------------------------------#
-
-#if(WANT_EXAMPLES)
-#  add_subdirectory(examples)
-#endif(WANT_EXAMPLES)
+speect_plugin_create()
 

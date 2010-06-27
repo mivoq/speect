@@ -87,7 +87,7 @@ typedef SFeatProcessor SSylPosPhraseRevFeatProc;
 /************************************************************************************/
 
 /**
- * Typedef of the segment syllable position in phrase (reverse) feature
+ * Typedef of the syllable position in phrase (reverse) feature
  * processor class. Does not add any new methods, therefore exactly
  * the same as #SFeatProcessorClass.
  */

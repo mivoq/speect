@@ -42,6 +42,7 @@
 
 #include "syl_vowel.h"
 #include "phoneset.h"
+#include "plugin_info.h"
 
 
 /************************************************************************************/

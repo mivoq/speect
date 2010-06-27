@@ -74,7 +74,7 @@ S_BEGIN_C_DECLS
 /************************************************************************************/
 
 /**
- * The syllable stress in feature processor structure. Does not add any
+ * The syllable stress all out feature processor structure. Does not add any
  * new members, therefore exactly the same as #SFeatProcessor.
  */
 typedef SFeatProcessor SSylStressAllOutFeatProc;
@@ -87,7 +87,7 @@ typedef SFeatProcessor SSylStressAllOutFeatProc;
 /************************************************************************************/
 
 /**
- * Typedef of the syllable stress in feature processor class. Does not
+ * Typedef of the syllable stress all out feature processor class. Does not
  * add any new methods, therefore exactly the same as
  * #SFeatProcessorClass.
  */

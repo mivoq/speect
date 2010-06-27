@@ -74,7 +74,7 @@ S_BEGIN_C_DECLS
 /************************************************************************************/
 
 /**
- * The syllable duration feature processor structure. Does not add any
+ * The syllable position type feature processor structure. Does not add any
  * new members, therefore exactly the same as #SFeatProcessor.
  */
 typedef SFeatProcessor SSylPosTypeFeatProc;
@@ -87,7 +87,7 @@ typedef SFeatProcessor SSylPosTypeFeatProc;
 /************************************************************************************/
 
 /**
- * Typedef of the syllable duration feature processor class. Does not add any
+ * Typedef of the syllable position type feature processor class. Does not add any
  * new methods, therefore exactly the same as #SFeatProcessorClass.
  */
 typedef SFeatProcessorClass SSylPosTypeFeatProcClass;

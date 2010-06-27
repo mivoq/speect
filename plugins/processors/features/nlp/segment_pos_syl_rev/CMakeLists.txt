@@ -5,32 +5,34 @@
 ##                                                                                  ##
 ######################################################################################
 ##                                                                                  ##
-## Template CMakeList for Speect Plug-ins                                           ##
+## CMakeList for Segment position in syllable (reverse) feature processor plug-in   ##
 ##                                                                                  ##
 ##                                                                                  ##
 ######################################################################################
 
 #------------------------------------------------------------------------------------#
-#                                Project name                                        #
+#                             Define plug-in                                         #
 #------------------------------------------------------------------------------------#
 
-message(STATUS "cmake for project \"Segment Pos Syllable (Reverse) Feature Processor\"")
-project(speect_segment_pos_syl_rev_featproc_plugin C)
-
-# Plug-in shared object name
-set(PLUGIN_SONAME segment_pos_syl_rev_featproc)
-
-set(${PLUGIN_SONAME}_VERSION_MAJOR 0)
-set(${PLUGIN_SONAME}_VERSION_MINOR 9)
-set(${PLUGIN_SONAME}_VERSION_PATCH 0)
-set(${PLUGIN_SONAME}_VERSION "${${PLUGIN_SONAME}_VERSION_MAJOR}.${${PLUGIN_SONAME}_VERSION_MINOR}.${${PLUGIN_SONAME}_VERSION_PATCH}")
+speect_plugin_definition(Seg_Pos_Syl_Rev_FeatProc "SSegPosSylRevFeatProc" 1 0 0)
 
 
 #------------------------------------------------------------------------------------#
-#                             Get all CMake modules                                  #
+#                        Configure plugin_info.h.in                                  #
 #------------------------------------------------------------------------------------#
 
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+set(description "The position of the given segment in it's syllable (reverse).")
+
+# Minimum required Speect Engine version 
+set(major_min 1)
+set(minor_min 0)
+
+speect_plugin_configure_info(${description} ${major_min} ${minor_min})
+
+
+#------------------------------------------------------------------------------------#
+#                               Source files                                         #
+#------------------------------------------------------------------------------------#
 
 # Lists of all the source files
 include(sources)
@@ -40,15 +42,5 @@ include(sources)
 #                        Plug-in shared object                                       #
 #------------------------------------------------------------------------------------#
 
-# Library build configuration
-include(plugin)
-
-
-#------------------------------------------------------------------------------------#
-#                                   examples                                         #
-#------------------------------------------------------------------------------------#
-
-#if(WANT_EXAMPLES)
-#  add_subdirectory(examples)
-#endif(WANT_EXAMPLES)
+speect_plugin_create()
 

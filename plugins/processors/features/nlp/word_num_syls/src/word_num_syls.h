@@ -74,7 +74,7 @@ S_BEGIN_C_DECLS
 /************************************************************************************/
 
 /**
- * The syllable end feature processor structure. Does not add any
+ * The word number of syllables feature processor structure. Does not add any
  * new members, therefore exactly the same as #SFeatProcessor.
  */
 typedef SFeatProcessor SWordNumSylsFeatProc;
@@ -87,7 +87,7 @@ typedef SFeatProcessor SWordNumSylsFeatProc;
 /************************************************************************************/
 
 /**
- * Typedef of the syllable end feature processor class. Does not add any
+ * Typedef of the word number of syllables feature processor class. Does not add any
  * new methods, therefore exactly the same as #SFeatProcessorClass.
  */
 typedef SFeatProcessorClass SWordNumSylsFeatProcClass;

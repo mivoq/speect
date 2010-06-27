@@ -87,7 +87,7 @@ typedef SFeatProcessor SSylPosPhraseFeatProc;
 /************************************************************************************/
 
 /**
- * Typedef of the segment syllable position in phrase feature
+ * Typedef of the syllable position in phrase feature
  * processor class. Does not add any new methods, therefore exactly
  * the same as #SFeatProcessorClass.
  */

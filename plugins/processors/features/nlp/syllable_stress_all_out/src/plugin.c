@@ -41,17 +41,7 @@
 /************************************************************************************/
 
 #include "syl_stress_all_out.h"
-
-
-/************************************************************************************/
-/*                                                                                  */
-/* Static variables                                                                 */
-/*                                                                                  */
-/************************************************************************************/
-
-static const char * const plugin_init_func = "SSylStressAllOutFeatProc plug-in initialization";
-
-static const char * const plugin_exit_func = "SSylStressAllOutFeatProc plug-in free";
+#include "plugin_info.h"
 
 
 /************************************************************************************/
@@ -60,7 +50,7 @@ static const char * const plugin_exit_func = "SSylStressAllOutFeatProc plug-in f
 /*                                                                                  */
 /************************************************************************************/
 
-static s_bool version_ok(const s_lib_version version);
+static void plugin_register_function(s_erc *error);
 
 static void plugin_exit_function(s_erc *error);
 
@@ -74,22 +64,25 @@ static void plugin_exit_function(s_erc *error);
 static const s_plugin_params plugin_params =
 {
 	/* plug-in name */
-	"Syllable stress all out feature processor",
+	SPCT_PLUGIN_NAME,
 
 	/* description */
-	"The number of syllables from the current syllable to the next stressed syllable",
+	SPCT_PLUGIN_DESCRIPTION,
 
 	/* version */
 	{
-		0,
-		1
+		SPCT_PLUGIN_VERSION_MAJOR,
+		SPCT_PLUGIN_VERSION_MINOR
 	},
 
 	/* Speect ABI version (which plug-in was compiled with) */
 	{
-		0,
-		9
+		S_MAJOR_VERSION,
+		S_MINOR_VERSION
 	},
+
+	/* register function pointer */
+	plugin_register_function,
 
 	/* exit function pointer */
 	plugin_exit_function
@@ -102,24 +95,18 @@ static const s_plugin_params plugin_params =
 /*                                                                                  */
 /************************************************************************************/
 
-const s_plugin_params *s_plugin_init(const s_lib_version version, s_erc *error)
+const s_plugin_params *s_plugin_init(s_erc *error)
 {
 	S_CLR_ERR(error);
 
-	if (!version_ok(version))
+	if (!s_lib_version_ok(SPCT_MAJOR_VERSION_MIN, SPCT_MINOR_VERSION_MIN))
 	{
 		S_CTX_ERR(error, S_FAILURE,
-				  plugin_init_func,
-				  "Incorrect Speect Engine version, require '0.9.x'");
+				  SPCT_PLUGIN_INIT_STR,
+				  "Incorrect Speect Engine version, require at least '%d.%d.x'",
+				  SPCT_MAJOR_VERSION_MIN, SPCT_MINOR_VERSION_MIN);
 		return NULL;
 	}
-
-	/* register plug-in classes here */
-	_s_syl_stress_all_out_class_reg(error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  plugin_init_func,
-				  "Failed to register SSylStressAllOutFeatProc class"))
-		return NULL;
 
 	return &plugin_params;
 }
@@ -131,17 +118,18 @@ const s_plugin_params *s_plugin_init(const s_lib_version version, s_erc *error)
 /*                                                                                  */
 /************************************************************************************/
 
-/* check the Speect Engine version */
-static s_bool version_ok(const s_lib_version version)
+/* plug-in register function */
+static void plugin_register_function(s_erc *error)
 {
-	/*
-	 * we want Speect Engine 0.9.x
-	 */
-	if ((version.major == 0)
-		&& (version.minor == 9))
-		return TRUE;
+	S_CLR_ERR(error);
 
-	return FALSE;
+	/* register plug-in classes here */
+
+	/* register plug-in classes here */
+	_s_syl_stress_all_out_class_reg(error);
+	S_CHK_ERR(error, S_CONTERR,
+			  SPCT_PLUGIN_REG_STR,
+			  SPCT_PLUGIN_REG_FAIL_STR);
 }
 
 
@@ -153,6 +141,6 @@ static void plugin_exit_function(s_erc *error)
 	/* free plug-in classes here */
 	_s_syl_stress_all_out_class_free(error);
 	S_CHK_ERR(error, S_CONTERR,
-			  plugin_exit_func,
-			  "Failed to free SSylStressAllOutFeatProc class");
+			  SPCT_PLUGIN_EXIT_STR,
+			  SPCT_PLUGIN_EXIT_FAIL_STR);
 }

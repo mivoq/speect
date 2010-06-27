@@ -74,7 +74,7 @@ S_BEGIN_C_DECLS
 /************************************************************************************/
 
 /**
- * The segment start feature processor structure. Does not add any
+ * The segment position in syllable feature processor structure. Does not add any
  * new members, therefore exactly the same as #SFeatProcessor.
  */
 typedef SFeatProcessor SSegPosSylFeatProc;
@@ -87,7 +87,7 @@ typedef SFeatProcessor SSegPosSylFeatProc;
 /************************************************************************************/
 
 /**
- * Typedef of the segment start feature processor class. Does not add any
+ * Typedef of the segment position in syllable feature processor class. Does not add any
  * new methods, therefore exactly the same as #SFeatProcessorClass.
  */
 typedef SFeatProcessorClass SSegPosSylFeatProcClass;

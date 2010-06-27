@@ -74,7 +74,7 @@ S_BEGIN_C_DECLS
 /************************************************************************************/
 
 /**
- * The word break feature processor structure. Does not add any
+ * The syllable break feature processor structure. Does not add any
  * new members, therefore exactly the same as #SFeatProcessor.
  */
 typedef SFeatProcessor SSylBreakFeatProc;
@@ -87,7 +87,7 @@ typedef SFeatProcessor SSylBreakFeatProc;
 /************************************************************************************/
 
 /**
- * Typedef of the word break feature processor class. Does not add any
+ * Typedef of the syllable break feature processor class. Does not add any
  * new methods, therefore exactly the same as #SFeatProcessorClass.
  */
 typedef SFeatProcessorClass SSylBreakFeatProcClass;

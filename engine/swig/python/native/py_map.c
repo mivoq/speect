@@ -204,7 +204,8 @@ static const SObject *MapPyValGet(const SMap *self, const char *key,
 				  "Call to \"s_set_pyobject_str\" failed"))
 		return NULL;
 
-	pobject = PyObject_GetItem(S_PY_DICT(pMap), pKey);
+	/* borrowed reference */
+	pobject = PyDict_GetItem(S_PY_DICT(pMap), pKey);
 	if (pobject == NULL)
 	{
 		char *py_error = s_get_python_error_str();

@@ -344,7 +344,12 @@ static const SObject *Object(SIterator *self, s_erc *error)
 
 
 	S_CLR_ERR(error);
+
+	if (pyItr->sobject != NULL)
+		S_DELETE(pyItr->sobject, "Object", error);
+
 	pyItr->sobject = s_pyobject_2_sobject(pyItr->c_itr, error);
+	Py_DECREF(pyItr->c_itr);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Object",
 				  "Call to \"s_pyobject_2_sobject\" failed"))
@@ -365,7 +370,7 @@ static SObject *Unlink(SIterator *self, s_erc *error)
 		return NULL;
 
 	tmp = s_pyobject_2_sobject(pyItr->c_itr, error);
-	Py_XDECREF(pyItr->c_itr);
+	Py_DECREF(pyItr->c_itr);
 	pyItr->c_itr = NULL;
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Unlink",

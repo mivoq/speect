@@ -79,6 +79,7 @@
 		if (newObject == NULL)
 			return;
 
+		Py_DECREF(val);
 		SMapSetObject($self, key, newObject, error);
 		if (*error != S_SUCCESS)
 			S_DELETE(newObject, "SMap::__setitem__", error);

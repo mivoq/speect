@@ -51,6 +51,7 @@
 
 		S_CLR_ERR(error);
 		object = s_pyobject_2_sobject(val, error);
+		Py_DECREF(val);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "write_object",
 					  "Call to \"s_pyobject_2_sobject\" failed"))

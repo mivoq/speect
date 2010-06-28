@@ -264,7 +264,7 @@ macro(speect_plugin_swig_python_wrapper)
   # set the output directory
   set_target_properties(${SWIG_MODULE_${plugin_lowercase_name}_REAL_NAME}
     PROPERTIES
-    LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/swig/python/speect
-    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/swig/python/speect
+    LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/swig/python/speect/lib
+    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/swig/python/speect/lib
     )
 endmacro(speect_plugin_swig_python_wrapper)

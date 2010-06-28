@@ -53,7 +53,6 @@ list(APPEND SPCT_SWIG_PYTHON_DEPS
 
 ###################################### SWIG ##########################################
 
-find_package(SWIG REQUIRED)
 include(${SWIG_USE_FILE})  # UseSWIG.cmake, provides swig functions
 
 

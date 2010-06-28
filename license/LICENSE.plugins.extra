@@ -1,0 +1,105 @@
+Speect is free and open source software. 
+See LICENSE for the Speect license (MIT).
+
+A portion of the Speect plug-ins have been derived from other free and
+open source projects, however no verbatim source code of any other projects
+have been included. All the licenses of the other projects are permissive
+free software licenses ("non-copyleft").
+
+The following is a list of these files that have been derived from other projects:
+
+
+From the Edinburgh Speech Tools library
+http://www.cstr.ed.ac.uk/projects/speech_tools
+----------------------------------------------
+speect/plugins/utils/viterbi/src/vit_candidate.h
+speect/plugins/utils/viterbi/src/vit_candidate.c
+speect/plugins/utils/viterbi/src/vit_path.h
+speect/plugins/utils/viterbi/src/vit_path.c
+speect/plugins/utils/viterbi/src/vit_point.h
+speect/plugins/utils/viterbi/src/vit_point.c
+speect/plugins/utils/viterbi/src/viterbi.c
+speect/plugins/utils/viterbi/src/viterbi.h
+speect/plugins/utils/tokenizer/src/token.c
+speect/plugins/utils/tokenizer/src/token.h
+speect/plugins/utils/tokenizer/src/tokenizer.c
+speect/plugins/utils/tokenizer/src/tokenizer.h
+speect/plugins/utils/tokenizer/src/tokenizer_file.c
+speect/plugins/utils/tokenizer/src/tokenizer_file.h
+speect/plugins/utils/tokenizer/src/tokenizer_string.c
+speect/plugins/utils/tokenizer/src/tokenizer_string.h
+speect/plugins/acoustic/wave_generation/relp/src/synthesis.c
+
+
+Edinburgh Speech Tools license (MIT-BSD hybrid)
+
+            Edinburgh Speech Tools Library version 1.2.96
+              Centre for Speech Technology Research                
+                   University of Edinburgh, UK                     
+                    Copyright (c) 1994-2006
+                      All Rights Reserved.                         
+                                                                   
+  Permission is hereby granted, free of charge, to use and distribute  
+  this software and its documentation without restriction, including   
+  without limitation the rights to use, copy, modify, merge, publish,  
+  distribute, sublicense, and/or sell copies of this work, and to      
+  permit persons to whom this work is furnished to do so, subject to   
+  the following conditions:                                            
+   1. The code must retain the above copyright notice, this list of    
+      conditions and the following disclaimer.                         
+   2. Any modifications must be clearly marked as such.                
+   3. Original authors' names are not deleted.                         
+   4. The authors' names are not used to endorse or promote products   
+      derived from this software without specific prior written        
+      permission.
+
+  THE UNIVERSITY OF EDINBURGH AND THE CONTRIBUTORS TO THIS WORK        
+  DISCLAIM ALL WARRANTIES WITH REGARD TO THIS SOFTWARE, INCLUDING      
+  ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN NO EVENT   
+  SHALL THE UNIVERSITY OF EDINBURGH NOR THE CONTRIBUTORS BE LIABLE     
+  FOR ANY SPECIAL, INDIRECT OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES    
+  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN   
+  AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION,          
+  ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF       
+  THIS SOFTWARE.
+
+
+From the Festival Speech Synthesis System,
+http://www.cstr.ed.ac.uk/projects/festival.html
+-----------------------------------------------
+speect/plugins/acoustic/wave_generation/relp/src/concat.c
+speect/plugins/acoustic/wave_generation/relp/src/window.c
+speect/plugins/acoustic/wave_generation/relp/src/synthesis.c
+speect/plugins/acoustic/wave_generation/relp/src/mapping.c
+
+
+Festival license (MIT-BSD hybrid)
+
+                  Centre for Speech Technology Research
+                       University of Edinburgh, UK
+                         Copyright (c) 1996,1997
+                          All Rights Reserved.
+  
+    Permission is hereby granted, free of charge, to use and distribute
+    this software and its documentation without restriction, including
+    without limitation the rights to use, copy, modify, merge, publish,
+    distribute, sublicense, and/or sell copies of this work, and to
+    permit persons to whom this work is furnished to do so, subject to
+    the following conditions:
+     1. The code must retain the above copyright notice, this list of
+        conditions and the following disclaimer.
+     2. Any modifications must be clearly marked as such.
+     3. Original authors' names are not deleted.
+     4. The authors' names are not used to endorse or promote products
+        derived from this software without specific prior written
+        permission.
+  
+    THE UNIVERSITY OF EDINBURGH AND THE CONTRIBUTORS TO THIS WORK
+    DISCLAIM ALL WARRANTIES WITH REGARD TO THIS SOFTWARE, INCLUDING
+    ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN NO EVENT
+    SHALL THE UNIVERSITY OF EDINBURGH NOR THE CONTRIBUTORS BE LIABLE
+    FOR ANY SPECIAL, INDIRECT OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+    WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN
+    AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION,
+    ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF
+    THIS SOFTWARE.

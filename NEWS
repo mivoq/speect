@@ -1,0 +1,13 @@
+* June 4, 2010
+  Speect version 0.9.5 is an update, and includes many bug fixes.
+  The Python interface and voice building tools are also included.
+  Voicetools is in a seperate git repository on the Sourceforge
+  project page.
+
+* December 2009
+  Speect version 0.9.0 is a rewrite of version 0.1.0 with better error handling,
+  logging and debugging. The build system has been redone to ease the bulding of 
+  plug-ins. The plug-in system has changed completely with the Speect
+  Engine having a minimal number of modules. All linguistic/acoustic objects and their
+  implementation is now done through plug-ins.
+

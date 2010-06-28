@@ -40,15 +40,15 @@ set(LIB_SUFFIX "" CACHE STRING "Suffix for 'lib' directories, e.g. '64'")
 #------------------------------------------------------------------------------------#
 
 # Choose to compile with thread support or not.
-option(WANT_THREADS "Enable multi threaded support." OFF)
+option(WANT_THREADS "Enable multi threaded support." off)
 
 
 #------------------------------------------------------------------------------------#
 #                         Documentation  (Default OFF)                               #
 #------------------------------------------------------------------------------------#
 
-option(WANT_DOCS "Generate documentation" on)
-option(WANT_DOCS_HTML "Generate HTML documentation" on)
+option(WANT_DOCS "Generate documentation" off)
+option(WANT_DOCS_HTML "Generate HTML documentation" off)
 option(WANT_DOCS_PDF "Generate PDF document (requires pdflatex)" off)
 
 

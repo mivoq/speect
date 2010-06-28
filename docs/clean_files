@@ -1,0 +1,70 @@
+#!/bin/sh
+
+echo "in docs"
+
+########################################################################
+
+if [ -f Makefile ]
+then 
+    echo "running make clean"
+    make clean
+    rm -f  Makefile 
+fi
+
+########################################################################
+
+echo "cleaning cmake files"
+
+if [ -f CMakeCache.txt ]
+then 
+    rm -f  CMakeCache.txt 
+fi
+
+if [ -d CMakeFiles ]
+then 
+    rm -fr CMakeFiles
+fi
+
+
+########################################################################
+
+echo "cleaning python"
+
+cd ./python/
+./clean_files
+cd ..
+
+
+########################################################################
+
+echo "cleaning sphinxext"
+
+cd ./sphinxext/
+./clean_files
+cd ..
+
+
+########################################################################
+
+echo "cleaning _static"
+
+cd ./_static/
+./clean_files
+cd ..
+
+
+########################################################################
+
+echo "cleaning _templates"
+
+cd ./_templates/
+./clean_files
+cd ..
+
+
+########################################################################
+
+rm -f  *~
+rm -f *.pyc
+
+echo ""

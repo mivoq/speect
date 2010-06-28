@@ -16,8 +16,12 @@
 #------------------------------------------------------------------------------------#
 
 # Choose static or shared libraries.
-option(BUILD_SHARED_LIBS "Build Speect with shared libraries." ON)
-set(SPCT_BUILD_SHARED_LIBS ${BUILD_SHARED_LIBS})
+#option(BUILD_SHARED_LIBS "Build Speect with shared libraries." ON)
+#set(SPCT_BUILD_SHARED_LIBS ${BUILD_SHARED_LIBS})
+
+# This is the only option for now
+set(BUILD_SHARED_LIBS 1)
+set(SPCT_BUILD_SHARED_LIBS 1)
 
 
 #------------------------------------------------------------------------------------#

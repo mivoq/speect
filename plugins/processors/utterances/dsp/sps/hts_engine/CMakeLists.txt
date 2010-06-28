@@ -51,6 +51,6 @@ include(sources)
 #                        Plug-in shared object                                       #
 #------------------------------------------------------------------------------------#
 
-speect_plugin_create()
+speect_plugin_create(${HTS_ENGINE_LIB})
 
 

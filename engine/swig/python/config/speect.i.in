@@ -108,6 +108,7 @@
 /*                                                                                  */
 /************************************************************************************/
 
+%include "${CMAKE_SOURCE_DIR}/engine/swig/python/plugin_python.c"
 %include "${CMAKE_SOURCE_DIR}/engine/swig/python/iterator_python.c"
 %include "${CMAKE_SOURCE_DIR}/engine/swig/python/utterance_python.c"
 %include "${CMAKE_SOURCE_DIR}/engine/swig/python/relation_itr_python.c"

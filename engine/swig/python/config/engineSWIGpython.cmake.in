@@ -29,6 +29,7 @@ set(SPCT_SWIG_PYTHON_SRC_FILES
   "${CMAKE_SOURCE_DIR}/engine/swig/python/list_python.c"
   "${CMAKE_SOURCE_DIR}/engine/swig/python/misc_docs.c"
   "${CMAKE_SOURCE_DIR}/engine/swig/python/plugin_docs.c"
+  "${CMAKE_SOURCE_DIR}/engine/swig/python/plugin_python.c"
   "${CMAKE_SOURCE_DIR}/engine/swig/python/relation_docs.c"
   "${CMAKE_SOURCE_DIR}/engine/swig/python/relation_itr_python.c"
   "${CMAKE_SOURCE_DIR}/engine/swig/python/relation_python.c"

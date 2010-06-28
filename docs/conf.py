@@ -18,6 +18,10 @@ import sys, os
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 sys.path.append(os.path.abspath('sphinxext'))
 
+# breathe
+sys.path.append("/home/aby/Software/Projects/breathe")
+
+
 # -- General configuration -----------------------------------------------------
 
 # Add any Sphinx extension module names here, as strings. They can be extensions
@@ -30,7 +34,14 @@ matplotlib_extensions = ['matplotlib.sphinxext.mathmpl', 'matplotlib.sphinxext.o
                          'sphinx.ext.doctest', 'ipython_console_highlighting',
                          'inheritance_diagram', 'numpydoc']
 
-extensions = extensions + matplotlib_extensions
+breathe_extensions = ['breathe']
+
+extensions = extensions + matplotlib_extensions + breathe_extensions
+
+# breathe setup
+breathe_projects = { "speect": "/home/aby/Development/speect_build/docs/c_api/xml/" }
+breathe_default_project = "speect"
+
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -115,7 +126,7 @@ def setup(app):
     #app.add_config.value('link2', False, False) # etc.
     app.add_role('addlink', addlink)
 
-link = ('doxygen generated Speect Engine API', 'c_api/html/index.html')
+link = ('doxygen generated Speect Engine API', '../c_api/html/index.html')
 #link2 = ('external link2', 'http://external.link2/') # etc.
 #---------------------------------------------------
 

@@ -41,7 +41,7 @@
 
 %typemap(out) sint32
 {
-	$result = PyInt_FromLong((long) $1);
+	$result = PyLong_FromLong((long) $1);
 }
 
 
@@ -53,7 +53,7 @@
 
 %typemap(out) uint32
 {
-	$result = PyInt_FromLong((ulong) $1);
+	$result = PyLong_FromLong((ulong) $1);
 }
 
 
@@ -87,8 +87,8 @@
 
 
 	versionTuple = PyTuple_New(2);
-	versionMajor = PyInt_FromLong((long)output->major);
-	versionMinor = PyInt_FromLong((long)output->minor);
+	versionMajor = PyLong_FromLong((long)output->major);
+	versionMinor = PyLong_FromLong((long)output->minor);
 
 	PyTuple_SetItem(versionTuple, 0, versionMajor);
 	PyTuple_SetItem(versionTuple, 1, versionMinor);
@@ -105,13 +105,14 @@
 	PyObject *versionPatchLevel;
 	PyObject *versionRelease;
 	s_lib_version output = $1;
+	s_erc local_err = S_SUCCESS;
 
 
 	versionTuple = PyTuple_New(4);
-	versionMajor = PyInt_FromLong((long)output.major);
-	versionMinor = PyInt_FromLong((long)output.minor);
-	versionPatchLevel = PyInt_FromLong((long)output.patch);
-	versionRelease = PyString_FromString(output.release);
+	versionMajor = PyLong_FromLong((long)output.major);
+	versionMinor = PyLong_FromLong((long)output.minor);
+	versionPatchLevel = PyLong_FromLong((long)output.patch);
+	versionRelease = s_set_pyobject_str(output.release, &local_err);
 
 
 	PyTuple_SetItem(versionTuple, 0, versionMajor);

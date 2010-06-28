@@ -382,9 +382,9 @@ static SList *Apply(const SG2P *self, const char *word, s_erc *error)
 	char alpha[4] = "\0";
 	uint32 character;
 	const SList *rules;
-	SIterator *itr;
+	SIterator *itr = NULL;
 	const char *matched_phone;
-	s_bool rule_matches;
+	s_bool rule_matches = FALSE;
 	SList *phoneList;
 
 

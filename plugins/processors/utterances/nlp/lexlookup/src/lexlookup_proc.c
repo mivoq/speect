@@ -311,10 +311,10 @@ static void Initialize(SUttProcessor *self, const SVoice *voice, s_erc *error)
 static void Run(const SUttProcessor *self, SUtterance *utt,
 				s_erc *error)
 {
-	SG2P *g2p;
-	SLexicon *lexicon;
-	SAddendum *addendum;
-	SSyllabification *syllab;
+	SG2P *g2p = NULL;
+	SLexicon *lexicon = NULL;
+	SAddendum *addendum = NULL;
+	SSyllabification *syllab = NULL;
 	const SRelation *wordRel;
 	SRelation *syllableRel = NULL;
 	SRelation *sylStructRel = NULL;

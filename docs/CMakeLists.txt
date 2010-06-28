@@ -55,7 +55,9 @@ add_custom_command(
   VERBATIM
   )
 
-add_custom_target(html DEPENDS ${CMAKE_BINARY_DIR}/docs/html/index.html)
+if(WANT_DOCS_HTML)
+  add_custom_target(html ALL DEPENDS ${CMAKE_BINARY_DIR}/docs/html/index.html)
+endif(WANT_DOCS_HTML)
 
 
 # latex
@@ -66,4 +68,6 @@ add_custom_command(
   VERBATIM
   )
 
-add_custom_target(latex DEPENDS ${CMAKE_BINARY_DIR}/docs/latex/Speect.tex)
+if(WANT_DOCS_PDF)
+  add_custom_target(latex DEPENDS ${CMAKE_BINARY_DIR}/docs/latex/Speect.tex)
+endif(WANT_DOCS_PDF)

@@ -69,8 +69,20 @@ include(spctBuild)
 include(spctSettings)
 
 
+#------------------------------------------------------------------------------------#
+#                               Include subdirectories                               #
+#------------------------------------------------------------------------------------#
 
+# Speect Engine
 add_subdirectory(engine)
+
+# Speect Plug-ins
 add_subdirectory(plugins)
+
+# Speect SWIG interface
 add_subdirectory(swig)
-add_subdirectory(docs)
+
+# Speect documentation
+if(WANT_DOCS)
+  add_subdirectory(docs)
+endif(WANT_DOCS)

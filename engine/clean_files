@@ -25,49 +25,9 @@ then
     rm -fr CMakeFiles
 fi
 
-if [ -f cmake_install.cmake ]
-then 
-    rm -f cmake_install.cmake
-fi
-
-if [ -f cmake_uninstall.cmake ]
-then 
-    rm -f cmake_uninstall.cmake
-fi
-
 if [ -f CTestTestfile.cmake ]
 then 
     rm -f CTestTestfile.cmake
-fi
-
-if [ -f install_manifest.txt ]
-then 
-    rm -f install_manifest.txt
-fi
-
-if [ -f spctConfig.cmake ]
-then 
-    rm -f spctConfig.cmake
-fi
-
-if [ -f SpeectConf.cmake ]
-then 
-    rm -f SpeectConf.cmake
-fi
-
-if [ -f speect.conf ]
-then 
-    rm -f speect.conf
-fi
-
-if [ -f spct_debug.log ]
-then 
-    rm -f spct_debug.log
-fi
-
-if [ -f spct_error.log ]
-then 
-    rm -f spct_error.log
 fi
 
 

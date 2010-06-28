@@ -90,13 +90,13 @@ S_BEGIN_C_DECLS
 /*                                                                                  */
 /************************************************************************************/
 
-/*
+/**
  * s_mutex structure for win32 threads.
  */
 typedef struct win32_api_mutex_s s_mutex_t;
 
 
-/*
+/**
  * Structure of the win32 mutex. We replicate the API's of the pthread library,
  * therefore the need for this structure.
  */

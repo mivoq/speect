@@ -96,7 +96,7 @@ typedef struct
  * Initialize an SListListIterator with the given SListList.
  * @private @memberof SIterator
  *
- * @param self The #SListListIterator to initialize.
+ * @param self The @c SListListIterator to initialize.
  * @param list The #SListList of the given iterator.
  * @param error Error code.
  *

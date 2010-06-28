@@ -11,14 +11,20 @@
 ######################################################################################
 
 
+#------------------------------------------------------------------------------------#
+#                              Generate __init__.py                                  #
+#------------------------------------------------------------------------------------#
+
+configure_file(${CMAKE_SOURCE_DIR}/swig/python/config/__init__.py.in
+  ${CMAKE_BINARY_DIR}/swig/python/speect/__init__.py @only)
+
+
+#------------------------------------------------------------------------------------#
+#                          Copy examples and other files                             #
+#------------------------------------------------------------------------------------#
 
 if(NOT "${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_BINARY_DIR}")
   
-  
-  # __init__.py
-  file(COPY ${CMAKE_SOURCE_DIR}/swig/python/speect/__init__.py
-    DESTINATION ${CMAKE_BINARY_DIR}/swig/python/speect)
-
   # client.py, server.py
   file(COPY ${CMAKE_SOURCE_DIR}/swig/python/client.py
     DESTINATION ${CMAKE_BINARY_DIR}/swig/python)

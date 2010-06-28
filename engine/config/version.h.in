@@ -99,6 +99,17 @@
 
 
 /**
+ * @def S_VERSION_STR
+ * @hideinitializer
+ * Speect full version number, that is
+ * #S_MAJOR_VERSION.#S_MINOR_VERSION.#S_PATCHLEVEL as a string.
+ * Printable format full version string, for example:
+ * @code printf("%s", S_VERSION_STR); @endcode
+ */
+#define S_VERSION_STR @SPCT_VERSION@
+
+
+/**
  * @def S_COMPILE_DATE
  * @hideinitializer
  * Compilation date. This is a string.

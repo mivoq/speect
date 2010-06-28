@@ -88,8 +88,6 @@ static void cache_add_plugin(SPlugin *plugin, const char *path, s_erc *error);
 
 static void cache_remove_plugin(SPlugin *plugin, s_erc *error);
 
-static char *fix_path(const char *path, s_erc *error);
-
 
 /************************************************************************************/
 /*                                                                                  */
@@ -119,10 +117,10 @@ S_API SPlugin *s_pm_load_plugin(const char *path, s_erc *error)
 	 * if path does not contain a path separator we concatenate the
 	 * default path.
 	 */
-	new_path = fix_path(path, error);
+	new_path = s_pm_get_plugin_path(path, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "s_pm_load_plugin",
-				  "Call to \"fix_path\" failed"))
+				  "Call to \"s_pm_get_plugin_path\" failed"))
 		return NULL;
 
 	/* we know it is a plugin, therefore the unsafe cast */
@@ -222,10 +220,10 @@ S_API s_bool s_pm_plugin_loaded(const char *path, s_erc *error)
 	 * if path does not contain a path separator we concatenate the
 	 * default path.
 	 */
-	new_path = fix_path(path, error);
+	new_path = s_pm_get_plugin_path(path, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "s_pm_plugin_loaded",
-				  "Call to \"fix_path\" failed"))
+				  "Call to \"s_pm_get_plugin_path\" failed"))
 		return FALSE;
 
 	/* check if the plugin is in the cache */
@@ -242,6 +240,43 @@ S_API s_bool s_pm_plugin_loaded(const char *path, s_erc *error)
 
 	S_FREE(new_path);
 	return cached_plugin;
+}
+
+
+S_API char *s_pm_get_plugin_path(const char *path, s_erc *error)
+{
+	char *new_path;
+	const char *ps;
+
+
+	S_CLR_ERR(error);
+
+	/* look for path seperator */
+	ps = s_strchr(path, S_PATH_SEP, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "s_pm_get_plugin_path",
+				  "Call to \"s_strchr\" failed"))
+		return NULL;
+
+	if (ps != NULL) /* we have path separators, just copy and return */
+	{
+		new_path = s_strdup(path, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "s_pm_get_plugin_path",
+					  "Call to \"s_strdup\" failed"))
+			return NULL;
+
+		return new_path;
+	}
+
+	/* no path separators, concatenate with default path */
+	s_asprintf(&new_path, error, "%s%c%s", plugin_path, S_PATH_SEP, path);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "s_pm_get_plugin_path",
+				  "Call to \"s_asprintf\" failed"))
+		return NULL;
+
+	return new_path;
 }
 
 
@@ -504,39 +539,4 @@ static void cache_remove_plugin(SPlugin *plugin, s_erc *error)
 }
 
 
-static char *fix_path(const char *path, s_erc *error)
-{
-	char *new_path;
-	const char *ps;
-
-
-	S_CLR_ERR(error);
-
-	/* look for path seperator */
-	ps = s_strchr(path, S_PATH_SEP, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "fix_path",
-				  "Call to \"s_strchr\" failed"))
-		return NULL;
-
-	if (ps != NULL) /* we have path separators, just copy and return */
-	{
-		new_path = s_strdup(path, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "fix_path",
-					  "Call to \"s_strdup\" failed"))
-			return NULL;
-
-		return new_path;
-	}
-
-	/* no path separators, concatenate with default path */
-	s_asprintf(&new_path, error, "%s%c%s", plugin_path, S_PATH_SEP, path);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "fix_path",
-				  "Call to \"s_asprintf\" failed"))
-		return NULL;
-
-	return new_path;
-}
 

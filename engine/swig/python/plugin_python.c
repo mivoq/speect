@@ -51,8 +51,8 @@
 		const s_plugin_init_fp plugin_initialize;
 		const s_plugin_params *plugin_info;
 		PyObject *tmp;
-				
-				
+
+
 		S_CLR_ERR(error);
 		if (path == NULL)
 		{
@@ -67,7 +67,7 @@
 					  "_s_get_plugin_info",
 					  "Failed to create new dynamic shared object for plug-in"))
 			return NULL;
-		
+
 		new_path = s_pm_get_plugin_path(path, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "_s_get_plugin_info",
@@ -76,7 +76,7 @@
 			S_DELETE(pluginDso, "_s_get_plugin_info", error);
 			return NULL;
 		}
-		
+
 
 		SDsoLoad(pluginDso, new_path, error);
 		if (S_CHK_ERR(error, S_CONTERR,
@@ -144,7 +144,7 @@
 						  "_s_get_plugin_info",
 						  "Call to \"PyDict_New\" failed");
 			}
-			
+
 			S_DELETE(pluginDso, "_s_get_plugin_info", error);
 			S_FREE(new_path);
 			return NULL;
@@ -165,7 +165,7 @@
 			return NULL;
 		}
 
-		if (PyDict_SetItemString(tmp, "name", tmp) != 0)
+		if (PyDict_SetItemString(info, "name", tmp) != 0)
 		{
 			char *py_error = s_get_python_error_str();
 
@@ -183,7 +183,7 @@
 						  "_s_get_plugin_info",
 						  "Call to \"PyDict_SetItemString\" failed");
 			}
-			
+
 			S_DELETE(pluginDso, "_s_get_plugin_info", error);
 			S_FREE(new_path);
 			Py_DECREF(info);
@@ -196,7 +196,7 @@
 			tmp = s_set_pyobject_str(plugin_info->description, error);
 		else
 			tmp = s_set_pyobject_str("unknown", error);
-		
+
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "_s_get_plugin_info",
 					  "Call to \"s_set_pyobject_str\" failed"))
@@ -207,7 +207,7 @@
 			return NULL;
 		}
 
-		if (PyDict_SetItemString(tmp, "description", tmp) != 0)
+		if (PyDict_SetItemString(info, "description", tmp) != 0)
 		{
 			char *py_error = s_get_python_error_str();
 
@@ -225,19 +225,19 @@
 						  "_s_get_plugin_info",
 						  "Call to \"PyDict_SetItemString\" failed");
 			}
-			
+
 			S_DELETE(pluginDso, "_s_get_plugin_info", error);
 			S_FREE(new_path);
 			Py_DECREF(info);
 			Py_DECREF(tmp);
 			return NULL;
 		}
-		
+
 		Py_DECREF(tmp);
 		{
 			PyObject *versionMajor;
 			PyObject *versionMinor;
-		
+
 
 			tmp = PyTuple_New(2);
 			versionMajor = PyLong_FromLong((long)plugin_info->version.major);
@@ -246,8 +246,8 @@
 			PyTuple_SetItem(tmp, 0, versionMajor);
 			PyTuple_SetItem(tmp, 1, versionMinor);
 		}
-	
-		if (PyDict_SetItemString(tmp, "plug-in version", tmp) != 0)
+
+		if (PyDict_SetItemString(info, "plug-in version", tmp) != 0)
 		{
 			char *py_error = s_get_python_error_str();
 
@@ -265,7 +265,7 @@
 						  "_s_get_plugin_info",
 						  "Call to \"PyDict_SetItemString\" failed");
 			}
-			
+
 			S_DELETE(pluginDso, "_s_get_plugin_info", error);
 			S_FREE(new_path);
 			Py_DECREF(info);
@@ -277,7 +277,7 @@
 		{
 			PyObject *versionMajor;
 			PyObject *versionMinor;
-		
+
 
 			tmp = PyTuple_New(2);
 			versionMajor = PyLong_FromLong((long)plugin_info->s_abi.major);
@@ -286,8 +286,8 @@
 			PyTuple_SetItem(tmp, 0, versionMajor);
 			PyTuple_SetItem(tmp, 1, versionMinor);
 		}
-	
-		if (PyDict_SetItemString(tmp, "Speect ABI version", tmp) != 0)
+
+		if (PyDict_SetItemString(info, "Speect ABI version", tmp) != 0)
 		{
 			char *py_error = s_get_python_error_str();
 
@@ -305,7 +305,7 @@
 						  "_s_get_plugin_info",
 						  "Call to \"PyDict_SetItemString\" failed");
 			}
-			
+
 			S_DELETE(pluginDso, "_s_get_plugin_info", error);
 			S_FREE(new_path);
 			Py_DECREF(info);
@@ -316,7 +316,7 @@
 		Py_DECREF(tmp);
 		S_DELETE(pluginDso, "_s_get_plugin_info", error);
 		S_FREE(new_path);
-		
+
 		return info;
 	}
 %}
@@ -331,15 +331,14 @@ def get_plugin_info(path):
     Get information on the plug-in at the given path.
     If the given path does not include any path separators (just a file name)
     then the path is concatenated with the default plug-in path.
-    
+
     :return: A dictionary with information on the given plug-in.
     :rtype: dict
     """
     if not isinstance(path, str):
         raise TypeError("Argument \"path\" must be a string")
-    
+
     return _s_get_plugin_info(path)
 %}
 
-};
 

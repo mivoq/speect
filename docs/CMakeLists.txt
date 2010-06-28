@@ -67,7 +67,7 @@ configure_file(${CMAKE_SOURCE_DIR}/docs/config/Doxyfile.in
   ${CMAKE_BINARY_DIR}/docs/Doxyfile @ONLY)
 
 # create a directory for the output of Doxygen
-file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/docs/html/c_api)
+file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/docs/c_api)
 
 
 #------------------------------------------------------------------------------------#
@@ -76,14 +76,14 @@ file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/docs/html/c_api)
 
 # api (Doxygen)
 add_custom_command(
-  OUTPUT  ${CMAKE_BINARY_DIR}/docs/html/c_api/html/index.html 
+  OUTPUT  ${CMAKE_BINARY_DIR}/docs/c_api/html/index.html 
   COMMAND ${DOXYGEN_EXECUTABLE} ${CMAKE_BINARY_DIR}/docs/Doxyfile
-  COMMENT "Building Speect Engine API Doxygen HTML pages in ${CMAKE_BINARY_DIR}/docs/html/c_api/html"
+  COMMENT "Building Speect Engine API Doxygen HTML pages in ${CMAKE_BINARY_DIR}/docs/c_api/html"
   VERBATIM
   )
 
 if(WANT_API_DOCS_HTML)
-  add_custom_target(api ALL DEPENDS ${CMAKE_BINARY_DIR}/docs/html/c_api/html/index.html )
+  add_custom_target(api ALL DEPENDS ${CMAKE_BINARY_DIR}/docs/c_api/html/index.html )
 endif(WANT_API_DOCS_HTML)
 
 

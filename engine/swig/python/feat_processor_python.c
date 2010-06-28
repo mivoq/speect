@@ -34,14 +34,12 @@
 /*                                                                                  */
 /************************************************************************************/
 
+%nodefaultctor SFeatProcessor;
+%nodefaultdtor SFeatProcessor;
 
 typedef struct
 {
 } SFeatProcessor;
-
-%nodefaultctor SFeatProcessor;
-
-%nodefaultdtor SFeatProcessor;
 
 %types(SFeatProcessor = SObject);
 

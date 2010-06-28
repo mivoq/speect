@@ -33,6 +33,7 @@
 /*                                                                                  */
 /************************************************************************************/
 
+%nodefaultctor SList;
 
 typedef struct
 {
@@ -40,7 +41,6 @@ typedef struct
 
 
 %types(SList = SObject);
-%nodefaultctor SList;
 
 %extend SList
 {

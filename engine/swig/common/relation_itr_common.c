@@ -34,6 +34,8 @@
 /*                                                                                  */
 /************************************************************************************/
 
+%nodefaultctor SRelationItr;
+
 %inline
 {
 
@@ -68,7 +70,6 @@
 	}
  }
 
-%nodefaultctor SRelationItr;
 
 %extend SRelationItr
 {

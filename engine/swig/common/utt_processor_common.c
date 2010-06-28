@@ -34,15 +34,14 @@
 /*                                                                                  */
 /************************************************************************************/
 
+%nodefaultctor SUttProcessor;
+%nodefaultdtor SUttProcessor;
+
+
 typedef struct
 {
 	SMap *features;
 } SUttProcessor;
-
-
-%nodefaultctor SUttProcessor;
-
-%nodefaultdtor SUttProcessor;
 
 %types(SUttProcessor = SObject);
 

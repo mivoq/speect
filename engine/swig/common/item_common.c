@@ -34,11 +34,12 @@
 /*                                                                                  */
 /************************************************************************************/
 
+%nodefaultctor SItem;
+%nodefaultdtor SItem;
+
 typedef struct
 {
 } SItem;
-
-%nodefaultctor SItem;
 
 %types(SItem = SObject);
 

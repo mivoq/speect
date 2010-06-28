@@ -33,6 +33,7 @@
 /*                                                                                  */
 /************************************************************************************/
 
+%nodefaultctor SMap;
 
 typedef struct
 {
@@ -40,9 +41,6 @@ typedef struct
 
 
 %types(SMap = SObject);
-
-%nodefaultctor SMap;
-
 
 %extend SMap
 {

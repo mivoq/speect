@@ -34,6 +34,9 @@
 /*                                                                                  */
 /************************************************************************************/
 
+%nodefaultctor PListIterator;
+%nodefaultctor PMapIterator;
+
 %inline
 {
 	typedef struct
@@ -86,6 +89,3 @@
 		return pitr;
 	}
 }
-
-%nodefaultctor PListIterator;
-%nodefaultctor PMapIterator;

@@ -33,13 +33,12 @@
 /*                                                                                  */
 /************************************************************************************/
 
+%nodefaultctor SObject;
 
 typedef struct
 {
 } SObject;
 
-
-%nodefaultctor SObject;
 
 %extend SObject
 {

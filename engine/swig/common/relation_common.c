@@ -33,14 +33,13 @@
 /*                                                                                  */
 /************************************************************************************/
 
+
 typedef struct
 {
 } SRelation;
 
 
 %types(SRelation = SObject);
-
-%nodefaultdtor SRelation;
 
 %extend SRelation
 {
@@ -68,6 +67,19 @@ typedef struct
 		}
 
 		return rel;
+	}
+
+
+	~SRelation()
+	{
+		s_erc error;
+
+		S_CLR_ERR(&error);
+		/* don't delete the relation, the utterance will delete it,
+		 * this is just here so that SWIG will not create a
+		 * destructor, and that SWIG has something to call, otherwise
+		 * we get a lot of messages about memory leaks (which aren't real)
+		 */
 	}
 
 

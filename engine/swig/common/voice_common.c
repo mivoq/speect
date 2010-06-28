@@ -34,6 +34,7 @@
 /*                                                                                  */
 /************************************************************************************/
 
+%newobject synth;
 
 typedef struct
 {
@@ -49,8 +50,6 @@ typedef struct
 
 
 %types(SVoice = SObject);
-
-%newobject synth;
 
 
 %extend SVoice

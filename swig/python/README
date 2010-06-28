@@ -1,29 +1,38 @@
-A simple client/server to test Speect voices.
+===========================
+Speect Python client/server
+===========================
+
+A simple Python client/server for Speect voices.
 
 
-Operation:
-----------
-The server ("server.py") initializes Speect and loads voices specified
-in a configuration file (an example can be found in this directory:
-"server.conf.example"), serves requests and logs all activity to a log
-file. The client ("client.py") can make synthesis requests or request
+Operation
+=========
+
+The server (``server.py``) initializes Speect and loads voices specified
+in a configuration file (an example can be found in ``server.conf.example``).
+The server serves all synthesis requests and logs all activity to a log
+file. The client (``client.py``) can make synthesis requests or request
 a list of loaded voices (names to be used when making synthesis
 requests) from the server.
 
 
-Running:
---------
-Available options and usage information can be found by executing:
+Running
+=======
 
-./server.py --help
+Available options and usage information can be found by executing::
 
-or
+    ./server.py --help
 
-./client.py --help
+or::
 
-The VOICENAME is any of the names returned when requesting a voicelist from the server
+     ./client.py --help
+
+The ``VOICENAME`` is any of the names returned when requesting a 
+``voicelist`` from the server
 
 
-Shutting down:
---------------
-The server is shut down by sending a SIGINT (CTRL-C) signal to the process.
+Shutting down
+=============
+
+The server is shut down by sending a ``SIGINT`` (CTRL-C) signal
+to the process.

@@ -230,7 +230,10 @@ function(speect_plugin_create)
     )
 
   # link with Speect library
-  target_link_libraries(${plugin_lowercase_name}_plugin ${SPCT_LIBRARIES_TARGET})
+  target_link_libraries(${plugin_lowercase_name}_plugin
+    ${SPCT_LIBRARIES_TARGET}
+    ${PLUGIN_PLATFORM_LIBS}
+    )
 
   set(${plugin_lowercase_name}_TARGET ${plugin_lowercase_name}_plugin)
 

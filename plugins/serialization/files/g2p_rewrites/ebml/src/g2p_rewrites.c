@@ -506,6 +506,9 @@ static SList *Apply(const SG2P *self, const char *word, s_erc *error)
 		}
 		else
 		{
+			rule_matches = FALSE;
+
+
 			/* iterate through rules searching for a match */
 			itr = S_ITERATOR_GET(rules, error);
 			if (S_CHK_ERR(error, S_CONTERR,
@@ -730,10 +733,11 @@ static const char *ApplyAt(const SG2P *self, const char *word, uint index, s_erc
 
 	for (i = 0; i < index; i++)
 	{
-		s_setat(word_left_context, i + 1, s_getx(&word_copy, error), error);
+		/* populate from right to left, therefore 0 */
+		s_insert(word_left_context, 0, s_getx(&word_copy, error), error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "ApplyAt",
-					  "Call to \"s_setat/s_getx\" failed"))
+					  "Call to \"s_insert/s_getx\" failed"))
 			goto quit_error;
 	}
 
@@ -762,6 +766,8 @@ static const char *ApplyAt(const SG2P *self, const char *word, uint index, s_erc
 	}
 	else
 	{
+		rule_matches = FALSE;
+
 		/* iterate through rules searching for a match */
 		itr = S_ITERATOR_GET(rules, error);
 		if (S_CHK_ERR(error, S_CONTERR,

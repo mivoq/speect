@@ -34,23 +34,6 @@
 /************************************************************************************/
 
 
-%feature("autodoc", "Request a graceful shutdown of the Speect Engine.") quit;
-
-%define version_DOCSTRING
-"""
-Return the Speect Engine library version in a tuple, (major version number, minor
-version number, patch number, release name).
-
-:rtype: tuple
-"""
-%enddef
-
-%feature("autodoc", version_DOCSTRING) version;
-
-
-/*
- * Do not delete these delimiters, required for SWIG
- */
 %inline
 %{
 	void quit(s_erc *error)

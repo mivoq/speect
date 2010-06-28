@@ -174,17 +174,6 @@ more meaning than can be described in one sentence, so additional documentation 
 |STRICT_WARN           |ON or OFF         |Enable stricter compile |OFF           |
 |                      |                  |flags.                  |              |
 +----------------------+------------------+------------------------+--------------+
-|WANT_DOCS             |ON or OFF         |Include documentation in|OFF           |
-|                      |                  |build process.          |              |
-+----------------------+------------------+------------------------+--------------+
-|WANT_DOCS_HTML        |ON or OFF         |Include HTML            |OFF           |
-|                      |                  |documentation in build  |              |
-|                      |                  |process.                |              |
-+----------------------+------------------+------------------------+--------------+
-|WANT_DOCS_PDF         |ON or OFF         |Include PDF             |OFF           |
-|                      |                  |documentation in build  |              |
-|                      |                  |process.                |              |
-+----------------------+------------------+------------------------+--------------+
 |WANT_EXAMPLES         |ON or OFF         |Include examples in     |OFF           |
 |                      |                  |build process.          |              |
 +----------------------+------------------+------------------------+--------------+

@@ -82,7 +82,9 @@ add_subdirectory(plugins)
 # Speect SWIG interface
 add_subdirectory(swig)
 
-# Speect documentation
+# Speect documentation, see docs/CMakeLists.txt for generation of documentation.
+# Not included in general build as doc generating software and versions are 
+# too specific and fragile.
 if(WANT_DOCS)
   add_subdirectory(docs)
 endif(WANT_DOCS)

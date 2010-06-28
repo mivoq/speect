@@ -44,15 +44,6 @@ option(WANT_THREADS "Enable multi threaded support." off)
 
 
 #------------------------------------------------------------------------------------#
-#                         Documentation  (Default OFF)                               #
-#------------------------------------------------------------------------------------#
-
-option(WANT_DOCS "Generate documentation" off)
-option(WANT_DOCS_HTML "Generate HTML documentation" off)
-option(WANT_DOCS_PDF "Generate PDF document (requires pdflatex)" off)
-
-
-#------------------------------------------------------------------------------------#
 #                                Developers options                                  #
 #------------------------------------------------------------------------------------#
 

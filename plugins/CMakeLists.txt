@@ -34,6 +34,9 @@ list(APPEND CMAKE_MODULE_PATH ${SPCT_PLUGINS_CMAKECONF_DIR})
 # Functions to create plug-ins
 include(pluginFunctions)
 
+# Options for plug-ins
+include(pluginOptions)
+
 # Variables that contain information about plug-ins. Use during installation
 # and to check that no duplicate plug-in names are created.
 set(SPCT_PLUGIN_LIST "" CACHE INTERNAL "List of Speect plug-ins and their include directories" FORCE)

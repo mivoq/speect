@@ -119,8 +119,8 @@ S_LOCAL SG2PRewrites *s_read_g2p_rewrites(SDatasource *ds, s_erc *error)
 
 	/* sanity check id */
 	S_EBML_ID_SANITY(id, S_G2PREWRITES_EBML,
-				"s_read_g2p_rewrites",
-				"ID mismatch", error);
+					 "s_read_g2p_rewrites",
+					 "ID mismatch", error);
 
 	while (1)
 	{
@@ -487,7 +487,7 @@ static void read_g2p_rewrites_rules(SG2PRewrites *g2p, SEbmlRead *ebmlReader, s_
 
 			while (1)
 			{
-				SG2PRewritesRule *rule = NULL;
+				SG2PRewritesRule *rule;
 
 
 				container_exhausted = S_EBMLREAD_CALL(ebmlReader, container_at_end)(ebmlReader, error);
@@ -510,24 +510,21 @@ static void read_g2p_rewrites_rules(SG2PRewrites *g2p, SEbmlRead *ebmlReader, s_
 				{
 				case S_G2PREWRITES_EBML_SINGLE_RULE_LEFT_CONTEXT:
 				{
-					/* elements should ordered ??? */
-					if (rule == NULL)
-					{
-						rule = (SG2PRewritesRule*)S_NEW("SG2PRewritesRule", error);
-						if (S_CHK_ERR(error, S_CONTERR,
-									  "read_g2p_rewrites_rules",
-									  "Failed to create new 'SG2PRewritesRule' object"))
-							return;
+					/* elements are ordered so we create a rule here */
+					rule = (SG2PRewritesRule*)S_NEW("SG2PRewritesRule", error);
+					if (S_CHK_ERR(error, S_CONTERR,
+								  "read_g2p_rewrites_rules",
+								  "Failed to create new 'SG2PRewritesRule' object"))
+						return;
 
-						/* add it to the list */
-						SListAppend(graphemeRuleList, S_OBJECT(rule), error);
-						if (S_CHK_ERR(error, S_CONTERR,
-									  "read_g2p_rewrites_rules",
-									  "Call to \"SListAppend\" failed"))
-						{
-							S_DELETE(rule, "read_g2p_rewrites_rules", error);
-							return;
-						}
+					/* add it to the list */
+					SListAppend(graphemeRuleList, S_OBJECT(rule), error);
+					if (S_CHK_ERR(error, S_CONTERR,
+								  "read_g2p_rewrites_rules",
+								  "Call to \"SListAppend\" failed"))
+					{
+						S_DELETE(rule, "read_g2p_rewrites_rules", error);
+						return;
 					}
 
 					rule->left_context = S_EBMLREAD_CALL(ebmlReader, read_utf8)(ebmlReader, &id,
@@ -543,28 +540,7 @@ static void read_g2p_rewrites_rules(SG2PRewrites *g2p, SEbmlRead *ebmlReader, s_
 				}
 				case S_G2PREWRITES_EBML_SINGLE_RULE_RIGHT_CONTEXT:
 				{
-					/* elements should ordered ??? */
-					if (rule == NULL)
-					{
-						rule = (SG2PRewritesRule*)S_NEW("SG2PRewritesRule", error);
-						if (S_CHK_ERR(error, S_CONTERR,
-									  "read_g2p_rewrites_rules",
-									  "Failed to create new 'SG2PRewritesRule' object"))
-							return;
-
-						/* add it to the list */
-						SListAppend(graphemeRuleList, S_OBJECT(rule), error);
-						if (S_CHK_ERR(error, S_CONTERR,
-									  "read_g2p_rewrites_rules",
-									  "Call to \"SListAppend\" failed"))
-						{
-							S_DELETE(rule, "read_g2p_rewrites_rules", error);
-							return;
-						}
-					}
-
-					rule->right_context = S_EBMLREAD_CALL(ebmlReader, read_utf8)(ebmlReader,
-																				 &id,
+					rule->right_context = S_EBMLREAD_CALL(ebmlReader, read_utf8)(ebmlReader, &id,
 																				 error);
 					if (S_CHK_ERR(error, S_CONTERR,
 								  "read_g2p_rewrites_rules",
@@ -575,26 +551,6 @@ static void read_g2p_rewrites_rules(SG2PRewrites *g2p, SEbmlRead *ebmlReader, s_
 				}
 				case S_G2PREWRITES_EBML_SINGLE_RULE_PHONEME:
 				{
-					/* elements should ordered ??? */
-					if (rule == NULL)
-					{
-						rule = (SG2PRewritesRule*)S_NEW("SG2PRewritesRule", error);
-						if (S_CHK_ERR(error, S_CONTERR,
-									  "read_g2p_rewrites_rules",
-									  "Failed to create new 'SG2PRewritesRule' object"))
-							return;
-
-						/* add it to the list */
-						SListAppend(graphemeRuleList, S_OBJECT(rule), error);
-						if (S_CHK_ERR(error, S_CONTERR,
-									  "read_g2p_rewrites_rules",
-									  "Call to \"SListAppend\" failed"))
-						{
-							S_DELETE(rule, "read_g2p_rewrites_rules", error);
-							return;
-						}
-					}
-
 					rule->phone = S_EBMLREAD_CALL(ebmlReader, read_utf8)(ebmlReader, &id,
 																		 error);
 					if (S_CHK_ERR(error, S_CONTERR,
@@ -868,6 +824,3 @@ static void read_g2p_rewrites_zeros(SG2PRewrites *g2p, SEbmlRead *ebmlReader, s_
 	S_DELETE(tmpZeros, "read_g2p_rewrites_zeros", error);
 	return;
 }
-
-
-

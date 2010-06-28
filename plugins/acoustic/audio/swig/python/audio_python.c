@@ -121,7 +121,7 @@ def play(self):
     if opsys == "posix":
         import ossaudiodev
 
-        dsp = ossaudiodev.open(mode="w")
+        dsp = ossaudiodev.open("w")
         dsp.setparameters(ossaudiodev.AFMT_S16_LE,
                           1,
                           waveform["samplerate"],

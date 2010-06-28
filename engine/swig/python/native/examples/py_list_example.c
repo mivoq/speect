@@ -33,11 +33,10 @@
 /*                                                                                  */
 /************************************************************************************/
 
-#include <stdio.h>
 #include "Python.h"
+#include <stdio.h>
 #include "speect.h"
 #include "py_native.h"
-
 
 
 

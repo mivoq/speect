@@ -51,7 +51,6 @@
 			return;
 
 		SVoiceSetUttType($self, key, pyList, error);
-		S_DELETE(pyList, "SVoice::uttType_set", error);
 	}
 
 

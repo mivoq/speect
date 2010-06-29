@@ -121,8 +121,6 @@ S_BEGIN_C_DECLS
  * @return Pointer to the newly created object.
  *
  * @todo check that everything is free'd on error.
- *
- * @sa #SObjectNewFromName
  */
 S_API SObject *SObjectNew(SObjectClass *cls, s_erc *error);
 

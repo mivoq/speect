@@ -92,7 +92,7 @@ S_BEGIN_C_DECLS
  *
  * @note The Error and debugging module takes ownership of the layout
  * and the loggers. These resources are destroyed when the module is
- * quit with #_s_errdbg_quit.
+ * quit with @c _s_errdbg_quit.
  * @note Not thread safe.
  * @note The error and debug loggers can be the same logger.
  */
@@ -130,8 +130,8 @@ S_API void s_errdbg_level(s_dbg_lvl level, s_erc *error);
 /************************************************************************************/
 
 /**
- * A dummy function, does nothing. Replaces #_s_err, #_s_fatal_err,
- * and #_s_check_err when error handling is turned off.
+ * A dummy function, does nothing. Replaces @c _s_err, @c _s_fatal_err,
+ * and @c _s_check_err when error handling is turned off.
  * @private
  *
  * @note Even though it replaces above mentioned, it never gets called
@@ -143,7 +143,7 @@ S_API int _s_err_dummy(s_erc *error_code, s_erc this_error,
 
 
 /**
- * A dummy warning function, does nothing. Replaces #_s_warn when
+ * A dummy warning function, does nothing. Replaces @c _s_warn when
  * error handling is turned off.
  * @private
  *

@@ -34,7 +34,18 @@
 /*                                                                                  */
 /************************************************************************************/
 
-%module(docstring="Speect Engine library Python interface") speect
+%define speect_DOCSTRING
+"Speect is a multilingual TTS system. It offers a full text-to-speech system with
+various API's, as well an environment for research and development of TTS systems
+and voices.
+
+It is written in ANSI C and uses a plug-in mechanism for extensions. Speect also
+includes an extensive set of Python bindings for quick implementation of new ideas,
+these bindings are derived from SWIG (www.swig.org) interface files and can easily
+be extended for other languages supported by SWIG."
+%enddef
+
+%module(docstring=speect_DOCSTRING) speect
 
 
 /************************************************************************************/
@@ -108,6 +119,7 @@
 /*                                                                                  */
 /************************************************************************************/
 
+%include "${CMAKE_SOURCE_DIR}/engine/swig/python/plugin_python.c"
 %include "${CMAKE_SOURCE_DIR}/engine/swig/python/iterator_python.c"
 %include "${CMAKE_SOURCE_DIR}/engine/swig/python/utterance_python.c"
 %include "${CMAKE_SOURCE_DIR}/engine/swig/python/relation_itr_python.c"

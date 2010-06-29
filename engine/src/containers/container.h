@@ -256,7 +256,7 @@ S_API SIterator *SContainerGetIterator(const SContainer *self, s_erc *error);
 
 /**
  * Utility function for macro #S_ITERATOR_GET.
- * If #SPCT_DO_SAFE_CAST is defined then this function is called and
+ * If @c SPCT_DO_SAFE_CAST is defined then this function is called and
  * it tries to cast the @c self variable to #SContainer. If it fails
  * it sets an error an returns @c NULL.
  * @private

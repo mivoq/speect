@@ -12,7 +12,7 @@ Speect Engine
    :synopsis: Speect Engine classes and functions 
 
 
-The main classes provided by the Speect Engine module is:
+The main classes provided by the Speect Engine module are:
 
 .. toctree::
    :maxdepth: 1

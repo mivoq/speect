@@ -65,6 +65,10 @@ macro(speect_plugin_swig_python_interface)
   # docstring
   file(APPEND ${filename} "%module(docstring=\"Speect Plug-in for ${swig_classname} class\") @plugin_lowercase_name@\n\n")
 
+  # version and license info
+  file(APPEND ${filename} "%pythoncode\n")
+  file(APPEND ${filename} "%{\n\t__version__ = \"${${plugin_lowercase_name}_VERSION}\"\n\t__license__= \"mit\"\n%}\n\n")
+
   # SWIG includes
   if(swig_includes)
     file(APPEND ${filename} "/* SWIG includes. */\n")
@@ -264,7 +268,7 @@ macro(speect_plugin_swig_python_wrapper)
   # set the output directory
   set_target_properties(${SWIG_MODULE_${plugin_lowercase_name}_REAL_NAME}
     PROPERTIES
-    LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/swig/python/speect
-    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/swig/python/speect
+    LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/swig/python/speect/lib
+    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/swig/python/speect/lib
     )
 endmacro(speect_plugin_swig_python_wrapper)

@@ -1,0 +1,16 @@
+# __init__.py is auto generated from speect/swig/python/config/__init__.py.in
+# do not edit __init__.py
+
+from speect import *
+__path__.append(__path__[0] + "/lib")  # add lib directory which contains swig modules
+
+__doc__ = "Speect is a multilingual TTS system. It offers a full text-to-speech system with\n" + \
+    "various API's, as well an environment for research and development of TTS systems\n" + \
+    "and voices.\n\n" + \
+    "It is written in ANSI C and uses a plug-in mechanism for extensions. Speect also\n" + \
+    "includes an extensive set of Python bindings for quick implementation of new ideas,\n" + \
+    "these bindings are derived from SWIG (www.swig.org) interface files and can easily\n" + \
+    "be extended for other languages supported by SWIG."
+
+__version__ = "@SPCT_VERSION@"
+__licence__ = "mit"

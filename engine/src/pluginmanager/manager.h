@@ -115,6 +115,22 @@ S_API s_bool s_pm_plugin_loaded(const char *path, s_erc *error);
 
 
 /**
+ * Get the full plug-in path from the given path. If the given path
+ * does not include any path separators (just a file name) then the
+ * path is concatenated with the @a default plug-in path.
+ *
+ * @param path The plug-in file/path
+ * @param error Error code.
+ *
+ * @return The full plug-in path
+ *
+ * @note The caller is responsible for the memory of the returned
+ * string.
+ */
+S_API char *s_pm_get_plugin_path(const char *path, s_erc *error);
+
+
+/**
  * Unload the given plug-in.
  * @private
  *

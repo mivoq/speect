@@ -185,6 +185,10 @@ function(speect_plugin_create)
     ${CMAKE_CURRENT_SOURCE_DIR}/src 
     ${CMAKE_CURRENT_BINARY_DIR}/src)
 
+  # reverse the list to make sure that the plug-ins own
+  # directories are included first
+  list(REVERSE ${plugin_lowercase_name}_INCLUDE_DIRS)
+
   include_directories(${${plugin_lowercase_name}_INCLUDE_DIRS})
  
   # extra libraries to link with

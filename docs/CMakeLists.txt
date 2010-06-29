@@ -6,7 +6,16 @@
 ######################################################################################
 ##                                                                                  ##
 ## CMakeList for Speect Docs                                                        ##
+## The required software and versions are too specific and fragile to include the   ##
+## generation of the documentation in the build process. Therefore, we only         ##
+## document the variables to activate the documentation building here.              ##
 ##                                                                                  ##
+## To activate the documentation generation you need to reconfigure cmake with the  ##
+## following variables:                                                             ##
+##      WANT_DOCS=ON              (Activates this CMakeList)                        ##
+##      WANT_API_DOCS_HTML=ON     (Generates Speect Engine API from Doxyfile)       ##
+##      WANT_DOCS_HTML=ON         (Generate Sphinx html documentation)              ##
+##      WANT_DOCS_PDF=ON          (Generate Sphinx pdf documentation)               ##
 ##                                                                                  ##
 ######################################################################################
 
@@ -44,8 +53,39 @@ set(ALLSPHINXOPTS -d ${CMAKE_BINARY_DIR}/docs/doctrees ${PAPEROPT_${PAPER}} ${SP
 
 
 #------------------------------------------------------------------------------------#
+#                                Find Doxygen                                        #
+#------------------------------------------------------------------------------------#
+
+find_package(Doxygen REQUIRED)
+
+
+#------------------------------------------------------------------------------------#
+#                          Configure the Doxyfile.in                                 #
+#------------------------------------------------------------------------------------#
+
+configure_file(${CMAKE_SOURCE_DIR}/docs/config/Doxyfile.in 
+  ${CMAKE_BINARY_DIR}/docs/Doxyfile @ONLY)
+
+# create a directory for the output of Doxygen
+file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/docs/c_api)
+
+
+#------------------------------------------------------------------------------------#
 #                                 Add targets                                        #
 #------------------------------------------------------------------------------------#
+
+# api (Doxygen)
+add_custom_command(
+  OUTPUT  ${CMAKE_BINARY_DIR}/docs/c_api/html/index.html 
+  COMMAND ${DOXYGEN_EXECUTABLE} ${CMAKE_BINARY_DIR}/docs/Doxyfile
+  COMMENT "Building Speect Engine API Doxygen HTML pages in ${CMAKE_BINARY_DIR}/docs/c_api/html"
+  VERBATIM
+  )
+
+if(WANT_API_DOCS_HTML)
+  add_custom_target(api ALL DEPENDS ${CMAKE_BINARY_DIR}/docs/c_api/html/index.html )
+endif(WANT_API_DOCS_HTML)
+
 
 # html
 add_custom_command(
@@ -69,5 +109,5 @@ add_custom_command(
   )
 
 if(WANT_DOCS_PDF)
-  add_custom_target(latex DEPENDS ${CMAKE_BINARY_DIR}/docs/latex/Speect.tex)
+  add_custom_target(latex ALL DEPENDS ${CMAKE_BINARY_DIR}/docs/latex/Speect.tex)
 endif(WANT_DOCS_PDF)

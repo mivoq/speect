@@ -164,12 +164,6 @@ typedef struct
 	}
 
 
-	void uttType_set(const char *key, const SList *uttType, s_erc *error)
-	{
-		SVoiceSetUttType($self, key, uttType, error);
-	}
-
-
 	void uttType_del(const char *key, s_erc *error)
 	{
 		SVoiceDelUttType($self, key, error);

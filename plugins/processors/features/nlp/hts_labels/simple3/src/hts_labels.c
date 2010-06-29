@@ -648,7 +648,6 @@ static char *create_syl_context_pause(const SItem *item, s_erc *error)
  */
 static char *create_A_context(const SItem *item, s_erc *error)
 {
-	const SObject *featPath;
 	SObject *dFeat;
 	char *a_context;
 	sint32 a1;
@@ -658,47 +657,9 @@ static char *create_A_context(const SItem *item, s_erc *error)
 
 	S_CLR_ERR(error);
 
-	/*  a1 */
-	featPath = s_path_to_feature(item, "R:SylStructure.parent.R:Syllable.p.stress",
-								 error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "create_A_context",
-				  "Call to \"s_path_to_feature\" failed"))
-		return NULL;
-
-	if (featPath != NULL)
-	{
-		a1 = get_stress_level(featPath, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "create_A_context",
-					  "Call to \"get_stress_level\" failed"))
-			return NULL;
-	}
-	else
-	{
-		a1 = 0;
-	}
-
-	/*  a2 */
-	featPath = s_path_to_feature(item, "R:SylStructure.parent.R:Syllable.p.accent",
-								 error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "create_A_context",
-				  "Call to \"s_path_to_feature\" failed"))
-		return NULL;
-
-	if (featPath != NULL)
-	{
-		a2 = get_accent_level(featPath, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "create_A_context",
-					  "Call to \"get_accent_level\" failed"))
-			return NULL;
-	}
-	else
-	{
-		a2 = 0;
-	}
+	/* we currently cannot compute a1 and a2 */
+	a1 = 0;
+	a2 = 0;
 
 	/* a3 */
 	dFeat = s_path_to_featproc(item, "R:SylStructure.parent.R:Syllable.p.syllable_num_phones",
@@ -723,7 +684,8 @@ static char *create_A_context(const SItem *item, s_erc *error)
 		a3 = 0;
 	}
 
-	s_asprintf(&a_context, error, "/A:%d_%d_%d", a1, a2, a3);
+	/* we currently cannot compute a1 and a2 */
+	s_asprintf(&a_context, error, "/A:0_0_%d", a3);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "create_A_context",
 				  "Call to \"s_asprintf\" failed"))
@@ -736,7 +698,6 @@ static char *create_A_context(const SItem *item, s_erc *error)
  * and not previous syllable */
 static char *create_A_context_pause(const SItem *item, s_erc *error)
 {
-	const SObject *featPath;
 	SObject *dFeat;
 	char *a_context;
 	sint32 a1;
@@ -746,47 +707,9 @@ static char *create_A_context_pause(const SItem *item, s_erc *error)
 
 	S_CLR_ERR(error);
 
-	/*  a1 */
-	featPath = s_path_to_feature(item, "p.R:SylStructure.parent.R:Syllable.stress",
-								 error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "create_A_context_pause",
-				  "Call to \"s_path_to_feature\" failed"))
-		return NULL;
-
-	if (featPath != NULL)
-	{
-		a1 = get_stress_level(featPath, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "create_A_context_pause",
-					  "Call to \"get_stress_level\" failed"))
-			return NULL;
-	}
-	else
-	{
-		a1 = 0;
-	}
-
-	/*  a2 */
-	featPath = s_path_to_feature(item, "p.R:SylStructure.parent.R:Syllable.accent",
-								 error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "create_A_context_pause",
-				  "Call to \"s_path_to_feature\" failed"))
-		return NULL;
-
-	if (featPath != NULL)
-	{
-		a2 = get_accent_level(featPath, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "create_A_context_pause",
-					  "Call to \"get_accent_level\" failed"))
-			return NULL;
-	}
-	else
-	{
-		a2 = 0;
-	}
+	/* we currently cannot compute a1 and a2 */
+	a1 = 0;
+	a2 = 0;
 
 	/* a3 */
 	dFeat = s_path_to_featproc(item, "p.R:SylStructure.parent.R:Syllable.syllable_num_phones",
@@ -811,7 +734,8 @@ static char *create_A_context_pause(const SItem *item, s_erc *error)
 		a3 = 0;
 	}
 
-	s_asprintf(&a_context, error, "/A:%d_%d_%d", a1, a2, a3);
+	/* we currently cannot compute a1 and a2 */
+	s_asprintf(&a_context, error, "/A:0_0_%d", a3);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "create_A_context_pause",
 				  "Call to \"s_asprintf\" failed"))
@@ -842,7 +766,6 @@ static char *create_A_context_pause(const SItem *item, s_erc *error)
  */
 static char *create_B_context(const SItem *item, s_erc *error)
 {
-	const SObject *featPath;
 	SObject *dFeat;
 	char *b_context;
 	sint32 b1;
@@ -865,47 +788,9 @@ static char *create_B_context(const SItem *item, s_erc *error)
 
 	S_CLR_ERR(error);
 
-	/* b1 */
-	featPath = s_path_to_feature(item, "R:SylStructure.parent.R:Syllable.stress",
-								 error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "create_B_context",
-				  "Call to \"s_path_to_feature\" failed"))
-		return NULL;
-
-	if (featPath != NULL)
-	{
-		b1 = get_stress_level(featPath, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "create_B_context",
-					  "Call to \"get_stress_level\" failed"))
-			return NULL;
-	}
-	else
-	{
-		b1 = 0;
-	}
-
-	/*  b2 */
-	featPath = s_path_to_feature(item, "R:SylStructure.parent.R:Syllable.accent",
-								 error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "create_B_context",
-				  "Call to \"s_path_to_feature\" failed"))
-		return NULL;
-
-	if (featPath != NULL)
-	{
-		b2 = get_accent_level(featPath, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "create_B_context",
-					  "Call to \"get_accent_level\" failed"))
-			return NULL;
-	}
-	else
-	{
-		b2 = 0;
-	}
+	/* no stress/accented methods */
+	b1 = 0;
+	b2 = 0;
 
 	/* b3 */
 	dFeat = s_path_to_featproc(item, "R:SylStructure.parent.R:Syllable.syllable_num_phones",
@@ -1025,196 +910,15 @@ static char *create_B_context(const SItem *item, s_erc *error)
 		b7 = 0;
 	}
 
-
-	/* b8 */
-	dFeat = s_path_to_featproc(item, "R:SylStructure.parent.R:Syllable.syllable_stress_in",
-							   error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "create_B_context",
-				  "Call to \"s_path_to_featproc\" failed"))
-		return NULL;
-
-	if (dFeat != NULL)
-	{
-		b8 = SObjectGetInt(dFeat, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "create_B_context",
-					  "Call to \"SObjectGetInt\" failed"))
-			return NULL;
-
-		S_DELETE(dFeat, "create_B_context", error);
-	}
-	else
-	{
-		b8 = 0;
-	}
-
-	/* b9 */
-	dFeat = s_path_to_featproc(item, "R:SylStructure.parent.R:Syllable.syllable_stress_out",
-							   error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "create_B_context",
-				  "Call to \"s_path_to_featproc\" failed"))
-		return NULL;
-
-	if (dFeat != NULL)
-	{
-		b9 = SObjectGetInt(dFeat, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "create_B_context",
-					  "Call to \"SObjectGetInt\" failed"))
-			return NULL;
-
-		S_DELETE(dFeat, "create_B_context", error);
-	}
-	else
-	{
-		b9 = 0;
-	}
-
-	/* b10 */
-	dFeat = s_path_to_featproc(item, "R:SylStructure.parent.R:Syllable.syllable_accent_in",
-							   error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "create_B_context",
-				  "Call to \"s_path_to_featproc\" failed"))
-		return NULL;
-
-	if (dFeat != NULL)
-	{
-		b10 = SObjectGetInt(dFeat, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "create_B_context",
-					  "Call to \"SObjectGetInt\" failed"))
-			return NULL;
-
-		S_DELETE(dFeat, "create_B_context", error);
-	}
-	else
-	{
-		b10 = 0;
-	}
-
-
-	/* b11 */
-	dFeat = s_path_to_featproc(item, "R:SylStructure.parent.R:Syllable.syllable_accent_out",
-							   error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "create_B_context",
-				  "Call to \"s_path_to_featproc\" failed"))
-		return NULL;
-
-	if (dFeat != NULL)
-	{
-		b11 = SObjectGetInt(dFeat, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "create_B_context",
-					  "Call to \"SObjectGetInt\" failed"))
-			return NULL;
-
-		S_DELETE(dFeat, "create_B_context", error);
-	}
-	else
-	{
-		b11 = 0;
-	}
-
-
-	/* b12 */
-	dFeat = s_path_to_featproc(item, "R:SylStructure.parent.R:Syllable.syllable_stress_all_in",
-							   error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "create_B_context",
-				  "Call to \"s_path_to_featproc\" failed"))
-		return NULL;
-
-	if (dFeat != NULL)
-	{
-		b12 = SObjectGetInt(dFeat, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "create_B_context",
-					  "Call to \"SObjectGetInt\" failed"))
-			return NULL;
-
-		S_DELETE(dFeat, "create_B_context", error);
-	}
-	else
-	{
-		b12 = 0;
-	}
-
-
-	/* b13 */
-	dFeat = s_path_to_featproc(item, "R:SylStructure.parent.R:Syllable.syllable_stress_all_out",
-							   error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "create_B_context",
-				  "Call to \"s_path_to_featproc\" failed"))
-		return NULL;
-
-	if (dFeat != NULL)
-	{
-		b13 = SObjectGetInt(dFeat, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "create_B_context",
-					  "Call to \"SObjectGetInt\" failed"))
-			return NULL;
-
-		S_DELETE(dFeat, "create_B_context", error);
-	}
-	else
-	{
-		b13 = 0;
-	}
-
-
-	/* b14 */
-	dFeat = s_path_to_featproc(item, "R:SylStructure.parent.R:Syllable.syllable_accent_all_in",
-							   error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "create_B_context",
-				  "Call to \"s_path_to_featproc\" failed"))
-		return NULL;
-
-	if (dFeat != NULL)
-	{
-		b14 = SObjectGetInt(dFeat, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "create_B_context",
-					  "Call to \"SObjectGetInt\" failed"))
-			return NULL;
-
-		S_DELETE(dFeat, "create_B_context", error);
-	}
-	else
-	{
-		b14 = 0;
-	}
-
-
-	/* b15 */
-	dFeat = s_path_to_featproc(item, "R:SylStructure.parent.R:Syllable.syllable_accent_all_out",
-							   error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "create_B_context",
-				  "Call to \"s_path_to_featproc\" failed"))
-		return NULL;
-
-	if (dFeat != NULL)
-	{
-		b15 = SObjectGetInt(dFeat, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "create_B_context",
-					  "Call to \"SObjectGetInt\" failed"))
-			return NULL;
-
-		S_DELETE(dFeat, "create_B_context", error);
-	}
-	else
-	{
-		b15 = 0;
-	}
-
+	/* no stress/accented methods */
+	b8 = 0;
+	b9 = 0;
+	b10 = 0;
+	b11 = 0;
+	b12 = 0;
+	b13 = 0;
+	b14 = 0;
+	b15 = 0;
 
 	/* b16 */
 	dFeat = s_path_to_featproc(item, "R:SylStructure.parent.R:Syllable.syllable_vowel",
@@ -1239,8 +943,8 @@ static char *create_B_context(const SItem *item, s_erc *error)
 	}
 
 	/* we currently cannot compute b1, b2, b8, b9, b10, b11, b12, b13, b14 and b15 */
-	s_asprintf(&b_context, error, "/B:%d-%d-%d@%d-%d&%d-%d#%d-%d$%d-%d!%d-%d;%d-%d|%s",
-			   b1, b2, b3, b4, b5, b6, b7, b8, b9, b10, b11, b12, b13, b14, b15, b16);
+	s_asprintf(&b_context, error, "/B:0-0-%d@%d-%d&%d-%d#x-x$x-x!x-x;x-x|%s",
+			   b3, b4, b5, b6, b7, b16);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "create_B_context",
 				  "Call to \"s_asprintf\" failed"))
@@ -1283,7 +987,6 @@ static char *create_B_context_pause(const SItem *item, s_erc *error)
  */
 static char *create_C_context(const SItem *item, s_erc *error)
 {
-	const SObject *featPath;
 	SObject *dFeat;
 	char *c_context;
 	sint32 c1;
@@ -1293,50 +996,9 @@ static char *create_C_context(const SItem *item, s_erc *error)
 
 	S_CLR_ERR(error);
 
-	/* c1 */
-	featPath = s_path_to_feature(item, "R:SylStructure.parent.R:Syllable.n.stress",
-								 error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "create_C_context",
-				  "Call to \"s_path_to_feature\" failed"))
-		return NULL;
-
-	if (featPath != NULL)
-	{
-		c1 = get_stress_level(featPath, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "create_C_context",
-					  "Call to \"get_stress_level\" failed"))
-			return NULL;
-
-		if (c1 > 0)
-			c1 = 1;
-	}
-	else
-	{
-		c1 = 0;
-	}
-
-	/* c2 */
-	featPath = s_path_to_feature(item, "R:SylStructure.parent.R:Syllable.n.accent",
-								 error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "create_C_context",
-				  "Call to \"s_path_to_feature\" failed"))
-		return NULL;
-
-	if (featPath != NULL)
-	{
-		c2 = get_accent_level(featPath, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "create_C_context",
-					  "Call to \"get_accent_level\" failed"))
-			return NULL;
-	}
-	else
-	{
-		c2 = 0;
-	}
+	/* we currently cannot compute c1 and c2 */
+	c1 = 0;
+	c2 = 0;
 
 	/* c3 */
 	dFeat = s_path_to_featproc(item, "R:SylStructure.parent.R:Syllable.n.syllable_num_phones",
@@ -1361,7 +1023,8 @@ static char *create_C_context(const SItem *item, s_erc *error)
 		c3 = 0;
 	}
 
-	s_asprintf(&c_context, error, "/C:%d+%d+%d", c1, c2, c3);
+	/* we currently cannot compute c1 and c2 */
+	s_asprintf(&c_context, error, "/C:0+0+%d", c3);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "create_C_context",
 				  "Call to \"s_asprintf\" failed"))
@@ -1370,12 +1033,10 @@ static char *create_C_context(const SItem *item, s_erc *error)
 	return c_context;
 }
 
-
 /* differs from create_C_context in that next phone's syllable is queried
  * and not next syllable */
 static char *create_C_context_pause(const SItem *item, s_erc *error)
 {
-	const SObject *featPath;
 	SObject *dFeat;
 	char *c_context;
 	sint32 c1;
@@ -1385,50 +1046,9 @@ static char *create_C_context_pause(const SItem *item, s_erc *error)
 
 	S_CLR_ERR(error);
 
-	/* c1 */
-	featPath = s_path_to_feature(item, "n.R:SylStructure.parent.R:Syllable.stress",
-								 error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "create_C_context_pause",
-				  "Call to \"s_path_to_feature\" failed"))
-		return NULL;
-
-	if (featPath != NULL)
-	{
-		c1 = get_stress_level(featPath, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "create_C_context_pause",
-					  "Call to \"get_stress_level\" failed"))
-			return NULL;
-
-		if (c1 > 0)
-			c1 = 1;
-	}
-	else
-	{
-		c1 = 0;
-	}
-
-	/* c2 */
-	featPath = s_path_to_feature(item, "n.R:SylStructure.parent.R:Syllable.accent",
-								 error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "create_C_context_pause",
-				  "Call to \"s_path_to_feature\" failed"))
-		return NULL;
-
-	if (featPath != NULL)
-	{
-		c2 = get_accent_level(featPath, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "create_C_context_pause",
-					  "Call to \"get_accent_level\" failed"))
-			return NULL;
-	}
-	else
-	{
-		c2 = 0;
-	}
+	/* we currently cannot compute c1 and c2 */
+	c1 = 0;
+	c2 = 0;
 
 	/* c3 */
 	dFeat = s_path_to_featproc(item, "n.R:SylStructure.parent.R:Syllable.syllable_num_phones",
@@ -1453,7 +1073,8 @@ static char *create_C_context_pause(const SItem *item, s_erc *error)
 		c3 = 0;
 	}
 
-	s_asprintf(&c_context, error, "/C:%d+%d+%d", c1, c2, c3);
+	/* we currently cannot compute c1 and c2 */
+	s_asprintf(&c_context, error, "/C:0+0+%d", c3);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "create_C_context_pause",
 				  "Call to \"s_asprintf\" failed"))

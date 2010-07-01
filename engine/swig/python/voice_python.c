@@ -37,6 +37,23 @@
 
 %extend SVoice
 {
+	void uttType_set(const char *key, PyObject *uttType, s_erc *error)
+	{
+		SList *pyList;
+
+
+		S_CLR_ERR(error);
+		pyList = (SList*)s_pyobject_2_sobject(uttType, error);
+		Py_DECREF(uttType);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "SVoice::uttType_set",
+					  "Call to \"s_pyobject_2_sobject\" failed"))
+			return;
+
+		SVoiceSetUttType($self, key, pyList, error);
+	}
+
+
 	PyObject *data_get(const char *key, s_erc *error)
 	{
 		const SObject *sdata;

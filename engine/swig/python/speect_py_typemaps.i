@@ -123,3 +123,82 @@
 	$result = versionTuple;
 }
 
+
+%typemap(in) SList*
+{
+	SListPy *pyList = NULL;
+	SList *list;
+	s_erc error;
+
+
+	S_CLR_ERR(&error);
+	if (PyList_Check($input))
+	{
+		/* create SListPy wrapper */
+		pyList = (SListPy*)S_NEW("SListPy", &error);
+		if (S_CHK_ERR(&error, S_CONTERR,
+					  "%typemap(in) const SList* uttType",
+					  "Failed to create new 'SListPy' object"))
+			goto slist_fail;
+
+		/* initialize with Python list */
+		SListPyInit(&pyList, $input, &error);
+		if (S_CHK_ERR(&error, S_CONTERR,
+					  "%typemap(in) const SList* uttType",
+					  "Call to \"SListPyInit\" failed"))
+			goto slist_fail;
+
+		/* we are finished with the Python list, it is
+		 * in the wrapper now.
+		 */
+		Py_CLEAR($input);
+	}
+	else
+	{
+		PyErr_SetString(PyExc_TypeError,"input is not a list");
+		goto slist_fail;
+	}
+
+	goto slist_good;
+
+
+slist_fail:
+	list = NULL;
+slist_good:
+	list = (SList*)pyList;
+	$1 = list;
+}
+
+
+%typemap(out) const SList*
+{
+	s_erc error;
+	PyObject *pyList;
+
+
+	S_CLR_ERR(&error);
+	pyList = s_sobject_2_pyobject(S_OBJECT($1), FALSE, &error);
+	if (S_CHK_ERR(&error, S_CONTERR,
+				  "%typemap(out) const SList*",
+				  "Call to \"s_sobject_2_pyobject\" failed"))
+		$result = NULL;
+	else
+		$result = pyList;
+}
+
+
+%typemap(out) SList*
+{
+	s_erc error;
+	PyObject *pyList;
+
+
+	S_CLR_ERR(&error);
+	pyList = s_sobject_2_pyobject(S_OBJECT($1), TRUE, &error);
+	if (S_CHK_ERR(&error, S_CONTERR,
+				  "%typemap(out) SList*",
+				  "Call to \"s_sobject_2_pyobject\" failed"))
+		$result = NULL;
+	else
+		$result = pyList;
+}

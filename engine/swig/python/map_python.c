@@ -46,6 +46,12 @@
 		if (*error != S_SUCCESS)
 			return NULL;
 
+		if (mapObject == NULL)
+		{
+			PyErr_SetString(PyExc_KeyError, "key not in map");
+			return NULL;
+		}
+
 		object = s_sobject_2_pyobject(mapObject, FALSE, error);
 		if (*error != S_SUCCESS)
 			return NULL;

@@ -64,3 +64,9 @@ swig/python/speect/*.pyc
 
 docs/_build/*
 docs/sphinxext/*.pyc
+
+
+##########################################################################
+# Ignore ditz config file
+
+.ditz-config

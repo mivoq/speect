@@ -1,0 +1,20 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Phony error logging
+desc: |-
+  It seems that the entry function between SWIG and Speect sets an error
+  when there was no fault
+type: :task
+component: Speect
+release: Beryllium
+reporter: Aby Louw <jalouw@csir.co.za>
+status: :unstarted
+disposition: 
+creation_time: 2010-07-01 13:23:45.270243 Z
+references: []
+
+id: c5cfaa7204d80dcd1b2d52eef98768ca0011f91a
+log_events: 
+- - 2010-07-01 13:23:56.694477 Z
+  - Aby Louw <jalouw@csir.co.za>
+  - created
+  - This has to be fixed asap

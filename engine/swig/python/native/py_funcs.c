@@ -198,14 +198,14 @@ S_API PyObject *s_sobject_2_pyobject(const SObject *object, s_bool own, s_erc *e
 		S_CTX_ERR(error, S_ARGERROR,
 				  "s_sobject_2_pyobject",
 				  "Argument \"object\" is NULL");
-		return NULL;
+		Py_RETURN_NONE;
 	}
 
 	type = get_sobject_type(object, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "s_sobject_2_pyobject",
 				  "Call to \"get_sobject_type\" failed"))
-		return NULL;
+		Py_RETURN_NONE;
 
 	switch(type)
 	{
@@ -215,7 +215,7 @@ S_API PyObject *s_sobject_2_pyobject(const SObject *object, s_bool own, s_erc *e
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "s_sobject_2_pyobject",
 					  "Call to \"ssint_2_pyobject\" failed"))
-			return NULL;
+			Py_RETURN_NONE;
 
 		goto check_owner;
 	}
@@ -225,7 +225,7 @@ S_API PyObject *s_sobject_2_pyobject(const SObject *object, s_bool own, s_erc *e
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "s_sobject_2_pyobject",
 					  "Call to \"sfloat_2_pyobject\" failed"))
-			return NULL;
+			Py_RETURN_NONE;
 
 		goto check_owner;
 	}
@@ -235,7 +235,7 @@ S_API PyObject *s_sobject_2_pyobject(const SObject *object, s_bool own, s_erc *e
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "s_sobject_2_pyobject",
 					  "Call to \"sstring_2_pyobject\" failed"))
-			return NULL;
+			Py_RETURN_NONE;
 
 		goto check_owner;
 	}
@@ -245,7 +245,7 @@ S_API PyObject *s_sobject_2_pyobject(const SObject *object, s_bool own, s_erc *e
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "s_sobject_2_pyobject",
 					  "Call to \"SPyObjectGet\" failed"))
-			return NULL;
+			Py_RETURN_NONE;
 
 		goto check_owner;
 	}
@@ -255,7 +255,7 @@ S_API PyObject *s_sobject_2_pyobject(const SObject *object, s_bool own, s_erc *e
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "s_sobject_2_pyobject",
 					  "Call to \"SPyObjectGet\" failed"))
-			return NULL;
+			Py_RETURN_NONE;
 
 		goto check_owner;
 	}
@@ -265,7 +265,7 @@ S_API PyObject *s_sobject_2_pyobject(const SObject *object, s_bool own, s_erc *e
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "s_sobject_2_pyobject",
 					  "Call to \"SPyObjectGet\" failed"))
-			return NULL;
+			Py_RETURN_NONE;
 
 		goto check_owner;
 	}
@@ -275,7 +275,7 @@ S_API PyObject *s_sobject_2_pyobject(const SObject *object, s_bool own, s_erc *e
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "s_sobject_2_pyobject",
 					  "Call to \"swig_2_pyobject\" failed"))
-			return NULL;
+			Py_RETURN_NONE;
 
 		return pobject; /* ownership is done in swig_2_pyobject */
 	}
@@ -284,7 +284,7 @@ S_API PyObject *s_sobject_2_pyobject(const SObject *object, s_bool own, s_erc *e
 		S_CTX_ERR(error, S_FAILURE,
 				  "s_sobject_2_pyobject",
 				  "Failed to do type conversion");
-		return NULL;
+		Py_RETURN_NONE;
 	}
 	}
 

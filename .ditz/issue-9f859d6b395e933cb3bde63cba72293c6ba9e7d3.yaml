@@ -1,0 +1,20 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Segfault at ipython quit
+desc: |-
+  Receiving "Segmentation Fault" when quiting IPython session after
+  voice used.
+type: :task
+component: Speect
+release: Beryllium
+reporter: Daniel van Niekerk <dvniekerk@csir.co.za>
+status: :unstarted
+disposition: 
+creation_time: 2010-07-01 14:53:51.030465 Z
+references: []
+
+id: 9f859d6b395e933cb3bde63cba72293c6ba9e7d3
+log_events: 
+- - 2010-07-01 14:54:15.580469 Z
+  - Daniel van Niekerk <dvniekerk@csir.co.za>
+  - created
+  - ""

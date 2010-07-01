@@ -48,17 +48,17 @@ import audio
 def save_riff(self, path):
     """
     save_riff(path)
-    
+
     Save the audio object in the RIFF format at the given path.
-    
+
     :param path: Full path and file name where audio should be saved.
     :type path: string
     """
-    
-    if not isinstance(path, str) or not isinstance(path, unicode):
+
+    if not isinstance(path, str):
         raise TypeError("Argument \"path\" must be a string")
 
-    _save_audio_riff_inline(self, path)
+    _save_audio_riff(self, path)
 
 
 setattr(audio.SAudio, "save_riff", save_riff)

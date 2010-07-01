@@ -49,5 +49,13 @@ A ticket (bug-fix/feature/issue) is assigned to a release. We have just one
 release that we are working on, Beryllium. 
 
 Ditz creates and stores the ticket files in the .ditz directory. So, git has
-to be updated after any changes have been done with Ditz.
+to be updated after any changes have been done with Ditz. There is a script
+in the top level Speect directory, ``git-ditz.sh``, which will do this for
+you. It adds any Ditz changes to the git staging area, commits these to
+your repository and then pushes up to dudley (if dudley is reachable).
+
+**IMPORTANT**
+If you are not going to use the ``git-ditz.sh`` script, you must please
+commit Ditz changes separately from other changes, and use "ditz update"
+as your commit message.
      	    	  

@@ -8,7 +8,7 @@ WGET="/usr/bin/wget"
 GIT="/usr/bin/git"
 
 ## Commit  with message "ditz update"
-cd ./.ditz/
+cd $($GIT rev-parse --show-cdup)/.ditz/ # git root then .dizt/
 $GIT add .
 $GIT commit . -m "ditz update"
 cd ..

@@ -61,7 +61,6 @@
 		}
 
 		phList = s_pyobject_2_sobject(phoneList, error);
-		Py_DECREF(phoneList);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "_syllabification_syllibify",
 					  "Call to \"s_pyobject_2_sobject\" failed"))

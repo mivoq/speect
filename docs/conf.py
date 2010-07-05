@@ -32,7 +32,7 @@ extensions = ['sphinx.ext.intersphinx', 'sphinx.ext.todo', 'sphinx.ext.pngmath',
 matplotlib_extensions = ['matplotlib.sphinxext.mathmpl', 'matplotlib.sphinxext.only_directives',
                          'matplotlib.sphinxext.plot_directive', 'sphinx.ext.autodoc',
                          'sphinx.ext.doctest', 'ipython_console_highlighting',
-                         'inheritance_diagram', 'numpydoc']
+                         'inheritance_diagram']
 
 breathe_extensions = ['breathe']
 

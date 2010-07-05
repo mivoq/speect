@@ -64,7 +64,7 @@
 
 		/* save audio */
 		SObjectSave(S_OBJECT(audio), path, "riff", error);
-		S_CTX_ERR(error, S_CONTERR,
+		S_CHK_ERR(error, S_CONTERR,
 				  "_save_audio_riff",
 				  "Call to \"SObjectSave\" failed");
 	}

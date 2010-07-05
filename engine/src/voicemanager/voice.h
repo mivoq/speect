@@ -285,9 +285,11 @@ typedef struct
 	 * @param error Error code.
 	 *
 	 * @return The synthesized utterance.
+	 *
+	 * @note The voice takes hold of the @c input #SObject
 	 */
 	SUtterance  *(*synth_utt)(const SVoice *self, const char *utt_type,
-							  const SObject *input, s_erc *error);
+							  SObject *input, s_erc *error);
 
 	/**
 	 * @protected ReSynthUtt function pointer.
@@ -330,9 +332,11 @@ typedef struct
  * @param error Error code.
  *
  * @return The synthesized utterance.
+ *
+ * @note The voice takes hold of the @c input #SObject
  */
 S_API SUtterance *SVoiceSynthUtt(const SVoice *self, const char *utt_type,
-								 const SObject *input, s_erc *error);
+								 SObject *input, s_erc *error);
 
 
 /**
@@ -551,14 +555,16 @@ S_API const SObject *SVoiceGetData(const SVoice *self, const char *key,
  * add a data object that is shareable one must get the data
  * configuration with the #SVoiceGetDataConfig, edit it, and
  * set it again with #SVoiceSetDataConfig.
+ *
+ * @note The voice takes hold of the @c object #SObject.
  */
 S_API void SVoiceSetData(SVoice *self, const char *key,
-						 const SObject *object,  s_erc *error);
+						 SObject *object,  s_erc *error);
 
 
 /**
- * Delete the value of the named key from the voice @a data container.  The key is removed
- * and value deleted if it is not referenced.
+ * Delete the value of the named key from the voice @a data container.
+ * The key is removed and value deleted if it is not referenced.
  *
  * @public @memberof SVoice
  * @param self The given voice.
@@ -649,9 +655,11 @@ S_API const SObject *SVoiceGetFeature(const SVoice *self, const char *key, s_erc
  * @param key The string key of the feature object to set.
  * @param object Pointer to the feature object of the named key.
  * @param error Error code.
+ *
+ * @note The voice takes hold of the @c object #SObject.
  */
 S_API void SVoiceSetFeature(SVoice *self, const char *key,
-							const SObject *object,  s_erc *error);
+							SObject *object,  s_erc *error);
 
 
 /**
@@ -734,9 +742,11 @@ S_API const SFeatProcessor *SVoiceGetFeatProc(const SVoice *self, const char *ke
  * @param key The string key of the feature processor object to set.
  * @param featProc Pointer to the feature processor of the named key.
  * @param error Error code.
+ *
+ * @note The voice takes hold of the @c featProc #SFeatProcessor.
  */
 S_API void SVoiceSetFeatProc(SVoice *self, const char *key,
-							 const SFeatProcessor *featProc,  s_erc *error);
+							 SFeatProcessor *featProc,  s_erc *error);
 
 
 /**
@@ -817,11 +827,13 @@ S_API const SUttProcessor *SVoiceGetUttProc(const SVoice *self, const char *key,
  * @public @memberof SVoice
  * @param self The given voice.
  * @param key The string key of the utterance processor object to set.
- * @param featProc Pointer to the utterance processor of the named key.
+ * @param uttProc Pointer to the utterance processor of the named key.
  * @param error Error code.
+ *
+ * @note The voice takes hold of the @c uttProc #SUttProcessor.
  */
 S_API void SVoiceSetUttProc(SVoice *self, const char *key,
-							const SUttProcessor *featProc,  s_erc *error);
+							SUttProcessor *uttProc,  s_erc *error);
 
 
 /**
@@ -907,9 +919,11 @@ S_API const SList *SVoiceGetUttType(const SVoice *self, const char *key, s_erc *
  * @param uttType Pointer to the #SList of utterance processors for
  * the named utterance type
  * @param error Error code.
+ *
+ * @note The voice takes hold of the @c uttType #SList.
  */
 S_API void SVoiceSetUttType(SVoice *self, const char *key,
-							const SList *uttType,  s_erc *error);
+							SList *uttType,  s_erc *error);
 
 
 /**

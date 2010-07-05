@@ -34,18 +34,13 @@
 /*                                                                                  */
 /************************************************************************************/
 
+%nodefaultdtor SVoice;
 %newobject synth;
+
 
 typedef struct
 {
 	SMap *features;
-	%extend
-	{
-		SList *uttTypes;
-		SList *uttProcessors;
-		SList *dataObjects;
-		SList *featProcessors;
-	}
 } SVoice;
 
 
@@ -71,7 +66,20 @@ typedef struct
 		s_erc error;
 
 		S_CLR_ERR(&error);
-		S_DELETE($self, "~SVoice", &error);
+		/* don't delete the voice, we need to explicitly call
+		 * voice.delete()
+		 * If we don't do this, then utterances created by the voice
+		 * will cause a segfault when they are deleted after the
+		 * voice. I can't figure out why, so this will have to do for
+		 * now.
+		 * It's a bug, issue speect-5
+		 */
+	}
+
+
+	void delete(s_erc *error)
+	{
+		S_DELETE($self, "SVoice::delete", error);
 	}
 
 
@@ -139,53 +147,16 @@ typedef struct
 	}
 
 
-	void data_set(const char *key, const SObject *object, s_erc *error)
-	{
-		SVoiceSetData($self, key, object, error);
-	}
-
-
 	void data_del(const char *key, s_erc *error)
 	{
 		SVoiceDelData($self, key, error);
 	}
 
 
-	const SList *uttType_get(const char *key, s_erc *error)
-	{
-		const SList *uttType;
-
-
-		uttType = SVoiceGetUttType($self, key, error);
-		if (*error != S_SUCCESS)
-			return NULL;
-
-		return uttType;
-	}
-
 
 	void uttType_del(const char *key, s_erc *error)
 	{
 		SVoiceDelUttType($self, key, error);
-	}
-
-
-	const SUttProcessor *uttProcessor_get(const char *key, s_erc *error)
-	{
-		const SUttProcessor *uttProc;
-
-
-		uttProc = SVoiceGetUttProc($self, key, error);
-		if (*error != S_SUCCESS)
-			return NULL;
-
-		return uttProc;
-	}
-
-
-	void uttProcessor_set(const char *key, const SUttProcessor *uttProc, s_erc *error)
-	{
-		SVoiceSetUttProc($self, key, uttProc, error);
 	}
 
 
@@ -195,20 +166,7 @@ typedef struct
 	}
 
 
-	const SFeatProcessor *featProcessor_get(const char *key, s_erc *error)
-	{
-		const SFeatProcessor *featProc;
-
-
-		featProc = SVoiceGetFeatProc($self, key, error);
-		if (*error != S_SUCCESS)
-			return NULL;
-
-		return featProc;
-	}
-
-
-	void featProcessor_set(const char *key, const SFeatProcessor *featProc, s_erc *error)
+	void featProcessor_set(const char *key, SFeatProcessor *featProc, s_erc *error)
 	{
 		SVoiceSetFeatProc($self, key, featProc, error);
 	}
@@ -219,105 +177,3 @@ typedef struct
 		SVoiceDelFeatProc($self, key, error);
 	}
 };
-
-
-%{
-	SList *SVoice_uttTypes_get(const SVoice *voice)
-	{
-		s_erc error;
-		SList *uttTypes;
-
-
-		S_CLR_ERR(&error);
-		uttTypes = SVoiceGetUttTypesKeys(voice, &error);
-		if (error != S_SUCCESS)
-			return NULL;
-
-		return uttTypes;
-	}
-
-
-	void SVoice_uttTypes_set(const SVoice *voice, SList *list)
-	{
-		s_erc error;
-
-
-		S_CLR_ERR(&error);
-		S_DELETE(list, "SVoice_uttTypes_set", &error);
-	}
-
-
-	SList *SVoice_uttProcessors_get(const SVoice *voice)
-	{
-		s_erc error;
-		SList *uttProcessors;
-
-
-		S_CLR_ERR(&error);
-		uttProcessors = SVoiceGetUttProcKeys(voice, &error);
-		if (error != S_SUCCESS)
-			return NULL;
-
-		return uttProcessors;
-	}
-
-
-	void SVoice_uttProcessors_set(const SVoice *voice, SList *list)
-	{
-		s_erc error;
-
-
-		S_CLR_ERR(&error);
-		S_DELETE(list, "SVoice_uttProcessors_set", &error);
-	}
-
-
-	SList *SVoice_dataObjects_get(const SVoice *voice)
-	{
-		s_erc error;
-		SList *data;
-
-
-		S_CLR_ERR(&error);
-		data = SVoiceGetDataKeys(voice, &error);
-		if (error != S_SUCCESS)
-			return NULL;
-
-		return data;
-	}
-
-
-	void SVoice_dataObjects_set(const SVoice *voice, SList *list)
-	{
-		s_erc error;
-
-
-		S_CLR_ERR(&error);
-		S_DELETE(list, "SVoice_dataObjects_set", &error);
-	}
-
-
-	SList *SVoice_featProcessors_get(const SVoice *voice)
-	{
-		s_erc error;
-		SList *featProcessors;
-
-
-		S_CLR_ERR(&error);
-		featProcessors = SVoiceGetFeatProcKeys(voice, &error);
-		if (error != S_SUCCESS)
-			return NULL;
-
-		return featProcessors;
-	}
-
-
-	void SVoice_featProcessors_set(const SVoice *voice, SList *list)
-	{
-		s_erc error;
-
-
-		S_CLR_ERR(&error);
-		S_DELETE(list, "SVoice_featProcessors_set", &error);
-	}
-%}

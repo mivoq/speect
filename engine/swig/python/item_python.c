@@ -145,7 +145,6 @@
 		if (newObject == NULL)
 			return;
 
-		Py_DECREF(val);
 		SItemSetObject($self, key, newObject, error);
 		if (*error != S_SUCCESS)
 			S_DELETE(newObject, "SItem::__setitem__", error);

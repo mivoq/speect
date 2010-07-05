@@ -38,14 +38,42 @@
 #include "speect.h"
 
 
+/************************************************************************************/
+/*                                                                                  */
+/*  Static function implementations                                                 */
+/*                                                                                  */
+/************************************************************************************/
 
-int main()
+static void usage(int rv)
+{
+    printf("usage: synth_test -t TEXT -v VOICEFILE -o WAVEFILE\n"
+           "  Converts text in TEXT, with voice specification in VOICEFILE\n"
+		   "  to a waveform in WAVEFILE.\n"
+		   "  None of the arguments are optional.\n"
+           "  --help      Output usage string\n");
+	exit(rv);
+}
+
+
+/************************************************************************************/
+/*                                                                                  */
+/*  Main function                                                                   */
+/*                                                                                  */
+/************************************************************************************/
+
+
+int main(int argc, char **argv)
 {
 	s_erc error = S_SUCCESS;
 	SVoice *voice = NULL;
 	SUtterance *utt = NULL;
 	const SObject *audio;
 	SPlugin *riffAudio = NULL;
+	int i;
+	int scomp;
+	const char *wavfile = NULL;
+	const char *voicefile = NULL;
+	const char *text = NULL;
 
 
 	/*
@@ -58,24 +86,88 @@ int main()
 		return 1;
 	}
 
+	/* parse options */
+    for (i=1; i<argc; i++)
+    {
+		scomp = s_strcmp(argv[i],"-h", &error);
+		if (S_CHK_ERR(&error, S_CONTERR,
+					  "main",
+					  "Call to \"s_strcmp\" failed"))
+			return 1;
+
+		if (scomp == 0)
+			usage(0);
+
+		scomp = s_strcmp(argv[i],"--help", &error);
+		if (S_CHK_ERR(&error, S_CONTERR,
+					  "main",
+					  "Call to \"s_strcmp\" failed"))
+			return 1;
+
+		if (scomp == 0)
+			usage(0);
+
+		scomp = s_strcmp(argv[i],"-t", &error);
+		if (S_CHK_ERR(&error, S_CONTERR,
+					  "main",
+					  "Call to \"s_strcmp\" failed"))
+			return 1;
+
+		if ((scomp == 0) && (i + 1 < argc))
+		{
+			text = argv[i+1];
+			i++;
+		}
+
+		scomp = s_strcmp(argv[i],"-v", &error);
+		if (S_CHK_ERR(&error, S_CONTERR,
+					  "main",
+					  "Call to \"s_strcmp\" failed"))
+			return 1;
+
+		if ((scomp == 0) && (i + 1 < argc))
+		{
+			voicefile = argv[i+1];
+			i++;
+		}
+
+		scomp = s_strcmp(argv[i],"-o", &error);
+		if (S_CHK_ERR(&error, S_CONTERR,
+					  "main",
+					  "Call to \"s_strcmp\" failed"))
+			return 1;
+
+		if ((scomp == 0) && (i + 1 < argc))
+		{
+			wavfile = argv[i+1];
+			i++;
+		}
+	}
+
+	if ((wavfile == NULL) || (voicefile == NULL) || (text == NULL))
+	{
+		S_CTX_ERR(&error, S_ARGERROR,
+				  "main",
+				  "Arguments are not optional, see usage");
+		usage(1);
+	}
+
 	/* load audio riff plug-in, so that we can save the audio */
-	riffAudio = s_pm_load_plugin("audio-riff.spi", &error);
+	riffAudio = s_pm_load_plugin("audio_riff.spi", &error);
 	if (S_CHK_ERR(&error, S_CONTERR,
 				  "main",
 				  "Call to \"s_pm_load_plugin\" failed"))
 		goto quit;
 
 	/* load voice */
-	voice = s_vm_load_voice("/home/aby/Development/speect/voices/english/lwazi/damon/etc/voice.sconf",
-							TRUE,
-							&error);
+	voice = s_vm_load_voice(voicefile, TRUE, &error);
 	if (S_CHK_ERR(&error, S_CONTERR,
 				  "main",
 				  "Call to \"s_vm_load_voice\" failed"))
 		goto quit;
 
 	/* synthesize utterance */
-	utt = SVoiceSynthUtt(voice, "text", SObjectSetString("hello world, this is the speect synthesis engine", &error), &error);
+	utt = SVoiceSynthUtt(voice, "text", SObjectSetString(text, &error), &error);
 	if (S_CHK_ERR(&error, S_CONTERR,
 				  "main",
 				  "Call to \"SVoiceSynthUtt\" failed"))
@@ -89,7 +181,7 @@ int main()
 		goto quit;
 
 	/* save audio */
-	SObjectSave(audio, "test.wav", "riff", &error);
+	SObjectSave(audio, wavfile, "riff", &error);
 	if (S_CHK_ERR(&error, S_CONTERR,
 				  "main",
 				  "Call to \"SObjectSave\" failed"))

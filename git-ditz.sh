@@ -6,10 +6,10 @@
 
 WGET="/usr/bin/wget"
 GIT="/usr/bin/git"
+DITZ_ROOT=$($GIT rev-parse --show-cdup)/.ditz/   # git root then .ditz/
 
 ## Commit  with message "ditz update"
-cd $($GIT rev-parse --show-cdup) # git root then .dizt/
-cd .ditz
+cd $DITZ_ROOT
 $GIT add .
 $GIT commit . -m "ditz update"
 cd ..

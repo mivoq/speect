@@ -7,8 +7,8 @@ type: :task
 component: Speect
 release: Beryllium
 reporter: Aby Louw <jalouw@csir.co.za>
-status: :unstarted
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2010-07-05 02:07:50.680040 Z
 references: []
 
@@ -18,3 +18,9 @@ log_events:
   - Aby Louw <jalouw@csir.co.za>
   - created
   - It is not immediatly apparent where this issue is
+- - 2010-07-05 03:19:21.999956 Z
+  - Aby Louw <jalouw@csir.co.za>
+  - closed with disposition fixed
+  - |-
+    See commit cdc010d05a7e776bcbaa424d05bda6593ea4ff9d
+    Utterance required audio plug-in

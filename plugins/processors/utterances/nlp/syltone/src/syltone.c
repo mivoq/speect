@@ -59,7 +59,7 @@ static SSylToneUttProcClass SylToneUttProcClass; /* SSylToneUttProcClass class d
 /************************************************************************************/
 
 /* local functions to register and free classes */
-S_LOCAL void _s_sylltone_utt_proc_class_reg(s_erc *error)
+S_LOCAL void _s_syltone_utt_proc_class_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
 	s_class_reg(&SylToneUttProcClass, error);
@@ -69,7 +69,7 @@ S_LOCAL void _s_sylltone_utt_proc_class_reg(s_erc *error)
 }
 
 
-S_LOCAL void _s_sylltone_utt_proc_class_free(s_erc *error)
+S_LOCAL void _s_syltone_utt_proc_class_free(s_erc *error)
 {
 	S_CLR_ERR(error);
 	s_class_free(&SylToneUttProcClass, error);

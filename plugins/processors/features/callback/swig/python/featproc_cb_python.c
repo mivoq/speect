@@ -124,7 +124,6 @@
 
 		/* convert result to Speect object */
 		retval = s_pyobject_2_sobject(result, error);
-		Py_DECREF(result);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "execute_python_callback",
 					  "Call to \"fpc_pyobject_2_sobject\" failed"))
@@ -219,14 +218,14 @@ def callback(callback_function):
     and return a single object, which will be considered the extracted feature. The
     input item argument must be considered as constant (in the C sense) and not
     modified in any way.
-    
+
     :param callback_function: A Python function that will be used as a callback
                               function when this feature processor's ``run`` method
                               is called.
     :type callback_function: A callable function
     :return: Extracted feature.
     """
-  
+
     return _s_featproc_cb_new(callback_function)
 
 

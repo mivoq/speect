@@ -406,7 +406,7 @@ static const char *GetLangCode(const SLexicon *self, s_erc *error)
 }
 
 
-static const s_version *GetVersion(const SLexicon *self, s_erc *error)
+static const s_version *SGetVersion(const SLexicon *self, s_erc *error)
 {
 	S_CLR_ERR(error);
 
@@ -527,7 +527,7 @@ static SLexiconJSONClass LexiconJSONClass =
 	GetDescription,      /* get_description */
 	GetLanguage,         /* get_language    */
 	GetLangCode,         /* get_lang_code   */
-	GetVersion,          /* get_version     */
+	SGetVersion,         /* get_version     */
 	GetFeature,          /* get_feature     */
 	GetWord              /* get_word        */
 };

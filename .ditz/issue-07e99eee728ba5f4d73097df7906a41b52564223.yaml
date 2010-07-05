@@ -1,0 +1,20 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Voice deletion problem
+desc: |-
+  When a voice, that has created utterances with "audio" features, is deleted
+  we get segfaults.
+type: :task
+component: Speect
+release: Beryllium
+reporter: Aby Louw <jalouw@csir.co.za>
+status: :unstarted
+disposition: 
+creation_time: 2010-07-05 02:07:50.680040 Z
+references: []
+
+id: 07e99eee728ba5f4d73097df7906a41b52564223
+log_events: 
+- - 2010-07-05 02:08:16.291962 Z
+  - Aby Louw <jalouw@csir.co.za>
+  - created
+  - It is not immediatly apparent where this issue is

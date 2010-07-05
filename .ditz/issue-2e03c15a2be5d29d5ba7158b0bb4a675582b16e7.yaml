@@ -7,8 +7,8 @@ type: :task
 component: Speect
 release: Beryllium
 reporter: Aby Louw <jalouw@csir.co.za>
-status: :unstarted
-disposition: 
+status: :closed
+disposition: :reorg
 creation_time: 2010-07-01 13:28:35.370379 Z
 references: []
 
@@ -18,3 +18,9 @@ log_events:
   - Aby Louw <jalouw@csir.co.za>
   - created
   - ""
+- - 2010-07-05 02:23:14.479696 Z
+  - Aby Louw <jalouw@csir.co.za>
+  - closed with disposition reorg
+  - |-
+    Rather do conversions in functions themselves. This allows for
+    far more control.

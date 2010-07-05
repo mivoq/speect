@@ -7,8 +7,8 @@ type: :task
 component: Speect
 release: Beryllium
 reporter: Aby Louw <jalouw@csir.co.za>
-status: :unstarted
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2010-07-01 13:23:45.270243 Z
 references: []
 
@@ -18,3 +18,9 @@ log_events:
   - Aby Louw <jalouw@csir.co.za>
   - created
   - This has to be fixed asap
+- - 2010-07-05 02:21:51.907717 Z
+  - Aby Louw <jalouw@csir.co.za>
+  - closed with disposition fixed
+  - |-
+    Wrong error checking macro in riff_common.c which caused an error to
+    be set when there was not one

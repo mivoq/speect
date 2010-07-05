@@ -39,8 +39,8 @@
 	PyObject *__getitem__(int key, s_erc *error)
 	{
 		const SObject *listObject;
-		PyObject *object;
 		size_t num_objects;
+		PyObject *pobject;
 
 
 		S_CLR_ERR(error);
@@ -50,20 +50,19 @@
 
 		if ((key >= (int)num_objects) || (key < 0))
 		{
-			PyErr_SetString(PyExc_RuntimeError, "Given key index out of bounds");
+			PyErr_SetString(PyExc_KeyError, "Given key index out of bounds");
 			return NULL;
 		}
-
 
 		listObject = SListNth($self, (uint32)key, error);
 		if (*error != S_SUCCESS)
 			return NULL;
 
-		object = s_sobject_2_pyobject(listObject, FALSE, error);
+		pobject = s_sobject_2_pyobject(listObject, FALSE, error);
 		if (*error != S_SUCCESS)
 			return NULL;
 
-		return object;
+		return pobject;
 	}
 
 
@@ -174,13 +173,11 @@
 
 		if ((key >= (int)num_objects) || (key < 0))
 		{
-			S_CTX_ERR(error, S_FAILURE,
-					  "SList::__delitem__()",
-					  "Given key index out of bounds");
+			PyErr_SetString(PyExc_KeyError, "Given key index out of bounds");
 			return;
 		}
 
-		itr = S_ITERATOR_GET(self, error);
+		itr = S_ITERATOR_GET($self, error);
 		if (*error != S_SUCCESS)
 		{
 			PyErr_SetString(PyExc_RuntimeError, "Failed to get list iterator");
@@ -247,7 +244,7 @@
 def __str__(self):
     """
     Return a string representation of the values that are in the list.
-    
+
     :return: A string representation of the values that are in the list.
     :rtype: string
     """

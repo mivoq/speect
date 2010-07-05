@@ -34,7 +34,6 @@
 /*                                                                                  */
 /************************************************************************************/
 
-%nodefaultdtor SVoice;
 %newobject synth;
 
 
@@ -66,20 +65,8 @@ typedef struct
 		s_erc error;
 
 		S_CLR_ERR(&error);
-		/* don't delete the voice, we need to explicitly call
-		 * voice.delete()
-		 * If we don't do this, then utterances created by the voice
-		 * will cause a segfault when they are deleted after the
-		 * voice. I can't figure out why, so this will have to do for
-		 * now.
-		 * It's a bug, issue speect-5
-		 */
-	}
+		S_DELETE($self, "SVoice::delete", &error);
 
-
-	void delete(s_erc *error)
-	{
-		S_DELETE($self, "SVoice::delete", error);
 	}
 
 

@@ -876,6 +876,7 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 				s_erc *error)
 {
 	SHTSEngineSynthUttProc *HTSsynth = (SHTSEngineSynthUttProc*)self;
+	SPlugin *audioPlugin;
 	const SRelation *segmentRel;
 	SAudio *audio = NULL;
 	s_bool is_present;
@@ -1025,6 +1026,29 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 				  "Run",
 				  "Call to \"SUtteranceSetFeature\" failed"))
 		goto quit_error;
+
+	/* We need to give the utterance the audio plug-in. If we don't do
+	 * this and the voice is deleted before the utterance, then the
+	 * utterance can't do *anything* with the audio. Not even delete
+	 * it (segfault). This should be fast because it is already
+	 * loaded.
+	 * Note that this happens after the audio is set. This is because
+	 * utt features are a list implementation.
+	 */
+	audioPlugin = s_pm_load_plugin("audio.spi", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "Run",
+				  "Call to \"SUtteranceSetFeature\" failed"))
+		goto quit_error;
+
+	SUtteranceSetFeature(utt, "audio_plugin", S_OBJECT(audioPlugin), error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "Run",
+				  "Call to \"SUtteranceSetFeature\" failed"))
+	{
+		S_DELETE(audioPlugin, "Run", error);
+		goto quit_error;
+	}
 
 	audio->sample_rate = HTSsynth->engine.global.sampling_rate;
 	audio->num_samples = (uint32)HTS_GStreamSet_get_total_nsample(&(HTSsynth->engine).gss);

@@ -53,7 +53,8 @@ Get the value in the map that is associated with the given key.
 
 :param key: The key of the desired value.
 :type key: string
-:return: The value associated with the given key or ``None`` if no such key-value pair.
+:return: The value associated with the given key.
+:note: Raises ``KeyError`` if key not in map.
 """
 %enddef
 
@@ -141,3 +142,18 @@ The Python iterator protocol for iteration over keys in a map.
 
 %feature("autodoc", map_iter_DOCSTRING) SMap::__iter__;
 
+
+%define map_contains_DOCSTRING
+"""
+__contains__(key)
+
+Query if named feature is present in this map.
+
+:param key: The feature key which to test for.
+:type key: string
+:return: ``True`` or ``False``.
+:rtype: bool
+"""
+%enddef
+
+%feature("autodoc", map_contains_DOCSTRING) SMap::__contains__;

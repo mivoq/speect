@@ -43,14 +43,14 @@ Load a voice, from the voice configuration at the given path. If any
 of the voice's data objects have already been loaded, then they are shared.
 This reduces the need for multiple redundant calls.
 
-:param path: The full path and name of the voice to load.
+:param path: The name of the voice configuration file to load.
 :type path: string
 :param load_data: This flag currently defaults to ``TRUE`` and should not be used.
 :type load_data: bool
 :return: Voice object
 :rtype: SVoice
 :raises: RuntimeError if Speect was unable to load the voice.
-:warning: The ``path`` must be an absolute path and not relative.
+:note: The ``path`` can be an absolute or relative path to the voice configuration file.
 """
 %enddef
 

@@ -48,17 +48,7 @@ typedef struct
 
 %extend SVoice
 {
-	SVoice(const char *path, s_bool load_data=TRUE, s_erc *error)
-	{
-		SVoice *voice;
-
-		voice = s_vm_load_voice(path, load_data, error);
-		if (*error != S_SUCCESS)
-			return NULL;
-
-		return voice;
-	}
-
+	/* SVoice() is in the language specific interfaces */
 
 	~SVoice()
 	{

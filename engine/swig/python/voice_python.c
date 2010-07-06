@@ -45,6 +45,121 @@
 	PyObject *featProcessors;
 
 
+	SVoice(const char *path, s_bool load_data=TRUE, s_erc *error)
+	{
+		SVoice *voice;
+		PyObject *osPathModule;
+		PyObject *abspathFunction;
+		PyObject *pyPath;
+		char *full_path;
+
+
+		if (path == NULL)
+		{
+			S_CTX_ERR(error, S_ARGERROR,
+					  "SVoice",
+					  "Argument \"path\" is NULL");
+			return NULL;
+		}
+
+		osPathModule = PyImport_ImportModule("os.path");
+		if (osPathModule == NULL)
+		{
+			char *py_error = s_get_python_error_str();
+
+			if (py_error)
+			{
+				S_CTX_ERR(error, S_FAILURE,
+						  "SVoice",
+						  "Call to \"PyImport_ImportModule\" failed. Reported error: %s",
+						  py_error);
+				S_FREE(py_error);
+			}
+			else
+			{
+				S_CTX_ERR(error, S_FAILURE,
+						  "SVoice",
+						  "Call to \"PyImport_ImportModule\" failed");
+			}
+
+			return NULL;
+		}
+
+		/* get abspath function */
+		abspathFunction = PyObject_GetAttrString(osPathModule, "abspath");
+		if (osPathModule == NULL)
+		{
+			char *py_error = s_get_python_error_str();
+
+			if (py_error)
+			{
+				S_CTX_ERR(error, S_FAILURE,
+						  "SVoice",
+						  "Call to \"PyObject_GetAttrString\" failed. Reported error: %s",
+						  py_error);
+				S_FREE(py_error);
+			}
+			else
+			{
+				S_CTX_ERR(error, S_FAILURE,
+						  "SVoice",
+						  "Call to \"PyObject_GetAttrString\" failed");
+			}
+
+			Py_DECREF(osPathModule);
+			return NULL;
+		}
+
+		/* run abspath on the given path */
+		pyPath = PyObject_CallFunction(abspathFunction, "s", path);
+		if (pyPath == NULL)
+		{
+			char *py_error = s_get_python_error_str();
+
+			if (py_error)
+			{
+				S_CTX_ERR(error, S_FAILURE,
+						  "SVoice",
+						  "Call to \"PyObject_CallFunction\" failed. Reported error: %s",
+						  py_error);
+				S_FREE(py_error);
+			}
+			else
+			{
+				S_CTX_ERR(error, S_FAILURE,
+						  "SVoice",
+						  "Call to \"PyObject_CallFunction\" failed");
+			}
+
+			Py_DECREF(abspathFunction);
+			Py_DECREF(osPathModule);
+			return NULL;
+		}
+
+		/* get the full path */
+		full_path = s_get_pyobject_str(pyPath, error);
+		Py_DECREF(pyPath);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "SVoice",
+					  "Call to \"s_get_pyobject_str\" failed"))
+		{
+			Py_DECREF(abspathFunction);
+			Py_DECREF(osPathModule);
+			return NULL;
+		}
+
+
+		voice = s_vm_load_voice(full_path, load_data, error);
+		S_FREE(full_path);
+		Py_DECREF(abspathFunction);
+		Py_DECREF(osPathModule);
+		if (*error != S_SUCCESS)
+			return NULL;
+
+		return voice;
+	}
+
+
 	void uttType_set(const char *key, PyObject *uttType, s_erc *error)
 	{
 		SObject *object;

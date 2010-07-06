@@ -1,0 +1,21 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Referencing non-existant feature of an Item should return None in Python
+desc: |-
+  At the moment referencing a non-existant feature of an Item in Python
+  raises a RuntimeError instead of returning None as per older
+  implementations. Behaviour should be changed to return None as before.
+type: :bugfix
+component: Speect
+release: Beryllium
+reporter: Daniel van Niekerk <dvniekerk@csir.co.za>
+status: :unstarted
+disposition: 
+creation_time: 2010-07-06 09:35:40.689831 Z
+references: []
+
+id: 35607b60d4f0d762dee84d5eddb36402d9ecca57
+log_events: 
+- - 2010-07-06 09:35:57.229795 Z
+  - Daniel van Niekerk <dvniekerk@csir.co.za>
+  - created
+  - ""

@@ -119,7 +119,15 @@
 	{
 		const SObject *feature;
 		PyObject *object;
+		s_bool present;
 
+
+		present = SItemFeatureIsPresent($self, key, error);
+		if (*error != S_SUCCESS)
+			return NULL;
+
+		if (!present)
+			Py_RETURN_NONE;
 
 		feature = SItemGetObject($self, key, error);
 		if (*error != S_SUCCESS)

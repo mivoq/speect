@@ -60,6 +60,19 @@
 	}
 
 
+	s_bool __contains__(const char *key, s_erc *error)
+	{
+		s_bool is_present;
+
+
+		is_present = SMapObjectPresent($self, key, error);
+		if (*error != S_SUCCESS)
+			return FALSE;
+
+		return is_present;
+	}
+
+
 	int __len__(s_erc *error)
 	{
 		size_t num_feats;

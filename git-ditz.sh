@@ -4,6 +4,8 @@
 # check if connected to dudley, and if so push changes to
 # dudley.
 
+# this is not working correctly, please help with cd command
+
 WGET="/usr/bin/wget"
 GIT="/usr/bin/git"
 DITZ_ROOT=$($GIT rev-parse --show-cdup)/.ditz/   # git root then .ditz/

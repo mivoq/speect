@@ -8,8 +8,8 @@ type: :bugfix
 component: Speect
 release: Beryllium
 reporter: Daniel van Niekerk <dvniekerk@csir.co.za>
-status: :unstarted
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2010-07-06 09:35:40.689831 Z
 references: []
 
@@ -19,3 +19,7 @@ log_events:
   - Daniel van Niekerk <dvniekerk@csir.co.za>
   - created
   - ""
+- - 2010-07-06 10:25:29.862608 Z
+  - Aby Louw <jalouw@csir.co.za>
+  - closed with disposition fixed
+  - Done. item["non-existant feature"] == None

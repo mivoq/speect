@@ -505,8 +505,7 @@ S_API char *s_get_pyobject_str(PyObject *pobject, s_erc *error)
 	char *new_cstr;
 
 
-	S_CLR_ERR(&error);
-
+	S_CLR_ERR(error);
 	if (pobject == NULL)
 	{
 		S_CTX_ERR(error, S_ARGERROR,

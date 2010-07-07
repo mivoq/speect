@@ -40,6 +40,28 @@
 
 /************************************************************************************/
 /*                                                                                  */
+/* Macros                                                                           */
+/*                                                                                  */
+/************************************************************************************/
+
+#define SPCT_WAIT_MEM 0
+
+/* this is a simple macro to wait for user input so that we can do
+ * memory testing, it does nothing if SPCT_WAIT_MEM is 0.
+ */
+#if SPCT_WAIT_MEM
+#  define SPCT_PRINT_AND_WAIT(STR)				\
+	do {										\
+		printf(STR);							\
+		getchar();								\
+	} while (0)
+#else /* SPCT_WAIT_MEM == 0 */
+#  define SPCT_PRINT_AND_WAIT(STR)
+#endif
+
+
+/************************************************************************************/
+/*                                                                                  */
 /*  Static function implementations                                                 */
 /*                                                                                  */
 /************************************************************************************/
@@ -76,6 +98,8 @@ int main(int argc, char **argv)
 	const char *text = NULL;
 
 
+	SPCT_PRINT_AND_WAIT("going to initialize speect, press ENTER\n");
+
 	/*
 	 * initialize speect
 	 */
@@ -85,6 +109,8 @@ int main(int argc, char **argv)
 		printf("Failed to initialize Speect\n");
 		return 1;
 	}
+
+	SPCT_PRINT_AND_WAIT("initialized speect, parsing options, press ENTER\n");
 
 	/* parse options */
     for (i=1; i<argc; i++)
@@ -152,12 +178,16 @@ int main(int argc, char **argv)
 		usage(1);
 	}
 
+	SPCT_PRINT_AND_WAIT("parsed options, loading audio riff plug-in, press ENTER\n");
+
 	/* load audio riff plug-in, so that we can save the audio */
 	riffAudio = s_pm_load_plugin("audio_riff.spi", &error);
 	if (S_CHK_ERR(&error, S_CONTERR,
 				  "main",
 				  "Call to \"s_pm_load_plugin\" failed"))
 		goto quit;
+
+	SPCT_PRINT_AND_WAIT("loaded audio riff plug-in, loading voice, press ENTER\n");
 
 	/* load voice */
 	voice = s_vm_load_voice(voicefile, TRUE, &error);
@@ -166,12 +196,16 @@ int main(int argc, char **argv)
 				  "Call to \"s_vm_load_voice\" failed"))
 		goto quit;
 
+	SPCT_PRINT_AND_WAIT("loaded voice, doing synthesis, press ENTER\n");
+
 	/* synthesize utterance */
 	utt = SVoiceSynthUtt(voice, "text", SObjectSetString(text, &error), &error);
 	if (S_CHK_ERR(&error, S_CONTERR,
 				  "main",
 				  "Call to \"SVoiceSynthUtt\" failed"))
 		goto quit;
+
+	SPCT_PRINT_AND_WAIT("synthesized utterance, getting audio object, press ENTER\n");
 
 	/* get audio object */
 	audio = SUtteranceGetFeature(utt, "audio", &error);
@@ -180,6 +214,8 @@ int main(int argc, char **argv)
 				  "Call to \"SUtteranceGetFeature\" failed"))
 		goto quit;
 
+	SPCT_PRINT_AND_WAIT("got audio object, saving audio object, press ENTER\n");
+
 	/* save audio */
 	SObjectSave(audio, wavfile, "riff", &error);
 	if (S_CHK_ERR(&error, S_CONTERR,
@@ -187,15 +223,26 @@ int main(int argc, char **argv)
 				  "Call to \"SObjectSave\" failed"))
 		goto quit;
 
+	SPCT_PRINT_AND_WAIT("saved audio object, press ENTER\n");
+
 quit:
+
+	SPCT_PRINT_AND_WAIT("deleting utterance, press ENTER\n");
+
 	if (utt != NULL)
 		S_DELETE(utt, "main", &error);
+
+	SPCT_PRINT_AND_WAIT("deleting voice, press ENTER\n");
 
 	if (voice != NULL)
 		S_DELETE(voice, "main", &error);
 
+	SPCT_PRINT_AND_WAIT("audio riff plug-in, press ENTER\n");
+
 	if (riffAudio != NULL)
 		S_DELETE(riffAudio, "main", &error);
+
+	SPCT_PRINT_AND_WAIT("quiting speect, press ENTER\n");
 
 	/*
 	 * quit speect
@@ -206,6 +253,8 @@ quit:
 		printf("Call to 'speect_quit' failed\n");
 		return 1;
 	}
+
+	SPCT_PRINT_AND_WAIT("done, press ENTER\n");
 
 	return 0;
 }

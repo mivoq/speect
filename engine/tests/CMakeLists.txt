@@ -1,1 +1,1 @@
-speect_example(init_speect)
+speect_example(synth_test)

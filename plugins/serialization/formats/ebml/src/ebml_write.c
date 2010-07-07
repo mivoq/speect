@@ -124,7 +124,7 @@ static void write_start_container(SEbmlWrite *self, uint32 id, s_erc *error);
 
 static void write_stop_container(SEbmlWrite *self, s_erc *error);
 
-static long tell(SEbmlWrite *self, s_erc *error);
+static long ebml_tell(SEbmlWrite *self, s_erc *error);
 
 
 /************************************************************************************/
@@ -1013,7 +1013,7 @@ static void write_stop_container(SEbmlWrite *self, s_erc *error)
 }
 
 
-static long tell(SEbmlWrite *self, s_erc *error)
+static long ebml_tell(SEbmlWrite *self, s_erc *error)
 {
 	long pos;
 
@@ -1442,7 +1442,7 @@ static long Tell(SEbmlWrite *self, s_erc *error)
 	}
 
 	s_mutex_lock(&(self->ebml_mutex));
-	pos = tell(self, error);
+	pos = ebml_tell(self, error);
 	s_mutex_unlock(&(self->ebml_mutex));
 
 	if (S_CHK_ERR(error, S_CONTERR,

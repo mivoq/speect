@@ -122,7 +122,7 @@ static void unload_voice_plugins(SList *plugins, s_erc *error);
 /* synthesis */
 
 S_API SUtterance *SVoiceSynthUtt(const SVoice *self, const char *utt_type,
-								 const SObject *input, s_erc *error)
+								 SObject *input, s_erc *error)
 {
 	SUtterance *utt;
 	s_bool key_present;
@@ -522,7 +522,7 @@ S_API const SObject *SVoiceGetData(const SVoice *self, const char *key, s_erc *e
 
 
 S_API void SVoiceSetData(SVoice *self, const char *key,
-						 const SObject *object,  s_erc *error)
+						 SObject *object,  s_erc *error)
 {
 	s_bool key_present;
 	SMap *dataObjectMap;
@@ -951,7 +951,7 @@ S_API const SObject *SVoiceGetFeature(const SVoice *self, const char *key, s_erc
 
 
 S_API void SVoiceSetFeature(SVoice *self, const char *key,
-							const SObject *object,  s_erc *error)
+							SObject *object,  s_erc *error)
 {
 	S_CLR_ERR(error);
 
@@ -1128,7 +1128,7 @@ S_API const SFeatProcessor *SVoiceGetFeatProc(const SVoice *self, const char *ke
 
 
 S_API void SVoiceSetFeatProc(SVoice *self, const char *key,
-							 const SFeatProcessor *featProc,  s_erc *error)
+							 SFeatProcessor *featProc,  s_erc *error)
 {
 	S_CLR_ERR(error);
 
@@ -1305,7 +1305,7 @@ S_API const SUttProcessor *SVoiceGetUttProc(const SVoice *self, const char *key,
 
 
 S_API void SVoiceSetUttProc(SVoice *self, const char *key,
-							const SUttProcessor *uttProc,  s_erc *error)
+							SUttProcessor *uttProc,  s_erc *error)
 {
 	S_CLR_ERR(error);
 
@@ -1480,7 +1480,7 @@ S_API const SList *SVoiceGetUttType(const SVoice *self, const char *key,
 
 
 S_API void SVoiceSetUttType(SVoice *self, const char *key,
-							const SList *uttType,  s_erc *error)
+							SList *uttType,  s_erc *error)
 {
 	S_CLR_ERR(error);
 
@@ -2350,7 +2350,7 @@ static void DisposeVoice(void *obj, s_erc *error)
 
 
 static SUtterance *SynthUtt(const SVoice *self, const char *utt_type,
-							const SObject *input, s_erc *error)
+							SObject *input, s_erc *error)
 {
 	const SList *uttType;
 	const SUttProcessor *uttProc; /* utterance processor */

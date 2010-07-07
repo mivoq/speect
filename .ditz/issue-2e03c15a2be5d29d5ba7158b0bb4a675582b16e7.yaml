@@ -1,0 +1,26 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Move conversion functions to typemaps
+desc: |-
+  The Speect<->SWIG<->Python conversion can all be moved to
+  typemaps which should make things easier
+type: :task
+component: Speect
+release: Beryllium
+reporter: Aby Louw <jalouw@csir.co.za>
+status: :closed
+disposition: :reorg
+creation_time: 2010-07-01 13:28:35.370379 Z
+references: []
+
+id: 2e03c15a2be5d29d5ba7158b0bb4a675582b16e7
+log_events: 
+- - 2010-07-01 13:28:36.386230 Z
+  - Aby Louw <jalouw@csir.co.za>
+  - created
+  - ""
+- - 2010-07-05 02:23:14.479696 Z
+  - Aby Louw <jalouw@csir.co.za>
+  - closed with disposition reorg
+  - |-
+    Rather do conversions in functions themselves. This allows for
+    far more control.

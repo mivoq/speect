@@ -1,0 +1,61 @@
+
+==========
+Ditz HOWTO
+==========
+
+
+What?
+=====
+
+(from the ditz README) http://ditz.rubyforge.org
+
+Ditz is a simple, light-weight distributed issue tracker designed to work with
+distributed version control systems like git.
+
+Ditz maintains an issue database directory on disk, with files written in a
+line-based and human-editable format. This directory is kept under version
+control, alongside project code.
+
+Ditz provides a simple, console-based interface for creating and updating the
+issue database files, and some basic static HTML generation capabilities for
+producing world-readable status pages.
+
+
+Why?
+====
+
+We have had a long standing need for documenting bugs, features etc. With Ditz
+and git we can have a full track record of bug fixes, issue tracking and so on.
+Ditz is very simple to use and has basic features, full blown issue trackers
+take up a lot of time.
+
+
+How?
+====
+
+We don't need much functionality, so here is a subset of what is required
+on a daily basis:
+
+   * ``ditz add`` Add an *issue*, *bug-fix* or *feature*.
+   * ``ditz status`` Show assigned/unassigned issues, bugs, features.
+   * ``ditz close`` Close a previously added issue.
+   * ``ditz log`` Show full logs of all issues, bugs, features.
+
+And that is basically it. There are more functions, use ``ditz help`` to
+view them.
+
+Ditz has a concept of releases, which are different versions of the system.
+A ticket (bug-fix/feature/issue) is assigned to a release. We have just one
+release that we are working on, Beryllium. 
+
+Ditz creates and stores the ticket files in the .ditz directory. So, git has
+to be updated after any changes have been done with Ditz. There is a script
+in the top level Speect directory, ``git-ditz.sh``, which will do this for
+you. It adds any Ditz changes to the git staging area, commits these to
+your repository and then pushes up to dudley (if dudley is reachable).
+
+**IMPORTANT**
+If you are not going to use the ``git-ditz.sh`` script, you must please
+commit Ditz changes separately from other changes, and use "ditz update"
+as your commit message.
+     	    	  

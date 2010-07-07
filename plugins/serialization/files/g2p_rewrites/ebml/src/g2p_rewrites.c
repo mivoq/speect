@@ -334,7 +334,7 @@ static const char *GetLangCode(const SG2P *self, s_erc *error)
 }
 
 
-static const s_version *GetVersion(const SG2P *self, s_erc *error)
+static const s_version *SGetVersion(const SG2P *self, s_erc *error)
 {
 	S_CLR_ERR(error);
 
@@ -862,7 +862,7 @@ static SG2PRewritesClass G2PRewritesClass =
 	GetDescription,      /* get_description */
 	GetLanguage,         /* get_language    */
 	GetLangCode,         /* get_lang_code   */
-	GetVersion,          /* get_version     */
+	SGetVersion,         /* get_version     */
 	GetFeature,          /* get_feature     */
 	Apply,               /* apply           */
 	ApplyAt              /* apply_at        */

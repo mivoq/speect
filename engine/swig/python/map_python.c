@@ -39,7 +39,7 @@
 	PyObject *__getitem__(const char *key, s_erc *error)
 	{
 		const SObject *mapObject;
-		PyObject *object;
+		PyObject *pobject;
 
 
 		mapObject = SMapGetObjectDef($self, key, NULL, error);
@@ -52,11 +52,24 @@
 			return NULL;
 		}
 
-		object = s_sobject_2_pyobject(mapObject, FALSE, error);
+		pobject = s_sobject_2_pyobject(mapObject, FALSE, error);
 		if (*error != S_SUCCESS)
 			return NULL;
 
-		return object;
+		return pobject;
+	}
+
+
+	s_bool __contains__(const char *key, s_erc *error)
+	{
+		s_bool is_present;
+
+
+		is_present = SMapObjectPresent($self, key, error);
+		if (*error != S_SUCCESS)
+			return FALSE;
+
+		return is_present;
 	}
 
 
@@ -82,13 +95,9 @@
 		if (*error != S_SUCCESS)
 			return;
 
-		if (newObject == NULL)
-			return;
-
-		Py_DECREF(val);
 		SMapSetObject($self, key, newObject, error);
 		if (*error != S_SUCCESS)
-			S_DELETE(newObject, "SMap::__setitem__", error);
+			S_DELETE(newObject, "SMap::__setitem__()", error);
 	}
 
 
@@ -102,7 +111,10 @@
 			return;
 
 		if (!is_present)
+		{
+			PyErr_SetString(PyExc_KeyError, "key not in map");
 			return;
+		}
 
 		SMapObjectDelete($self, key, error);
 	}

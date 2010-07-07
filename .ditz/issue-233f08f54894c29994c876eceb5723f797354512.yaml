@@ -1,0 +1,26 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Segfault when doing voice build
+desc: |-
+  Georg reported a segfault when doing a voice build, wheras
+  v0.9.5 runs through the build with no issues
+type: :task
+component: Speect
+release: Beryllium
+reporter: Aby Louw <jalouw@csir.co.za>
+status: :closed
+disposition: :fixed
+creation_time: 2010-07-01 13:26:32.394517 Z
+references: []
+
+id: 233f08f54894c29994c876eceb5723f797354512
+log_events: 
+- - 2010-07-01 13:26:33.946229 Z
+  - Aby Louw <jalouw@csir.co.za>
+  - created
+  - ""
+- - 2010-07-06 14:35:30.962841 Z
+  - Aby Louw <jalouw@csir.co.za>
+  - closed with disposition fixed
+  - |-
+    Daniel has built e new voice with all the latest fixes and it
+    works.

@@ -1,0 +1,18 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Speect plug-ins load on startup (Python)
+desc: Should all plug-ins be loaded on startup of Python?
+type: :feature
+component: Speect
+release: Beryllium
+reporter: Aby Louw <jalouw@csir.co.za>
+status: :unstarted
+disposition: 
+creation_time: 2010-07-06 19:10:58.834712 Z
+references: []
+
+id: cb1581d6d193b278fa621b6720a3823dc2be3c8d
+log_events: 
+- - 2010-07-06 19:11:21.818631 Z
+  - Aby Louw <jalouw@csir.co.za>
+  - created
+  - Python guys must help. I don't know if this is good or not

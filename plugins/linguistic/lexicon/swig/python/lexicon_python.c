@@ -67,7 +67,6 @@
 		{
 			have_features = TRUE;
 			feats = s_pyobject_2_sobject(features, error);
-			Py_DECREF(features);
 			if (S_CHK_ERR(error, S_CONTERR,
 						  "_lexicon_get_word",
 						  "Call to \"s_pyobject_2_sobject\" failed"))

@@ -30,7 +30,7 @@ set(CMAKE_CONFIGURATION_TYPES "${CMAKE_BUILD_TYPE}" CACHE INTERNAL "internal")
 #                          CMake minimum version                                     #
 #------------------------------------------------------------------------------------#
 
-cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
+cmake_minimum_required(VERSION 2.6 FATAL_ERROR)
 
 
 #------------------------------------------------------------------------------------#
@@ -38,6 +38,9 @@ cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 #------------------------------------------------------------------------------------#
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
+
+# CMake compatibility functions
+include(cmakeCompat)
 
 
 #------------------------------------------------------------------------------------#

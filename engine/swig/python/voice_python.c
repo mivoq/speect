@@ -35,22 +35,178 @@
 /************************************************************************************/
 
 
+
+
 %extend SVoice
 {
+	PyObject *uttTypes;
+	PyObject *uttProcessors;
+	PyObject *dataObjects;
+	PyObject *featProcessors;
+
+
+	SVoice(const char *path, s_bool load_data=TRUE, s_erc *error)
+	{
+		SVoice *voice;
+		PyObject *osPathModule;
+		PyObject *abspathFunction;
+		PyObject *pyPath;
+		char *full_path;
+
+
+		if (path == NULL)
+		{
+			S_CTX_ERR(error, S_ARGERROR,
+					  "SVoice",
+					  "Argument \"path\" is NULL");
+			return NULL;
+		}
+
+		osPathModule = PyImport_ImportModule("os.path");
+		if (osPathModule == NULL)
+		{
+			char *py_error = s_get_python_error_str();
+
+			if (py_error)
+			{
+				S_CTX_ERR(error, S_FAILURE,
+						  "SVoice",
+						  "Call to \"PyImport_ImportModule\" failed. Reported error: %s",
+						  py_error);
+				S_FREE(py_error);
+			}
+			else
+			{
+				S_CTX_ERR(error, S_FAILURE,
+						  "SVoice",
+						  "Call to \"PyImport_ImportModule\" failed");
+			}
+
+			return NULL;
+		}
+
+		/* get abspath function */
+		abspathFunction = PyObject_GetAttrString(osPathModule, "abspath");
+		if (osPathModule == NULL)
+		{
+			char *py_error = s_get_python_error_str();
+
+			if (py_error)
+			{
+				S_CTX_ERR(error, S_FAILURE,
+						  "SVoice",
+						  "Call to \"PyObject_GetAttrString\" failed. Reported error: %s",
+						  py_error);
+				S_FREE(py_error);
+			}
+			else
+			{
+				S_CTX_ERR(error, S_FAILURE,
+						  "SVoice",
+						  "Call to \"PyObject_GetAttrString\" failed");
+			}
+
+			Py_DECREF(osPathModule);
+			return NULL;
+		}
+
+		/* run abspath on the given path */
+		pyPath = PyObject_CallFunction(abspathFunction, "s", path);
+		if (pyPath == NULL)
+		{
+			char *py_error = s_get_python_error_str();
+
+			if (py_error)
+			{
+				S_CTX_ERR(error, S_FAILURE,
+						  "SVoice",
+						  "Call to \"PyObject_CallFunction\" failed. Reported error: %s",
+						  py_error);
+				S_FREE(py_error);
+			}
+			else
+			{
+				S_CTX_ERR(error, S_FAILURE,
+						  "SVoice",
+						  "Call to \"PyObject_CallFunction\" failed");
+			}
+
+			Py_DECREF(abspathFunction);
+			Py_DECREF(osPathModule);
+			return NULL;
+		}
+
+		/* get the full path */
+		full_path = s_get_pyobject_str(pyPath, error);
+		Py_DECREF(pyPath);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "SVoice",
+					  "Call to \"s_get_pyobject_str\" failed"))
+		{
+			Py_DECREF(abspathFunction);
+			Py_DECREF(osPathModule);
+			return NULL;
+		}
+
+
+		voice = s_vm_load_voice(full_path, load_data, error);
+		S_FREE(full_path);
+		Py_DECREF(abspathFunction);
+		Py_DECREF(osPathModule);
+		if (*error != S_SUCCESS)
+			return NULL;
+
+		return voice;
+	}
+
+
 	void uttType_set(const char *key, PyObject *uttType, s_erc *error)
 	{
-		SList *pyList;
+		SObject *object;
 
 
-		S_CLR_ERR(error);
-		pyList = (SList*)s_pyobject_2_sobject(uttType, error);
-		Py_DECREF(uttType);
+		object = s_pyobject_2_sobject(uttType, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "SVoice::uttType_set",
 					  "Call to \"s_pyobject_2_sobject\" failed"))
 			return;
 
-		SVoiceSetUttType($self, key, pyList, error);
+		SVoiceSetUttType($self, key, S_LIST(object), error);
+		if (*error != S_SUCCESS)
+			S_DELETE(object, "SVoice::uttType_set", error);
+	}
+
+
+	PyObject *uttType_get(const char *key, s_erc *error)
+	{
+		const SList *uttType;
+		PyObject *plist;
+
+
+		uttType = SVoiceGetUttType($self, key, error);
+		if (*error != S_SUCCESS)
+			return NULL;
+
+		plist = s_sobject_2_pyobject(S_OBJECT(uttType), FALSE, error);
+		if (*error != S_SUCCESS)
+			return NULL;
+
+		return plist;
+	}
+
+
+	void data_set(const char *key, PyObject *pobject, s_erc *error)
+	{
+		SObject *object;
+
+
+		object = s_pyobject_2_sobject(pobject, error);
+		if (*error != S_SUCCESS)
+			return;
+
+		SVoiceSetData($self, key, object, error);
+		if (*error != S_SUCCESS)
+			S_DELETE(object, "SVoice::data_set", error);
 	}
 
 
@@ -58,7 +214,6 @@
 	{
 		const SObject *sdata;
 		PyObject *pdata;
-
 
 
 		sdata = SVoiceGetData($self, key, error);
@@ -71,4 +226,203 @@
 
 		return pdata;
 	}
+
+
+	void uttProcessor_set(const char *key, PyObject *uttProc, s_erc *error)
+	{
+		SObject *object;
+
+
+		object = s_pyobject_2_sobject(uttProc, error);
+		if (*error != S_SUCCESS)
+			return;
+
+		SVoiceSetUttProc($self, key, S_UTTPROCESSOR(uttProc), error);
+		if (*error != S_SUCCESS)
+			S_DELETE(object, "SVoice::uttProcessor_set", error);
+	}
+
+
+	PyObject *uttProcessor_get(const char *key, s_erc *error)
+	{
+		const SUttProcessor *uttProc;
+		PyObject *pProc;
+
+
+		uttProc = SVoiceGetUttProc($self, key, error);
+		if (*error != S_SUCCESS)
+			return NULL;
+
+
+		pProc = s_sobject_2_pyobject(S_OBJECT(uttProc), FALSE, error);
+		if (*error != S_SUCCESS)
+			return NULL;
+
+		return pProc;
+	}
+
+
+	void featProcessor_set(const char *key, PyObject *featProc, s_erc *error)
+	{
+		SObject *object;
+
+
+		object = s_pyobject_2_sobject(featProc, error);
+		if (*error != S_SUCCESS)
+			return;
+
+		SVoiceSetFeatProc($self, key, S_FEATPROCESSOR(featProc), error);
+		if (*error != S_SUCCESS)
+			S_DELETE(object, "SVoice::featProcessor_set", error);
+
+	}
+
+
+	PyObject *featProcessor_get(const char *key, s_erc *error)
+	{
+		const SFeatProcessor *featProc;
+		PyObject *fProc;
+
+
+		featProc = SVoiceGetFeatProc($self, key, error);
+		if (*error != S_SUCCESS)
+			return NULL;
+
+		fProc = s_sobject_2_pyobject(S_OBJECT(featProc), FALSE, error);
+		if (*error != S_SUCCESS)
+			return NULL;
+
+		return fProc;
+	}
 };
+
+
+
+%{
+	PyObject *SVoice_uttTypes_get(const SVoice *voice)
+	{
+		s_erc error;
+		SList *uttTypes;
+		PyObject *pobject;
+
+
+		S_CLR_ERR(&error);
+		uttTypes = SVoiceGetUttTypesKeys(voice, &error);
+		if (error != S_SUCCESS)
+			return NULL;
+
+		pobject = s_sobject_2_pyobject(S_OBJECT(uttTypes), TRUE, &error);
+		if (error != S_SUCCESS)
+		{
+			S_DELETE(uttTypes, "SVoice_uttTypes_get", &error);
+			return NULL;
+		}
+
+		return pobject;
+	}
+
+
+	void SVoice_uttTypes_set(const SVoice *voice, PyObject *list)
+	{
+		s_erc error;
+
+
+		S_CLR_ERR(&error);
+	}
+
+
+	PyObject *SVoice_uttProcessors_get(const SVoice *voice)
+	{
+		s_erc error;
+		SList *uttProcessors;
+		PyObject *pobject;
+
+
+		S_CLR_ERR(&error);
+		uttProcessors = SVoiceGetUttProcKeys(voice, &error);
+		if (error != S_SUCCESS)
+			return NULL;
+
+		pobject = s_sobject_2_pyobject(S_OBJECT(uttProcessors), TRUE, &error);
+		if (error != S_SUCCESS)
+		{
+			S_DELETE(uttProcessors, "SVoice_uttProcessors_get", &error);
+			return NULL;
+		}
+
+		return pobject;
+	}
+
+
+	void SVoice_uttProcessors_set(const SVoice *voice, PyObject *list)
+	{
+		s_erc error;
+
+
+		S_CLR_ERR(&error);
+	}
+
+
+	PyObject *SVoice_dataObjects_get(const SVoice *voice)
+	{
+		s_erc error;
+		SList *data;
+		PyObject *pobject;
+
+
+		S_CLR_ERR(&error);
+		data = SVoiceGetDataKeys(voice, &error);
+		if (error != S_SUCCESS)
+			return NULL;
+
+		pobject = s_sobject_2_pyobject(S_OBJECT(data), TRUE, &error);
+		if (error != S_SUCCESS)
+		{
+			S_DELETE(data, "SVoice_dataObjects_get", &error);
+			return NULL;
+		}
+
+		return pobject;
+	}
+
+
+	void SVoice_dataObjects_set(const SVoice *voice, PyObject *list)
+	{
+		s_erc error;
+
+
+		S_CLR_ERR(&error);
+	}
+
+
+	PyObject *SVoice_featProcessors_get(const SVoice *voice)
+	{
+		s_erc error;
+		SList *featProcessors;
+		PyObject *pobject;
+
+
+		S_CLR_ERR(&error);
+		featProcessors = SVoiceGetFeatProcKeys(voice, &error);
+		if (error != S_SUCCESS)
+			return NULL;
+
+		pobject = s_sobject_2_pyobject(S_OBJECT(featProcessors), TRUE, &error);
+		if (error != S_SUCCESS)
+		{
+			S_DELETE(featProcessors, "SVoice_featProcessors_get", &error);
+			return NULL;
+		}
+
+		return pobject;
+	}
+
+
+	void SVoice_featProcessors_set(const SVoice *voice, PyObject *list)
+	{
+		s_erc error;
+
+
+		S_CLR_ERR(&error);
+	}
+%}

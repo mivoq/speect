@@ -1,0 +1,23 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Cross compilation does not work
+desc: |-
+  Cross compilation does not work properly for Windows.
+  The biggest issues are:
+      * We need SWIG and Python builds for Windows
+      * I don't know what to do with the location of 
+        the speect.conf file
+type: :task
+component: Speect
+release: Beryllium
+reporter: Aby Louw <jalouw@csir.co.za>
+status: :unstarted
+disposition: 
+creation_time: 2010-07-07 10:56:12.534834 Z
+references: []
+
+id: 4fcc059c54ca86227e1cebb73eab9376db802205
+log_events: 
+- - 2010-07-07 10:56:15.655590 Z
+  - Aby Louw <jalouw@csir.co.za>
+  - created
+  - ""

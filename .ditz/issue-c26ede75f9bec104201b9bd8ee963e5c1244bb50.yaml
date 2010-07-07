@@ -1,0 +1,25 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Python plug-ins in voice config file
+desc: |-
+  It will be nice if the voice config files can have
+  Python plug-ins as replacements for C plug-ins for
+  easier testing and migration
+type: :task
+component: Speect
+release: 
+reporter: Aby Louw <jalouw@csir.co.za>
+status: :unstarted
+disposition: 
+creation_time: 2010-07-01 13:29:42.202849 Z
+references: []
+
+id: c26ede75f9bec104201b9bd8ee963e5c1244bb50
+log_events: 
+- - 2010-07-01 13:29:43.330764 Z
+  - Aby Louw <jalouw@csir.co.za>
+  - created
+  - ""
+- - 2010-07-01 13:31:48.754520 Z
+  - Aby Louw <jalouw@csir.co.za>
+  - unassigned from release Beryllium
+  - This is probably not in the time frame for Beryllium release

@@ -1,0 +1,26 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Phony error logging
+desc: |-
+  It seems that the entry function between SWIG and Speect sets an error
+  when there was no fault
+type: :task
+component: Speect
+release: Beryllium
+reporter: Aby Louw <jalouw@csir.co.za>
+status: :closed
+disposition: :fixed
+creation_time: 2010-07-01 13:23:45.270243 Z
+references: []
+
+id: c5cfaa7204d80dcd1b2d52eef98768ca0011f91a
+log_events: 
+- - 2010-07-01 13:23:56.694477 Z
+  - Aby Louw <jalouw@csir.co.za>
+  - created
+  - This has to be fixed asap
+- - 2010-07-05 02:21:51.907717 Z
+  - Aby Louw <jalouw@csir.co.za>
+  - closed with disposition fixed
+  - |-
+    Wrong error checking macro in riff_common.c which caused an error to
+    be set when there was not one

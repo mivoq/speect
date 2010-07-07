@@ -14,10 +14,12 @@
 #                   Find SWIG and mark as advanced in CMakecache                     #
 #------------------------------------------------------------------------------------#
 
-find_package(SWIG REQUIRED)
-mark_as_advanced(SWIG_DIR)
-mark_as_advanced(SWIG_EXECUTABLE)
-mark_as_advanced(SWIG_VERSION)
+if(NOT NO_SWIG)
+  find_package(SWIG REQUIRED)
+  mark_as_advanced(SWIG_DIR)
+  mark_as_advanced(SWIG_EXECUTABLE)
+  mark_as_advanced(SWIG_VERSION)
+endif(NOT NO_SWIG)
 
 
 #------------------------------------------------------------------------------------#

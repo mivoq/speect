@@ -1,0 +1,16 @@
+--- !ditz.rubyforge.org,2008-03-06/project 
+name: Speect
+version: "0.5"
+components: 
+- !ditz.rubyforge.org,2008-03-06/component 
+  name: Speect
+releases: 
+- !ditz.rubyforge.org,2008-03-06/release 
+  name: Beryllium
+  status: :unreleased
+  release_time: 
+  log_events: 
+  - - 2010-07-01 13:04:48.694171 Z
+    - Aby Louw <jalouw@csir.co.za>
+    - created
+    - Speect release v1.0.0

@@ -99,6 +99,18 @@ cd ..
 ########################################################################
 
 
+echo "--cleaning lib"
+
+# CMake config files for plug-ins
+if [ -d lib ]
+then 
+    rm -fr lib
+fi
+
+
+########################################################################
+
+
 echo "--cleaning linguistic"
 
 cd ./linguistic/

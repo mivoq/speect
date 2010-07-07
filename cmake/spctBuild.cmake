@@ -43,11 +43,11 @@ endif(STRICT_WARN)
 #                                WIN32 compatibility                                 #
 #------------------------------------------------------------------------------------#
 
-if(WIN32 AND SPCT_GCC)
+if(SPCT_WIN32 AND SPCT_GCC)
 
     # Helps to ensure the Windows port remains compatible with MSVC.
     set(WFLAGS_C_ONLY "${WFLAGS_C_ONLY} -Wdeclaration-after-statement")
-endif(WIN32 AND SPCT_GCC)
+endif(SPCT_WIN32 AND SPCT_GCC)
 
 
 #------------------------------------------------------------------------------------#
@@ -93,3 +93,13 @@ if(SPCT_GCC)
         )
 endif(SPCT_GCC)
 
+
+#------------------------------------------------------------------------------------#
+#                           SWIG C compilation flags                                 #
+#------------------------------------------------------------------------------------#
+
+if(SPCT_GCC)
+  set(SWIG_C_COMPILE_FLAGS "-fno-strict-aliasing -fwrapv -Wstrict-prototypes -Wall -DSWIG_TYPE_TABLE=speect")
+elseif(SPCT_MSVC)
+  set(SWIG_C_COMPILE_FLAGS "-DSWIG_TYPE_TABLE=speect")
+endif(SPCT_GCC)

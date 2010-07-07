@@ -60,7 +60,9 @@ option(ERROR_ABORT_FATAL "Abort on fatal errors." off)
 option(SAFE_CAST "Do safe cast of objects, slower than non-safe cast." on)
 
 # Use Speect's error handling facilities (Default ON)
-option(ERROR_HANDLING "Speect error handling facilities." on)
+
+# FIXME, this is not a option to be turned of now.
+#option(ERROR_HANDLING "Speect error handling facilities." on)
 
 
 #------------------------------------------------------------------------------------#

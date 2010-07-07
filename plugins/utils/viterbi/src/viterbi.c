@@ -114,7 +114,7 @@ static void prune_initialize(SViterbi *self, SViterbiPoint *p,
 static void init_dynamic_states(SViterbiPoint *p, SViterbiCandidate *cands,
 								s_erc *error);
 
-static s_bool better_than(SViterbi *self, const float a, const float b);
+static s_bool better_than(SViterbi *self, double a, double b);
 
 static void add_path(SViterbi *self, SViterbiPoint *p, SViterbiPath *np, s_erc *error);
 
@@ -173,7 +173,7 @@ static void init_paths_array(SViterbiPoint *n, int num_states, s_erc *error)
 }
 
 
-static s_bool better_than(SViterbi *self, const float a, const float b)
+static s_bool better_than(SViterbi *self, double a, double b)
 {
 	/*
 	 * Some thing big is better, others want it to be as small as possible

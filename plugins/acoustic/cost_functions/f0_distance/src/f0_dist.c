@@ -98,9 +98,9 @@ float GetCost(const SCostFunction *self, const SItem *item1, const SItem *item2,
 {
 	const SMatrixFloat *leftJoinCoef;
 	const SMatrixFloat *rightJoinCoef;
-	float left_f0;
-	float right_f0;
-	float f0_distance;
+	double left_f0;
+	double right_f0;
+	double f0_distance;
 
 
 	S_CLR_ERR(error);
@@ -158,7 +158,7 @@ float GetCost(const SCostFunction *self, const SItem *item1, const SItem *item2,
 
 	f0_distance = sqrt(pow((left_f0 - right_f0),2));
 
- 	return f0_distance;
+ 	return (float)f0_distance;
 }
 
 

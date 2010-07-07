@@ -100,7 +100,7 @@ float GetCost(const SCostFunction *self, const SItem *item1, const SItem *item2,
 	const SMatrixFloat *rightJoinCoef;
 	float **left_spectral = NULL;
 	float **right_spectral = NULL;
-	float spectral_distance = 0.0;
+	double spectral_distance = 0.0;
 	uint32 i;
 
 
@@ -164,7 +164,7 @@ float GetCost(const SCostFunction *self, const SItem *item1, const SItem *item2,
 
 	spectral_distance = sqrt(spectral_distance/i);
 
-	return spectral_distance;
+	return (float)spectral_distance;
 }
 
 

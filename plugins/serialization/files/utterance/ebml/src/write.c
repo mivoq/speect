@@ -554,7 +554,7 @@ static s_hash_table *write_item_contents(SEbmlWrite *ebmlWriter, const SUtteranc
 
 	/* create item content table */
 	items_content_table = s_hash_table_new(&items_content_table_free_fp,
-										   ceil(s_log2(max_num_contents)), error);
+										   (size_t)ceil(s_log2(max_num_contents)), error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "write_item_contents",
 				  "Call to \"s_hash_table_new\" failed"))

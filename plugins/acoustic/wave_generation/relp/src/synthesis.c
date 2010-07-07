@@ -283,7 +283,7 @@ static void td_synthesis(SRelp *self, s_erc *error)
 		last_time = self->target->time[self->num_frames - 1];
 
 		/* window_signal guarantees odd */
-		last_sample = (sint32)(last_time * sr + 0.5) + (residuals->count - 1)/2.0;
+		last_sample = (sint32)(last_time * sr + 0.5) + (sint32)((residuals->count - 1)/2.0);
 
 		samples = S_CALLOC(float, last_sample + 1);
 		if (samples == NULL)
@@ -307,7 +307,7 @@ static void td_synthesis(SRelp *self, s_erc *error)
 			frame = self->residuals[mapped_i];
 
 			/* window_signal guarantees odd */
-			t_start = (sint32)(self->target->time[i] * sr + 0.5) - (frame->count - 1)/2.0;
+			t_start = (sint32)(self->target->time[i] * sr + 0.5) - (sint32)((frame->count - 1)/2.0);
 
 			for (j = 0; j < (sint32)frame->count; j++)
 				if (j + t_start >= 0)

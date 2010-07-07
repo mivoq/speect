@@ -246,7 +246,7 @@ typedef struct
  *
  * @return Pointer to the newly created SObject (of type @c SInt).
  */
-S_API SObject *SObjectSetInt(const sint32 i, s_erc *error);
+S_API SObject *SObjectSetInt(sint32 i, s_erc *error);
 
 
 /**
@@ -258,7 +258,7 @@ S_API SObject *SObjectSetInt(const sint32 i, s_erc *error);
  * @param i The @a new signed integer value.
  * @param error Error code.
  */
-S_API void SObjectResetInt(SObject *self, const sint32 i, s_erc *error);
+S_API void SObjectResetInt(SObject *self, sint32 i, s_erc *error);
 
 
 /**
@@ -293,7 +293,7 @@ S_API sint32 SObjectGetInt(const SObject *self, s_erc *error);
  *
  * @return Pointer to the newly created SObject (of type @c SFloat).
  */
-S_API SObject *SObjectSetFloat(const float f, s_erc *error);
+S_API SObject *SObjectSetFloat(float f, s_erc *error);
 
 
 /**
@@ -305,7 +305,7 @@ S_API SObject *SObjectSetFloat(const float f, s_erc *error);
  * @param f The @a new float value.
  * @param error Error code.
  */
-S_API void SObjectResetFloat(SObject *self, const float f, s_erc *error);
+S_API void SObjectResetFloat(SObject *self, float f, s_erc *error);
 
 
 /**

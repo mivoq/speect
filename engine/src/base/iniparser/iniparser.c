@@ -642,7 +642,7 @@ static s_ini_parser *parser_create(const char *path)
 		return NULL;
 	}
 
-	parser->dict = s_hash_table_new(dict_free, ceil(s_log2(S_ASCIILINESZ)), &error);
+	parser->dict = s_hash_table_new(dict_free, (size_t)ceil(s_log2(S_ASCIILINESZ)), &error);
 	if ((parser->dict == NULL) || (error != S_SUCCESS))
 	{
 		S_ERR_PRINT(S_FAILURE,

@@ -228,7 +228,7 @@ S_API SObject *SObjectSetInt(sint32 i, s_erc *error)
 }
 
 
-S_API void SObjectResetInt(SObject *self, const sint32 i, s_erc *error)
+S_API void SObjectResetInt(SObject *self, sint32 i, s_erc *error)
 {
 	s_bool type_is_good;
 
@@ -315,7 +315,7 @@ S_API SObject *SObjectSetFloat(float f, s_erc *error)
 }
 
 
-S_API void SObjectResetFloat(SObject *self, const float f, s_erc *error)
+S_API void SObjectResetFloat(SObject *self, float f, s_erc *error)
 {
 	s_bool type_is_good;
 

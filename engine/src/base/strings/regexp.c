@@ -122,10 +122,6 @@
 /* max rune ranges per character class */
 #define S_REGEX_NCCRUNE	(sizeof(s_regex_char_class)/sizeof(uint32))
 
-/* max character classes per program */
-static s_regex RePrOg;
-#define	S_REGEX_NCLASS	(sizeof(RePrOg.class)/sizeof(s_regex_char_class))
-
 /* debug, produces valgrind errors */
 /* #define	S_REGEX_DEBUG */
 
@@ -240,6 +236,11 @@ typedef struct
 	s_regex_inst *first;
 	s_regex_inst *last;
 } s_regex_node;
+
+
+/* max character classes per program */
+static s_regex RePrOg;
+#define	S_REGEX_NCLASS	(sizeof(RePrOg.class)/sizeof(s_regex_char_class))
 
 
 /************************************************************************************/

@@ -274,7 +274,7 @@ S_API SIterator *SIteratorNext(SIterator *self);
  *
  * @return The key pointed to by the iterator.
  */
-const char *SIteratorKey(SIterator *self, s_erc *error);
+S_API const char *SIteratorKey(SIterator *self, s_erc *error);
 
 
 /**

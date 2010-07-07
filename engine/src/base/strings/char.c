@@ -396,7 +396,7 @@ S_API size_t s_remove(char *s, uint index, s_erc *error)
 	w = s_width(s, error);
 	memmove(s, s + w, s_strzsize(s + w, error));
 
-	return (-w);
+	return w;
 }
 
 

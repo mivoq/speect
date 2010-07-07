@@ -660,7 +660,7 @@ S_LOCAL void _s_classes_create(size_t size, s_erc *error)
 		return;
 
 	s_classes = s_hash_table_new(s_hash_table_delete_classes,
-								 ceil(s_log2(size)), error);
+								 (size_t)ceil(s_log2(size)), error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "_s_classes_create",
 				  "Call to \"s_hash_table_new\" failed"))

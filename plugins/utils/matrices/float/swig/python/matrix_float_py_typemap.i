@@ -38,8 +38,8 @@
 {
 	int i;
 	int j;
-	int row_count;
-	int col_count;
+	int row_count = 0;
+	int col_count = 0;
 	float **fpp;
 
 

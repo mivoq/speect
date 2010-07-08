@@ -393,6 +393,8 @@ static void read_g2p_rewrites_rules(SG2PRewrites *g2p, SEbmlRead *ebmlReader, s_
 {
 	uint32 id;
 	s_bool container_exhausted;
+	SList *graphemeRuleList = NULL;
+	SG2PRewritesRule *rule = NULL;
 
 
 	S_CLR_ERR(error);
@@ -423,9 +425,6 @@ static void read_g2p_rewrites_rules(SG2PRewrites *g2p, SEbmlRead *ebmlReader, s_
 
 	while (1)
 	{
-		SList *graphemeRuleList;
-
-
 		container_exhausted = S_EBMLREAD_CALL(ebmlReader, container_at_end)(ebmlReader, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "read_g2p_rewrites_rules",
@@ -487,9 +486,6 @@ static void read_g2p_rewrites_rules(SG2PRewrites *g2p, SEbmlRead *ebmlReader, s_
 
 			while (1)
 			{
-				SG2PRewritesRule *rule;
-
-
 				container_exhausted = S_EBMLREAD_CALL(ebmlReader, container_at_end)(ebmlReader, error);
 				if (S_CHK_ERR(error, S_CONTERR,
 							  "read_g2p_rewrites_rules",

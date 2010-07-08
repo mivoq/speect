@@ -46,7 +46,7 @@ int main()
 	const char *doc_type = "spct_ebml_test";
 	SDatasource *ds = NULL;
 	SEbmlRead *ebmlReader = NULL;
-	SObject *object;
+	SObject *object = NULL;
 	int rv;
 
 

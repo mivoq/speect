@@ -354,7 +354,7 @@ static SViterbiPath *find_best_end(SViterbi *self, s_erc *error)
 	double best = 0.0;
 	double worst = 0.0;
 	SViterbiPath *p;
-	SViterbiPath *bestP;
+	SViterbiPath *bestP = NULL;
 	int i;
 
 

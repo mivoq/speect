@@ -33,44 +33,6 @@
 /*                                                                                  */
 /************************************************************************************/
 
-#ifndef _SPCT_DSO_LOADING_H__
-#define _SPCT_DSO_LOADING_H__
-
-
-/**
- * @file dynamic_loading.h
- * DSO open/symbols/close abstraction.
- */
-
-
-/**
- * @ingroup SDSO
- * @defgroup SDSOLoading DSO Loading Abstraction
- * Defines a set of functions to open/close and load symbols from <i>dymanic shared
- * objects</i>. Different dynamic loading/unloading implementations are supported by
- * implementing the following macros:
- *
- * <table>
- *  <tr>
- *   <td> @code void *_S_DSO_OPEN(const char *FILENAME, s_erc *ERROR) @endcode </td>
- *   <td> Open a dynamic shared object (see #s_dso_open). </td>
- *  </tr>
- *  <tr>
- *   <td> @code void *_S_DSO_SYM(void *DSO_HANDLE, const char *SYMBOL, s_erc *ERROR) @endcode </td>
- *   <td> Load a symbol from a dynamic shared object (see #s_dso_sym). </td>
- *  </tr>
- *  <tr>
- *   <td> @code void _S_DSO_CLOSE(void *DSO_HANDLE, s_erc *ERROR) @endcode </td>
- *   <td> Close a dynamic shared objectx (see #s_dso_close).</td>
- *  </tr>
- * </table>
- *
- * See the posix_dll.h and win32_dll.h for examples. The dl library loader loads
- * with flags <tt>RTLD_LAZY|RTLD_LOCAL</tt>, while the win32 library loader's
- * loading flag is <tt>LOAD_WITH_ALTERED_SEARCH_PATH</tt>.
- * @{
- */
-
 
 /************************************************************************************/
 /*                                                                                  */
@@ -78,86 +40,132 @@
 /*                                                                                  */
 /************************************************************************************/
 
-#include "include/common.h"
-#include "base/errdbg/errdbg.h"
+#include "pluginmanager/dynamic_loading.h"
+
+/*
+ * Include the dso loading implementation.
+ * dynamic_loading_impl.h is automatically created by the build system
+ * from system tests.
+ */
+#include "pluginmanager/platform/dynamic_loading_impl.h"
 
 
 /************************************************************************************/
 /*                                                                                  */
-/* Begin external c declaration                                                     */
-/*                                                                                  */
-/************************************************************************************/
-S_BEGIN_C_DECLS
-
-
-/************************************************************************************/
-/*                                                                                  */
-/* Function prototypes                                                              */
+/* Static variables                                                                 */
 /*                                                                                  */
 /************************************************************************************/
 
-/**
- * Open a <i>dynamic shared object</i>.
- *
- * @param filename The full path and filename of the dynamic shared object.
- * @param error Error code.
- *
- * @return Handle to the dynamic shared object.
- */
-S_API void *s_dso_open(const char *filename, s_erc *error);
-
-
-/**
- * Get a symbol from a given <i>dynamic shared object</i>.
- *
- * @param dso_handle Handle to the dynamic shared object.
- * @param symbol The name of the symbol to get.
- * @param error Error code.
- *
- * @return  Handle to the symbol.
- */
-S_API void *s_dso_sym(void *dso_handle, const char *symbol, s_erc *error);
-
-
-/**
- * Close the given <i>dynamic shared object</i>.
- *
- * @param dso_handle Handle to the dynamic shared object to close.
- * @param error Error code.
- */
-S_API void s_dso_close(void *dso_handle, s_erc *error);
-
-
-/**
- * Initialize the dynamic loading module
- * @private
- *
- * @param error Error code.
- */
-S_LOCAL void _s_dynamic_loading_init(s_erc *error);
-
-
-/**
- * Quit the dynamic loading module.
- * @private
- *
- * @param error Error code.
- */
-S_LOCAL void _s_dynamic_loading_quit(s_erc *error);
+/* declare mutex */
+S_DECLARE_MUTEX_STATIC(dll_mutex);
 
 
 /************************************************************************************/
 /*                                                                                  */
-/* End external c declaration                                                       */
+/* Function implementations                                                         */
 /*                                                                                  */
 /************************************************************************************/
-S_END_C_DECLS
+
+S_API void *s_dso_open(const char *filename, s_erc *error)
+{
+	void *handle;
 
 
-/**
- * @}
- * end documentation
- */
+	S_CLR_ERR(error);
+	s_mutex_lock(&dll_mutex);
+	if (filename == NULL)
+	{
+		S_CTX_ERR(error, S_ARGERROR,
+				  "s_dso_open",
+				  "Argument \"filename\" is NULL");
+		s_mutex_unlock(&dll_mutex);
+		return NULL;
+	}
 
-#endif /* _SPCT_DSO_LOADING_H__ */
+	handle = _S_DSO_OPEN(filename, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "s_dso_open",
+				  "Call to \"_S_DSO_OPEN\" failed"))
+	{
+		s_mutex_unlock(&dll_mutex);
+		return NULL;
+	}
+
+	s_mutex_unlock(&dll_mutex);
+	return handle;
+}
+
+
+S_API void *s_dso_sym(void *dso_handle, const char *symbol, s_erc *error)
+{
+	void *symbol_add;
+
+
+	S_CLR_ERR(error);
+	s_mutex_lock(&dll_mutex);
+	if (dso_handle == NULL)
+	{
+		S_CTX_ERR(error, S_ARGERROR,
+				  "s_dso_sym",
+				  "Argument \"dso_handle\" is NULL");
+		s_mutex_unlock(&dll_mutex);
+		return NULL;
+	}
+
+	if (symbol == NULL)
+	{
+		S_CTX_ERR(error, S_ARGERROR,
+				  "s_dso_sym",
+				  "Argument \"symbol\" is NULL");
+		s_mutex_unlock(&dll_mutex);
+		return NULL;
+	}
+
+	symbol_add = _S_DSO_SYM(dso_handle, symbol, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "s_dso_open",
+				  "Call to \"_S_DSO_SYM\" failed"))
+	{
+		s_mutex_unlock(&dll_mutex);
+		return NULL;
+	}
+
+	s_mutex_unlock(&dll_mutex);
+	return symbol_add;
+}
+
+
+S_API void s_dso_close(void *dso_handle, s_erc *error)
+{
+	S_CLR_ERR(error);
+	s_mutex_lock(&dll_mutex);
+	if (dso_handle == NULL)
+	{
+		S_CTX_ERR(error, S_ARGERROR,
+				  "s_dso_close",
+				  "Argument \"dso_handle\" is NULL");
+		s_mutex_unlock(&dll_mutex);
+		return;
+	}
+
+	_S_DSO_CLOSE(dso_handle, error);
+	S_CHK_ERR(error, S_CONTERR,
+			  "s_dso_close",
+			  "Call to \"_S_DSO_CLOSE\" failed");
+	s_mutex_unlock(&dll_mutex);
+}
+
+
+S_LOCAL void _s_dynamic_loading_init(s_erc *error)
+{
+	S_CLR_ERR(error);
+	s_mutex_init(&dll_mutex);
+}
+
+
+S_LOCAL void _s_dynamic_loading_quit(s_erc *error)
+{
+	S_CLR_ERR(error);
+	s_mutex_destroy(&dll_mutex);
+}
 

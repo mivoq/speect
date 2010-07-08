@@ -147,7 +147,9 @@ S_LOCAL void SListPyIteratorInit(SListPyIterator **self, SListPy *list, s_erc *e
 		goto clean_up;
 	}
 
-	is_empty = SListIsEmpty(S_LIST(list), error);
+	/* call list method directly, otherwise we get mutex locking
+	   clashes */
+	is_empty = S_LIST_CALL(S_LIST(list), is_empty)(S_LIST(list), error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "SListPyIteratorInit",
 				  "Call to \"SListIsEmpty\" failed"))

@@ -610,6 +610,27 @@ S_API void SItemInit(SItem **self, const SRelation *rel, const SItem *toShare,
 
 
 /**
+ * Initialize a newly created item. Set it's relation and the content it must
+ * share with another item. If the given shared item is @c NULL, a new content
+ * is created. This is almost the same as #SItemInit except that no mutex locking
+ * is done. If we don't do this then a relation cannot create items.
+ * This *must* only be called in SRelation and SItem functions
+ * @private @memberof SItem
+ *
+ * @param self The newly created item to initialize.
+ * @param rel The relation of the new item.
+ * @param toShare Item with which to share content. If @c NULL then a new content is
+ * created.
+ * @param error Error code.
+ *
+ * @note If this function fails the item will be deleted and the @c
+ * self pointer will be set to @c NULL.
+ */
+S_LOCAL void _SItemInit_no_lock(SItem **self, const SRelation *rel,
+								const SItem *toShare, s_erc *error);
+
+
+/**
  * @}
  */
 

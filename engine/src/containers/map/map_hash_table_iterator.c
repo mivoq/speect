@@ -126,7 +126,9 @@ S_LOCAL void SMapHashTableIteratorInit(SMapHashTableIterator **self, SMapHashTab
 		return;
 	}
 
-	map_size = SMapSize(S_MAP(map), error);
+	/* call method directly, otherwise we get mutex locking
+	   clashes */
+	map_size = S_MAP_CALL(S_MAP(map), size)(S_MAP(map), error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "SMapHashTableIteratorInit",
 				  "Call to \"SMapSize\" failed"))

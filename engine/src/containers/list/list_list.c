@@ -354,7 +354,10 @@ static void ListListMerge(SList *self, const SList *with, s_erc *error)
 	SObject *tmp;
 
 
-	itr = SContainerGetIterator(S_CONTAINER(with), error);
+	S_CLR_ERR(error);
+
+	/* call method directly to avoid mutex locking issues */
+	itr = S_CONTAINER_CALL(S_CONTAINER(with), get_iterator)(S_CONTAINER(with), error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "ListListMerge",
 				  "Failed to get an iterator to \'with\' list container"))

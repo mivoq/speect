@@ -117,6 +117,9 @@
 
 static s_hash_table *s_classes = NULL;    /* Speect class repository */
 
+/* declare mutex */
+S_DECLARE_MUTEX_STATIC(class_mutex);
+
 
 /************************************************************************************/
 /*                                                                                  */
@@ -155,6 +158,8 @@ static const s_class_info *s_class_find_info(const char *name, s_erc *error);
 
 static void s_hash_table_delete_classes(void *key, void *data, s_erc *error);
 
+static const SObjectClass *s_class_find_no_lock(const char *name, s_erc *error);
+
 
 /************************************************************************************/
 /*                                                                                  */
@@ -171,22 +176,25 @@ S_API void s_class_add(const void *cls, s_erc *error)
 
 
 	S_CLR_ERR(error);
-
+	s_mutex_lock(&class_mutex);
 	baseClass = (const SObjectClass*)cls;
-	class_name = s_class_name(baseClass, error);
 
+	class_name = s_class_name(baseClass, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "s_class_add",
 				  "Failed to get class name"))
+	{
+		s_mutex_unlock(&class_mutex);
 		return;
+	}
 
 	class_info = S_MALLOC(s_class_info, 1);
-
 	if (class_info == NULL)
 	{
 		S_FTL_ERR(error, S_MEMERROR,
 				  "s_class_add",
 				  "Failed to allocate memory for class info object");
+		s_mutex_unlock(&class_mutex);
 		return;
 	}
 
@@ -201,12 +209,12 @@ S_API void s_class_add(const void *cls, s_erc *error)
 	 */
 	he = s_hash_table_find(s_classes, (void*)class_name,
 						   s_strzsize(class_name, error), error);
-
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "s_class_add",
 				  "Call to s_hash_table_find failed"))
 	{
 		S_FREE(class_info);
+		s_mutex_unlock(&class_mutex);
 		return;
 	}
 
@@ -217,6 +225,7 @@ S_API void s_class_add(const void *cls, s_erc *error)
 				  "s_class_add",
 				  "Failed to add class '%s', class names must be unique",
 				  class_name);
+		s_mutex_unlock(&class_mutex);
 		return;
 	}
 
@@ -224,15 +233,17 @@ S_API void s_class_add(const void *cls, s_erc *error)
 	s_hash_table_add(s_classes, (void*)class_name,
 					 s_strzsize(class_name, error), (void*)class_info,
 					 error);
-
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "s_class_add",
 				  "Failed to add class info for class '%s' to hash table",
 				  class_name))
 	{
 		S_FREE(class_info);
+		s_mutex_unlock(&class_mutex);
 		return;
 	}
+
+	s_mutex_unlock(&class_mutex);
 }
 
 
@@ -249,50 +260,57 @@ S_API void s_class_init(const void *cls, s_erc *error)
 
 
 	S_CLR_ERR(error);
-
+	s_mutex_lock(&class_mutex);
 	baseClass = (const SObjectClass*)cls;
-	class_name = s_class_name(baseClass, error);
 
+	class_name = s_class_name(baseClass, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "s_class_init",
 				  "Failed to get class name"))
+	{
+		s_mutex_unlock(&class_mutex);
 		return;
+	}
 
 	/* get inheritance hierarchy */
 	s_class_get_hierarchy(baseClass, &hier, &n_hier, error);
-
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "s_class_init",
 				  "Failed to get class hierarchy"))
+	{
+		s_mutex_unlock(&class_mutex);
 		return;
+	}
 
 	if (n_hier > 0)
 	{
 		/* get the class info */
 		class_info = (s_class_info*)s_class_find_info(class_name, error);
-
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "s_class_init",
 					  "Failed to find class info for class '%s'", class_name))
+		{
+			s_mutex_unlock(&class_mutex);
 			return;
+		}
 
 		init_hier = S_MALLOC(s_init_fp, n_hier);
-
 		if (init_hier == NULL)
 		{
 			S_FTL_ERR(error, S_MEMERROR,
 					  "s_class_init",
 					  "Failed to allocate memory for init_hier");
+			s_mutex_unlock(&class_mutex);
 			return;
 		}
 
 		destroy_hier = S_MALLOC(s_destroy_fp, n_hier);
-
-		if (init_hier == NULL)
+		if (destroy_hier == NULL)
 		{
 			S_FTL_ERR(error, S_MEMERROR,
 					  "s_class_init",
 					  "Failed to allocate memory for destroy_hier");
+			s_mutex_unlock(&class_mutex);
 			return;
 		}
 
@@ -309,15 +327,15 @@ S_API void s_class_init(const void *cls, s_erc *error)
 		class_info->destroy_hier = destroy_hier;
 		class_info->n_hier = n_hier;
 	}
+
+	s_mutex_unlock(&class_mutex);
 }
 
 
 S_API void s_class_reg(const void *cls, s_erc *error)
 {
 	S_CLR_ERR(error);
-
 	s_class_add(cls, error);
-
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "s_class_reg",
 				  "Failed to add class to object system"))
@@ -338,26 +356,34 @@ S_API void s_class_free(const void *cls, s_erc *error)
 
 
 	S_CLR_ERR(error);
-
+	s_mutex_lock(&class_mutex);
 	baseClass = (const SObjectClass*)cls;
+
 	class_name = s_class_name(baseClass, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "s_class_free",
 				  "Failed to get class name"))
+	{
+		s_mutex_unlock(&class_mutex);
 		return;
+	}
 
 	hte = s_hash_table_find(s_classes, (uchar*)class_name,
 							s_strzsize(class_name, error), error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "s_class_free",
 				  "Call to \"s_hash_table_find\" failed"))
+	{
+		s_mutex_unlock(&class_mutex);
 		return;
+	}
 
 	if (!hte)
 	{
 		S_CTX_ERR(error, S_FAILURE,
 				  "s_class_free",
 				  "Failed to find class '%s'", class_name);
+		s_mutex_unlock(&class_mutex);
 		return;
 	}
 
@@ -365,6 +391,7 @@ S_API void s_class_free(const void *cls, s_erc *error)
 	S_CHK_ERR(error, S_CONTERR,
 			  "s_class_free",
 			  "Failed to free class '%s'", class_name);
+	s_mutex_unlock(&class_mutex);
 }
 
 
@@ -408,13 +435,17 @@ S_API const SObjectClass *s_class_find(const char *name, s_erc *error)
 
 
 	S_CLR_ERR(error);
-
+	s_mutex_lock(&class_mutex);
 	class_info = s_class_find_info(name, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "s_class_find",
 				  "Failed to find class info for class '%s'", name))
+	{
+		s_mutex_unlock(&class_mutex);
 		return NULL;
+	}
 
+	s_mutex_unlock(&class_mutex);
 	return (const SObjectClass*)class_info->cls;
 }
 
@@ -425,18 +456,25 @@ S_API s_bool s_class_is_reg(const char *name, s_erc *error)
 
 
 	S_CLR_ERR(error);
+	s_mutex_lock(&class_mutex);
 
 	hte = s_hash_table_find(s_classes, (uchar*)name,
 							s_strzsize(name, error), error);
-
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "s_class_is_reg",
 				  "Call to \"s_hash_table_find\" failed"))
+	{
+		s_mutex_unlock(&class_mutex);
 		return FALSE;
+	}
 
 	if (!hte)
+	{
+		s_mutex_unlock(&class_mutex);
 		return FALSE;
+	}
 
+	s_mutex_unlock(&class_mutex);
 	return TRUE;
 }
 
@@ -459,13 +497,20 @@ S_API SObject *SObjectNewFromName(const char *name, s_erc *error)
 		return NULL;
 	}
 
+	s_mutex_lock(&class_mutex);
+
 	/* get the class information */
 	class_info = s_class_find_info(name, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "SObjectNewFromName",
 				  "Call to \"s_class_find_info\" for object type '%s' failed",
 				  name))
+	{
+		s_mutex_unlock(&class_mutex);
 		return NULL;
+	}
+
+	s_mutex_unlock(&class_mutex);
 
 	if (class_info == NULL)
 	{
@@ -477,7 +522,6 @@ S_API SObject *SObjectNewFromName(const char *name, s_erc *error)
 	}
 
 	class = (SObjectClass *)class_info->cls;
-
 	if (class == NULL)
 	{
 		S_CTX_ERR(error, S_FAILURE,
@@ -488,7 +532,6 @@ S_API SObject *SObjectNewFromName(const char *name, s_erc *error)
 	}
 
 	obj = S_MALLOC_SIZE(class->size);
-
 	if (obj == NULL)
 	{
 		S_FTL_ERR(error, S_MEMERROR,
@@ -558,13 +601,20 @@ S_LOCAL void SObjectInit(SObject *obj, s_erc *error)
 				  "Failed to find object class name"))
 		return;
 
+	s_mutex_lock(&class_mutex);
+
 	/* get class info */
 	class_info = s_class_find_info(class_name, error);
 
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "SObjectInit",
 				  "Failed to find class info for class '%s'", class_name))
+	{
+		s_mutex_unlock(&class_mutex);
 		return;
+	}
+
+	s_mutex_unlock(&class_mutex);
 
 	/* execute init functions */
 	for (i = 0; i < class_info->n_hier; i++)
@@ -625,13 +675,20 @@ S_API void SObjectDelete(SObject *self, s_erc *error)
 				  "Failed to find object class name"))
 		return;
 
+	s_mutex_lock(&class_mutex);
+
 	/* get class info */
 	class_info = s_class_find_info(class_name, error);
 
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "SObjectDelete",
 				  "Failed to find class info for class '%s'", class_name))
+	{
+		s_mutex_unlock(&class_mutex);
 		return;
+	}
+
+	s_mutex_unlock(&class_mutex);
 
 	/* execute destroy functions */
 	for (i = class_info->n_hier - 1; i >= 0; i--)
@@ -656,9 +713,8 @@ S_LOCAL void _s_classes_create(size_t size, s_erc *error)
 {
 	S_CLR_ERR(error);
 
-	if (s_classes != NULL)
-		return;
-
+	s_mutex_init(&class_mutex);
+	s_mutex_lock(&class_mutex);
 	s_classes = s_hash_table_new(s_hash_table_delete_classes,
 								 (size_t)ceil(s_log2(size)), error);
 	if (S_CHK_ERR(error, S_CONTERR,
@@ -666,8 +722,10 @@ S_LOCAL void _s_classes_create(size_t size, s_erc *error)
 				  "Call to \"s_hash_table_new\" failed"))
 	{
 		s_classes = NULL;
+		s_mutex_unlock(&class_mutex);
 		return;
 	}
+	s_mutex_unlock(&class_mutex);
 }
 
 
@@ -675,24 +733,28 @@ S_LOCAL void _s_classes_create(size_t size, s_erc *error)
 S_LOCAL void _s_classes_init(s_erc *error)
 {
 	const char *class_name;
-	const s_class_info *class_info;
+	s_class_info *class_info;
 	const SObjectClass *class;
 	s_hash_element *hte;
 
 
 	S_CLR_ERR(error);
-
+	s_mutex_lock(&class_mutex);
 	hte = s_hash_table_first(s_classes, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "_s_init_classes",
 				  "Call to \"s_hash_table_first\" failed"))
+	{
+		s_mutex_unlock(&class_mutex);
 		return;
+	}
 
 	if (!hte)
 	{
 		S_CTX_ERR(error, S_FAILURE,
 				  "_s_init_classes",
 				  "Failed to get first class in class table");
+		s_mutex_unlock(&class_mutex);
 		return;
 	}
 
@@ -702,32 +764,93 @@ S_LOCAL void _s_classes_init(s_erc *error)
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "_s_classes_init",
 					  "Call to \"s_hash_element_key\" failed"))
+		{
+			s_mutex_unlock(&class_mutex);
 			return;
+		}
 
-		class_info = (const s_class_info *)s_hash_element_get_data(hte, error);
+		class_info = (s_class_info *)s_hash_element_get_data(hte, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "_s_classes_init",
 					  "Call to \"s_hash_element_data\" failed"))
+		{
+			s_mutex_unlock(&class_mutex);
 			return;
+		}
 
 		class = (const SObjectClass*)class_info->cls;
 
-		/* initialize if not already */
+		/* initialize if not already, same as s_class_init */
 		if (class_info->n_hier == 0)
 		{
-			s_class_init(class, error);
+			const SObjectClass  *baseClass;
+			SObjectClass       **hier = NULL;
+			int                  n_hier;
+			int                  i;
+			s_init_fp           *init_hier;
+			s_destroy_fp        *destroy_hier;
+
+
+			baseClass = (const SObjectClass*)class;
+
+			/* get inheritance hierarchy */
+			s_class_get_hierarchy(baseClass, &hier, &n_hier, error);
 			if (S_CHK_ERR(error, S_CONTERR,
 						  "_s_classes_init",
-						  "Call to \"s_class_init\" failed"))
+						  "Failed to get class hierarchy"))
+			{
+				s_mutex_unlock(&class_mutex);
 				return;
+			}
+
+			if (n_hier > 0)
+			{
+				init_hier = S_MALLOC(s_init_fp, n_hier);
+				if (init_hier == NULL)
+				{
+					S_FTL_ERR(error, S_MEMERROR,
+							  "_s_classes_init",
+							  "Failed to allocate memory for init_hier");
+					s_mutex_unlock(&class_mutex);
+					return;
+				}
+
+				destroy_hier = S_MALLOC(s_destroy_fp, n_hier);
+				if (destroy_hier == NULL)
+				{
+					S_FTL_ERR(error, S_MEMERROR,
+							  "_s_classes_init",
+							  "Failed to allocate memory for destroy_hier");
+					s_mutex_unlock(&class_mutex);
+					return;
+				}
+
+				/* set the inheritance hierarchy init and destroy functions */
+				for (i = 0; i < n_hier; i++)
+				{
+					init_hier[i] = hier[i]->init;
+					destroy_hier[i] = hier[i]->destroy;
+				}
+
+				S_FREE(hier);
+
+				class_info->init_hier = init_hier;
+				class_info->destroy_hier = destroy_hier;
+				class_info->n_hier = n_hier;
+			}
 		}
 
 		hte = s_hash_element_next(hte, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "_s_classes_init",
 					  "Call to \"s_hash_table_next\" failed"))
+		{
+			s_mutex_unlock(&class_mutex);
 			return;
+		}
 	} while (hte != NULL);
+
+	s_mutex_unlock(&class_mutex);
 }
 
 
@@ -735,14 +858,21 @@ S_LOCAL void _s_classes_init(s_erc *error)
 S_LOCAL void _s_classes_clear(s_erc *error)
 {
 	S_CLR_ERR(error);
+	s_mutex_lock(&class_mutex);
 
 	s_hash_table_delete(s_classes, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "_s_classes_clear",
 				  "Call to \"s_hash_table_delete\" failed"))
+	{
+		s_mutex_unlock(&class_mutex);
 		return;
+	}
 
 	s_classes = NULL;
+
+	s_mutex_unlock(&class_mutex);
+	s_mutex_destroy(&class_mutex);
 }
 
 
@@ -756,15 +886,22 @@ S_LOCAL void _s_classes_print(s_erc *error)
 
 
 	S_CLR_ERR(error);
+	s_mutex_lock(&class_mutex);
 
 	hte = s_hash_table_first(s_classes, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "_s_classes_print",
 				  "Call to \"s_hash_table_first\" failed"))
+	{
+		s_mutex_unlock(&class_mutex);
 		return;
+	}
 
 	if (hte == NULL)
+	{
+		s_mutex_unlock(&class_mutex);
 		return;
+	}
 
 	do
 	{
@@ -772,13 +909,19 @@ S_LOCAL void _s_classes_print(s_erc *error)
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "_s_classes_print",
 					  "Call to \"s_hash_element_key\" failed"))
+		{
+			s_mutex_unlock(&class_mutex);
 			return;
+		}
 
 		pos = s_hash_element_pos(hte, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "_s_classes_print",
 					  "Call to \"s_hash_element_pos\" failed"))
+		{
+			s_mutex_unlock(&class_mutex);
 			return;
+		}
 
 		S_DEBUG(S_DBG_TRACE, "class '%s' at position %d\n", class_name, pos);
 
@@ -786,7 +929,10 @@ S_LOCAL void _s_classes_print(s_erc *error)
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "_s_classes_print",
 					  "Call to \"s_hash_element_next\" failed"))
+		{
+			s_mutex_unlock(&class_mutex);
 			return;
+		}
 	} while (hte);
 
 
@@ -796,11 +942,13 @@ S_LOCAL void _s_classes_print(s_erc *error)
 				  "Call to \"s_hash_table_stats\" failed"))
 	{
 		S_FREE(buf);
+		s_mutex_unlock(&class_mutex);
 		return;
 	}
 
 	S_DEBUG(S_DBG_TRACE, "hash table stats for class repository:\n%s", buf);
 	S_FREE(buf);
+	s_mutex_unlock(&class_mutex);
 }
 #endif /* SPCT_DEBUGMODE */
 
@@ -810,6 +958,22 @@ S_LOCAL void _s_classes_print(s_erc *error)
 /* Static function implementations                                                  */
 /*                                                                                  */
 /************************************************************************************/
+
+static const SObjectClass *s_class_find_no_lock(const char *name, s_erc *error)
+{
+	const s_class_info *class_info;
+
+
+	S_CLR_ERR(error);
+	class_info = s_class_find_info(name, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "s_class_find_no_lock",
+				  "Failed to find class info for class '%s'", name))
+		return NULL;
+
+	return (const SObjectClass*)class_info->cls;
+}
+
 
 static void s_hash_table_delete_classes(void *key, void *data, s_erc *error)
 {
@@ -846,18 +1010,15 @@ static void s_class_get_hierarchy(const SObjectClass *self, SObjectClass ***hier
 
 	/* get number of classes in hierarchy */
 	cname = s_strdup(self->name, error);
-
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "s_class_get_hierarchy",
 				  "Failed to duplicate class name"))
 		return;
 
 	cp = cname;
-
 	do
 	{
 		c = s_strtok_r(NULL, ":", &cp, error);
-
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "s_class_get_hierarchy",
 					  "Failed to extract token from class name"))
@@ -877,7 +1038,6 @@ static void s_class_get_hierarchy(const SObjectClass *self, SObjectClass ***hier
 	(*n_hier)++;
 
 	*hier = S_MALLOC(SObjectClass*, (*n_hier));
-
 	if (*hier == NULL)
 	{
 		S_FTL_ERR(error, S_MEMERROR,
@@ -891,7 +1051,6 @@ static void s_class_get_hierarchy(const SObjectClass *self, SObjectClass ***hier
 
 	/* get hierarchy */
 	cname = s_strdup(self->name, error);
-
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "s_class_get_hierarchy",
 				  "Failed to duplicate class name"))
@@ -901,7 +1060,7 @@ static void s_class_get_hierarchy(const SObjectClass *self, SObjectClass ***hier
 	i = 0;
 
 	/* first one is SObjectClass */
-	(*hier)[i++] = (SObjectClass*)s_class_find("SObject", error);
+	(*hier)[i++] = (SObjectClass*)s_class_find_no_lock("SObject", error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "s_class_get_hierarchy",
 				  "Failed to find class 'SObject'"))
@@ -914,7 +1073,6 @@ static void s_class_get_hierarchy(const SObjectClass *self, SObjectClass ***hier
 	do
 	{
 		c = s_strtok_r(NULL, ":", &cp, error);
-
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "s_class_get_hierarchy",
 					  "Failed to extract token from class name"))
@@ -927,8 +1085,7 @@ static void s_class_get_hierarchy(const SObjectClass *self, SObjectClass ***hier
 		if (c == NULL)
 			break;
 
-		cls = s_class_find(c, error);
-
+		cls = s_class_find_no_lock(c, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "s_class_get_hierarchy",
 					  "Failed to find class '%s'", c))

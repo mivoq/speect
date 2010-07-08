@@ -378,10 +378,11 @@ static SVoice *load_voice_no_data(const char *path, s_erc *error)
 	}
 
 	/* add config file as voice feature */
-	SVoiceSetFeature(voice, "config_file", SObjectSetString(path, error), error);
+	_SVoiceSetFeature_no_lock(voice, "config_file",
+							  SObjectSetString(path, error), error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "load_voice_no_data",
-				  "Call to \"SObjectSetString/SVoiceSetFeature\" failed"))
+				  "Call to \"SObjectSetString/_SVoiceSetFeature_no_lock\" failed"))
 	{
 		S_DELETE(voice, "load_voice_no_data", error);
 		S_DELETE(voiceConfig, "load_voice_no_data", error);

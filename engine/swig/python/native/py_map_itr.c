@@ -147,7 +147,9 @@ S_LOCAL void SMapPyIteratorInit(SMapPyIterator **self, SMapPy *map, s_erc *error
 		goto clean_up;
 	}
 
-	size = SMapSize(S_MAP(map), error);
+	/* call method directly, otherwise we get mutex locking
+	   clashes */
+	size = S_MAP_CALL(S_MAP(map), size)(S_MAP(map), error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "SMapPyIteratorInit",
 				  "Call to \"SMapSize\" failed"))

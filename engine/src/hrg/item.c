@@ -202,7 +202,7 @@ S_API void SItemInit(SItem **self, const SRelation *rel,
 	{
 		(*self)->content = (SItmContent*)S_NEW("SItmContent", error);
 		if (S_CHK_ERR(error, S_CONTERR,
-					  "ItemSetContent",
+					  "SItemInit",
 					  "Failed to create new item contents"))
 		{
 			S_FORCE_DELETE(*self, "SItemInit", error);
@@ -238,10 +238,91 @@ S_API void SItemInit(SItem **self, const SRelation *rel,
 	S_UNLOCK_ITEM(*self);
 
 	if (S_CHK_ERR(error, S_CONTERR,
-				  "SetContents",
+				  "SItemInit",
 				  "Call to \"assign_id\" failed"))
 	{
 		S_FORCE_DELETE(*self, "SItemInit", error);
+		*self = NULL;
+	}
+}
+
+
+/* This is almost the same as SItemInit except that no mutex locking
+ * is done. If we don't do this then a relation cannot create items.
+ * This *must* only be called in SRelation and SItem functions
+ */
+S_LOCAL void _SItemInit_no_lock(SItem **self, const SRelation *rel,
+								const SItem *toShare, s_erc *error)
+{
+	S_CLR_ERR(error);
+
+	if (*self == NULL)
+	{
+		S_CTX_ERR(error, S_ARGERROR,
+				  "_SItemInit_no_lock",
+				  "Argument \"self\" is NULL");
+		return;
+	}
+
+	if (rel == NULL)
+	{
+		S_CTX_ERR(error, S_ARGERROR,
+				  "_SItemInit_no_lock",
+				  "Argument \"rel\" is NULL");
+		S_FORCE_DELETE(*self, "_SItemInit_no_lock", error);
+		*self = NULL;
+		return;
+	}
+
+	(*self)->relation = (SRelation*)rel;
+
+	if (toShare == NULL) /* new content    */
+	{
+		(*self)->content = (SItmContent*)S_NEW("SItmContent", error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "_SItemInit_no_lock",
+					  "Failed to create new item contents"))
+		{
+			S_FORCE_DELETE(*self, "_SItemInit_no_lock", error);
+			*self = NULL;
+			return;
+		}
+	}
+	else                /* shared content */
+	{
+		/*
+		 * ABY: Check this, old Speect
+		 * SPCT_ICRemoveItemRelation(current->contents,
+		 * current->relation->name);
+		 */
+		(*self)->content = toShare->content;
+	}
+
+	/* don't lock */
+	/*	S_LOCK_ITEM(*self); */
+	SItmContentAdd((*self)->content, (*self)->relation->name,
+				   *self, error);
+
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "_SItemInit_no_lock",
+				  "Failed to add new relation/item pair for relation \"%s\"",
+				  (*self)->relation->name? (*self)->relation->name : "NULL"))
+	{
+		S_FORCE_DELETE(*self, "_SItemInit_no_lock", error);
+		*self = NULL;
+		return;
+	}
+
+	assign_id(*self, error);
+
+	/* don't unlock */
+	/* S_UNLOCK_ITEM(*self); */
+
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "_SItemInit_no_lock",
+				  "Call to \"assign_id\" failed"))
+	{
+		S_FORCE_DELETE(*self, "_SItemInit_no_lock", error);
 		*self = NULL;
 	}
 }
@@ -1312,7 +1393,7 @@ S_API s_bool SItemEqual(const SItem *a, const SItem *b, s_erc *error)
 		return FALSE;
 
 	S_LOCK_ITEM(a);
-	is_equal = SObjectCompare(S_OBJECT(a), S_OBJECT(b), error);
+	is_equal = S_OBJECT_CALL(S_OBJECT(a), compare)(S_OBJECT(a), S_OBJECT(b), error);
 	S_UNLOCK_ITEM(a);
 
 	if (S_CHK_ERR(error, S_CONTERR,
@@ -1371,23 +1452,28 @@ static void assign_id(SItem *self, s_erc *error)
 	if (id_present == TRUE)
 		return;
 
-	u = SItemUtterance(self, error);
+	/* to avoid mutex locking use call macro, also cast away const
+	 * so that we can lock the utt's mutex
+	 */
+	u = S_ITEM_CALL(self, utterance)(self, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "assign_id",
-				  "Call to SItemUtterance failed"))
+				  "Call to method \"utterance\" failed"))
 		return;
 
+	/* get id from utt */
 	if (u != NULL)
 	{
 		id = SUtteranceGetNextId(u, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "assign_id",
-					  "Call to SUtteranceGetNextId failed"))
+					  "Call to \"SUtteranceGetNextId\" failed"))
 			return;
-		SItemSetInt(self, "_id", id, error);
+
+		S_ITEM_CALL(self, set_int)(self, "_id", id, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "assign_id",
-					  "Call to SItemSetInt failed"))
+					  "Call to method \"set_int\" failed"))
 			return;
 	}
 }
@@ -1583,7 +1669,7 @@ static SItem *ItemAppend(SItem *self, const SItem *toShare, s_erc *error)
 				  "Failed to create new item"))
 		return NULL;
 
-	SItemInit(&rni, self->relation, toShare, error);
+	_SItemInit_no_lock(&rni, self->relation, toShare, error);
 	if (S_CHK_ERR(error, S_FAILURE,
 				  "ItemAppend",
 				  "Failed to initialize new item"))
@@ -1625,7 +1711,7 @@ static SItem *ItemPrepend(SItem *self, const SItem *toShare, s_erc *error)
 				  "Failed to create new item"))
 		return NULL;
 
-	SItemInit(&rni, self->relation, toShare, error);
+	_SItemInit_no_lock(&rni, self->relation, toShare, error);
 	if (S_CHK_ERR(error, S_FAILURE,
 				  "ItemPrepend",
 				  "Failed to initialize new item"))
@@ -1769,7 +1855,7 @@ static SItem *ItemAddDaughter(SItem *self, const SItem *toShare, s_erc *error)
 					  "Failed to create new daugther item"))
 			return NULL;
 
-		SItemInit(&rnd, self->relation, toShare, error);
+		_SItemInit_no_lock(&rnd, self->relation, toShare, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "ItemAddDaughter",
 					  "Failed to initialize new daugther item"))

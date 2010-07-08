@@ -485,14 +485,14 @@ S_LOCAL sint32 SUtteranceGetNextId(const SUtterance *self, s_erc *error)
 	sint32 id;
 
 
-	s_mutex_lock((s_mutex*)&(self->utt_mutex));
+	s_mutex_lock((s_mutex*)&(self->utt_id_mutex));
 
 	id = SMapGetInt(self->features, "_id", error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "SUtteranceGetNextId",
 				  "Call to \"SMapGetInt\" failed"))
 	{
-		s_mutex_unlock((s_mutex*)&(self->utt_mutex));
+		s_mutex_unlock((s_mutex*)&(self->utt_id_mutex));
 		return 0;
 	}
 
@@ -501,11 +501,11 @@ S_LOCAL sint32 SUtteranceGetNextId(const SUtterance *self, s_erc *error)
 				  "SUtteranceGetNextId",
 				  "Call to \"SMapSetInt\" failed"))
 	{
-		s_mutex_unlock((s_mutex*)&(self->utt_mutex));
+		s_mutex_unlock((s_mutex*)&(self->utt_id_mutex));
 		return 0;
 	}
 
-	s_mutex_unlock((s_mutex*)&(self->utt_mutex));
+	s_mutex_unlock((s_mutex*)&(self->utt_id_mutex));
 
 	return id;
 }
@@ -719,6 +719,7 @@ static void InitUtterance(void *obj, s_erc *error)
 			  "Call to SMapSetInt failed");
 
 	s_mutex_init(&(self->utt_mutex));
+	s_mutex_init(&(self->utt_id_mutex));
 }
 
 
@@ -768,6 +769,7 @@ static void DestroyUtt(void *obj, s_erc *error)
 	S_DELETE(self->relations, "DestroyUtt", error);
 	s_mutex_unlock(&(self->utt_mutex));
 	s_mutex_destroy(&(self->utt_mutex));
+	s_mutex_destroy(&(self->utt_id_mutex));
 }
 
 

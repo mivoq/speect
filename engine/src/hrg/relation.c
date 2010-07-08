@@ -321,8 +321,9 @@ S_API SItem *SRelationAppend(SRelation *self, const SItem *toShare, s_erc *error
 		return NULL;
 	}
 
-	/* locked in self->append */
+	s_mutex_lock(&(self->rel_mutex));
 	pItem = S_RELATION_CALL(self, append)(self, toShare, error);
+	s_mutex_unlock(&(self->rel_mutex));
 
 	if (S_CHK_ERR(error, S_CONTERR,
 		      "SRelationAppend",
@@ -353,8 +354,9 @@ S_API SItem *SRelationPrepend(SRelation *self, const SItem *toShare, s_erc *erro
 		return NULL;
 	}
 
-	/* locked in self->prepend */
+	s_mutex_lock(&(self->rel_mutex));
 	pItem = S_RELATION_CALL(self, prepend)(self, toShare, error);
+	s_mutex_unlock(&(self->rel_mutex));
 
 	if (S_CHK_ERR(error, S_CONTERR,
 		      "SRelationPrepend",
@@ -474,13 +476,11 @@ static SItem *RelationAppend(SRelation *self, const SItem *toShare, s_erc *error
 		      "Failed to create new item"))
 		return NULL;
 
-	SItemInit(&newItem, self, toShare, error);
+	_SItemInit_no_lock(&newItem, self, toShare, error);
 	if (S_CHK_ERR(error, S_FAILURE,
 		      "RelationAppend",
 		      "Failed to initialize new item"))
 		return NULL;
-
-	s_mutex_lock(&(self->rel_mutex));
 
 	if (self->head == NULL)
 		self->head = newItem;
@@ -491,8 +491,6 @@ static SItem *RelationAppend(SRelation *self, const SItem *toShare, s_erc *error
 		self->tail->next = newItem;
 
 	self->tail = newItem;
-
-	s_mutex_unlock(&(self->rel_mutex));
 
 	return newItem;
 }
@@ -510,14 +508,11 @@ static SItem *RelationPrepend(SRelation *self, const SItem *toShare, s_erc *erro
 		      "Failed to create new item"))
 		return NULL;
 
-	SItemInit(&newItem, self, toShare, error);
+	_SItemInit_no_lock(&newItem, self, toShare, error);
 	if (S_CHK_ERR(error, S_FAILURE,
 		      "RelationAppend",
 		      "Failed to initialize new item"))
 		return NULL;
-
-
-	s_mutex_lock(&(self->rel_mutex));
 
 	if (self->tail == NULL)
 		self->tail = newItem;
@@ -528,8 +523,6 @@ static SItem *RelationPrepend(SRelation *self, const SItem *toShare, s_erc *erro
 		self->head->prev = newItem;
 
 	self->head = newItem;
-
-	s_mutex_unlock(&(self->rel_mutex));
 
 	return newItem;
 }

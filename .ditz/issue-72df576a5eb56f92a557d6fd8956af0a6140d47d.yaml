@@ -7,8 +7,8 @@ type: :task
 component: Speect
 release: Beryllium
 reporter: Aby Louw <jalouw@csir.co.za>
-status: :unstarted
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2010-07-09 13:06:45.145819 Z
 references: []
 
@@ -18,3 +18,7 @@ log_events:
   - Aby Louw <jalouw@csir.co.za>
   - created
   - It has something to do with the Python<->SWIG<->Speect memory handling
+- - 2010-07-09 14:07:05.713150 Z
+  - Aby Louw <jalouw@csir.co.za>
+  - closed with disposition fixed
+  - Reference counting errors.

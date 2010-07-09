@@ -624,7 +624,7 @@ static const char *ApplyAt(const SG2P *self, const char *word, uint index, s_erc
 	char alpha[4] = "\0";
 	uint32 character;
 	const SList *rules;
-	SIterator *itr;
+	SIterator *itr = NULL;
 	const char *matched_phone;
 	s_bool rule_matches;
 	uint i;

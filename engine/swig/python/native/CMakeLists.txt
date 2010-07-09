@@ -106,6 +106,17 @@ list(APPEND SPCT_PYTHON_NATIVE_SOURCES
 
 
 #------------------------------------------------------------------------------------#
+#                               Compile flags                                        #
+#------------------------------------------------------------------------------------#
+
+if(SPCT_GCC)
+  set(SWIG_C_COMPILE_FLAGS "-fno-strict-aliasing -fwrapv -Wstrict-prototypes -DSPCT_SRC -DSPCT_LIBRARIES_EXPORTS -DSWIG_TYPE_TABLE=speect ${static_flag}")
+elseif(SPCT_MSVC)
+  set(SWIG_C_COMPILE_FLAGS "-DSPCT_SRC -DSPCT_LIBRARIES_EXPORTS -DSWIG_TYPE_TABLE=speect ${static_flag}")
+endif(SPCT_GCC)
+
+
+#------------------------------------------------------------------------------------#
 #                          Library definition                                        #
 #------------------------------------------------------------------------------------#
 
@@ -117,7 +128,7 @@ set_target_properties(SPCT_PYTHON_NATIVE_LIBRARY
   PROPERTIES
   VERSION "${SPCT_VERSION_MAJOR}.${SPCT_VERSION_MINOR}.${SPCT_VERSION_PATCH}"
   SOVERSION "${SPCT_VERSION_MAJOR}"
-  COMPILE_FLAGS "-fno-strict-aliasing -fwrapv -Wstrict-prototypes -DSPCT_SRC -DSPCT_LIBRARIES_EXPORTS -DSWIG_TYPE_TABLE=speect ${static_flag}"
+  COMPILE_FLAGS "${SWIG_C_COMPILE_FLAGS}"
   LINK_FLAGS "${SPCT_LIBRARY_LINK_FLAGS}"
   OUTPUT_NAME ${SPCT_PYTHON_NATIVE_LIBRARY}
   LIBRARY_OUTPUT_DIRECTORY ${SPCT_LIBRARY_OUTPUT_PATH}

@@ -141,7 +141,9 @@ S_LOCAL void SMapListIteratorInit(SMapListIterator **self, SMapList *map, s_erc 
 		return;
 	}
 
-	map_size = SMapSize(S_MAP(map), error);
+	/* call method directly, otherwise we get mutex locking
+	   clashes */
+	map_size = S_MAP_CALL(S_MAP(map), size)(S_MAP(map), error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "SMapListIteratorInit",
 				  "Call to \"SMapSize\" failed"))

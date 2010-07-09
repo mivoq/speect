@@ -380,7 +380,8 @@ static SList *ListPyCopy(SList *dst, const SList *src, s_erc *error)
 		SListPy *listDst;
 
 
-		size = SListSize(src, error);
+		/* call method directly, otherwise we get mutex locks */
+		size = S_LIST_CALL(S_LIST(src), size)(S_LIST(src), error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "ListPyCopy",
 					  "Call to \"SListSize\" failed"))
@@ -543,7 +544,8 @@ static SList *ListPyCopy(SList *dst, const SList *src, s_erc *error)
 				return NULL;
 			}
 
-			SListAppend(dst, tmp, error);
+			/* call method directly to avoid mutex locks */
+			S_LIST_CALL(S_LIST(dst), append)(S_LIST(dst), tmp, error);
 			if (S_CHK_ERR(error, S_CONTERR,
 						  "ListPyCopy",
 						  "Call to \"SListAppend\" failed"))

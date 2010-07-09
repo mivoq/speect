@@ -505,8 +505,7 @@ S_API char *s_get_pyobject_str(PyObject *pobject, s_erc *error)
 	char *new_cstr;
 
 
-	S_CLR_ERR(&error);
-
+	S_CLR_ERR(error);
 	if (pobject == NULL)
 	{
 		S_CTX_ERR(error, S_ARGERROR,
@@ -599,7 +598,9 @@ S_API char *s_get_python_error_str(void)
 	PyObject *ptype;
 	PyObject *pvalue;
 	PyObject *ptraceback;
-	char *rerror;
+	char *terror = NULL; /* error type */
+	char *verror = NULL; /* error value */
+	char *this_error = NULL; /* all combined */
 	s_erc error;
 
 
@@ -613,31 +614,58 @@ S_API char *s_get_python_error_str(void)
 
 	PyErr_Fetch(&ptype, &pvalue, &ptraceback);
 	if (ptype == NULL)
-	{
-		rerror = s_strdup("Unknown error", &error);
-		return rerror;
-	}
+		goto error_cleanup;
 
 	PyErr_NormalizeException(&ptype, &pvalue, &ptraceback);
 	if (ptype == NULL)
+		goto error_cleanup;
+
+	terror = s_get_pyobject_str(ptype, &error);
+	if (error != S_SUCCESS)
+		goto error_cleanup;
+
+	if (pvalue != NULL)
 	{
-		rerror = s_strdup("Unknown error", &error);
-		return rerror;
+		verror = s_get_pyobject_str(pvalue, &error);
+		if (error != S_SUCCESS)
+			goto error_cleanup;
 	}
 
-	rerror = s_get_pyobject_str(ptype, &error);
+	/* combine them */
+	s_asprintf(&this_error, &error, "%s, %s",
+			   terror, verror? verror : "Unknown");
+	if (error != S_SUCCESS)
+		goto error_cleanup;
+
+	/* all normal */
 	/* clear */
 	Py_XDECREF(ptype);
 	Py_XDECREF(pvalue);
 	Py_XDECREF(ptraceback);
 
-	if (error != S_SUCCESS)
-	{
-		rerror = s_strdup("Unknown error", &error);
-		return rerror;
-	}
+	if (terror != NULL)
+		S_FREE(terror);
 
-	return rerror;
+	if (verror != NULL)
+		S_FREE(verror);
+
+	return this_error;
+
+	/* errors */
+error_cleanup:
+	/* clear */
+	Py_XDECREF(ptype);
+	Py_XDECREF(pvalue);
+	Py_XDECREF(ptraceback);
+
+	if (terror != NULL)
+		S_FREE(terror);
+
+	if (verror != NULL)
+		S_FREE(verror);
+
+	this_error = s_strdup("Unknown error", &error);
+	return this_error;
 }
 
 

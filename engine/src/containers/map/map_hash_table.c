@@ -101,7 +101,7 @@ S_API void SMapHashTableResize(SMapHashTable *self, sint32 size, s_erc *error)
 	}
 	else if (size > 0)
 	{
-		s_hash_table_resize(self->table,  ceil(s_log2(size)), error);
+		s_hash_table_resize(self->table,  (sint32)ceil(s_log2(size)), error);
 	}
 	else
 	{
@@ -167,7 +167,7 @@ static void InitMapHashTable(void *obj, s_erc *error)
 
 	S_CLR_ERR(error);
 	self->table = s_hash_table_new(s_hash_table_delete_kv_pair,
-								   ceil(s_log2(S_MAP_HASH_TABLE_INIT_SIZE)),
+								   (size_t)ceil(s_log2(S_MAP_HASH_TABLE_INIT_SIZE)),
 								   error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "InitMapHashTable",

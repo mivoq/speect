@@ -130,6 +130,7 @@ set(SPCT_SRC_FILES
 
     # src/pluginmanager
     src/pluginmanager/dso.c
+    src/pluginmanager/dynamic_loading.c
     src/pluginmanager/manager.c
     src/pluginmanager/pluginmanager.c
     src/pluginmanager/plugin_object.c

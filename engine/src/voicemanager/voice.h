@@ -663,6 +663,27 @@ S_API void SVoiceSetFeature(SVoice *self, const char *key,
 
 
 /**
+ * Set the value of the named voice @a feature key to the
+ * given #SObject. If the named key already exists
+ * then it's #SObject will be deleted (if not referenced) and
+ * replaced. This is almost the same as #SVoiceSetFeature except that
+ * no mutex locking is performed. This function *must* not be used
+ * outside of the VoiceManager.
+ *
+ * @private @memberof SVoice
+ * @param self The given voice.
+ * @param key The string key of the feature object to set.
+ * @param object Pointer to the feature object of the named key.
+ * @param error Error code.
+ *
+ * @note The voice takes hold of the @c object #SObject.
+ * @note Not thread safe, VoiceManager does mutex locking.
+ */
+S_LOCAL void _SVoiceSetFeature_no_lock(SVoice *self, const char *key,
+									   SObject *object,  s_erc *error);
+
+
+/**
  * Delete the value of the named key from the voice @a feature container.
  * The key is removed and value deleted if it is not referenced.
  *
@@ -945,13 +966,15 @@ S_API void SVoiceDelUttType(SVoice *self, const char *key, s_erc *error);
 
 /**
  * Get the voice data configuration from the given #SMap which has been loaded from
- * a voice configuration file with #s_json_parse_config_file. Used internally by VoiceManager.
+ * a voice configuration file with #s_json_parse_config_file. Used
+ * internally by VoiceManager.
  * @note Data is @b not loaded.
  *
  * @private
  * @param self The voice.
  * @param voiceConfig voiceConfig The #SMap containing the voice configuration.
  * @param error Error code.
+ * @note Not thread safe, VoiceManager does mutex locking.
  */
 S_LOCAL void SVoiceLoadDataConfig(SVoice *self, const SMap *voiceConfig,
 								  s_erc *error);

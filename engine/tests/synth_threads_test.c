@@ -24,17 +24,18 @@
 /************************************************************************************/
 /*                                                                                  */
 /* AUTHOR  : Aby Louw                                                               */
-/* DATE    : December 2009                                                          */
+/* DATE    : July 2010                                                              */
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* Synthesis example.                                                               */
+/* Synthesis with threads test.                                                     */
 /*                                                                                  */
 /*                                                                                  */
 /************************************************************************************/
 
-
+#include <string.h>
 #include <stdio.h>
+#include <pthread.h>
 #include "speect.h"
 
 
@@ -44,20 +45,14 @@
 /*                                                                                  */
 /************************************************************************************/
 
-#define SPCT_WAIT_MEM 0
-
-/* this is a simple macro to wait for user input so that we can do
- * memory testing, it does nothing if SPCT_WAIT_MEM is 0.
- */
-#if SPCT_WAIT_MEM
-#  define SPCT_PRINT_AND_WAIT(STR)				\
-	do {										\
-		printf(STR);							\
-		getchar();								\
-	} while (0)
-#else /* SPCT_WAIT_MEM == 0 */
-#  define SPCT_PRINT_AND_WAIT(STR)
-#endif
+typedef struct
+{
+	const char *voicefile;
+	const char *wavfile;
+	const char *text;
+	s_erc error;
+	uint id;
+} targ;
 
 
 /************************************************************************************/
@@ -68,12 +63,103 @@
 
 static void usage(int rv)
 {
-    printf("usage: synth_test -t TEXT -v VOICEFILE -o WAVEFILE\n"
+    printf("usage: synth_threads_test -n NUMTHREADS -t TEXT -v VOICEFILE -o WAVEFILE\n"
            "  Converts text in TEXT, with voice specification in VOICEFILE\n"
-		   "  to a waveform in WAVEFILE.\n"
+		   "  to a waveform in WAVEFILE with NUMTHREADS running concurrently.\n"
 		   "  None of the arguments are optional.\n"
            "  --help      Output usage string\n");
 	exit(rv);
+}
+
+
+
+void *child_fn(void *args)
+{
+	SVoice *voice = NULL;
+	SUtterance *utt = NULL;
+	const SObject *audio;
+	SPlugin *riffAudio = NULL;
+	targ *myargs;
+	char *wavfile = NULL;
+	s_erc *error;
+
+
+	myargs = (targ*)args;
+	error = &(myargs->error);
+
+
+	S_CLR_ERR(error);
+
+	/* load audio riff plug-in, so that we can save the audio */
+	riffAudio = s_pm_load_plugin("audio_riff.spi", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "child_fn",
+				  "Call to \"s_pm_load_plugin\" failed"))
+		pthread_exit((void*)myargs);
+
+	/* load voice */
+	voice = s_vm_load_voice(myargs->voicefile, TRUE, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "child_fn",
+				  "Call to \"s_vm_load_voice\" failed"))
+	{
+		S_DELETE(riffAudio, "child_fn", error);
+		pthread_exit((void*)myargs);
+	}
+
+	/* synthesize utterance */
+	utt = SVoiceSynthUtt(voice, "text", SObjectSetString(myargs->text, error), error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "child_fn",
+				  "Call to \"SVoiceSynthUtt\" failed"))
+	{
+		S_DELETE(riffAudio, "child_fn", error);
+		S_DELETE(voice, "child_fn", error);
+		pthread_exit((void*)myargs);
+	}
+
+	/* get audio object */
+	audio = SUtteranceGetFeature(utt, "audio", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "child_fn",
+				  "Call to \"SUtteranceGetFeature\" failed"))
+	{
+		S_DELETE(riffAudio, "child_fn", error);
+		S_DELETE(utt, "child_fn", error);
+		S_DELETE(voice, "child_fn", error);
+		pthread_exit((void*)myargs);
+	}
+
+	s_asprintf(&wavfile, error, "%s%d\n", myargs->wavfile, myargs->id);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "child_fn",
+				  "Call to \"s_asprintf\" failed"))
+	{
+		S_DELETE(riffAudio, "child_fn", error);
+		S_DELETE(utt, "child_fn", error);
+		S_DELETE(voice, "child_fn", error);
+		pthread_exit((void*)myargs);
+	}
+
+	/* save audio */
+	SObjectSave(audio, wavfile, "riff", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "child_fn",
+				  "Call to \"SObjectSave\" failed"))
+	{
+		S_DELETE(riffAudio, "child_fn", error);
+		S_DELETE(utt, "child_fn", error);
+		S_DELETE(voice, "child_fn", error);
+		S_FREE(wavfile);
+		pthread_exit((void*)myargs);
+	}
+
+
+	S_DELETE(riffAudio, "child_fn", error);
+	S_DELETE(utt, "child_fn", error);
+	S_DELETE(voice, "child_fn", error);
+	S_FREE(wavfile);
+	pthread_exit((void*)myargs);
 }
 
 
@@ -87,18 +173,16 @@ static void usage(int rv)
 int main(int argc, char **argv)
 {
 	s_erc error = S_SUCCESS;
-	SVoice *voice = NULL;
-	SUtterance *utt = NULL;
-	const SObject *audio;
-	SPlugin *riffAudio = NULL;
 	int i;
 	int scomp;
 	const char *wavfile = NULL;
 	const char *voicefile = NULL;
 	const char *text = NULL;
-
-
-	SPCT_PRINT_AND_WAIT("going to initialize speect, press ENTER\n");
+	uint num_threads = 2;
+	pthread_t *threads;
+	pthread_attr_t attr;
+	uint t;
+	int rc;
 
 	/*
 	 * initialize speect
@@ -109,8 +193,6 @@ int main(int argc, char **argv)
 		printf("Failed to initialize Speect\n");
 		return 1;
 	}
-
-	SPCT_PRINT_AND_WAIT("initialized speect, parsing options, press ENTER\n");
 
 	/* parse options */
     for (i=1; i<argc; i++)
@@ -168,6 +250,22 @@ int main(int argc, char **argv)
 			wavfile = argv[i+1];
 			i++;
 		}
+
+		scomp = s_strcmp(argv[i],"-n", &error);
+		if (S_CHK_ERR(&error, S_CONTERR,
+					  "main",
+					  "Call to \"s_strcmp\" failed"))
+			return 1;
+
+		if ((scomp == 0) && (i + 1 < argc))
+		{
+			num_threads = (uint)s_atof(argv[i+1], &error);
+			if (S_CHK_ERR(&error, S_CONTERR,
+						  "main",
+						  "Call to \"s_atof\" failed"))
+				return 1;
+			i++;
+		}
 	}
 
 	if ((wavfile == NULL) || (voicefile == NULL) || (text == NULL))
@@ -178,71 +276,65 @@ int main(int argc, char **argv)
 		usage(1);
 	}
 
-	SPCT_PRINT_AND_WAIT("parsed options, loading audio riff plug-in, press ENTER\n");
+	/* Initialize and set thread join attribute */
+	pthread_attr_init(&attr);
+	pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
 
-	/* load audio riff plug-in, so that we can save the audio */
-	riffAudio = s_pm_load_plugin("audio_riff.spi", &error);
-	if (S_CHK_ERR(&error, S_CONTERR,
+	threads = S_CALLOC(pthread_t, num_threads);
+	if (threads == NULL)
+	{
+		S_FTL_ERR(&error, S_MEMERROR,
 				  "main",
-				  "Call to \"s_pm_load_plugin\" failed"))
-		goto quit;
+				  "Failed to allocate memory for 'pthread_t' objects");
+		pthread_attr_destroy(&attr);
+		return 1;
+	}
 
-	SPCT_PRINT_AND_WAIT("loaded audio riff plug-in, loading voice, press ENTER\n");
 
-	/* load voice */
-	voice = s_vm_load_voice(voicefile, TRUE, &error);
-	if (S_CHK_ERR(&error, S_CONTERR,
-				  "main",
-				  "Call to \"s_vm_load_voice\" failed"))
-		goto quit;
+	for(t = 0; t < num_threads; t++)
+	{
+		targ *thread_args;
 
-	SPCT_PRINT_AND_WAIT("loaded voice, doing synthesis, press ENTER\n");
 
-	/* synthesize utterance */
-	utt = SVoiceSynthUtt(voice, "text", SObjectSetString(text, &error), &error);
-	if (S_CHK_ERR(&error, S_CONTERR,
-				  "main",
-				  "Call to \"SVoiceSynthUtt\" failed"))
-		goto quit;
+		thread_args = S_CALLOC(targ, 1);
+		thread_args->voicefile = voicefile;
+		thread_args->wavfile = wavfile;
+		thread_args->text = text;
+		thread_args->id = t;
+		S_CLR_ERR(&(thread_args->error));
 
-	SPCT_PRINT_AND_WAIT("synthesized utterance, getting audio object, press ENTER\n");
 
-	/* get audio object */
-	audio = SUtteranceGetFeature(utt, "audio", &error);
-	if (S_CHK_ERR(&error, S_CONTERR,
-				  "main",
-				  "Call to \"SUtteranceGetFeature\" failed"))
-		goto quit;
+		rc = pthread_create(&threads[t], NULL, child_fn, (void *)thread_args);
+		if (rc)
+		{
+			printf("ERROR: return code from pthread_create() is %d\n", rc);
+			printf("Code %d= %s\n",rc,strerror(rc));
+			S_FREE(threads);
+			pthread_attr_destroy(&attr);
+			exit(-1);
+		}
+	}
 
-	SPCT_PRINT_AND_WAIT("got audio object, saving audio object, press ENTER\n");
+	/* Free attribute and wait for the other threads */
+	pthread_attr_destroy(&attr);
+ 	for(t = 0; t < num_threads; t++)
+	{
+		targ *thread_args;
 
-	/* save audio */
-	SObjectSave(audio, wavfile, "riff", &error);
-	if (S_CHK_ERR(&error, S_CONTERR,
-				  "main",
-				  "Call to \"SObjectSave\" failed"))
-		goto quit;
+		rc = pthread_join(threads[t], (void**)&thread_args);
+		if (rc)
+		{
+			printf("ERROR; return code from pthread_join() is %d\n", rc);
+			S_FREE(threads);
+			pthread_attr_destroy(&attr);
+			exit(-1);
+		}
 
-	SPCT_PRINT_AND_WAIT("saved audio object, press ENTER\n");
+		printf("Main: completed join with thread %d having a error status of %d\n",t, thread_args->error);
+		S_FREE(thread_args);
+	}
 
-quit:
-
-	SPCT_PRINT_AND_WAIT("deleting utterance, press ENTER\n");
-
-	if (utt != NULL)
-		S_DELETE(utt, "main", &error);
-
-	SPCT_PRINT_AND_WAIT("deleting voice, press ENTER\n");
-
-	if (voice != NULL)
-		S_DELETE(voice, "main", &error);
-
-	SPCT_PRINT_AND_WAIT("audio riff plug-in, press ENTER\n");
-
-	if (riffAudio != NULL)
-		S_DELETE(riffAudio, "main", &error);
-
-	SPCT_PRINT_AND_WAIT("quiting speect, press ENTER\n");
+	S_FREE(threads);
 
 	/*
 	 * quit speect
@@ -254,8 +346,7 @@ quit:
 		return 1;
 	}
 
-	SPCT_PRINT_AND_WAIT("done, press ENTER\n");
-
-	return 0;
+	printf("Main: program completed. Exiting.\n");
+	pthread_exit(NULL);
 }
 

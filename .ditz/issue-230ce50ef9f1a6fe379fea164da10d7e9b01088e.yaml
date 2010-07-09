@@ -1,0 +1,24 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Disabling error handling
+desc: |-
+  Disabling error handling is more involved that I have thought.
+  I am also wondering if it is a good thing, as we are working with
+  varied input from different sources. Currently all the error
+  checking code grows the debug build of the engine from 587k to
+  909k, which for now is not a problem, but for other platforms
+  might be. We should leave this till later.
+type: :feature
+component: Speect
+release: 
+reporter: Aby Louw <jalouw@csir.co.za>
+status: :unstarted
+disposition: 
+creation_time: 2010-07-07 22:01:04.967231 Z
+references: []
+
+id: 230ce50ef9f1a6fe379fea164da10d7e9b01088e
+log_events: 
+- - 2010-07-07 22:01:09.382906 Z
+  - Aby Louw <jalouw@csir.co.za>
+  - created
+  - ""

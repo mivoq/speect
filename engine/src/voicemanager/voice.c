@@ -508,10 +508,7 @@ S_API const SObject *SVoiceGetData(const SVoice *self, const char *key, s_erc *e
 		return NULL;
 	}
 
-	s_mutex_lock((s_mutex*)&self->voice_mutex);
 	tmp = SMapGetObjectDef(self->data->dataObjects, key, NULL, error);
-	s_mutex_unlock((s_mutex*)&self->voice_mutex);
-
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "SVoiceGetData",
 				  "Call to \"SMapGetObjectDef\" failed"))
@@ -979,12 +976,48 @@ S_API void SVoiceSetFeature(SVoice *self, const char *key,
 		return;
 	}
 
-	s_mutex_lock((s_mutex*)&self->voice_mutex);
+	s_mutex_lock((s_mutex*)&(self->voice_mutex));
 	SMapSetObject(self->features, key, object, error);
-	s_mutex_unlock((s_mutex*)&self->voice_mutex);
+	s_mutex_unlock((s_mutex*)&(self->voice_mutex));
 
 	S_CHK_ERR(error, S_CONTERR,
 			  "SVoiceSetFeature",
+			  "Call to \"SMapSetObject\" failed");
+}
+
+
+S_LOCAL void _SVoiceSetFeature_no_lock(SVoice *self, const char *key,
+									   SObject *object,  s_erc *error)
+{
+	S_CLR_ERR(error);
+
+	if (self == NULL)
+	{
+		S_CTX_ERR(error, S_ARGERROR,
+				  "_SVoiceSetFeature_no_lock",
+				  "Argument \"self\" is NULL");
+		return;
+	}
+
+	if (key == NULL)
+	{
+		S_CTX_ERR(error, S_ARGERROR,
+				  "_SVoiceSetFeature_no_lock",
+				  "Argument \"key\" is NULL");
+		return;
+	}
+
+	if (object == NULL)
+	{
+		S_CTX_ERR(error, S_ARGERROR,
+				  "_SVoiceSetFeature_no_lock",
+				  "Argument \"object\" is NULL");
+		return;
+	}
+
+	SMapSetObject(self->features, key, object, error);
+	S_CHK_ERR(error, S_CONTERR,
+			  "_SVoiceSetFeature_no_lock",
 			  "Call to \"SMapSetObject\" failed");
 }
 
@@ -1590,10 +1623,7 @@ S_LOCAL void SVoiceLoadDataConfig(SVoice *self, const SMap *voiceConfig,
 		return;
 	}
 
-	s_mutex_lock(&self->voice_mutex);
 	self->data->dataConfig = _s_load_voice_data_config(voiceConfig, error);
-	s_mutex_unlock(&self->voice_mutex);
-
 	S_CHK_ERR(error, S_CONTERR,
 			  "SVoiceLoadDataConfig",
 			  "Call to \"_s_load_voice_data_config\" failed");
@@ -2290,6 +2320,8 @@ static void DestroyVoice(void *obj, s_erc *error)
 			 * shared data.
 			 */
 			S_FREE(self->data);
+			s_mutex_unlock(&self->voice_mutex);
+			s_mutex_destroy(&self->voice_mutex);
 			return;
 		}
 
@@ -2309,6 +2341,8 @@ static void DestroyVoice(void *obj, s_erc *error)
 				 * shared data.
 				 */
 				S_FREE(self->data);
+				s_mutex_unlock(&self->voice_mutex);
+				s_mutex_destroy(&self->voice_mutex);
 				return;
 			}
 
@@ -2326,6 +2360,8 @@ static void DestroyVoice(void *obj, s_erc *error)
 				 * shared data.
 				 */
 				S_FREE(self->data);
+				s_mutex_unlock(&self->voice_mutex);
+				s_mutex_destroy(&self->voice_mutex);
 				return;
 			}
 
@@ -2564,7 +2600,7 @@ static SVoiceClass VoiceClass =
 		NULL,          /* copy    */
 	},
 	SynthUtt,          /* synth_utt    */
-	ReSynthUtt,        /* re_synth_utt */
+	ReSynthUtt         /* re_synth_utt */
 };
 
 

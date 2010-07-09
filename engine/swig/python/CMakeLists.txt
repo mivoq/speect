@@ -108,7 +108,7 @@ set_source_files_properties(${CMAKE_BINARY_DIR}/engine/swig/python/speect.i
 # add flags for Python Speect Engine wrapper compilation
 set_source_files_properties(${CMAKE_BINARY_DIR}/engine/swig/python/speectPYTHON_wrap.c 
   PROPERTIES 
-  COMPILE_FLAGS "-fno-strict-aliasing -fwrapv -Wstrict-prototypes -Wall -DSWIG_TYPE_TABLE=speect"
+  COMPILE_FLAGS ${SWIG_C_COMPILE_FLAGS}
   GENERATED TRUE
 )
 

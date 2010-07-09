@@ -42,7 +42,7 @@ int main()
 {
 	s_erc error = S_SUCCESS;
 	SList *list = NULL;
-	SIterator *itr;
+	SIterator *itr = NULL;
 	SObject *a = NULL;
 	SObject *b = NULL;
 	SObject *c = NULL;

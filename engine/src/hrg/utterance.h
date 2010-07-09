@@ -282,6 +282,11 @@ struct SUtterance
 	 * @protected Locking mutex.
 	 */
 	S_DECLARE_MUTEX(utt_mutex);
+
+	/**
+	 * @protected Locking mutex for ids.
+	 */
+	S_DECLARE_MUTEX(utt_id_mutex);
 };
 
 

@@ -55,24 +55,39 @@
 		PyObject *result;
 
 
-		/* get Python function */
-		func = (PyObject*)sfunction;
+		S_CLR_ERR(error);
 
-		/* Create a PyObject from the SObject, flag = 0 (Python does
-		 * not own the SObject/PyObject
-		 */
-		pyUtt = SWIG_NewPointerObj((void*)utt, SWIGTYPE_p_SUtterance, 0);
-		if (pyUtt == NULL)
+		if (utt == NULL)
 		{
-			S_CTX_ERR(error, S_FAILURE,
+			S_CTX_ERR(error, S_ARGERROR,
 					  "execute_python_callback",
-					  "Call to \"SWIG_NewPointerObj\" failed");
+					  "Argument \"utt\" is NULL");
 			return;
 		}
 
+		if (sfunction == NULL)
+		{
+			S_CTX_ERR(error, S_ARGERROR,
+					  "execute_python_callback",
+					  "Argument \"sfunction\" is NULL");
+			return;
+		}
+
+		/* get Python function */
+		func = (PyObject*)sfunction;
+
+		/* Create Python utterance from the utt, FALSE as Python does
+		 * not own the utterance
+		 */
+		pyUtt = s_sobject_2_pyobject(S_OBJECT(utt), FALSE, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "execute_python_callback",
+					  "Call to \"s_sobject_2_pyobject\" failed"))
+			return;
+
 		/* create argument list */
 		arglist = Py_BuildValue("(O)", pyUtt);
-		if (arglist == NULL) /* callback function failed */
+		if (arglist == NULL)
 		{
 			char *py_error = s_get_python_error_str();
 
@@ -117,7 +132,15 @@
 						  "execute_python_callback",
 						  "Python callback execution failed: \"Unknown error!\"");
 			}
+
+			/* cleanup */
+			Py_DECREF(pyUtt);
+
+			return;
 		}
+
+		/* cleanup */
+		Py_DECREF(pyUtt);
 
 		/* this should be None */
 		Py_DECREF(result);

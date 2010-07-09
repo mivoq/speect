@@ -112,7 +112,9 @@ S_LOCAL void SListListIteratorInit(SListListIterator **self, SListList *list, s_
 		goto clean_up;
 	}
 
-	list_is_empty = SListIsEmpty(S_LIST(list), error);
+	/* call list method directly, otherwise we get mutex locking
+	   clashes */
+	list_is_empty = S_LIST_CALL(S_LIST(list), is_empty)(S_LIST(list), error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "SListListIteratorInit",
 				  "Call to \"SListIsEmpty\" failed"))

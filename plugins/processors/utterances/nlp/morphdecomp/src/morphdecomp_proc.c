@@ -204,8 +204,8 @@ static void Dispose(void *obj, s_erc *error)
 static void Run(const SUttProcessor *self, SUtterance *utt,
 				s_erc *error)
 {
-	SG2P *g2p;
-	SFeatProcessor *morphDecompFeatProc;
+	SG2P *g2p = NULL;
+	SFeatProcessor *morphDecompFeatProc = NULL;
 	const SRelation *wordRel;
 	SRelation *morphRel = NULL;
 	SRelation *morphStructRel = NULL;

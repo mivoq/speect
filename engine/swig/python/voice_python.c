@@ -228,40 +228,6 @@
 	}
 
 
-	void uttProcessor_set(const char *key, PyObject *uttProc, s_erc *error)
-	{
-		SObject *object;
-
-
-		object = s_pyobject_2_sobject(uttProc, error);
-		if (*error != S_SUCCESS)
-			return;
-
-		SVoiceSetUttProc($self, key, S_UTTPROCESSOR(uttProc), error);
-		if (*error != S_SUCCESS)
-			S_DELETE(object, "SVoice::uttProcessor_set", error);
-	}
-
-
-	PyObject *uttProcessor_get(const char *key, s_erc *error)
-	{
-		const SUttProcessor *uttProc;
-		PyObject *pProc;
-
-
-		uttProc = SVoiceGetUttProc($self, key, error);
-		if (*error != S_SUCCESS)
-			return NULL;
-
-
-		pProc = s_sobject_2_pyobject(S_OBJECT(uttProc), FALSE, error);
-		if (*error != S_SUCCESS)
-			return NULL;
-
-		return pProc;
-	}
-
-
 	void featProcessor_set(const char *key, PyObject *featProc, s_erc *error)
 	{
 		SObject *object;

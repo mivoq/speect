@@ -47,7 +47,7 @@ int main()
 	SDatasource *ds = NULL;
 	s_ebml_header *header = NULL;
 	SEbmlWrite *ebmlWriter = NULL;
-	SObject *object;
+	SObject *object = NULL;
 
 
 	S_CLR_ERR(&error);

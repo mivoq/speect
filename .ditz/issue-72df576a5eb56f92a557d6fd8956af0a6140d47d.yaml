@@ -1,0 +1,20 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Python utt processors callbacks segfault
+desc: |-
+  Georg reports that creating an utt processor in Python, and
+  trying to use it in a voice segfaults.
+type: :task
+component: Speect
+release: Beryllium
+reporter: Aby Louw <jalouw@csir.co.za>
+status: :unstarted
+disposition: 
+creation_time: 2010-07-09 13:06:45.145819 Z
+references: []
+
+id: 72df576a5eb56f92a557d6fd8956af0a6140d47d
+log_events: 
+- - 2010-07-09 13:07:21.097710 Z
+  - Aby Louw <jalouw@csir.co.za>
+  - created
+  - It has something to do with the Python<->SWIG<->Speect memory handling

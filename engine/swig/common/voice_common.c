@@ -137,6 +137,27 @@ typedef struct
 	}
 
 
+	void uttProcessor_set(const char *key, SUttProcessor *uttProc, s_erc *error)
+	{
+		SVoiceSetUttProc($self, key, uttProc, error);
+		if (*error != S_SUCCESS)
+			S_DELETE(uttProc, "SVoice::uttProcessor_set", error);
+	}
+
+
+	const SUttProcessor *uttProcessor_get(const char *key, s_erc *error)
+	{
+		const SUttProcessor *uttProc;
+
+
+		uttProc = SVoiceGetUttProc($self, key, error);
+		if (*error != S_SUCCESS)
+			return NULL;
+
+		return uttProc;
+	}
+
+
 	void uttProcessor_del(const char *key, s_erc *error)
 	{
 		SVoiceDelUttProc($self, key, error);

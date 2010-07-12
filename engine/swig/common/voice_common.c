@@ -56,7 +56,6 @@ typedef struct
 
 		S_CLR_ERR(&error);
 		S_DELETE($self, "SVoice::delete", &error);
-
 	}
 
 
@@ -168,7 +167,7 @@ typedef struct
 	{
 		SVoiceSetFeatProc($self, key, featProc, error);
 		if (*error != S_SUCCESS)
-			S_DELETE(uttProc, "SVoice::featProcessor_set", error);
+			S_DELETE(featProc, "SVoice::featProcessor_set", error);
 	}
 
 

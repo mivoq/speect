@@ -167,6 +167,21 @@ typedef struct
 	void featProcessor_set(const char *key, SFeatProcessor *featProc, s_erc *error)
 	{
 		SVoiceSetFeatProc($self, key, featProc, error);
+		if (*error != S_SUCCESS)
+			S_DELETE(uttProc, "SVoice::featProcessor_set", error);
+	}
+
+
+	const SFeatProcessor *featProcessor_get(const char *key, s_erc *error)
+	{
+		const SFeatProcessor *featProc;
+
+
+		featProc = SVoiceGetFeatProc($self, key, error);
+		if (*error != S_SUCCESS)
+			return NULL;
+
+		return featProc;
 	}
 
 

@@ -226,40 +226,6 @@
 
 		return pdata;
 	}
-
-
-	void featProcessor_set(const char *key, PyObject *featProc, s_erc *error)
-	{
-		SObject *object;
-
-
-		object = s_pyobject_2_sobject(featProc, error);
-		if (*error != S_SUCCESS)
-			return;
-
-		SVoiceSetFeatProc($self, key, S_FEATPROCESSOR(featProc), error);
-		if (*error != S_SUCCESS)
-			S_DELETE(object, "SVoice::featProcessor_set", error);
-
-	}
-
-
-	PyObject *featProcessor_get(const char *key, s_erc *error)
-	{
-		const SFeatProcessor *featProc;
-		PyObject *fProc;
-
-
-		featProc = SVoiceGetFeatProc($self, key, error);
-		if (*error != S_SUCCESS)
-			return NULL;
-
-		fProc = s_sobject_2_pyobject(S_OBJECT(featProc), FALSE, error);
-		if (*error != S_SUCCESS)
-			return NULL;
-
-		return fProc;
-	}
 };
 
 

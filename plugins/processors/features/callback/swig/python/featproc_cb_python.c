@@ -56,20 +56,36 @@
 		PyObject *result;
 		SObject *retval = NULL;
 
+
+		S_CLR_ERR(error);
+
+		if (item == NULL)
+		{
+			S_CTX_ERR(error, S_ARGERROR,
+					  "execute_python_callback",
+					  "Argument \"item\" is NULL");
+			return NULL;
+		}
+
+		if (sfunction == NULL)
+		{
+			S_CTX_ERR(error, S_ARGERROR,
+					  "execute_python_callback",
+					  "Argument \"sfunction\" is NULL");
+			return NULL;
+		}
+
 		/* get Python function */
 		func = (PyObject*)sfunction;
 
-		/* Create a PyObject from the SObject, flag = 0 (Python does
-		 * not own the pyItem
+		/* Create Python item from the SItem, FALSE as Python does
+		 * not own the item
 		 */
-		pyItem = SWIG_NewPointerObj(S_VOIDPTR(item), SWIGTYPE_p_SItem, 0);
-		if (pyItem == NULL)
-		{
-			S_CTX_ERR(error, S_FAILURE,
+		pyItem = s_sobject_2_pyobject(S_OBJECT(item), FALSE, error);
+		if (S_CHK_ERR(error, S_CONTERR,
 					  "execute_python_callback",
-					  "Call to \"SWIG_NewPointerObj\" failed");
+					  "Call to \"s_sobject_2_pyobject\" failed"))
 			return NULL;
-		}
 
 		/* create argument list */
 		arglist = Py_BuildValue("(O)", pyItem);
@@ -121,6 +137,9 @@
 
 			return NULL;
 		}
+
+		/* cleanup */
+		Py_DECREF(pyItem);
 
 		/* convert result to Speect object */
 		retval = s_pyobject_2_sobject(result, error);

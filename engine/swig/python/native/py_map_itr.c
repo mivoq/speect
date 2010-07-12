@@ -224,7 +224,8 @@ S_LOCAL void SMapPyIteratorInit(SMapPyIterator **self, SMapPy *map, s_erc *error
 	}
 
 	/* set reference to Python map, we need this for Object method */
-	(*self)->map = Py_INCREF(S_PY_MAP(map));
+	(*self)->map = S_PY_MAP(map);
+	Py_INCREF((*self)->map);
 
 	/* all OK */
 	return;
@@ -397,10 +398,10 @@ static const SObject *Object(SIterator *self, s_erc *error)
 		return NULL;
 
 	/* get item */
-	pyobject = PyMapping_GetItemString(self->map, key);
+	pyobject = PyMapping_GetItemString(pyItr->map, (char*)key);
 	if (pyobject == NULL)
 	{
-		py_error = s_get_python_error_str();
+		char *py_error = s_get_python_error_str();
 		if (py_error)
 		{
 			S_CTX_ERR(error, S_FAILURE,
@@ -454,10 +455,10 @@ static SObject *Unlink(SIterator *self, s_erc *error)
 	pyItr->c_itr = NULL;
 
 	/* get item */
-	pyobject = PyMapping_GetItemString(self->map, key);
+	pyobject = PyMapping_GetItemString(pyItr->map, (char*)key);
 	if (pyobject == NULL)
 	{
-		py_error = s_get_python_error_str();
+		char *py_error = s_get_python_error_str();
 		if (py_error)
 		{
 			S_CTX_ERR(error, S_FAILURE,
@@ -485,9 +486,9 @@ static SObject *Unlink(SIterator *self, s_erc *error)
 		return NULL;
 
 	/* delete value from list */
-	if (PyMapping_DelItemString(self->map, key) == -1)
+	if (PyMapping_DelItemString(pyItr->map, (char*)key) == -1)
 	{
-		py_error = s_get_python_error_str();
+		char *py_error = s_get_python_error_str();
 		if (py_error)
 		{
 			S_CTX_ERR(error, S_FAILURE,

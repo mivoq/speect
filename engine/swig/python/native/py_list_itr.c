@@ -224,10 +224,11 @@ S_LOCAL void SListPyIteratorInit(SListPyIterator **self, SListPy *list, s_erc *e
 	}
 
 	/* get reference for list */
-	self->list = Py_INCREF(S_PY_LIST(list));
+	(*self)->list = S_PY_LIST(list);
+	Py_INCREF((*self)->list);
 
 	/* set list position */
-	self->counter = 0;
+	(*self)->counter = 0;
 
 	/* all OK */
 	return;
@@ -330,7 +331,7 @@ static SIterator *Next(SIterator *self, s_erc *error)
 	if (pyItr->c_itr != NULL)
 	{
 		Py_DECREF(pyItr->c_itr);
-		self->counter++;
+		pyItr->counter++;
 	}
 
 	pyItr->c_itr = pyItr->n_itr;
@@ -396,9 +397,9 @@ static SObject *Unlink(SIterator *self, s_erc *error)
 		return NULL;
 
 	/* delete it from list */
-	if (PySequence_DelItem(self->list, self->counter) == -1)
+	if (PySequence_DelItem(pyItr->list, pyItr->counter) == -1)
 	{
-		py_error = s_get_python_error_str();
+		char *py_error = s_get_python_error_str();
 		if (py_error)
 		{
 			S_CTX_ERR(error, S_FAILURE,

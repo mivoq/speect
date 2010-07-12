@@ -1,0 +1,18 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: do_alignments segfault
+desc: speect segfaults during the do_alignments.py script when nlp4tts is added (without works fine)
+type: :bugfix
+component: Speect
+release: Beryllium
+reporter: Georg Schlunz <gschlunz@csir.co.za>
+status: :unstarted
+disposition: 
+creation_time: 2010-07-12 09:15:23.710183 Z
+references: []
+
+id: 82f7e0f63d02a52e47b204c418a87dd582acefc4
+log_events: 
+- - 2010-07-12 09:16:15.861544 Z
+  - Georg Schlunz <gschlunz@csir.co.za>
+  - created
+  - ""

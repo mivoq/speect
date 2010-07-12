@@ -274,19 +274,19 @@ static void DestroyListPyIterator(void *obj, s_erc *error)
 	S_CLR_ERR(error);
 	if (self->iterator != NULL)
 	{
-		Py_XDECREF(self->iterator);
+		Py_DECREF(self->iterator);
 		self->iterator = NULL;
 	}
 
 	if (self->c_itr != NULL)
 	{
-		Py_XDECREF(self->c_itr);
+		Py_DECREF(self->c_itr);
 		self->c_itr = NULL;
 	}
 
 	if (self->n_itr != NULL)
 	{
-		Py_XDECREF(self->n_itr);
+		Py_DECREF(self->n_itr);
 		self->n_itr = NULL;
 	}
 
@@ -314,7 +314,7 @@ static SIterator *Next(SIterator *self, s_erc *error)
 		return NULL;
 
 	if (pyItr->c_itr != NULL)
-		Py_XDECREF(pyItr->c_itr);
+		Py_DECREF(pyItr->c_itr);
 
 	pyItr->c_itr = pyItr->n_itr;
 
@@ -351,7 +351,6 @@ static const SObject *Object(SIterator *self, s_erc *error)
 		S_DELETE(pyItr->sobject, "Object", error);
 
 	pyItr->sobject = s_pyobject_2_sobject(pyItr->c_itr, error);
-	Py_DECREF(pyItr->c_itr);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Object",
 				  "Call to \"s_pyobject_2_sobject\" failed"))

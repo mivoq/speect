@@ -223,6 +223,12 @@ S_LOCAL void SListPyIteratorInit(SListPyIterator **self, SListPy *list, s_erc *e
 		goto clean_up;
 	}
 
+	/* get reference for list */
+	self->list = Py_INCREF(S_PY_LIST(list));
+
+	/* set list position */
+	self->counter = 0;
+
 	/* all OK */
 	return;
 
@@ -264,6 +270,8 @@ static void InitListPyIterator(void *obj, s_erc *error)
 	self->c_itr = NULL;
 	self->n_itr = NULL;
 	self->sobject = NULL;
+	self->list = NULL;
+	self->counter = 0;
 }
 
 
@@ -290,6 +298,12 @@ static void DestroyListPyIterator(void *obj, s_erc *error)
 		self->n_itr = NULL;
 	}
 
+	if (self->list != NULL)
+	{
+		Py_DECREF(self->list);
+		self->list = NULL;
+	}
+
 	if (self->sobject != NULL)
 		S_DELETE(self->sobject, "DestroyListPyIterator", error);
 }
@@ -314,7 +328,10 @@ static SIterator *Next(SIterator *self, s_erc *error)
 		return NULL;
 
 	if (pyItr->c_itr != NULL)
+	{
 		Py_DECREF(pyItr->c_itr);
+		self->counter++;
+	}
 
 	pyItr->c_itr = pyItr->n_itr;
 
@@ -377,6 +394,26 @@ static SObject *Unlink(SIterator *self, s_erc *error)
 				  "Unlink",
 				  "Call to \"s_pyobject_2_sobject\" failed"))
 		return NULL;
+
+	/* delete it from list */
+	if (PySequence_DelItem(self->list, self->counter) == -1)
+	{
+		py_error = s_get_python_error_str();
+		if (py_error)
+		{
+			S_CTX_ERR(error, S_FAILURE,
+					  "Unlink",
+					  "Call to \"PySequence_DelItem\" failed. Reported error: %s",
+					  py_error);
+			S_FREE(py_error);
+		}
+		else
+		{
+			S_CTX_ERR(error, S_FAILURE,
+					  "Unlink",
+					  "Call to \"PySequence_DelItem\" failed");
+		}
+	}
 
 	return tmp;
 }

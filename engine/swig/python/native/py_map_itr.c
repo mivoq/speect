@@ -223,6 +223,9 @@ S_LOCAL void SMapPyIteratorInit(SMapPyIterator **self, SMapPy *map, s_erc *error
 		goto clean_up;
 	}
 
+	/* set reference to Python map, we need this for Object method */
+	(*self)->map = Py_INCREF(S_PY_MAP(map));
+
 	/* all OK */
 	return;
 
@@ -265,6 +268,7 @@ static void InitMapPyIterator(void *obj, s_erc *error)
 	self->n_itr = NULL;
 	self->sobject = NULL;
 	self->key = NULL;
+	self->map = NULL;
 }
 
 
@@ -275,24 +279,30 @@ static void DestroyMapPyIterator(void *obj, s_erc *error)
 	S_CLR_ERR(error);
 	if (self->iterator != NULL)
 	{
-		Py_XDECREF(self->iterator);
+		Py_DECREF(self->iterator);
 		self->iterator = NULL;
 	}
 
 	if (self->c_itr != NULL)
 	{
-		Py_XDECREF(self->c_itr);
+		Py_DECREF(self->c_itr);
 		self->c_itr = NULL;
 	}
 
 	if (self->n_itr != NULL)
 	{
-		Py_XDECREF(self->n_itr);
+		Py_DECREF(self->n_itr);
 		self->n_itr = NULL;
 	}
 
 	if (self->sobject != NULL)
 		S_DELETE(self->sobject, "DestroyMapPyIterator", error);
+
+	if (self->map != NULL)
+	{
+		Py_DECREF(self->map);
+		self->map = NULL;
+	}
 
 	if (self->key != NULL)
 		S_FREE(self->key);
@@ -318,7 +328,7 @@ static SIterator *Next(SIterator *self, s_erc *error)
 		return NULL;
 
 	if (pyItr->c_itr != NULL)
-		Py_XDECREF(pyItr->c_itr);
+		Py_DECREF(pyItr->c_itr);
 
 	pyItr->c_itr = pyItr->n_itr;
 
@@ -370,6 +380,8 @@ static const char *Key(SIterator *self, s_erc *error)
 static const SObject *Object(SIterator *self, s_erc *error)
 {
 	SMapPyIterator *pyItr = S_MAPPY_ITER(self);
+	PyObject *pyobject;
+	const char *key;
 
 
 	S_CLR_ERR(error);
@@ -377,8 +389,38 @@ static const SObject *Object(SIterator *self, s_erc *error)
 	if (pyItr->sobject != NULL)
 		S_DELETE(pyItr->sobject, "Object", error);
 
-	pyItr->sobject = s_pyobject_2_sobject(pyItr->c_itr, error);
-	Py_DECREF(pyItr->c_itr);
+	/* get key */
+	key = Key(self, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "Object",
+				  "Call to method \"Key\" failed"))
+		return NULL;
+
+	/* get item */
+	pyobject = PyMapping_GetItemString(self->map, key);
+	if (pyobject == NULL)
+	{
+		py_error = s_get_python_error_str();
+		if (py_error)
+		{
+			S_CTX_ERR(error, S_FAILURE,
+					  "Object",
+					  "Call to \"PyMapping_GetItemString\" failed. Reported error: %s",
+					  py_error);
+			S_FREE(py_error);
+		}
+		else
+		{
+			S_CTX_ERR(error, S_FAILURE,
+					  "Object",
+					  "Call to \"PyMapping_GetItemString\" failed");
+		}
+
+		return NULL;
+	}
+
+	pyItr->sobject = s_pyobject_2_sobject(pyobject, error);
+	Py_DECREF(pyobject);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Object",
 				  "Call to \"s_pyobject_2_sobject\" failed"))
@@ -392,19 +434,75 @@ static SObject *Unlink(SIterator *self, s_erc *error)
 {
 	SMapPyIterator *pyItr = S_MAPPY_ITER(self);
 	SObject *tmp;
+	const char *key;
+	PyObject *pyobject;
 
 
 	S_CLR_ERR(error);
 	if (pyItr->c_itr == NULL)
 		return NULL;
 
-	tmp = s_pyobject_2_sobject(pyItr->c_itr, error);
+	/* get key */
+	key = Key(self, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "Unlink",
+				  "Call to method \"Key\" failed"))
+		return NULL;
+
+	/* finished with current item */
 	Py_DECREF(pyItr->c_itr);
 	pyItr->c_itr = NULL;
+
+	/* get item */
+	pyobject = PyMapping_GetItemString(self->map, key);
+	if (pyobject == NULL)
+	{
+		py_error = s_get_python_error_str();
+		if (py_error)
+		{
+			S_CTX_ERR(error, S_FAILURE,
+					  "Unlink",
+					  "Call to \"PyMapping_GetItemString\" failed. Reported error: %s",
+					  py_error);
+			S_FREE(py_error);
+		}
+		else
+		{
+			S_CTX_ERR(error, S_FAILURE,
+					  "Unlink",
+					  "Call to \"PyMapping_GetItemString\" failed");
+		}
+
+		return NULL;
+	}
+
+	/* create Speect object */
+	tmp = s_pyobject_2_sobject(pyobject, error);
+	Py_DECREF(pyobject);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Unlink",
 				  "Call to \"s_pyobject_2_sobject\" failed"))
 		return NULL;
+
+	/* delete value from list */
+	if (PyMapping_DelItemString(self->map, key) == -1)
+	{
+		py_error = s_get_python_error_str();
+		if (py_error)
+		{
+			S_CTX_ERR(error, S_FAILURE,
+					  "Unlink",
+					  "Call to \"PyMapping_DelItemString\" failed. Reported error: %s",
+					  py_error);
+			S_FREE(py_error);
+		}
+		else
+		{
+			S_CTX_ERR(error, S_FAILURE,
+					  "Unlink",
+					  "Call to \"PyMapping_DelItemString\" failed");
+		}
+	}
 
 	return tmp;
 }

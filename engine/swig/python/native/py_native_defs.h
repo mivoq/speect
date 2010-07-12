@@ -136,6 +136,8 @@ typedef struct
 	PyObject   *c_itr;     /*!< Pointer to current list element.      */
 	PyObject   *n_itr;     /*!< Pointer to next list element.         */
 	SObject    *sobject;   /*!< Pointer to Object method's tmp value. */
+	PyObject   *list;      /*!< Reference to Python list.			  */
+	uint32      counter;   /*!< Counter for list position.            */
 } SListPyIterator;
 
 
@@ -189,6 +191,7 @@ typedef struct
 	PyObject   *iterator;  /*!< Python iterator object.				  */
 	PyObject   *c_itr;     /*!< Pointer to current map element.       */
 	PyObject   *n_itr;     /*!< Pointer to next map element.          */
+	PyObject   *map;       /*!< Reference to Python map.			  */
 	SObject    *sobject;   /*!< Pointer to Object method's tmp value. */
 	char       *key;       /*!< Pointer to Key method's tmp value.    */
 } SMapPyIterator;

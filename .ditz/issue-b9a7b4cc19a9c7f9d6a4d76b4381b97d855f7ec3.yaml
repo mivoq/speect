@@ -1,0 +1,18 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: CPack packaging
+desc: Need to to packaging with CPack to create installation packages.
+type: :task
+component: Speect
+release: Beryllium
+reporter: Aby Louw <jalouw@csir.co.za>
+status: :unstarted
+disposition: 
+creation_time: 2010-07-13 09:22:07.495832 Z
+references: []
+
+id: b9a7b4cc19a9c7f9d6a4d76b4381b97d855f7ec3
+log_events: 
+- - 2010-07-13 09:22:09.640228 Z
+  - Aby Louw <jalouw@csir.co.za>
+  - created
+  - ""

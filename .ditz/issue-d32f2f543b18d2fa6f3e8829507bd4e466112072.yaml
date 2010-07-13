@@ -1,0 +1,18 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Finalize Speect Python API
+desc: Need to go through all Speect Python API and finalize for release.
+type: :task
+component: Speect
+release: Beryllium
+reporter: Aby Louw <jalouw@csir.co.za>
+status: :unstarted
+disposition: 
+creation_time: 2010-07-13 09:20:45.307959 Z
+references: []
+
+id: d32f2f543b18d2fa6f3e8829507bd4e466112072
+log_events: 
+- - 2010-07-13 09:20:46.571930 Z
+  - Aby Louw <jalouw@csir.co.za>
+  - created
+  - ""

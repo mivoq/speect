@@ -1,0 +1,18 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Plug-in template
+desc: Plug-in template and documentation needs to be done.
+type: :task
+component: Speect
+release: Beryllium
+reporter: Aby Louw <jalouw@csir.co.za>
+status: :unstarted
+disposition: 
+creation_time: 2010-07-13 09:23:20.439754 Z
+references: []
+
+id: f541d32bcc931825ee33bc28b40702474c5ac7a0
+log_events: 
+- - 2010-07-13 09:23:21.695629 Z
+  - Aby Louw <jalouw@csir.co.za>
+  - created
+  - ""

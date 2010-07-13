@@ -1,0 +1,18 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Log files with process id
+desc: The current file logging is wrong. Their should be a file per process.
+type: :task
+component: Speect
+release: Beryllium
+reporter: Aby Louw <jalouw@csir.co.za>
+status: :unstarted
+disposition: 
+creation_time: 2010-07-13 07:29:15.091473 Z
+references: []
+
+id: 8bdd93e12391a49820a9dfc14fcba42be5d56fae
+log_events: 
+- - 2010-07-13 07:29:16.611930 Z
+  - Aby Louw <jalouw@csir.co.za>
+  - created
+  - ""

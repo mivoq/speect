@@ -88,11 +88,46 @@ S_BEGIN_C_DECLS
 /**
  * @hideinitializer
  * Return the given #SPlugin child class object as a plug-in object.
+ *
  * @param SELF The given object.
  * @return Given object as #SPlugin* type.
+ *
  * @note This casting is not safety checked.
  */
 #define S_PLUGIN(SELF)    ((SPlugin *)(SELF))
+
+
+/**
+ * @hideinitializer
+ * Call the given function method of the given #SPlugin,
+ * see full description #S_PLUGIN_CALL for usage.
+ *
+ * @param SELF The given #SPlugin*.
+ * @param FUNC The function method of the given object to call.
+ *
+ * @note This casting is not safety checked.
+ * @note Example usage: @code S_PLUGIN_CALL(self, func)(param1, param2, ..., paramN); @endcode
+ * where @c param1, @c param2, ..., @c paramN are the parameters passed to the object function
+ * @c func.
+ */
+#define S_PLUGIN_CALL(SELF, FUNC)				\
+	((SPluginClass *)S_OBJECT_CLS(SELF))->FUNC
+
+
+/**
+ * @hideinitializer
+ * Test if the given function method of the given #SPlugin
+ * can be called.
+ *
+ * @param SELF The given #SPlugin*.
+ * @param FUNC The function method of the given object to check.
+ *
+ * @return #TRUE if function can be called, otherwise #FALSE.
+ *
+ * @note This casting is not safety checked.
+ */
+#define S_PLUGIN_METH_VALID(SELF, FUNC)			\
+	S_PLUGIN_CALL(SELF, FUNC) ? TRUE : FALSE
 
 
 /**
@@ -138,6 +173,11 @@ typedef struct
 	s_bool                 in_pluginmanager;
 
 	/**
+	 * @private Is the plug-in loaded and ready to be used?
+	 */
+	s_bool                 ready;
+
+	/**
 	 * @protected Main locking mutex
 	 */
 	S_DECLARE_MUTEX(plugin_mutex);
@@ -151,9 +191,42 @@ typedef struct
 /************************************************************************************/
 
 /**
- * The SPluginClass structure. Same as #SObjectClass.
+ * The SPluginClass structure.
+ * @extends SObjectClass
  */
-typedef SObjectClass SPluginClass;
+typedef struct
+{
+	/* Class members */
+	/**
+	 * @protected Inherit from #SObjectClass.
+	 */
+	SObjectClass _inherit;
+
+	/* Class methods */
+	/**
+	 * @private IsReady function pointer.
+	 * Query whether the plug-in is ready for use. A plug-in can be in
+	 * cache and returned to a caller without being completely loaded
+	 * and ready for use. This is especially true for multi-threaded
+	 * applications. Use this call to check whether the plug-in is
+	 * ready to be used.
+	 *
+	 * @param self The plug-in to query.
+	 *
+	 * @return @c TRUE if ready for use, otherwise @c FALSE.
+	 */
+	s_bool (*is_ready) (const SPlugin *self);
+
+	/**
+	 * @private SetReady function pointer.
+	 * Set the ready flag of the plug-in. This must only be set after
+	 * a plug-in has been fully loaded, so that threaded applications
+	 * can now when a plug-in is ready for use.
+	 *
+	 * @param self The plug-in to set the ready flag for.
+	 */
+	void   (*set_ready)(SPlugin *self);
+} SPluginClass;
 
 
 /************************************************************************************/
@@ -161,6 +234,36 @@ typedef SObjectClass SPluginClass;
 /* Function prototypes                                                              */
 /*                                                                                  */
 /************************************************************************************/
+
+/**
+ * Query whether the plug-in is ready for use. A plug-in can be in
+ * cache and returned to a caller without being completely loaded
+ * and ready for use. This is especially true for multi-threaded
+ * applications. Use this call to check whether the plug-in is
+ * ready to be used. Used internally in the PluginManager.
+ *
+ * @private @memberof SPlugin
+ *
+ *
+ * @param self The plug-in to query.
+ *
+ * @return @c TRUE if ready for use, otherwise @c FALSE.
+ */
+S_LOCAL s_bool SPluginIsReady(const SPlugin *self);
+
+
+/**
+ * Set the ready flag of the plug-in. This must only be set after
+ * a plug-in has been fully loaded, so that threaded applications
+ * can now when a plug-in is ready for use. Used internally in the
+ * PluginManager.
+ *
+ * @private @memberof SPlugin
+ *
+ * @param self The plug-in to set the ready flag for.
+ */
+S_LOCAL void SPluginSetReady(SPlugin *self);
+
 
 /**
  * Add the SPlugin class to the object system.

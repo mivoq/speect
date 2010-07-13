@@ -143,6 +143,16 @@ S_API SPlugin *s_pm_load_plugin(const char *path, s_erc *error)
 		SObjectIncRef(S_OBJECT(loaded));
 		S_FREE(new_path);
 		s_mutex_unlock(&pm_mutex);
+
+		/* wait until plug-in has loaded before
+		 * returning and
+		 * using it
+		 */
+		while (!SPluginIsReady(loaded))
+		{
+			/* NOP */
+		}
+
 		return loaded;
 	}
 
@@ -190,6 +200,9 @@ S_API SPlugin *s_pm_load_plugin(const char *path, s_erc *error)
 	}
 
 	S_FREE(new_path);
+
+	/* other threads can start using the plug-in */
+	SPluginSetReady(loaded);
 
 	/*
 	 * it's loaded and added to cache,

@@ -61,6 +61,65 @@ static SPluginClass PluginClass; /* Plugin class declaration. */
 /*                                                                                  */
 /************************************************************************************/
 
+S_LOCAL s_bool SPluginIsReady(const SPlugin *self)
+{
+	s_bool ready_status;
+	s_erc error;
+
+
+	S_CLR_ERR(&error);
+	if (self == NULL)
+	{
+		S_CTX_ERR(&error, S_ARGERROR,
+				  "SPluginIsReady",
+				  "Argument \"self\" is NULL");
+		return FALSE;
+	}
+
+	if (!S_PLUGIN_METH_VALID(self, is_ready))
+	{
+		S_WARNING(S_METHINVLD,
+				  "SPluginIsReady",
+				  "Plug-in method \"is_ready\" not implemented");
+		return FALSE;
+	}
+
+	s_mutex_lock((s_mutex*)&(self->plugin_mutex));
+	ready_status = S_PLUGIN_CALL(self, is_ready)(self);
+	s_mutex_unlock((s_mutex*)&(self->plugin_mutex));
+
+	return ready_status;
+}
+
+
+S_LOCAL void SPluginSetReady(SPlugin *self)
+{
+	s_erc error;
+
+
+	S_CLR_ERR(&error);
+	if (self == NULL)
+	{
+		S_CTX_ERR(&error, S_ARGERROR,
+				  "SPluginSetReady",
+				  "Argument \"self\" is NULL");
+		return;
+	}
+
+	if (!S_PLUGIN_METH_VALID(self, set_ready))
+	{
+		S_WARNING(S_METHINVLD,
+				  "SPluginIsReady",
+				  "Plug-in method \"set_ready\" not implemented");
+		return;
+	}
+
+	s_mutex_lock((s_mutex*)&(self->plugin_mutex));
+	S_PLUGIN_CALL(self, set_ready)(self);
+	s_mutex_unlock((s_mutex*)&(self->plugin_mutex));
+}
+
+
 S_LOCAL void _s_plugin_class_add(s_erc *error)
 {
 	S_CLR_ERR(error);
@@ -87,6 +146,7 @@ static void InitPlugin(void *obj, s_erc *error)
 	self->plugin_info = NULL;
 	self->path = NULL;
 	self->in_pluginmanager = FALSE;
+	self->ready = FALSE;
 	s_mutex_init(&(self->plugin_mutex));
 }
 
@@ -144,6 +204,18 @@ static void DisposePlugin(void *obj, s_erc *error)
 }
 
 
+static s_bool IsReady(const SPlugin *self)
+{
+	return self->ready;
+}
+
+
+static void SetReady(SPlugin *self)
+{
+	self->ready = TRUE;
+}
+
+
 /************************************************************************************/
 /*                                                                                  */
 /* SPlugin class initialization                                                     */
@@ -154,13 +226,17 @@ static void DisposePlugin(void *obj, s_erc *error)
 static SPluginClass PluginClass =
 {
 	/* SObjectClass */
-	"SPlugin",
-	sizeof(SPlugin),
-	{ 0, 1},
-	InitPlugin,    /* init    */
-	DestroyPlugin, /* destroy */
-	DisposePlugin, /* dispose */
-	NULL,          /* compare */
-	NULL,          /* print   */
-	NULL,          /* copy    */
+	{
+		"SPlugin",
+		sizeof(SPlugin),
+		{ 0, 1},
+		InitPlugin,    /* init    */
+		DestroyPlugin, /* destroy */
+		DisposePlugin, /* dispose */
+		NULL,          /* compare */
+		NULL,          /* print   */
+		NULL,          /* copy    */
+	},
+	IsReady,           /* is_ready  */
+	SetReady           /* set_ready */
 };

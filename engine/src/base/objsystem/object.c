@@ -570,10 +570,13 @@ S_API void SObjectDecRef(SObject *self)
 	if (self == NULL)
 		return;
 
-	if (self->ref == 0) /* no references, dont decrement */
-		return;
-
 	s_mutex_lock(&(self->object_mutex));
+	if (self->ref == 0) /* no references, dont decrement */
+	{
+		s_mutex_unlock(&(self->object_mutex));
+		return;
+	}
+
 	self->ref--;
 	s_mutex_unlock(&(self->object_mutex));
 }

@@ -5,8 +5,8 @@ type: :feature
 component: Speect
 release: Beryllium
 reporter: Aby Louw <jalouw@csir.co.za>
-status: :unstarted
-disposition: 
+status: :closed
+disposition: :wontfix
 creation_time: 2010-07-06 19:10:58.834712 Z
 references: []
 
@@ -16,3 +16,7 @@ log_events:
   - Aby Louw <jalouw@csir.co.za>
   - created
   - Python guys must help. I don't know if this is good or not
+- - 2010-07-13 09:17:12.844208 Z
+  - Aby Louw <jalouw@csir.co.za>
+  - closed with disposition wontfix
+  - This is not standard Pythonic behaviour, so we are not going to do it.

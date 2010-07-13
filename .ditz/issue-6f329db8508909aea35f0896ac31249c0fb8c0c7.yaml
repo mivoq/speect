@@ -1,0 +1,21 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Plug-ins not ready in threads
+desc: |-
+  When a thread requests a plug-in, the plug-in that is returned
+  might not yet be loaded. Their needs to be a system where the plug-ins are
+  checked if they can be used.
+type: :task
+component: Speect
+release: Beryllium
+reporter: Aby Louw <jalouw@csir.co.za>
+status: :unstarted
+disposition: 
+creation_time: 2010-07-13 07:30:42.415844 Z
+references: []
+
+id: 6f329db8508909aea35f0896ac31249c0fb8c0c7
+log_events: 
+- - 2010-07-13 07:30:43.647724 Z
+  - Aby Louw <jalouw@csir.co.za>
+  - created
+  - ""

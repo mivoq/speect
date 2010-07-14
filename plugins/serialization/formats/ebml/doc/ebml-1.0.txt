@@ -1,0 +1,1102 @@
+Draft                                                       M. Nilsson
+Document: ebml-1.0.txt                                 15th March 2004
+
+
+		  Extensible Binary Markup Language
+
+Copyright
+
+   Copyright (C) Martin Nilsson 2004. All rights reserved.
+
+
+Abstract
+
+   The extensible binary markup language, EBML, is a binary language
+   for storing hierarchical, typed in data in a compact, yet easily
+   parsed format.
+
+
+About this document
+
+   This document is currently in its draft stage and is subject to
+   changes. The contents should not be relied upon for
+   implementational purposes.
+
+   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+   "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in
+   this document are to be interpreted as described in RFC 2119
+   [RFC2119].
+
+   The definitions in this document uses ABNF [ABNF]. Note that string
+   terminals are case insensitive in ABNF. The interpretation of
+   binary values has been slightly altered so that every bit must be
+   explicitly printed, e.g. %b0 is one zero bit while %b000 represents
+   three zero bits. The following (re)definitions are used throughout
+   this document.
+
+     BIT  = %b1 / %b0
+     BYTE = OCTET
+     WSP  = SP / HTAB / CR / LF
+
+
+1.  Introduction
+
+   The Extensible Binary Markup Language EBML was designed to be a
+   simplified binary version of XML for the purpose of storing and
+   manipulating data in a hierarchical form with variable field
+   lengths. Specifically EBML was designed as the framework language
+   for the video container format Matroska. Some of the advantages of
+   EBML are:
+
+   - Possibility for compatibility between different versions of
+     binary languages defined in EBML. A rare property of binary
+     format that otherwise often needs careful consideration
+     beforehand.
+
+   - Unlimited size of data payload.
+
+   - Can be both generated and read as a stream, without knowing the
+     data size beforehand.
+
+   - Often very space efficient, even compared to other binary
+     representations of the same data.
+
+   Some of the EBML disadvantages are:
+
+   - No references can be made between EBML files, such as includes or
+     inherits. Every EBML document is a self contained entity. The
+     data stored in EBML may of course reference other resources.
+
+   - No compositioning process to merge two or more EBML languages
+     currently exists.
+
+   This document describes the EBML binary syntax, its semantic
+   interpretation and the syntax of a textual document type definition
+   format used to define the rules and constraints of an EBML
+   language. BNF is used throughout this document to augment the
+   description and make it more formalized. It must however be noted
+   that two different formats are described in this document, with two
+   different BNFs. One for the binary format in chapter 2 and one for
+   the document type definition in the rest of the document. To avoid
+   confusion different token names has been chosen. The BNFs can be
+   viewed in full in the appendices.
+
+
+2.  Structure
+
+   Syntactically an EBML document is a list of EBML elements. Each
+   element has three parts; an element ID, a size descriptor and the
+   element data payload. The element data payload is then either data,
+   implicitly typed by the element ID, or a list of EBML elements.
+
+     EBML       = *ELEMENT
+     ELEMENT    = ELEMENT_ID SIZE DATA
+     DATA       = VALUE / *ELEMENT
+     ELEMENT_ID = VINT
+     SIZE       = VINT
+
+   EBML uses big endian/network order byte order, i.e. most
+   significant bit first. All of the tokens above are byte aligned.
+
+
+2.1.  Variable size integer
+
+   For both element ID and size descriptor EBML uses a variable size
+   integer, coded according to a schema similar to that of UTF-8
+   [UTF-8] encoding. The variable size integer begins with zero or
+   more zero bits to define the width of the integer. Zero zeroes
+   means a width of one byte, one zero a width of two bytes etc. The
+   zeroes are followed by a marker of one set bit and then follows the
+   actual integer data. The integer data consists of alignment data
+   and tail data. The alignment data together with the width
+   descriptor and the marker makes up one ore more complete bytes. The
+   tail data is as many bytes as there were zeroes in the width
+   descriptor, i.e. width-1.
+
+     VINT           = VINT_WIDTH VINT_MARKER VINT_DATA
+     VINT_WIDTH     = *%b0
+     VINT_MARKER    = %b1
+     VINT_DATA      = VINT_ALIGNMENT VINT_TAIL
+     VINT_ALIGNMENT = *BIT
+     VINT_TAIL      = *BYTE
+
+   An alternate way of expressing this is the following definition,
+   where the width is the number of levels of expansion.
+
+     VINT = ( %b0 VINT 7BIT ) / ( %b1 7BIT )
+
+   Some examples of the encoding of integers of width 1 to 4. The x:es
+   represent bits where the actual integer value would be stored.
+
+   Width  Size  Representation
+     1    2^7   1xxx xxxx
+     2    2^14  01xx xxxx  xxxx xxxx
+     3    2^21  001x xxxx  xxxx xxxx  xxxx xxxx
+     4    2^28  0001 xxxx  xxxx xxxx  xxxx xxxx  xxxx xxxx
+
+
+2.2.  Element ID
+
+   The EBML element ID is encoded as a variable size integer with, by
+   default, widths up to 4. Another maximum width value can be set by
+   setting another value to EBMLMaxIDWidth in the EBML header. See
+   section 5.1. IDs are always encoded in their shortest form, e.g. 1
+   is always encoded as 0x81 and never as 0x4001. This limits the
+   number of IDs in every class with the number of IDs in the previous
+   classes. Furthermore, values with all data bits set to 1 and all
+   data bits set to 0 are reserved, hence the effective number of IDs
+   are as follows for different widths. Note that the shortest
+   encoding form for 127 is 0x407f since 0x7f is reserved.
+
+   Class  Width  Number of IDs
+     A      1    2^7-2     =         126
+     B      2    2^14-2^7  =      16 256
+     C      3    2^21-2^14 =   2 080 768
+     D      4    2^28-2^21 = 266 338 304
+
+
+2.3.  Element data size
+
+   The EBML element data size is encoded as a variable size integer
+   with, by default, widths up to 8. Another maximum width value can
+   be set by setting another value to EBMLMaxSizeWidth in the EBML
+   header. See section 5.1. There is a range overlap between all
+   different widths, so that 1 encoded with width 1 is semantically
+   equal to 1 encoded with width 8. This allows for the element data
+   to shrink without having to shrink the width of the size
+   descriptor.
+
+   Values with all data bits set to 1 means size unknown, which allows
+   for dynamically generated EBML streams where the final size isn't
+   known beforehand. The element with unknown size MUST be an element
+   with an element list as data payload. The end of the element list is
+   determined by the ID of the element. When an element that isn't a
+   sub-element of the element with unknown size arrives, the element
+   list is ended.
+
+   Since the highest value is used for unknown size the effective
+   maximum data size is 2^56-2, using variable size integer width 8.
+
+
+2.4.  Values
+
+   Besides having an element list as data payload an element can have
+   its data typed with any of seven predefined data types. The actual
+   type information isn't stored in EBML but is inferred from the
+   document type definition through the element ID. The defined data
+   types are signed integer, unsigned integer, float, ASCII string,
+   UTF-8 string, date and binary data.
+
+     VALUE = INT / UINT / FLOAT / STRING / DATE / BINARY
+
+
+     INT = *8BYTE
+
+   Signed integer, represented in two's complement notation, sizes
+   from 0-8 bytes. A zero byte integer represents the integer value 0.
+
+
+     UINT = *8BYTE
+
+   Unsigned integer, sizes from 0-8 bytes. A zero byte integer
+   represents the integer value 0.
+
+
+     FLOAT = *1( 4BYTE / 8BYTE / 10BYTE )
+
+   IEEE float [FLOAT], sizes 0, 4, 8 or 10 bytes. A zero byte float
+   represents the float value 0.0.
+
+
+     PADDING = %x00
+     STRING  = *BYTE *PADDING
+
+   UTF-8 [UTF-8] encoded Unicode [UNICODE] string. A string MAY be
+   zero padded at the end. Note that a string can be of zero length.
+
+
+     DATE = 8BYTE
+
+   Signed, 64-bit (8 byte) integer describing the distance in
+   nanoseconds to the beginning of the millennium (2001-01-01 00:00:00
+   UTC).
+
+
+     BINARY = *BYTE
+
+   Binary data, i.e. not interpreted at the EBML level.
+
+
+3.  Semantic interpretation
+
+   Every element has several properties defined in the document type
+   definition, which are needed for the correct syntactical and
+   semantic handling of the information. These properties are name,
+   parent, ID, cardinality, value restrictions, default value, value
+   type and child order.
+
+   To syntactically parse EBML data we need to know the element value
+   types, and to semantically interpret that data we also need to know
+   the element IDs and element names. Elements can have a default
+   value, so for the final presentation of the parsed EBML data
+   elements that wasn't stored in the data may show up. Finally
+   elements may have restrictions in terms of which parent or parents
+   they may have, the number of times they may occur in the EBML data,
+   their order in the document and various additional restrictions of
+   their data payload.
+
+
+3.1.  Name property
+
+   The name is the symbolic identifier of an element and has a 1:1
+   mapping to the element ID. Only alphanumeric characters and
+   underscores may be used for the name. It may not start with a
+   number. Names are treated case insensitive, i.e. "Name" is the same
+   identifier as "name".
+
+     NAME = [A-Za-z_] 1*[A-Za-z_0-9]
+
+
+3.2.  Value type property
+
+   There is no way of knowing whether or not to look for sub elements
+   with only the information presented in the EBML data. Hence the
+   element value type is the most important information in the EBML
+   DTD. In addition to the value types defined in section 2.4 an
+   element can also be of the type "container", which simply means
+   that its content is more elements.
+
+
+3.3.  ID property
+
+   Every element must have an ID associated, as defined in section
+   2.2.  These IDs are expressed in the hexadecimal representation of
+   their encoded form, e.g. 1a45dfa3.
+
+     ID = 1*( 2HEXDIG )
+
+
+3.4.  Default value property
+
+   Every non-container MAY be assigned a default value. If so, its
+   value will be added to the interpretation of the EBML data if no
+   element with another value exists in the data.
+
+   As an example, consider this EBML DTD:
+
+   Weight := 4101 {
+     WeightValue := 41a1 uint;
+     WeightUnit  := 41a2 string [ def:"kilogram" ];
+   }
+
+   If the Weight element only contains the WeightValue element, the
+   WeightUnit element with value "kilogram" will be added when the
+   information is semantically processed. A WeightUnit element with
+   another value would of course override the default.
+
+   The default value can also be a symbol referring back to a
+   previously seen symbol. If however no such symbol has been seen,
+   i.e. it has not been encoded into the EBML data and has no default
+   value, the element will not be added as a child on the semantic
+   level.
+
+   Weight := 4101 {
+     WeightValue := 41a1 uint;
+     WeightUnit  := 41a2 string [ def:WeightUnit ];
+   }
+
+   In this example all Weight elements will use the same weight unit
+   as the previous one. To ensure that the first one has a value its
+   cardinality should be set to "1". See section 3.6.
+
+     DEFAULT = INT_DEF / UINT_DEF / FLOAT_DEF / STRING_DEF /
+               DATE_DEF / BINARY_DEF / NAME
+
+     DATE_VALUE = *1DIGIT 2DIGIT 2DIGIT
+                  *1(%x54 2DIGIT ":" 2DIGIT ":" 2DIGIT
+                     *1( "." *1DIGIT ))
+
+     INT_DEF    = *1"-" 1*DIGIT
+     UINT_DEF   = 1*DIGIT
+     FLOAT_DEF  = INT "." 1*DIGIT *1( "e" *1( "+"/"-" ) 1*DIGIT )
+     DATE_DEF   = INT_DEF / DATE_VALUE
+
+     STRING_DEF = ("0x" 1*( 2HEXDIG )) / ( %x22 *(%x20-7e) %x22 )
+     BINARY_DEF = STRING_DEF
+
+   The date default value is either described as the integer in its
+   encoded form or in the ISO short format; YYYYMMDD followed by the
+   string literal T, the time as HH:MM:DD and finally and optionally
+   the fractions as .F with an optional numbers of F for
+   precision. Some examples:
+
+     ExampleInt := c0 int [ def:-114; ]
+     ExampleUInt := c1 uint [ def:0; ]
+     ExampleFloat := c2 float [ def:6.022E23 ]
+     ExampleDate := c3 date [ def:20011224T15:00:03.21; ]
+     ExampleBinary := c5 binary [ def:0x4944337632; ]
+     ExampleString := c6 string [ def:"Sweden"; ]
+
+
+3.5.  Parent property
+
+   To place the elements in a hierarchical structure we need
+   relational information about the elements. In the EBML DTD this is
+   expressed as the possible parents an element may have. This can be
+   expressed in two ways: an explicit list of allowed parents or a
+   generic definition of allowed insertion depth.
+ 
+     PARENTS = NAME / ( NAME "," PARENTS )
+     LEVEL   = 1*DIGIT *1( ".." *DIGIT )
+
+   An element with neither parents nor level defined is assumed to
+   exist on the top level in the EBML document. An element can not
+   have both a parent and a level property.
+
+   The following example contains two elements, Envelope and
+   Letter. The Letter must, if it exists in the document, be a child
+   of Envelope and Envelop must, if it exists in the document, reside
+   at the top level.
+
+     Envelope := a0 container;
+     Letter := b0 string [ parent:Envelope; ]
+
+   The following example expresses the exact same relationships, but
+   in an abbreviated syntax.
+
+     Envelope := a0 container {
+       Letter := b0 string;
+     }
+
+   The following example shows that the abbreviated syntax can't be
+   used to solve all relations. Here the Letter element can be a child
+   in both the Envelope element and the Trashcan element. The explicit
+   parent information is merged with the one expressed with the
+   abbreviated syntax.
+
+     Envelope := a0 container {
+       Letter := b0 string [ parent:Trashcan; ];
+     }
+     Trashcan := a1 container;
+
+   The following example demonstrates the usage of level instead of
+   parent. The element Void may occur at any place in the EBML
+   document.
+
+     Void  := ec binary [ level:1..; card:*; ]
+
+   This is an example similar to the one above, but using containers
+   instead. The children of the parent to the SHA1 element may be
+   pushed down to the level where "%children;" is, i.e. if used with
+   the first Letter-Envelope example the Envelope may contain an SHA1
+   element which may contain an SHA1Content element which may contain
+   a Letter element. A container element with a level property MUST
+   NOT use undefined size as described in section 2.3, since then the
+   end of the element can not be determined in all cases.
+
+     SHA1 := 190babe5 container [ level:1..; card:*; ] {
+        SHA1Content := 20110f container {
+          %children;
+        }
+        SHA1Hash := 20110e binary;
+     }
+
+
+3.6.  Cardinality property
+
+   The cardinality of an element declares how many times an element
+   may occur in its current scope. By default an element may only
+   occur at most once in a scope, e.g. if the element Weight has been
+   defined as a child to Brick, no more than one Weight element can be
+   used in every Brick element. The cardinality can however be altered
+   from the default to any of the following. Note that this affects
+   all scopes that the element can be inserted into.
+
+     Symbol   Interpretation
+       *      Zero or more occurrences.
+       ?      Zero or one occurrence (default).
+       1      Exactly one occurrence.
+       +      One or more occurrences.
+
+     CARDINALITY = "*" / "?" / "1" / "+"
+   
+
+3.7.  Child order property
+
+   The child order property only applies to container elements. It
+   simply declares if the children of the element must appear in the
+   order they are defined in or not. By default this restriction is
+   imposed on all children to all elements. The advantage of ordered
+   elements in combination with default values is that the EBML
+   decoder will know immediately once an element is skipped and can
+   output the appropriate default value instead.
+
+     YES     = "yes" / "1"
+     NO      = "no" / "0"
+     ORDERED = YES / NO
+
+
+3.8.  Value restriction properties
+
+   Every element may impose additional constraints upon its
+   value. These constraints are only used to validate data during
+   encoding and makes no difference for the decoding or interpretation
+   of the encoded data. The available constraints and syntax differs
+   between different types of elements.
+
+
+3.8.1.  Range
+
+   The range of an element value determines the allowed values that
+   the element value may have. The range is expressed as one or more
+   specific values or spans of allowed values, with the exception of
+   floats and dates where only spans are allowed.
+
+     RANGE_LIST = RANGE_ITEM / ( RANGE_ITEM S "," S RANGE_LIST )
+     RANGE_ITEM = INT_RANGE / UINT_RANGE / FLOAT_RANGE /
+                  STRING_RANGE / DATE_RANGE / BINARY_RANGE
+
+   For integers the range is a list of values and open or closed
+   ranges, e.g. "0,1", "1..5" and "..-1,1..". The final allowed range
+   is a union of all listed ranges. If a value matches any of the
+   listed ranges it is considered valid.
+
+     INT_RANGE = INT_DEF / ( INT_DEF ".." ) / ( ".." INT_DEF ) /
+                 ( INT_DEF ".." INT_DEF )
+
+   Unsigned integers is similar, but can not have its range open to
+   the left.
+
+     UINT_RANGE  = UINT_DEF *1( ".." UINT_DEF )
+
+   Floats can have both inclusive and exclusive end points of its
+   ranges.
+
+     FLOAT_RANGE = ( ("<" / "<="/ ">" / ">=") FLOAT_DEF ) /
+                   ( FLOAT_DEF "<"/"<=" ".." "<"/"<=" FLOAT_DEF )
+
+   Date ranges has the same syntax and semantics as integer ranges,
+   except that the actual date can be described either as an integer
+   or in ISO short format.
+
+     DATE_RANGE = ( DATE_DEF ".." ) / ( ".." DATE_DEF ) /
+                  ( DATE_DEF ".." DATE_DEF )
+
+   String and binary ranges limits the range for each character/byte
+   in the string. Note that in the string case this is for the
+   unencoded unicode data, i.e. the possible range is larger than
+   0-255, which is the bounding range for binary data.
+
+     STRING_RANGE = UINT_RANGE
+     BINARY_RANGE = UINT_RANGE
+
+
+3.8.2.  Size
+
+   The size of an element value is simply the number of bytes it
+   occupies in its encoded form. That means that the size of a string
+   element value need not be the same as the string length.
+
+     SIZE_LIST = UINT_RANGE / ( UINT_RANGE S "," S SIZE_LIST )
+
+
+4.  Document Type Definition
+
+   The EBML document type definition, EDTD, is an ASCII based language
+   that allows for the constraints and relations described in chapter
+   3 to be described in a way that is both human and computer
+   readable. Syntactically it consists of blocks, not unlike most
+   programming languages, which contains definitions/declarations
+   similar to BNF. The format is largely whitespace insensitive, case
+   insensitive and supports both C-style (LCOMMENT) and C++-style
+   (BCOMMENT) comments. The BNF lines in this chapter is somewhat
+   simplified for readability compared to the complete BNF in Appendix
+   B.
+
+     COMMENT = LCOMMENT / BCOMMENT
+     S       = *WSP / ( *WSP COMMENT *WSP ) ; Optional white spaces
+
+   On the top level of the EDTD only three different blocks are
+   currently defined, header declarations, type definitions and
+   element definitions.
+
+     DTD     = *( S / HBLOCK / TBLOCK / EBLOCK )
+
+
+4.1.  Header declarations
+
+   The meaning of the header declaration is to declare what values
+   should be put into the elements of the header, should they differ
+   from the default values. The header declaration block is written as
+   "declare header" followed by curly brackets that encloses the block
+   of statements. The actual statements are very straightforward, the
+   element name followed by ":=" followed by the value, as described
+   in section 3.4, followed by ";". There MUST only be one header
+   declaration block in a DTD.
+
+     HBLOCK    = "declare" WSP "header" S "{" *(S / STATEMENT) "}"
+     STATEMENT = NAME S ":=" S DEFS S ";"
+
+   Since the DocType element has no default value it MUST be declared
+   in the EDTD. It is RECOMMENDED that the EBMLVersion is also
+   declared. Such a declaration could look like this:
+
+     declare header {
+       DocType := "xhtml";
+       EBMLVersion := 1;
+     }
+
+
+4.2.  Type definitions
+
+   Type definitions is a way to create types with more mnemonic names,
+   making the DTD both smaller and easier to read. The type
+   definitions block is written as "define types" followed by a block
+   of statements enclosed in curly brackets. Each statement is a type
+   name followed by ":=" followed by the type on which this type
+   should be based on, optionally followed by a list of properties,
+   enclosed in angle brackets. The type names follows the same rules
+   as element names, but lives in another namespace, i.e. there may be
+   an element with the same name as a type.
+
+     TBLOCK = "define" S WSP "types" S "{" *(S / DTYPE) "}"
+     DTYPE  = NAME S ":=" S TYPE S (PROPERTIES S *1";")/";"
+
+   The base type may be another defined type, as long as the
+   definitions are made in order, as shown in the following example.
+
+     define types {
+       digits := int;
+       number := digits;
+     }
+
+   The type definition then both allows for types as described in
+   section 2.4 and NAME, which refers to types previously defined in
+   the document.
+
+     TYPE  = VTYPE / CTYPE
+     VTYPE = "int" / "uint" / "float" / "string" / "date" /
+     	     "binary" / NAME
+     CTYPE = "conainer" / NAME
+
+   If the type definition has no list of properties, the statement is
+   ended with ";". If the it has a property list, ending the statement
+   with ";" is optional.
+
+     PROPERTIES = "[" S 1*PROPERTY S "]"
+     PROPERTY   = PROP_NAME S ":" S PROP_VALUE S ";"
+
+   Some examples:
+
+     crc32 := binary [ size:4; ]
+     sha1  := binary [ size:20; ]
+     bool  := uint [ range:0..1; ]
+     us_printable := binary [ range:32..126; ]
+
+
+4.2.  Element definitions
+
+   The element definitions is the real purpose of the DTD. The element
+   definitions block is written as "define elements" followed by a
+   block of statements enclosed in curly brackets. Each statement can
+   be either a simple statement similar to the type definition
+   statements, or a block statement, containing more statements.
+
+     EBLOCK   = "define" WSP "elements" S "{" *(S / ELEMENT) "}"
+     DELEMENT = VELEMENT / CELEMENT / "%children;"
+
+   The simple statements are typically used for value elements and
+   consists of a name followed by ":=", id, type and optionally
+   properties.
+
+     VELEMENT = NAME S ":=" S ID WSP S TYPE S (PROPERTIES S *1";")/";"
+
+   The block version of the element statements are only used to
+   express parent-children relations. See section 3.5.
+
+     CELEMENT = NAME S ":=" S ID WSP S "container" S *1PROPERTIES S
+                ("{" *DELEMENT "}")/";"
+
+
+5.  EBML standard elements
+
+   EBML defines a small set of elements that can be used in any EBML
+   application. An EBML document MUST begin with an EBML header
+   consisting of the EBML element. Generally speaking it would be
+   possible to define default values to all elements in the EBML
+   element in the document type definition for an application, and
+   thus being able to represent the entire header without have a
+   single byte written. However, in order to be able to identify EBML
+   documents between applications it is REQUIRED that all EBML
+   elements whose values differs from the standard defaults in this
+   document, are written in EBML data. In practice that means that at
+   least the DocType is always stored in all EBML documents.
+
+5.1.  EBML
+
+   The EBML element is a container for the EBML header.
+
+     EBML := 1a45dfa3 container [ card:+; ]
+
+
+5.1.1.  EBMLVersion
+
+   EBMLVersion is the version of EBML to which the document conforms
+   to.
+
+     EBMLVersion := 4286 uint [ def:1; parent:EBML; ]
+
+
+5.1.2.  EBMLReadVersion
+
+   The minimum EBML version a parser has to support in order to read
+   the document.
+
+     EBMLReadVersion := 42f7 uint [ def:1; parent:EBML; ]
+
+
+5.1.3.  EBMLMaxIDWidth
+
+   The maximum width of the IDs used in this document. It is
+   RECOMMENDED to not have wider IDs than 4. EBMLMaxIDWidth may be
+   larger than any actual width used in the document.
+
+     EBMLMaxIDWidth := 42f2 uint [ def:4; parent:EBML; ]
+
+
+5.1.4.  EBMLMaxSizeWidth
+
+   The maximum width of the size descriptors used in this document. It
+   is RECOMMENDED to not have wider size descriptors than 8.
+   EBMLMaxSizeWidth may be larger than any actual width used in the
+   document.
+
+     EBMLMaxSizeWidth := 42f3 uint [ def:8; parent:EBML; ]
+
+
+5.1.5.  DocType
+
+   An ASCII string that identifies the type of the document.
+
+     DocType := 4282 binary [ range:32..126; parent:EBML; ]
+
+
+5.1.6.  DocTypeVersion
+
+   DocTypeVersion is the version of document type to which the
+   document conforms to.
+
+     DocTypeVersion := 4287 uint [ def:1; parent:EBML; ]
+
+
+5.1.7.  DocTypeReadVersion
+
+   The minimum DocType version an interpreter has to support in order
+   to read the document.
+
+     DocTypeReadVersion := 4285 uint [ def:1; parent:EBML; ]
+
+
+5.2.  CRC32
+
+   The CRC32 container can be placed around any EBML element or
+   elements. The value stored in CRC32Value is the result of the
+   CRC-32 [CRC32] checksum performed on the other child elements.
+
+     CRC32 := c3 container [ level:1..; card:*; ] {
+       %children;
+       CRC32Value := 42fe binary [ size:4; ]
+     }
+
+
+5.3.  Void
+
+   The void element can be used as padding to prepare for more data,
+   or to fill space when data has been removed. It should simply be
+   ignored when the document is interpreted.
+
+     Void  := ec binary [ level:1..; card:*; ]
+
+
+6.  References
+
+   [ABNF] D. Crocker, P. Overell, 'Augmented BNF for Syntax
+   Specifications: ABNF', RFC 2234, November 1997.
+
+      <url:ftp://ftp.isi.edu/in-notes/rfc2234.txt>
+
+   [CRC32] International Organization for Standardization, 'ISO
+   Information Processing Systems - Data Communication High-Level Data
+   Link Control Procedure - Frame Structure", IS 3309, October 1984,
+   3rd Edition.
+
+   [FLOAT] Institute of Electrical and Electronics Engineers, 'IEEE
+   Standard for Binary Floating-Point Arithmetic', ANSI/IEEE Standard
+   754-1985, August 1985.
+
+   [RFC2119] S. Bradner, 'Key words for use in RFCs to Indicate
+   Requirement Levels', RFC 2119, March 1997.
+
+      <url:ftp://ftp.isi.edu/in-notes/rfc2119.txt>
+
+   [UNICODE] International Organization for Standardization,
+   'Universal Multiple-Octet Coded Character Set (UCS), Part 1:
+   Architecture and Basic Multilingual Plane', ISO/IEC 10646-1:1993.
+
+      <url:http://www.unicode.org>
+
+   [UTF-8] F. Yergeau, 'UTF-8, a transformation format of ISO 10646',
+   RFC 3629, November 2003.
+
+      <url:ftp://ftp.isi.edu/in-notes/rfc3629.txt>
+
+
+Appendix A.  EBML BNF
+
+     EBML    = *ELEMENT
+     ELEMENT = ELEMENT_ID SIZE DATA
+     DATA    = VALUE / *ELEMENT
+
+     VINT = ( %b0 VINT 7BIT ) / ( %b1 7BIT )
+
+     ; A more annotated but less correct definition of VINT
+     ;
+     ; VINT           = VINT_WIDTH VINT_MARKER VINT_DATA
+     ; VINT_WIDTH     = *%b0
+     ; VINT_MARKER    = %b1
+     ; VINT_DATA      = VINT_ALIGNMENT VINT_TAIL
+     ; VINT_ALIGNMENT = *BIT
+     ; VINT_TAIL      = *BYTE
+
+     ELEMENT_ID   = VINT
+     SIZE         = VINT
+
+     VALUE = INT / UINT / FLOAT / STRING / DATE / BINARY
+
+     PADDING = %x00
+
+     INT    = *8BYTE
+     UINT   = *8BYTE
+     FLOAT  = *1( 4BYTE / 8BYTE / 10BYTE )
+     STRING = *BYTE *PADDING
+     DATE   = 8BYTE
+     BINARY = *BYTE
+
+
+Appendix B.  EBML DTD BNF
+
+   ; NOTE: This BNF is not correct in that it allows for more freedom
+   ; than what is described in the text. That is because a 100%
+   ; correct BNF would be almost unreadable. To be correct CELEMENT
+   ; would be split into one ELEMENT token for every value type, and
+   ; then each and every one of them would have their own PROPERTIES
+   ; definition which points out only the DEF and RANGE for that value
+   ; type. Some other shortcuts are noted in comments.
+
+   LCOMMENT = "//" *BYTE (CR / LF) ; *BYTE is string without CR/LF
+   BCOMMENT = "/*" *BYTE "*/" ; *BYTE is string without "*/"
+   COMMENT  = LCOMMENT / BCOMMENT ; Line comment / Block comment
+   S        = *WSP / ( *WSP COMMENT *WSP ) ; Optional white spaces
+
+   DTD      = *( S / HBLOCK / TBLOCK / EBLOCK )
+   HBLOCK   = "declare" S WSP "header" S "{" *(S / STATEMENT) "}"
+   EBLOCK   = "define" S WSP "elements" S "{" *(S / DELEMENT) "}"
+   TBLOCK   = "define" S WSP "types" S "{" *(S / DTYPE) "}"
+
+   DELEMENT = VELEMENT / CELEMENT / "%children;"
+   VELEMENT = NAME S ":=" S ID WSP S TYPE S (PROPERTIES S *1";")/";"
+   CELEMENT = NAME S ":=" S ID WSP S "container" S *1PROPERTIES S
+              ("{" *DELEMENT "}")/";"
+
+   NAME     = [A-Za-z_] 1*[A-Za-z_0-9]
+
+   ID       = 1*( 2HEXDIG )
+
+   TYPE     = VTYPE / CTYPE
+   VTYPE    = "int" / "uint" / "float" / "string" / "date" /
+              "binary" / NAME
+   CTYPE    = "conainer" / NAME
+
+   PROPERTIES = "[" S 1*PROPERTY S "]"
+   PROPERTY   = PARENT / LEVEL / CARD / DEF / RANGE / SIZE
+
+   PARENT   = "parent" S ":" S PARENTS S ";"
+   PARENTS  = NAME / ( NAME S "," S PARENTS )
+
+   LEVEL    = "level"  S ":" S 1*DIGIT *(".." *DIGIT) S ";"
+   CARD     = "card"   S ":" S ( "*" / "?" / "1" / "+" ) S ";"
+
+   ORDERED  = "ordered" S ":" S ( YES / NO ) S ";"
+   YES      = "yes" / "1"
+   NO       = "no" / "0"
+
+   DEF      = "def"    S ":" S DEFS S ";"
+   DEFS     = ( INT_DEF / UINT_DEF / FLOAT_DEF / STRING_DEF /
+                DATE_DEF / BINARY_DEF / NAME )
+
+   RANGE    = "range" S ":" S RANGE_LIST S ";"
+   RANGE_LIST = RANGE_ITEM / ( RANGE_ITEM S "," S RANGE_LIST )
+   RANGE_ITEM = INT_RANGE / UINT_RANGE / FLOAT_RANGE /
+                STRING_RANGE / DATE_RANGE / BINARY_RANGE
+
+   SIZE       = "size" S ":" S SIZE_LIST S ";"
+   SIZE_LIST  = UINT_RANGE / ( UINT_RANGE S "," S SIZE_LIST )
+
+   ; Actual values, but INT_VALUE is too long.
+   INT_V   = *1"-" 1*DIGIT
+   FLOAT_V = INT "." 1*DIGIT *1( "e" *1( "+"/"-" ) 1*DIGIT )
+   ; DATE uses ISO short format, yyyymmddThh:mm:ss.f
+   DATE_V  = *1DIGIT 2DIGIT 2DIGIT
+             *1(%x54 2DIGIT ":" 2DIGIT ":" 2DIGIT *1( "." *1DIGIT ))
+
+   INT_DEF    = INT_V
+   UINT_DEF   = 1*DIGIT
+   FLOAT_DEF  = FLOAT_V
+   DATE_DEF   = INT_DEF / DATE_V
+   STRING_DEF = ("0x" 1*( 2HEXDIG )) / ( %x22 *(%x20-7e) %x22 )
+   BINARY_DEF = STRING_DEF
+
+   INT_RANGE   = INT_V / ( INT_V ".." ) / ( ".." INT_V ) /
+                  ( INT_V ".." INT_V )
+   UINT_RANGE  = 1*DIGIT *1( ".." *DIGIT )
+   FLOAT_RANGE = ( ("<" / "<=" / ">" / ">=") FLOAT_DEF ) /
+                   ( FLOAT_DEF "<"/"<=" ".." "<"/"<=" FLOAT_DEF )
+   DATE_RANGE   = (1*DIGIT / DATE_V) *1( ".." *(DIGIT / DATE_V) )
+   BINARY_RANGE = UINT_RANGE
+   STRING_RANGE = UINT_RANGE
+
+   STATEMENT = NAME S ":=" S DEFS S ";"
+
+   ; TYPE must be defined. PROPERTIES must only use DEF and RANGE.
+   DTYPE     = NAME S ":=" S TYPE S (PROPERTIES S *1";")/";"
+
+
+Appendix C.  EBML Standard definitions
+
+   define elements {
+     EBML := 1a45dfa3 container [ card:+; ] {
+       EBMLVersion := 4286 uint [ def:1; ]
+       EBMLReadVersion := 42f7 uint [ def:1; ]
+       EBMLMaxIDLength := 42f2 uint [ def:4; ]
+       EBMLMaxSizeLength := 42f3 uint [ def:8; ]
+       DocType := 4282 string [ range:32..126; ]
+       DocTypeVersion := 4287 uint [ def:1; ]
+       DocTypeReadVersion := 4285 uint [ def:1; ]
+     }
+
+     CRC32 := c3 container [ level:1..; card:*; ] {
+       %children;
+       CRC32Value := 42fe binary [ size:4; ]
+     }
+     Void  := ec binary [ level:1..; card:*; ]
+   }
+
+
+Appendix D.  Matroska DTD
+
+   declare header {
+     DocType := "matroska";
+     EBMLVersion := 1;
+   }
+   define types {
+     bool := uint [ range:0..1; ]
+     ascii := string [ range:32..126; ]
+   }
+   define elements {
+     Segment := 18538067 container [ card:*; ] {
+
+       // Meta Seek Information
+       SeekHead := 114d9b74 container [ card:*; ] {
+         Seek := 4dbb container [ card:*; ] {
+           SeekID := 53ab binary;
+           SeekPosition := 53ac uint;
+         }
+       }
+
+       // Segment Information
+       Info := 1549a966 container [ card:*; ] {
+         SegmentUID := 73a4 binary;
+         SegmentFilename := 7384 string;
+         PrevUID := 3cb923 binary;
+         PrevFilename := 3c83ab string;
+         NextUID := 3eb923 binary;
+         NextFilename := 3e83bb string;
+         TimecodeScale := 2ad7b1 uint [ def:1000000; ]
+         Duration := 4489 float [ range:>0.0; ]
+         DateUTC := 4461 date;
+         Title := 7ba9 string;
+         MuxingApp := 4d80 string;
+         WritingApp := 5741 string;
+       }
+
+       // Cluster
+       Cluster := 1f43b675 container [ card:*; ] {
+         Timecode := e7 uint;
+         Position := a7 uint;
+         PrevSize := ab uint;
+         BlockGroup := a0 container [ card:*; ] {
+           Block := a1 binary;
+           BlockVirtual := a2 binary;
+           BlockAdditions := 75a1 container {
+             BlockMore := a6 container [ card:*; ] {
+               BlockAddID := ee uint [ range:1..; ]
+               BlockAdditional := a5 binary;
+             }
+           }
+           BlockDuration := 9b uint [ def:TrackDuration; ];
+           ReferencePriority := fa uint;
+           ReferenceBlock := fb int [ card:*; ]
+           ReferenceVirtual := fd int;
+           CodecState := a4 binary;
+           Slices := 8e container [ card:*; ] {
+             TimeSlice := e8 container [ card:*; ] {
+               LaceNumber := cc uint [ def:0; ]
+               FrameNumber := cd uint [ def:0; ]
+               BlockAdditionID := cb uint [ def:0; ]
+               Delay := ce uint [ def:0; ]
+               Duration := cf uint [ def:TrackDuration; ];
+             }
+           }
+         }
+       }
+
+       // Track
+       Tracks := 1654ae6b container [ card:*; ] {
+         TrackEntry := ae container [ card:*; ] {
+           TrackNumber := d7 uint [ range:1..; ]
+           TrackUID := 73c5 uint [ range:1..; ]
+           TrackType := 83 uint [ range:1..254; ]
+           FlagEnabled := b9 uint [ range:0..1; def:1; ]
+           FlagDefault := 88 uint [ range:0..1; def:1; ]
+           FlagLacing  := 9c uint [ range:0..1; def:1; ]
+           MinCache := 6de7 uint [ def:0; ]
+           MaxCache := 6df8 uint;
+           DefaultDuration := 23e383 uint [ range:1..; ]
+           TrackTimecodeScale := 23314f float [ range:>0.0; def:1.0; ]
+           Name := 536e string;
+           Language := 22b59c string [ def:"eng"; range:32..126; ]
+           CodecID := 86 string [ range:32..126; ];
+           CodecPrivate := 63a2 binary;
+           CodecName := 258688 string;
+           CodecSettings := 3a9697 string;
+           CodecInfoURL := 3b4040 string [ card:*; range:32..126; ]
+           CodecDownloadURL := 26b240 string [ card:*; range:32..126; ]
+           CodecDecodeAll := aa uint [ range:0..1; def:1; ]
+           TrackOverlay := 6fab uint;
+
+           // Video
+           Video := e0 container {
+             FlagInterlaced := 9a uint [ range:0..1; def:0; ]
+             StereoMode := 53b8 uint [ range:0..3; def:0; ]
+             PixelWidth := b0 uint [ range:1..; ]
+             PixelHeight := ba uint [ range:1..; ]
+             DisplayWidth := 54b0 uint [ def:PixelWidth; ]
+             DisplayHeight := 54ba uint [ def:PixelHeight; ]
+             DisplayUnit := 54b2 uint [ def:0; ]
+             AspectRatioType := 54b3 uint [ def:0; ]
+             ColourSpace := 2eb524 binary;
+             GammaValue := 2fb523 float [ range:>0.0; ]
+           }
+
+           // Audio
+           Audio := e1 container {
+             SamplingFrequency := b5 float [ range:>0.0; def:8000.0; ]
+             OutputSamplingFrequency := 78b5 float [ range:>0.0;
+                                                     def:8000.0; ]
+             Channels := 94 uint [ range:1..; def:1; ]
+             ChannelPositions := 7d7b binary;
+             BitDepth := 6264 uint [ range:1..; ]
+           }
+
+           // Content Encoding
+           ContentEncodings := 6d80 container {
+             ContentEncoding := 6240 container [ card:*; ] {
+               ContentEncodingOrder := 5031 uint [ def:0; ]
+               ContentEncodingScope := 5032 uint [ range:1..; def:1; ]
+               ContentEncodingType := 5033 uint;
+               ContentCompression := 5034 container {
+                 ContentCompAlgo := 4254 uint [ def:0; ]
+                 ContentCompSettings := 4255 binary;
+               }
+               ContentEncryption := 5035 container {
+                 ContentEncAlgo := 47e1 uint [ def:0; ]
+                 ContentEncKeyID := 47e2 binary;
+                 ContentSignature := 47e3 binary;
+                 ContentSigKeyID := 47e4 binary;
+                 ContentSigAlgo := 47e5 uint;
+                 ContentSigHashAlgo := 47e6 uint;
+               }
+             }
+           }
+         }
+       }
+
+       // Cueing Data
+       Cues := 1c53bb6b container {
+         CuePoint := bb container [ card:*; ] {
+           CueTime := b3 uint;
+           CueTrackPositions := b7 container [ card:*; ] {
+             CueTrack := f7 uint [ range:1..; ]
+             CueClusterPosition := f1 uint;
+             CueBlockNumber := 5378 uint [ range:1..; def:1; ]
+             CueCodecState := ea uint [ def:0; ]
+             CueReference := db container [ card:*; ] {
+               CueRefTime := 96 uint;
+               CueRefCluster := 97 uint;
+               CueRefNumber := 535f uint [ range:1..; def:1; ]
+               CueRefCodecState := eb uint [ def:0; ]
+             }
+           }
+         }
+       }
+
+       // Attachment
+       Attachments := 1941a469 container {
+         AttachedFile := 61a7 container [ card:*; ] {
+           FileDescription := 467e string;
+           FileName := 466e string;
+           FileMimeType := 4660 string [ range:32..126; ]
+           FileData := 465c binary;
+           FileUID := 46ae uint;
+         }
+       }
+
+       // Chapters
+       Chapters := 1043a770 container {
+         EditionEntry := 45b9 container [ card:*; ] {
+           ChapterAtom := b6 container [ card:*; ] {
+             ChapterUID := 73c4 uint [ range:1..; ]
+             ChapterTimeStart := 91 uint;
+             ChapterTimeEnd := 92 uint;
+             ChapterFlagHidden := 98 uint [ range:0..1; def:0; ]
+             ChapterFlagEnabled := 4598 uint [ range:0..1; def:0; ]
+             ChapterTrack := 8f container {
+               ChapterTrackNumber := 89 uint [ card:*; range:0..1; ]
+               ChapterDisplay := 80 container [ card:*; ] {
+                 ChapString := 85 string;
+                 ChapLanguage := 437c string [ card:*; def:"eng";
+                                               range:32..126; ]
+                 ChapCountry := 437e string [ card:*; range:32..126; ]
+               }
+             }
+           }
+         }
+       }
+
+       // Tagging
+       Tags := 1254c367 container [ card:*; ] {
+         Tag := 7373 container [ card:*; ] {
+           Targets := 63c0 container {
+             TrackUID := 63c5 uint [ card:*; def:0; ]
+             ChapterUID := 63c4 uint [ card:*; def:0; ]
+             AttachmentUID := 63c6 uint [ card:*; def:0; ]
+           }
+           SimpleTag := 67c8 container [ card:*; ] {
+             TagName := 45a3 string;
+             TagString := 4487 string;
+             TagBinary := 4485 binary;
+           }
+         }
+       }
+     }
+   }

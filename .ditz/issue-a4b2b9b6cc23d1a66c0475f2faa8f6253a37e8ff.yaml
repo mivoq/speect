@@ -1,0 +1,20 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Check support for voices using HTS Engine API 1.03.
+desc: |-
+  Ensure that models built with HTS 2.1.1 for HTS Engine API 1.03 can be
+  loaded and used by Speect voices.
+type: :task
+component: Speect
+release: Beryllium
+reporter: Daniel van Niekerk <dvniekerk@csir.co.za>
+status: :unstarted
+disposition: 
+creation_time: 2010-07-14 13:55:25.876539 Z
+references: []
+
+id: a4b2b9b6cc23d1a66c0475f2faa8f6253a37e8ff
+log_events: 
+- - 2010-07-14 13:55:39.436025 Z
+  - Daniel van Niekerk <dvniekerk@csir.co.za>
+  - created
+  - ""

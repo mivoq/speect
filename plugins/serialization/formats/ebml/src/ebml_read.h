@@ -180,10 +180,7 @@ typedef struct
 	 */
 	s_list        *level;
 
-	/**
-	 * @protected Locking mutex
-	 */
-	S_DECLARE_MUTEX(ebml_mutex);
+	/* no need for mutex as data source (in SDataReader) has one */
 } SEbmlRead;
 
 

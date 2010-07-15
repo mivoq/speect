@@ -1104,8 +1104,6 @@ static void InitEbmlWrite(void *obj, s_erc *error)
 	S_CLR_ERR(error);
 	self->header = NULL;
 	self->level = NULL;
-
-	s_mutex_init(&(self->ebml_mutex));
 }
 
 
@@ -1115,8 +1113,6 @@ static void DestroyEbmlWrite(void *obj, s_erc *error)
 
 
 	S_CLR_ERR(error);
-
-	s_mutex_lock(&(self->ebml_mutex));
 
 	if (self->header != NULL)
 	{
@@ -1133,9 +1129,6 @@ static void DestroyEbmlWrite(void *obj, s_erc *error)
 				  "DestroyEbmlWrite",
 				  "Failed to delete ebml container levels");
 	}
-
-	s_mutex_unlock(&(self->ebml_mutex));
- 	s_mutex_destroy(&(self->ebml_mutex));
 }
 
 
@@ -1175,10 +1168,7 @@ static void WriteInit(SEbmlWrite **self, SDatasource *ds,
 		return;
 	}
 
-	s_mutex_lock(&((*self)->ebml_mutex));
 	write_init(self, ds, header, error);
-	s_mutex_unlock(&((*self)->ebml_mutex));
-
 	S_CHK_ERR(error, S_CONTERR,
 			  "WriteInit",
 			  "Call to \"write_init\" failed");
@@ -1198,10 +1188,7 @@ static void WriteUint(SEbmlWrite *self, uint32 id,
 		return;
 	}
 
-	s_mutex_lock(&(self->ebml_mutex));
 	write_uint(self, id, i, error);
-	s_mutex_unlock(&(self->ebml_mutex));
-
 	S_CHK_ERR(error, S_CONTERR,
 			  "WriteUint",
 			  "Call to \"write_uint\" failed");
@@ -1221,10 +1208,7 @@ static void WriteSint(SEbmlWrite *self, uint32 id,
 		return;
 	}
 
-	s_mutex_lock(&(self->ebml_mutex));
 	write_sint(self, id, i, error);
-	s_mutex_unlock(&(self->ebml_mutex));
-
 	S_CHK_ERR(error, S_CONTERR,
 			  "WriteSint",
 			  "Call to \"write_sint\" failed");
@@ -1244,10 +1228,7 @@ static void WriteFloat(SEbmlWrite *self, uint32 id,
 		return;
 	}
 
-	s_mutex_lock(&(self->ebml_mutex));
 	write_float(self, id, f, error);
-	s_mutex_unlock(&(self->ebml_mutex));
-
 	S_CHK_ERR(error, S_CONTERR,
 			  "WriteFloat",
 			  "Call to \"write_float\" failed");
@@ -1267,10 +1248,7 @@ static void WriteDouble(SEbmlWrite *self, uint32 id,
 		return;
 	}
 
-	s_mutex_lock(&(self->ebml_mutex));
 	write_double(self, id, d, error);
-	s_mutex_unlock(&(self->ebml_mutex));
-
 	S_CHK_ERR(error, S_CONTERR,
 			  "WriteDouble",
 			  "Call to \"write_double\" failed");
@@ -1290,10 +1268,7 @@ static void WriteAscii(SEbmlWrite *self, uint32 id,
 		return;
 	}
 
-	s_mutex_lock(&(self->ebml_mutex));
 	write_ascii(self, id, string, error);
-	s_mutex_unlock(&(self->ebml_mutex));
-
 	S_CHK_ERR(error, S_CONTERR,
 			  "WriteAscii",
 			  "Call to \"write_ascii\" failed");
@@ -1313,10 +1288,7 @@ static void WriteUtf8(SEbmlWrite *self, uint32 id,
 		return;
 	}
 
-	s_mutex_lock(&(self->ebml_mutex));
 	write_utf8(self, id, string, error);
-	s_mutex_unlock(&(self->ebml_mutex));
-
 	S_CHK_ERR(error, S_CONTERR,
 			  "WriteUtf8",
 			  "Call to \"write_utf8\" failed");
@@ -1344,10 +1316,7 @@ static void WriteBinary(SEbmlWrite *self, uint32 id, const s_byte *data,
 		return;
 	}
 
-	s_mutex_lock(&(self->ebml_mutex));
 	write_binary(self, id, data, size, error);
-	s_mutex_unlock(&(self->ebml_mutex));
-
 	S_CHK_ERR(error, S_CONTERR,
 			  "WriteBinary",
 			  "Call to \"write_binary\" failed");
@@ -1375,11 +1344,7 @@ static void WriteObject(SEbmlWrite *self, uint32 id,
 		return;
 	}
 
-
-	s_mutex_lock(&(self->ebml_mutex));
 	write_object(self, id, object, error);
-	s_mutex_unlock(&(self->ebml_mutex));
-
 	S_CHK_ERR(error, S_CONTERR,
 			  "WriteObject",
 			  "Call to \"write_object\" failed");
@@ -1398,10 +1363,7 @@ static void WriteStartContainer(SEbmlWrite *self, uint32 id, s_erc *error)
 		return;
 	}
 
-	s_mutex_lock(&(self->ebml_mutex));
 	write_start_container(self, id, error);
-	s_mutex_unlock(&(self->ebml_mutex));
-
 	S_CHK_ERR(error, S_CONTERR,
 			  "WriteStartContainer",
 			  "Call to \"write_start_container\" failed");
@@ -1420,10 +1382,7 @@ static void WriteStopContainer(SEbmlWrite *self, s_erc *error)
 		return;
 	}
 
-	s_mutex_lock(&(self->ebml_mutex));
 	write_stop_container(self, error);
-	s_mutex_unlock(&(self->ebml_mutex));
-
 	S_CHK_ERR(error, S_CONTERR,
 			  "WriteStopContainer",
 			  "Call to \"write_stop_container\" failed");
@@ -1444,10 +1403,7 @@ static long Tell(SEbmlWrite *self, s_erc *error)
 		return 0;
 	}
 
-	s_mutex_lock(&(self->ebml_mutex));
 	pos = ebml_tell(self, error);
-	s_mutex_unlock(&(self->ebml_mutex));
-
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Tell",
 				  "Call to \"tell\" failed"))

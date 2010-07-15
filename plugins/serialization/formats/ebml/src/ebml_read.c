@@ -1220,8 +1220,6 @@ static void InitEbmlRead(void *obj, s_erc *error)
 	S_CLR_ERR(error);
  	self->header = NULL;
 	self->level = NULL;
-
-	s_mutex_init(&(self->ebml_mutex));
 }
 
 
@@ -1239,8 +1237,6 @@ static void DestroyEbmlRead(void *obj, s_erc *error)
 
 	S_CLR_ERR(error);
 
-	s_mutex_lock(&(self->ebml_mutex));
-
 	if (self->header != NULL)
 	{
 		if (self->header->doctype != NULL)
@@ -1256,9 +1252,6 @@ static void DestroyEbmlRead(void *obj, s_erc *error)
 				  "DestroyEbmlRead",
 				  "Failed to delete ebml container levels");
 	}
-
-	s_mutex_unlock(&(self->ebml_mutex));
-	s_mutex_destroy(&(self->ebml_mutex));
 }
 
 
@@ -1282,10 +1275,7 @@ static void ReadInit(SEbmlRead **self, SDatasource *ds, s_erc *error)
 		return;
 	}
 
-	s_mutex_lock(&((*self)->ebml_mutex));
 	read_init(self, ds, error);
-	s_mutex_unlock(&((*self)->ebml_mutex));
-
 	S_CHK_ERR(error, S_CONTERR,
 			  "ReadInit",
 			  "Call to \"read_init\" failed");
@@ -1306,10 +1296,7 @@ static uint32 ReadID(SEbmlRead *self, s_erc *error)
 		return 0;
 	}
 
-	s_mutex_lock(&(self->ebml_mutex));
 	id = read_id(self, error);
-	s_mutex_unlock(&(self->ebml_mutex));
-
 	S_CHK_ERR(error, S_CONTERR,
 			  "ReadID",
 			  "Call to \"read_id\" failed");
@@ -1330,10 +1317,7 @@ static void Seek(SEbmlRead *self, long pos, s_seek_mode mode, s_erc *error)
 		return;
 	}
 
-	s_mutex_lock(&(self->ebml_mutex));
 	seek(self, pos, mode, error);
-	s_mutex_unlock(&(self->ebml_mutex));
-
 	S_CHK_ERR(error, S_CONTERR,
 			  "Seek",
 			  "Call to \"seek\" failed");
@@ -1355,10 +1339,7 @@ static uint32 PeekID(SEbmlRead *self, s_erc *error)
 		return 0;
 	}
 
-	s_mutex_lock(&(self->ebml_mutex));
 	id = peek_id(self, error);
-	s_mutex_unlock(&(self->ebml_mutex));
-
 	S_CHK_ERR(error, S_CONTERR,
 			  "PeekID",
 			  "Call to \"peek_id\" failed");
@@ -1382,10 +1363,7 @@ static uint32 ReadElementSize(SEbmlRead *self, s_erc *error)
 		return 0;
 	}
 
-	s_mutex_unlock(&(self->ebml_mutex));
 	size = read_element_size(self, error);
-	s_mutex_unlock(&(self->ebml_mutex));
-
 	S_CHK_ERR(error, S_CONTERR,
 			  "ReadElementSize",
 			  "Call to \"read_element_size\" failed");
@@ -1406,10 +1384,7 @@ static void SkipElement(SEbmlRead *self, s_erc *error)
 		return;
 	}
 
-	s_mutex_unlock(&(self->ebml_mutex));
 	skip_element(self, error);
-	s_mutex_unlock(&(self->ebml_mutex));
-
 	S_CHK_ERR(error, S_CONTERR,
 			  "SkipElement",
 			  "Call to \"skip_element\" failed");
@@ -1447,10 +1422,7 @@ static s_byte *ReadBinary(SEbmlRead *self, uint32 *id, uint32 *size, s_erc *erro
 		return NULL;
 	}
 
-	s_mutex_lock(&(self->ebml_mutex));
 	data = read_binary(self, id, size, error);
-	s_mutex_unlock(&(self->ebml_mutex));
-
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "ReadBinary",
 				  "Call to \"read_binary\" failed"))
@@ -1483,10 +1455,7 @@ static uint32 ReadUint(SEbmlRead *self, uint32 *id, s_erc *error)
 		return 0;
 	}
 
-	s_mutex_lock(&(self->ebml_mutex));
 	val = read_uint(self, id, error);
-	s_mutex_unlock(&(self->ebml_mutex));
-
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "ReadUint",
 				  "Call to \"read_uint\" failed"))
@@ -1519,10 +1488,7 @@ static sint32 ReadSint(SEbmlRead *self, uint32 *id, s_erc *error)
 		return 0;
 	}
 
-	s_mutex_lock(&(self->ebml_mutex));
 	val = read_sint(self, id, error);
-	s_mutex_unlock(&(self->ebml_mutex));
-
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "ReadSint",
 				  "Call to \"read_sint\" failed"))
@@ -1555,10 +1521,7 @@ static float ReadFloat(SEbmlRead *self, uint32 *id, s_erc *error)
 		return 0.0;
 	}
 
-	s_mutex_lock(&(self->ebml_mutex));
 	val = read_float(self, id, error);
-	s_mutex_unlock(&(self->ebml_mutex));
-
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "ReadFloat",
 				  "Call to \"read_float\" failed"))
@@ -1591,10 +1554,7 @@ static double ReadDouble(SEbmlRead *self, uint32 *id, s_erc *error)
 		return 0.0;
 	}
 
-	s_mutex_lock(&(self->ebml_mutex));
 	val = read_double(self, id, error);
-	s_mutex_unlock(&(self->ebml_mutex));
-
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "ReadDouble",
 				  "Call to \"read_double\" failed"))
@@ -1627,10 +1587,7 @@ static char *ReadAscii(SEbmlRead *self, uint32 *id, s_erc *error)
 		return NULL;
 	}
 
-	s_mutex_lock(&(self->ebml_mutex));
 	buf = read_ascii(self, id, error);
-	s_mutex_unlock(&(self->ebml_mutex));
-
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "ReadAscii",
 				  "Call to \"read_ascii\" failed"))
@@ -1663,10 +1620,7 @@ static char *ReadUtf8(SEbmlRead *self, uint32 *id, s_erc *error)
 		return NULL;
 	}
 
-	s_mutex_lock(&(self->ebml_mutex));
 	buf = read_utf8(self, id, error);
-	s_mutex_unlock(&(self->ebml_mutex));
-
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "ReadUtf8",
 				  "Call to \"read_utf8\" failed"))
@@ -1699,10 +1653,7 @@ static SObject *ReadObject(SEbmlRead *self, uint32 *id, s_erc *error)
 		return NULL;
 	}
 
-	s_mutex_lock(&(self->ebml_mutex));
 	object = read_object(self, id, error);
-	s_mutex_unlock(&(self->ebml_mutex));
-
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "ReadObject",
 				  "Call to \"read_object\" failed"))
@@ -1726,10 +1677,7 @@ static uint32 ReadContainer(SEbmlRead *self, s_erc *error)
 		return 0;
 	}
 
-	s_mutex_lock(&(self->ebml_mutex));
 	id = read_container(self, error);
-	s_mutex_unlock(&(self->ebml_mutex));
-
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "ReadContainer",
 				  "Call to \"read_container\" failed"))
@@ -1754,10 +1702,7 @@ static s_bool ReadContainerAtEnd(SEbmlRead *self, s_erc *error)
 		return FALSE;
 	}
 
-	s_mutex_lock(&(self->ebml_mutex));
 	at_end = read_container_at_end(self, error);
-	s_mutex_unlock(&(self->ebml_mutex));
-
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "ReadContainerAtEnd",
 				  "Call to \"read_container\" failed"))

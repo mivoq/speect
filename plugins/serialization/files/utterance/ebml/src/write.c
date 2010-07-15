@@ -225,11 +225,19 @@ static void write_feature(SEbmlWrite *ebmlWriter,
 
 	if (!writeable)
 	{
+		const char *type;
+
 		/* ignore this object, issue a warning */
+		type = SObjectType(featObject, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "write_feature",
+					  "Call to \"SObjectType\" failed"))
+			type = "Object type unknown";
+
 		S_WARNING(S_WARNERR,
 				  "write_feature",
 				  "Given feature pair (%s, %s) cannot be written, object is not writable",
-				  feat_name, SObjectType(featObject, error));
+				  feat_name, type);
 		return;
 	}
 

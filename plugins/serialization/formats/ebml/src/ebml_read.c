@@ -191,6 +191,7 @@ static uint32 read_id(SEbmlRead *self, s_erc *error)
 	int i;
 	uint32 id;
 
+
 	/*
 	 * Element ID is encoded as a variable integer as in "Extensible Binary Markup Language"
 	 * document ebml-1.0.txt.
@@ -202,7 +203,8 @@ static uint32 read_id(SEbmlRead *self, s_erc *error)
 	 *
 	 * VINT_DATA should be the Element ID, but we we don't follow the specs exactly,
 	 * we use VINT_MARKER as part of VINT_DATA (this is done in matroska format) as
-	 * it makes it much easier to see in a hex-viewer.
+	 * it makes it much easier to see in a hex-viewer. Of course then
+	 * the given ID must be valid in terms of the specification.
 	 *
 	 */
 
@@ -308,18 +310,6 @@ static uint32 read_element_size(SEbmlRead *self, s_erc *error)
 	int i;
 	uint32 size;
 
-	/*
-	 * Element size is encoded as a variable integer as in "Extensible Binary Markup Language"
-	 * document ebml-1.0.txt.
-	 *
-	 * VINT = VINT_WIDTH VINT_MARKER VINT_DATA
-	 * VINT_WIDTH = *%b0
-	 * VINT_MARKER = %b1
-	 * VINT_DATA = *BIT *BYTE
-	 *
-	 * Here we only use VINT_DATA as the element size as specified in the EBML rfc.
-	 *
-	 */
 
 	S_CLR_ERR(error);
 
@@ -333,7 +323,6 @@ static uint32 read_element_size(SEbmlRead *self, s_erc *error)
 
 	/* get the first byte to determine the length of the size */
 	SDatasourceRead(S_DATAREADER(self)->ds, &buf, sizeof(uint8), 1, error);
-
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "read_element_size",
 				  "Failed to read first byte of size"))
@@ -372,9 +361,6 @@ static uint32 read_element_size(SEbmlRead *self, s_erc *error)
 		/* shift left and add */
 		size = (size << 8) | buf;
 	}
-
-	/* byteswap size */
-	/* 	(*size) = spct_swap_be32(*size); */
 
 	return size;
 }

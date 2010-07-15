@@ -164,9 +164,11 @@ static void s_ebml_write_id(SEbmlWrite *self, uint32 id, s_erc *error)
 	 *
 	 * VINT_DATA should be the Element ID, but we we don't follow the specs exactly,
 	 * we use VINT_MARKER as part of VINT_DATA (this is done in matroska format) as
-	 * it makes it much easier to see in a hex-viewer.
+	 * it makes it much easier to see in a hex-viewer. Of course then
+	 * the given ID must be valid in terms of the specification.
 	 *
 	 */
+
 	S_CLR_ERR(error);
 
 	test = id & (mask << ((length - 1) * 8));
@@ -195,7 +197,7 @@ static void s_ebml_write_id(SEbmlWrite *self, uint32 id, s_erc *error)
 		return;
 	}
 
-	/* little endian */
+	/* little endian insertion into data buffer */
 	for (i = 0; i < length; i++)
 	{
 		data[i] = id & 0xff;
@@ -226,39 +228,40 @@ static void s_ebml_write_id(SEbmlWrite *self, uint32 id, s_erc *error)
 
 static void s_ebml_write_size(SEbmlWrite *self, uint32 size, s_erc *error)
 {
-	uint mask = 0x80;
-	uint test;
+	uint mask;
 	uint length;
 	s_byte *data;
 	uint i;
 
 
 	S_CLR_ERR(error);
-	length = 1;
 
-	if (size != S_EBML_SIZE_UNKNOWN)
+	if (size < 127) /* 2^7 - 1 */
 	{
-		test = size >> ((length - 1) * 8);
-
-		while ((test >= (mask - 1)) && (length <= self->header->max_size_width))
-		{
-			mask >>= 1;
-			length++;
-			test = size >> ((length - 1) * 8);
-		}
-
-		if (length > self->header->max_size_width)
-		{
-			S_CTX_ERR(error, S_FAILURE,
-					  "s_ebml_write_size",
-					  "Invalid element byte size (%d)", length);
-			return;
-		}
+		length = 1;
+		mask = 0x80;
+	}
+	else if (size < 16383) /* 2^14 - 1 */
+	{
+		length = 2;
+		mask = 0x4000;
+	}
+	else if (size < 2097151) /* 2^21 - 1 */
+	{
+		length = 3;
+		mask = 0x200000;
+	}
+	else if (size < 268435455) /* 2^28 - 1 */
+	{
+		length = 4;
+		mask = 0x10000000;
 	}
 	else
 	{
-		mask = 0x01;
-		length = self->header->max_size_width;
+		S_CTX_ERR(error, S_FAILURE,
+				  "s_ebml_write_size",
+				  "Invalid element byte size (%d)", size);
+		return;
 	}
 
 	size = size | mask;

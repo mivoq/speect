@@ -167,27 +167,20 @@ S_API s_bool SObjectIsType(const SObject *self, const char *type, s_erc *error)
 		return FALSE;
 	}
 
-	s_mutex_lock((s_mutex*)&(self->object_mutex));
 	nname = s_strdup(self->cls->name, error);
-
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "SObjectIsType",
 				  "Failed to duplicate object class name"))
-	{
-		s_mutex_unlock((s_mutex*)&(self->object_mutex));
 		return FALSE;
-	}
 
 	np = nname;
 
 	s = s_strtok_r(NULL, ":", &np, error);
-
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "SObjectIsType",
 				  "Call to \"s_strtok_r\" failed"))
 	{
 		S_FREE(nname);
-		s_mutex_unlock((s_mutex*)&(self->object_mutex));
 		return FALSE;
 	}
 
@@ -200,7 +193,6 @@ S_API s_bool SObjectIsType(const SObject *self, const char *type, s_erc *error)
 					  "Call to \"s_strcmp\" failed"))
 		{
 			S_FREE(nname);
-			s_mutex_unlock((s_mutex*)&(self->object_mutex));
 			return FALSE;
 		}
 
@@ -213,7 +205,6 @@ S_API s_bool SObjectIsType(const SObject *self, const char *type, s_erc *error)
 						  "Call to \"s_strtok_r\" failed"))
 			{
 				S_FREE(nname);
-				s_mutex_unlock((s_mutex*)&(self->object_mutex));
 				return FALSE;
 			}
 
@@ -222,13 +213,11 @@ S_API s_bool SObjectIsType(const SObject *self, const char *type, s_erc *error)
 		else
 		{
 			S_FREE(nname);
-			s_mutex_unlock((s_mutex*)&(self->object_mutex));
 			return TRUE;
 		}
 	}
 
 	S_FREE(nname);
-	s_mutex_unlock((s_mutex*)&(self->object_mutex));
 
 	return FALSE;
 }

@@ -20,3 +20,13 @@ log_events:
   - Aby Louw <jalouw@csir.co.za>
   - changed status from unstarted to in_progress
   - ""
+- - 2010-07-15 23:27:38.838728 Z
+  - Aby Louw <jalouw@csir.co.za>
+  - commented
+  - |-
+    Handling the logging inside Speect gets too complicated, as we have
+    to handle different processes from different users, and each of these
+    might be multi-threaded. The easiest solution is to have each program
+    supply a callback logging message handler, almost like GLib. Then it
+    is up to the program to handle messages in anyway it likes, or
+    even to disregard them.

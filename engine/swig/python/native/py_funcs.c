@@ -194,12 +194,7 @@ S_API PyObject *s_sobject_2_pyobject(const SObject *object, s_bool own, s_erc *e
 	S_CLR_ERR(error);
 
 	if (object == NULL)
-	{
-		S_CTX_ERR(error, S_ARGERROR,
-				  "s_sobject_2_pyobject",
-				  "Argument \"object\" is NULL");
-		Py_RETURN_NONE;
-	}
+		Py_RETURN_NONE; /* Maybe not error */
 
 	type = get_sobject_type(object, error);
 	if (S_CHK_ERR(error, S_CONTERR,

@@ -157,7 +157,12 @@ static void InitMapPy(void *obj, s_erc *error)
 
 
 	S_CLR_ERR(error);
-	self->tmp = NULL;
+	self->staticObjects = (SList*)S_NEW("SListList", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "InitMapPy",
+				  "Failed to create new 'SListList' object"))
+		return;
+
 	self->pyObject = (SPyObject*)S_NEW("SPyObject", error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "InitMapPy",
@@ -175,8 +180,8 @@ static void DestroyMapPy(void *obj, s_erc *error)
 	if (self->pyObject != NULL)
 		S_DELETE(self->pyObject, "DestroyMapPy", error);
 
-	if (self->tmp != NULL)
-		S_DELETE(self->tmp, "DestroyMapPy", error);
+	if (self->staticObjects != NULL)
+		S_DELETE(self->staticObjects, "DestroyMapPy", error);
 }
 
 
@@ -193,6 +198,7 @@ static const SObject *MapPyValGet(const SMap *self, const char *key,
 	SMapPy *pMap = (SMapPy*)self;
 	PyObject *pKey;
 	PyObject *pobject;
+	SObject *tmp;
 
 
 	S_CLR_ERR(error);
@@ -233,13 +239,21 @@ static const SObject *MapPyValGet(const SMap *self, const char *key,
 	/* decrement reference of pKey */
 	Py_XDECREF(pKey);
 
-	if (pMap->tmp != NULL)
-		S_DELETE(pMap->tmp, "MapPyValGet", error);
-
 	/* convert to Speect object type */
-	pMap->tmp = s_pyobject_2_sobject(pobject, error);
+	tmp = s_pyobject_2_sobject(pobject, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "MapPyValGet",
+				  "Call to \"s_pyobject_2_sobject\" failed"))
+		return NULL;
 
-	return (const SObject*)pMap->tmp;
+	/* add to list of "const" objects */
+	SListAppend(pMap->staticObjects, tmp, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "MapPyValGet",
+				  "Call to \"SListAppend\" failed"))
+		return NULL;
+
+	return (const SObject*)tmp;
 
 	/* for S_CHECK_PY_MAP */
 failure:

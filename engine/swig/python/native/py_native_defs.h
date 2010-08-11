@@ -165,9 +165,11 @@ typedef struct
 	SPyObject *pyObject;
 
 	/**
-	 * @protected Temporary object for @c const calls.
+	 * @protected List for temporary objects for @c const calls.
+	 * This needs to be fixed in the future, as soon as we can make
+	 * static objects.
 	 */
-	SObject   *tmp;
+	SList     *staticObjects;
 } SMapPy;
 
 

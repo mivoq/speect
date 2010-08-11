@@ -367,16 +367,16 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 						  "Call to \"SIteratorObject\" failed"))
 				goto quit_error;
 
-			SItemSetObject(morphemeItem, "name", morphemeName, error);
-			if (S_CHK_ERR(error, S_CONTERR,
-						  "Run",
-						  "Call to \"SItemSetObject\" failed"))
-				goto quit_error;
-
 			morpheme_graphemes = SObjectGetString(morphemeName, error);
 			if (S_CHK_ERR(error, S_CONTERR,
 						  "Run",
 						  "Call to \"SObjectGetString\" failed"))
+				goto quit_error;
+
+			SItemSetName(morphemeItem, morpheme_graphemes, error);
+			if (S_CHK_ERR(error, S_CONTERR,
+						  "Run",
+						  "Call to \"SItemSetName\" failed"))
 				goto quit_error;
 
 			morpheme_graphemes_size = s_strlen(morpheme_graphemes, error);
@@ -392,10 +392,10 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 						  "Call to \"SIteratorObject\" failed"))
 				goto quit_error;
 
-			SItemSetObject(morphemeItem, "class", morphemeClass, error);
+			SItemSetString(morphemeItem, "class", SObjectGetString(morphemeClass, error), error);
 			if (S_CHK_ERR(error, S_CONTERR,
 						  "Run",
-						  "Call to \"SItemSetObject\" failed"))
+						  "Call to \"SObjectGetString/SItemSetObject\" failed"))
 				goto quit_error;
 
 			/* daughter of above item, but in MorphStructure */

@@ -1,6 +1,6 @@
 import speect
-import speect.featproc_callback
-import speect.pyobject
+import speect.featproc_cb
+import speect.pyobject_ebml
 import cPickle as pickle
 
 
@@ -32,11 +32,11 @@ def morphdecomp(item):
         morphnameList.append(morphname)
         morphtypeList.append(morphtype)
         
-    sMap = speect.SMap()
-    sMap["morphemes"] = morphnameList
-    sMap["classes"] = morphtypeList
+    myDict = dict()
+    myDict["morphemes"] = morphnameList
+    myDict["classes"] = morphtypeList
 
-    return sMap
+    return myDict
 
 
 morhpdecomp_feat_processor = speect.SFeatProcessor.callback(morphdecomp)

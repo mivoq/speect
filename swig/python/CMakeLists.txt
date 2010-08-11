@@ -31,6 +31,7 @@ if(NOT "${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_BINARY_DIR}")
   
   # examples
   file(GLOB python_examples "${CMAKE_SOURCE_DIR}/swig/python/examples/*.py")
+  file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/swig/python/examples)
   speect_file_copy(${python_examples} ${CMAKE_BINARY_DIR}/swig/python/examples)
 
   # README
@@ -38,5 +39,10 @@ if(NOT "${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_BINARY_DIR}")
   
   # server.conf.example
   speect_file_copy(${CMAKE_SOURCE_DIR}/swig/python/server.conf.example ${CMAKE_BINARY_DIR}/swig/python)
+
+  # speect/modules
+  file(GLOB python_modules "${CMAKE_SOURCE_DIR}/swig/python/speect/modules/*.py")
+  file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/swig/python/speect/modules)
+  speect_file_copy(${python_modules} ${CMAKE_BINARY_DIR}/swig/python/speect/modules)
 
 endif(NOT "${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_BINARY_DIR}")

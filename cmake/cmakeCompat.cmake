@@ -36,11 +36,14 @@ function(speect_file_copy src dst)
 	get_filename_component(SOURCE_FILE ${ARGV} NAME)
 	set(OUTPUT_FILE "${dst}/${SOURCE_FILE}")
 	configure_file(${ARGV} ${OUTPUT_FILE} COPYONLY)
-      elseif(IS_DIRECTORY ${dst}) # it's a rename copy
+      else(IS_DIRECTORY ${dst}) # it's a rename copy
 	configure_file(${ARGV} ${dst} COPYONLY)	 
       endif(IS_DIRECTORY ${dst})
-    elseif(SLEN EQUAL 1)  # list of files
-      get_filename_component(DEST_DIR ${dst} PATH)
+    else(SLEN EQUAL 1)  # list of files
+      if(NOT IS_DIRECTORY ${dst}) # must be a directory for list of files
+	message(FATAL_ERROR "Destination must be a directory if a source is a list of files")
+      endif(NOT IS_DIRECTORY ${dst})
+      set(DEST_DIR ${dst})
       # src can be a list
       foreach(arg ${ARGV})
 	if(NOT IS_ABSOLUTE ${arg})

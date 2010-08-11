@@ -14,7 +14,7 @@
 #                             Define plug-in                                         #
 #------------------------------------------------------------------------------------#
 
-speect_plugin_definition(Morphdecom_UttProc "SMorphdecomUttProc" 1 0 0)
+speect_plugin_definition(Morphdecomp_UttProc "SMorphdecompUttProc" 1 0 0)
 
 
 #------------------------------------------------------------------------------------#

@@ -1,21 +1,27 @@
 ######################################################################################
 ##                                                                                  ##
 ## AUTHOR  : Aby Louw                                                               ##
-## DATE    : 11 June 2010                                                           ##
+## DATE    : August 2010                                                            ##
 ##                                                                                  ##
 ######################################################################################
 ##                                                                                  ##
-## CMakeList for language specific plug-ins                                         ##
+## Source files for Freedomfone Kiswahili syllabification plug-in                   ##
 ##                                                                                  ##
 ##                                                                                  ##
 ######################################################################################
 
-#------------------------------------------------------------------------------------#
-#                        Plug-in directories                                         #
-#------------------------------------------------------------------------------------#
 
-add_subdirectory(english)
-add_subdirectory(isizulu)
-add_subdirectory(kiswahili)
+######## source files ##################
 
+speect_plugin_sources(
+  src/plugin.c
+  src/swa_freedomfone.c
+  )
+ 
+
+######## header files ##################
+
+speect_plugin_headers(
+  src/swa_freedomfone.h 
+  )
 

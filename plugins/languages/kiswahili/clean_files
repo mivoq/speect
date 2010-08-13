@@ -27,27 +27,9 @@ fi
 # see the templates directory for examples
 ########################################################################
 
-echo "--cleaning english--"
+echo "--cleaning swa--"
 
-cd ./english/
-./clean_files
-cd ..
-
-
-########################################################################
-
-echo "--cleaning isizulu--"
-
-cd ./isizulu/
-./clean_files
-cd ..
-
-
-########################################################################
-
-echo "--cleaning kiswahili--"
-
-cd ./kiswahili/
+cd ./swa/
 ./clean_files
 cd ..
 

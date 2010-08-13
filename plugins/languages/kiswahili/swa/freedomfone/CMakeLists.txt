@@ -1,12 +1,12 @@
 ######################################################################################
 ##                                                                                  ##
 ## AUTHOR  : Aby Louw                                                               ##
-## DATE    : 11 June 2010                                                           ##
+## DATE    : August 2010                                                            ##
 ##                                                                                  ##
 ######################################################################################
 ##                                                                                  ##
-## CMakeList for language specific plug-ins                                         ##
-##                                                                                  ##
+## CMakeList for Kiswahili language project specific plug-ins                       ##
+## Language modules                                                                 ##
 ##                                                                                  ##
 ######################################################################################
 
@@ -14,8 +14,6 @@
 #                        Plug-in directories                                         #
 #------------------------------------------------------------------------------------#
 
-add_subdirectory(english)
-add_subdirectory(isizulu)
-add_subdirectory(kiswahili)
+add_subdirectory(syllabification)
 
 

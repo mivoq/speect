@@ -23,37 +23,33 @@ fi
 
 
 ########################################################################
-# Add plug-in directories here if they have a 'clean_files' script, 
-# see the templates directory for examples
-########################################################################
 
-echo "--cleaning english--"
+echo "cleaning cmake"
 
-cd ./english/
+cd ./cmake/
 ./clean_files
 cd ..
 
 
 ########################################################################
 
-echo "--cleaning isizulu--"
+echo "cleaning doc"
 
-cd ./isizulu/
+cd ./doc/
 ./clean_files
 cd ..
 
 
 ########################################################################
 
-echo "--cleaning kiswahili--"
+echo "cleaning src"
 
-cd ./kiswahili/
+cd ./src/
 ./clean_files
 cd ..
 
 
-########################################################################
-
+##################################################
 
 rm -f  *~
 

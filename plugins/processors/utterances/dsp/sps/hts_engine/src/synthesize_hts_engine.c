@@ -475,6 +475,7 @@ static void load_hts_engine_data(const SMap *data, HTS_Engine *engine,
 	char **cwindows;
 	int num_win;
 	const char *gv;
+	const char *gv_switch;
 
 
 	S_CLR_ERR(error);
@@ -528,7 +529,7 @@ static void load_hts_engine_data(const SMap *data, HTS_Engine *engine,
 				  "Call to \"get_trees_pdfs\" failed"))
 		return;
 
-	HTS_Engine_load_duration_from_fn(engine, cpdfs, ctrees, num);
+	HTS_Engine_load_duration_from_fn(engine, cpdfs, ctrees, 1);
 	for (i = 0; i < num; i++)
 	{
 		S_FREE(ctrees[i]);
@@ -610,7 +611,7 @@ static void load_hts_engine_data(const SMap *data, HTS_Engine *engine,
 
 	/* log f0 is stream 1, and msd_flag is TRUE */
 	HTS_Engine_load_parameter_from_fn(engine, cpdfs, ctrees, cwindows,
-									  1, TRUE, num_win, num);
+									  1, TRUE, num_win, 1);
 
 	for (i = 0; i < num; i++)
 	{
@@ -722,7 +723,7 @@ static void load_hts_engine_data(const SMap *data, HTS_Engine *engine,
 
 	/* spectrum is stream 0, and msd_flag is FALSE */
 	HTS_Engine_load_parameter_from_fn(engine, cpdfs, ctrees, cwindows,
-									  0, FALSE, num_win, num);
+									  0, FALSE, num_win, 1);
 
 	for (i = 0; i < num; i++)
 	{
@@ -760,6 +761,32 @@ static void load_hts_engine_data(const SMap *data, HTS_Engine *engine,
 			return;
 
 		HTS_Engine_load_gv_from_fn(engine, (char**)&combined_path, NULL, 0, 1);
+		S_FREE(combined_path);
+	}
+
+	/* gv switch */
+	gv_switch = SMapGetStringDef(data, "gv-switch", NULL, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "load_hts_engine_data",
+				  "Call to \"SMapGetObjectDef\" failed"))
+		return;
+
+	if (gv_switch != NULL)
+	{
+		char *combined_path;
+
+
+		/* get data path, the one in the config file may be relative
+		 * to the voice base path
+		 */
+		combined_path = s_path_combine(voice_base_path, gv_switch,
+									   error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "load_hts_engine_data",
+					  "Call to \"s_path_combine\" failed"))
+			return;
+
+		HTS_Engine_load_gv_switch_from_fn(engine, combined_path);
 		S_FREE(combined_path);
 	}
 }

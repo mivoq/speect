@@ -781,7 +781,7 @@ failure:
 }
 
 
-static const SObject *ListPyNth(SList *self, uint32 n, s_erc *error)
+static const SObject *ListPyNth(const SList *self, uint32 n, s_erc *error)
 {
 	SListPy *pList = (SListPy*)self;
 	PyObject *pobject;

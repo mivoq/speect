@@ -526,7 +526,7 @@ static void ListListReverse(SList *self, s_erc *error)
 }
 
 
-static const SObject *ListListNth(SList *self, uint32 n, s_erc *error)
+static const SObject *ListListNth(const SList *self, uint32 n, s_erc *error)
 {
 	SListList *lList = (SListList*)self;
 	s_list_element *nth;

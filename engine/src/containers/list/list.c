@@ -538,7 +538,7 @@ S_API void SListReverse(SList *self, s_erc *error)
 }
 
 
-S_API const SObject *SListNth(SList *self, uint32 n, s_erc *error)
+S_API const SObject *SListNth(const SList *self, uint32 n, s_erc *error)
 {
 	const SObject *tmp;
 	size_t size;

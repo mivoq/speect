@@ -368,7 +368,7 @@ typedef struct
 	 *
 	 * @note Indexing starts at 0.
 	 */
-	const SObject *(*nth)          (SList *self, uint32 n, s_erc *error);
+	const SObject *(*nth)          (const SList *self, uint32 n, s_erc *error);
 
 	/**
 	 * @protected ValPresent function pointer.
@@ -615,7 +615,7 @@ S_API void SListReverse(SList *self, s_erc *error);
  * @param error Error code.
  * @return #SObject object at index @a n.
  */
-S_API const SObject *SListNth(SList *self, uint32 n, s_erc *error);
+S_API const SObject *SListNth(const SList *self, uint32 n, s_erc *error);
 
 
 /**

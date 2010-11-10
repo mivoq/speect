@@ -14,7 +14,7 @@
 #                             Define plug-in                                         #
 #------------------------------------------------------------------------------------#
 
-speect_plugin_definition(HTS_Engine_Synth_UttProc "SHTSEngineSynthUttProc" 1 0 0)
+speect_plugin_definition(HTS_Engine_Synth_UttProc "SHTSEngineSynthUttProc103" 1 0 0)
 
 
 #------------------------------------------------------------------------------------#
@@ -36,7 +36,7 @@ speect_plugin_configure_info(${description} ${major_min} ${minor_min})
 
 include(audio)
 
-speect_plugin_include_dirs(${HTS_ENGINE_INCLUDE})
+speect_plugin_include_dirs(${HTS_ENGINE_INCLUDE_103})
 
 
 #------------------------------------------------------------------------------------#
@@ -51,6 +51,6 @@ include(sources)
 #                        Plug-in shared object                                       #
 #------------------------------------------------------------------------------------#
 
-speect_plugin_create(${HTS_ENGINE_LIB})
+speect_plugin_create(${HTS_ENGINE_LIB_103})
 
 

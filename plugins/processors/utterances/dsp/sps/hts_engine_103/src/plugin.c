@@ -33,15 +33,6 @@
 /*                                                                                  */
 /************************************************************************************/
 
-#ifndef _SPCT_PLUGIN_UTTPROCESSOR_SYNTH_HTS_ENGINE_H__
-#define _SPCT_PLUGIN_UTTPROCESSOR_SYNTH_HTS_ENGINE_H__
-
-
-/**
- * @file synthesize_hts_engine.h
- * An utterance processor to do HTS Engine synthesis of a segment relation stream.
- */
-
 
 /************************************************************************************/
 /*                                                                                  */
@@ -49,94 +40,127 @@
 /*                                                                                  */
 /************************************************************************************/
 
-#include "speect.h"
-#include "HTS_engine.h"
+#include "synthesize_hts_engine.h"
+#include "plugin_info.h"
 
 
 /************************************************************************************/
 /*                                                                                  */
-/* Begin external c declaration                                                     */
+/* Static variables                                                                 */
 /*                                                                                  */
 /************************************************************************************/
-S_BEGIN_C_DECLS
+
+static SPlugin *audioPlugin = NULL;
+
+
+
+/************************************************************************************/
+/*                                                                                  */
+/* Static function prototypes                                                       */
+/*                                                                                  */
+/************************************************************************************/
+
+static void plugin_register_function(s_erc *error);
+
+static void plugin_exit_function(s_erc *error);
 
 
 /************************************************************************************/
 /*                                                                                  */
-/* SHTSEngineSynthUttProc definition                                                */
+/* Plug-in parameters                                                               */
 /*                                                                                  */
 /************************************************************************************/
 
-/**
- * The SHTSEngineSynthUttProc structure.
- * An utterance processor to do HTS Engine synthesis of a segment relation stream.
- * @extends SUttProcessor
- */
-typedef struct
+static const s_plugin_params plugin_params =
 {
-	/**
-	 * @protected Inherit from #SUttProcessor.
-	 */
-	SUttProcessor obj;
+	/* plug-in name */
+	SPCT_PLUGIN_NAME,
 
-	/**
-	 * @protected The HTS Engine.
-	 */
-	HTS_Engine    engine;
-} SHTSEngineSynthUttProc;
+	/* description */
+	SPCT_PLUGIN_DESCRIPTION,
 
+	/* version */
+	{
+		SPCT_PLUGIN_VERSION_MAJOR,
+		SPCT_PLUGIN_VERSION_MINOR
+	},
 
-/************************************************************************************/
-/*                                                                                  */
-/* SHTSEngineSynthUttProcClass definition                                           */
-/*                                                                                  */
-/************************************************************************************/
+	/* Speect ABI version (which plug-in was compiled with) */
+	{
+		S_MAJOR_VERSION,
+		S_MINOR_VERSION
+	},
 
-/**
- * Typedef of the hts engine synthesizer utterance processor class. Does not add any
- * new methods, therefore exactly the same as #SUttProcessor.
- */
-typedef SUttProcessorClass SHTSEngineSynthUttProcClass;
+	/* register function pointer */
+	plugin_register_function,
 
-
-/************************************************************************************/
-/*                                                                                  */
-/* Plug-in class registration/free                                                  */
-/*                                                                                  */
-/************************************************************************************/
-
-/**
- * Register the #SHTSEngineSynthUttProc plug-in class with the Speect Engine
- * object system.
- * @private
- *
- * @param error Error code.
- */
-S_LOCAL void _s_hts_engine_synth_utt_proc_class_reg(s_erc *error);
-
-
-/**
- * Free the #SHTSEngineSynthUttProc plug-in class from the Speect Engine
- * object system.
- * @private
- *
- * @param error Error code.
- */
-S_LOCAL void _s_hts_engine_synth_utt_proc_class_free(s_erc *error);
+	/* exit function pointer */
+	plugin_exit_function
+};
 
 
 /************************************************************************************/
 /*                                                                                  */
-/* End external c declaration                                                       */
+/* Function implementations                                                         */
 /*                                                                                  */
 /************************************************************************************/
-S_END_C_DECLS
+
+const s_plugin_params *s_plugin_init(s_erc *error)
+{
+	S_CLR_ERR(error);
+
+	if (!s_lib_version_ok(SPCT_MAJOR_VERSION_MIN, SPCT_MINOR_VERSION_MIN))
+	{
+		S_CTX_ERR(error, S_FAILURE,
+				  SPCT_PLUGIN_INIT_STR,
+				  "Incorrect Speect Engine version, require at least '%d.%d.x'",
+				  SPCT_MAJOR_VERSION_MIN, SPCT_MINOR_VERSION_MIN);
+		return NULL;
+	}
+
+	return &plugin_params;
+}
 
 
-/**
- * @}
- * end documentation
- */
+/************************************************************************************/
+/*                                                                                  */
+/* Static function implementations                                                  */
+/*                                                                                  */
+/************************************************************************************/
 
-#endif /* _SPCT_PLUGIN_UTTPROCESSOR_SYNTH_HTS_ENGINE_H__ */
+/* plug-in register function */
+static void plugin_register_function(s_erc *error)
+{
+	S_CLR_ERR(error);
 
+	audioPlugin = s_pm_load_plugin("audio.spi", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  SPCT_PLUGIN_REG_STR,
+				  "Call to \"s_pm_load_plugin\" failed"))
+		return;
+
+	/* register plug-in classes here */
+	_s_hts_engine_synth_utt_proc_class_reg(error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  SPCT_PLUGIN_REG_STR,
+				  SPCT_PLUGIN_REG_FAIL_STR))
+	{
+		S_DELETE(audioPlugin, SPCT_PLUGIN_REG_STR, error);
+		return;
+	}
+}
+
+
+/* plug-in exit function */
+static void plugin_exit_function(s_erc *error)
+{
+	S_CLR_ERR(error);
+
+	/* free plug-in classes here */
+	_s_hts_engine_synth_utt_proc_class_free(error);
+	S_CHK_ERR(error, S_CONTERR,
+			  SPCT_PLUGIN_EXIT_STR,
+			  SPCT_PLUGIN_EXIT_FAIL_STR);
+
+	S_DELETE(audioPlugin, SPCT_PLUGIN_EXIT_STR, error);
+}

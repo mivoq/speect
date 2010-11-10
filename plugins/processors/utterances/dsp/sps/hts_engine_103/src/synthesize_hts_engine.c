@@ -89,8 +89,8 @@ typedef struct
 /*                                                                                  */
 /************************************************************************************/
 
-/* SHTSEngineSynthUttProc class declaration. */
-static SHTSEngineSynthUttProcClass HTSEngineSynthUttProcClass;
+/* SHTSEngineSynthUttProc103 class declaration. */
+static SHTSEngineSynthUttProc103Class HTSEngineSynthUttProc103Class;
 
 
 /************************************************************************************/
@@ -118,23 +118,23 @@ static void load_hts_engine_data(const SMap *data, HTS_Engine *engine,
 /************************************************************************************/
 
 /* local functions to register and free classes */
-S_LOCAL void _s_hts_engine_synth_utt_proc_class_reg(s_erc *error)
+S_LOCAL void _s_hts_engine_synth_utt_proc_103_class_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(&HTSEngineSynthUttProcClass, error);
+	s_class_reg(&HTSEngineSynthUttProc103Class, error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_hts_engine_synth_utt_proc_class_reg",
-			  "Failed to register SHTSEngineSynthUttProcClass");
+			  "Failed to register SHTSEngineSynthUttProc103Class");
 }
 
 
-S_LOCAL void _s_hts_engine_synth_utt_proc_class_free(s_erc *error)
+S_LOCAL void _s_hts_engine_synth_utt_proc_103_class_free(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_free(&HTSEngineSynthUttProcClass, error);
+	s_class_free(&HTSEngineSynthUttProc103Class, error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_hts_engine_synth_utt_proc_class_free",
-			  "Failed to free SHTSEngineSynthUttProcClass");
+			  "Failed to free SHTSEngineSynthUttProc103Class");
 }
 
 
@@ -801,7 +801,7 @@ static void load_hts_engine_data(const SMap *data, HTS_Engine *engine,
 /* we need to delete the window plug-in if any */
 static void Destroy(void *obj, s_erc *error)
 {
-	SHTSEngineSynthUttProc *self = obj;
+	SHTSEngineSynthUttProc103 *self = obj;
 
 
 	S_CLR_ERR(error);
@@ -819,7 +819,7 @@ static void Dispose(void *obj, s_erc *error)
 static void Initialize(SUttProcessor *self, const SVoice *voice, s_erc *error)
 {
 	hts_params *engine_params;
-	SHTSEngineSynthUttProc *HTSsynth = (SHTSEngineSynthUttProc*)self;
+	SHTSEngineSynthUttProc103 *HTSsynth = (SHTSEngineSynthUttProc103*)self;
 	const SMap *hts_data;
 	const SObject *vcfgObject;
 	char *voice_base_path;
@@ -902,7 +902,7 @@ quit_error:
 static void Run(const SUttProcessor *self, SUtterance *utt,
 				s_erc *error)
 {
-	SHTSEngineSynthUttProc *HTSsynth = (SHTSEngineSynthUttProc*)self;
+	SHTSEngineSynthUttProc103 *HTSsynth = (SHTSEngineSynthUttProc103*)self;
 	SPlugin *audioPlugin;
 	const SRelation *segmentRel;
 	SAudio *audio = NULL;
@@ -1120,16 +1120,16 @@ quit_error:
 
 /************************************************************************************/
 /*                                                                                  */
-/* SCreateUnitsUttProc class initialization                                         */
+/* SHTSEngineSynthUttProc103 class initialization                                   */
 /*                                                                                  */
 /************************************************************************************/
 
-static SHTSEngineSynthUttProcClass HTSEngineSynthUttProcClass =
+static SHTSEngineSynthUttProc103Class HTSEngineSynthUttProc103Class =
 {
 	/* SObjectClass */
 	{
-		"SUttProcessor:SHTSEngineSynthUttProc",
-		sizeof(SHTSEngineSynthUttProc),
+		"SUttProcessor:SHTSEngineSynthUttProc103",
+		sizeof(SHTSEngineSynthUttProc103),
 		{ 0, 1},
 		NULL,            /* init    */
 		Destroy,         /* destroy */

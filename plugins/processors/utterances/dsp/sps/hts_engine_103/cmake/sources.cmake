@@ -1,24 +1,27 @@
 ######################################################################################
 ##                                                                                  ##
 ## AUTHOR  : Aby Louw                                                               ##
-## DATE    : 11 June 2010                                                           ##
+## DATE    : 5 November 2009                                                        ##
 ##                                                                                  ##
 ######################################################################################
 ##                                                                                  ##
-## CMakeList for dsp statistical parametric synthesis utterance processors plug-ins ##
+## Source files for HTS Engine synthesis utterance processor plug-in                ##
 ##                                                                                  ##
 ##                                                                                  ##
 ######################################################################################
 
-#------------------------------------------------------------------------------------#
-#                        Plug-in directories                                         #
-#------------------------------------------------------------------------------------#
 
-if(HTS_ENGINE_INCLUDE_102 AND HTS_ENGINE_LIB_102)
-  add_subdirectory(hts_engine_102)
-endif(HTS_ENGINE_INCLUDE_102 AND HTS_ENGINE_LIB_102)
+######## source files ##################
 
-if(HTS_ENGINE_INCLUDE_103 AND HTS_ENGINE_LIB_103)
-  add_subdirectory(hts_engine_103)
-endif(HTS_ENGINE_INCLUDE_103 AND HTS_ENGINE_LIB_103)
+speect_plugin_sources(
+  src/plugin.c
+  src/synthesize_hts_engine.c
+  )
+ 
+
+######## header files ##################
+
+speect_plugin_headers(
+  src/synthesize_hts_engine.h
+  )
 

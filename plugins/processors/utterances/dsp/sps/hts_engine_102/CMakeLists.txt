@@ -14,7 +14,7 @@
 #                             Define plug-in                                         #
 #------------------------------------------------------------------------------------#
 
-speect_plugin_definition(HTS_Engine_Synth_UttProc "SHTSEngineSynthUttProc102" 1 0 0)
+speect_plugin_definition(HTS_Engine_Synth_UttProc_102 "SHTSEngineSynthUttProc102" 1 0 0)
 
 
 #------------------------------------------------------------------------------------#

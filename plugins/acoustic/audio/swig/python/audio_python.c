@@ -100,7 +100,9 @@ def get_audio_waveform(self):
 
 def play(self):
     """
-    Play the audio waveform (supports only 'posix' and 'nt' systems).
+    Play the audio waveform.
+    First tries using pyaudio, else ossaudiodev on 'posix'
+    or winsound on 'nt' systems.
 
     :note: On 'posix' systems, this function tries to 
            open an audio device (environment variable ``AUDIODEV``,
@@ -108,31 +110,68 @@ def play(self):
            values to it.
     """
 
-    import os
-    
-    opsys = os.name
-    
-    if opsys not in ("posix", "nt"):
-        raise EnvironmentError("SAudio.play() currently works only on" + \
-                               " \"posix\" and \"nt\" compatible systems")
 
+    # first get audio waveform from audio object
     waveform = self.get_audio_waveform()
 
-    if opsys == "posix":
-        import ossaudiodev
+    # try using pyaudio
+    try:
+        import pyaudio
+        chunk = 1024
+        start = 0
+        end = 1024       
 
-        dsp = ossaudiodev.open("w")
-        dsp.setparameters(ossaudiodev.AFMT_S16_LE,
-                          1,
-                          waveform["samplerate"],
-                          True)
-        dsp.writeall(waveform["samples"])
-        dsp.close()
-    
-    else:     # nt (win)
-        import winsound
+        p = pyaudio.PyAudio()
+
+        # note: currently supports only 'int16' sample types (i.e. samplewidth = 2)
+        samplewidth = 2
         
-        winsound.PlaySound(waveform["samples"], winsound.SND_MEMORY)
+        # open stream
+        stream = p.open(format =
+                        p.get_format_from_width(samplewidth),
+                        channels = 1,
+                        rate = waveform["samplerate"],
+                        output = True)
+
+        num_samples = self.num_samples()
+        print num_samples
+        while (end < num_samples):
+            stream.write(waveform["samples"][start:end])
+            start = end
+            end = end + chunk
+            print end
+        
+        stream.write(waveform["samples"][start:])
+        print waveform["samples"][start:]
+        stream.stop_stream()
+        stream.close()
+        p.terminate()
+
+    # no pyaudio
+    except ImportError:
+        import os
+    
+        opsys = os.name
+    
+        if opsys not in ("posix", "nt"):
+            raise EnvironmentError("SAudio.play() currently works only on" + \
+                                       " \"posix\" and \"nt\" compatible systems")
+
+        if opsys == "posix":
+            import ossaudiodev
+
+            dsp = ossaudiodev.open("w")
+            dsp.setparameters(ossaudiodev.AFMT_S16_LE,
+                              1,
+                              waveform["samplerate"],
+                              True)
+            dsp.writeall(waveform["samples"])
+            dsp.close()
+    
+        else:     # nt (win)
+            import winsound
+        
+            winsound.PlaySound(waveform["samples"], winsound.SND_MEMORY)
 
 %}
 };

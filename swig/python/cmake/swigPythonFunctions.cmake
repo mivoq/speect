@@ -11,6 +11,7 @@
 ##   speect_plugin_swig_python_loader       (Generate SWIG interface file that      ##
 ##                                           only loads plug-in when imported)      ##
 ##   speect_plugin_swig_python_wrapper      (Generate SWIG Python wrapper)          ##
+##   speect_include_python_directories      (Include Python include directories)    ##
 ##                                                                                  ##
 ## See the documentation at each function/macro below.                              ##
 ##                                                                                  ##
@@ -272,3 +273,20 @@ macro(speect_plugin_swig_python_wrapper)
     RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/swig/python/speect/lib
     )
 endmacro(speect_plugin_swig_python_wrapper)
+
+
+#------------------------------------------------------------------------------------#
+#                       Include Python include directories                           #
+#------------------------------------------------------------------------------------#
+#
+# macro(speect_include_python_directories)
+#
+# PYTHON_INCLUDE_PATH is deprecated in older CMAKE versions, use this macro 
+#
+macro(speect_include_python_directories)
+  if(${PYTHON_INCLUDE_PATH})
+    include_directories(${PYTHON_INCLUDE_PATH})  
+  elseif(${PYTHON_INCLUDE_DIRS})
+    include_directories(${PYTHON_INCLUDE_DIRS})  
+  endif(${PYTHON_INCLUDE_PATH})
+endmacro(speect_include_python_directories)

@@ -213,6 +213,23 @@ endmacro(speect_plugin_swig_python_loader)
 
 
 #------------------------------------------------------------------------------------#
+#                       Include Python include directories                           #
+#------------------------------------------------------------------------------------#
+#
+# macro(speect_include_python_directories)
+#
+# PYTHON_INCLUDE_PATH is deprecated in older CMAKE versions, use this macro 
+#
+macro(speect_include_python_directories)
+  if(${PYTHON_INCLUDE_PATH} STREQUAL "")
+    include_directories(${PYTHON_INCLUDE_DIRS})  
+  else(${PYTHON_INCLUDE_PATH} STREQUAL "")
+    include_directories(${PYTHON_INCLUDE_PATH})  
+  endif(${PYTHON_INCLUDE_PATH} STREQUAL "")
+endmacro(speect_include_python_directories)
+
+
+#------------------------------------------------------------------------------------#
 #                       Create plug-in SWIG Python wrapper                           #
 #------------------------------------------------------------------------------------#
 #
@@ -233,7 +250,7 @@ macro(speect_plugin_swig_python_wrapper)
   find_package(PythonLibs REQUIRED) # Note, currently PythonLibs does not look for Python 3
 
   # include Python
-  include_directories(${PYTHON_INCLUDE_DIRS})    # PYTHON_INCLUDE_PATH (deprecated)
+  speect_include_python_directories()
 
   # include Speect 
   include_directories(${SPCT_INCLUDE_DIRS})
@@ -274,19 +291,3 @@ macro(speect_plugin_swig_python_wrapper)
     )
 endmacro(speect_plugin_swig_python_wrapper)
 
-
-#------------------------------------------------------------------------------------#
-#                       Include Python include directories                           #
-#------------------------------------------------------------------------------------#
-#
-# macro(speect_include_python_directories)
-#
-# PYTHON_INCLUDE_PATH is deprecated in older CMAKE versions, use this macro 
-#
-macro(speect_include_python_directories)
-  if(${PYTHON_INCLUDE_PATH})
-    include_directories(${PYTHON_INCLUDE_PATH})  
-  elseif(${PYTHON_INCLUDE_DIRS})
-    include_directories(${PYTHON_INCLUDE_DIRS})  
-  endif(${PYTHON_INCLUDE_PATH})
-endmacro(speect_include_python_directories)

@@ -58,6 +58,6 @@ add_subdirectory(utt_num_syls)
 add_subdirectory(utt_num_words)
 add_subdirectory(utt_num_phrases)
 
-if(HTS_ENGINE_INCLUDE AND HTS_ENGINE_LIB)
+if ((HTS_ENGINE_INCLUDE_102 AND HTS_ENGINE_LIB_102) OR (HTS_ENGINE_INCLUDE_103 AND HTS_ENGINE_LIB_103))
   add_subdirectory(hts_labels)
-endif(HTS_ENGINE_INCLUDE AND HTS_ENGINE_LIB)
+endif((HTS_ENGINE_INCLUDE_102 AND HTS_ENGINE_LIB_102) OR (HTS_ENGINE_INCLUDE_103 AND HTS_ENGINE_LIB_103))

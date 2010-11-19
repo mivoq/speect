@@ -20,8 +20,11 @@ include(${SWIG_USE_FILE})
 # find Python interpreter
 find_package(PythonLibs REQUIRED) # Note, currently PythonInterp does not look for Python 3
 
+# has speect_include_python_directories macro
+include(${CMAKE_SOURCE_DIR}/swig/python/cmake/swigPythonFunctions.cmake)
+
 # add Python to includes
-include_directories(${PYTHON_INCLUDE_PATH})
+speect_include_python_directories()
 
 # add Speect Engine includes
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})

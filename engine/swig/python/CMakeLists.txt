@@ -58,8 +58,13 @@ include(${SWIG_USE_FILE})  # UseSWIG.cmake, provides swig functions
 
 #################################### Python ##########################################
 
+# has speect_include_python_directories macro
+include(${CMAKE_SOURCE_DIR}/swig/python/cmake/swigPythonFunctions.cmake)
+
 find_package(PythonLibs REQUIRED) # Note, CMake does not look for Python 3
-include_directories(${PYTHON_INCLUDE_DIRS})    # PYTHON_INCLUDE_PATH (deprecated)
+
+# add Python to includes
+speect_include_python_directories()
 
 
 #################################### Speect ##########################################

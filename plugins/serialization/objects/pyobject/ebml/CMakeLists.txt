@@ -55,8 +55,11 @@ include_directories(${SPCT_PYTHON_NATIVE_INCLUDE_DIRS})
 # find Python 
 find_package(PythonLibs REQUIRED) # Note, currently PythonLibs does not look for Python 3
 
+# has speect_include_python_directories macro
+include(${CMAKE_SOURCE_DIR}/swig/python/cmake/swigPythonFunctions.cmake)
+
 # include Python
-include_directories(${PYTHON_INCLUDE_DIRS})  # PYTHON_INCLUDE_PATH (deprecated)
+speect_include_python_directories()
 
 # link with Speect SWIG Python native library and Python
 speect_plugin_create(${SPCT_PYTHON_NATIVE_LIBRARY_TARGET} ${PYTHON_LIBRARIES})

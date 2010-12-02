@@ -50,8 +50,16 @@
 		SVoice *voice;
 		PyObject *osPathModule;
 		PyObject *abspathFunction;
+		PyObject *splitextFunction;
+		PyObject *splitFunction;
 		PyObject *pyPath;
+		PyObject *tmpObject1;
+		PyObject *tmpObject2;
+		const char *dir = NULL;
+		const char *ext = NULL;
+		const char *filename = NULL;
 		char *full_path;
+		int rv;
 
 
 		if (path == NULL)
@@ -110,6 +118,59 @@
 			return NULL;
 		}
 
+		/* get splitext function */
+		splitextFunction = PyObject_GetAttrString(osPathModule, "splitext");
+		if (osPathModule == NULL)
+		{
+			char *py_error = s_get_python_error_str();
+
+			if (py_error)
+			{
+				S_CTX_ERR(error, S_FAILURE,
+						  "SVoice",
+						  "Call to \"PyObject_GetAttrString\" failed. Reported error: %s",
+						  py_error);
+				S_FREE(py_error);
+			}
+			else
+			{
+				S_CTX_ERR(error, S_FAILURE,
+						  "SVoice",
+						  "Call to \"PyObject_GetAttrString\" failed");
+			}
+
+			Py_DECREF(abspathFunction);
+			Py_DECREF(osPathModule);
+			return NULL;
+		}
+
+		/* get split function */
+		splitFunction = PyObject_GetAttrString(osPathModule, "split");
+		if (osPathModule == NULL)
+		{
+			char *py_error = s_get_python_error_str();
+
+			if (py_error)
+			{
+				S_CTX_ERR(error, S_FAILURE,
+						  "SVoice",
+						  "Call to \"PyObject_GetAttrString\" failed. Reported error: %s",
+						  py_error);
+				S_FREE(py_error);
+			}
+			else
+			{
+				S_CTX_ERR(error, S_FAILURE,
+						  "SVoice",
+						  "Call to \"PyObject_GetAttrString\" failed");
+			}
+
+			Py_DECREF(splitextFunction);
+			Py_DECREF(abspathFunction);
+			Py_DECREF(osPathModule);
+			return NULL;
+		}
+
 		/* run abspath on the given path */
 		pyPath = PyObject_CallFunction(abspathFunction, "s", path);
 		if (pyPath == NULL)
@@ -131,6 +192,8 @@
 						  "Call to \"PyObject_CallFunction\" failed");
 			}
 
+			Py_DECREF(splitFunction);
+			Py_DECREF(splitextFunction);
 			Py_DECREF(abspathFunction);
 			Py_DECREF(osPathModule);
 			return NULL;
@@ -143,14 +206,416 @@
 					  "SVoice",
 					  "Call to \"s_get_pyobject_str\" failed"))
 		{
+			Py_DECREF(splitFunction);
+			Py_DECREF(splitextFunction);
 			Py_DECREF(abspathFunction);
 			Py_DECREF(osPathModule);
 			return NULL;
 		}
 
+		/* split the path into the directory name and file name */
+		tmpObject1 = PyObject_CallFunction(splitFunction, "s", full_path);
+		if (tmpObject1 == NULL)
+		{
+			char *py_error = s_get_python_error_str();
 
+			if (py_error)
+			{
+				S_CTX_ERR(error, S_FAILURE,
+						  "SVoice",
+						  "Call to \"PyObject_CallFunction\" failed. Reported error: %s",
+						  py_error);
+				S_FREE(py_error);
+			}
+			else
+			{
+				S_CTX_ERR(error, S_FAILURE,
+						  "SVoice",
+						  "Call to \"PyObject_CallFunction\" failed");
+			}
+
+			S_FREE(full_path);
+			Py_DECREF(splitFunction);
+			Py_DECREF(splitextFunction);
+			Py_DECREF(abspathFunction);
+			Py_DECREF(osPathModule);
+			return NULL;
+		}
+
+		/* extract info from returned object */
+		if (!PyArg_ParseTuple(tmpObject1, "ss", &dir, &filename))
+		{
+			char *py_error = s_get_python_error_str();
+
+			if (py_error)
+			{
+				S_CTX_ERR(error, S_FAILURE,
+						  "SVoice",
+						  "Call to \"PyArg_ParseTuple\" failed. Reported error: %s",
+						  py_error);
+				S_FREE(py_error);
+			}
+			else
+			{
+				S_CTX_ERR(error, S_FAILURE,
+						  "SVoice",
+						  "Call to \"PyArg_ParseTuple\" failed");
+			}
+
+			S_FREE(full_path);
+			Py_DECREF(tmpObject1);
+			Py_DECREF(splitFunction);
+			Py_DECREF(splitextFunction);
+			Py_DECREF(abspathFunction);
+			Py_DECREF(osPathModule);
+			return NULL;
+		}
+
+		/* now get file extension from file name */
+		tmpObject2 = PyObject_CallFunction(splitextFunction, "s", filename);
+		if (tmpObject2 == NULL)
+		{
+			char *py_error = s_get_python_error_str();
+
+			if (py_error)
+			{
+				S_CTX_ERR(error, S_FAILURE,
+						  "SVoice",
+						  "Call to \"PyObject_CallFunction\" failed. Reported error: %s",
+						  py_error);
+				S_FREE(py_error);
+			}
+			else
+			{
+				S_CTX_ERR(error, S_FAILURE,
+						  "SVoice",
+						  "Call to \"PyObject_CallFunction\" failed");
+			}
+
+			S_FREE(full_path);
+			Py_DECREF(tmpObject1);
+			Py_DECREF(splitFunction);
+			Py_DECREF(splitextFunction);
+			Py_DECREF(abspathFunction);
+			Py_DECREF(osPathModule);
+			return NULL;
+		}
+
+		/* extract info from returned object */
+		if (!PyArg_ParseTuple(tmpObject2, "ss", &filename, &ext))
+		{
+			char *py_error = s_get_python_error_str();
+
+			if (py_error)
+			{
+				S_CTX_ERR(error, S_FAILURE,
+						  "SVoice",
+						  "Call to \"PyArg_ParseTuple\" failed. Reported error: %s",
+						  py_error);
+				S_FREE(py_error);
+			}
+			else
+			{
+				S_CTX_ERR(error, S_FAILURE,
+						  "SVoice",
+						  "Call to \"PyArg_ParseTuple\" failed");
+			}
+
+			S_FREE(full_path);
+			Py_DECREF(tmpObject1);
+			Py_DECREF(tmpObject2);
+			Py_DECREF(splitFunction);
+			Py_DECREF(splitextFunction);
+			Py_DECREF(abspathFunction);
+			Py_DECREF(osPathModule);
+			return NULL;
+		}
+
+		/* Check if we were given a Python file */
+		rv = s_strcmp(ext, ".py", error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "SVoice",
+					  "Call to \"s_strscmp\" failed"))
+		{
+			S_FREE(full_path);
+			Py_DECREF(tmpObject1);
+			Py_DECREF(tmpObject2);
+			Py_DECREF(splitFunction);
+			Py_DECREF(splitextFunction);
+			Py_DECREF(abspathFunction);
+			Py_DECREF(osPathModule);
+			return NULL;
+		}
+
+		if (rv == 0) /* it's a Python file */
+		{
+			PyObject *sysModule;
+			PyObject *voiceModule;
+			PyObject *pathList;
+			PyObject *tmp;
+			PyObject *loadedVoice;
+
+
+			/* load the sys module */
+			sysModule = PyImport_ImportModule("sys");
+			if (sysModule == NULL)
+			{
+				char *py_error = s_get_python_error_str();
+
+				if (py_error)
+				{
+					S_CTX_ERR(error, S_FAILURE,
+							  "SVoice",
+							  "Call to \"PyImport_ImportModule\" failed. Reported error: %s",
+							  py_error);
+					S_FREE(py_error);
+				}
+				else
+				{
+					S_CTX_ERR(error, S_FAILURE,
+							  "SVoice",
+							  "Call to \"PyImport_ImportModule\" failed");
+				}
+
+				S_FREE(full_path);
+				Py_DECREF(tmpObject1);
+				Py_DECREF(tmpObject2);
+				Py_DECREF(splitFunction);
+				Py_DECREF(splitextFunction);
+				Py_DECREF(abspathFunction);
+				Py_DECREF(osPathModule);
+
+				return NULL;
+			}
+
+			/* get the path list */
+			pathList =  PyObject_GetAttrString(sysModule, "path");
+			if (pathList == NULL)
+			{
+				char *py_error = s_get_python_error_str();
+
+				if (py_error)
+				{
+					S_CTX_ERR(error, S_FAILURE,
+							  "SVoice",
+							  "Call to \"PyObject_GetAttrString\" failed. Reported error: %s",
+							  py_error);
+					S_FREE(py_error);
+				}
+				else
+				{
+					S_CTX_ERR(error, S_FAILURE,
+							  "SVoice",
+							  "Call to \"PyObject_GetAttrString\" failed");
+				}
+
+				S_FREE(full_path);
+				Py_DECREF(tmpObject1);
+				Py_DECREF(tmpObject2);
+				Py_DECREF(splitFunction);
+				Py_DECREF(splitextFunction);
+				Py_DECREF(abspathFunction);
+				Py_DECREF(osPathModule);
+				Py_DECREF(sysModule);
+				return NULL;
+			}
+
+			/* now add the dir to the system path */
+			tmp = s_set_pyobject_str(dir, error);
+			if (S_CHK_ERR(error, S_CONTERR,
+						  "SVoice",
+						  "Call to \"s_set_pyobject_str\" failed"))
+			{
+
+				S_FREE(full_path);
+				Py_DECREF(pathList);
+				Py_DECREF(tmpObject1);
+				Py_DECREF(tmpObject2);
+				Py_DECREF(splitFunction);
+				Py_DECREF(splitextFunction);
+				Py_DECREF(abspathFunction);
+				Py_DECREF(osPathModule);
+				Py_DECREF(sysModule);
+				return NULL;
+			}
+
+			if (PyList_Append(pathList, tmp) == -1)
+			{
+				char *py_error = s_get_python_error_str();
+
+				if (py_error)
+				{
+					S_CTX_ERR(error, S_FAILURE,
+							  "SVoice",
+							  "Call to \"PyList_Append\" failed. Reported error: %s",
+							  py_error);
+					S_FREE(py_error);
+				}
+				else
+				{
+					S_CTX_ERR(error, S_FAILURE,
+							  "SVoice",
+							  "Call to \"PyList_Append\" failed");
+				}
+
+				S_FREE(full_path);
+				Py_DECREF(pathList);
+				Py_DECREF(tmp);
+				Py_DECREF(tmpObject1);
+				Py_DECREF(tmpObject2);
+				Py_DECREF(splitFunction);
+				Py_DECREF(splitextFunction);
+				Py_DECREF(abspathFunction);
+				Py_DECREF(osPathModule);
+				Py_DECREF(sysModule);
+				return NULL;
+			}
+
+			/* done with tmp and pathList */
+			Py_DECREF(pathList);
+			Py_DECREF(tmp);
+
+			/* now import the file */
+			voiceModule = PyImport_ImportModule(filename);
+			if (voiceModule == NULL)
+			{
+				char *py_error = s_get_python_error_str();
+
+				if (py_error)
+				{
+					S_CTX_ERR(error, S_FAILURE,
+							  "SVoice",
+							  "Call to \"PyImport_ImportModule\" failed. Reported error: %s",
+							  py_error);
+					S_FREE(py_error);
+				}
+				else
+				{
+					S_CTX_ERR(error, S_FAILURE,
+							  "SVoice",
+							  "Call to \"PyImport_ImportModule\" failed");
+				}
+
+				S_FREE(full_path);
+				Py_DECREF(tmpObject1);
+				Py_DECREF(tmpObject2);
+				Py_DECREF(splitFunction);
+				Py_DECREF(splitextFunction);
+				Py_DECREF(abspathFunction);
+				Py_DECREF(osPathModule);
+				Py_DECREF(sysModule);
+				return NULL;
+			}
+
+			/* get voice loading function */
+			tmp = PyObject_GetAttrString(voiceModule, "load_voice");
+			if (tmp == NULL)
+			{
+				char *py_error = s_get_python_error_str();
+
+				if (py_error)
+				{
+					S_CTX_ERR(error, S_FAILURE,
+							  "SVoice",
+							  "Call to \"PyObject_GetAttrString\" failed. Reported error: %s",
+							  py_error);
+					S_FREE(py_error);
+				}
+				else
+				{
+					S_CTX_ERR(error, S_FAILURE,
+							  "SVoice",
+							  "Call to \"PyObject_GetAttrString\" failed");
+				}
+
+				S_FREE(full_path);
+				Py_DECREF(tmpObject1);
+				Py_DECREF(tmpObject2);
+				Py_DECREF(splitFunction);
+				Py_DECREF(splitextFunction);
+				Py_DECREF(abspathFunction);
+				Py_DECREF(osPathModule);
+				Py_DECREF(sysModule);
+				Py_DECREF(voiceModule);
+				return NULL;
+			}
+
+			/* and run it, no arguments */
+			loadedVoice = PyObject_CallFunctionObjArgs(tmp, NULL, NULL);
+			if (loadedVoice == NULL)
+			{
+				char *py_error = s_get_python_error_str();
+
+				if (py_error)
+				{
+					S_CTX_ERR(error, S_FAILURE,
+							  "SVoice",
+							  "Call to \"PyObject_CallFunctionObjArgs\" failed. Reported error: %s",
+							  py_error);
+					S_FREE(py_error);
+				}
+				else
+				{
+					S_CTX_ERR(error, S_FAILURE,
+							  "SVoice",
+							  "Call to \"PyObject_CallFunctionObjArgs\" failed");
+				}
+
+				S_FREE(full_path);
+				Py_DECREF(tmp);
+				Py_DECREF(tmpObject1);
+				Py_DECREF(tmpObject2);
+				Py_DECREF(splitFunction);
+				Py_DECREF(splitextFunction);
+				Py_DECREF(abspathFunction);
+				Py_DECREF(osPathModule);
+				Py_DECREF(sysModule);
+				Py_DECREF(voiceModule);
+				return NULL;
+			}
+
+			/* get voice */
+			voice = (SVoice*)s_pyobject_2_sobject(loadedVoice, error);
+			Py_DECREF(loadedVoice);
+			if (S_CHK_ERR(error, S_CONTERR,
+						  "SVoice",
+						  "Call to \"s_pyobject_2_sobject\" failed"))
+			{
+				S_FREE(full_path);
+				Py_DECREF(tmp);
+				Py_DECREF(tmpObject1);
+				Py_DECREF(tmpObject2);
+				Py_DECREF(splitFunction);
+				Py_DECREF(splitextFunction);
+				Py_DECREF(abspathFunction);
+				Py_DECREF(osPathModule);
+				Py_DECREF(sysModule);
+				Py_DECREF(voiceModule);
+				return NULL;
+			}
+
+			/* clean and return */
+			S_FREE(full_path);
+			Py_DECREF(tmp);
+			Py_DECREF(tmpObject1);
+			Py_DECREF(tmpObject2);
+			Py_DECREF(splitFunction);
+			Py_DECREF(splitextFunction);
+			Py_DECREF(abspathFunction);
+			Py_DECREF(osPathModule);
+			Py_DECREF(sysModule);
+			Py_DECREF(voiceModule);
+
+			return voice;
+		}
+
+		/* it's not a Python file, do normal loading */
 		voice = s_vm_load_voice(full_path, load_data, error);
 		S_FREE(full_path);
+		Py_DECREF(tmpObject1);
+		Py_DECREF(tmpObject2);
+		Py_DECREF(splitFunction);
+		Py_DECREF(splitextFunction);
 		Py_DECREF(abspathFunction);
 		Py_DECREF(osPathModule);
 		if (*error != S_SUCCESS)

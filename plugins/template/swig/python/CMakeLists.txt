@@ -1,71 +1,52 @@
 ######################################################################################
 ##                                                                                  ##
-## AUTHOR  : Aby Louw                                                               ##
-## DATE    : December 2009                                                          ##
+## AUTHOR  :                                                                        ##
+## DATE    :                                                                        ##
 ##                                                                                  ##
 ######################################################################################
 ##                                                                                  ##
-## CMakeList for your wrapper Python classes                                        ##
+## CMakeList for SYour Python interface                                             ##
 ##                                                                                  ##
 ##                                                                                  ##
 ######################################################################################
 
+# see TODO: sections
 
-# find swig
-find_package(SWIG REQUIRED)
+#------------------------------------------------------------------------------------#
+#                          Set the interface variables                               #
+#------------------------------------------------------------------------------------#
 
-# include swig
-include(${SWIG_USE_FILE})
+# SWIG includes
+set(swig_includes "typemaps.i;exception.i")
 
-# find Python interpreter
-find_package(PythonLibs REQUIRED) # Note, currently PythonInterp does not look for Python 3
+# C header files (speect.h is automatically included)
+set(swig_c_includes "source.h") # TODO: add includes
 
-# has speect_include_python_directories macro
-include(${CMAKE_SOURCE_DIR}/swig/python/cmake/swigPythonFunctions.cmake)
+# Load the plug-in on initialization ? 
+set(swig_load_plugin 1)
 
-# add Python to includes
-speect_include_python_directories()
+# Include Python docstrings
+set(swig_python_docstrings "source_docs.c")  # TODO: add docs
 
-# add Speect Engine includes
-include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+# Include Python typemaps
+set(swig_python_typemaps)
 
-# clear SWIG flags, we don't need anything here
-set(CMAKE_SWIG_FLAGS "")
+# Include SWIG common interface definition.
+set(swig_common "source_common.c")  # TODO: add c functions and interface
 
-# clear C flags, we don't want the same stuff as Speect
-set(CMAKE_C_FLAGS "")
+# Include SWIG Python interface definition.
+set(swig_python "source_python.c")  # TODO: add pure Python functions and interface
 
-# add flags for Python Speect Engine wrapper generation
-set_source_files_properties(your_wrapper.i 
-  PROPERTIES 
-  SWIG_FLAGS "-Wall"
-  SWIG_FLAGS "-I${SPEECT_PYTHON_WRAPPER_INCLUDE_PATH}"
-)
 
-# add flags for Python Speect Engine wrapper compilation
-set_source_files_properties(your_wrapperPYTHON_wrap.c 
-  PROPERTIES 
-  COMPILE_FLAGS "-fno-strict-aliasing -fwrapv -Wstrict-prototypes -Wall"
-  GENERATED TRUE
-)
+#------------------------------------------------------------------------------------#
+#                          Create the interface file                                 #
+#------------------------------------------------------------------------------------#
 
-# set ouput directory
-#message(STATUS "CMAKE_CURRENT_BIN_DIR = ${CMAKE_BINARY_DIR}")
-set(CMAKE_SWIG_OUTDIR "${PLUGINS_ENV_VAR}/../swig/python")
+speect_plugin_swig_python_interface()
 
-# create the Python Speect Engine wrapper (C and Python files)
-swig_add_module(your_wrapper python your_wrapper.i)
 
-# link with Python and Speect Engine
-swig_link_libraries(your_wrapper ${PYTHON_LIBRARIES} SPCT_LIBRARY_TARGET)
+#------------------------------------------------------------------------------------#
+#                        Generate the Python wrapper                                 #
+#------------------------------------------------------------------------------------#
 
-# set the output directory
-set_target_properties(${SWIG_MODULE_your_wrapper_REAL_NAME}
-  PROPERTIES
-  LIBRARY_OUTPUT_DIRECTORY "${PLUGINS_ENV_VAR}/../swig/python"
-  RUNTIME_OUTPUT_DIRECTORY "${PLUGINS_ENV_VAR}/../swig/python"
-)
-
-#configure_file(${CMAKE_SOURCE_DIR}/swig/python/config/setup.py.in 
-#  ${CMAKE_BINARY_DIR}/swig/python/setup.py @only)
-
+speect_plugin_swig_python_wrapper()

@@ -1,11 +1,11 @@
 ######################################################################################
 ##                                                                                  ##
-## AUTHOR  : Aby Louw                                                               ##
-## DATE    : 5 November 2009                                                        ##
+## AUTHOR  :                                                                        ##
+## DATE    :                                                                        ##
 ##                                                                                  ##
 ######################################################################################
 ##                                                                                  ##
-## Source files for Viterbi plug-in                                                 ##
+## Source files for YOUR plug-in                                                    ##
 ##                                                                                  ##
 ##                                                                                  ##
 ######################################################################################
@@ -15,19 +15,13 @@
 
 speect_plugin_sources(
   src/plugin.c
-  src/vit_candidate.c
-  src/viterbi.c
-  src/vit_path.c
-  src/vit_point.c
+  src/source.c
   )
  
 
 ######## header files ##################
 
 speect_plugin_headers(
-  src/vit_candidate.h
-  src/viterbi.h
-  src/vit_path.h
-  src/vit_point.h
+  src/source.h
   )
 

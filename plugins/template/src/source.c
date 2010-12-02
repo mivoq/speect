@@ -13,7 +13,7 @@
 /*                                                                                  */
 /************************************************************************************/
 
-/* see TODO:  where to change, rest stays the same */
+/* see TODO:  where to change */
 
 /************************************************************************************/
 /*                                                                                  */
@@ -21,109 +21,135 @@
 /*                                                                                  */
 /************************************************************************************/
 
-#include "source.h" /* TODO: files to include */
-#include "plugin_info.h" /* always include plugin_info.h */
+#include <string.h>
+#include "source.h" /* TODO: include header files */
 
 
 /************************************************************************************/
 /*                                                                                  */
-/* Static function prototypes                                                       */
+/* Static variables                                                                 */
 /*                                                                                  */
 /************************************************************************************/
 
-static void plugin_register_function(s_erc *error);
-
-static void plugin_exit_function(s_erc *error);
+static SYourClass YourClass; /* TODO: SYour class declaration. */
 
 
 /************************************************************************************/
 /*                                                                                  */
-/* Plug-in parameters                                                               */
+/* Plug-in class registration/free                                                  */
 /*                                                                                  */
 /************************************************************************************/
 
-static const s_plugin_params plugin_params =
-{
-	/* plug-in name */
-	SPCT_PLUGIN_NAME,
+/* TODO: register/free functions */
 
-	/* description */
-	SPCT_PLUGIN_DESCRIPTION,
-
-	/* version */
-	{
-		SPCT_PLUGIN_VERSION_MAJOR,
-		SPCT_PLUGIN_VERSION_MINOR
-	},
-
-	/* Speect ABI version (which plug-in was compiled with) */
-	{
-		S_MAJOR_VERSION,
-		S_MINOR_VERSION
-	},
-
-	/* register function pointer */
-	plugin_register_function,
-
-	/* exit function pointer */
-	plugin_exit_function
-};
-
-
-/************************************************************************************/
-/*                                                                                  */
-/* Function implementations                                                         */
-/*                                                                                  */
-/************************************************************************************/
-
-const s_plugin_params *s_plugin_init(s_erc *error)
+/* local functions to register and free classes */
+S_LOCAL void _s_your_class_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
+	s_class_reg(&YourClass, error);
+	S_CHK_ERR(error, S_CONTERR,
+			  "_s_your_class_reg",
+			  "Failed to register SYourClass");
+}
 
-	if (!s_lib_version_ok(SPCT_MAJOR_VERSION_MIN, SPCT_MINOR_VERSION_MIN))
+
+S_LOCAL void _s_your_class_free(s_erc *error)
+{
+	S_CLR_ERR(error);
+	s_class_free(&YourClass, error);
+	S_CHK_ERR(error, S_CONTERR,
+			  "_s_your_class_free",
+			  "Failed to free SYourClass");
+}
+
+
+/************************************************************************************/
+/*                                                                                  */
+/* Static class function implementations                                            */
+/*                                                                                  */
+/************************************************************************************/
+
+static void Init(void *obj, s_erc *error)
+{
+	SYour *self = obj;
+
+
+	S_CLR_ERR(error);
+
+	/* TODO: initialize object members */
+}
+
+
+static void Destroy(void *obj, s_erc *error)
+{
+	SYour *self = obj;
+
+
+	S_CLR_ERR(error);
+
+	/* TODO: free object members */
+}
+
+
+static void Dispose(void *obj, s_erc *error)
+{
+	S_CLR_ERR(error);
+	SObjectDecRef(obj);
+}
+
+
+/* TODO: implement class methods, Resize example below */
+
+static void Resize(SYour *self, uint32 new_size, s_erc *error)
+{
+	float *samples;
+
+
+	S_CLR_ERR(error);
+
+	samples = S_CALLOC(float, new_size);
+	if (samples == NULL)
 	{
-		S_CTX_ERR(error, S_FAILURE,
-				  SPCT_PLUGIN_INIT_STR,
-				  "Incorrect Speect Engine version, require at least '%d.%d.x'",
-				  SPCT_MAJOR_VERSION_MIN, SPCT_MINOR_VERSION_MIN);
-		return NULL;
+		S_FTL_ERR(error, S_MEMERROR,
+				  "Resize",
+				  "Failed to allocate memory for 'float' object");
+		return;
 	}
 
-	return &plugin_params;
+	if (self->samples != NULL)
+	{
+		memmove(samples, self->samples,
+				sizeof(float) * ((new_size < self->num_samples) ? new_size : self->num_samples));
+
+		S_FREE(self->samples);
+	}
+
+	self->samples = samples;
+	self->num_samples = new_size;
 }
 
 
+/* TODO: initialize class */
 /************************************************************************************/
 /*                                                                                  */
-/* Static function implementations                                                  */
+/* SYour class initialization                                                       */
 /*                                                                                  */
 /************************************************************************************/
 
-/* plug-in register function */
-static void plugin_register_function(s_erc *error)
+static SYourClass AudioClass =
 {
-	S_CLR_ERR(error);
-
-	/* register plug-in classes here */
-
-	/* TODO: your plug-in register function */
-
-	S_CHK_ERR(error, S_CONTERR,
-			  SPCT_PLUGIN_REG_STR,
-			  SPCT_PLUGIN_REG_FAIL_STR);
-}
-
-
-/* plug-in exit function */
-static void plugin_exit_function(s_erc *error)
-{
-	S_CLR_ERR(error);
-
-	/* free plug-in classes here */
-
-	/* TODO: your plug-in free function here */
-
-	S_CHK_ERR(error, S_CONTERR,
-			  SPCT_PLUGIN_EXIT_STR,
-			  SPCT_PLUGIN_EXIT_FAIL_STR);
-}
+	/* SObjectClass */
+	{
+		"SYour",
+		sizeof(SYour),
+		{ 0, 1},
+		Init,            /* init    */
+		Destroy,         /* destroy */
+		Dispose,         /* dispose */
+		NULL,            /* compare */
+		NULL,            /* print   */
+		NULL,            /* copy    */
+	},
+	/* SYourClass */
+	/* TODO: add class methods */
+};

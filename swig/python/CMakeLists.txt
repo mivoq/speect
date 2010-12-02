@@ -34,6 +34,11 @@ if(NOT "${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_BINARY_DIR}")
   file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/swig/python/examples)
   speect_file_copy(${python_examples} ${CMAKE_BINARY_DIR}/swig/python/examples)
 
+  ## examples - ibibio frontend
+  file(GLOB ibitio_frontend_examples "${CMAKE_SOURCE_DIR}/swig/python/examples/ibibio_frontend/*")
+  file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/swig/python/examples/ibibio_frontend)
+  speect_file_copy(${ibitio_frontend_examples} ${CMAKE_BINARY_DIR}/swig/python/examples/ibibio_frontend)
+
   # README
   speect_file_copy(${CMAKE_SOURCE_DIR}/swig/python/README ${CMAKE_BINARY_DIR}/swig/python)
   

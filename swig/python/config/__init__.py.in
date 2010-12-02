@@ -10,9 +10,6 @@ this_file_path = os.path.dirname(os.path.abspath(__file__))
 # add lib directory which contains swig modules
 sys.path.append(os.path.join(this_file_path, "lib")) 
 
-# add modules directory which contains python modules
-sys.path.append(os.path.join(this_file_path, "modules")) 
-
 from speect import *
 __doc__ = "Speect is a multilingual TTS system. It offers a full text-to-speech system with\n" + \
     "various API's, as well an environment for research and development of TTS systems\n" + \

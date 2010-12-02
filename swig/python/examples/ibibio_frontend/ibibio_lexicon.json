@@ -1,0 +1,20 @@
+  {
+    "lexicon-definition" :
+      {
+	"name" : "UYO Ibibio",
+	"language" : "ibibio",
+	"lang-code" : "ibb",
+	"description" : "UYO Ibibio voice for Moses.",
+	"version" :
+	  {
+	    "major" : 0,
+	    "minor" : 0
+	  }
+      },
+    "lexicon-entries" :
+      {
+	 /* no entries, add as per example below and uncomment */
+
+	 /* "abbotstown" : [{"phones" : ["ae", "b", "ah", "t", "s", "t", "aw", "n"]}], */
+      }
+  }

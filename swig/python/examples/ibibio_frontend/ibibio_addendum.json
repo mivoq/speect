@@ -1,0 +1,30 @@
+  {
+    "addendum-definition" :
+      {
+	"name" : "UYO Ibibio",
+	"language" : "ibibio",
+	"lang-code" : "ibb",
+	"description" : "UYO Ibibio voice for Moses.",
+	"version" :
+	  {
+	    "major" : 0,
+	    "minor" : 0
+	  }
+      },
+      "addendum-entries" :
+      {
+        /* no entries, add as per example below and uncomment */
+
+	/*
+	"noha":
+	[
+	  {
+	    "syllables": [["n", "O", "H"], ["h", "a", "L"], ["N"]]
+	  }
+	],
+	"abbotstown" : [{"phones" : ["ae", "b", "ah", "t", "s", "t", "aw", "n"]}], 
+	*/
+
+      }
+  }
+

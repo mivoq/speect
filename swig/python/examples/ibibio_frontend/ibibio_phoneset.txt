@@ -1,0 +1,62 @@
+  {
+    "phoneset-definition" :
+    {
+        "name" : "UYO Ibibio",
+        "language" : "ibibio",
+        "lang-code" : "ibb",
+        "description" : "The UYO Ibibio phoneset.",
+        "version" :
+        {
+            "major" : 0,
+            "minor" : 1
+        }
+    },
+    "features" :
+    {
+        "silence_phone": "pau",
+        "closure_phone": "pau_cl"
+    },
+    "phones" :
+    {
+	"pau"      : ["pause"],
+
+        "a"  : ["class_sonorant", "class_syllabic", "vowel", "duration_short", "height_low", "position_back"],
+        "aa"  : ["class_sonorant", "class_syllabic", "vowel", "duration_long", "height_low", "position_back"],
+        "b"   :["class_consonantal", "consonant", "manner_stop", "place_labial", "voiced"],  
+        "d"   :["class_consonantal", "consonant", "manner_stop", "place_alveolar", "voiced"],
+        "e" : ["class_sonorant", "class_syllabic", "vowel", "duration_short", "height_mid", "position_front"],
+        "ee" : ["class_sonorant", "class_syllabic", "vowel", "duration_long", "height_mid", "position_front"],
+        "@"  : ["class_sonorant", "class_syllabic", "vowel", "duration_short", "height_mid", "position_mid"],
+        "f"  : ["class_consonantal", "consonant", "manner_fricative", "manner_strident", "place_labiodental"],
+        "R"  :["class_consonantal", "consonant", "manner_fricative", "place_dental", "voiceless"],
+        "h"  :["class_consonantal", "consonant", "manner_stop", "place_labial", "voiceless"],
+        "i"  : ["class_sonorant", "class_syllabic", "vowel", "duration_short", "height_high", "position_front"],
+        "ii" : ["class_sonorant", "class_syllabic", "vowel", "duration_long", "height_high", "position_front"],
+        "I"  : ["class_sonorant", "class_syllabic", "vowel", "duration_short", "height_high", "position_front"],
+        "k"  :["class_consonantal", "consonant", "manner_stop", "place_velar", "voiceless"],
+        "kk" :["class_consonantal", "consonant", "manner_stop", "place_velar", "voiceless"],
+        "kp" :["class_consonantal", "consonant", "manner_stop", "place_velar", "voiceless"],
+        "m"  : ["class_sonorant", "class_consonantal", "consonant", "manner_nasal", "place_labial", "voiced"], 
+        "mm" : ["class_sonorant", "class_consonantal", "consonant", "manner_nasal", "place_labial", "voiced"], 
+        "n"  : ["class_sonorant", "class_consonantal", "consonant", "manner_nasal", "place_labial", "voiced"],
+        "nn" : ["class_sonorant", "class_consonantal", "consonant", "manner_nasal", "place_labial", "voiced"], 
+        "J"  :["class_sonorant", "consonanttal", "manner_nasal", "place_palatal", "voiced"],
+        "N"  : ["class_sonorant", "class_consonantal", "consonant", "manner_nasal", "place_alveolar", "voiced"],
+        "NN" :["class_sonorant", "class_consonantal", "consonant", "manner_nasal", "place_alveolar", "voiced"],
+        "V"  : ["class_consonantal", "consonant", "manner_fricative", "place_labio-dental"],
+        "o"   : ["class_sonorant", "class_syllabic", "vowel", "duration_short", "height_mid", "position_back"],
+        "oo"  : ["class_sonorant", "class_syllabic", "vowel", "duration_long", "height_mid", "position_back"],
+        "O"   : ["class_sonorant", "class_syllabic", "vowel", "duration_short", "height_mid", "position_back"],
+        "OO"  : ["class_sonorant", "class_syllabic", "vowel", "duration_long", "height_mid", "position_back"],
+        "p"   :["class_consonantal", "consonant", "manner_stop", "place_labial", "voiceless"],
+        "pp" :["class_consonantal", "consonant", "manner_stop", "place_labial", "voiceless"],
+        "s"   : ["class_consonantal", "consonant", "manner_fricative", "manner_strident", "place_alveolar"],
+        "t"   : ["class_consonantal", "consonant", "manner_fricative", "manner_strident", "place_dental"],
+        "tt"  : ["class_consonantal", "consonant", "manner_fricative", "manner_strident", "place_dental"],
+        "u"   : ["class_sonorant", "class_syllabic", "vowel", "duration_short", "height_high", "position_back"],
+        "uu"  : ["class_sonorant", "class_syllabic", "vowel", "duration_long", "height_mid", "position_back"],
+        "}"   : ["class_sonorant", "class_syllabic", "vowel", "duration_short", "height_mid", "position_back"],
+        "w"   :["class_consonantal", "consonant", "manner_stop", "place_labial", "voiceless"],
+        "j"   : ["class_sonorant", "consonant", "manner_approximant", "manner_glide", "place_palatal", "voiced"]
+    }
+}

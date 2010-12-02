@@ -1,0 +1,6 @@
+An example of a front end implemented for a voice in Python.
+See ibibio_voice.py for implementation details.
+Usage:
+
+import speect
+voice = speect.SVoice("ibibio_voice.py")

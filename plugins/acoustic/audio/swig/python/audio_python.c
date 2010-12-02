@@ -49,7 +49,7 @@ def _saudio_utt_play(self):
     if the utterance does not have an "audio"
     feature.
 
-    :note: Uses SAudio.play() internally. 
+    :note: Uses SAudio.play() internally.
     """
 
     audio = self.features["audio"]
@@ -70,14 +70,14 @@ setattr(speect.SUtterance, "play", _saudio_utt_play)
 /************************************************************************************/
 
 %extend SAudio
-{	
+{
 %pythoncode
 %{
 def get_audio_waveform(self):
     """
     Return the waveform of this SAudio object in Python dict  e.g.::
-    
-        {'sampletype': 'int16', 
+
+        {'sampletype': 'int16',
          'samplerate': 16000,
          'samples': '...bytestring...samples....'}
 
@@ -104,7 +104,7 @@ def play(self):
     First tries using pyaudio, else ossaudiodev on 'posix'
     or winsound on 'nt' systems.
 
-    :note: On 'posix' systems, this function tries to 
+    :note: On 'posix' systems, this function tries to
            open an audio device (environment variable ``AUDIODEV``,
            or fallback ``/dev/dsp``) and write 16 bit *little endian*
            values to it.
@@ -119,13 +119,13 @@ def play(self):
         import pyaudio
         chunk = 1024
         start = 0
-        end = 1024       
+        end = 1024
 
         p = pyaudio.PyAudio()
 
         # note: currently supports only 'int16' sample types (i.e. samplewidth = 2)
         samplewidth = 2
-        
+
         # open stream
         stream = p.open(format =
                         p.get_format_from_width(samplewidth),
@@ -134,15 +134,12 @@ def play(self):
                         output = True)
 
         num_samples = self.num_samples()
-        print num_samples
         while (end < num_samples):
             stream.write(waveform["samples"][start:end])
             start = end
             end = end + chunk
-            print end
-        
+
         stream.write(waveform["samples"][start:])
-        print waveform["samples"][start:]
         stream.stop_stream()
         stream.close()
         p.terminate()
@@ -150,9 +147,9 @@ def play(self):
     # no pyaudio
     except ImportError:
         import os
-    
+
         opsys = os.name
-    
+
         if opsys not in ("posix", "nt"):
             raise EnvironmentError("SAudio.play() currently works only on" + \
                                        " \"posix\" and \"nt\" compatible systems")
@@ -167,10 +164,10 @@ def play(self):
                               True)
             dsp.writeall(waveform["samples"])
             dsp.close()
-    
+
         else:     # nt (win)
             import winsound
-        
+
             winsound.PlaySound(waveform["samples"], winsound.SND_MEMORY)
 
 %}

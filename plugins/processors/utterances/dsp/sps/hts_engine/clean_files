@@ -23,37 +23,33 @@ fi
 
 
 ########################################################################
-# Add plug-in directories here if they have a 'clean_files' script, 
-# see the templates directory for examples
-########################################################################
 
-echo "--cleaning hts_engine_102--"
+echo "cleaning cmake"
 
-cd ./hts_engine_102/
+cd ./cmake/
 ./clean_files
 cd ..
 
 
 ########################################################################
 
-echo "--cleaning hts_engine_103--"
+echo "cleaning doc"
 
-cd ./hts_engine_103/
+cd ./doc/
 ./clean_files
 cd ..
 
 
 ########################################################################
 
-echo "--cleaning hts_engine--"
+echo "cleaning src"
 
-cd ./hts_engine/
+cd ./src/
 ./clean_files
 cd ..
 
 
-########################################################################
-
+##################################################
 
 rm -f  *~
 

@@ -47,6 +47,18 @@ well. Items can be shared between relations.
 %feature("autodoc", item_DOCSTRING) SItem;
 
 
+%define item_delete_DOCSTRING
+"""
+delete()
+
+Delete this item from it's relation. Does not delete related items from
+other relations.
+"""
+%enddef
+
+%feature("autodoc", item_delete_DOCSTRING) SItem::delete;
+
+
 %define item_as_relation_DOCSTRING
 """
 as_relation(relname)

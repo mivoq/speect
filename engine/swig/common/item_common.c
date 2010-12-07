@@ -45,6 +45,12 @@ typedef struct
 
 %extend SItem
 {
+	void delete(s_erc *error)
+	{
+		S_FORCE_DELETE($self, "SItem:delete", error);
+	}
+
+
 	SItem *as_relation(const char *relname, s_erc *error)
 	{
 		SItem *itemAs;

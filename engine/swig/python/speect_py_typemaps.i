@@ -123,3 +123,44 @@
 	$result = versionTuple;
 }
 
+
+/*** const char * ***/
+%typemap(out) const char*
+{
+	size_t slen;
+	s_erc error;
+
+
+	S_CLR_ERR(&error);
+	slen = s_strsize($1, &error);
+	if (S_CHK_ERR(&error, S_CONTERR,
+				  "%typemap(out) const char *",
+				  "Call to \"s_strsize\" failed"))
+	{
+		$result = NULL;
+	}
+	else
+	{
+#if PY_VERSION_HEX >= 0x03000000
+		$result = PyUnicode_FromStringAndSize($1, slen);
+#else /* ! PY_VERSION_HEX >= 0x03000000 */
+		$result = PyUnicode_DecodeUTF8($1, slen, NULL);
+#endif /* PY_VERSION_HEX >= 0x03000000 */
+	}
+}
+
+
+%typemap(in) const char*
+{
+	s_erc error;
+
+
+	S_CLR_ERR(&error);
+	$1 = s_get_pyobject_str($input, &error);
+}
+
+/* need to free above allocated $1 */
+%typemap(freearg, noblock=1) const char*
+{
+	free($1);
+}

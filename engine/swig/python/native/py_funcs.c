@@ -474,7 +474,7 @@ S_API PyObject *s_set_pyobject_str(const char *cstr, s_erc *error)
 	pobject = PyUnicode_FromStringAndSize(cstr, slen);
 #define SPCT_S_SET_PYOBJECT_STR_FUNC "PyUnicode_FromStringAndSize"
 #else /* ! PY_VERSION_HEX >= 0x03000000 */
-	pobject = PyString_FromStringAndSize(cstr, slen);
+	pobject = PyUnicode_DecodeUTF8(cstr, slen, NULL);
 #define SPCT_S_SET_PYOBJECT_STR_FUNC "PyString_FromStringAndSize"
 #endif /* PY_VERSION_HEX >= 0x03000000 */
 
@@ -502,6 +502,8 @@ S_API PyObject *s_set_pyobject_str(const char *cstr, s_erc *error)
 
 	return pobject;
 }
+
+S_API char *s_get_python_error_str(void);
 
 
 S_API char *s_get_pyobject_str(PyObject *pobject, s_erc *error)
@@ -558,32 +560,109 @@ S_API char *s_get_pyobject_str(PyObject *pobject, s_erc *error)
 				  "Call to \"s_strdup\" failed"))
 		return NULL;
 #else /* ! PY_VERSION_HEX >= 0x03000000 */
-	strObject = PyObject_Unicode(pobject);
-	if (strObject == NULL)
+	if (PyUnicode_Check(pobject))
 	{
-		S_CTX_ERR(error, S_FAILURE,
-				  "s_get_pyobject_str",
-				  "Call to \"PyObject_Unicode\" failed");
-		return NULL;
-	}
+		utf8Object = PyUnicode_AsUTF8String(pobject);
+		if (utf8Object == NULL)
+		{
+			char *py_error = s_get_python_error_str();
 
-	utf8Object = PyUnicode_AsUTF8String(strObject);
-	Py_XDECREF(strObject);
-	if (utf8Object == NULL)
+
+			if (py_error)
+			{
+				S_CTX_ERR(error, S_FAILURE,
+						  "s_get_pyobject_str",
+						  "Call to \"PyUnicode_AsUTF8String\" failed. Reported error: %s",
+						  py_error);
+				S_FREE(py_error);
+			}
+			else
+			{
+				S_CTX_ERR(error, S_FAILURE,
+						  "s_get_pyobject_str",
+						  "Call to \"PyUnicode_AsUTF8String\" failed");
+			}
+
+			return NULL;
+		}
+	}
+	else if (PyString_Check(pobject))
 	{
-		S_CTX_ERR(error, S_FAILURE,
-				  "s_get_pyobject_str",
-				  "Call to \"PyUnicode_AsUTF8String\" failed");
-		return NULL;
+		Py_XINCREF(pobject);
+		utf8Object = pobject;
+	}
+	else
+	{
+		strObject = PyObject_Unicode(pobject);
+		if (strObject == NULL)
+		{
+			char *py_error = s_get_python_error_str();
+
+			if (py_error)
+			{
+				S_CTX_ERR(error, S_FAILURE,
+						  "s_get_pyobject_str",
+						  "Call to \"PyObject_Unicode\" failed. Reported error: %s",
+						  py_error);
+				S_FREE(py_error);
+			}
+			else
+			{
+				S_CTX_ERR(error, S_FAILURE,
+						  "s_get_pyobject_str",
+						  "Call to \"PyObject_Unicode\" failed");
+			}
+
+			return NULL;
+		}
+
+		utf8Object = PyUnicode_AsUTF8String(strObject);
+		Py_XDECREF(strObject);
+		if (utf8Object == NULL)
+		{
+			char *py_error = s_get_python_error_str();
+
+			if (py_error)
+			{
+				S_CTX_ERR(error, S_FAILURE,
+						  "s_get_pyobject_str",
+						  "Call to \"PyUnicode_AsUTF8String\" failed. Reported error: %s",
+						  py_error);
+				S_FREE(py_error);
+			}
+			else
+			{
+				S_CTX_ERR(error, S_FAILURE,
+						  "s_get_pyobject_str",
+						  "Call to \"PyUnicode_AsUTF8String\" failed");
+			}
+
+			return NULL;
+		}
 	}
 
 	cstr = PyString_AsString(utf8Object);
 	if (cstr == NULL)
 	{
+		char *py_error = s_get_python_error_str();
+
+
 		Py_XDECREF(utf8Object);
-		S_CTX_ERR(error, S_FAILURE,
-				  "s_get_pyobject_str",
-				  "Call to \"PyString_AsString\" failed");
+		if (py_error)
+		{
+			S_CTX_ERR(error, S_FAILURE,
+					  "s_get_pyobject_str",
+					  "Call to \"PyString_AsString\" failed. Reported error: %s",
+					  py_error);
+			S_FREE(py_error);
+		}
+		else
+		{
+			S_CTX_ERR(error, S_FAILURE,
+					  "s_get_pyobject_str",
+					  "Call to \"PyString_AsString\" failed");
+		}
+
 		return NULL;
 	}
 

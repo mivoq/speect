@@ -125,14 +125,15 @@ S_API char *s_get_pyobject_str(PyObject *pobject, s_erc *error);
 
 
 /**
- * Create a new Python string object from a @e C string.
+ * Create a new Python unicode object from a @e C string.
  *
  * @param cstr A null terminated @e C string (utf8 encoding).
  * @param error Error code.
  *
- * @return New reference Python string/unicode object (dependent on
+ * @return New reference Python unicode object (dependent on
  * Python version).
- */
+ * @note This function always returns a unicode object.
+  */
 S_API PyObject *s_set_pyobject_str(const char *cstr, s_erc *error);
 
 
@@ -142,6 +143,9 @@ S_API PyObject *s_set_pyobject_str(const char *cstr, s_erc *error);
  * no error occured @c NULL is returned.
  *
  * @return A null terminated @e C string (utf8 encoding) or @c NULL.
+ *
+ * @note The caller is responsible for the memory of the
+ * returned @e C string.
  */
 S_API char *s_get_python_error_str(void);
 

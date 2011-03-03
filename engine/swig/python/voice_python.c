@@ -349,11 +349,13 @@
 
 		if (rv == 0) /* it's a Python file */
 		{
-			PyObject *sysModule;
-			PyObject *voiceModule;
-			PyObject *pathList;
-			PyObject *tmp;
-			PyObject *loadedVoice;
+			PyObject   *sysModule;
+			PyObject   *voiceModule;
+			PyObject   *pathList;
+			PyObject   *modulesDict;
+			PyObject   *tmp;
+			PyObject   *loadedVoice;
+			Py_ssize_t  sp_size;
 
 
 			/* load the sys module */
@@ -471,8 +473,7 @@
 				return NULL;
 			}
 
-			/* done with tmp and pathList */
-			Py_DECREF(pathList);
+			/* done with tmp */
 			Py_DECREF(tmp);
 
 			/* now import the file */
@@ -497,6 +498,7 @@
 				}
 
 				S_FREE(full_path);
+				Py_DECREF(pathList);
 				Py_DECREF(tmpObject1);
 				Py_DECREF(tmpObject2);
 				Py_DECREF(splitFunction);
@@ -529,6 +531,7 @@
 				}
 
 				S_FREE(full_path);
+				Py_DECREF(pathList);
 				Py_DECREF(tmpObject1);
 				Py_DECREF(tmpObject2);
 				Py_DECREF(splitFunction);
@@ -562,6 +565,7 @@
 				}
 
 				S_FREE(full_path);
+				Py_DECREF(pathList);
 				Py_DECREF(tmp);
 				Py_DECREF(tmpObject1);
 				Py_DECREF(tmpObject2);
@@ -582,6 +586,7 @@
 						  "Call to \"s_pyobject_2_sobject\" failed"))
 			{
 				S_FREE(full_path);
+				Py_DECREF(pathList);
 				Py_DECREF(tmp);
 				Py_DECREF(tmpObject1);
 				Py_DECREF(tmpObject2);
@@ -593,6 +598,115 @@
 				Py_DECREF(voiceModule);
 				return NULL;
 			}
+
+			/* remove the dir from the system path */
+			sp_size = PyList_Size(pathList);
+			if (PySequence_DelItem(pathList, sp_size - 1) == -1)
+			{
+				char *py_error = s_get_python_error_str();
+
+				if (py_error)
+				{
+					S_CTX_ERR(error, S_FAILURE,
+							  "SVoice",
+							  "Call to \"PySequence_DelItem\" failed. Reported error: %s",
+							  py_error);
+					S_FREE(py_error);
+				}
+				else
+				{
+					S_CTX_ERR(error, S_FAILURE,
+							  "SVoice",
+							  "Call to \"PySequence_DelItem\" failed");
+				}
+
+				S_FREE(full_path);
+				Py_DECREF(pathList);
+				Py_DECREF(tmp);
+				Py_DECREF(tmpObject1);
+				Py_DECREF(tmpObject2);
+				Py_DECREF(splitFunction);
+				Py_DECREF(splitextFunction);
+				Py_DECREF(abspathFunction);
+				Py_DECREF(osPathModule);
+				Py_DECREF(sysModule);
+				Py_DECREF(voiceModule);
+				return NULL;
+			}
+
+			/* remove reference to system path */
+			Py_DECREF(pathList);
+
+			/*
+			 * also remove the named module from the sys.modules dict
+			 * get sys.modules dict
+			 */
+			modulesDict = PyObject_GetAttrString(sysModule, "modules");
+			if (modulesDict == NULL)
+			{
+				char *py_error = s_get_python_error_str();
+
+				if (py_error)
+				{
+					S_CTX_ERR(error, S_FAILURE,
+							  "SVoice",
+							  "Call to \"PyObject_GetAttrString\" failed. Reported error: %s",
+							  py_error);
+					S_FREE(py_error);
+				}
+				else
+				{
+					S_CTX_ERR(error, S_FAILURE,
+							  "SVoice",
+							  "Call to \"PyObject_GetAttrString\" failed");
+				}
+
+				S_FREE(full_path);
+				Py_DECREF(tmp);
+				Py_DECREF(tmpObject1);
+				Py_DECREF(tmpObject2);
+				Py_DECREF(splitFunction);
+				Py_DECREF(splitextFunction);
+				Py_DECREF(abspathFunction);
+				Py_DECREF(osPathModule);
+				Py_DECREF(sysModule);
+				Py_DECREF(voiceModule);
+				return NULL;
+			}
+
+			if (PyDict_DelItemString(modulesDict, filename) != 0)
+			{
+				char *py_error = s_get_python_error_str();
+
+				if (py_error)
+				{
+					S_CTX_ERR(error, S_FAILURE,
+							  "SVoice",
+							  "Call to \"PyDict_DelItemString\" failed. Reported error: %s",
+							  py_error);
+					S_FREE(py_error);
+				}
+				else
+				{
+					S_CTX_ERR(error, S_FAILURE,
+							  "SVoice",
+							  "Call to \"PyDict_DelItemString\" failed");
+				}
+
+				S_FREE(full_path);
+				Py_DECREF(tmp);
+				Py_DECREF(tmpObject1);
+				Py_DECREF(tmpObject2);
+				Py_DECREF(splitFunction);
+				Py_DECREF(splitextFunction);
+				Py_DECREF(abspathFunction);
+				Py_DECREF(osPathModule);
+				Py_DECREF(sysModule);
+				Py_DECREF(voiceModule);
+				return NULL;
+			}
+
+			Py_DECREF(modulesDict);
 
 			/* clean and return */
 			S_FREE(full_path);

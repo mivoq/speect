@@ -162,20 +162,6 @@
 /* need to free above allocated $1 */
 %typemap(freearg, noblock=1) const char*
 {
-	/*
-	 * the test here for "text" is because of the way SWIG wraps
-	 * "default paramaters" in C. The function SVoice::synth in
-	 * voice_common.c has "text" as a default argument for the
-	 * utt_type argument, which in SWIG translates to:
-	 * <code>
-	 * char *arg3 = (char *) "text" ;
-	 * </code>
-	 * Therefore, we cannot free arg3.
-	 *
-	 * Note that all default arguments for const char* would have to
-	 * be added here.
-	 */
-
-	if (($1 != NULL) && (strcmp($1, "text") != 0))
+	if ($1 != NULL)
 		free($1);
 }

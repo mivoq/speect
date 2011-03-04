@@ -59,7 +59,7 @@ typedef struct
 	}
 
 
-	SUtterance *synth(const char *input, const char *utt_type="text", s_erc *error)
+	SUtterance *synth(const char *input, char *utt_type="text", s_erc *error)
 	{
 		SUtterance *utt;
 		SObject *inputObject;
@@ -69,7 +69,7 @@ typedef struct
 		if (*error != S_SUCCESS)
 			return NULL;
 
-		utt = SVoiceSynthUtt($self, utt_type, inputObject, error);
+		utt = SVoiceSynthUtt($self, (const char*)utt_type, inputObject, error);
 		if (*error != S_SUCCESS)
 		{
 			if (utt != NULL)

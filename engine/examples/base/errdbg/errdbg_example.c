@@ -124,7 +124,7 @@ int main(void)
 
 
 	/* initialize speect */
-	error = speect_init();
+	error = speect_init(NULL);
 	if (error != S_SUCCESS)
 	{
 		printf("Failed to initialize Speect\n");
@@ -139,7 +139,7 @@ int main(void)
 			S_CLR_ERR(&error);
 
 			/* change the debugging level */
-			s_errdbg_level(S_DBG_INFO, &error);
+			s_set_errdbg_level(S_DBG_INFO, &error);
 
 			/* check error and continue it */
 			S_CHK_ERR(&error, S_CONTERR,

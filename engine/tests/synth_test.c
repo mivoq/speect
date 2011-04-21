@@ -103,7 +103,7 @@ int main(int argc, char **argv)
 	/*
 	 * initialize speect
 	 */
-	error = speect_init();
+	error = speect_init(NULL);
 	if (error != S_SUCCESS)
 	{
 		printf("Failed to initialize Speect\n");

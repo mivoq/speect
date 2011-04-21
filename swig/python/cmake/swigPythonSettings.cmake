@@ -1,38 +1,35 @@
 ######################################################################################
 ##                                                                                  ##
 ## AUTHOR  : Aby Louw                                                               ##
-## DATE    : June 2010                                                              ##
+## DATE    : April 2011                                                             ##
 ##                                                                                  ##
 ######################################################################################
 ##                                                                                  ##
-## CMake custom functions for Speect plug-ins SWIG interfaces                       ##
+## Speect Python settings                                                           ##
 ##                                                                                  ##
 ##                                                                                  ##
 ######################################################################################
 
 
 #------------------------------------------------------------------------------------#
-#                    Set the Speect Engine SWIG common interface                     #
+#                    Speect Python logging configuration file                        #
 #------------------------------------------------------------------------------------#
 
-set(SPCT_SWIG_COMMON_INTERFACE ${CMAKE_BINARY_DIR}/engine/swig/common/speect_common.i)
-
-# get the list of files that above depends on, provides SPCT_SWIG_PYTHON_SRC_FILES
-include(${CMAKE_BINARY_DIR}/engine/swig/common/cmake/engineSWIGcommon.cmake)
-
-# set SPCT_ENGINE_SWIG_COMMON_INTERFACE dependencies
-set_source_files_properties(SPCT_SWIG_COMMON_INTERFACE
-  PROPERTIES 
-  OBJECT_DEPENDS SPCT_SWIG_COMMON_SRC_FILES
-  GENERATED TRUE
-)
+set(SPCT_PYTHON_LOG_CONFIG_FILE "${CMAKE_BINARY_DIR}/spct_python_log.conf")
+mark_as_advanced(SPCT_PYTHON_LOG_CONFIG_FILE)
 
 
 #------------------------------------------------------------------------------------#
-#                             SWIG Python functions                                  #
+#      Configure the log_config.c file (loads spct_python_log.conf for logging)      #
 #------------------------------------------------------------------------------------#
 
-if(WANT_PYTHON_WRAPPER)
-  # include plug-in SWIG Python common cmake file
-  include(${CMAKE_SOURCE_DIR}/swig/python/cmake/swigPythonCommonFunctions.cmake)
-endif(WANT_PYTHON_WRAPPER)
+configure_file(${CMAKE_SOURCE_DIR}/engine/swig/python/config/log_config.c.in 
+  ${CMAKE_BINARY_DIR}/engine/swig/python/log_config.c)
+
+
+#------------------------------------------------------------------------------------#
+#                Copy logging configuration file to home directory                   #
+#------------------------------------------------------------------------------------#
+
+speect_file_copy(${CMAKE_SOURCE_DIR}/engine/swig/python/spct_python_log.conf ${CMAKE_BINARY_DIR}/spct_python_log.conf)
+ 

@@ -46,21 +46,18 @@
 	{
 		return s_speect_version();
 	}
-%}
 
 
-/*
- * Speect Engine initialization on module loading
- */
-%init
-%{
-	/* delimiters because of the need for local variables */
+	void setDebugLevel(int level, s_erc *error)
 	{
-		s_erc rv = S_SUCCESS;
+		if ((level < 4) || (level > -1))
+			s_set_errdbg_level(level, error);
+	}
 
 
-		rv = speect_init();
-		if (rv != S_SUCCESS)
-			SWIG_Error(SWIG_RuntimeError, "Failed to initialize Speect Engine");
+	int getDebugLevel(s_erc *error)
+	{
+		return s_get_errdbg_level(error);
 	}
 %}
+

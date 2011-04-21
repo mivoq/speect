@@ -28,34 +28,35 @@
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* Message layout (format) functions.                                               */
+/* Basic stream facilities.                                                         */
 /*                                                                                  */
 /*                                                                                  */
 /************************************************************************************/
 
-#ifndef _SPCT_LAYOUT_IMPL_H__
-#define _SPCT_LAYOUT_IMPL_H__
+#ifndef _SPCT_STREAM_H__
+#define _SPCT_STREAM_H__
 
 
 /**
- * @file layout_impl.h
- * Message layout (format) implementation.
+ * @file stream.h
+ * Basic stream facilities.
  */
 
 
 /**
  * @ingroup SLogging
- * @defgroup SLayout Message Layout
- * Message layout (format) functions.
- * The layout formatters provides a simple mechanism to format logging
- * messages before they are output to different streams. This enables
- * one to have different log formats, i.e. xml, html, syslog, and so
- * forth, with the same top level interface. Of course the layout
- * implementations need to be robust enough to still output the
- * message in some or other way even if the formatting failed for some
- * reason. It is easily extendable by implementing the #s_layout
- * structure pointer functions for a new layout, with a current
- * implementation @ref SLayoutStd.
+ * @defgroup SStream Streams
+ * Basic stream facilities.
+ * The stream module provides a very basic mechanism to write
+ * messages to different types of streams. It is used by all the error
+ * and debug reporting facilites in @ref SErrDbg, and therefore aims
+ * to be as robust as possible. If any error occurs during one of the
+ * streaming functions, an error will be printed to @c stderr, and the
+ * message to the stream will be written to @c stdout. It is
+ * easily extend-able by implementing the #s_stream structure pointer
+ * functions for a new stream type, with current
+ * implementations @ref SFileStream and @ref SConsoleStream.
+ *
  * @{
  */
 
@@ -68,8 +69,8 @@
 
 #include <stdarg.h>
 #include "include/common.h"
-#include "base/log/event/event.h"
 #include "base/errdbg/errdbg_defs.h"
+
 
 
 /************************************************************************************/
@@ -82,72 +83,68 @@ S_BEGIN_C_DECLS
 
 /************************************************************************************/
 /*                                                                                  */
-/* Typedef and data types                                                           */
+/* Logger object                                                                    */
 /*                                                                                  */
 /************************************************************************************/
 
 /**
- * Opaque data type for layout private info. Defined by each layout as
+ * Opaque data type for stream private info. Defined by each stream as
  * required.
  */
-typedef struct s_layout_private_info s_layout_private_info;
+typedef struct s_stream_private_info s_stream_private_info;
 
 
 /* forward declaration */
-typedef struct s_layout s_layout;
+typedef struct s_stream s_stream;
 
 
 /**
- * The s_layout structure definition. The layout consists of private
+ * The s_stream structure definition. The stream consists of private
  * data which can be anything required by the specific implementation,
- * as it is only defined as an opaque type. The different layout
+ * as it is only defined as an opaque type. The different stream
  * implementations must implement the function pointers as described.
+ * If any error occurs during one of the stream functions, the stream
+ * must try and continue and print the error to @c stderr.
  */
-struct s_layout
+struct s_stream
 {
 	/**
-	 * Layout private data. Defined by each layout as
+	 * Stream private data. Defined by each stream as
 	 * required (opaque type).
 	 */
-	s_layout_private_info *data;
+	s_stream_private_info *data;
 
 
 	/**
-	 * Format the given logging event information to a character
-	 * string buffer, which can be ouput by different logging streams
-	 * (@ref SLogger). Must be implemented by each layout as it is
-	 * called by #s_layout_format. If the message cannot be formatted
-	 * successfully, this function @b must return @c NULL, then the
-	 * #s_layout_format will attemp to write the message to @c stdout
-	 * in a predefined format.
+	 * Write a message to the stream with a vardiac list pointer. Must
+	 * be implemented by each stream as it is called by
+	 * #s_stream_vwrite and #s_stream_write. If the message cannot be
+	 * written successfully then the calling function
+	 * (#s_stream_vwrite or #s_stream_write) will attemp to write the
+	 * message to @c stdout.
 	 *
-	 * @param level The event level.
-	 * @param error_msg As defined by #s_erc.
-	 * @param func Calling function name.
-	 * @param file Calling function file name.
-	 * @param line Calling line in function.
-	 * @param user_msg A format string specifying the string to write
-	 * and the format of the arguments in the va_list.
+	 * @param self This stream object.
+	 * @param fmt A format string specifying the string to write and
+	 * the format of the arguments in the va_list.
 	 * @param argp The va_list, see the standard function @c
-	 * vprintf(). The value of argp is undefined after the call to
+	 * vprintf(). The value of @c argp is undefined after the call to
 	 * this function.
-	 *
-	 * @return Pointer to formated string, or @c NULL on error.
-	 */
-	char *(*format)(s_log_event level, const char *error_msg,
-					const char *func, const char *file, int line,
-					const char *user_msg, va_list argp);
-
-	/**
-	 * Destroy the layout object's associated resources. The layout's
-	 * memory itself must @b not be free'd. Must be implemented by
-	 * each layout as it is called by #s_layout_destroy.
-	 *
-	 * @param layout This layout object.
 	 *
 	 * @return Error code.
 	 */
-	s_erc (*destroy)(s_layout *self);
+	s_erc (*v_write)(const s_stream *self, const char *fmt, va_list argp);
+
+
+	/**
+	 * Destroy the stream object's associated resources. The stream's
+	 * memory itself must @b not be free'd. Must be implemented by
+	 * each stream as it is called by #s_stream_destroy.
+	 *
+	 * @param stream This stream object.
+	 *
+	 * @return Error code.
+	 */
+	s_erc (*destroy)(s_stream *self);
 };
 
 
@@ -157,70 +154,54 @@ struct s_layout
 /*                                                                                  */
 /************************************************************************************/
 
+
 /**
- * Format the given logging event information to a character string
- * buffer, with the given layout formatter. If the underlying
- * implementation of the layout formatter fails, then the logging
- * event info will be output to @c stdout in a simple format.
+ * Write a message to the stream with a variable argument list.
+ * Writes the given message with the given format.
  *
- * @param layout The given layout formatter.
- * @param level The event level.
- * @param error_msg As defined by #s_erc.
- * @param func Calling function name.
- * @param file Calling function file name.
- * @param line Calling line in function.
- * @param user_msg A format string specifying the string to write and
- * the format of the variable length argument list. Same as the the
- * standard @c printf() function.
+ * @param stream The stream to write to.
+ * @param fmt A format string specifying the string to write and the
+ * format of the variable length argument list. Same as the standard
+ * @c printf() function.
  *
- * @return Pointer to formated string, or @c NULL on error.
+ * @return Error code.
  *
  * @note Thread-safety is dependant on the underlying implementation.
  */
-S_API char *s_layout_format(const s_layout *layout, s_log_event level,
-							const char *error_msg, const char *func,
-							const char *file, int line, const char *user_msg, ...);
+S_API s_erc s_stream_write(const s_stream *stream, const char *fmt, ...);
 
 
 /**
- * Format the given logging event information, with a vardiac list
- * pointer, to a character string buffer, with the given layout
- * formatter. If the underlying implementation of the layout formatter
- * fails, then the logging event info will be output to @c stdout in a
- * simple format.
+ * Write a message to the stream with a vardiac list pointer.
+ * Equivalent to the #s_stream_write except that it is called
+ * with a va_list instead of a variable number of arguments,
+ * same as the standard function @c vprintf().
  *
- * @param layout The given layout formatter.
- * @param level The event level.
- * @param error_msg As defined by #s_erc.
- * @param func Calling function name.
- * @param file Calling function file name.
- * @param line Calling line in function.
- * @param user_msg A format string specifying the string to write and
- * the format of the arguments in the va_list.
+ * @param stream The stream to write to.
+ * @param fmt A format string specifying the string to write and the
+ * format of the arguments in the va_list.
  * @param argp The va_list, see the standard function @c
- * vprintf(). The value  of argp is undefined after the call to this
+ * vprintf(). The value of argp is undefined after the call to this
  * function.
- *
- * @return Pointer to formated string, or @c NULL on error.
- *
- * @note Thread-safety is dependant on the underlying implementation.
- */
-S_API char *s_layout_vformat(const s_layout *layout, s_log_event level,
-							 const char *error_msg, const char *func, const char *file,
-							 int line, const char *user_msg, va_list argp);
-
-
-/**
- * Destroy the given layout's associated resources. The layout @b must
- * still be free'd with #S_FREE after this call.
- *
- * @param layout The layout object's resources to destroy.
  *
  * @return error Error code.
  *
  * @note Thread-safety is dependant on the underlying implementation.
  */
-S_API s_erc s_layout_destroy(s_layout *layout);
+S_API s_erc s_stream_vwrite(const s_stream *stream, const char *fmt, va_list argp);
+
+
+/**
+ * Destroy the given stream's associated resources. The stream @b must
+ * still be free'd with #S_FREE after this call.
+ *
+ * @param stream The stream object's resources to destroy.
+ *
+ * @return error Error code.
+ *
+ * @note Thread-safety is dependant on the underlying implementation.
+ */
+S_API s_erc s_stream_destroy(s_stream *stream);
 
 
 /************************************************************************************/
@@ -236,5 +217,5 @@ S_END_C_DECLS
  * end documentation
  */
 
-#endif /* _SPCT_LAYOUT_IMPL_H__ */
+#endif /* _SPCT_STREAM_H__ */
 

@@ -28,10 +28,19 @@
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* Basic logging facilities.                                                        */
+/* Message layout (format) includes.                                                */
 /*                                                                                  */
 /*                                                                                  */
 /************************************************************************************/
+
+#ifndef _SPCT_LAYOUTS_H__
+#define _SPCT_LAYOUTS_H__
+
+
+/**
+ * @file layouts.h
+ * Message layout (format) includes.
+ */
 
 
 /************************************************************************************/
@@ -40,135 +49,10 @@
 /*                                                                                  */
 /************************************************************************************/
 
-#include <stdio.h>
-#include "base/utils/alloc.h"
-#include "base/errdbg/errdbg_utils.h"
-#include "base/errdbg/errdbg_macros.h"
-#include "base/log/streams/stream_impl.h"
+#include "include/common.h"
+#include "base/log/layout/layout.h"       /* Layout functions.               */
+#include "base/log/layout/standard.h"     /* Standard layout implementation. */
 
 
-/************************************************************************************/
-/*                                                                                  */
-/* Function implementations                                                         */
-/*                                                                                  */
-/************************************************************************************/
+#endif /* _SPCT_LAYOUTS_H__ */
 
-S_API s_erc s_logger_write(const s_logger *logger, const char *fmt, ...)
-{
-	va_list marker;
-	s_erc this_error;
-
-
-	S_CLR_ERR(&this_error);
-
-	if (logger == NULL)
-	{
-		S_ERR_PRINT(S_ARGERROR, "s_logger_write",
-					"Argument \"logger\" is NULL");
-		return S_ARGERROR;
-	}
-
-	if (fmt == NULL)
-	{
-		S_ERR_PRINT(S_ARGERROR, "s_logger_write",
-					"Argument \"fmt\" is NULL");
-		return S_ARGERROR;
-	}
-
-	if (logger->v_write == NULL)
-	{
-		S_ERR_PRINT(S_METHINVLD, "s_logger_write",
-					"Object method \"v_write\" is NULL");
-		return S_METHINVLD;
-	}
-
-	va_start(marker, fmt);
-	this_error = logger->v_write(logger, fmt, marker);
-	va_end(marker);
-
-	if (this_error != S_SUCCESS)
-	{
-		S_ERR_PRINT(this_error, "s_logger_write",
-					"Call to object method \"v_write\" failed");
-		/* try and print it to stdout */
-		va_start(marker, fmt);
-		vfprintf(stdout, fmt, marker);
-		va_end(marker);
-	}
-
-	return this_error;
-}
-
-
-S_API s_erc s_logger_vwrite(const s_logger *logger, const char *fmt, va_list argp)
-{
-	s_erc this_error;
-
-
-	S_CLR_ERR(&this_error);
-
-	if (logger == NULL)
-	{
-		S_ERR_PRINT(S_ARGERROR, "s_logger_vwrite",
-					"Argument \"logger\" is NULL");
-		return S_ARGERROR;
-	}
-
-	if (fmt == NULL)
-	{
-		S_ERR_PRINT(S_ARGERROR, "s_logger_vwrite",
-					"Argument \"fmt\" is NULL");
-		return S_ARGERROR;
-	}
-
-	if (logger->v_write == NULL)
-	{
-		S_ERR_PRINT(S_METHINVLD, "s_logger_vwrite",
-					"Object method \"v_write\" is NULL");
-		return S_METHINVLD;
-	}
-
-	this_error = logger->v_write(logger, fmt, argp);
-
-	if (this_error != S_SUCCESS)
-	{
-		S_ERR_PRINT(this_error, "s_logger_vwrite",
-					"Call to object method \"v_write\" failed");
-
-		/* try and print it to stdout */
-		vfprintf(stdout, fmt, argp);
-	}
-
-	return this_error;
-}
-
-
-S_API s_erc s_logger_destroy(s_logger *logger)
-{
-	s_erc this_error;
-
-
-	S_CLR_ERR(&this_error);
-
-	if (logger == NULL)
-	{
-		S_ERR_PRINT(S_ARGERROR, "s_logger_destroy",
-					"Argument \"logger\" is NULL");
-		return S_ARGERROR;
-	}
-
-	if (logger->destroy == NULL)
-	{
-		S_ERR_PRINT(S_METHINVLD, "s_logger_destroy",
-					"Object method \"destroy\" is NULL");
-		return S_METHINVLD;
-	}
-
-	this_error = logger->destroy(logger);
-
-	if (this_error != S_SUCCESS)
-		S_ERR_PRINT(this_error, "s_logger_destroy",
-					"Call to object method \"destroy\" failed");
-
-	return this_error;
-}

@@ -28,35 +28,32 @@
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* Basic logging stream facilities.                                                 */
+/* Basic logging facilities.                                                        */
 /*                                                                                  */
 /*                                                                                  */
 /************************************************************************************/
 
-#ifndef _SPCT_LOG_STREAM_H__
-#define _SPCT_LOG_STREAM_H__
+#ifndef _SPCT_LOGGER_H__
+#define _SPCT_LOGGER_H__
 
 
 /**
- * @file stream_impl.h
- * Basic stream logging facilities.
+ * @file logger.h
+ * Basic logging facilities.
  */
 
 
 /**
  * @ingroup SLogging
- * @defgroup SLogger Streams
- * Basic loggin stream facilities.
- * The logging stream system provides a very basic mechanism to write
+ * @defgroup SLogger Loggers
+ * Basic logging facilities.
+ * The logging system provides a very basic mechanism to write
  * messages to different types of streams. It is used by all the error
  * and debug reporting facilites in @ref SErrDbg, and therefore aims
  * to be as robust as possible. If any error occurs during one of the
  * logger functions, an error will be printed to @c stderr. If a
  * logger is unsuccessful at writing the log message to the log stream
- * then it will log the message to @c stdout. It is easily extendable
- * by implementing the #s_logger structure pointer functions for a
- * new logger, with current implementations @ref SFileLogger
- * and @ref SConsoleLogger.
+ * then it will log the message to @c stdout.
  *
  * @{
  */
@@ -117,23 +114,30 @@ struct s_logger
 
 
 	/**
-	 * Write a message to the logger stream with a vardiac list
-	 * pointer. Must be implemented by each logger as it is called by
+	 * Format and write the given logging event information to the
+	 * logger. Must be implemented by each logger as it is called by
 	 * #s_logger_vwrite and #s_logger_write. If the message cannot be
-	 * written successfully then the calling function
+	 * formatted or written successfully then the calling function
 	 * (#s_logger_vwrite or #s_logger_write) will attemp to write the
 	 * message to @c stdout.
 	 *
 	 * @param self This logger object.
-	 * @param fmt A format string specifying the string to write and
-	 * the format of the arguments in the va_list.
+	 * @param level The event level.
+	 * @param error_msg As defined by #s_erc.
+	 * @param func_name Calling function name.
+	 * @param file_name Calling function file name.
+	 * @param line_num Calling line number in function.
+	 * @param user_msg A format string specifying the string to write
+	 * and the format of the arguments in the va_list.
 	 * @param argp The va_list, see the standard function @c
-	 * vprintf(). The value of @c argp is undefined after the call to
+	 * vprintf(). The value of argp is undefined after the call to
 	 * this function.
 	 *
 	 * @return Error code.
 	 */
-	s_erc (*v_write)(const s_logger *self, const char *fmt, va_list argp);
+	s_erc (*v_write)(const s_logger *self, s_log_event level, const char *error_msg,
+					 const char *func_name, const char *file_name, int line_num,
+					 const char *user_msg, va_list argp);
 
 
 	/**
@@ -149,6 +153,7 @@ struct s_logger
 };
 
 
+
 /************************************************************************************/
 /*                                                                                  */
 /* Function prototypes                                                              */
@@ -157,39 +162,114 @@ struct s_logger
 
 
 /**
- * Write a message to the logger with a variable argument list.
- * Writes the given message with the given format.
- *
- * @param logger The logger to write to.
- * @param fmt A format string specifying the string to write and the
- * format of the variable length argument list. Same as the the
- * standard @c printf() function.
- *
- * @return Error code.
- *
- * @note Thread-safety is dependant on the underlying implementation.
+ * @name Logger Creators
+ * @{
  */
-S_API s_erc s_logger_write(const s_logger *logger, const char *fmt, ...);
 
 
 /**
- * Write a message to the logger with a vardiac list pointer.
- * Equivalent to the #s_logger_write except that it is called
+ * Create a new file stream logger, see @ref SFileStream. The logging
+ * message will be in the @ref SLayoutStd layout format.
+ *
+ * @param path The full path and filename of the file which to
+ * log to. If the file already exists, then it will be overwritten.
+ *
+ * @return Pointer to newly created file stream logger, or @c NULL on error.
+ *
+ * @note Only thread safe if compiled with threading library, and
+ * whether the standard vfprintf() function is thread-safe,
+ * see @ref SThreads.
+ *
+ * @todo check MT safety
+ */
+S_API s_logger *s_logger_file_new(const char *path);
+
+
+/**
+ * Create a new console stream logger, see @ref SConsoleStream. The
+ * logging message will be in the @ref SLayoutStd layout format.
+ *
+ * @param log_to_stdout If #TRUE then logging will be to @c stdout,
+ * otherwise streaming will be to @c stderr.
+ *
+ * @return Pointer to newly created console stream logger, or @c NULL
+ * on error.
+ *
+ * @note Only thread safe if compiled with threading library, and
+ * whether the standard vfprintf() function is thread-safe,
+ * see @ref SThreads.
+
+ * @todo check MT safety
+ */
+S_API s_logger *s_logger_console_new(s_bool log_to_stdout);
+
+
+/**
+ * @}
+ */
+
+
+/**
+ * @name Logging Functions
+ * @{
+ */
+
+
+/**
+ * Format and write the given logging event information to the
+ * logger.
+ *
+ * @param logger The logger to write to.
+ * @param level The event level.
+ * @param error_msg As defined by #s_erc.
+ * @param func_name Calling function name.
+ * @param file_name Calling function file name.
+ * @param line_num Calling line number in function.
+ * @param user_msg A format string specifying the string to write and
+ * the format of the variable length argument list. Same as the the
+ * standard @c printf() function.
+ *
+ * @return Error code.
+ */
+S_API s_erc s_logger_write(const s_logger *logger, s_log_event level, const char *error_msg,
+						   const char *func_name, const char *file_name, int line_num,
+						   const char *user_msg, ...);
+
+
+/**
+ * Format and write the given logging event information to the
+ * logger. Equivalent to the #s_logger_write except that it is called
  * with a va_list instead of a variable number of arguments,
  * same as the standard function @c vprintf().
  *
  * @param logger The logger to write to.
- * @param fmt A format string specifying the string to write and the
- * format of the arguments in the va_list.
+ * @param level The event level.
+ * @param error_msg As defined by #s_erc.
+ * @param func_name Calling function name.
+ * @param file_name Calling function file name.
+ * @param line_num Calling line number in function.
+ * @param user_msg A format string specifying the string to write
+ * and the format of the arguments in the va_list.
  * @param argp The va_list, see the standard function @c
- * vprintf(). The value of argp is undefined after the call to this
- * function.
+ * vprintf(). The value of argp is undefined after the call to
+ * this function.
  *
- * @return error Error code.
- *
- * @note Thread-safety is dependant on the underlying implementation.
+ * @return Error code.
  */
-S_API s_erc s_logger_vwrite(const s_logger *logger, const char *fmt, va_list argp);
+S_API s_erc s_logger_vwrite(const s_logger *logger, s_log_event level, const char *error_msg,
+							const char *func_name, const char *file_name, int line_num,
+							const char *user_msg, va_list argp);
+
+
+/**
+ * @}
+ */
+
+
+/**
+ * @name Logger Destroyer
+ * @{
+ */
 
 
 /**
@@ -205,6 +285,11 @@ S_API s_erc s_logger_vwrite(const s_logger *logger, const char *fmt, va_list arg
 S_API s_erc s_logger_destroy(s_logger *logger);
 
 
+/**
+ * @}
+ */
+
+
 /************************************************************************************/
 /*                                                                                  */
 /* End external c declaration                                                       */
@@ -218,5 +303,5 @@ S_END_C_DECLS
  * end documentation
  */
 
-#endif /* _SPCT_LOG_STREAM_H__ */
+#endif /* _SPCT_LOGGER_H__ */
 

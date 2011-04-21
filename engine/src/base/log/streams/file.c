@@ -28,7 +28,7 @@
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* File logging facilities.                                                         */
+/* File streaming facilities.                                                       */
 /*                                                                                  */
 /*                                                                                  */
 /************************************************************************************/
@@ -56,9 +56,9 @@
 /************************************************************************************/
 
 /*
- * The opaque s_logger data structure
+ * The opaque s_stream data structure
  */
-struct s_logger_private_info
+struct s_stream_private_info
 {
 	FILE *file;                     /* File handle                        */
 	char *name;                     /* File name (full path name)         */
@@ -72,13 +72,13 @@ struct s_logger_private_info
 /*                                                                                  */
 /************************************************************************************/
 
-static s_erc v_write_file(const s_logger *self, const char *fmt, va_list argp);
+static s_erc v_write_file(const s_stream *self, const char *fmt, va_list argp);
 
-static s_erc destroy_file(s_logger *self);
+static s_erc destroy_file(s_stream *self);
 
-static s_erc startlog_info(s_logger *self);
+static s_erc startlog_info(s_stream *self);
 
-static s_erc endlog_info(s_logger *self);
+static s_erc endlog_info(s_stream *self);
 
 
 /************************************************************************************/
@@ -87,11 +87,11 @@ static s_erc endlog_info(s_logger *self);
 /*                                                                                  */
 /************************************************************************************/
 
-S_API s_logger *s_logger_file_new(const char *path)
+S_API s_stream *s_stream_file_new(const char *path)
 {
 	FILE *fhandle;
-	s_logger *file_logger;
-	struct s_logger_private_info *private_data;
+	s_stream *file_stream;
+	struct s_stream_private_info *private_data;
 	s_erc this_error;
 
 
@@ -99,7 +99,7 @@ S_API s_logger *s_logger_file_new(const char *path)
 
 	if (path == NULL)
 	{
-		S_ERR_PRINT(S_ARGERROR, "s_logger_file_new",
+		S_ERR_PRINT(S_ARGERROR, "s_stream_file_new",
 					"Argument \"path\" is NULL");
 		return NULL;
 	}
@@ -112,11 +112,11 @@ S_API s_logger *s_logger_file_new(const char *path)
 
 #ifdef SPCT_USE_THREADS
 		fprintf(stderr, "[ERROR (%s) %lu] Failed to open log file '%s'"
-				" (in function 's_logger_file_new', %s, %d)\n",
+				" (in function 's_stream_file_new', %s, %d)\n",
 				err_str, s_thread_id(), path, __FILE__, __LINE__);
 #else /* !SPCT_USE_THREADS */
 		fprintf(stderr, "[ERROR (%s)] Failed to open log file '%s'"
-				" (in function 's_logger_file_new', %s, %d)\n",
+				" (in function 's_stream_file_new', %s, %d)\n",
 				err_str, path, __FILE__, __LINE__);
 #endif /* SPCT_USE_THREADS */
 		S_FREE(err_str);
@@ -125,12 +125,12 @@ S_API s_logger *s_logger_file_new(const char *path)
 
 	clearerr(fhandle);
 
-	private_data = S_MALLOC(struct s_logger_private_info, 1);
+	private_data = S_MALLOC(struct s_stream_private_info, 1);
 
 	if (private_data == NULL)
 	{
-		S_FTL_ERR_PRINT(S_MEMERROR, "s_logger_file_new",
-						"Failed to allocate memory for logger private data");
+		S_FTL_ERR_PRINT(S_MEMERROR, "s_stream_file_new",
+						"Failed to allocate memory for stream private data");
 		fclose(fhandle);
 		return NULL;
 	}
@@ -140,19 +140,19 @@ S_API s_logger *s_logger_file_new(const char *path)
 
 	if (private_data->name == NULL)
 	{
-		S_ERR_PRINT(S_FAILURE, "s_logger_file_new",
+		S_ERR_PRINT(S_FAILURE, "s_stream_file_new",
 					"Call to \"s_strdup_clib\" failed");
 		S_FREE(private_data);
 		fclose(fhandle);
 		return NULL;
 	}
 
-	file_logger = S_MALLOC(s_logger, 1);
+	file_stream = S_MALLOC(s_stream, 1);
 
-	if (file_logger == NULL)
+	if (file_stream == NULL)
 	{
-		S_FTL_ERR_PRINT(S_MEMERROR, "s_logger_file_new",
-						"Failed to allocate memory for logger object");
+		S_FTL_ERR_PRINT(S_MEMERROR, "s_stream_file_new",
+						"Failed to allocate memory for stream object");
 		S_FREE(private_data->name);
 		S_FREE(private_data);
 		fclose(fhandle);
@@ -162,17 +162,17 @@ S_API s_logger *s_logger_file_new(const char *path)
 	/* init mutex */
 	s_mutex_init(&(private_data->logging_mutex));
 
-	file_logger->data = private_data;
+	file_stream->data = private_data;
 
 	/* initialize file writer function pointers */
-	file_logger->v_write = &v_write_file;
-	file_logger->destroy = &destroy_file;
+	file_stream->v_write = &v_write_file;
+	file_stream->destroy = &destroy_file;
 
-	if (startlog_info(file_logger) != S_SUCCESS)
-		S_ERR_PRINT(S_FAILURE, "s_logger_file_new",
+	if (startlog_info(file_stream) != S_SUCCESS)
+		S_ERR_PRINT(S_FAILURE, "s_stream_file_new",
 					"Call to \"startlog_info\" failed");
 
-	return file_logger;
+	return file_stream;
 }
 
 
@@ -182,7 +182,7 @@ S_API s_logger *s_logger_file_new(const char *path)
 /*                                                                                  */
 /************************************************************************************/
 
-static s_erc v_write_file(const s_logger *self, const char *fmt, va_list argp)
+static s_erc v_write_file(const s_stream *self, const char *fmt, va_list argp)
 {
 	s_erc this_error;
 
@@ -199,11 +199,11 @@ static s_erc v_write_file(const s_logger *self, const char *fmt, va_list argp)
 
 		S_NEW_ERR(&this_error, S_FAILURE);
 #ifdef SPCT_USE_THREADS
-		fprintf(stderr, "[ERROR (%s) %lu] vfprintf failed to write to log file '%s'"
+		fprintf(stderr, "[ERROR (%s) %lu] vfprintf failed to write to file stream '%s'"
 				" (in function 'v_write_file', %s, %d)\n",
 				err_str, s_thread_id(), self->data->name, __FILE__, __LINE__);
 #else /* !SPCT_USE_THREADS */
-		fprintf(stderr, "[ERROR (%s)] vfprintf failed to write to log file '%s'"
+		fprintf(stderr, "[ERROR (%s)] vfprintf failed to write to file stream '%s'"
 				" (in function 'v_write_file', %s, %d)\n",
 				err_str, self->data->name, __FILE__, __LINE__);
 #endif /* SPCT_USE_THREADS */
@@ -221,7 +221,7 @@ static s_erc v_write_file(const s_logger *self, const char *fmt, va_list argp)
 }
 
 
-static s_erc destroy_file(s_logger *self)
+static s_erc destroy_file(s_stream *self)
 {
 	s_erc this_error;
 
@@ -253,7 +253,7 @@ static s_erc destroy_file(s_logger *self)
 }
 
 
-static s_erc startlog_info(s_logger *self)
+static s_erc startlog_info(s_stream *self)
 {
 	s_erc this_error;
 	s_erc store_error;
@@ -263,7 +263,7 @@ static s_erc startlog_info(s_logger *self)
 	S_CLR_ERR(&store_error);
 
 	/* Speect Engine version info */
-	this_error = s_logger_write(self, "Speect (%s), version %d.%d.%d\n",
+	this_error = s_stream_write(self, "Speect (%s), version %d.%d.%d\n",
 								S_RELEASE, S_MAJOR_VERSION,
 								S_MINOR_VERSION, S_PATCHLEVEL);
 
@@ -271,12 +271,12 @@ static s_erc startlog_info(s_logger *self)
 	if (this_error != S_SUCCESS)
 	{
 		S_ERR_PRINT(S_FAILURE, "startlog_info",
-					"Call to \"s_logger_write\" failed");
+					"Call to \"s_stream_write\" failed");
 		store_error = this_error;
 	}
 
 	/* build info */
-	this_error = s_logger_write(self, "Build Date: %s %s\n",
+	this_error = s_stream_write(self, "Build Date: %s %s\n",
 								S_COMPILE_DATE,
 								S_COMPILE_TIME);
 
@@ -284,19 +284,19 @@ static s_erc startlog_info(s_logger *self)
 	if (this_error != S_SUCCESS)
 	{
 		S_ERR_PRINT(S_FAILURE, "startlog_info",
-					"Call to \"s_logger_write\" failed");
+					"Call to \"s_stream_write\" failed");
 		store_error = this_error;
 	}
 
 	/* start */
-	this_error = s_logger_write(self,
+	this_error = s_stream_write(self,
 								"------------------- start log --------------------\n\n");
 
 	/* ok if this error is cleared futher on, not big issue */
 	if (this_error != S_SUCCESS)
 	{
 		S_ERR_PRINT(S_FAILURE, "startlog_info",
-					"Call to \"s_logger_write\" failed");
+					"Call to \"s_stream_write\" failed");
 		store_error = this_error;
 	}
 
@@ -307,7 +307,7 @@ static s_erc startlog_info(s_logger *self)
 }
 
 
-static s_erc endlog_info(s_logger *self)
+static s_erc endlog_info(s_stream *self)
 {
 	s_erc this_error;
 
@@ -315,13 +315,13 @@ static s_erc endlog_info(s_logger *self)
 	S_CLR_ERR(&this_error);
 
 	/* Speect Engine version info */
-	this_error = s_logger_write(self,
+	this_error = s_stream_write(self,
 								"\n--------------------- end log --------------------\n");
 
 	/* ok if this error is cleared futher on, not big issue */
 	if (this_error != S_SUCCESS)
 		S_ERR_PRINT(S_FAILURE, "endlog_info",
-					"Call to \"s_logger_write\" failed");
+					"Call to \"s_stream_write\" failed");
 
 	return this_error;
 }

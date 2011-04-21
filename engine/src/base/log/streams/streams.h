@@ -28,31 +28,31 @@
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* Base log streams system include.                                                 */
+/* Base streams system include.                                                     */
 /*                                                                                  */
 /*                                                                                  */
 /************************************************************************************/
 
-#ifndef _SPCT_LOG_STREAMS_H__
-#define _SPCT_LOG_STREAMS_H__
+#ifndef _SPCT_STREAMS_H__
+#define _SPCT_STREAMS_H__
 
 
 /**
  * @file streams.h
- * Base log streams system include.
+ * Base streams system include, for different stream implementations.
  */
 
 
 /************************************************************************************/
 /*                                                                                  */
-/*  Include files in base log streams                                               */
+/*  Include files in base streams                                                   */
 /*                                                                                  */
 /************************************************************************************/
 
 #include "include/common.h"
-#include "base/log/streams/stream_impl.h"      /* Basic logging stream facilities.   */
+#include "base/log/streams/stream.h"           /* Basic logging stream facilities.   */
 #include "base/log/streams/file.h"             /* File logging implementation.       */
 #include "base/log/streams/console.h"          /* Console logging implementation.    */
 
 
-#endif /* _SPCT_LOG_STREAMS_H__ */
+#endif /* _SPCT_STREAMS_H__ */

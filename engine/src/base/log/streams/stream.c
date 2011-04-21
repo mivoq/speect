@@ -28,27 +28,10 @@
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* Console streaming facilities.                                                    */
+/* Basic stream facilities.                                                         */
 /*                                                                                  */
 /*                                                                                  */
 /************************************************************************************/
-
-#ifndef _SPCT_STREAM_CONSOLE_H__
-#define _SPCT_STREAM_CONSOLE_H__
-
-
-/**
- * @file console.h
- * A console log stream.
- */
-
-
-/**
- * @ingroup SStream
- * @defgroup SConsoleStream Console Stream
- * Implements a console stream for either @c stdout or @c stderr.
- * @{
- */
 
 
 /************************************************************************************/
@@ -57,57 +40,137 @@
 /*                                                                                  */
 /************************************************************************************/
 
-#include "include/common.h"
-#include "base/utils/types.h"
+#include <stdio.h>
+#include "base/utils/alloc.h"
+#include "base/errdbg/errdbg_utils.h"
+#include "base/errdbg/errdbg_macros.h"
 #include "base/log/streams/stream.h"
 
 
 /************************************************************************************/
 /*                                                                                  */
-/* Begin external c declaration                                                     */
-/*                                                                                  */
-/************************************************************************************/
-S_BEGIN_C_DECLS
-
-
-/************************************************************************************/
-/*                                                                                  */
-/* Function prototypes                                                              */
+/* Function implementations                                                         */
 /*                                                                                  */
 /************************************************************************************/
 
-/**
- * Create a new console stream. The console stream implementes the
- * function pointers of #s_stream (#s_stream::v_write and
- * #s_stream::destroy).
- *
- * @param log_to_stdout If #TRUE then logging will be to @c stdout,
- * otherwise streaming will be to @c stderr.
- *
- * @return Pointer to newly created console stream that can be used
- * with the functions defined in @ref SStream, or @c NULL on error.
- *
- * @note Only thread safe if compiled with threading library, and
- * whether the standard vfprintf() function is thread-safe,
- * see @ref SThreads.
-
- * @todo check MT safety
- */
-S_API s_stream *s_stream_console_new(s_bool log_to_stdout);
+S_API s_erc s_stream_write(const s_stream *stream, const char *fmt, ...)
+{
+	va_list marker;
+	s_erc this_error;
 
 
-/************************************************************************************/
-/*                                                                                  */
-/* End external c declaration                                                       */
-/*                                                                                  */
-/************************************************************************************/
-S_END_C_DECLS
+	S_CLR_ERR(&this_error);
+
+	if (stream == NULL)
+	{
+		S_ERR_PRINT(S_ARGERROR, "s_stream_write",
+					"Argument \"stream\" is NULL");
+		return S_ARGERROR;
+	}
+
+	if (fmt == NULL)
+	{
+		S_ERR_PRINT(S_ARGERROR, "s_stream_write",
+					"Argument \"fmt\" is NULL");
+		return S_ARGERROR;
+	}
+
+	if (stream->v_write == NULL)
+	{
+		S_ERR_PRINT(S_METHINVLD, "s_stream_write",
+					"Object method \"v_write\" is NULL");
+		return S_METHINVLD;
+	}
+
+	va_start(marker, fmt);
+	this_error = stream->v_write(stream, fmt, marker);
+	va_end(marker);
+
+	if (this_error != S_SUCCESS)
+	{
+		S_ERR_PRINT(this_error, "s_stream_write",
+					"Call to object method \"v_write\" failed");
+		/* try and print it to stdout */
+		va_start(marker, fmt);
+		vfprintf(stdout, fmt, marker);
+		va_end(marker);
+	}
+
+	return this_error;
+}
 
 
-/**
- * @}
- * end documentation
- */
+S_API s_erc s_stream_vwrite(const s_stream *stream, const char *fmt, va_list argp)
+{
+	s_erc this_error;
 
-#endif /* _SPCT_STREAM_CONSOLE_H__ */
+
+	S_CLR_ERR(&this_error);
+
+	if (stream == NULL)
+	{
+		S_ERR_PRINT(S_ARGERROR, "s_stream_vwrite",
+					"Argument \"stream\" is NULL");
+		return S_ARGERROR;
+	}
+
+	if (fmt == NULL)
+	{
+		S_ERR_PRINT(S_ARGERROR, "s_stream_vwrite",
+					"Argument \"fmt\" is NULL");
+		return S_ARGERROR;
+	}
+
+	if (stream->v_write == NULL)
+	{
+		S_ERR_PRINT(S_METHINVLD, "s_stream_vwrite",
+					"Object method \"v_write\" is NULL");
+		return S_METHINVLD;
+	}
+
+	this_error = stream->v_write(stream, fmt, argp);
+
+	if (this_error != S_SUCCESS)
+	{
+		S_ERR_PRINT(this_error, "s_stream_vwrite",
+					"Call to object method \"v_write\" failed");
+
+		/* try and print it to stdout */
+		vfprintf(stdout, fmt, argp);
+	}
+
+	return this_error;
+}
+
+
+S_API s_erc s_stream_destroy(s_stream *stream)
+{
+	s_erc this_error;
+
+
+	S_CLR_ERR(&this_error);
+
+	if (stream == NULL)
+	{
+		S_ERR_PRINT(S_ARGERROR, "s_stream_destroy",
+					"Argument \"stream\" is NULL");
+		return S_ARGERROR;
+	}
+
+	if (stream->destroy == NULL)
+	{
+		S_ERR_PRINT(S_METHINVLD, "s_stream_destroy",
+					"Object method \"destroy\" is NULL");
+		return S_METHINVLD;
+	}
+
+	this_error = stream->destroy(stream);
+
+	if (this_error != S_SUCCESS)
+		S_ERR_PRINT(this_error, "s_stream_destroy",
+					"Call to object method \"destroy\" failed");
+
+	return this_error;
+}
+
 

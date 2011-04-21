@@ -87,8 +87,9 @@
 
 #include "include/common.h"
 #include "base/log/event/event.h"     /* Logging events include.      */
-#include "base/log/layout/layout.h"   /* Logging layouts include.     */
+#include "base/log/layout/layouts.h"  /* Logging layouts include.     */
 #include "base/log/streams/streams.h" /* Logging streams include.     */
+#include "base/log/logger.h"          /* Logging include.             */
 
 
 #endif /* _SPCT_LOG_H__ */

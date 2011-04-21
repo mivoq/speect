@@ -49,7 +49,7 @@
 #include "base/strings/strings.h"
 #include "base/strings/sprint.h"
 #include "base/errdbg/errdbg_macros.h"
-#include "base/log/layout/layout_impl.h"
+#include "base/log/layout/layout.h"
 
 
 /************************************************************************************/

@@ -28,25 +28,25 @@
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* File logging facilities.                                                         */
+/* File streaming facilities.                                                       */
 /*                                                                                  */
 /*                                                                                  */
 /************************************************************************************/
 
-#ifndef _SPCT_LOG_FILE_H__
-#define _SPCT_LOG_FILE_H__
+#ifndef _SPCT_STREAM_FILE_H__
+#define _SPCT_STREAM_FILE_H__
 
 
 /**
  * @file file.h
- * A file log stream.
+ * A file stream.
  */
 
 
 /**
  * @ingroup SLogger
- * @defgroup SFileLogger File
- * Implements a file log stream.
+ * @defgroup SFileStream File Streaming
+ * Implements a file stream.
  * @{
  */
 
@@ -58,7 +58,7 @@
 /************************************************************************************/
 
 #include "include/common.h"
-#include "base/log/streams/stream_impl.h"
+#include "base/log/streams/stream.h"
 
 
 /************************************************************************************/
@@ -76,15 +76,15 @@ S_BEGIN_C_DECLS
 /************************************************************************************/
 
 /**
- * Create a new file log stream. The file logger implementes the
- * function pointers of #s_logger (#s_logger::v_write and
- * #s_logger::destroy).
+ * Create a new file stream. The file stream implementes the
+ * function pointers of #s_stream (#s_stream::v_write and
+ * #s_stream::destroy).
  *
  * @param path The full path and filename of the file which to
  * log to. If the file already exists, then it will be overwritten.
  *
- * @return Pointer to newly created file logger that can be used with
- * the functions defined in @ref SLogging, or @c NULL on error.
+ * @return Pointer to newly created file stream that can be used with
+ * the functions defined in @ref SStream, or @c NULL on error.
  *
  * @note Only thread safe if compiled with threading library, and
  * whether the standard vfprintf() function is thread-safe,
@@ -92,7 +92,7 @@ S_BEGIN_C_DECLS
  *
  * @todo check MT safety
  */
-S_API s_logger *s_logger_file_new(const char *path);
+S_API s_stream *s_stream_file_new(const char *path);
 
 
 /************************************************************************************/
@@ -108,5 +108,5 @@ S_END_C_DECLS
  * end documentation
  */
 
-#endif /* _SPCT_LOG_FILE_H__ */
+#endif /* _SPCT_STREAM_FILE_H__ */
 

@@ -28,7 +28,7 @@
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* Console logging facilities.                                                      */
+/* Console streaming facilities.                                                    */
 /*                                                                                  */
 /*                                                                                  */
 /************************************************************************************/
@@ -55,9 +55,9 @@
 /************************************************************************************/
 
 /*
- * The opaque s_logger data structure
+ * The opaque s_stream data structure
  */
-struct s_logger_private_info
+struct s_stream_private_info
 {
 	FILE   *file;                   /* Stream handle for stdout/stderr.   */
 	S_DECLARE_MUTEX(logging_mutex); /* Locking mutex.                     */
@@ -70,9 +70,9 @@ struct s_logger_private_info
 /*                                                                                  */
 /************************************************************************************/
 
-static s_erc v_write_console(const s_logger *self, const char *fmt, va_list argp);
+static s_erc v_write_console(const s_stream *self, const char *fmt, va_list argp);
 
-static s_erc destroy_console(s_logger *self);
+static s_erc destroy_console(s_stream *self);
 
 
 /************************************************************************************/
@@ -81,30 +81,30 @@ static s_erc destroy_console(s_logger *self);
 /*                                                                                  */
 /************************************************************************************/
 
-S_API s_logger *s_logger_console_new(s_bool log_to_stdout)
+S_API s_stream *s_stream_console_new(s_bool log_to_stdout)
 {
-	s_logger *console_logger;
-	struct s_logger_private_info *private_data;
+	s_stream *console_stream;
+	struct s_stream_private_info *private_data;
 	s_erc this_error;
 
 
 	S_CLR_ERR(&this_error);
 
-	private_data = S_MALLOC(struct s_logger_private_info, 1);
+	private_data = S_MALLOC(struct s_stream_private_info, 1);
 
 	if (private_data == NULL)
 	{
-		S_FTL_ERR_PRINT(S_MEMERROR, "s_logger_console_new",
-						"Failed to allocate memory for logger private data");
+		S_FTL_ERR_PRINT(S_MEMERROR, "s_stream_console_new",
+						"Failed to allocate memory for stream private data");
 		return NULL;
 	}
 
-	console_logger = S_MALLOC(s_logger, 1);
+	console_stream = S_MALLOC(s_stream, 1);
 
-	if (console_logger == NULL)
+	if (console_stream == NULL)
 	{
-		S_FTL_ERR_PRINT(S_MEMERROR, "s_logger_console_new",
-						"Failed to allocate memory for logger object");
+		S_FTL_ERR_PRINT(S_MEMERROR, "s_stream_console_new",
+						"Failed to allocate memory for stream object");
 		S_FREE(private_data);
 		return NULL;
 	}
@@ -117,13 +117,13 @@ S_API s_logger *s_logger_console_new(s_bool log_to_stdout)
 	/* initialize mutex */
 	s_mutex_init(&(private_data->logging_mutex));
 
-	console_logger->data = private_data;
+	console_stream->data = private_data;
 
 	/* initialize console writer function pointers */
-	console_logger->v_write = &v_write_console;
-	console_logger->destroy = &destroy_console;
+	console_stream->v_write = &v_write_console;
+	console_stream->destroy = &destroy_console;
 
-	return console_logger;
+	return console_stream;
 }
 
 
@@ -133,7 +133,7 @@ S_API s_logger *s_logger_console_new(s_bool log_to_stdout)
 /*                                                                                  */
 /************************************************************************************/
 
-static s_erc v_write_console(const s_logger *self, const char *fmt, va_list argp)
+static s_erc v_write_console(const s_stream *self, const char *fmt, va_list argp)
 {
 	s_erc this_error;
 
@@ -159,7 +159,7 @@ static s_erc v_write_console(const s_logger *self, const char *fmt, va_list argp
 }
 
 
-static s_erc destroy_console(s_logger *self)
+static s_erc destroy_console(s_stream *self)
 {
 	s_erc this_error;
 

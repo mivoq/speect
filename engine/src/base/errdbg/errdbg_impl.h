@@ -80,24 +80,18 @@ S_BEGIN_C_DECLS
  * Initialize the error and debugging system. The relevant resources
  * are allocated.
  *
- * @param err_logger The logger stream where errors and warnings are
- * logged.
- * @param dbg_logger The logger stream where debug messages are
- * logged. This can be the same logger as @a err_logger. If @c NULL
- * then no debug messages are logged.
- * @param layout The layout formatter.
+ * @param logger The logger stream where errors, warnings and debug
+ * messages are logged.
  * @param level The initial debugging level. The debuggging level can
  * be changed with #s_errdbg_level.
  * @param error Error code.
  *
- * @note The Error and debugging module takes ownership of the layout
- * and the loggers. These resources are destroyed when the module is
+ * @note The Error and debugging module takes ownership of the
+ * logger. These resources are destroyed when the module is
  * quit with @c _s_errdbg_quit.
  * @note Not thread safe.
- * @note The error and debug loggers can be the same logger.
  */
-S_LOCAL void _s_errdbg_init(s_logger *err_logger, s_logger *dbg_logger,
-							s_layout *layout, s_dbg_lvl level, s_erc *error);
+S_LOCAL void _s_errdbg_init(s_logger *logger, s_dbg_lvl level, s_erc *error);
 
 
 /**
@@ -120,7 +114,19 @@ S_LOCAL void _s_errdbg_quit(s_erc *error);
  *
  * @see #s_dbg_lvl
  */
-S_API void s_errdbg_level(s_dbg_lvl level, s_erc *error);
+S_API void s_set_errdbg_level(s_dbg_lvl level, s_erc *error);
+
+
+/**
+ * Get the debugging level.
+ *
+ * @param error Error code.
+ *
+ * @return The debugging level.
+ *
+ * @see #s_dbg_lvl
+ */
+S_API s_dbg_lvl s_get_errdbg_level(s_erc *error);
 
 
 /************************************************************************************/

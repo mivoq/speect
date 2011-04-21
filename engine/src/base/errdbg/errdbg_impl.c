@@ -84,29 +84,14 @@
 
 #define _S_LOG_WITH_INITIALIZED(ERROR_EVENT, FUNC, RETURN_ABORT)		\
 	do {																\
-		/* format message with layout */								\
-		va_start(argp, fmt);											\
-		msg = s_layout_vformat(my_layout, ERROR_EVENT, error_string,	\
-							   function_name, error_file_name, error_line, \
-							   fmt, argp);								\
+       	/* send message to logger */	                                \
+	    va_start(argp, fmt);                                            \
+        local_err = s_logger_vwrite(ewd_logger, ERROR_EVENT,            \
+                                    error_string, function_name,        \
+			                        error_file_name, error_line,        \
+									fmt, argp);							\
 		va_end(argp);													\
 																		\
-		if (msg == NULL)												\
-		{																\
-			/*															\
-			 * if layout made an error it should still output message	\
-			 * to stdout.												\
-			 */															\
-			S_ERR_PRINT(S_METHFAIL, FUNC,								\
-						"Call to \"s_layout_vformat\" failed");			\
-			S_FREE(error_string);										\
-			/* unlock and return, nothing to do here */					\
-			s_mutex_unlock(&errdbg_mutex);								\
-			RETURN_ABORT;												\
-		}																\
-																		\
-		/* send message to logger */									\
-		local_err = s_logger_write(err_logger, msg);					\
 		if (local_err != S_SUCCESS)										\
 		{																\
 			/*															\
@@ -114,10 +99,9 @@
 			 * to stdout.												\
 			 */															\
 			S_ERR_PRINT(local_err, FUNC,								\
-						"Call to \"s_logger_write\" failed");			\
+						"Call to \"s_logger_vwrite\" failed");			\
 		}																\
 																		\
-		S_FREE(msg);													\
 		S_FREE(error_string);											\
 																		\
 		/* unlock and return, nothing to do here */						\
@@ -159,11 +143,7 @@ static int error_line;
 
 static s_dbg_lvl dbg_level = S_DBG_INFO;
 
-static s_logger *err_logger = NULL;
-
-static s_logger *dbg_logger = NULL;
-
-static s_layout *my_layout = NULL;
+static s_logger *ewd_logger = NULL;
 
 static s_bool initialized = FALSE;
 
@@ -198,27 +178,18 @@ static s_bool check_error(s_erc *error_code, s_erc this_error,
 /*                                                                                  */
 /************************************************************************************/
 
-S_LOCAL void _s_errdbg_init(s_logger *e_logger, s_logger *d_logger,
-							s_layout *layout, s_dbg_lvl level, s_erc *error)
+S_LOCAL void _s_errdbg_init(s_logger *logger, s_dbg_lvl level, s_erc *error)
 {
 	S_CLR_ERR(error);
 
 	if (initialized == TRUE)
 		return;
 
-	if (e_logger == NULL)
+	if (logger == NULL)
 	{
 		S_NEW_ERR(error, S_ARGERROR);
 		S_ERR_PRINT(S_ARGERROR, "_s_errdbg_init",
-					"Argument \"e_logger\" is NULL");
-		return;
-	}
-
-	if (layout == NULL)
-	{
-		S_NEW_ERR(error, S_ARGERROR);
-		S_ERR_PRINT(S_ARGERROR, "_s_errdbg_init",
-					"Argument \"layout\" is NULL");
+					"Argument \"logger\" is NULL");
 		return;
 	}
 
@@ -237,10 +208,7 @@ S_LOCAL void _s_errdbg_init(s_logger *e_logger, s_logger *d_logger,
 	s_mutex_lock(&errdbg_mutex);
 
 	dbg_level = level;
-	err_logger = e_logger;
-	dbg_logger = d_logger;
-	my_layout = layout;
-
+	ewd_logger = logger;
 	initialized = TRUE;
 
 	/* unlock mutex before return */
@@ -261,39 +229,14 @@ S_LOCAL void _s_errdbg_quit(s_erc *error)
 	/* lock mutex */
 	s_mutex_lock(&errdbg_mutex);
 
-	if (err_logger == dbg_logger) /* loggers are the same */
-		dbg_logger = NULL;
-
-	local_err = s_logger_destroy(err_logger);
+	local_err = s_logger_destroy(ewd_logger);
 	if (local_err != S_SUCCESS)
 	{
 		S_ERR_PRINT(local_err, "_s_errdbg_quit",
-					"Failed to destroy error logger");
+					"Failed to destroy logger");
 		S_NEW_ERR(error, local_err);
 	}
-	S_FREE(err_logger);
-
-	if (dbg_logger != NULL)
-	{
-		local_err = s_logger_destroy(dbg_logger);
-		if (local_err != S_SUCCESS)
-		{
-			S_ERR_PRINT(local_err, "_s_errdbg_quit",
-						"Failed to destroy debug logger");
-			if (*error == S_SUCCESS)
-				S_NEW_ERR(error, local_err);
-		}
-		S_FREE(dbg_logger);
-	}
-
-	local_err = s_layout_destroy(my_layout);
-	if (local_err != S_SUCCESS)
-	{
-		S_ERR_PRINT(local_err, "_s_errdbg_quit",
-					"Failed to destroy layout");
-		S_NEW_ERR(error, local_err);
-	}
-	S_FREE(my_layout);
+	S_FREE(ewd_logger);
 
 	error_file_name = NULL;
 	error_line = 0;
@@ -315,7 +258,7 @@ S_LOCAL void _s_errdbg_quit(s_erc *error)
 }
 
 
-S_API void s_errdbg_level(s_dbg_lvl level, s_erc *error)
+S_API void s_set_errdbg_level(s_dbg_lvl level, s_erc *error)
 {
 	S_CLR_ERR(error);
 
@@ -326,6 +269,25 @@ S_API void s_errdbg_level(s_dbg_lvl level, s_erc *error)
 
 	/* unlock mutex */
 	s_mutex_unlock(&errdbg_mutex);
+}
+
+
+S_API s_dbg_lvl s_get_errdbg_level(s_erc *error)
+{
+	s_dbg_lvl level;
+
+
+	S_CLR_ERR(error);
+
+	/* lock mutex */
+	s_mutex_lock(&errdbg_mutex);
+
+	level = dbg_level;
+
+	/* unlock mutex */
+	s_mutex_unlock(&errdbg_mutex);
+
+	return level;
 }
 
 
@@ -441,11 +403,7 @@ S_API void _s_dbg(s_dbg_lvl level, const char *fmt, ...)
 {
 	va_list argp;
 	s_erc local_err;
-	char *msg;
 
-
-	if (dbg_logger == NULL)
-		return;
 
 	S_CLR_ERR(&local_err);
 
@@ -461,27 +419,14 @@ S_API void _s_dbg(s_dbg_lvl level, const char *fmt, ...)
 			return;
 		}
 
-		/* format message with layout */
-		va_start(argp, fmt);
-		msg = s_layout_vformat(my_layout, dbglvl_2_evntlvl(level),
-							   NULL, NULL, NULL, 0, fmt, argp);
-		va_end(argp);
-
-		if (msg == NULL)
-		{
-			/*
-			 * if layout made an error it should still output message
-			 * to stdout.
-			 */
-			S_ERR_PRINT(S_METHFAIL, "_s_dbg",
-						"Call to \"s_layout_vformat\" failed");
-			/* unlock and return, nothing to do here */
-			s_mutex_unlock(&errdbg_mutex);
-			return;
-		}
 
 		/* send message to logger */
-		local_err = s_logger_write(dbg_logger, msg);
+		va_start(argp, fmt);
+		local_err = s_logger_vwrite(ewd_logger, dbglvl_2_evntlvl(level),
+									NULL, NULL, NULL, 0,
+									fmt, argp);
+		va_end(argp);
+
 		if (local_err != S_SUCCESS)
 		{
 			/*
@@ -489,10 +434,8 @@ S_API void _s_dbg(s_dbg_lvl level, const char *fmt, ...)
 			 * to stdout.
 			 */
 			S_ERR_PRINT(local_err, "_s_dbg",
-						"Call to \"s_logger_write\" failed");
+						"Call to \"s_logger_vwrite\" failed");
 		}
-
-		S_FREE(msg);
 
 		/* unlock and return, nothing to do here */
 		s_mutex_unlock(&errdbg_mutex);
@@ -543,7 +486,6 @@ static void log_error(s_erc *error_code, s_erc new_error,
 {
 	s_erc local_err;
 	va_list argp;
-	char *msg;
 	char *error_string;
 
 
@@ -570,7 +512,6 @@ static void log_warn(s_erc new_error, const char *function_name,
 {
 	s_erc local_err;
 	va_list argp;
-	char *msg;
 	char *error_string;
 
 
@@ -593,7 +534,6 @@ static void log_fatal_error(s_erc *error_code, s_erc new_error,
 {
 	s_erc local_err;
 	va_list argp;
-	char *msg;
 	char *error_string;
 
 
@@ -623,7 +563,6 @@ static s_bool check_error(s_erc *error_code, s_erc this_error,
 {
 	s_erc local_err;
 	va_list argp;
-	char *msg;
 	char *error_string;
 
 

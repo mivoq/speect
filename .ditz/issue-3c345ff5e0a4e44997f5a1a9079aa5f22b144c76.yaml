@@ -7,8 +7,8 @@ type: :bugfix
 component: Speect
 release: Beryllium
 reporter: Georg Schlunz <gschlunz@csir.co.za>
-status: :unstarted
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2011-01-17 12:42:38.686921 Z
 references: []
 
@@ -18,3 +18,7 @@ log_events:
   - Georg Schlunz <gschlunz@csir.co.za>
   - created
   - none
+- - 2011-04-21 07:55:33.509472 Z
+  - Aby Louw <jalouw@csir.co.za>
+  - closed with disposition fixed
+  - Fixed with given proposal.

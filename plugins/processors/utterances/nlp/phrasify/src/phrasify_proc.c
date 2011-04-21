@@ -222,6 +222,10 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 
 	while (wordItem != NULL)
 	{
+		SItem *lastWordInToken;
+		SItem *wordAsToken;
+
+
 		if (phraseItem == NULL)
 		{
 			/* if phrase item is NULL, create a new phrase item (NULL
@@ -244,12 +248,17 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 					  "Call to \"SItemAddDaughter\" failed"))
 			goto quit_error;
 
+		/* get word as in Token relation */
+		wordAsToken = SItemAs(wordItem, "Token", error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "Run",
+					  "Failed to get word item's as in Token relation"))
+			goto quit_error;
+
 		/*
-		 * get word's token:
-		 *    first get word as in token relation,
-		 *    then get it's parent which is the token.
+		 * get word's token which is the parent of wordAsToken.
 		 */
-		tokenItem = SItemParent(SItemAs(wordItem, "Token", error), error);
+		tokenItem = SItemParent(wordAsToken, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "Run",
 					  "Failed to get word item's token item"))
@@ -262,7 +271,14 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 					  "Call to \"SItemFeatureIsPresent\" failed"))
 			goto quit_error;
 
-		if (is_present)
+		/* get last word in token */
+		lastWordInToken = SItemLastDaughter(tokenItem, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "Run",
+					  "Failed to get last daughter of token item"))
+			goto quit_error;
+
+		if ((is_present) && (wordAsToken == lastWordInToken))
 		{
 			char *ptr;
 

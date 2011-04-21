@@ -34,29 +34,29 @@
 /*                                                                                  */
 /************************************************************************************/
 
-%nodefaultctor PListIterator;
-%nodefaultctor PMapIterator;
+%nodefaultctor _PListIterator;
+%nodefaultctor _PMapIterator;
 
 %inline
 {
 	typedef struct
 	{
 		SIterator *itr;
-	} PMapIterator;
+	} _PMapIterator;
 
 
-	PMapIterator *make_PMapIterator(SIterator *itr, s_erc *error)
+	_PMapIterator *_make_PMapIterator(SIterator *itr, s_erc *error)
 	{
-		PMapIterator *pitr;
+		_PMapIterator *pitr;
 
 
 		S_CLR_ERR(error);
-		pitr = S_MALLOC(PMapIterator, 1);
+		pitr = S_MALLOC(_PMapIterator, 1);
 		if (pitr == NULL)
 		{
 			S_FTL_ERR(error, S_MEMERROR,
-					  "make_PMapIterator",
-					  "Failed to allocate memory for 'PMapIterator' object");
+					  "_make_PMapIterator",
+					  "Failed to allocate memory for '_PMapIterator' object");
 			return NULL;
 		}
 
@@ -67,21 +67,21 @@
 	typedef struct
 	{
 		SIterator *itr;
-	} PListIterator;
+	} _PListIterator;
 
 
-	PListIterator *make_PListIterator(SIterator *itr, s_erc *error)
+	_PListIterator *_make_PListIterator(SIterator *itr, s_erc *error)
 	{
-		PListIterator *pitr;
+		_PListIterator *pitr;
 
 
 		S_CLR_ERR(error);
-		pitr = S_MALLOC(PListIterator, 1);
+		pitr = S_MALLOC(_PListIterator, 1);
 		if (pitr == NULL)
 		{
 			S_FTL_ERR(error, S_MEMERROR,
-					  "make_PListIterator",
-					  "Failed to allocate memory for 'PListIterator' object");
+					  "_make_PListIterator",
+					  "Failed to allocate memory for '_PListIterator' object");
 			return NULL;
 		}
 

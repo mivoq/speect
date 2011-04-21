@@ -220,9 +220,9 @@
 	}
 
 
-	PListIterator *__iter__()
+	_PListIterator *__iter__()
 	{
-		PListIterator *pitr;
+		_PListIterator *pitr;
 		SIterator *itr;
 		s_erc error;
 
@@ -232,7 +232,7 @@
 		if (error != S_SUCCESS)
 			return NULL;
 
-		pitr = make_PListIterator(itr, &error);
+		pitr = _make_PListIterator(itr, &error);
 		if (error != S_SUCCESS)
 			return NULL;
 

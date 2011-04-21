@@ -35,9 +35,9 @@
 /************************************************************************************/
 
 
-%extend PMapIterator
+%extend _PMapIterator
 {
-	PMapIterator *__iter__()
+	_PMapIterator *__iter__()
 	{
 		return $self;
 	}
@@ -76,9 +76,9 @@
 };
 
 
-%extend PListIterator
+%extend _PListIterator
 {
-	PListIterator *__iter__()
+	_PListIterator *__iter__()
 	{
 		return $self;
 	}

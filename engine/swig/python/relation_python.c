@@ -36,14 +36,14 @@
 
 %extend SRelation
 {
-	SRelationItr *__iter__()
+	_SRelationItr *__iter__()
 	{
-		SRelationItr *pitr;
+		_SRelationItr *pitr;
 		s_erc error;
 
 
 		S_CLR_ERR(&error);
-		pitr = make_SRelationItr($self, &error);
+		pitr = _make_SRelationItr($self, &error);
 		if (error != S_SUCCESS)
 			return NULL;
 

@@ -34,7 +34,7 @@
 /*                                                                                  */
 /************************************************************************************/
 
-%nodefaultctor SRelationItr;
+%nodefaultctor _SRelationItr;
 
 %inline
 {
@@ -42,19 +42,19 @@
 	typedef struct
 	{
 		const SItem *item;
-	} SRelationItr;
+	} _SRelationItr;
 
-	SRelationItr *make_SRelationItr(const SRelation *rel, s_erc *error)
+	_SRelationItr *_make_SRelationItr(const SRelation *rel, s_erc *error)
 	{
-		SRelationItr *ritr;
+		_SRelationItr *ritr;
 
 
 		S_CLR_ERR(error);
-		ritr = S_MALLOC(SRelationItr, 1);
+		ritr = S_MALLOC(_SRelationItr, 1);
 		if (ritr == NULL)
 		{
 			S_FTL_ERR(error, S_MEMERROR,
-					  "make_SRelationItr",
+					  "_make_SRelationItr",
 					  "Failed to allocate memory for 'SRelationItr' object");
 			return NULL;
 		}
@@ -71,9 +71,9 @@
  }
 
 
-%extend SRelationItr
+%extend _SRelationItr
 {
-	SRelationItr *__iter__()
+	_SRelationItr *__iter__()
 	{
 		return $self;
 	}

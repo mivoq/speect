@@ -175,9 +175,9 @@
 	}
 
 
-	PMapIterator *__iter__()
+	_PMapIterator *__iter__()
 	{
-		PMapIterator *pitr;
+		_PMapIterator *pitr;
 		SIterator *itr;
 		s_erc error;
 
@@ -187,7 +187,7 @@
 		if (error != S_SUCCESS)
 			return NULL;
 
-		pitr = make_PMapIterator(itr, &error);
+		pitr = _make_PMapIterator(itr, &error);
 		if (error != S_SUCCESS)
 			return NULL;
 

@@ -55,12 +55,6 @@
 /*                                                                                  */
 /************************************************************************************/
 
-static s_logger *err_logger = NULL;
-
-static s_logger *dbg_logger = NULL;
-
-static s_layout *layout = NULL;
-
 static uint initialized_count = 0;
 
 
@@ -74,12 +68,13 @@ static uint initialized_count = 0;
  * Initialize the Speect library.
  * The order of the calls are important.
  */
-S_API s_erc speect_init(void)
+S_API s_erc speect_init(s_logger *logger)
 {
 	s_erc local_err = S_SUCCESS;
 	s_ini_parser *spct_ini;
 	s_bool have_plugin_path;
 	const char *def_plugin_path;
+	s_logger *local_logger;
 
 
 	if (initialized_count++ > 0)
@@ -98,18 +93,23 @@ S_API s_erc speect_init(void)
 		return S_FAILURE;
 	}
 
-	/* create error and debugging loggers */
-	_s_create_loggers(spct_ini, &err_logger, &dbg_logger, &layout, &local_err);
-	if (local_err != S_SUCCESS)
+	/* create logger to stderr if no logger was given */
+	if (logger == NULL)
 	{
-		S_ERR_PRINT(S_FAILURE, "speect_init",
-					"Failed to create error and debugging loggers");
-		initialized_count--;
-		return S_FAILURE;
+		local_logger = s_logger_console_new(FALSE); /* FALSE == log to stderr */
+		if (local_logger == NULL)
+		{
+			S_ERR_PRINT(S_FAILURE, "speect_init",
+						"Failed to create a logger to stderr");
+			initialized_count--;
+			return S_FAILURE;
+		}
+
+		logger = local_logger;
 	}
 
 	/* initialize error handling module */
-	_s_errdbg_init(err_logger, dbg_logger, layout, S_DBG_NONE, &local_err);
+	_s_errdbg_init(logger, S_DBG_NONE, &local_err);
 	if (local_err != S_SUCCESS)
 	{
 		S_ERR_PRINT(S_FAILURE, "speect_init",
@@ -121,10 +121,8 @@ S_API s_erc speect_init(void)
 		 * it takes hold of the loggers and destroys them
 		 * when it is quit.
 		 */
-		_s_destroy_loggers(err_logger, dbg_logger, layout, &local_err);
-		err_logger = NULL;
-		dbg_logger = NULL;
-		layout = NULL;
+		_s_destroy_loggers(logger, &local_err);
+		logger = NULL;
 		initialized_count--;
 		return S_FAILURE;
 	}
@@ -135,9 +133,7 @@ S_API s_erc speect_init(void)
 				  "speect_init",
 				  "Failed to create Speect Engine class repository"))
 	{
-		err_logger = NULL;
-		dbg_logger = NULL;
-		layout = NULL;
+		logger = NULL;
 		_s_errdbg_quit(&local_err);
 		initialized_count--;
 		return S_FAILURE;
@@ -149,9 +145,7 @@ S_API s_erc speect_init(void)
 				  "speect_init",
 				  "Failed to initialize Speect Engine modules"))
 	{
-		err_logger = NULL;
-		dbg_logger = NULL;
-		layout = NULL;
+		logger = NULL;
 		_s_errdbg_quit(&local_err);
 		initialized_count--;
 		return S_FAILURE;
@@ -163,9 +157,7 @@ S_API s_erc speect_init(void)
 				  "speect_init",
 				  "Failed to initialize Speect Engine class repository"))
 	{
-		err_logger = NULL;
-		dbg_logger = NULL;
-		layout = NULL;
+		logger = NULL;
 		_s_modules_quit(&local_err);
 		_s_errdbg_quit(&local_err);
 		initialized_count--;
@@ -178,9 +170,7 @@ S_API s_erc speect_init(void)
 				  "speect_init",
 				  "Failed to initialize Speect Engine managers"))
 	{
-		err_logger = NULL;
-		dbg_logger = NULL;
-		layout = NULL;
+		logger = NULL;
 		_s_modules_quit(&local_err);
 		_s_classes_clear(&local_err);
 		_s_errdbg_quit(&local_err);
@@ -199,9 +189,7 @@ S_API s_erc speect_init(void)
 					  "speect_init",
 					  "Failed to set default plug-in path"))
 		{
-			err_logger = NULL;
-			dbg_logger = NULL;
-			layout = NULL;
+			logger = NULL;
 			_s_managers_quit(&local_err);
 			_s_modules_quit(&local_err);
 			_s_classes_clear(&local_err);

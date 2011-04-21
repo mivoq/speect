@@ -75,14 +75,10 @@ S_BEGIN_C_DECLS
  *
  * @private
  * @param spct_ini INI parser structure.
- * @param err_logger Error logger.
- * @param dbg_logger Debug logger.
- * @param layout Layout to be used for loggers.
+ * @param logger Logger to create and initialize.
  * @param error Error code.
  */
-S_LOCAL void _s_create_loggers(s_ini_parser *spct_ini,
-							   s_logger **err_logger, s_logger **dbg_logger,
-							   s_layout **layout, s_erc *error);
+S_LOCAL void _s_create_logger(s_ini_parser *spct_ini, s_logger **logger, s_erc *error);
 
 
 /**
@@ -90,13 +86,10 @@ S_LOCAL void _s_create_loggers(s_ini_parser *spct_ini,
  * Used internally by #speect_init.
  *
  * @private
- * @param err_logger Error logger.
- * @param dbg_logger Debug logger.
- * @param layout Layout used for loggers.
+ * @param logger Logger to destroy.
  * @param error Error code.
  */
-S_LOCAL void _s_destroy_loggers(s_logger *err_logger, s_logger *dbg_logger,
-								s_layout *layout, s_erc *error);
+S_LOCAL void _s_destroy_loggers(s_logger *logger, s_erc *error);
 
 
 /************************************************************************************/

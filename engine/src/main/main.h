@@ -72,11 +72,14 @@ S_BEGIN_C_DECLS
  * before any other Speect Engine API calls.
  * @ingroup Speect
  *
+ * @param logger Logger where messages should be written to. If @c
+ * NULL, then messages of error type will be written to @c stderr.
+ *
  * @return Error code.
  *
  * @note Not thread safe.
  */
-S_API s_erc speect_init(void);
+S_API s_erc speect_init(s_logger *logger);
 
 
 /**

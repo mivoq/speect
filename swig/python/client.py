@@ -59,7 +59,6 @@ NAME = "client.py"
 RECV_SIZE = 1024
 DEF_PORT = 22222
 DEF_HOST = "localhost"
-END_OF_MESSAGE_STRING = "<EoM>"
 
 
 def setopts():
@@ -95,62 +94,87 @@ def setopts():
     return parser
 
 
+class TTSClient(object):
+    END_OF_MESSAGE_STRING = "<EoM>"
+    
+    def __init__(self, host=DEF_HOST, port=DEF_PORT, recv_size=RECV_SIZE):
+        self.host = host
+        self.port = port
+        self.recv_size = recv_size
+    
+    def request(self, rtype="listvoices", voice=None, text=None):
+        try:
+            text = unicode(text, "latin-1").encode("utf-8")
+        except TypeError:
+            pass
+        message = {"type": rtype,
+                   "voicename": voice,
+                   "text": text}
+
+        fulls = pickle.dumps(message)
+        #create a socket
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        #connect to server
+        s.connect((self.host, self.port))
+        #send..
+        s.sendall(fulls)
+        s.sendall(TTSClient.END_OF_MESSAGE_STRING)
+        #recv reply..
+        replymsgfull = str()
+        while True:
+            replymsgpart = s.recv(self.recv_size)
+            if replymsgpart:
+                replymsgfull += replymsgpart
+            else:
+                break
+        #close connection..
+        s.close()
+        #recover reply..
+        reply = pickle.loads(replymsgfull)
+        if not reply["success"]:
+            raise Exception("Request failed..")
+        
+        return reply
+
+    def write_audio(self, voice, text, filename):
+        reply = self.request("synth", voice, text)
+        if reply["sampletype"] != "int16":
+            raise Exception("Client currently only supports 16bit samplesize")
+        outwf = wave.open(filename, "w")
+        outwf.setparams((1, 2, reply["samplerate"], len(reply["samples"]) / 2, "NONE", "not compressed"))
+        outwf.writeframesraw(reply["samples"])
+        outwf.close()
+        
+
+
 if __name__ == "__main__":
     parser = setopts()
     opts, args = parser.parse_args()
 
-    host = opts.host
-    port = opts.port
 
     #create message
-    if opts.listvoices:
-        message = {"type": "listvoices"}
-    else:
+    if not opts.listvoices:
         if len(args) < 2:
             parser.print_usage()
             sys.exit()
         voicename, text = args
-        message = {"type": "synth",
-                   "voicename": voicename,
-                   "text": unicode(text, "latin-1").encode("utf-8")}
 
-    fulls = pickle.dumps(message)
-    #create a socket
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    #connect to server
-    s.connect((host, port))
-    #send..
-    s.sendall(fulls)
-    s.sendall(END_OF_MESSAGE_STRING)
-    #recv reply..
-    replymsgfull = str()
-    while True:
-        replymsgpart = s.recv(RECV_SIZE)
-        if replymsgpart:
-            replymsgfull += replymsgpart
-        else:
-            break
-    #close connection..
-    s.close()
-    #recover reply..
-    reply = pickle.loads(replymsgfull)
-    if not reply["success"]:
-        raise Exception("Request failed..")
+    host = opts.host
+    port = opts.port
+    client = TTSClient(host, port)
 
     if opts.listvoices:
+        reply = client.request("listvoices")
         print("\n".join(sorted(reply["voicelist"])))
     else:
-        if reply["sampletype"] != "int16":
-            raise Exception("Client currently only supports 16bit samplesize")
-
         if opts.wavefilename:
             #assume that we only want to save - not play..
-            outwf = wave.open(opts.wavefilename, "w")
-            outwf.setparams((1, 2, reply["samplerate"], len(reply["samples"]) / 2, "NONE", "not compressed"))
-            outwf.writeframesraw(reply["samples"])
-            outwf.close()
+            client.write_audio(voicename, text, opts.wavefilename)
         else:
             #init audio device and play samples..
+            reply = client.request("synth", voicename, text)
+            if reply["sampletype"] != "int16":
+                raise Exception("Client currently only supports 16bit samplesize")
             dsp = ossaudiodev.open("/dev/dsp", "w")
             dsp.setparameters(ossaudiodev.AFMT_S16_LE,
                               1,

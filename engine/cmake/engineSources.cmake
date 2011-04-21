@@ -37,11 +37,12 @@ set(SPCT_SRC_FILES
 
     # src/base/log
     src/base/log/event/event.c
-    src/base/log/layout/layout_impl.c
+    src/base/log/layout/layout.c
     src/base/log/layout/standard.c
     src/base/log/streams/console.c
     src/base/log/streams/file.c
-    src/base/log/streams/stream_impl.c
+    src/base/log/streams/stream.c
+    src/base/log/logger.c
 
     # src/base/obj
     src/base/objsystem/class.c

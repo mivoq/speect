@@ -5,8 +5,8 @@ type: :task
 component: Speect
 release: Beryllium
 reporter: Aby Louw <jalouw@csir.co.za>
-status: :in_progress
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2010-07-13 07:29:15.091473 Z
 references: []
 
@@ -30,3 +30,7 @@ log_events:
     supply a callback logging message handler, almost like GLib. Then it
     is up to the program to handle messages in anyway it likes, or
     even to disregard them.
+- - 2011-04-21 05:22:17.731136 Z
+  - Aby Louw <jalouw@csir.co.za>
+  - closed with disposition fixed
+  - Logging moved out of Speect. Calling program must supply logging interface. Implemented Python interface.

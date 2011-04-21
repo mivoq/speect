@@ -5,8 +5,8 @@ type: :task
 component: Speect
 release: Beryllium
 reporter: Aby Louw <jalouw@csir.co.za>
-status: :unstarted
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2010-07-13 09:20:45.307959 Z
 references: []
 
@@ -16,3 +16,7 @@ log_events:
   - Aby Louw <jalouw@csir.co.za>
   - created
   - ""
+- - 2011-04-21 05:24:37.255132 Z
+  - Aby Louw <jalouw@csir.co.za>
+  - closed with disposition fixed
+  - API is up to date for version 1.*, will not change until a major reversioning

@@ -91,9 +91,9 @@ cd ..
 
 ########################################################################
 
-echo "cleaning license"
+echo "cleaning copying"
 
-cd ./license/
+cd ./copying/
 ./clean_files
 cd ..
 

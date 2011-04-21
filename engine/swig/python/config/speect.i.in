@@ -119,6 +119,9 @@ be extended for other languages supported by SWIG."
 /*                                                                                  */
 /************************************************************************************/
 
+%include "${CMAKE_BINARY_DIR}/engine/swig/python/log_config.c"
+%include "${CMAKE_SOURCE_DIR}/engine/swig/python/logger_python.c"
+%include "${CMAKE_SOURCE_DIR}/engine/swig/python/misc_python.c"
 %include "${CMAKE_SOURCE_DIR}/engine/swig/python/plugin_python.c"
 %include "${CMAKE_SOURCE_DIR}/engine/swig/python/iterator_python.c"
 %include "${CMAKE_SOURCE_DIR}/engine/swig/python/utterance_python.c"

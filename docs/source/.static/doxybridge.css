@@ -1,0 +1,49 @@
+/* -- doxygenbridge extension specific styles ----------------------------------------------- */
+
+/* So enum value descriptions are displayed inline to the item */
+.doxybridgeenumvalues li strong + p {
+	display: inline;
+}
+
+.doxybridgeenumvalues li tt + p {
+	display: inline;
+}
+
+/* So parameter descriptions are displayed inline to the item */
+.doxybridgeparameterlist li strong + p {
+	display: inline;
+}
+
+.doxybridgeparameterlist li tt + p {
+	display: inline;
+}
+
+dl.enum, 
+dl.typedef, 
+dl.struct, 
+dl.variable,
+dl.define,
+dl.function,
+dl.macro
+{
+    border-top: 2px solid #888;
+}
+
+
+dl.speectobject {
+    border-top: 1px solid #888;
+}
+
+dl.speectobject dt {
+    border-top: 1px solid #aaa;
+}
+
+
+dl.speectclass {
+    border-top: 1px solid #888;
+}
+
+dl.speectclass dt {
+    border-top: 1px solid #aaa;
+}
+

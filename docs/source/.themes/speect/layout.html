@@ -1,0 +1,126 @@
+{#
+    speect/layout.html
+    ~~~~~~~~~~~~~~~~~~
+
+    Sphinx layout template for the speect theme,
+    written by Aby Louw.
+
+    :copyright: Copyright 2011, Human Language Technologies Group, Meraka Institute, CSIR, South Africa
+    :license: BSD
+#}
+{% extends "basic/layout.html" %}
+
+
+{% set spct_no_sidebar_relbar = ["index", "copyright", "download"] %}
+
+
+{#
+   Redo relbar to remove "Navigation" heading
+#}
+{%- macro spct_relbar(class) %}
+    <div class="{{ class }}">
+      <ul>
+        {%- for rellink in rellinks %}
+        <li class="right" {% if loop.first %}style="margin-right: 10px"{% endif %}>
+          <a href="{{ pathto(rellink[0]) }}" title="{{ rellink[1]|striptags|e }}"
+             {{ accesskey(rellink[2]) }}>{{ rellink[3] }}</a>
+          {%- if not loop.first %}{{ reldelim2 }}{% endif %}</li>
+        {%- endfor %}
+        {%- block rootrellink %}
+	  {{ spct_rootrellink() }}
+        {%- endblock %}
+        {%- for parent in parents %}
+          <li><a href="{{ parent.link|e }}" {% if loop.last %}{{ accesskey("U") }}{% endif %}>{{ parent.title }}</a>{{ reldelim1 }}</li>
+        {%- endfor %}
+        {%- block relbaritems %} {% endblock %}
+      </ul>
+    </div>
+{%- endmacro %}
+
+
+{#
+   Formatting to remove the
+   * heading h1
+   * relbar(s)
+   * sidebar(s)
+
+   from the index, about page.
+#}
+{%- block extrahead %}
+  {% if pagename in spct_no_sidebar_relbar %}
+    <style type="text/css" media="all">h1 {display: none;}</style>
+    <style type="text/css" media="all">div.related {display: none;}</style>
+    <style type="text/css" media="all">div.sphinxsidebar {display: none;}</style>
+    <style type="text/css" media="all">div.bodywrapper {margin: 0; border: 0;}</style>
+  {% endif %}
+{% endblock %}
+
+
+{#
+   Add the "theme_small_logo" logo in the root link
+#}
+{% macro spct_rootrellink() %}
+  {% if theme_small_logo is not sameas "0" %}
+    <li><img src="{{ pathto('_static/' + theme_small_logo, 1) }}" alt=""
+             style="vertical-align: middle; margin-top: -1px"/></li>
+  {% endif %}
+  <li><a href="{{ pathto('index') }}">{{ shorttitle }}</a>{{ reldelim1 }}</li>
+{% endmacro %}
+
+
+
+{%- block relbar1 %}
+  {% if pagename in spct_no_sidebar_relbar %}
+    {{ spct_relbar("related_nav") }}
+  {% else %}  
+    {{ spct_relbar("related") }}
+  {% endif %}  
+{% endblock %}
+
+  
+{#
+   Left sidebar
+#}  
+{% block sidebar1 %}
+  {{ sidebar() }}
+{% endblock %}
+
+  
+{#
+   No right sidebar
+#} 
+{% block sidebar2 %}{% endblock %}
+
+
+{%- block relbar2 %}{{ spct_relbar("related") }}{% endblock %}
+
+  
+{#
+  Adds some line breaks to basic footer
+#}  
+{%- block footer %}
+  <div class="footer">
+    <a href="http://sourceforge.net/projects/speect"><img class="footer_floatleft"
+    src="http://sflogo.sourceforge.net/sflogo.php?group_id=221100&amp;type=10" 
+    width="80" 
+    height="15" 
+    alt="Get Speect at SourceForge.net. Fast, secure and Free Open Source software downloads" />
+    </a>
+    {%- if show_copyright %}
+      {%- if hasdoc('copyright') %}
+        {% trans path=pathto('copyright'), copyright=copyright|e %}&copy; <a href="{{ path }}">Copyright</a> {{ copyright }}.{% endtrans %}
+      {%- else %}
+        {% trans copyright=copyright|e %}&copy; Copyright {{ copyright }}.{% endtrans %}
+      {%- endif %}
+      <br />
+    {%- endif %}
+    {%- if last_updated %}
+      {% trans last_updated=last_updated|e %}Last updated on {{ last_updated }}.{% endtrans %}
+      <br />
+    {%- endif %}
+    {%- if show_sphinx %}
+      {% trans sphinx_version=sphinx_version|e %}Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> {{ sphinx_version }}.{% endtrans %}
+    {%- endif %}
+  </div>
+{%- endblock %}
+

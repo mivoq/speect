@@ -25,10 +25,10 @@ set(swig_c_includes "syllabification.h")
 set(swig_load_plugin 1)
 
 # Include Python docstrings
-set(swig_python_docstrings)
+set(swig_python_docstrings "syllabification_docs.c")
 
 # Include SWIG common interface definition.
-set(swig_common)
+set(swig_common "syllabification_common.c")
 
 # Include SWIG Python interface definition.
 set(swig_python "syllabification_python.c")

@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2010 The Department of Arts and Culture,                           */
+/* Copyright (c) 2011 The Department of Arts and Culture,                           */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -24,65 +24,15 @@
 /************************************************************************************/
 /*                                                                                  */
 /* AUTHOR  : Aby Louw                                                               */
-/* DATE    : June 2010                                                              */
+/* DATE    : May 2011                                                               */
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* C convenience functions for SSyllabification Python wrapper.                     */
+/* SWIG common C convenience functions for SSyllabification.                        */
 /*                                                                                  */
 /*                                                                                  */
 /*                                                                                  */
 /************************************************************************************/
-
-
-/************************************************************************************/
-/*                                                                                  */
-/* Inline helper functions                                                          */
-/*                                                                                  */
-/************************************************************************************/
-
-%inline
-%{
-	PyObject *_syllabification_syllibify(const SSyllabification *self, const SItem *word,
-										 PyObject *phoneList, s_erc *error)
-	{
-		PyObject *list;
-		SList *sylList;
-		SObject *phList;
-
-
-		S_CLR_ERR(error);
-		if (!S_SYLLABIFICATION_METH_VALID(self, syllabify))
-		{
-			S_CTX_ERR(error, S_METHINVLD,
-					  "_syllabification_syllibify",
-					  "Syllabification method \"syllabify\" not implemented");
-			return NULL;
-		}
-
-		phList = s_pyobject_2_sobject(phoneList, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "_syllabification_syllibify",
-					  "Call to \"s_pyobject_2_sobject\" failed"))
-			return NULL;
-
-		sylList = S_SYLLABIFICATION_CALL(self, syllabify)(word, S_LIST(phList), error);
-		if (*error != S_SUCCESS)
-		{
-			S_DELETE(phList, "_syllabification_syllibify", error);
-			return NULL;
-		}
-
-		S_DELETE(phList, "_syllabification_syllibify", error);
-		list = s_sobject_2_pyobject(S_OBJECT(sylList), TRUE, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-		              "_syllabification_syllibify",
-					  "Call to \"s_sobject_2_pobject\" failed"))
-			return NULL;
-
-		return list;
-	}
-%}
 
 
 /************************************************************************************/
@@ -91,43 +41,118 @@
 /*                                                                                  */
 /************************************************************************************/
 
+typedef struct
+{
+	SMap *features;
+} SSyllabification;
+
+%nodefaultctor SSyllabification;
+
+%types(SSyllabification = SObject, SObject*);
+
 %extend SSyllabification
 {
-%pythoncode
-%{
-def syllabify(self, word, phone_list):
-    """
-    syllabify(word, phone_list):
+	const char *name(s_erc *error)
+	{
+		const char *name;
 
-    Syllabify the given phone list of the given word item. The word must be an
-    ``SItem`` type so that the syllabification algorithm has access to any
-    voice features it requires.
 
-    :param word: The word item.
-    :type word: SItem
-    :param phone_list: The list of phones for the given word item.
-    :type phone_list: list
-    :return: A List of lists where the primary list are syllables and the secondary
-             lists are the phones in the syllables. For example, for the word *mathematics*,
-             the phonelist is ::
+		S_CLR_ERR(error);
+		if (!S_SYLLABIFICATION_METH_VALID($self, get_name))
+		{
+			S_CTX_ERR(error, S_METHINVLD,
+					  "name",
+					  "Syllabification method \"get_name\" not implemented");
+			return NULL;
+		}
 
-                 [m , ae , th, ax, m, ae, t, ih, k, s]
+		name = S_SYLLABIFICATION_CALL($self, get_name)($self, error);
+		if (*error != S_SUCCESS)
+			return NULL;
 
-             and the returned list is::
+		return name;
+	}
 
-                 [[m, ae], [th, ax], [m, ae], [t, ih, k, s]]
 
-    :rtype: list
-    """
+	const char *description(s_erc *error)
+	{
+		const char *description;
 
-    if not isinstance(phone_list, list):
-        raise TypeError("Argument \"phone_list\" must be is list type")
 
-    return _syllabification_syllibify(self, word, phone_list)
-%}
+		S_CLR_ERR(error);
+		if (!S_SYLLABIFICATION_METH_VALID($self, get_description))
+		{
+			S_CTX_ERR(error, S_METHINVLD,
+					  "description",
+					  "Syllabification method \"get_description\" not implemented");
+			return NULL;
+		}
+
+		description = S_SYLLABIFICATION_CALL($self, get_description)($self, error);
+		if (*error != S_SUCCESS)
+			return NULL;
+
+		return description;
+	}
+
+
+	const char *language(s_erc *error)
+	{
+		const char *language;
+
+
+		S_CLR_ERR(error);
+		if (!S_SYLLABIFICATION_METH_VALID($self, get_language))
+		{
+			S_CTX_ERR(error, S_METHINVLD,
+					  "language",
+					  "Syllabification method \"get_language\" not implemented");
+			return NULL;
+		}
+
+		language = S_SYLLABIFICATION_CALL($self, get_language)($self, error);
+		if (*error != S_SUCCESS)
+			return NULL;
+
+		return language;
+	}
+
+
+	const char *lang_code(s_erc *error)
+	{
+		const char *lang_code;
+
+
+		S_CLR_ERR(error);
+		if (!S_SYLLABIFICATION_METH_VALID($self, get_lang_code))
+		{
+			S_CTX_ERR(error, S_METHINVLD,
+					  "lang_code",
+					  "Syllabification method \"get_lang_code\" not implemented");
+			return NULL;
+		}
+
+		lang_code = S_SYLLABIFICATION_CALL($self, get_lang_code)($self, error);
+		if (*error != S_SUCCESS)
+			return NULL;
+
+		return lang_code;
+	}
+
+
+	s_version *version(s_erc *error)
+	{
+		S_CLR_ERR(error);
+		if (!S_SYLLABIFICATION_METH_VALID($self, get_version))
+		{
+			S_CTX_ERR(error, S_METHINVLD,
+					  "version",
+					  "Syllabification method \"get_version\" not implemented");
+			return NULL;
+		}
+
+		return (s_version*)S_SYLLABIFICATION_CALL($self, get_version)($self, error);
+	}
 };
-
-
-
 
 

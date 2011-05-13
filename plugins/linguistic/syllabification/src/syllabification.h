@@ -121,15 +121,70 @@ S_BEGIN_C_DECLS
 
 /************************************************************************************/
 /*                                                                                  */
+/* Data types                                                                       */
+/*                                                                                  */
+/************************************************************************************/
+
+/**
+ * The syllabification information structure.
+ */
+typedef struct
+{
+	/**
+	 * The name of the syllabification.
+	 */
+	char       *name;
+
+	/**
+	 * A short description of the syllabification.
+	 */
+	char       *description;
+
+	/**
+	 * The syllabification language.
+	 */
+	char       *language;
+
+	/**
+	 * The syllabification language code, <tt>ISO 639-2</tt>.
+	 * @note See http://en.wikipedia.org/wiki/List_of_ISO_639-2_codes
+	 */
+	char       *lang_code;
+
+	/**
+	 *  Syllabification version.
+	 */
+	s_version   version;
+} s_syllabification_info;
+
+
+/************************************************************************************/
+/*                                                                                  */
 /* SSyllabification definition                                                      */
 /*                                                                                  */
 /************************************************************************************/
 
 /**
- * The SSyllabification structure. Does not add any members to the
- * #SObject object, therefore exactly the same.
+ * The SSyllabification structure.
+ * @extends SObject
  */
-typedef SObject SSyllabification;
+typedef struct
+{
+	/**
+	 * @protected Inherit from #SObject.
+	 */
+	SObject       obj;
+
+	/**
+	 * @protected Syllabification information.
+	 */
+	s_syllabification_info *info;
+
+	/**
+	 * @protected Features.
+	 */
+	SMap         *features;
+} SSyllabification;
 
 
 /************************************************************************************/
@@ -152,6 +207,78 @@ typedef struct
 
 	/* Class methods */
 	/**
+	 * Get the name of the given syllabification.
+	 *
+	 * @param self The given syllabification.
+	 * @param error Error code.
+	 *
+	 * @return The name of the given syllabification.
+	 */
+	const char      *(*get_name)           (const SSyllabification *self,
+											s_erc *error);
+
+	/**
+	 * Get the description of the given syllabification.
+	 *
+	 * @param self The given syllabification.
+	 * @param error Error code.
+	 *
+	 * @return The description of the given syllabification.
+	 */
+	const char      *(*get_description)    (const SSyllabification *self,
+											s_erc *error);
+
+	/**
+	 * Get the language of the given syllabification.
+	 *
+	 * @param self The given syllabification.
+	 * @param error Error code.
+	 *
+	 * @return The language of the given syllabification.
+	 */
+	const char      *(*get_language)       (const SSyllabification *self,
+											s_erc *error);
+
+	/**
+	 * Get the language code (<tt>ISO 639-2</tt>) of the given syllabification.
+	 *
+	 * @param self The given syllabification.
+	 * @param error Error code.
+	 *
+	 * @return The language of the given syllabification.
+	 *
+	 * @note See http://en.wikipedia.org/wiki/List_of_ISO_639-2_codes
+	 * for the language codes.
+	 */
+	const char      *(*get_lang_code)      (const SSyllabification *self,
+											s_erc *error);
+
+	/**
+	 * Get the version of the given syllabification.
+	 *
+	 * @param self The given syllabification.
+	 * @param error Error code.
+	 *
+	 * @return The version of the given syllabification.
+	 */
+	const s_version *(*get_version)        (const SSyllabification *self,
+											s_erc *error);
+
+	/**
+	 * Get the syllabification feature object of the named key.
+	 *
+	 * @param self The given syllabification.
+	 * @param key The string key of the feature object to get.
+	 * @param error Error code.
+	 *
+	 * @return Pointer to the feature object of the named key, or @a NULL if
+	 * feature of named key is not present in syllabification.
+	 */
+	const SObject   *(*get_feature)        (const SSyllabification *self,
+											const char *key,
+											s_erc *error);
+
+	/**
 	 * Syllabify the given phone list of the given word item.
 	 *
 	 * @param word The word item.
@@ -165,7 +292,8 @@ typedef struct
 	 *
 	 * @note The caller is responsible for the memory of the returned list.
 	 */
-	SList *(*syllabify)  (const SItem *word, const SList *phoneList, s_erc *error);
+	SList           *(*syllabify)  (const SItem *word, const SList *phoneList,
+									s_erc *error);
 } SSyllabificationClass;
 
 

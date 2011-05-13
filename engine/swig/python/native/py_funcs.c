@@ -120,7 +120,7 @@ typedef struct
 /*                                                                                  */
 /************************************************************************************/
 
-/* a list of Speect object types with there enum types */
+/* a list of Speect object types with their enum types */
 static const s_sobject_defs sobject_type_list[] =
 {
 	{ "SInt", S_TYPE_SSINT },
@@ -133,7 +133,7 @@ static const s_sobject_defs sobject_type_list[] =
 };
 
 
-/* a list of Python object types with there enum types */
+/* a list of Python object types with their enum types */
 static const s_pobject_defs pobject_type_list[] =
 {
 	{ "int", S_TYPE_INT },

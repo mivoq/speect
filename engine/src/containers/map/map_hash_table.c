@@ -203,7 +203,7 @@ static const SObject *MapHashTableValGet(const SMap *self, const char *key,
 										 s_erc *error)
 {
 	const SMapHashTable *hashTable = (const SMapHashTable *)self;
-	s_hash_element *hte;
+	const s_hash_element *hte;
 	const SObject *val;
 
 
@@ -219,7 +219,7 @@ static const SObject *MapHashTableValGet(const SMap *self, const char *key,
 	if (hte == NULL)
 		return NULL;
 
-	val = (const SObject *)s_hash_element_get_data(hte, error);
+	val = s_hash_element_get_data(hte, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "MapHashTableValGet",
 				  "Call to \"s_hash_element_get_data\" failed"))
@@ -242,8 +242,8 @@ static void MapHashTableValSet(SMap *self, const char *key, const SObject *val,
 	if (hashTable->table == NULL)
 		return;
 
-	hte = s_hash_table_find(hashTable->table, (void*)key,
-							s_strzsize(key, error), error);
+	hte = (s_hash_element *)s_hash_table_find(hashTable->table, (void*)key,
+											  s_strzsize(key, error), error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "MapHashTableValGet",
 				  "Call to \"s_hash_table_find\" failed"))
@@ -301,9 +301,9 @@ static void MapHashTableValDelete(SMap *self, const char *key, s_erc *error)
 
 	S_CLR_ERR(error);
 
-	hte = s_hash_table_find(hashTable->table, (void*)key,
-							s_strzsize(key, error),
-							error);
+	hte = (s_hash_element *)s_hash_table_find(hashTable->table, (void*)key,
+											  s_strzsize(key, error),
+											  error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "MapHashTableValDelete",
 				  "Call to \"s_hash_table_find\" failed"))
@@ -329,9 +329,9 @@ static SObject *MapHashTableValUnlink(SMap *self, const char *key, s_erc *error)
 
 	S_CLR_ERR(error);
 
-	hte = s_hash_table_find(hashTable->table, (void*)key,
-							s_strzsize(key, error),
-							error);
+	hte = (s_hash_element *)s_hash_table_find(hashTable->table, (void*)key,
+											  s_strzsize(key, error),
+											  error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "MapHashTableValUnlink",
 				  "Call to \"s_hash_table_find\" failed"))
@@ -349,7 +349,7 @@ static SObject *MapHashTableValUnlink(SMap *self, const char *key, s_erc *error)
 	if (tmp_key != NULL)
 		S_FREE(tmp_key);
 
-	object = s_hash_element_get_data(hte, error);
+	object = (SObject *)s_hash_element_get_data(hte, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "MapHashTableValUnlink",
 				  "Call to \"s_hash_element_get_data\" failed"))
@@ -370,7 +370,7 @@ static SObject *MapHashTableValUnlink(SMap *self, const char *key, s_erc *error)
 static s_bool MapHashTableValPresent(const SMap *self, const char *key, s_erc *error)
 {
 	const SMapHashTable *hashTable = (const SMapHashTable *)self;
-	s_hash_element *hte;
+	const s_hash_element *hte;
 
 
 	S_CLR_ERR(error);
@@ -392,7 +392,7 @@ static s_bool MapHashTableValPresent(const SMap *self, const char *key, s_erc *e
 static SList *MapHashTableValKeys(const SMap *self, s_erc *error)
 {
 	const SMapHashTable *hashTable = (const SMapHashTable *)self;
-	s_hash_element *hte;
+	const s_hash_element *hte;
 	SList *keys;
 	const char *tmp;
 
@@ -417,7 +417,7 @@ static SList *MapHashTableValKeys(const SMap *self, s_erc *error)
 
 	do
 	{
-		tmp = (const char*)s_hash_element_key(hte, error);
+		tmp = s_hash_element_key(hte, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "MapHashTableValKeys",
 					  "Call to \"s_hash_element_key\" failed"))
@@ -472,7 +472,7 @@ static SMap *MapHashTableCopy(SMap *dst, const SMap *src, s_erc *error)
 {
 	const SMapHashTable *mapSrc = (const SMapHashTable*)src;
 	SMapHashTable *mapDst;
-	s_hash_element *hte;
+	const s_hash_element *hte;
 	s_bool made_new = FALSE;
 	const char *key;
 	SObject *val;

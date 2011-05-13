@@ -346,7 +346,7 @@ S_API const char *s_iniparser_get_string(const s_ini_parser *inip,
 {
     char *lc_key;
     const char *sval;
-	s_hash_element *kv;
+	const s_hash_element *kv;
 	s_erc error;
 
 
@@ -371,7 +371,7 @@ S_API const char *s_iniparser_get_string(const s_ini_parser *inip,
 		|| (error != S_SUCCESS))
 		return def;
 
-    return (const char *)sval;
+    return sval;
 }
 
 

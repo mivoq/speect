@@ -87,7 +87,7 @@ int main()
 	s_hash_table *ht_ptr = NULL;
 	const key_val *itr;
 	size_t size;
-	s_hash_element *el;
+	const s_hash_element *el;
 	int counter;
 	char *stats;
 
@@ -145,11 +145,11 @@ int main()
 	while (el != NULL)
 	{
 		const char *key;
-		int *val;
+		const int *val;
 
 
 		/* get hash element key */
-		key = (const char*)s_hash_element_key(el, &error);
+		key = s_hash_element_key(el, &error);
 		if (S_CHK_ERR(&error, S_CONTERR,
 					  "main",
 					  "Call to \"s_hash_element_key\" failed"))
@@ -158,7 +158,7 @@ int main()
 		printf("%d\t%s\t\t", counter++, key);
 
 		/* get hash element value */
-		val = (int*)s_hash_element_get_data(el, &error);
+		val = s_hash_element_get_data(el, &error);
 		if (S_CHK_ERR(&error, S_CONTERR,
 					  "main",
 					  "Call to \"s_hash_element_get_data\" failed"))
@@ -251,11 +251,11 @@ int main()
 	while (el != NULL)
 	{
 		const char *key;
-		int *val;
+		const int *val;
 
 
 		/* get hash element key */
-		key = (const char*)s_hash_element_key(el, &error);
+		key = s_hash_element_key(el, &error);
 		if (S_CHK_ERR(&error, S_CONTERR,
 					  "main",
 					  "Call to \"s_hash_element_key\" failed"))
@@ -264,7 +264,7 @@ int main()
 		printf("%d\t%s\t\t", counter++, key);
 
 		/* get hash element value */
-		val = (int*)s_hash_element_get_data(el, &error);
+		val = s_hash_element_get_data(el, &error);
 		if (S_CHK_ERR(&error, S_CONTERR,
 					  "main",
 					  "Call to \"s_hash_element_get_data\" failed"))

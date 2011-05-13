@@ -169,10 +169,10 @@ static const SObjectClass *s_class_find_no_lock(const char *name, s_erc *error);
 
 S_API void s_class_add(const void *cls, s_erc *error)
 {
-	const SObjectClass *baseClass;
-	const char         *class_name;
-	s_class_info       *class_info;
-	s_hash_element     *he;
+	const SObjectClass   *baseClass;
+	const char           *class_name;
+	s_class_info         *class_info;
+	const s_hash_element *he;
 
 
 	S_CLR_ERR(error);
@@ -368,8 +368,8 @@ S_API void s_class_free(const void *cls, s_erc *error)
 		return;
 	}
 
-	hte = s_hash_table_find(s_classes, (uchar*)class_name,
-							s_strzsize(class_name, error), error);
+	hte = (s_hash_element*)s_hash_table_find(s_classes, (uchar*)class_name,
+											 s_strzsize(class_name, error), error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "s_class_free",
 				  "Call to \"s_hash_table_find\" failed"))
@@ -452,7 +452,7 @@ S_API const SObjectClass *s_class_find(const char *name, s_erc *error)
 
 S_API s_bool s_class_is_reg(const char *name, s_erc *error)
 {
-	s_hash_element *hte;
+	const s_hash_element *hte;
 
 
 	S_CLR_ERR(error);
@@ -735,7 +735,7 @@ S_LOCAL void _s_classes_init(s_erc *error)
 	const char *class_name;
 	s_class_info *class_info;
 	const SObjectClass *class;
-	s_hash_element *hte;
+	const s_hash_element *hte;
 
 
 	S_CLR_ERR(error);
@@ -760,7 +760,7 @@ S_LOCAL void _s_classes_init(s_erc *error)
 
 	do
 	{
-		class_name = (const char *)s_hash_element_key(hte, error);
+		class_name = s_hash_element_key(hte, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "_s_classes_init",
 					  "Call to \"s_hash_element_key\" failed"))
@@ -888,7 +888,7 @@ S_LOCAL void _s_classes_print(s_erc *error)
 	S_CLR_ERR(error);
 	s_mutex_lock(&class_mutex);
 
-	hte = s_hash_table_first(s_classes, error);
+	hte = (s_hash_element *)s_hash_table_first(s_classes, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "_s_classes_print",
 				  "Call to \"s_hash_table_first\" failed"))
@@ -905,7 +905,7 @@ S_LOCAL void _s_classes_print(s_erc *error)
 
 	do
 	{
-		class_name = (const char *)s_hash_element_key(hte, error);
+		class_name = s_hash_element_key(hte, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "_s_classes_print",
 					  "Call to \"s_hash_element_key\" failed"))
@@ -925,7 +925,7 @@ S_LOCAL void _s_classes_print(s_erc *error)
 
 		S_DEBUG(S_DBG_TRACE, "class '%s' at position %d\n", class_name, pos);
 
-		hte = s_hash_element_next(hte, error);
+		hte = (s_hash_element *)s_hash_element_next(hte, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "_s_classes_print",
 					  "Call to \"s_hash_element_next\" failed"))
@@ -1106,7 +1106,7 @@ static void s_class_get_hierarchy(const SObjectClass *self, SObjectClass ***hier
 static const s_class_info *s_class_find_info(const char *name, s_erc *error)
 {
 	const s_class_info *class_info;
-	s_hash_element *hte;
+	const s_hash_element *hte;
 
 
 	S_CLR_ERR(error);
@@ -1127,7 +1127,7 @@ static const s_class_info *s_class_find_info(const char *name, s_erc *error)
 		return NULL;
 	}
 
-	class_info = (const s_class_info *)s_hash_element_get_data(hte, error);
+	class_info = s_hash_element_get_data(hte, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "s_class_find_info",
 				  "Call to \"s_hash_element_get_data\" failed"))

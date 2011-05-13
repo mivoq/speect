@@ -995,7 +995,7 @@ static uint32 read_container(SEbmlRead *self, s_erc *error)
 static s_bool read_container_at_end(SEbmlRead *self, s_erc *error)
 {
 	long pos;
-	s_list_element *current_master;
+	const s_list_element *current_master;
 	long *master_end;
 
 

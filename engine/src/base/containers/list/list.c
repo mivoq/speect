@@ -86,7 +86,7 @@ struct s_list_element
 /*
  * Return the first element in the list.
  */
-S_API s_list_element *s_list_first(s_list *self, s_erc *error)
+S_API const s_list_element *s_list_first(const s_list *self, s_erc *error)
 {
 	S_CLR_ERR(error);
 
@@ -97,7 +97,7 @@ S_API s_list_element *s_list_first(s_list *self, s_erc *error)
 /*
  * Return the last element in the list.
  */
-S_API s_list_element *s_list_last(s_list *self, s_erc *error)
+S_API const s_list_element *s_list_last(const s_list *self, s_erc *error)
 {
 	S_CLR_ERR(error);
 
@@ -110,7 +110,7 @@ S_API s_list_element *s_list_last(s_list *self, s_erc *error)
 /*
  * Get the list element data.
  */
-S_API const void *s_list_element_get(s_list_element *self, s_erc *error)
+S_API const void *s_list_element_get(const s_list_element *self, s_erc *error)
 {
 	S_CLR_ERR(error);
 
@@ -208,7 +208,7 @@ S_API s_list_element *s_list_element_delete(s_list_element *self, s_erc *error)
 /*
  * Return the next element in the list.
  */
-S_API s_list_element *s_list_element_next(s_list_element *self, s_erc *error)
+S_API const s_list_element *s_list_element_next(const s_list_element *self, s_erc *error)
 {
 	S_CLR_ERR(error);
 
@@ -223,7 +223,7 @@ S_API s_list_element *s_list_element_next(s_list_element *self, s_erc *error)
 /*
  * Return the prev element in the list.
  */
-S_API s_list_element *s_list_element_prev(s_list_element *self, s_erc *error)
+S_API const s_list_element *s_list_element_prev(const s_list_element *self, s_erc *error)
 {
 	S_CLR_ERR(error);
 
@@ -240,7 +240,7 @@ S_API s_list_element *s_list_element_prev(s_list_element *self, s_erc *error)
 /*
  * Query if the list has any elements.
  */
-S_API s_bool s_list_isempty(s_list *self, s_erc *error)
+S_API s_bool s_list_isempty(const s_list *self, s_erc *error)
 {
 	S_CLR_ERR(error);
 
@@ -251,7 +251,7 @@ S_API s_bool s_list_isempty(s_list *self, s_erc *error)
 /*
  * Get the number of elements in the list.
  */
-S_API uint32 s_list_size(s_list *self, s_erc *error)
+S_API uint32 s_list_size(const s_list *self, s_erc *error)
 {
 	S_CLR_ERR(error);
 
@@ -264,11 +264,11 @@ S_API uint32 s_list_size(s_list *self, s_erc *error)
  * comparison function #s_list_compare_fp. If the comparison function is
  * null then nothing is done.
  */
-S_API s_list_element *s_list_find_index(s_list *self, s_list_element *f,
+S_API s_list_element *s_list_find_index(const s_list *self, const s_list_element *f,
 										const void *data, int *index, s_erc *error)
 {
 	s_list_element *iterator;
-	s_list_element *from;
+	const s_list_element *from;
 	int cnt;
 	s_bool compared;
 
@@ -278,12 +278,14 @@ S_API s_list_element *s_list_find_index(s_list *self, s_list_element *f,
 		return NULL;
 
 	if (f == NULL)
-		from = s_list_first(self, error);
+		from = (s_list_element*)s_list_first(self, error);
 	else
-		from = f;
+		from = (s_list_element*)f;
 
-	for (iterator = from, cnt = 0; iterator != NULL;
-	     iterator = s_list_element_next(iterator, error), cnt++)
+
+	/* cast away const */
+	for (iterator = (s_list_element*)from, cnt = 0; iterator != NULL;
+	     iterator = (s_list_element*)s_list_element_next(iterator, error), cnt++)
 	{
 		compared = (self->compare_func)(data, s_list_element_get(iterator, error), error);
 		if (S_CHK_ERR(error, S_CONTERR,
@@ -306,7 +308,7 @@ S_API s_list_element *s_list_find_index(s_list *self, s_list_element *f,
 /*
  * Find the nth element in the list.
  */
-S_API s_list_element *s_list_nth(s_list *self, uint32 n, s_erc *error)
+S_API const s_list_element *s_list_nth(const s_list *self, uint32 n, s_erc *error)
 {
 	s_list_element *iterator = NULL;
 	uint32 cnt;
@@ -316,8 +318,8 @@ S_API s_list_element *s_list_nth(s_list *self, uint32 n, s_erc *error)
 	if ((self == NULL) || (n > self->size))
 		return NULL;
 
-	for (iterator = s_list_first(self, error), cnt = 0; cnt < n; cnt++,
-		     iterator = s_list_element_next(iterator, error))
+	for (iterator = (s_list_element *)s_list_first(self, error), cnt = 0; cnt < n; cnt++,
+		     iterator = (s_list_element *)s_list_element_next(iterator, error))
 		continue;
 
 	return iterator;
@@ -349,7 +351,7 @@ S_API void *s_list_pop(s_list *self, s_erc *error)
 	if (self == NULL)
 		return NULL;
 
-	last = s_list_last(self, error);
+	last = (s_list_element *)s_list_last(self, error);
 
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "s_list_pop",
@@ -378,14 +380,14 @@ S_API void s_list_reverse(s_list *self, s_erc *error)
 	if (self == NULL)
 		return;
 
-	orig_first = s_list_first(self, error);
+	orig_first = (s_list_element *)s_list_first(self, error);
 
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "s_list_reverse",
 				  "Failed to get first item in list"))
 		return;
 
-	iterator = s_list_last(self, error);
+	iterator = (s_list_element*)s_list_last(self, error);
 
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "s_list_reverse",
@@ -466,7 +468,7 @@ S_API void s_list_append(s_list *self, void *data, s_erc *error)
 /*
  * Insert data before given list element. Return reference to inserted data element.
  */
-S_API s_list_element *s_list_insert_before(s_list_element *self, void *data, s_erc *error)
+S_API const s_list_element *s_list_insert_before(s_list_element *self, void *data, s_erc *error)
 {
 	s_list_element *new_element ;
 
@@ -506,7 +508,7 @@ S_API s_list_element *s_list_insert_before(s_list_element *self, void *data, s_e
 /*
  * Insert data after given list element. Return reference to inserted data element.
  */
-S_API s_list_element *s_list_insert_after(s_list_element *self, void *data, s_erc *error)
+S_API const s_list_element *s_list_insert_after(s_list_element *self, void *data, s_erc *error)
 {
 	s_list_element *new_element;
 

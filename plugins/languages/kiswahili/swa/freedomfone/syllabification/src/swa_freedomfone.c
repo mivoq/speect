@@ -995,7 +995,8 @@ static const SObject *GetFeature(const SSyllabification *self, const char *key,
  * syllfunc returns : ((m, ae), (th, ax), (m, ae), (t, ih, k, s))
  */
 
-static SList *Syllabify(const SItem *word, const SList *phoneList, s_erc *error)
+static SList *Syllabify(const SSyllabification *self, const SItem *word,
+						const SList *phoneList, s_erc *error)
 {
 	const SPhoneset *phoneset;
 	const SVoice *voice;
@@ -1356,6 +1357,9 @@ quit_error:
 		S_DELETE(phoneListCopy, "Syllabify", error);
 
 	return NULL;
+
+	/* for unused compiler warning */
+	self = NULL;
 }
 
 

@@ -281,6 +281,7 @@ typedef struct
 	/**
 	 * Syllabify the given phone list of the given word item.
 	 *
+	 * @param self The given syllabification.
 	 * @param word The word item.
 	 * @param phoneList The list of phones for the given word item.
 	 * @param error Error code.
@@ -292,8 +293,9 @@ typedef struct
 	 *
 	 * @note The caller is responsible for the memory of the returned list.
 	 */
-	SList           *(*syllabify)  (const SItem *word, const SList *phoneList,
-									s_erc *error);
+	SList           *(*syllabify)          (const SSyllabification *self,
+											const SItem *word, const SList *phoneList,
+											s_erc *error);
 } SSyllabificationClass;
 
 

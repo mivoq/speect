@@ -66,7 +66,7 @@
 					  "Call to \"s_pyobject_2_sobject\" failed"))
 			return NULL;
 
-		sylList = S_SYLLABIFICATION_CALL(self, syllabify)(word, S_LIST(phList), error);
+		sylList = S_SYLLABIFICATION_CALL(self, syllabify)(self, word, S_LIST(phList), error);
 		if (*error != S_SUCCESS)
 		{
 			S_DELETE(phList, "_syllabification_syllibify", error);

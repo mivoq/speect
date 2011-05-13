@@ -28,11 +28,49 @@
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* SWIG common C convenience functions for SG2P.                                    */
+/* C convenience functions for SG2P Python wrapper.                                 */
 /*                                                                                  */
 /*                                                                                  */
 /*                                                                                  */
 /************************************************************************************/
+
+
+/************************************************************************************/
+/*                                                                                  */
+/* Inline helper functions                                                          */
+/*                                                                                  */
+/************************************************************************************/
+
+%inline
+%{
+	PyObject *_g2p_apply(const SG2P *self, const char *word, s_erc *error)
+	{
+		PyObject *list;
+		SList *phonelist;
+
+
+		S_CLR_ERR(error);
+		if (!S_G2P_METH_VALID(self, apply))
+		{
+			S_CTX_ERR(error, S_METHINVLD,
+					  "_g2p_apply",
+					  "G2P method \"apply\" not implemented");
+			return NULL;
+		}
+
+		phonelist = S_G2P_CALL(self, apply)(self, word, error);
+		if (*error != S_SUCCESS)
+			return NULL;
+
+		list = s_sobject_2_pyobject(S_OBJECT(phonelist), TRUE, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+		              "_g2p_apply",
+					  "Call to \"s_sobject_2_pobject\" failed"))
+			return NULL;
+
+		return list;
+	}
+%}
 
 
 /************************************************************************************/
@@ -41,156 +79,32 @@
 /*                                                                                  */
 /************************************************************************************/
 
-typedef struct
-{
-	SMap *features;
-} SG2P;
-
-%nodefaultctor SG2P;
-
-%types(SG2P = SObject, SObject*);
-
 %extend SG2P
 {
-	const char *name(s_erc *error)
-	{
-		const char *name;
+%pythoncode
+%{
+def apply(self, word):
+    """
+    apply(word)
 
+    Apply the g2p to the given word to get a phone list.
 
-		S_CLR_ERR(error);
-		if (!S_G2P_METH_VALID($self, get_name))
-		{
-			S_CTX_ERR(error, S_METHINVLD,
-					  "name",
-					  "G2P method \"get_name\" not implemented");
-			return NULL;
-		}
+    :param word: The word to convert to a phone list.
+    :type word: string
+    :return: A list of phones for the given word or ``None`` if the
+                 g2p failed. If the g2p failed a warning will be set in the
+                 error log.
+    :rtype: list
+    """
 
-		name = S_G2P_CALL($self, get_name)($self, error);
-		if (*error != S_SUCCESS)
-			return NULL;
+    if not isinstance(word, unicode) and not isinstance(word, str):
+        raise TypeError("Argument \"word\" must be a str or unicode type")
 
-		return name;
-	}
-
-
-	const char *description(s_erc *error)
-	{
-		const char *description;
-
-
-		S_CLR_ERR(error);
-		if (!S_G2P_METH_VALID($self, get_description))
-		{
-			S_CTX_ERR(error, S_METHINVLD,
-					  "description",
-					  "G2P method \"get_description\" not implemented");
-			return NULL;
-		}
-
-		description = S_G2P_CALL($self, get_description)($self, error);
-		if (*error != S_SUCCESS)
-			return NULL;
-
-		return description;
-	}
-
-
-	const char *language(s_erc *error)
-	{
-		const char *language;
-
-
-		S_CLR_ERR(error);
-		if (!S_G2P_METH_VALID($self, get_language))
-		{
-			S_CTX_ERR(error, S_METHINVLD,
-					  "language",
-					  "G2P method \"get_language\" not implemented");
-			return NULL;
-		}
-
-		language = S_G2P_CALL($self, get_language)($self, error);
-		if (*error != S_SUCCESS)
-			return NULL;
-
-		return language;
-	}
-
-
-	const char *lang_code(s_erc *error)
-	{
-		const char *lang_code;
-
-
-		S_CLR_ERR(error);
-		if (!S_G2P_METH_VALID($self, get_lang_code))
-		{
-			S_CTX_ERR(error, S_METHINVLD,
-					  "lang_code",
-					  "G2P method \"get_lang_code\" not implemented");
-			return NULL;
-		}
-
-		lang_code = S_G2P_CALL($self, get_lang_code)($self, error);
-		if (*error != S_SUCCESS)
-			return NULL;
-
-		return lang_code;
-	}
-
-
-	s_version *version(s_erc *error)
-	{
-		S_CLR_ERR(error);
-		if (!S_G2P_METH_VALID($self, get_version))
-		{
-			S_CTX_ERR(error, S_METHINVLD,
-					  "version",
-					  "G2P method \"get_version\" not implemented");
-			return NULL;
-		}
-
-		return (s_version*)S_G2P_CALL($self, get_version)($self, error);
-	}
-
-
-	const char *apply_at(const char *word, uint index, s_erc *error)
-	{
-		size_t size;
-		const char *phone;
-
-
-		S_CLR_ERR(error);
-		if (!S_G2P_METH_VALID($self, apply))
-		{
-			S_CTX_ERR(error, S_METHINVLD,
-					  "apply_at",
-					  "G2P method \"apply_at\" not implemented");
-			return NULL;
-		}
-
-		size = s_strlen(word, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "apply_at",
-					  "Call to \"s_strlen\" failed"))
-			return NULL;
-
-		if (index > size - 1)
-		{
-			S_CTX_ERR(error, S_FAILURE,
-					  "apply_at",
-					  "Given index, %d, is greater than word '%s' length, %d",
-					  index, word, size);
-			return NULL;
-		}
-
-		phone = S_G2P_CALL($self, apply_at)($self, word, index, error);
-		if (*error != S_SUCCESS)
-			return NULL;
-
-		return phone;
-	}
+    return _g2p_apply(self, word)
+%}
 };
+
+
+
 
 

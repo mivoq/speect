@@ -351,7 +351,7 @@ static uint8 phone_sonority_level(const SPhoneset *phoneset, const char *phone, 
 
 
 		present = S_PHONESET_CALL(phoneset, phone_has_feature)(phoneset, phone,
-															   "height_low",
+															   "height_high",
 															   error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "phone_sonority_level",

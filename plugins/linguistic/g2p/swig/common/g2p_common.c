@@ -155,28 +155,6 @@ typedef struct
 	}
 
 
-	SList *apply(const char *word, s_erc *error)
-	{
-		SList *phonelist;
-
-
-		S_CLR_ERR(error);
-		if (!S_G2P_METH_VALID($self, apply))
-		{
-			S_CTX_ERR(error, S_METHINVLD,
-					  "apply",
-					  "G2P method \"apply\" not implemented");
-			return NULL;
-		}
-
-		phonelist = S_G2P_CALL($self, apply)($self, word, error);
-		if (*error != S_SUCCESS)
-			return NULL;
-
-		return phonelist;
-	}
-
-
 	const char *apply_at(const char *word, uint index, s_erc *error)
 	{
 		size_t size;

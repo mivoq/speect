@@ -443,7 +443,7 @@ static void delete_unused_items_content(s_hash_table *items_content_table, s_erc
 	s_hash_element *hte;
 	s_erc local_err = S_SUCCESS;
 
-	hte = s_hash_table_first(items_content_table, error);
+	hte = (s_hash_element *)s_hash_table_first(items_content_table, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "delete_unused_item_contents",
 				  "Call to \"s_hash_table_first\" failed"))
@@ -453,7 +453,7 @@ static void delete_unused_items_content(s_hash_table *items_content_table, s_erc
 	{
 		uint32 *num = NULL;
 		s_items_content_container *ic = NULL;
-		s_hash_element *next = NULL;
+		const s_hash_element *next = NULL;
 
 
 		next = s_hash_element_next(hte, error);
@@ -465,7 +465,7 @@ static void delete_unused_items_content(s_hash_table *items_content_table, s_erc
 			local_err = *error;
 		}
 
-		num = s_hash_element_key(hte, error);
+		num = (uint32 *)s_hash_element_key(hte, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "delete_unused_item_contents",
 					  "Call to \"s_hash_element_key\" failed"))
@@ -474,7 +474,7 @@ static void delete_unused_items_content(s_hash_table *items_content_table, s_erc
 		if (num != NULL)
 			S_FREE(num);
 
-		ic = s_hash_element_get_data(hte, error);
+		ic = (s_items_content_container *)s_hash_element_get_data(hte, error);
 		if (!S_CHK_ERR(error, S_CONTERR,
 					   "delete_unused_item_contents",
 					   "Call to \"s_hash_element_get_data\" failed"))
@@ -497,7 +497,7 @@ static void delete_unused_items_content(s_hash_table *items_content_table, s_erc
 					  "Call to \"s_hash_element_unlink\" failed"))
 			local_err = *error;
 
-		hte = next;
+		hte = (s_hash_element *)next;
 	}
 
 	s_hash_table_delete(items_content_table, error);
@@ -941,7 +941,7 @@ static void read_relation_items(SEbmlRead *ebmlReader, SRelation *rel,
 		case S_UTT_EBML_RELATION_ITEM_CONTENT_ID:
 		{
 			uint32 item_content_id;
-			s_hash_element *he;
+			const s_hash_element *he;
 			s_items_content_container *ic;
 
 
@@ -967,7 +967,7 @@ static void read_relation_items(SEbmlRead *ebmlReader, SRelation *rel,
 				goto quit_error;
 			}
 
-			ic = s_hash_element_get_data(he, error);
+			ic = (s_items_content_container *)s_hash_element_get_data(he, error);
 			if (S_CHK_ERR(error, S_CONTERR,
 						  "read_relation_items",
 						  "Call to \"s_hash_element_get_data\" failed"))
@@ -1110,7 +1110,7 @@ quit_error:
 		s_hash_element *next;
 		s_erc local_err = S_SUCCESS;
 
-		hte = s_hash_table_first(relation_items, &local_err);
+		hte = (s_hash_element *)s_hash_table_first(relation_items, &local_err);
 		if (S_CHK_ERR(&local_err, S_CONTERR,
 					  "read_relation_items",
 					  "Call to \"s_hash_table_first\" failed"))
@@ -1122,19 +1122,19 @@ quit_error:
 			uint32 *item_node_number;
 
 
-			next = s_hash_element_next(hte, &local_err);
+			next = (s_hash_element *)s_hash_element_next(hte, &local_err);
 			if (S_CHK_ERR(&local_err, S_CONTERR,
 						  "read_relation_items",
 						  "Call to \"s_hash_element_next\" failed"))
 				next = NULL;
 
-			item_node_number = s_hash_element_key(hte, &local_err);
+			item_node_number = (uint32 *)s_hash_element_key(hte, &local_err);
 			if (!S_CHK_ERR(&local_err, S_CONTERR,
 						   "read_relation_items",
 						   "Call to \"s_hash_element_key\" failed"))
 				S_FREE(item_node_number);
 
-			item = s_hash_element_get_data(hte, &local_err);
+			item = (SItem *)s_hash_element_get_data(hte, &local_err);
 			if (!S_CHK_ERR(&local_err, S_CONTERR,
 						   "read_relation_items",
 						   "Call to \"s_hash_element_get_data\" failed"))
@@ -1161,7 +1161,7 @@ static SItem *get_item(s_hash_table *relation_items, uint32 item_node_number, s_
 {
 	uint32 *item_node_number_copy;
 	SItem *item;
-	s_hash_element *he;
+	const s_hash_element *he;
 
 
 	/* search for item, if not found create a new one and add it. */
@@ -1207,7 +1207,7 @@ static SItem *get_item(s_hash_table *relation_items, uint32 item_node_number, s_
 	}
 	else
 	{
-		item = s_hash_element_get_data(he, error);
+		item = (SItem*)s_hash_element_get_data(he, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "get_item",
 					  "Call to \"s_hash_element_get_data\" failed"))

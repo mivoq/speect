@@ -271,7 +271,7 @@ S_API char *s_strzncpy(char *dest, const char *src, size_t n,
 
 
 /**
- * Concatenate two strings. The size if @a dest is specified by
+ * Concatenate two strings. The size of @a dest is specified by
  * @a size.
  *
  * @param dest The destination string.

@@ -167,7 +167,7 @@ S_API void s_hash_table_delete(s_hash_table *self, s_erc *error)
 	if (self == NULL)
 		return;
 
-	hte = s_hash_table_first(self, error);
+	hte = (s_hash_element *)s_hash_table_first(self, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "s_hash_table_delete",
 				  "Failed to find first element of hash table"))
@@ -175,7 +175,7 @@ S_API void s_hash_table_delete(s_hash_table *self, s_erc *error)
 
 	while (hte != NULL)
 	{
-		next = s_hash_element_next(hte, error);
+		next = (s_hash_element *)s_hash_element_next(hte, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "s_hash_table_delete",
 					  "Failed to find next element of hash table"))
@@ -442,12 +442,14 @@ S_API void s_hash_element_delete(s_hash_element *self, s_erc *error)
 /*
  * Find a hash element in the hash table.
  */
-S_API s_hash_element *s_hash_table_find(s_hash_table *self, void *key,
-										size_t keyl, s_erc *error)
+S_API const s_hash_element *s_hash_table_find(const s_hash_table *self,
+											  const void *key,
+											  size_t keyl, s_erc *error)
 {
 	s_hash_element *hte;
 	ulong y;
 	ulong x;
+	s_hash_table *selfnc = (s_hash_table *)self;
 
 
 	S_CLR_ERR(error);
@@ -464,7 +466,7 @@ S_API s_hash_element *s_hash_table_find(s_hash_table *self, void *key,
 		    (keyl == hte->keyl) &&
 		    !memcmp(key, hte->key, keyl))
 		{
-			self->apos = y;
+			selfnc->apos = y;
 			return hte;
 		}
 	}
@@ -473,15 +475,18 @@ S_API s_hash_element *s_hash_table_find(s_hash_table *self, void *key,
 }
 
 
-S_API s_hash_element *s_hash_table_first(s_hash_table *self, s_erc *error)
+S_API const s_hash_element *s_hash_table_first(const s_hash_table *self, s_erc *error)
 {
+	s_hash_table *selfnc = (s_hash_table *)self;
+
+
 	S_CLR_ERR(error);
 
 	if (self == NULL)
 		return NULL;
 
-	self->apos = self->mask;
-	_s_hash_table_n_bucket(self, error);
+	selfnc->apos = self->mask;
+	_s_hash_table_n_bucket((s_hash_table*)self, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "s_hash_table_first",
 				  "Failed to find element in bucket"))
@@ -491,7 +496,7 @@ S_API s_hash_element *s_hash_table_first(s_hash_table *self, s_erc *error)
 }
 
 
-S_API s_hash_element *s_hash_element_next(s_hash_element *self, s_erc *error)
+S_API const s_hash_element *s_hash_element_next(const s_hash_element *self, s_erc *error)
 {
 	s_bool no_wrap;
 
@@ -520,7 +525,7 @@ S_API s_hash_element *s_hash_element_next(s_hash_element *self, s_erc *error)
 }
 
 
-S_API void *s_hash_element_key(s_hash_element *self, s_erc *error)
+S_API const void *s_hash_element_key(const s_hash_element *self, s_erc *error)
 {
 	S_CLR_ERR(error);
 
@@ -531,7 +536,7 @@ S_API void *s_hash_element_key(s_hash_element *self, s_erc *error)
 }
 
 
-S_API size_t s_hash_element_key_length(s_hash_element *self, s_erc *error)
+S_API size_t s_hash_element_key_length(const s_hash_element *self, s_erc *error)
 {
 	S_CLR_ERR(error);
 
@@ -542,7 +547,7 @@ S_API size_t s_hash_element_key_length(s_hash_element *self, s_erc *error)
 }
 
 
-S_API void *s_hash_element_get_data(s_hash_element *self, s_erc *error)
+S_API const void *s_hash_element_get_data(const s_hash_element *self, s_erc *error)
 {
 	S_CLR_ERR(error);
 
@@ -565,7 +570,7 @@ S_API void s_hash_element_set_data(s_hash_element *self, void *data,
 }
 
 
-S_API uint32 s_hash_element_pos(s_hash_element *self, s_erc *error)
+S_API uint32 s_hash_element_pos(const s_hash_element *self, s_erc *error)
 {
 	S_CLR_ERR(error);
 
@@ -592,7 +597,7 @@ S_API uint32 s_hash_element_pos(s_hash_element *self, s_erc *error)
 /*
  * Print statistics about the hash table
  */
-S_API char *s_hash_table_stats(s_hash_table *self, s_erc *error)
+S_API char *s_hash_table_stats(const s_hash_table *self, s_erc *error)
 {
 	uint32 i;
 	uint32 j;
@@ -702,7 +707,7 @@ S_API char *s_hash_table_stats(s_hash_table *self, s_erc *error)
 /*
  * Get the number of elements in the list.
  */
-S_API uint32 s_hash_table_size(s_hash_table *self, s_erc *error)
+S_API uint32 s_hash_table_size(const s_hash_table *self, s_erc *error)
 {
 	S_CLR_ERR(error);
 

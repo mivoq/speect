@@ -408,9 +408,9 @@ static s_bool MapListValPresent(const SMap *self, const char *key, s_erc *error)
 static SList *MapListValKeys(const SMap *self, s_erc *error)
 {
 	const SMapList *mapList = (const SMapList*)self;
-	s_list_element *itr = NULL;
+	const s_list_element *itr = NULL;
 	SList *keys;
-	s_kvp *tmp;
+	const s_kvp *tmp;
 
 	S_CLR_ERR(error);
 	keys = S_LIST(S_NEW("SListList", error));
@@ -431,7 +431,7 @@ static SList *MapListValKeys(const SMap *self, s_erc *error)
 			return NULL;
 		}
 
-		tmp = (s_kvp*)s_list_element_get(itr, error);
+		tmp = s_list_element_get(itr, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 			      "MapListValKeys",
 			      "Call to \"s_list_element_get\" failed"))
@@ -478,8 +478,8 @@ static SMap *MapListCopy(SMap *dst, const SMap *src, s_erc *error)
 {
 	const SMapList *mapSrc = (const SMapList*)src;
 	SMapList *mapDst;
-	s_kvp *tmp;
-	s_list_element *itr = NULL;
+	const s_kvp *tmp;
+	const s_list_element *itr = NULL;
 	s_bool made_new = FALSE;
 
 
@@ -513,7 +513,7 @@ static SMap *MapListCopy(SMap *dst, const SMap *src, s_erc *error)
 			return NULL;
 		}
 
-		tmp = (s_kvp*)s_list_element_get(itr, error);
+		tmp = s_list_element_get(itr, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 			      "MapListCopy",
 			      "Call to \"s_list_element_get\" failed"))

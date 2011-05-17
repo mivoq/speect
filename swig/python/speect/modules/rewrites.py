@@ -129,10 +129,9 @@ class RewriteRule(object):
         else:
             return False
 
-
  
     def ruleMatches(self, LC, RC, sets):
-        """ Returns True if this rule matches the given context...
+        """ Returns this rule if it matches the given context...
         """
 
         # right context (actually A + RC) must be at least as long as rule's A
@@ -141,18 +140,20 @@ class RewriteRule(object):
         
         # check if [ A ] matches
         counter = 0
+        a_match = []
         for c1, c2 in zip(self.A, RC):
-            if c1 != c2:
-                return None
+            if not self._itemMatch(c1, c2, sets):
+                return None, None
+            a_match.append(c2)
             counter += 1
 
         # Check LC: LC may have some limited regex stuff  
         rLC = list(LC)
         rLC.reverse()
         if (self._contextMatch(self.LC, rLC,sets) and self._contextMatch(self.RC, RC[counter:],sets)):
-            return RC[counter:]
+            return a_match, RC[counter:]
         else:
-            return None     
+            return None, None    
         
 
 
@@ -169,6 +170,58 @@ class Rewrites(object):
         
         self.ruleset = {}
         self.sets = sets
+
+
+	def _add_rule(self, index, rule):
+         try:
+             self.ruleset[index].append(rule)     
+         except KeyError:
+             self.ruleset[index] = []
+             self.ruleset[index].append(rule)     
+
+
+    def addRule(self, index, rule):
+        if index in self.sets:
+            for set_entry in self.sets[index]:
+                self._add_rule(set_entry, rule)
+        else:
+            self._add_rule(index, rule)
+
+
+    def itemMatch(self, PATT, THING, sets):
+
+        if PATT == THING:
+            return True
+
+        if sets is None:
+            return False
+
+        if not PATT in sets:
+            return False
+        
+        if not THING in sets[PATT]:
+            return False
+
+        return True
+
+
+    def get_otape(self, rRHS, am):
+        print "get_otape a_match = " + str(am)
+        print "get_otape ruleRHS = " + str(rRHS)
+        new_otape = []
+        ruleRHS = list(rRHS)
+        ruleRHS.reverse()
+        a_match = list(am)
+        a_match.reverse()
+        while len(ruleRHS) > 0:
+            p = ruleRHS.pop()
+            if p == "-":
+                new_otape.append(p)
+            else:
+                r = a_match.pop()
+                new_otape.append(r)
+
+        return new_otape
 
 
     def rewrite(self, itape):
@@ -191,7 +244,7 @@ class Rewrites(object):
 
             # search through rewrite rules to find matching one 
             for rule in self.ruleset[RC[0]]:
-                newRC = rule.ruleMatches(LC, RC, self.sets)
+                a_match, newRC = rule.ruleMatches(LC, RC, self.sets)
                 if newRC is not None:
                     found_rule = True
                     break
@@ -200,7 +253,7 @@ class Rewrites(object):
                 res = "Failed to find rewrite rule for itape sequence '" + str(itape) + "'"
                 raise RuntimeError(res)
             
-            otape += rule.getRightHandSide()
+            otape += self.get_otape(rule.getRightHandSide(), a_match)
             LC = LC + RC[0:len(RC) - len(newRC)]
             RC = newRC
             

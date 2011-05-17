@@ -190,7 +190,7 @@ S_API void s_list_delete(s_list *self, s_erc *error);
  * @note Lists are indexed starting from 0.
  * @note The index variable will be relative if f is @b not @c NULL.
  */
-S_API s_list_element *s_list_find_index(s_list *self, s_list_element *f,
+S_API s_list_element *s_list_find_index(const s_list *self, const s_list_element *f,
 										const void *data, int *index, s_erc *error);
 
 
@@ -208,7 +208,7 @@ S_API s_list_element *s_list_find_index(s_list *self, s_list_element *f,
  *
  * @return Pointer to the first element in the list.
  */
-S_API s_list_element *s_list_first(s_list *self, s_erc *error);
+S_API const s_list_element *s_list_first(const s_list *self, s_erc *error);
 
 
 /**
@@ -219,7 +219,7 @@ S_API s_list_element *s_list_first(s_list *self, s_erc *error);
  *
  * @return Pointer to the last element in the list.
  */
-S_API s_list_element *s_list_last(s_list *self, s_erc *error);
+S_API const s_list_element *s_list_last(const s_list *self, s_erc *error);
 
 
 /**
@@ -250,11 +250,13 @@ S_API s_list_element *s_list_last(s_list *self, s_erc *error);
  * @param n Index of element to find.
  * @param error Error code.
  *
- * @return Pointer to the nth list element.
+ * @return Pointer to the nth list element or @c NULL if index
+ * is out of bounds.
  *
  * @note The list elements are indexed from 0.
  */
-S_API s_list_element *s_list_nth(s_list *self, uint32 n, s_erc *error);
+S_API const s_list_element *s_list_nth(const s_list *self, uint32 n,
+									   s_erc *error);
 
 
 /**
@@ -276,19 +278,22 @@ S_API s_list_element *s_list_nth(s_list *self, uint32 n, s_erc *error);
  *
  * @return Pointer to the list element data.
  */
-S_API const void *s_list_element_get(s_list_element *self, s_erc *error);
+S_API const void *s_list_element_get(const s_list_element *self, s_erc *error);
 
 
 /**
- * Replace list element data, does not delete old data.
+ * Replace the list element data, does not delete old data.
  *
  * @param self The list element who's data is to be replaced.
  * @param data The new list element data.
  * @param error Error code.
  *
  * @return Pointer to the replaced list element @a data.
+ *
+ * @note The list element takes ownership of the new data.
  */
-S_API void *s_list_element_replace(s_list_element *self, void *data, s_erc *error);
+S_API void *s_list_element_replace(s_list_element *self, void *data,
+								   s_erc *error);
 
 
 /**
@@ -298,12 +303,15 @@ S_API void *s_list_element_replace(s_list_element *self, void *data, s_erc *erro
  * @param error Error code.
  *
  * @return Pointer to the unlinked list element @a data.
+ *
+ * @note The caller is responsible for the returned data's memory.
  */
 S_API void *s_list_element_unlink(s_list_element *self, s_erc *error);
 
 
 /**
- * Remove list element from list and delete list element data.
+ * Remove the list element from it's parent list and delete the list
+ * element data.
  *
  * @param self The list element to be deleted.
  * @param error Error code.
@@ -313,29 +321,32 @@ S_API void *s_list_element_unlink(s_list_element *self, s_erc *error);
  * @note If #s_list_free_fp is not defined then nothing is done
  * and @c NULL returned.
  */
-S_API s_list_element *s_list_element_delete(s_list_element *self, s_erc *error);
+S_API s_list_element *s_list_element_delete(s_list_element *self,
+											s_erc *error);
 
 
 /**
- * Return the next element in the list.
+ * Return the next element in the list relative to the given one.
  *
  * @param self Pointer to current position in list.
  * @param error Error code.
  *
  * @return Pointer to the next element in the list.
  */
-S_API s_list_element *s_list_element_next(s_list_element *self, s_erc *error);
+S_API const s_list_element *s_list_element_next(const s_list_element *self,
+												s_erc *error);
 
 
 /**
- * Return the prev element in the list.
+ * Return the previous element in the list relative to the given one.
  *
  * @param self Pointer to current position in list.
  * @param error Error code.
  *
- * @return Pointer to the prev element in the list.
+ * @return Pointer to the previous element in the list.
  */
-S_API s_list_element *s_list_element_prev(s_list_element *self, s_erc *error);
+S_API const s_list_element *s_list_element_prev(const s_list_element *self,
+												s_erc *error);
 
 
 /**
@@ -348,7 +359,10 @@ S_API s_list_element *s_list_element_prev(s_list_element *self, s_erc *error);
  * @param data The data to match.
  * @param error Error code.
  *
- * @return Pointer to the list element which matches the data, else @c NULL.
+ * @return Pointer to the list element which matches the data, else @c
+ * NULL.
+ *
+ * @note Returns the first match.
  */
 #define s_list_find(self, data, error) \
 	s_list_find_index(self, NULL, data, NULL, error)
@@ -373,7 +387,7 @@ S_API s_list_element *s_list_element_prev(s_list_element *self, s_erc *error);
  *
  * @return #TRUE or #FALSE.
  */
-S_API s_bool s_list_isempty(s_list *self, s_erc *error);
+S_API s_bool s_list_isempty(const s_list *self, s_erc *error);
 
 
 /**
@@ -384,7 +398,7 @@ S_API s_bool s_list_isempty(s_list *self, s_erc *error);
  *
  * @return The number of elements in the list.
  */
-S_API uint32 s_list_size(s_list *self, s_erc *error);
+S_API uint32 s_list_size(const s_list *self, s_erc *error);
 
 
 /**
@@ -403,8 +417,9 @@ S_API uint32 s_list_size(s_list *self, s_erc *error);
  *
  * @param self The list.
  * @param error Error code.
- *
  * @param data The data to append.
+ *
+ * @note The list takes ownership of the data.
  */
 S_API void s_list_push(s_list *self, void *data, s_erc *error);
 
@@ -417,6 +432,9 @@ S_API void s_list_push(s_list *self, void *data, s_erc *error);
  * @param error Error code.
  *
  * @return Pointer to popped element data.
+ *
+ * @note The caller is responsible for the memory of the returned
+ * data.
  */
 S_API void *s_list_pop(s_list *self, s_erc *error);
 
@@ -447,6 +465,8 @@ S_API void s_list_reverse(s_list *self, s_erc *error);
  * @param self The list.
  * @param error Error code.
  * @param data The data to prepend.
+ *
+ * @note The list takes ownership of the data.
  */
 S_API void s_list_prepend(s_list *self, void *data, s_erc *error);
 
@@ -457,6 +477,8 @@ S_API void s_list_prepend(s_list *self, void *data, s_erc *error);
  * @param self The list.
  * @param error Error code.
  * @param data The data to append.
+ *
+ * @note The list takes ownership of the data.
  */
 S_API void s_list_append(s_list *self, void *data, s_erc *error);
 
@@ -470,8 +492,10 @@ S_API void s_list_append(s_list *self, void *data, s_erc *error);
  * @param error Error code.
  *
  * @return Pointer to the inserted list element.
+ *
+ * @note The list takes ownership of the data.
  */
-S_API s_list_element *s_list_insert_before(s_list_element *self, void *data, s_erc *error);
+S_API const s_list_element *s_list_insert_before(s_list_element *self, void *data, s_erc *error);
 
 
 /**
@@ -483,8 +507,10 @@ S_API s_list_element *s_list_insert_before(s_list_element *self, void *data, s_e
  * @param error Error code.
  *
  * @return Pointer to the inserted list element.
+ *
+ * @note The list takes ownership of the data.
  */
-S_API s_list_element *s_list_insert_after(s_list_element *self, void *data, s_erc *error);
+S_API const s_list_element *s_list_insert_after(s_list_element *self, void *data, s_erc *error);
 
 
 /**

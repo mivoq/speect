@@ -70,3 +70,9 @@ docs/sphinxext/*.pyc
 # Ignore ditz config file
 
 .ditz-config
+
+
+##########################################################################
+# Ignore cscope files
+
+cscope*

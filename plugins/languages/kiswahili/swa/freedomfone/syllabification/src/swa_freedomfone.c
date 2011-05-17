@@ -905,6 +905,89 @@ static void Dispose(void *obj, s_erc *error)
 }
 
 
+static const char *GetName(const SSyllabification *self, s_erc *error)
+{
+	S_CLR_ERR(error);
+
+	if (self->info == NULL)
+		return NULL;
+
+	return (const char*)self->info->name;
+}
+
+
+static const char *GetDescription(const SSyllabification *self, s_erc *error)
+{
+	S_CLR_ERR(error);
+
+	if (self->info == NULL)
+		return NULL;
+
+	return (const char*)self->info->description;
+}
+
+
+static const char *GetLanguage(const SSyllabification *self, s_erc *error)
+{
+	S_CLR_ERR(error);
+
+	if (self->info == NULL)
+		return NULL;
+
+	return (const char*)self->info->language;
+}
+
+
+static const char *GetLangCode(const SSyllabification *self, s_erc *error)
+{
+	S_CLR_ERR(error);
+
+	if (self->info == NULL)
+		return NULL;
+
+	return (const char*)self->info->lang_code;
+}
+
+
+static const s_version *SGetVersion(const SSyllabification *self, s_erc *error)
+{
+	S_CLR_ERR(error);
+
+	if (self->info == NULL)
+		return NULL;
+
+	return (const s_version*)&(self->info->version);
+}
+
+
+static const SObject *GetFeature(const SSyllabification *self, const char *key,
+								 s_erc *error)
+{
+	const SObject *feature;
+
+
+	S_CLR_ERR(error);
+	if (key == NULL)
+	{
+		S_CTX_ERR(error, S_ARGERROR,
+				  "GetFeature",
+				  "Argument \"key\" is NULL");
+		return NULL;
+	}
+
+	if (self->features == NULL)
+		return NULL;
+
+	feature = SMapGetObjectDef(self->features, key, NULL, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "GetFeature",
+				  "Call to \"SMapGetObjectDef\" failed"))
+		return NULL;
+
+	return feature;
+}
+
+
 /**
  * return a vallist of vallists where the primary list is syllables and the secondary
  * lists are the phones in the syllables. for example :
@@ -912,7 +995,8 @@ static void Dispose(void *obj, s_erc *error)
  * syllfunc returns : ((m, ae), (th, ax), (m, ae), (t, ih, k, s))
  */
 
-static SList *Syllabify(const SItem *word, const SList *phoneList, s_erc *error)
+static SList *Syllabify(const SSyllabification *self, const SItem *word,
+						const SList *phoneList, s_erc *error)
 {
 	const SPhoneset *phoneset;
 	const SVoice *voice;
@@ -1273,6 +1357,9 @@ quit_error:
 		S_DELETE(phoneListCopy, "Syllabify", error);
 
 	return NULL;
+
+	/* for unused compiler warning */
+	self = NULL;
 }
 
 
@@ -1297,5 +1384,11 @@ static SSyllabSwaFreedomfoneClass SyllabSwaFreedomfoneClass =
 		NULL,            /* copy    */
 	},
 	/* SSyllabificationClass */
-	Syllabify          /* syllabify */
+	GetName,             /* get_name        */
+	GetDescription,      /* get_description */
+	GetLanguage,         /* get_language    */
+	GetLangCode,         /* get_lang_code   */
+	SGetVersion,         /* get_version     */
+	GetFeature,          /* get_feature     */
+	Syllabify            /* syllabify       */
 };

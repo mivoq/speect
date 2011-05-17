@@ -457,7 +457,8 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 		{
 			if (syllab != NULL)
 			{
-				syllablesPhones = S_SYLLABIFICATION_CALL(syllab, syllabify)(wordItem,
+				syllablesPhones = S_SYLLABIFICATION_CALL(syllab, syllabify)(syllab,
+																			wordItem,
 																			phones,
 																			error);
 				if (S_CHK_ERR(error, S_CONTERR,

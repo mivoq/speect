@@ -86,6 +86,53 @@ S_LOCAL void _s_syllabification_class_free(s_erc *error)
 /*                                                                                  */
 /************************************************************************************/
 
+static void Init(void *obj, s_erc *error)
+{
+	SSyllabification *self = obj;
+
+
+	S_CLR_ERR(error);
+	self->info = S_CALLOC(s_syllabification_info, 1);
+	if (self->info == NULL)
+	{
+		S_FTL_ERR(error, S_MEMERROR,
+				  "Init",
+				  "Failed to allocate memory for 's_syllabification_info' object");
+		return;
+	}
+
+	self->features = NULL;
+}
+
+
+static void Destroy(void *obj, s_erc *error)
+{
+	SSyllabification *self = obj;
+
+
+	S_CLR_ERR(error);
+	if (self->info != NULL)
+	{
+		if (self->info->name != NULL)
+			S_FREE(self->info->name);
+
+		if (self->info->description != NULL)
+			S_FREE(self->info->description);
+
+		if (self->info->language != NULL)
+			S_FREE(self->info->language);
+
+		if (self->info->lang_code != NULL)
+			S_FREE(self->info->lang_code);
+
+		S_FREE(self->info);
+	}
+
+	if (self->features != NULL)
+		S_DELETE(self->features, "Destroy", error);
+}
+
+
 static void Dispose(void *obj, s_erc *error)
 {
 	S_CLR_ERR(error);
@@ -106,13 +153,19 @@ static SSyllabificationClass SyllabificationClass =
 		"SSyllabification",
 		sizeof(SSyllabification),
 		{ 0, 1},
-		NULL,            /* init    */
-		NULL,            /* destroy */
+		Init,            /* init    */
+		Destroy,         /* destroy */
 		Dispose,         /* dispose */
 		NULL,            /* compare */
 		NULL,            /* print   */
 		NULL,            /* copy    */
 	},
 	/* SSyllabificationClass */
-	NULL              /* syllabify */
+	NULL,             /* get_name        */
+	NULL,             /* get_description */
+	NULL,             /* get_language    */
+	NULL,             /* get_lang_code   */
+	NULL,             /* get_version     */
+	NULL,             /* get_feature     */
+	NULL              /* syllabify       */
 };

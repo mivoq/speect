@@ -1,24 +1,29 @@
 ######################################################################################
 ##                                                                                  ##
 ## AUTHOR  : Aby Louw                                                               ##
-## DATE    : 11 June 2010                                                           ##
+## DATE    : 5 November 2009                                                        ##
 ##                                                                                  ##
 ######################################################################################
 ##                                                                                  ##
-## CMakeList for file serialization plug-ins                                        ##
+## Source files for SG2PRewrites plug-in                                            ##
 ##                                                                                  ##
 ##                                                                                  ##
 ######################################################################################
 
-#------------------------------------------------------------------------------------#
-#                        Plug-in directories                                         #
-#------------------------------------------------------------------------------------#
 
-add_subdirectory(addendum)
-add_subdirectory(audio)
-add_subdirectory(g2p_rewrites)
-add_subdirectory(halfphone_db)
-add_subdirectory(lexicon)
-add_subdirectory(phoneset)
-add_subdirectory(syllab_rewrites)
-add_subdirectory(utterance)
+######## source files ##################
+
+speect_plugin_sources(
+  src/plugin.c
+  src/syllab_rewrites.c
+  src/syllab_rewrites_rule.c
+  )
+ 
+
+######## header files ##################
+
+speect_plugin_headers(
+  src/syllab_rewrites.h
+  src/syllab_rewrites_rule.h
+  )
+

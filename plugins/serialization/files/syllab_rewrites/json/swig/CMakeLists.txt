@@ -1,24 +1,22 @@
 ######################################################################################
 ##                                                                                  ##
 ## AUTHOR  : Aby Louw                                                               ##
-## DATE    : 11 June 2010                                                           ##
+## DATE    : December 2009                                                          ##
 ##                                                                                  ##
 ######################################################################################
 ##                                                                                  ##
-## CMakeList for file serialization plug-ins                                        ##
+## CMakeList for SPhonesetJSON SWIG Wrappers                                        ##
 ##                                                                                  ##
 ##                                                                                  ##
 ######################################################################################
 
+
 #------------------------------------------------------------------------------------#
-#                        Plug-in directories                                         #
+#                   Include wrappers for different languages                         #
 #------------------------------------------------------------------------------------#
 
-add_subdirectory(addendum)
-add_subdirectory(audio)
-add_subdirectory(g2p_rewrites)
-add_subdirectory(halfphone_db)
-add_subdirectory(lexicon)
-add_subdirectory(phoneset)
-add_subdirectory(syllab_rewrites)
-add_subdirectory(utterance)
+if(WANT_PYTHON_WRAPPER)
+  add_subdirectory(python)
+endif(WANT_PYTHON_WRAPPER)
+
+

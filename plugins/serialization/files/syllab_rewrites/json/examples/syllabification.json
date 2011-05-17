@@ -1,0 +1,574 @@
+  {
+    "syllabification-definition" :
+    {
+      "name" : "South African English Lwazi",
+      "language" : "english",
+      "lang-code" : "eng-ZA",
+      "description" : "The Lwazi English syllabification rewrite rules",
+      "version" :
+      {
+	"major" : 1,
+	"minor" : 2
+      }
+    },
+    "features" :
+    {
+      "syllable_clusters": ["VCV", "VCCV", "VCCCV", "VCCCCV",
+			    "VCGV", "VCCGV", "VCCCGV", "VV"],
+      "wellformed_plosive_clusters": ["pl", "bl", "kl", "gl", "pr",
+                                      "br", "tr", "dr", "kr", "gr",
+                                      "tw", "dw", "gw", "kw", "py",
+                                      "by", "ty", "dy", "ky", "gy"],
+      "wellformed_fricative_clusters": ["fl", "fr", "thr", "shr",
+					"thw", "hw", "fy", "vy",
+					"thy", "zy", "hy"],
+      "wellformed_other_clusters": ["my", "ny", "ly"],
+      "wellformed_s_clusters": ["sp", "st", "sk", "sm", "sn",
+				"sf", "sw", "sl", "sy", "spl",
+				"spr", "spy", "smy", "str",
+				"sty", "skl", "skr", "skw",
+				"sky"],
+      "bursts": ["b", "ch", "d", "g", "jh", "k", "p", "t"],
+      "silence_phone": "pau",
+      "closure_phone": "pau_cl",
+      "syllable-boundary-symbol" : "-"
+    },
+
+    /* 
+     * Sets are mappings which can make it easier to write rules, and are optional.
+     * Any class of phones can be grouped together in sets.
+     * Note that set key names must be unique in the phoneset space. 
+     * 
+     */
+    "sets" :
+    {
+      /*
+       * C for a consonant, V represents a syllable peak (i.e. short
+       * vowel, syllabic sonorant, long vowel, diphthong), G represents glide.
+       */
+
+      /*  
+       * V represents a syllable peak (i.e. short
+       * vowel, syllabic sonorant, long vowel, diphthong)
+       */
+      "V" : ["_", "__", "a", "aa", "ai", "au", "e", "e_", "ei", "i", "i_", "ii", "o", "oi", "oo", "ou", "u", "u_", "uh", "uu", "w", "y"],	
+      
+      /* 
+       * C for a consonant
+       */
+      "C" : ["b", "ch", "d", "dh", "f", "g", "h", "jh", "k", "l", "m", "n", "ng", "p", "r", "s", "sh", "t", "th", "v", "w", "z", "zh"],
+      
+      /*
+       * G represents glide.
+       */
+      "G" : ["w", "y"],
+      
+      /*
+       * ANY represents all phones
+       */
+      "ANY" : ["_", "__", "a", "aa", "ai", "au", "b", "ch", "d", "dh", "e", "e_", "ei", "f", "g", "h", "i", "i_", "ii", "jh", "k", "l", "m", "n", "ng", "o", "oi", "oo", "ou", "p", "r", "s", "sh", "t", "th", "u", "u_", "uh", "uu", "v", "w", "y", "z", "zh"],
+      
+      /*
+       * Permissible s clusters (size 2)
+       */
+      "SCLUSTER1" : ["p", "t", "k", "m", "n", "f", "w", "l", "y"],
+      
+      /*
+       * Permissible s clusters (size 3)
+       */
+      "SCLUSTER2" : ["p", "t", "k", "m", "n", "f", "w", "l", "y"]
+    },
+
+    "rules" :
+    [  
+      /* 
+       * VCV -> V.CV
+       * 
+       * always split V.CV 
+       */
+      ["", "V", "C V", "V -"],
+      
+      /*
+       * VCCV -> V.CCV
+       * 
+       * Tautosyllabic CC clusters  
+       * -------------------------
+       * (a) the CC exhibits a sonority rise (going from left to right) and the
+       *     CC is a permissible word-initial cluster of English, or
+       * (b) the CC consists of [s] + voiceless stop.
+       */
+      /* case (a) */
+      ["", "V", "f l", "V -"],
+      ["", "V", "f r", "V -"],
+      ["", "V", "th r", "V -"],
+      ["", "V", "sh r", "V -"],
+      ["", "V", "b l", "V -"],
+      ["", "V", "b r", "V -"],
+      ["", "V", "p l", "V -"],
+      ["", "V", "p r", "V -"],
+      ["", "V", "s l", "V -"],
+      ["", "V", "s n", "V -"],
+      ["", "V", "s m", "V -"],
+      ["", "V", "k l", "V -"],
+      ["", "V", "k r", "V -"],
+      ["", "V", "g l", "V -"],
+      ["", "V", "g r", "V -"],
+      ["", "V", "d r", "V -"],
+      ["", "V", "t r", "V -"],
+      
+      /* case (b) */
+      ["", "V", "s p", "V -"],
+      ["", "V", "s k", "V -"],
+      ["", "V", "s t", "V -"],
+      
+
+      /*
+       * VCCV -> VC.CV
+       * 
+       * Heterosyllabic CC clusters  
+       * --------------------------
+       * There are three types of heterosyllabic CC sequences:
+       * (a) CC clusters in which the second C is less sonorous than the first (e.g.
+       *     /lk/ in bulky)
+       * (b) CC clusters in which the second C is more sonorous than the first and
+       *     which are not well-formed onsets of English e.g. /tl/ in atlas)
+       * (c) CC clusters in which the two C's are equally sonorous (e.g. /pk/ in
+       *     napkin)
+       */
+      /* case (a) */
+      ["", "V C", "l y", "V C -"],
+      ["", "V C", "l k", "V C -"],
+      ["", "V C", "n y", "V C -"],
+      ["", "V C", "f y", "V C -"],
+      ["", "V C", "th y", "V C -"],
+      ["", "V C", "th w", "V C -"],
+      ["", "V C", "b y", "V C -"],
+      ["", "V C", "p y", "V C -"],
+      ["", "V C", "z y", "V C -"],
+      ["", "V C", "v y", "V C -"],
+      ["", "V C", "s p", "V C -"],
+      ["", "V C", "s y", "V C -"],
+      ["", "V C", "s w", "V C -"],
+      ["", "V C", "s k", "V C -"],
+      ["", "V C", "s t", "V C -"],
+      ["", "V C", "k y", "V C -"],
+      ["", "V C", "k w", "V C -"],
+      ["", "V C", "m y", "V C -"],
+      ["", "V C", "g y", "V C -"],
+      ["", "V C", "g w", "V C -"],
+      ["", "V C", "d y", "V C -"],
+      ["", "V C", "d w", "V C -"],
+      ["", "V C", "t y", "V C -"],
+      ["", "V C", "t w", "V C -"],
+      ["", "V C", "h y", "V C -"],
+      ["", "V C", "h w", "V C -"],
+      
+      /* case (b) */
+      ["", "V C", "jh l", "V C -"],
+      ["", "V C", "jh n", "V C -"],
+      ["", "V C", "jh f", "V C -"],
+      ["", "V C", "jh th", "V C -"],
+      ["", "V C", "jh sh", "V C -"],
+      ["", "V C", "jh ng", "V C -"],
+      ["", "V C", "jh b", "V C -"],
+      ["", "V C", "jh p", "V C -"],
+      ["", "V C", "jh z", "V C -"],
+      ["", "V C", "jh v", "V C -"],
+      ["", "V C", "jh s", "V C -"],
+      ["", "V C", "jh k", "V C -"],
+      ["", "V C", "jh dh", "V C -"],
+      ["", "V C", "jh m", "V C -"],
+      ["", "V C", "jh g", "V C -"],
+      ["", "V C", "jh d", "V C -"],
+      ["", "V C", "jh t", "V C -"],
+      ["", "V C", "jh r", "V C -"],
+      ["", "V C", "jh zh", "V C -"],
+      ["", "V C", "jh h", "V C -"],
+      ["", "V C", "ch l", "V C -"],
+      ["", "V C", "ch n", "V C -"],
+      ["", "V C", "ch f", "V C -"],
+      ["", "V C", "ch th", "V C -"],
+      ["", "V C", "ch sh", "V C -"],
+      ["", "V C", "ch ng", "V C -"],
+      ["", "V C", "ch b", "V C -"],
+      ["", "V C", "ch p", "V C -"],
+      ["", "V C", "ch z", "V C -"],
+      ["", "V C", "ch v", "V C -"],
+      ["", "V C", "ch s", "V C -"],
+      ["", "V C", "ch k", "V C -"],
+      ["", "V C", "ch dh", "V C -"],
+      ["", "V C", "ch m", "V C -"],
+      ["", "V C", "ch g", "V C -"],
+      ["", "V C", "ch d", "V C -"],
+      ["", "V C", "ch t", "V C -"],
+      ["", "V C", "ch r", "V C -"],
+      ["", "V C", "ch zh", "V C -"],
+      ["", "V C", "ch h", "V C -"],
+      ["", "V C", "n l", "V C -"],
+      ["", "V C", "n r", "V C -"],
+      ["", "V C", "f l", "V C -"],
+      ["", "V C", "f n", "V C -"],
+      ["", "V C", "f ng", "V C -"],
+      ["", "V C", "f z", "V C -"],
+      ["", "V C", "f v", "V C -"],
+      ["", "V C", "f dh", "V C -"],
+      ["", "V C", "f m", "V C -"],
+      ["", "V C", "f r", "V C -"],
+      ["", "V C", "f zh", "V C -"],
+      ["", "V C", "th l", "V C -"],
+      ["", "V C", "th n", "V C -"],
+      ["", "V C", "th ng", "V C -"],
+      ["", "V C", "th z", "V C -"],
+      ["", "V C", "th v", "V C -"],
+      ["", "V C", "th dh", "V C -"],
+      ["", "V C", "th m", "V C -"],
+      ["", "V C", "th r", "V C -"],
+      ["", "V C", "th zh", "V C -"],
+      ["", "V C", "sh l", "V C -"],
+      ["", "V C", "sh n", "V C -"],
+      ["", "V C", "sh ng", "V C -"],
+      ["", "V C", "sh z", "V C -"],
+      ["", "V C", "sh v", "V C -"],
+      ["", "V C", "sh dh", "V C -"],
+      ["", "V C", "sh m", "V C -"],
+      ["", "V C", "sh r", "V C -"],
+      ["", "V C", "sh zh", "V C -"],
+      ["", "V C", "ng l", "V C -"],
+      ["", "V C", "ng r", "V C -"],
+      ["", "V C", "b l", "V C -"],
+      ["", "V C", "b n", "V C -"],
+      ["", "V C", "b f", "V C -"],
+      ["", "V C", "b th", "V C -"],
+      ["", "V C", "b sh", "V C -"],
+      ["", "V C", "b ng", "V C -"],
+      ["", "V C", "b z", "V C -"],
+      ["", "V C", "b v", "V C -"],
+      ["", "V C", "b s", "V C -"],
+      ["", "V C", "b dh", "V C -"],
+      ["", "V C", "b m", "V C -"],
+      ["", "V C", "b r", "V C -"],
+      ["", "V C", "b zh", "V C -"],
+      ["", "V C", "b h", "V C -"],
+      ["", "V C", "p l", "V C -"],
+      ["", "V C", "p n", "V C -"],
+      ["", "V C", "p f", "V C -"],
+      ["", "V C", "p th", "V C -"],
+      ["", "V C", "p sh", "V C -"],
+      ["", "V C", "p ng", "V C -"],
+      ["", "V C", "p b", "V C -"],
+      ["", "V C", "p z", "V C -"],
+      ["", "V C", "p v", "V C -"],
+      ["", "V C", "p s", "V C -"],
+      ["", "V C", "p dh", "V C -"],
+      ["", "V C", "p m", "V C -"],
+      ["", "V C", "p g", "V C -"],
+      ["", "V C", "p d", "V C -"],
+      ["", "V C", "p r", "V C -"],
+      ["", "V C", "p zh", "V C -"],
+      ["", "V C", "p h", "V C -"],
+      ["", "V C", "y l", "V C -"],
+      ["", "V C", "y n", "V C -"],
+      ["", "V C", "y f", "V C -"],
+      ["", "V C", "y th", "V C -"],
+      ["", "V C", "y sh", "V C -"],
+      ["", "V C", "y ng", "V C -"],
+      ["", "V C", "y b", "V C -"],
+      ["", "V C", "y p", "V C -"],
+      ["", "V C", "y z", "V C -"],
+      ["", "V C", "y v", "V C -"],
+      ["", "V C", "y s", "V C -"],
+      ["", "V C", "y k", "V C -"],
+      ["", "V C", "y dh", "V C -"],
+      ["", "V C", "y m", "V C -"],
+      ["", "V C", "y g", "V C -"],
+      ["", "V C", "y d", "V C -"],
+      ["", "V C", "y t", "V C -"],
+      ["", "V C", "y r", "V C -"],
+      ["", "V C", "y zh", "V C -"],
+      ["", "V C", "y h", "V C -"],
+      ["", "V C", "z l", "V C -"],
+      ["", "V C", "z n", "V C -"],
+      ["", "V C", "z ng", "V C -"],
+      ["", "V C", "z m", "V C -"],
+      ["", "V C", "z r", "V C -"],
+      ["", "V C", "v l", "V C -"],
+      ["", "V C", "v n", "V C -"],
+      ["", "V C", "v ng", "V C -"],
+      ["", "V C", "v m", "V C -"],
+      ["", "V C", "v r", "V C -"],
+      ["", "V C", "w l", "V C -"],
+      ["", "V C", "w n", "V C -"],
+      ["", "V C", "w f", "V C -"],
+      ["", "V C", "w th", "V C -"],
+      ["", "V C", "w sh", "V C -"],
+      ["", "V C", "w ng", "V C -"],
+      ["", "V C", "w b", "V C -"],
+      ["", "V C", "w p", "V C -"],
+      ["", "V C", "w z", "V C -"],
+      ["", "V C", "w v", "V C -"],
+      ["", "V C", "w s", "V C -"],
+      ["", "V C", "w k", "V C -"],
+      ["", "V C", "w dh", "V C -"],
+      ["", "V C", "w m", "V C -"],
+      ["", "V C", "w g", "V C -"],
+      ["", "V C", "w d", "V C -"],
+      ["", "V C", "w t", "V C -"],
+      ["", "V C", "w r", "V C -"],
+      ["", "V C", "w zh", "V C -"],
+      ["", "V C", "w h", "V C -"],
+      ["", "V C", "s l", "V C -"],
+      ["", "V C", "s n", "V C -"],
+      ["", "V C", "s ng", "V C -"],
+      ["", "V C", "s z", "V C -"],
+      ["", "V C", "s v", "V C -"],
+      ["", "V C", "s dh", "V C -"],
+      ["", "V C", "s m", "V C -"],
+      ["", "V C", "s r", "V C -"],
+      ["", "V C", "s zh", "V C -"],
+      ["", "V C", "k l", "V C -"],
+      ["", "V C", "k n", "V C -"],
+      ["", "V C", "k f", "V C -"],
+      ["", "V C", "k th", "V C -"],
+      ["", "V C", "k sh", "V C -"],
+      ["", "V C", "k ng", "V C -"],
+      ["", "V C", "k b", "V C -"],
+      ["", "V C", "k z", "V C -"],
+      ["", "V C", "k v", "V C -"],
+      ["", "V C", "k s", "V C -"],
+      ["", "V C", "k dh", "V C -"],
+      ["", "V C", "k m", "V C -"],
+      ["", "V C", "k g", "V C -"],
+      ["", "V C", "k d", "V C -"],
+      ["", "V C", "k r", "V C -"],
+      ["", "V C", "k zh", "V C -"],
+      ["", "V C", "k h", "V C -"],
+      ["", "V C", "dh l", "V C -"],
+      ["", "V C", "dh n", "V C -"],
+      ["", "V C", "dh ng", "V C -"],
+      ["", "V C", "dh m", "V C -"],
+      ["", "V C", "dh r", "V C -"],
+      ["", "V C", "m l", "V C -"],
+      ["", "V C", "m r", "V C -"],
+      ["", "V C", "g l", "V C -"],
+      ["", "V C", "g n", "V C -"],
+      ["", "V C", "g f", "V C -"],
+      ["", "V C", "g th", "V C -"],
+      ["", "V C", "g sh", "V C -"],
+      ["", "V C", "g ng", "V C -"],
+      ["", "V C", "g z", "V C -"],
+      ["", "V C", "g v", "V C -"],
+      ["", "V C", "g s", "V C -"],
+      ["", "V C", "g dh", "V C -"],
+      ["", "V C", "g m", "V C -"],
+      ["", "V C", "g r", "V C -"],
+      ["", "V C", "g zh", "V C -"],
+      ["", "V C", "g h", "V C -"],
+      ["", "V C", "d l", "V C -"],
+      ["", "V C", "d n", "V C -"],
+      ["", "V C", "d f", "V C -"],
+      ["", "V C", "d th", "V C -"],
+      ["", "V C", "d sh", "V C -"],
+      ["", "V C", "d ng", "V C -"],
+      ["", "V C", "d z", "V C -"],
+      ["", "V C", "d v", "V C -"],
+      ["", "V C", "d s", "V C -"],
+      ["", "V C", "d dh", "V C -"],
+      ["", "V C", "d m", "V C -"],
+      ["", "V C", "d r", "V C -"],
+      ["", "V C", "d zh", "V C -"],
+      ["", "V C", "d h", "V C -"],
+      ["", "V C", "t l", "V C -"],
+      ["", "V C", "t n", "V C -"],
+      ["", "V C", "t f", "V C -"],
+      ["", "V C", "t th", "V C -"],
+      ["", "V C", "t sh", "V C -"],
+      ["", "V C", "t ng", "V C -"],
+      ["", "V C", "t b", "V C -"],
+      ["", "V C", "t z", "V C -"],
+      ["", "V C", "t v", "V C -"],
+      ["", "V C", "t s", "V C -"],
+      ["", "V C", "t dh", "V C -"],
+      ["", "V C", "t m", "V C -"],
+      ["", "V C", "t g", "V C -"],
+      ["", "V C", "t d", "V C -"],
+      ["", "V C", "t r", "V C -"],
+      ["", "V C", "t zh", "V C -"],
+      ["", "V C", "t h", "V C -"],
+      ["", "V C", "zh l", "V C -"],
+      ["", "V C", "zh n", "V C -"],
+      ["", "V C", "zh ng", "V C -"],
+      ["", "V C", "zh m", "V C -"],
+      ["", "V C", "zh r", "V C -"],
+      ["", "V C", "h l", "V C -"],
+      ["", "V C", "h n", "V C -"],
+      ["", "V C", "h ng", "V C -"],
+      ["", "V C", "h z", "V C -"],
+      ["", "V C", "h v", "V C -"],
+      ["", "V C", "h dh", "V C -"],
+      ["", "V C", "h m", "V C -"],
+      ["", "V C", "h r", "V C -"],
+      ["", "V C", "h zh", "V C -"],
+      
+      /* case (c) */
+      ["", "V C", "p k", "V C -"],
+      ["", "V C", "s f", "V C -"],
+      
+
+      /*
+       * VCCCV -> VC.CCV
+       * 
+       * CCC clusters in which C2 and C3 are well-formed onsets of English
+       * and in which C2 and C3 rise in sonority (from left to right)
+       * These words can have either a nasal or a liquid as the
+       * first C.
+       */
+      ["", "V l", "f l V", "V l -"],
+      ["", "V l", "f r V", "V l -"],
+      ["", "V l", "th r V", "V l -"],
+      ["", "V l", "sh r V", "V l -"],
+      ["", "V l", "b l V", "V l -"],
+      ["", "V l", "b r V", "V l -"],
+      ["", "V l", "p l V", "V l -"],
+      ["", "V l", "p r V", "V l -"],
+      ["", "V l", "s l V", "V l -"],
+      ["", "V l", "s n V", "V l -"],
+      ["", "V l", "s m V", "V l -"],
+      ["", "V l", "k l V", "V l -"],
+      ["", "V l", "k r V", "V l -"],
+      ["", "V l", "g l V", "V l -"],
+      ["", "V l", "g r V", "V l -"],
+      ["", "V l", "d r V", "V l -"],
+      ["", "V l", "t r V", "V l -"],
+      ["", "V r", "f l V", "V r -"],
+      ["", "V r", "f r V", "V r -"],
+      ["", "V r", "th r V", "V r -"],
+      ["", "V r", "sh r V", "V r -"],
+      ["", "V r", "b l V", "V r -"],
+      ["", "V r", "b r V", "V r -"],
+      ["", "V r", "p l V", "V r -"],
+      ["", "V r", "p r V", "V r -"],
+      ["", "V r", "s l V", "V r -"],
+      ["", "V r", "s n V", "V r -"],
+      ["", "V r", "s m V", "V r -"],
+      ["", "V r", "k l V", "V r -"],
+      ["", "V r", "k r V", "V r -"],
+      ["", "V r", "g l V", "V r -"],
+      ["", "V r", "g r V", "V r -"],
+      ["", "V r", "d r V", "V r -"],
+      ["", "V r", "t r V", "V r -"],
+      ["", "V n", "f l V", "V n -"],
+      ["", "V n", "f r V", "V n -"],
+      ["", "V n", "th r V", "V n -"],
+      ["", "V n", "sh r V", "V n -"],
+      ["", "V n", "b l V", "V n -"],
+      ["", "V n", "b r V", "V n -"],
+      ["", "V n", "p l V", "V n -"],
+      ["", "V n", "p r V", "V n -"],
+      ["", "V n", "s l V", "V n -"],
+      ["", "V n", "s n V", "V n -"],
+      ["", "V n", "s m V", "V n -"],
+      ["", "V n", "k l V", "V n -"],
+      ["", "V n", "k r V", "V n -"],
+      ["", "V n", "g l V", "V n -"],
+      ["", "V n", "g r V", "V n -"],
+      ["", "V n", "d r V", "V n -"],
+      ["", "V n", "t r V", "V n -"],
+      ["", "V ng", "f l V", "V ng -"],
+      ["", "V ng", "f r V", "V ng -"],
+      ["", "V ng", "th r V", "V ng -"],
+      ["", "V ng", "sh r V", "V ng -"],
+      ["", "V ng", "b l V", "V ng -"],
+      ["", "V ng", "b r V", "V ng -"],
+      ["", "V ng", "p l V", "V ng -"],
+      ["", "V ng", "p r V", "V ng -"],
+      ["", "V ng", "s l V", "V ng -"],
+      ["", "V ng", "s n V", "V ng -"],
+      ["", "V ng", "s m V", "V ng -"],
+      ["", "V ng", "k l V", "V ng -"],
+      ["", "V ng", "k r V", "V ng -"],
+      ["", "V ng", "g l V", "V ng -"],
+      ["", "V ng", "g r V", "V ng -"],
+      ["", "V ng", "d r V", "V ng -"],
+      ["", "V ng", "t r V", "V ng -"],
+      ["", "V m", "f l V", "V m -"],
+      ["", "V m", "f r V", "V m -"],
+      ["", "V m", "th r V", "V m -"],
+      ["", "V m", "sh r V", "V m -"],
+      ["", "V m", "b l V", "V m -"],
+      ["", "V m", "b r V", "V m -"],
+      ["", "V m", "p l V", "V m -"],
+      ["", "V m", "p r V", "V m -"],
+      ["", "V m", "s l V", "V m -"],
+      ["", "V m", "s n V", "V m -"],
+      ["", "V m", "s m V", "V m -"],
+      ["", "V m", "k l V", "V m -"],
+      ["", "V m", "k r V", "V m -"],
+      ["", "V m", "g l V", "V m -"],
+      ["", "V m", "g r V", "V m -"],
+      ["", "V m", "d r V", "V m -"],
+      ["", "V m", "t r V", "V m -"],
+
+ 
+      /*
+       * VCCCV -> VCC.CV
+       * (a) C1 C2 C3 clusters in which C2 and C3 are not well-formed onsets of English
+       *     and in which C2 and C3 rise in sonority (<) (from left to right).
+       *
+       * (b) C2 and C3 exhibit a sonority plateau (=) and are not well-formed onsets
+       *     of English.
+       */
+      /* case (a) */
+      
+      
+      
+
+      
+      /* fall through */
+      ["", "_", "", "_"],
+      ["", "__", "", "__"],
+      ["", "a", "", "a"],
+      ["", "aa", "", "aa"],
+      ["", "ai", "", "ai"],
+      ["", "au", "", "au"],
+      ["", "b", "", "b"],
+      ["", "ch", "", "ch"],
+      ["", "d", "", "d"],
+      ["", "dh", "", "dh"],
+      ["", "e", "", "e"],
+      ["", "e_", "", "e_"],
+      ["", "ei", "", "ei"],
+      ["", "f", "", "f"],
+      ["", "g", "", "g"],
+      ["", "h", "", "h"],
+      ["", "i", "", "i"],
+      ["", "i_", "", "i_"],
+      ["", "ii", "", "ii"],
+      ["", "jh", "", "jh"],
+      ["", "k", "", "k"],
+      ["", "l", "", "l"],
+      ["", "m", "", "m"],
+      ["", "n", "", "n"],
+      ["", "ng", "", "ng"],
+      ["", "o", "", "o"],
+      ["", "oi", "", "oi"],
+      ["", "oo", "", "oo"],
+      ["", "ou", "", "ou"],
+      ["", "p", "", "p"],
+      ["", "r", "", "r"],
+      ["", "s", "", "s"],
+      ["", "sh", "", "sh"],
+      ["", "t", "", "t"],
+      ["", "th", "", "th"],
+      ["", "u", "", "u"],
+      ["", "u_", "", "u_"],
+      ["", "uh", "", "uh"],
+      ["", "uu", "", "uu"],
+      ["", "v", "", "v"],
+      ["", "w", "", "w"],
+      ["", "y", "", "y"],
+      ["", "z", "", "z"],
+      ["", "zh", "", "zh"]
+      
+]
+ 
+  }

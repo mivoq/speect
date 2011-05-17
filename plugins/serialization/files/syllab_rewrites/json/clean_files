@@ -23,82 +23,51 @@ fi
 
 
 ########################################################################
-# Add plug-in directories here if they have a 'clean_files' script, 
-# see the templates directory for examples
-########################################################################
 
-echo "--cleaning addendum--"
+echo "cleaning cmake"
 
-cd ./addendum/
+cd ./cmake/
 ./clean_files
 cd ..
 
 
 ########################################################################
 
-echo "--cleaning audio--"
+echo "cleaning doc"
 
-cd ./audio/
+cd ./doc/
 ./clean_files
 cd ..
 
 
 ########################################################################
 
-echo "--cleaning g2p_rewrites--"
+echo "cleaning examples"
 
-cd ./g2p_rewrites/
+cd ./examples/
 ./clean_files
 cd ..
 
 
 ########################################################################
 
-echo "--cleaning halfphone_db--"
+echo "cleaning src"
 
-cd ./halfphone_db/
+cd ./src/
 ./clean_files
 cd ..
 
 
 ########################################################################
 
-echo "--cleaning lexicon--"
+echo "cleaning swig"
 
-cd ./lexicon/
+cd ./swig/
 ./clean_files
 cd ..
 
 
 ########################################################################
-
-echo "--cleaning phoneset--"
-
-cd ./phoneset/
-./clean_files
-cd ..
-
-
-########################################################################
-
-echo "--cleaning syllab_rewrites--"
-
-cd ./syllab_rewrites/
-./clean_files
-cd ..
-
-
-########################################################################
-
-echo "--cleaning utterance--"
-
-cd ./utterance/
-./clean_files
-cd ..
-
-
-########################################################################
-
 
 rm -f  *~
 

@@ -114,24 +114,6 @@ Get the g2p's version.
 %feature("autodoc", g2p_version_DOCSTRING) SG2P::version;
 
 
-%define g2p_apply_DOCSTRING
-"""
-apply(word)
-
-Apply the g2p to the given word to get a phone list.
-
-:param word: The word to convert to a phone list.
-:type word: string
-:return: A list of phones for the given word or ``None`` if the
-	     g2p failed. If the g2p failed a warning will be set in the
-	     error log.
-:rtype: list
-"""
-%enddef
-
-%feature("autodoc", g2p_apply_DOCSTRING) SG2P::apply;
-
-
 %define g2p_apply_at_DOCSTRING
 """
 apply_at(word, index)

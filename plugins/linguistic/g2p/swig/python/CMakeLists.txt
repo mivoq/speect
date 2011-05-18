@@ -31,7 +31,7 @@ set(swig_python_docstrings "g2p_docs.c")
 set(swig_common "g2p_common.c")
 
 # Include SWIG Python interface definition.
-set(swig_python)
+set(swig_python "g2p_python.c")
 
 
 #------------------------------------------------------------------------------------#

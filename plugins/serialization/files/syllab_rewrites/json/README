@@ -1,0 +1,107 @@
+
+================================
+Syllabification JSON File Format
+================================
+
+The basic format of the syllabification rules follows that of the addendum, 
+lexicon and phoneset. 
+
+
+Syllabification definition
+==========================
+
+The first entry is a map with some information about
+the syllabification rules::
+    
+    "syllabification-definition" :
+    {
+      "name" : "South African English Lwazi",
+      "language" : "english",
+      "lang-code" : "eng-ZA",
+      "description" : "The Lwazi South African English syllabification rewrite rules. Based on T.A. Hall, \"English syllabification as the interaction of markedness constraints*\", Studia Linguistica, vol. 60, 2006, pp. 1-33",
+      "version" :
+      {
+	"major" : 1,
+	"minor" : 2
+      }
+    }
+
+
+Features section
+================
+
+Next follows a features section, you can add any information to the features, which will
+be accessible in Python as::
+
+   syllabification_rules_object.features["feature_name"]
+
+The only requirement for the features section is the *syllable-boundary-symbol* which we will
+get to later on. Here follows an example of the feature section::
+
+    "features" :
+    {
+      "syllable-boundary-symbol" : "-"
+    }
+
+
+Sets
+====
+
+Sets are a mapping from a *keyword* to a list that can replace that keyword in the rules. An example of
+the sets are::
+  
+    "sets" :
+    {
+      /*  
+       * V represents a syllable peak (i.e. short
+       * vowel, syllabic sonorant, long vowel, diphthong)
+       */
+      "V" : ["_", "__", "a", "aa", "ai", "au", "e", "e_", "ei", "i", "i_", "ii", "o", "oi", "oo", "ou", "u", "u_", "uh", "uu", "w", "y"],	
+      
+      /* 
+       * C for a consonant
+       */
+      "C" : ["b", "ch", "d", "dh", "f", "g", "h", "jh", "k", "l", "m", "n", "ng", "p", "r", "s", "sh", "t", "th", "v", "w", "z", "zh"],
+      
+      /*
+       * G represents a glide.
+       */
+      "G" : ["w", "y"],
+    }
+
+
+Rules
+=====
+
+The rewrite rule system is very simple but is powerful enough to build reasonably
+complex syllabification rule set. The basic form of a rule is as follows::
+	
+	["LEFTCONTEXT", "ITEMS", "RIGHTCONTEXT", "REPLACEMENT"]
+
+where the interpretation is that if *ITEMS* appear in the specified right and left context
+then the output string is to contain *REPLACEMENT*. Any of *LEFTCONTEXT*, *RIGHTCONTEXT* or
+*REPLACEMENT* may be empty. Note that *REPLACEMENT* is written to a different "tape" and hence
+cannot feed further rules (within this ruleset). An example is::
+
+       ["#", "e", "b l V", "e -"]
+
+The special character *#* denotes a boundary, and the symbol *V* in this context refers to the set named V,
+which is the set of all vowels. This rule states that an "e" at the start of a phone list followed by the phones
+"b" and "l" and another vowel, must have a syllable boundary after the "e", where "-" denotes the *syllable-boundary-symbol*
+as specified in the features section.
+
+Symbols in contexts (that is LEFTCONTEXT and RIGHTCONTEXT) may be followed by the symbol * for zero or more occurrences,
+or + for one or more occurrences. The symbols in the rules are treated as set names if they are declared as such or as
+symbols in the input/output alphabets. The symbols may be more than one character long and the names are case sensitive.
+Symbols must be separated by a space (" ").
+
+Symbols in the ITEMS and REPLACEMENT section can contain references to sets, for example::
+	
+	["#", "V a", "b l V", "V a -"]
+
+which states that a vowel and an "a" at the start of a phone list followed by the phones
+"b" and "l" and another vowel, must have a syllable boundary after the "a". One requirement of this
+format is that the number of elements in the ITEMS and REPLACEMENT sections must be the same.
+
+The rules are tried in order until one matches the first (or more) symbol of the tape. The rule is applied adding
+the right hand side to the output tape. The rules are again applied from the start of the list of rules.

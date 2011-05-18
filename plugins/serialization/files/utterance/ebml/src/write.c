@@ -338,7 +338,7 @@ static void write_this_content(SEbmlWrite *ebmlWriter, const SItem *item,
 	sint32 item_id;
 	sint32 *item_id_copy = NULL;
 	uint32 *item_content_id_copy = NULL;
-	s_hash_element *he;
+	const s_hash_element *he;
 	SItmContent *itmContent;
 	SIterator *itr = NULL;
 	const char *feat_name;
@@ -650,9 +650,9 @@ static void write_items_recursive(SEbmlWrite *ebmlWriter, const SItem *item,
 {
 	uint32 *node_number = NULL;
 	sint32 id;
-	uint32 *item_content_id;
+	const uint32 *item_content_id;
 	SItem *itemToWrite;
-	s_hash_element *he;
+	const s_hash_element *he;
 
 
 	/*
@@ -784,7 +784,7 @@ static void write_items_recursive(SEbmlWrite *ebmlWriter, const SItem *item,
 			return;
 		}
 
-		node_number = s_hash_element_get_data(he, error);
+		node_number = (uint32 *)s_hash_element_get_data(he, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "write_items_recursive",
 					  "Call to \"s_hash_element_get_data\" failed"))
@@ -824,7 +824,7 @@ static void write_items_recursive(SEbmlWrite *ebmlWriter, const SItem *item,
 			return;
 		}
 
-		node_number = s_hash_element_get_data(he, error);
+		node_number = (uint32 *)s_hash_element_get_data(he, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "write_items_recursive",
 					  "Call to \"s_hash_element_get_data\" failed"))
@@ -864,7 +864,7 @@ static void write_items_recursive(SEbmlWrite *ebmlWriter, const SItem *item,
 			return;
 		}
 
-		node_number = s_hash_element_get_data(he, error);
+		node_number = (uint32 *)s_hash_element_get_data(he, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "write_items_recursive",
 					  "Call to \"s_hash_element_get_data\" failed"))
@@ -904,7 +904,7 @@ static void write_items_recursive(SEbmlWrite *ebmlWriter, const SItem *item,
 			return;
 		}
 
-		node_number = s_hash_element_get_data(he, error);
+		node_number = (uint32 *)s_hash_element_get_data(he, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "write_items_recursive",
 					  "Call to \"s_hash_element_get_data\" failed"))

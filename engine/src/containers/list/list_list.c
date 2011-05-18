@@ -279,7 +279,6 @@ static void ListListInsertBefore(SList *self, SIterator *itr,
 	SListList *lList = (SListList*)self;
 	SListListIterator *listItr;
 	s_list_element *current_element;
-	s_list_element *inserted_element;
 	SObject *tmp;
 
 
@@ -297,7 +296,7 @@ static void ListListInsertBefore(SList *self, SIterator *itr,
 	SObjectIncRef(tmp);
 
 	/* insert */
-	inserted_element = s_list_insert_before(current_element, (void*)tmp, error);
+	s_list_insert_before(current_element, (void*)tmp, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "ListListInsertBefore",
 				  "Call to s_list_insert_before failed"))
@@ -333,7 +332,7 @@ static void ListListInsertAfter(SList *self, SIterator *itr,
 	SObjectIncRef(tmp);
 
 	/* insert */
-	inserted_element = s_list_insert_after(current_element, (void*)tmp, error);
+	inserted_element = (s_list_element*)s_list_insert_after(current_element, (void*)tmp, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "ListListInsertAfter",
 				  "Call to s_list_insert_after failed"))
@@ -401,7 +400,7 @@ static SList *ListListCopy(SList *dst, const SList *src, s_erc *error)
 {
 	const SListList *listSrc = (const SListList*)src;
 	SListList *listDst;
-	s_list_element *itr = NULL;
+	const s_list_element *itr = NULL;
 	s_bool made_new = FALSE;
 	const SObject *tmp;
 
@@ -529,7 +528,7 @@ static void ListListReverse(SList *self, s_erc *error)
 static const SObject *ListListNth(const SList *self, uint32 n, s_erc *error)
 {
 	SListList *lList = (SListList*)self;
-	s_list_element *nth;
+	const s_list_element *nth;
 	const SObject *object;
 
 
@@ -558,9 +557,9 @@ static const SObject *ListListNth(const SList *self, uint32 n, s_erc *error)
 
 static s_bool ListListValPresent(const SList *self, const SObject *val, s_erc *error)
 {
-	SObject *object;
+	const SObject *object;
 	SListList *lList = (SListList*)self;
-	s_list_element *itr;
+	const s_list_element *itr;
 	s_bool same;
 
 
@@ -576,7 +575,7 @@ static s_bool ListListValPresent(const SList *self, const SObject *val, s_erc *e
 
 	while (itr != NULL)
 	{
-		object = (SObject*)s_list_element_get(itr, error);
+		object = s_list_element_get(itr, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "ListListValPresent",
 					  "Call to s_list_element_get failed"))

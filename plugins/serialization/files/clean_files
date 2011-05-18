@@ -81,6 +81,15 @@ cd ..
 
 ########################################################################
 
+echo "--cleaning syllab_rewrites--"
+
+cd ./syllab_rewrites/
+./clean_files
+cd ..
+
+
+########################################################################
+
 echo "--cleaning utterance--"
 
 cd ./utterance/

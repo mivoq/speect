@@ -92,12 +92,9 @@ class Syllab_Rewrites(rewrites.Rewrites):
 
 
             rule = rewrites.RewriteRule(LC, G, RC, P, 0)
-            try:
-                self.ruleset[G[0]].append(rule)     # we don't use the last field...
-            except KeyError:
-                self.ruleset[G[0]] = []
-                self.ruleset[G[0]].append(rule)     # we don't use the last field...
-       
+            self.addRule(G[0], rule)
+
+        
 
     
     def syllabify(self, word, phones):

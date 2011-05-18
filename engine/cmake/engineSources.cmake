@@ -55,6 +55,7 @@ set(SPCT_SRC_FILES
     src/base/strings/regexp.c
     src/base/strings/sprint.c
     src/base/strings/strings.c
+    src/base/strings/str_list.c
 
     # src/base/utils
     src/base/utils/alloc.c
@@ -225,6 +226,7 @@ set(SPCT_SRC_INCLUDE_FILES
    src/base/strings/sprint.h
    src/base/strings/strings.h
    src/base/strings/utf8.h
+   src/base/strings/str_list.h
 
    # src/base/threads
    src/base/threads/threads.h

@@ -236,7 +236,7 @@ S_API void s_hash_element_delete(s_hash_element *self, s_erc *error);
  *
  * @return Returns the number of elements of the hash table.
  */
-S_API uint32 s_hash_table_size(s_hash_table *self, s_erc *error);
+S_API uint32 s_hash_table_size(const s_hash_table *self, s_erc *error);
 
 
 /**
@@ -291,8 +291,8 @@ S_API void s_hash_table_resize(s_hash_table *self, sint32 size,
  * @return Pointer to the hash table element or @c NULL if the given
  * key does not have an associated hash table element.
  */
-S_API s_hash_element *s_hash_table_find(s_hash_table *self, void *key,
-										size_t key_length, s_erc *error);
+S_API const s_hash_element *s_hash_table_find(const s_hash_table *self, const void *key,
+											  size_t key_length, s_erc *error);
 
 
 /**
@@ -304,7 +304,7 @@ S_API s_hash_element *s_hash_table_find(s_hash_table *self, void *key,
  * @return Pointer to the first hash table element, or @c NULL if not
  * found or the hash table is empty.
  */
-S_API s_hash_element *s_hash_table_first(s_hash_table *self, s_erc *error);
+S_API const s_hash_element *s_hash_table_first(const s_hash_table *self, s_erc *error);
 
 
 /**
@@ -316,7 +316,7 @@ S_API s_hash_element *s_hash_table_first(s_hash_table *self, s_erc *error);
  * @return Pointer to next hash table element relative to given one,
  * or @c NULL if none.
  */
-S_API s_hash_element *s_hash_element_next(s_hash_element *self, s_erc *error);
+S_API const s_hash_element *s_hash_element_next(const s_hash_element *self, s_erc *error);
 
 
 /**
@@ -338,7 +338,7 @@ S_API s_hash_element *s_hash_element_next(s_hash_element *self, s_erc *error);
  *
  * @return The key of the given hash table element.
  */
-S_API void *s_hash_element_key(s_hash_element *self, s_erc *error);
+S_API const void *s_hash_element_key(const s_hash_element *self, s_erc *error);
 
 
 /**
@@ -349,7 +349,7 @@ S_API void *s_hash_element_key(s_hash_element *self, s_erc *error);
  *
  * @return The key length (bytes) of the given hash table element.
  */
-S_API size_t s_hash_element_key_length(s_hash_element *self, s_erc *error);
+S_API size_t s_hash_element_key_length(const s_hash_element *self, s_erc *error);
 
 
 /**
@@ -360,7 +360,7 @@ S_API size_t s_hash_element_key_length(s_hash_element *self, s_erc *error);
  *
  * @return The data of the given hash table element.
  */
-S_API void *s_hash_element_get_data(s_hash_element *self, s_erc *error);
+S_API const void *s_hash_element_get_data(const s_hash_element *self, s_erc *error);
 
 
 /**
@@ -408,7 +408,7 @@ S_API void s_hash_element_set_data(s_hash_element *self, void *data, s_erc *erro
  * buffer.
  *
  */
-S_API char *s_hash_table_stats(s_hash_table *self, s_erc *error);
+S_API char *s_hash_table_stats(const s_hash_table *self, s_erc *error);
 
 
 /**
@@ -421,7 +421,7 @@ S_API char *s_hash_table_stats(s_hash_table *self, s_erc *error);
  * @return The position of the given hash table element in the hash
  * table array.
  */
-S_API uint32 s_hash_element_pos(s_hash_element *self, s_erc *error);
+S_API uint32 s_hash_element_pos(const s_hash_element *self, s_erc *error);
 
 
 /**

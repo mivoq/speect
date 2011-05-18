@@ -62,6 +62,7 @@
 #include "base/strings/regexp.h"          /* UTF-8 regular expressions.             */
 #include "base/strings/sprint.h"          /* UTF-8 string print functions.          */
 #include "base/strings/strings.h"         /* UTF-8 string handling functions.       */
+#include "base/strings/str_list.h"        /* UTF-8 string lists.                    */
 
 
 #endif /* _SPCT_UTF8_STRINGS_H__ */

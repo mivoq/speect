@@ -624,16 +624,6 @@ static SList *Syllabify(const SSyllabification *self, const SItem *word,
 
 
 	S_CLR_ERR(error);
-	/*
-	if (word == NULL)
-	{
-		S_CTX_ERR(error, S_ARGERROR,
-				  "Syllabify",
-				  "Argument \"word\" is NULL");
-		goto error_return;
-	}
-	*/
-
 	if (phoneList == NULL)
 	{
 		S_CTX_ERR(error, S_ARGERROR,
@@ -785,6 +775,8 @@ error_return:
 	}
 
 	return NULL;
+
+	word = NULL; /* compiler noise about unused parameters */
 }
 
 /************************************************************************************/

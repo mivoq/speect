@@ -172,12 +172,12 @@ class Rewrites(object):
         self.sets = sets
 
 
-	def _add_rule(self, index, rule):
-         try:
-             self.ruleset[index].append(rule)     
-         except KeyError:
-             self.ruleset[index] = []
-             self.ruleset[index].append(rule)     
+    def _add_rule(self, index, rule):
+        try:
+            self.ruleset[index].append(rule)     
+        except KeyError:
+            self.ruleset[index] = []
+            self.ruleset[index].append(rule)     
 
 
     def addRule(self, index, rule):
@@ -206,8 +206,6 @@ class Rewrites(object):
 
 
     def get_otape(self, rRHS, am):
-        print "get_otape a_match = " + str(am)
-        print "get_otape ruleRHS = " + str(rRHS)
         new_otape = []
         ruleRHS = list(rRHS)
         ruleRHS.reverse()

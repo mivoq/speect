@@ -4,7 +4,7 @@
       "name" : "South African English Lwazi",
       "language" : "english",
       "lang-code" : "eng-ZA",
-      "description" : "The Lwazi English syllabification rewrite rules",
+      "description" : "The Lwazi South African English syllabification rewrite rules. Based on T.A. Hall, \"English syllabification as the interaction of markedness constraints*\", Studia Linguistica, vol. 60, 2006, pp. 1-33",
       "version" :
       {
 	"major" : 1,
@@ -13,24 +13,6 @@
     },
     "features" :
     {
-      "syllable_clusters": ["VCV", "VCCV", "VCCCV", "VCCCCV",
-			    "VCGV", "VCCGV", "VCCCGV", "VV"],
-      "wellformed_plosive_clusters": ["pl", "bl", "kl", "gl", "pr",
-                                      "br", "tr", "dr", "kr", "gr",
-                                      "tw", "dw", "gw", "kw", "py",
-                                      "by", "ty", "dy", "ky", "gy"],
-      "wellformed_fricative_clusters": ["fl", "fr", "thr", "shr",
-					"thw", "hw", "fy", "vy",
-					"thy", "zy", "hy"],
-      "wellformed_other_clusters": ["my", "ny", "ly"],
-      "wellformed_s_clusters": ["sp", "st", "sk", "sm", "sn",
-				"sf", "sw", "sl", "sy", "spl",
-				"spr", "spy", "smy", "str",
-				"sty", "skl", "skr", "skw",
-				"sky"],
-      "bursts": ["b", "ch", "d", "g", "jh", "k", "p", "t"],
-      "silence_phone": "pau",
-      "closure_phone": "pau_cl",
       "syllable-boundary-symbol" : "-"
     },
 
@@ -43,10 +25,10 @@
     "sets" :
     {
       /*
-       * C for a consonant, V represents a syllable peak (i.e. short
-       * vowel, syllabic sonorant, long vowel, diphthong), G represents glide.
+       * ANY represents all phones
        */
-
+      "ANY" : ["_", "__", "a", "aa", "ai", "au", "b", "ch", "d", "dh", "e", "e_", "ei", "f", "g", "h", "i", "i_", "ii", "jh", "k", "l", "m", "n", "ng", "o", "oi", "oo", "ou", "p", "r", "s", "sh", "t", "th", "u", "u_", "uh", "uu", "v", "w", "y", "z", "zh"],
+      
       /*  
        * V represents a syllable peak (i.e. short
        * vowel, syllabic sonorant, long vowel, diphthong)
@@ -59,361 +41,141 @@
       "C" : ["b", "ch", "d", "dh", "f", "g", "h", "jh", "k", "l", "m", "n", "ng", "p", "r", "s", "sh", "t", "th", "v", "w", "z", "zh"],
       
       /*
-       * G represents glide.
+       * G represents a glide.
        */
       "G" : ["w", "y"],
+         
+      /*
+       * O represents an obstruent
+       */
+      "O" : ["b", "ch", "d", "dh", "f", "g", "jh", "k", "p", "s", "sh", "t", "th", "v", "z", "zh"],
       
       /*
-       * ANY represents all phones
+       * LN represents liquids and nasals
        */
-      "ANY" : ["_", "__", "a", "aa", "ai", "au", "b", "ch", "d", "dh", "e", "e_", "ei", "f", "g", "h", "i", "i_", "ii", "jh", "k", "l", "m", "n", "ng", "o", "oi", "oo", "ou", "p", "r", "s", "sh", "t", "th", "u", "u_", "uh", "uu", "v", "w", "y", "z", "zh"],
+      "LN" : ["l", "m", "n", "ng", "r"],
       
       /*
-       * Permissible s clusters (size 2)
+       * UVSTOP represents voiceless stop/plosive
        */
-      "SCLUSTER1" : ["p", "t", "k", "m", "n", "f", "w", "l", "y"],
+      "UVSTOP" : ["k", "p", "t"],
       
       /*
-       * Permissible s clusters (size 3)
+       * STOP represents stop/plosive
        */
-      "SCLUSTER2" : ["p", "t", "k", "m", "n", "f", "w", "l", "y"]
+      "STOP" : ["b", "d", "g", "k", "p", "t"],
+      
+      /*
+       * NOT_STOP represents consonants that are NOT stop/plosive
+       */
+      "NOT_STOP" : ["ch", "dh", "f", "h", "jh", "l", "m", "n", "ng", "r", "s", "sh", "th", "v", "w", "y", "z", "zh"],
+
+      /*
+       * Not well formed CC clusters (for sonority rise and equal)
+       * Used in VCCCV -> VCC.CV
+       */
+      "B_NWF_RE" : ["b", "d", "dh", "f", "g", "h", "m", "n", "ng", "s", "sh", "th", "v", "z", "zh"],
+      "CH_NWF_RE" : ["b", "ch", "d", "dh", "f", "g", "h", "jh", "k", "l", "m", "n", "ng", "p", "r", "s", "sh", "t", "th", "v", "w", "y", "z", "zh"],
+      "D_NWF_RE" : ["b", "d", "dh", "f", "g", "h", "l", "m", "n", "ng", "s", "sh", "th", "v", "z", "zh"],
+      "DH_NWF_RE" : ["dh", "l", "m", "n", "ng", "r", "v", "z", "zh"],
+      "F_NWF_RE" : ["dh", "f", "h", "m", "n", "ng", "s", "sh", "th", "v", "z", "zh"],
+      "G_NWF_RE" : ["b", "d", "dh", "f", "g", "h", "m", "n", "ng", "s", "sh", "th", "v", "z", "zh"],
+      "H_NWF_RE" : ["dh", "f", "h", "l", "m", "n", "ng", "r", "s", "sh", "th", "v", "z", "zh"],
+      "JH_NWF_RE" : ["b", "ch", "d", "dh", "f", "g", "h", "jh", "k", "l", "m", "n", "ng", "p", "r", "s", "sh", "t", "th", "v", "w", "y", "z", "zh"],
+      "K_NWF_RE" : ["b", "d", "dh", "f", "g", "h", "k", "m", "n", "ng", "p", "s", "sh", "t", "th", "v", "z", "zh"],
+      "L_NWF_RE" : ["l", "r"],
+      "M_NWF_RE" : ["l", "m", "n", "ng", "r"],
+      "N_NWF_RE" : ["l", "m", "n", "ng", "r"],
+      "NG_NWF_RE" : ["l", "m", "n", "ng", "r"],
+      "P_NWF_RE" : ["b", "d", "dh", "f", "g", "h", "k", "m", "n", "ng", "p", "s", "sh", "t", "th", "v", "z", "zh"],
+      "R_NWF_RE" : ["l", "r"],
+      "S_NWF_RE" : ["dh", "h", "ng", "r", "s", "sh", "th", "v", "z", "zh"],
+      "SH_NWF_RE" : ["dh", "f", "h", "l", "m", "n", "ng", "s", "sh", "th", "v", "z", "zh"],
+      "T_NWF_RE" : ["b", "d", "dh", "f", "g", "h", "k", "l", "m", "n", "ng", "p", "s", "sh", "t", "th", "v", "z", "zh"],
+      "TH_NWF_RE" : ["dh", "f", "h", "l", "m", "n", "ng", "s", "sh", "th", "v", "z", "zh"],
+      "V_NWF_RE" : ["dh", "l", "m", "n", "ng", "r", "v", "z", "zh"],
+      "W_NWF_RE" : ["b", "ch", "d", "dh", "f", "g", "h", "jh", "k", "l", "m", "n", "ng", "p", "r", "s", "sh", "t", "th", "v", "w", "y", "z", "zh"],
+      "Y_NWF_RE" : ["b", "ch", "d", "dh", "f", "g", "h", "jh", "k", "l", "m", "n", "ng", "p", "r", "s", "sh", "t", "th", "v", "w", "y", "z", "zh"],
+      "Z_NWF_RE" : ["dh", "l", "m", "n", "ng", "r", "v", "z", "zh"],
+      "ZH_NWF_RE" : ["dh", "l", "m", "n", "ng", "r", "v", "z", "zh"],
+      
+
+      /*
+       * Not well formed CC clusters (for sonority rise, fall and equal)
+       * Used in heterosyllabic CC clusters (VCCV -> VC.CV)
+       */
+      "B_NWF_RFE" : ["b", "ch", "d", "dh", "f", "g", "h", "jh", "k", "m", "n", "ng", "p", "s", "sh", "t", "th", "v", "w", "z", "zh"],
+      "CH_NWF_RFE": ["b", "ch", "d", "dh", "f", "g", "h", "jh", "k", "l", "m", "n", "ng", "p", "r", "s", "sh", "t", "th", "v", "w", "y", "z", "zh"],
+      "D_NWF_RFE" : ["b", "ch", "d", "dh", "f", "g", "h", "jh", "k", "l", "m", "n", "ng", "p", "s", "sh", "t", "th", "v", "z", "zh"],
+      "DH_NWF_RFE" : ["b", "ch", "d", "dh", "f", "g", "h", "jh", "k", "l", "m", "n", "ng", "p", "r", "s", "sh", "t", "th", "v", "w", "y", "z", "zh"],
+      "F_NWF_RFE" : ["b", "ch", "d", "dh", "f", "g", "h", "jh", "k", "m", "n", "ng", "p", "s", "sh", "t", "th", "v", "w", "z", "zh"],
+      "G_NWF_RFE" : ["b", "ch", "d", "dh", "f", "g", "h", "jh", "k", "m", "n", "ng", "p", "s", "sh", "t", "th", "v", "z", "zh"],
+      "H_NWF_RFE" : ["b", "ch", "d", "dh", "f", "g", "h", "jh", "k", "l", "m", "n", "ng", "p", "r", "s", "sh", "t", "th", "v", "z", "zh"],
+      "JH_NWF_RFE" : ["b", "ch", "d", "dh", "f", "g", "h", "jh", "k", "l", "m", "n", "ng", "p", "r", "s", "sh", "t", "th", "v", "w", "y", "z", "zh"],
+      "K_NWF_RFE" : ["b", "ch", "d", "dh", "f", "g", "h", "jh", "k", "m", "n", "ng", "p", "s", "sh", "t", "th", "v", "z", "zh"],
+      "L_NWF_RFE" : ["b", "ch", "d", "dh", "f", "g", "h", "jh", "k", "l", "m", "n", "ng", "p", "r", "s", "sh", "t", "th", "v", "w", "y", "z", "zh"],
+      "M_NWF_RFE" : ["b", "ch", "d", "dh", "f", "g", "h", "jh", "k", "l", "m", "n", "ng", "p", "r", "s", "sh", "t", "th", "v", "w", "y", "z", "zh"],
+      "N_NWF_RFE" : ["b", "ch", "d", "dh", "f", "g", "h", "jh", "k", "l", "m", "n", "ng", "p", "r", "s", "sh", "t", "th", "v", "w", "y", "z", "zh"],
+      "NG_NWF_RFE" : ["b", "ch", "d", "dh", "f", "g", "h", "jh", "k", "l", "m", "n", "ng", "p", "r", "s", "sh", "t", "th", "v", "w", "y", "z", "zh"],
+      "P_NWF_RFE" : ["b", "ch", "d", "dh", "f", "g", "h", "jh", "k", "m", "n", "ng", "p", "s", "sh", "t", "th", "v", "w", "z", "zh"],
+      "R_NWF_RFE" : ["b", "ch", "d", "dh", "f", "g", "h", "jh", "k", "l", "m", "n", "ng", "p", "r", "s", "sh", "t", "th", "v", "w", "y", "z", "zh"],
+      "S_NWF_RFE" : ["b", "ch", "d", "dh", "g", "h", "jh", "ng", "r", "s", "sh", "th", "v", "z", "zh"],
+      "SH_NWF_RFE" : ["b", "ch", "d", "dh", "f", "g", "h", "jh", "k", "l", "m", "n", "ng", "p", "s", "sh", "t", "th", "v", "w", "y", "z", "zh"],
+      "T_NWF_RFE" : ["b", "ch", "d", "dh", "f", "g", "h", "jh", "k", "l", "m", "n", "ng", "p", "s", "sh", "t", "th", "v", "z", "zh"],
+      "TH_NWF_RFE" : ["b", "ch", "d", "dh", "f", "g", "h", "jh", "k", "l", "m", "n", "ng", "p", "s", "sh", "t", "th", "v", "z", "zh"],
+      "V_NWF_RFE" : ["b", "ch", "d", "dh", "f", "g", "h", "jh", "k", "l", "m", "n", "ng", "p", "r", "s", "sh", "t", "th", "v", "w", "z", "zh"],
+      "W_NWF_RFE" : ["b", "ch", "d", "dh", "f", "g", "h", "jh", "k", "l", "m", "n", "ng", "p", "r", "s", "sh", "t", "th", "v", "w", "y", "z", "zh"],
+      "Y_NWF_RFE" : ["b", "ch", "d", "dh", "f", "g", "h", "jh", "k", "l", "m", "n", "ng", "p", "r", "s", "sh", "t", "th", "v", "w", "y", "z", "zh"],
+      "Z_NWF_RFE" : ["b", "ch", "d", "dh", "f", "g", "h", "jh", "k", "l", "m", "n", "ng", "p", "r", "s", "sh", "t", "th", "v", "w", "z", "zh"],
+      "ZH_NWF_RFE" : ["b", "ch", "d", "dh", "f", "g", "h", "jh", "k", "l", "m", "n", "ng", "p", "r", "s", "sh", "t", "th", "v", "w", "y", "z", "zh"],
+      
+      /*
+       * Well formed CG onset clusters 
+       */
+      "B_OWF_G" : ["y"],
+      "D_OWF_G" : ["w", "y"],
+      "G_OWF_G" : ["w", "y"],
+      "K_OWF_G" : ["w", "y"],
+      "P_OWF_G" : ["y"],
+      "T_OWF_G" : ["w", "y"]
     },
 
     "rules" :
     [  
-      /* 
-       * VCV -> V.CV
-       * 
-       * always split V.CV 
-       */
-      ["", "V", "C V", "V -"],
       
       /*
-       * VCCV -> V.CCV
-       * 
-       * Tautosyllabic CC clusters  
-       * -------------------------
-       * (a) the CC exhibits a sonority rise (going from left to right) and the
-       *     CC is a permissible word-initial cluster of English, or
-       * (b) the CC consists of [s] + voiceless stop.
+       * VCCCCV Clusters
+       * ===============
        */
-      /* case (a) */
-      ["", "V", "f l", "V -"],
-      ["", "V", "f r", "V -"],
-      ["", "V", "th r", "V -"],
-      ["", "V", "sh r", "V -"],
-      ["", "V", "b l", "V -"],
-      ["", "V", "b r", "V -"],
-      ["", "V", "p l", "V -"],
-      ["", "V", "p r", "V -"],
-      ["", "V", "s l", "V -"],
-      ["", "V", "s n", "V -"],
-      ["", "V", "s m", "V -"],
-      ["", "V", "k l", "V -"],
-      ["", "V", "k r", "V -"],
-      ["", "V", "g l", "V -"],
-      ["", "V", "g r", "V -"],
-      ["", "V", "d r", "V -"],
-      ["", "V", "t r", "V -"],
       
-      /* case (b) */
-      ["", "V", "s p", "V -"],
-      ["", "V", "s k", "V -"],
-      ["", "V", "s t", "V -"],
+      /*
+       * VCCCCV -> VC.CCCV
+       * 
+       * Tautomorphemic clusters
+       * 
+       *  _always_
+       * 
+       * Will also handle VCCCGV -> VC.CCGV, which is 
+       * basically the same.
+       * 
+       */
+      ["", "V C", "C C C V", "V C -"],
       
 
       /*
-       * VCCV -> VC.CV
-       * 
-       * Heterosyllabic CC clusters  
-       * --------------------------
-       * There are three types of heterosyllabic CC sequences:
-       * (a) CC clusters in which the second C is less sonorous than the first (e.g.
-       *     /lk/ in bulky)
-       * (b) CC clusters in which the second C is more sonorous than the first and
-       *     which are not well-formed onsets of English e.g. /tl/ in atlas)
-       * (c) CC clusters in which the two C's are equally sonorous (e.g. /pk/ in
-       *     napkin)
+       * VCCCV Clusters
+       * ==============
        */
-      /* case (a) */
-      ["", "V C", "l y", "V C -"],
-      ["", "V C", "l k", "V C -"],
-      ["", "V C", "n y", "V C -"],
-      ["", "V C", "f y", "V C -"],
-      ["", "V C", "th y", "V C -"],
-      ["", "V C", "th w", "V C -"],
-      ["", "V C", "b y", "V C -"],
-      ["", "V C", "p y", "V C -"],
-      ["", "V C", "z y", "V C -"],
-      ["", "V C", "v y", "V C -"],
-      ["", "V C", "s p", "V C -"],
-      ["", "V C", "s y", "V C -"],
-      ["", "V C", "s w", "V C -"],
-      ["", "V C", "s k", "V C -"],
-      ["", "V C", "s t", "V C -"],
-      ["", "V C", "k y", "V C -"],
-      ["", "V C", "k w", "V C -"],
-      ["", "V C", "m y", "V C -"],
-      ["", "V C", "g y", "V C -"],
-      ["", "V C", "g w", "V C -"],
-      ["", "V C", "d y", "V C -"],
-      ["", "V C", "d w", "V C -"],
-      ["", "V C", "t y", "V C -"],
-      ["", "V C", "t w", "V C -"],
-      ["", "V C", "h y", "V C -"],
-      ["", "V C", "h w", "V C -"],
       
-      /* case (b) */
-      ["", "V C", "jh l", "V C -"],
-      ["", "V C", "jh n", "V C -"],
-      ["", "V C", "jh f", "V C -"],
-      ["", "V C", "jh th", "V C -"],
-      ["", "V C", "jh sh", "V C -"],
-      ["", "V C", "jh ng", "V C -"],
-      ["", "V C", "jh b", "V C -"],
-      ["", "V C", "jh p", "V C -"],
-      ["", "V C", "jh z", "V C -"],
-      ["", "V C", "jh v", "V C -"],
-      ["", "V C", "jh s", "V C -"],
-      ["", "V C", "jh k", "V C -"],
-      ["", "V C", "jh dh", "V C -"],
-      ["", "V C", "jh m", "V C -"],
-      ["", "V C", "jh g", "V C -"],
-      ["", "V C", "jh d", "V C -"],
-      ["", "V C", "jh t", "V C -"],
-      ["", "V C", "jh r", "V C -"],
-      ["", "V C", "jh zh", "V C -"],
-      ["", "V C", "jh h", "V C -"],
-      ["", "V C", "ch l", "V C -"],
-      ["", "V C", "ch n", "V C -"],
-      ["", "V C", "ch f", "V C -"],
-      ["", "V C", "ch th", "V C -"],
-      ["", "V C", "ch sh", "V C -"],
-      ["", "V C", "ch ng", "V C -"],
-      ["", "V C", "ch b", "V C -"],
-      ["", "V C", "ch p", "V C -"],
-      ["", "V C", "ch z", "V C -"],
-      ["", "V C", "ch v", "V C -"],
-      ["", "V C", "ch s", "V C -"],
-      ["", "V C", "ch k", "V C -"],
-      ["", "V C", "ch dh", "V C -"],
-      ["", "V C", "ch m", "V C -"],
-      ["", "V C", "ch g", "V C -"],
-      ["", "V C", "ch d", "V C -"],
-      ["", "V C", "ch t", "V C -"],
-      ["", "V C", "ch r", "V C -"],
-      ["", "V C", "ch zh", "V C -"],
-      ["", "V C", "ch h", "V C -"],
-      ["", "V C", "n l", "V C -"],
-      ["", "V C", "n r", "V C -"],
-      ["", "V C", "f l", "V C -"],
-      ["", "V C", "f n", "V C -"],
-      ["", "V C", "f ng", "V C -"],
-      ["", "V C", "f z", "V C -"],
-      ["", "V C", "f v", "V C -"],
-      ["", "V C", "f dh", "V C -"],
-      ["", "V C", "f m", "V C -"],
-      ["", "V C", "f r", "V C -"],
-      ["", "V C", "f zh", "V C -"],
-      ["", "V C", "th l", "V C -"],
-      ["", "V C", "th n", "V C -"],
-      ["", "V C", "th ng", "V C -"],
-      ["", "V C", "th z", "V C -"],
-      ["", "V C", "th v", "V C -"],
-      ["", "V C", "th dh", "V C -"],
-      ["", "V C", "th m", "V C -"],
-      ["", "V C", "th r", "V C -"],
-      ["", "V C", "th zh", "V C -"],
-      ["", "V C", "sh l", "V C -"],
-      ["", "V C", "sh n", "V C -"],
-      ["", "V C", "sh ng", "V C -"],
-      ["", "V C", "sh z", "V C -"],
-      ["", "V C", "sh v", "V C -"],
-      ["", "V C", "sh dh", "V C -"],
-      ["", "V C", "sh m", "V C -"],
-      ["", "V C", "sh r", "V C -"],
-      ["", "V C", "sh zh", "V C -"],
-      ["", "V C", "ng l", "V C -"],
-      ["", "V C", "ng r", "V C -"],
-      ["", "V C", "b l", "V C -"],
-      ["", "V C", "b n", "V C -"],
-      ["", "V C", "b f", "V C -"],
-      ["", "V C", "b th", "V C -"],
-      ["", "V C", "b sh", "V C -"],
-      ["", "V C", "b ng", "V C -"],
-      ["", "V C", "b z", "V C -"],
-      ["", "V C", "b v", "V C -"],
-      ["", "V C", "b s", "V C -"],
-      ["", "V C", "b dh", "V C -"],
-      ["", "V C", "b m", "V C -"],
-      ["", "V C", "b r", "V C -"],
-      ["", "V C", "b zh", "V C -"],
-      ["", "V C", "b h", "V C -"],
-      ["", "V C", "p l", "V C -"],
-      ["", "V C", "p n", "V C -"],
-      ["", "V C", "p f", "V C -"],
-      ["", "V C", "p th", "V C -"],
-      ["", "V C", "p sh", "V C -"],
-      ["", "V C", "p ng", "V C -"],
-      ["", "V C", "p b", "V C -"],
-      ["", "V C", "p z", "V C -"],
-      ["", "V C", "p v", "V C -"],
-      ["", "V C", "p s", "V C -"],
-      ["", "V C", "p dh", "V C -"],
-      ["", "V C", "p m", "V C -"],
-      ["", "V C", "p g", "V C -"],
-      ["", "V C", "p d", "V C -"],
-      ["", "V C", "p r", "V C -"],
-      ["", "V C", "p zh", "V C -"],
-      ["", "V C", "p h", "V C -"],
-      ["", "V C", "y l", "V C -"],
-      ["", "V C", "y n", "V C -"],
-      ["", "V C", "y f", "V C -"],
-      ["", "V C", "y th", "V C -"],
-      ["", "V C", "y sh", "V C -"],
-      ["", "V C", "y ng", "V C -"],
-      ["", "V C", "y b", "V C -"],
-      ["", "V C", "y p", "V C -"],
-      ["", "V C", "y z", "V C -"],
-      ["", "V C", "y v", "V C -"],
-      ["", "V C", "y s", "V C -"],
-      ["", "V C", "y k", "V C -"],
-      ["", "V C", "y dh", "V C -"],
-      ["", "V C", "y m", "V C -"],
-      ["", "V C", "y g", "V C -"],
-      ["", "V C", "y d", "V C -"],
-      ["", "V C", "y t", "V C -"],
-      ["", "V C", "y r", "V C -"],
-      ["", "V C", "y zh", "V C -"],
-      ["", "V C", "y h", "V C -"],
-      ["", "V C", "z l", "V C -"],
-      ["", "V C", "z n", "V C -"],
-      ["", "V C", "z ng", "V C -"],
-      ["", "V C", "z m", "V C -"],
-      ["", "V C", "z r", "V C -"],
-      ["", "V C", "v l", "V C -"],
-      ["", "V C", "v n", "V C -"],
-      ["", "V C", "v ng", "V C -"],
-      ["", "V C", "v m", "V C -"],
-      ["", "V C", "v r", "V C -"],
-      ["", "V C", "w l", "V C -"],
-      ["", "V C", "w n", "V C -"],
-      ["", "V C", "w f", "V C -"],
-      ["", "V C", "w th", "V C -"],
-      ["", "V C", "w sh", "V C -"],
-      ["", "V C", "w ng", "V C -"],
-      ["", "V C", "w b", "V C -"],
-      ["", "V C", "w p", "V C -"],
-      ["", "V C", "w z", "V C -"],
-      ["", "V C", "w v", "V C -"],
-      ["", "V C", "w s", "V C -"],
-      ["", "V C", "w k", "V C -"],
-      ["", "V C", "w dh", "V C -"],
-      ["", "V C", "w m", "V C -"],
-      ["", "V C", "w g", "V C -"],
-      ["", "V C", "w d", "V C -"],
-      ["", "V C", "w t", "V C -"],
-      ["", "V C", "w r", "V C -"],
-      ["", "V C", "w zh", "V C -"],
-      ["", "V C", "w h", "V C -"],
-      ["", "V C", "s l", "V C -"],
-      ["", "V C", "s n", "V C -"],
-      ["", "V C", "s ng", "V C -"],
-      ["", "V C", "s z", "V C -"],
-      ["", "V C", "s v", "V C -"],
-      ["", "V C", "s dh", "V C -"],
-      ["", "V C", "s m", "V C -"],
-      ["", "V C", "s r", "V C -"],
-      ["", "V C", "s zh", "V C -"],
-      ["", "V C", "k l", "V C -"],
-      ["", "V C", "k n", "V C -"],
-      ["", "V C", "k f", "V C -"],
-      ["", "V C", "k th", "V C -"],
-      ["", "V C", "k sh", "V C -"],
-      ["", "V C", "k ng", "V C -"],
-      ["", "V C", "k b", "V C -"],
-      ["", "V C", "k z", "V C -"],
-      ["", "V C", "k v", "V C -"],
-      ["", "V C", "k s", "V C -"],
-      ["", "V C", "k dh", "V C -"],
-      ["", "V C", "k m", "V C -"],
-      ["", "V C", "k g", "V C -"],
-      ["", "V C", "k d", "V C -"],
-      ["", "V C", "k r", "V C -"],
-      ["", "V C", "k zh", "V C -"],
-      ["", "V C", "k h", "V C -"],
-      ["", "V C", "dh l", "V C -"],
-      ["", "V C", "dh n", "V C -"],
-      ["", "V C", "dh ng", "V C -"],
-      ["", "V C", "dh m", "V C -"],
-      ["", "V C", "dh r", "V C -"],
-      ["", "V C", "m l", "V C -"],
-      ["", "V C", "m r", "V C -"],
-      ["", "V C", "g l", "V C -"],
-      ["", "V C", "g n", "V C -"],
-      ["", "V C", "g f", "V C -"],
-      ["", "V C", "g th", "V C -"],
-      ["", "V C", "g sh", "V C -"],
-      ["", "V C", "g ng", "V C -"],
-      ["", "V C", "g z", "V C -"],
-      ["", "V C", "g v", "V C -"],
-      ["", "V C", "g s", "V C -"],
-      ["", "V C", "g dh", "V C -"],
-      ["", "V C", "g m", "V C -"],
-      ["", "V C", "g r", "V C -"],
-      ["", "V C", "g zh", "V C -"],
-      ["", "V C", "g h", "V C -"],
-      ["", "V C", "d l", "V C -"],
-      ["", "V C", "d n", "V C -"],
-      ["", "V C", "d f", "V C -"],
-      ["", "V C", "d th", "V C -"],
-      ["", "V C", "d sh", "V C -"],
-      ["", "V C", "d ng", "V C -"],
-      ["", "V C", "d z", "V C -"],
-      ["", "V C", "d v", "V C -"],
-      ["", "V C", "d s", "V C -"],
-      ["", "V C", "d dh", "V C -"],
-      ["", "V C", "d m", "V C -"],
-      ["", "V C", "d r", "V C -"],
-      ["", "V C", "d zh", "V C -"],
-      ["", "V C", "d h", "V C -"],
-      ["", "V C", "t l", "V C -"],
-      ["", "V C", "t n", "V C -"],
-      ["", "V C", "t f", "V C -"],
-      ["", "V C", "t th", "V C -"],
-      ["", "V C", "t sh", "V C -"],
-      ["", "V C", "t ng", "V C -"],
-      ["", "V C", "t b", "V C -"],
-      ["", "V C", "t z", "V C -"],
-      ["", "V C", "t v", "V C -"],
-      ["", "V C", "t s", "V C -"],
-      ["", "V C", "t dh", "V C -"],
-      ["", "V C", "t m", "V C -"],
-      ["", "V C", "t g", "V C -"],
-      ["", "V C", "t d", "V C -"],
-      ["", "V C", "t r", "V C -"],
-      ["", "V C", "t zh", "V C -"],
-      ["", "V C", "t h", "V C -"],
-      ["", "V C", "zh l", "V C -"],
-      ["", "V C", "zh n", "V C -"],
-      ["", "V C", "zh ng", "V C -"],
-      ["", "V C", "zh m", "V C -"],
-      ["", "V C", "zh r", "V C -"],
-      ["", "V C", "h l", "V C -"],
-      ["", "V C", "h n", "V C -"],
-      ["", "V C", "h ng", "V C -"],
-      ["", "V C", "h z", "V C -"],
-      ["", "V C", "h v", "V C -"],
-      ["", "V C", "h dh", "V C -"],
-      ["", "V C", "h m", "V C -"],
-      ["", "V C", "h r", "V C -"],
-      ["", "V C", "h zh", "V C -"],
       
-      /* case (c) */
-      ["", "V C", "p k", "V C -"],
-      ["", "V C", "s f", "V C -"],
+      /*
+       * VCCCV -> VC.CCV
+       * 
+       * CCC sequences in which all three segments are obstruents.
+       */
+      ["", "V O", "O O V", "V O -"],
       
-
+      
       /*
        * VCCCV -> VC.CCV
        * 
@@ -422,93 +184,24 @@
        * These words can have either a nasal or a liquid as the
        * first C.
        */
-      ["", "V l", "f l V", "V l -"],
-      ["", "V l", "f r V", "V l -"],
-      ["", "V l", "th r V", "V l -"],
-      ["", "V l", "sh r V", "V l -"],
-      ["", "V l", "b l V", "V l -"],
-      ["", "V l", "b r V", "V l -"],
-      ["", "V l", "p l V", "V l -"],
-      ["", "V l", "p r V", "V l -"],
-      ["", "V l", "s l V", "V l -"],
-      ["", "V l", "s n V", "V l -"],
-      ["", "V l", "s m V", "V l -"],
-      ["", "V l", "k l V", "V l -"],
-      ["", "V l", "k r V", "V l -"],
-      ["", "V l", "g l V", "V l -"],
-      ["", "V l", "g r V", "V l -"],
-      ["", "V l", "d r V", "V l -"],
-      ["", "V l", "t r V", "V l -"],
-      ["", "V r", "f l V", "V r -"],
-      ["", "V r", "f r V", "V r -"],
-      ["", "V r", "th r V", "V r -"],
-      ["", "V r", "sh r V", "V r -"],
-      ["", "V r", "b l V", "V r -"],
-      ["", "V r", "b r V", "V r -"],
-      ["", "V r", "p l V", "V r -"],
-      ["", "V r", "p r V", "V r -"],
-      ["", "V r", "s l V", "V r -"],
-      ["", "V r", "s n V", "V r -"],
-      ["", "V r", "s m V", "V r -"],
-      ["", "V r", "k l V", "V r -"],
-      ["", "V r", "k r V", "V r -"],
-      ["", "V r", "g l V", "V r -"],
-      ["", "V r", "g r V", "V r -"],
-      ["", "V r", "d r V", "V r -"],
-      ["", "V r", "t r V", "V r -"],
-      ["", "V n", "f l V", "V n -"],
-      ["", "V n", "f r V", "V n -"],
-      ["", "V n", "th r V", "V n -"],
-      ["", "V n", "sh r V", "V n -"],
-      ["", "V n", "b l V", "V n -"],
-      ["", "V n", "b r V", "V n -"],
-      ["", "V n", "p l V", "V n -"],
-      ["", "V n", "p r V", "V n -"],
-      ["", "V n", "s l V", "V n -"],
-      ["", "V n", "s n V", "V n -"],
-      ["", "V n", "s m V", "V n -"],
-      ["", "V n", "k l V", "V n -"],
-      ["", "V n", "k r V", "V n -"],
-      ["", "V n", "g l V", "V n -"],
-      ["", "V n", "g r V", "V n -"],
-      ["", "V n", "d r V", "V n -"],
-      ["", "V n", "t r V", "V n -"],
-      ["", "V ng", "f l V", "V ng -"],
-      ["", "V ng", "f r V", "V ng -"],
-      ["", "V ng", "th r V", "V ng -"],
-      ["", "V ng", "sh r V", "V ng -"],
-      ["", "V ng", "b l V", "V ng -"],
-      ["", "V ng", "b r V", "V ng -"],
-      ["", "V ng", "p l V", "V ng -"],
-      ["", "V ng", "p r V", "V ng -"],
-      ["", "V ng", "s l V", "V ng -"],
-      ["", "V ng", "s n V", "V ng -"],
-      ["", "V ng", "s m V", "V ng -"],
-      ["", "V ng", "k l V", "V ng -"],
-      ["", "V ng", "k r V", "V ng -"],
-      ["", "V ng", "g l V", "V ng -"],
-      ["", "V ng", "g r V", "V ng -"],
-      ["", "V ng", "d r V", "V ng -"],
-      ["", "V ng", "t r V", "V ng -"],
-      ["", "V m", "f l V", "V m -"],
-      ["", "V m", "f r V", "V m -"],
-      ["", "V m", "th r V", "V m -"],
-      ["", "V m", "sh r V", "V m -"],
-      ["", "V m", "b l V", "V m -"],
-      ["", "V m", "b r V", "V m -"],
-      ["", "V m", "p l V", "V m -"],
-      ["", "V m", "p r V", "V m -"],
-      ["", "V m", "s l V", "V m -"],
-      ["", "V m", "s n V", "V m -"],
-      ["", "V m", "s m V", "V m -"],
-      ["", "V m", "k l V", "V m -"],
-      ["", "V m", "k r V", "V m -"],
-      ["", "V m", "g l V", "V m -"],
-      ["", "V m", "g r V", "V m -"],
-      ["", "V m", "d r V", "V m -"],
-      ["", "V m", "t r V", "V m -"],
-
- 
+      ["", "V LN", "b l V", "V LN -"],
+      ["", "V LN", "b r V", "V LN -"],
+      ["", "V LN", "d r V", "V LN -"],
+      ["", "V LN", "f l V", "V LN -"],
+      ["", "V LN", "f r V", "V LN -"],
+      ["", "V LN", "g l V", "V LN -"],
+      ["", "V LN", "g r V", "V LN -"],
+      ["", "V LN", "k l V", "V LN -"],
+      ["", "V LN", "k r V", "V LN -"],
+      ["", "V LN", "p l V", "V LN -"],
+      ["", "V LN", "p r V", "V LN -"],
+      ["", "V LN", "s l V", "V LN -"],
+      ["", "V LN", "s m V", "V LN -"],
+      ["", "V LN", "s n V", "V LN -"],
+      ["", "V LN", "sh r V", "V LN -"],
+      ["", "V LN", "t r V", "V LN -"],
+      ["", "V LN", "th r V", "V LN -"],
+      
       /*
        * VCCCV -> VCC.CV
        * (a) C1 C2 C3 clusters in which C2 and C3 are not well-formed onsets of English
@@ -517,12 +210,173 @@
        * (b) C2 and C3 exhibit a sonority plateau (=) and are not well-formed onsets
        *     of English.
        */
-      /* case (a) */
+      ["", "V C b", "B_NWF_RE V", "V C b -"],
+      ["", "V C ch", "CH_NWF_RE V", "V C ch -"],
+      ["", "V C d", "D_NWF_RE V", "V C d -"],
+      ["", "V C dh", "DH_NWF_RE V", "V C dh -"],
+      ["", "V C f", "F_NWF_RE V", "V C f -"],
+      ["", "V C g", "G_NWF_RE V", "V C g -"],
+      ["", "V C h", "H_NWF_RE V", "V C h -"],
+      ["", "V C jh", "JH_NWF_RE V", "V C jh -"],
+      ["", "V C k", "K_NWF_RE V", "V C k -"],
+      ["", "V C l", "L_NWF_RE V", "V C l -"],
+      ["", "V C m", "M_NWF_RE V", "V C m -"],
+      ["", "V C n", "N_NWF_RE V", "V C n -"],
+      ["", "V C ng", "NG_NWF_RE V", "V C ng -"],
+      ["", "V C p", "P_NWF_RE V", "V C p -"],
+      ["", "V C r", "R_NWF_RE V", "V C r -"],
+      ["", "V C s", "S_NWF_RE V", "V C s -"],
+      ["", "V C sh", "SH_NWF_RE V", "V C sh -"],
+      ["", "V C t", "T_NWF_RE V", "V C t -"],
+      ["", "V C th", "TH_NWF_RE V", "V C th -"],
+      ["", "V C v", "V_NWF_RE V", "V C v -"],
+      ["", "V C w", "W_NWF_RE V", "V C w -"],
+      ["", "V C y", "Y_NWF_RE V", "V C y -"],
+      ["", "V C z", "Z_NWF_RE V", "V C z -"],
+      ["", "V C zh", "ZH_NWF_RE V", "V C zh -"],
       
+        
+      /*
+       * VCCGV Clusters
+       * ==============
+       */
       
+      /* 
+       *  VCCGV -> V.CCGV
+       * 
+       *  First C is an /s/
+       */
+      ["", "V", "s C G V", "V -"],
       
 
+      /* 
+       * VCCGV -> VC.CGV 
+       * 
+       * First C is anything other than /s/
+       * Previous rule will handle /s/
+       */
+      ["", "V C", "C G V", "V C -"],
       
+      
+      /*
+       * VCCV Clusters
+       * =============
+       */
+      
+      /*
+       * VCCV -> V.CCV
+       * 
+       * Tautosyllabic CC clusters  
+       * 
+       * (a) the CC exhibits a sonority rise (going from left to right) and the
+       *     CC is a permissible word-initial cluster of English, or
+       * (b) the CC consists of [s] + voiceless stop.
+       */
+      
+      /* case (a) */
+      ["", "V", "b l V", "V -"],
+      ["", "V", "b r V", "V -"],
+      ["", "V", "d r V", "V -"],
+      ["", "V", "f l V", "V -"],
+      ["", "V", "f r V", "V -"],
+      ["", "V", "g l V", "V -"],
+      ["", "V", "g r V", "V -"],
+      ["", "V", "k l V", "V -"],
+      ["", "V", "k r V", "V -"],
+      ["", "V", "p l V", "V -"],
+      ["", "V", "p r V", "V -"],
+      ["", "V", "s l V", "V -"],
+      ["", "V", "s m V", "V -"],
+      ["", "V", "s n V", "V -"],
+      ["", "V", "sh r V", "V -"],
+      ["", "V", "t r V", "V -"],
+      ["", "V", "th r V", "V -"],
+      
+      /* case (b) */
+      ["", "V", "s UVSTOP V", "V -"],
+      
+      
+      /*
+       * VCCV -> VC.CV
+       * 
+       * Heterosyllabic CC clusters  
+       * 
+       * There are three types of heterosyllabic CC sequences:
+       * (a) CC clusters in which the second C is less sonorous than the first (e.g.
+       *     /lk/ in bulky)
+       * (b) CC clusters in which the second C is more sonorous than the first and
+       *     which are not well-formed onsets of English e.g. /tl/ in atlas)
+       * (c) CC clusters in which the two C's are equally sonorous (e.g. /pk/ in
+       *     napkin)
+       */
+      ["", "V b", "B_NWF_RFE V", "V b -"],
+      ["", "V ch", "CH_NWF_RFE V", "V ch -"],
+      ["", "V d", "D_NWF_RFE V", "V d -"],
+      ["", "V dh", "DH_NWF_RFE V", "V dh -"],
+      ["", "V f", "F_NWF_RFE V", "V f -"],
+      ["", "V g", "G_NWF_RFE V", "V g -"],
+      ["", "V h", "H_NWF_RFE V", "V h -"],
+      ["", "V jh", "JH_NWF_RFE V", "V jh -"],
+      ["", "V k", "K_NWF_RFE V", "V k -"],
+      ["", "V l", "L_NWF_RFE V", "V l -"],
+      ["", "V m", "M_NWF_RFE V", "V m -"],
+      ["", "V n", "N_NWF_RFE V", "V n -"],
+      ["", "V ng", "NG_NWF_RFE V", "V ng -"],
+      ["", "V p", "P_NWF_RFE V", "V p -"],
+      ["", "V r", "R_NWF_RFE V", "V r -"],
+      ["", "V s", "S_NWF_RFE V", "V s -"],
+      ["", "V sh", "SH_NWF_RFE V", "V sh -"],
+      ["", "V t", "T_NWF_RFE V", "V t -"],
+      ["", "V th", "TH_NWF_RFE V", "V th -"],
+      ["", "V v", "V_NWF_RFE V", "V v -"],
+      ["", "V w", "W_NWF_RFE V", "V w -"],
+      ["", "V y", "Y_NWF_RFE V", "V y -"],
+      ["", "V z", "Z_NWF_RFE V", "V z -"],
+      ["", "V zh", "ZH_NWF_RFE V", "V zh -"],
+ 
+
+      /*
+       * VCGV Clusters
+       * =============
+       */
+      
+      /*
+       * VCGV -> V.CGV
+       * (a) VCGV sequences in which C is a stop
+       *     where CG is a well-formed onset.
+       */
+      ["", "V", "b B_OWF_G V", "V -"],
+      ["", "V", "d D_OWF_G V", "V -"],
+      ["", "V", "g G_OWF_G V", "V -"],
+      ["", "V", "k K_OWF_G V", "V -"],
+      ["", "V", "p P_OWF_G V", "V -"],
+      ["", "V", "t T_OWF_G V", "V -"],
+      
+
+      /*
+       * VCGV -> VC.GV
+       * (b) VCGV sequences in which C is not a stop
+       *     where CG is not a well-formed onset.
+       *
+       * (c) VCGV sequences in which C is not a stop
+       *     where CG is a well-formed onset.
+       */
+      ["", "V NOT_STOP", "G V", "V NOT_STOP -"],
+      
+
+      /*
+       * VCV Clusters
+       * ============
+       */
+      
+      /*
+       * VCV -> V.CV
+       *  
+       * _always_
+       */
+      ["", "V", "C V", "V -"],      
+      
+
       /* fall through */
       ["", "_", "", "_"],
       ["", "__", "", "__"],
@@ -569,6 +423,6 @@
       ["", "z", "", "z"],
       ["", "zh", "", "zh"]
       
-]
+    ]
  
   }

@@ -29,7 +29,7 @@
 /************************************************************************************/
 /*                                                                                  */
 /* Example loading a JSON format syllabification rewrites rule-set and              */
-/* looking up the syllabification rule-set's description.                           */
+/* running it on a input phone list.                                                */
 /*                                                                                  */
 /*                                                                                  */
 /************************************************************************************/
@@ -48,11 +48,11 @@ int main()
 	s_erc error = S_SUCCESS;
 	SSyllabification *syllab = NULL;
 	SPlugin *syllabRewritesJSONPlugin = NULL;
-	const char *description = NULL;
-	SList *syls;
-	SList *phones;
-	char *tmp;
-
+	SList *syls = NULL;
+	SList *phones = NULL;
+	char *tmp = NULL;
+	SIterator *itr1 = NULL;
+	SIterator *itr2 = NULL;
 
 
 	S_CLR_ERR(&error);
@@ -94,36 +94,166 @@ int main()
 				  "Failed to load syllabification"))
 		goto quit;
 
+	/* setup a phone list */
 	phones = (SList*)S_NEW("SListList", &error);
+	if (S_CHK_ERR(&error, S_CONTERR,
+				  "main",
+				  "Failed to create a new 'SList' object"))
+		goto quit;
+
+	/* add the phones "s i l a b i f i k ei sh _ n" to the list */
+	SListAppend(phones, S_OBJECT(SObjectSetString("s",&error)), &error);
+	if (S_CHK_ERR(&error, S_CONTERR,
+				  "main",
+				  "Call to \"SObjectSetString/SListAppend failed"))
+		goto quit;
+
+	SListAppend(phones, S_OBJECT(SObjectSetString("i",&error)), &error);
+	if (S_CHK_ERR(&error, S_CONTERR,
+				  "main",
+				  "Call to \"SObjectSetString/SListAppend failed"))
+		goto quit;
+
+	SListAppend(phones, S_OBJECT(SObjectSetString("l",&error)), &error);
+	if (S_CHK_ERR(&error, S_CONTERR,
+				  "main",
+				  "Call to \"SObjectSetString/SListAppend failed"))
+		goto quit;
+
 	SListAppend(phones, S_OBJECT(SObjectSetString("a",&error)), &error);
-	SListAppend(phones, S_OBJECT(SObjectSetString("nb",&error)), &error);
-	SListAppend(phones, S_OBJECT(SObjectSetString("y",&error)), &error);
+	if (S_CHK_ERR(&error, S_CONTERR,
+				  "main",
+				  "Call to \"SObjectSetString/SListAppend failed"))
+		goto quit;
+
+	SListAppend(phones, S_OBJECT(SObjectSetString("b",&error)), &error);
+	if (S_CHK_ERR(&error, S_CONTERR,
+				  "main",
+				  "Call to \"SObjectSetString/SListAppend failed"))
+		goto quit;
+
+	SListAppend(phones, S_OBJECT(SObjectSetString("i",&error)), &error);
+	if (S_CHK_ERR(&error, S_CONTERR,
+				  "main",
+				  "Call to \"SObjectSetString/SListAppend failed"))
+		goto quit;
+
+	SListAppend(phones, S_OBJECT(SObjectSetString("f",&error)), &error);
+	if (S_CHK_ERR(&error, S_CONTERR,
+				  "main",
+				  "Call to \"SObjectSetString/SListAppend failed"))
+		goto quit;
+
+	SListAppend(phones, S_OBJECT(SObjectSetString("i",&error)), &error);
+	if (S_CHK_ERR(&error, S_CONTERR,
+				  "main",
+				  "Call to \"SObjectSetString/SListAppend failed"))
+		goto quit;
+
+	SListAppend(phones, S_OBJECT(SObjectSetString("k",&error)), &error);
+	if (S_CHK_ERR(&error, S_CONTERR,
+				  "main",
+				  "Call to \"SObjectSetString/SListAppend failed"))
+		goto quit;
+
+	SListAppend(phones, S_OBJECT(SObjectSetString("ei",&error)), &error);
+	if (S_CHK_ERR(&error, S_CONTERR,
+				  "main",
+				  "Call to \"SObjectSetString/SListAppend failed"))
+		goto quit;
+
+	SListAppend(phones, S_OBJECT(SObjectSetString("sh",&error)), &error);
+	if (S_CHK_ERR(&error, S_CONTERR,
+				  "main",
+				  "Call to \"SObjectSetString/SListAppend failed"))
+		goto quit;
+
+	SListAppend(phones, S_OBJECT(SObjectSetString("_",&error)), &error);
+	if (S_CHK_ERR(&error, S_CONTERR,
+				  "main",
+				  "Call to \"SObjectSetString/SListAppend failed"))
+		goto quit;
+
+	SListAppend(phones, S_OBJECT(SObjectSetString("n",&error)), &error);
+	if (S_CHK_ERR(&error, S_CONTERR,
+				  "main",
+				  "Call to \"SObjectSetString/SListAppend failed"))
+		goto quit;
 
 
-
+	/* call syllabify method on the syllabification rule-set */
 	syls = S_SYLLABIFICATION_CALL(syllab, syllabify)(syllab, NULL, phones, &error);
-	tmp = SObjectPrint(S_OBJECT(syls), &error);
+	if (S_CHK_ERR(&error, S_CONTERR,
+				  "main",
+				  "Call to \"syllabify\" method failed"))
+		goto quit;
 
-	printf("syls = %s\n", tmp);
-	S_FREE(tmp);
+	/* get an iterator to the syllables list */
+	itr1 = S_ITERATOR_GET(syls, &error);
+	if (S_CHK_ERR(&error, S_CONTERR,
+				  "main",
+				  "Call to \"S_ITERATOR_GET\" failed"))
+		goto quit;
+
+	for (/* NOP */; itr1 != NULL; itr1 = SIteratorNext(itr1))
+	{
+		const SList *syllable;
+
+
+		syllable = (SList*)SIteratorObject(itr1, &error);
+		if (S_CHK_ERR(&error, S_CONTERR,
+					  "main",
+					  "Call to \"SIteratorObject\" failed"))
+			goto quit;
+
+		/* get an iterator to the phones in the syllable */
+		itr2 = S_ITERATOR_GET(syllable, &error);
+		if (S_CHK_ERR(&error, S_CONTERR,
+					  "main",
+					  "Call to \"S_ITERATOR_GET\" failed"))
+			goto quit;
+
+		for (/* NOP */; itr2 != NULL; itr2 = SIteratorNext(itr2))
+		{
+			const SObject *phone;
+
+
+			phone = SIteratorObject(itr2, &error);
+			if (S_CHK_ERR(&error, S_CONTERR,
+						  "main",
+						  "Call to \"SIteratorObject\" failed"))
+				goto quit;
+
+			tmp = SObjectPrint(phone, &error);
+			if (S_CHK_ERR(&error, S_CONTERR,
+						  "main",
+						  "Call to \"SObjectPrint\" failed"))
+				goto quit;
+
+			printf("%s ", tmp);
+			S_FREE(tmp);
+		}
+
+		printf("\n");
+	}
+
+
+quit:
+	if (tmp != NULL)
+		S_FREE(tmp);
+
+	if (itr1 != NULL)
+		S_DELETE(itr1, "main", &error);
+
+	if (itr2 != NULL)
+		S_DELETE(itr2, "main", &error);
+
+	if (phones != NULL)
+		S_DELETE(phones, "main", &error);
 
 	if (syls != NULL)
 		S_DELETE(syls, "main", &error);
 
-	S_DELETE(phones, "main", &error);
-
-
-
-
-	description = S_SYLLABIFICATION_CALL(syllab, get_description)(syllab, &error);
-	if (S_CHK_ERR(&error, S_CONTERR,
-				  "main",
-				  "Call to method \"get_description\" failed"))
-		goto quit;
-
-	printf("description of syllabification rewrites rule-set is: '%s'\n", description);
-
-quit:
 	if (syllab != NULL)
 		S_DELETE(syllab, "main", &error);
 

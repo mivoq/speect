@@ -358,7 +358,7 @@ static SList *Syllabify(const SSyllabification *self, const SItem *word,
 					  "Call to \"SObjectGetString\" failed"))
 			goto quit_error;
 
-		/* test for SA -> S.A, where A is any type */
+		/* test for SC -> S.C, where C is a consonant type */
 		{
 			s_bool sylcon;
 
@@ -371,41 +371,64 @@ static SList *Syllabify(const SSyllabification *self, const SItem *word,
 
 			if (sylcon)
 			{
-				/* this is a syllable boundary */
+				const char *second_phone_string;
+				s_bool second_is_vowel;
 
-				/*
-				 * we add the phone_string so that it is
-				 * independent from the phoneList
-				 */
-				SListPush(syl, SObjectSetString(phone_string, error), error);
+
+				second_phone_string = SObjectGetString(SListNth(phoneListCopy,
+																list_size - 1,
+																error), error);
 				if (S_CHK_ERR(error, S_CONTERR,
 							  "Syllabify",
-							  "Call to \"SListPush/SObjectSetString\" failed"))
+							  "Call to \"SObjectGetString/SListNth\" failed"))
 					goto quit_error;
 
-				if (list_size > 0)
+				second_is_vowel = S_PHONESET_CALL(phoneset, phone_has_feature)(phoneset,
+																			   second_phone_string,
+																			   "vowel",
+																			   error);
+				if (S_CHK_ERR(error, S_CONTERR,
+							  "Syllabify",
+							  "Call to method \"phone_has_feature\" failed"))
+					goto quit_error;
+
+				if (!second_is_vowel)
 				{
-					/* new syllable */
-					syl = (SList*)S_NEW("SListList", error);
+					/* this is a syllable boundary */
+
+					/*
+					 * we add the phone_string so that it is
+					 * independent from the phoneList
+					 */
+					SListPush(syl, SObjectSetString(phone_string, error), error);
 					if (S_CHK_ERR(error, S_CONTERR,
 								  "Syllabify",
-								  "Failed to create new 'SList' object"))
+								  "Call to \"SListPush/SObjectSetString\" failed"))
 						goto quit_error;
 
-					SListPush(syllables, S_OBJECT(syl), error);
-					if (S_CHK_ERR(error, S_CONTERR,
-								  "Syllabify",
-								  "Call to \"SListPush\" failed"))
+					if (list_size > 0)
 					{
-						S_DELETE(syl, "Syllabify", error);
-						goto quit_error;
-					}
-				}
+						/* new syllable */
+						syl = (SList*)S_NEW("SListList", error);
+						if (S_CHK_ERR(error, S_CONTERR,
+									  "Syllabify",
+									  "Failed to create new 'SList' object"))
+							goto quit_error;
 
-				continue;
+						SListPush(syllables, S_OBJECT(syl), error);
+						if (S_CHK_ERR(error, S_CONTERR,
+									  "Syllabify",
+									  "Call to \"SListPush\" failed"))
+						{
+							S_DELETE(syl, "Syllabify", error);
+							goto quit_error;
+						}
+					}
+
+					continue;
+				}
 			}
 		}
-
 
 		current_is_vowel = S_PHONESET_CALL(phoneset, phone_has_feature)(phoneset,
 																		phone_string,
@@ -420,51 +443,51 @@ static SList *Syllabify(const SSyllabification *self, const SItem *word,
 		/* test for VCC -> VC.C */
 		if ((list_size > 2) && current_is_vowel)
 		{
-			const char *second_last_phone_string;
-			const char *third_last_phone_string;
-			s_bool second_last_is_vowel;
-			s_bool third_last_is_vowel;
+			const char *second_phone_string;
+			const char *third_phone_string;
+			s_bool second_is_vowel;
+			s_bool third_is_vowel;
 
 
-			second_last_phone_string = SObjectGetString(SListNth(phoneListCopy,
-																 list_size - 2,
-																 error), error);
+			second_phone_string = SObjectGetString(SListNth(phoneListCopy,
+															list_size - 1,
+															error), error);
 			if (S_CHK_ERR(error, S_CONTERR,
 						  "Syllabify",
 						  "Call to \"SObjectGetString/SListNth\" failed"))
 				goto quit_error;
 
-			second_last_is_vowel = S_PHONESET_CALL(phoneset, phone_has_feature)(phoneset,
-																				second_last_phone_string,
-																				"vowel",
-																				error);
+			second_is_vowel = S_PHONESET_CALL(phoneset, phone_has_feature)(phoneset,
+																		   second_phone_string,
+																		   "vowel",
+																		   error);
 			if (S_CHK_ERR(error, S_CONTERR,
 						  "Syllabify",
 						  "Call to method \"phone_has_feature\" failed"))
 				goto quit_error;
 
-			if (!second_last_is_vowel)
+			if (!second_is_vowel)
 			{
-				third_last_phone_string = SObjectGetString(SListNth(phoneListCopy,
-																	list_size - 3,
-																	error), error);
+				third_phone_string = SObjectGetString(SListNth(phoneListCopy,
+															   list_size - 2,
+															   error), error);
 				if (S_CHK_ERR(error, S_CONTERR,
 							  "Syllabify",
 							  "Call to \"SObjectGetString/SListNth\" failed"))
 					goto quit_error;
 
-				third_last_is_vowel = S_PHONESET_CALL(phoneset, phone_has_feature)(phoneset,
-																				   third_last_phone_string,
-																				   "vowel",
-																				   error);
+				third_is_vowel = S_PHONESET_CALL(phoneset, phone_has_feature)(phoneset,
+																			  third_phone_string,
+																			  "vowel",
+																			  error);
 				if (S_CHK_ERR(error, S_CONTERR,
 							  "Syllabify",
 							  "Call to method \"phone_has_feature\" failed"))
 					goto quit_error;
 
-				if (!third_last_is_vowel)
+				if (!third_is_vowel)
 				{
-					/* pop second last, no need to
+					/* pop second, no need to
 					 * delete as it still belongs to
 					 * original phone list
 					 */
@@ -485,7 +508,7 @@ static SList *Syllabify(const SSyllabification *self, const SItem *word,
 						goto quit_error;
 
 					/* add to syllable */
-					SListPush(syl, SObjectSetString(second_last_phone_string, error), error);
+					SListPush(syl, SObjectSetString(second_phone_string, error), error);
 					if (S_CHK_ERR(error, S_CONTERR,
 								  "Syllabify",
 								  "Call to \"SListPush/SObjectSetString\" failed"))

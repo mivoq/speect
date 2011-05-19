@@ -359,6 +359,7 @@ static SList *Syllabify(const SSyllabification *self, const SItem *word,
 			goto quit_error;
 
 		/* test for SC -> S.C, where C is a consonant type */
+		if (list_size > 1)
 		{
 			s_bool sylcon;
 

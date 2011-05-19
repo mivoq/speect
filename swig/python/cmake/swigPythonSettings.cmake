@@ -20,11 +20,11 @@ mark_as_advanced(SPCT_PYTHON_LOG_CONFIG_FILE)
 
 
 #------------------------------------------------------------------------------------#
-#      Configure the log_config.c file (loads spct_python_log.conf for logging)      #
+#  Configure the py_logger_config.c file (loads spct_python_log.conf for logging)    #
 #------------------------------------------------------------------------------------#
 
-configure_file(${CMAKE_SOURCE_DIR}/engine/swig/python/config/log_config.c.in 
-  ${CMAKE_BINARY_DIR}/engine/swig/python/log_config.c)
+configure_file(${CMAKE_SOURCE_DIR}/engine/swig/python/native/config/py_logger_config.c.in 
+  ${CMAKE_BINARY_DIR}/engine/swig/python/native/py_logger_config.c)
 
 
 #------------------------------------------------------------------------------------#

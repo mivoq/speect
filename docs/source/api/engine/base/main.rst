@@ -13,3 +13,5 @@ Base
    strings/main 
    errdbg/main
    objsystem/main
+   containers/main
+   log/main

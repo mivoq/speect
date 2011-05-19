@@ -91,6 +91,8 @@ Error Codes
 .. doxybridge:: s_erc
    :type: typedef enum
 
+.. doxybridge:: s_error_str
+
 
 .. _debug_levels:
 
@@ -99,6 +101,11 @@ Debug Levels
 
 .. doxybridge:: s_dbg_lvl
    :type: typedef enum
+
+.. doxybridge:: s_set_errdbg_level
+
+.. doxybridge:: s_get_errdbg_level
+
 
 
 .. [#] There are a few exceptions to this rule, especially where errors might occur before

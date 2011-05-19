@@ -80,7 +80,7 @@
  * @defgroup SBaseObjectDef Base Object Definition
  * Provides the base object.
  * SObject provides an interface to a generic data container.
- * It is a simple object which can contain any other objects and
+ * It is a simple object which can encapsulate any other objects and
  * allows entities to store @a any type of data. Any data type
  * can inherit form the SObject class, and implement the basic
  * methods, or not. An object can also extend these as required.

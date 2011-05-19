@@ -45,7 +45,7 @@
 
 /**
  * @ingroup SLogger
- * @defgroup SFileStream File Streaming
+ * @defgroup SFileStream File Stream
  * Implements a file stream.
  * @{
  */

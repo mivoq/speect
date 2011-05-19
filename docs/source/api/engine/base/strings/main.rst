@@ -13,3 +13,4 @@ Strings
    strings
    print
    regex
+   string_lists

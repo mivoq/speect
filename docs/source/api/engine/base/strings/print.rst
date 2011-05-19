@@ -1,7 +1,7 @@
 .. index:: 
    single: Strings (C API); String Printing Functions
 
-. _print:
+.. _print:
 
 =========================
 String Printing Functions

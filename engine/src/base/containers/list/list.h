@@ -171,6 +171,12 @@ S_API void s_list_delete(s_list *self, s_erc *error);
 
 
 /**
+ * @name Accessing
+ * @{
+ */
+
+
+/**
  * @private
  * Find the element in the list which matches the comparison with the
  * comparison function #s_list_compare_fp. If the comparison function
@@ -192,12 +198,6 @@ S_API void s_list_delete(s_list *self, s_erc *error);
  */
 S_API s_list_element *s_list_find_index(const s_list *self, const s_list_element *f,
 										const void *data, int *index, s_erc *error);
-
-
-/**
- * @name Accessing
- * @{
- */
 
 
 /**

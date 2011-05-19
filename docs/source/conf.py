@@ -30,8 +30,12 @@ extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.todo',
               'sphinx.ext.pngmath',
               'sphinx.ext.ifconfig',
-              'doxybridge'
+              'doxybridge',
+              'speect_objects'
               ]
+
+# include todo's
+todo_include_todos = True
 
 # tell doxybridge  about the projects:
 doxybridge_projects = { "speect": ("/home/aby/Development/speect/docs/doxygen/xml", "c") }

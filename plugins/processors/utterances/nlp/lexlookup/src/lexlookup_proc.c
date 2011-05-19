@@ -133,12 +133,23 @@ static void s_get_lexical_objects(const SUttProcessor *self, SUtterance *utt,
 				  "Call to \"SVoiceGetData\" failed"))
 		return;
 
-	*syllab = (SSyllabification*)SMapGetObjectDef(self->features , "_syll_func", NULL,
-												  error);
+	/* first try for syllabification in voice data, new method */
+	*syllab = (SSyllabification*)SVoiceGetData(voice , "syllabification", error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "s_get_lexical_objects",
-				  "Call to \"SMapGetObjectDef\" failed"))
+				  "Call to \"SVoiceGetData\" failed"))
 		return;
+
+	/* if not found try old method */
+	if ((*syllab) == NULL)
+	{
+		*syllab = (SSyllabification*)SMapGetObjectDef(self->features , "_syll_func", NULL,
+													  error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "s_get_lexical_objects",
+					  "Call to \"SMapGetObjectDef\" failed"))
+			return;
+	}
 
 	/* now check for least requirements */
 	if ((*addendum == NULL)

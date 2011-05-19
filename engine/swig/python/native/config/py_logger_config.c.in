@@ -29,14 +29,21 @@
 /************************************************************************************/
 /*                                                                                  */
 /* Locate the Speect Python logging config file.                                    */
-/* log_config.c is auto generated from config/log_config.c.in, do not               */
-/* edit log_config.c                                                                */
+/* py_logger_config.c is auto generated from config/py_logger_config.c.in, do not   */
+/* edit py_logger_config.c                                                          */
 /*                                                                                  */
 /************************************************************************************/
 
 
-%inline
-%{
+/************************************************************************************/
+/*                                                                                  */
+/* Modules used                                                                     */
+/*                                                                                  */
+/************************************************************************************/
+
+#include "py_logger_config.h"
+
+
 /************************************************************************************/
 /*                                                                                  */
 /* Defines (done by CMake configuration in                                          */
@@ -50,12 +57,11 @@
 
 /************************************************************************************/
 /*                                                                                  */
-/* Static function implementations                                                  */
+/* Function implementations                                                         */
 /*                                                                                  */
 /************************************************************************************/
 
-static const char *_get_spct_python_log_config_file(void)
+S_LOCAL const char *_s_get_spct_python_log_config_file(void)
 {
 	return S_PYTHON_LOG_CONFIG_FILE;
 }
-%}

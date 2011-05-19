@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2010 The Department of Arts and Culture,                           */
+/* Copyright (c) 2011 The Department of Arts and Culture,                           */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -24,22 +24,22 @@
 /************************************************************************************/
 /*                                                                                  */
 /* AUTHOR  : Aby Louw                                                               */
-/* DATE    : June 2010                                                              */
+/* DATE    : 19 April 2011                                                          */
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* Native interfaces for Speect <-> Python objects.                                 */
+/* Python s_logger for Speect                                                       */
 /*                                                                                  */
 /*                                                                                  */
 /************************************************************************************/
 
-#ifndef _SPCT_PYTHON_NATIVE_H__
-#define _SPCT_PYTHON_NATIVE_H__
+#ifndef _SPCT_PY_LOGGER_H__
+#define _SPCT_PY_LOGGER_H__
 
 
 /**
- * @file py_native.h
- * Native interfaces for Speect <-> Python objects.
+ * @file py_logger.h
+ * Python s_logger for Speect
  */
 
 
@@ -49,17 +49,7 @@
 /*                                                                                  */
 /************************************************************************************/
 
-#include "Python.h"
-#include "speect.h"
-#include "py_native_defs.h"        /* Python Native type definitions.          */
-#include "py_funcs.h"              /* Misc conversion functions.               */
-#include "py_object.h"             /* SPyObject Speect Python object wrapper.  */
-#include "py_list.h"               /* SListPy Speect Python list wrapper.      */
-#include "py_list_itr.h"           /* Speect Python list iterator wrapper.     */
-#include "py_map.h"                /* SMapPy Speect Python dict wrapper.       */
-#include "py_map_itr.h"            /* Speect Python dict iterator wrapper.     */
-#include "py_logger_config.h"      /* Speect Python logging config file.       */
-#include "py_logger.h"             /* Python s_logger for Speect.              */
+#include "py_native.h"
 
 
 /************************************************************************************/
@@ -77,12 +67,12 @@ S_BEGIN_C_DECLS
 /************************************************************************************/
 
 /**
- * Initialize the Python object wrapper's module with the Speect
- * Engine.
+ * Create a new logger, that uses Python's logging module for
+ * message output.
  *
- * @return Error code.
+ * @return Pointer to newly created Python logger, or @c NULL on error.
  */
-S_API s_erc s_python_native_objects_init(void);
+S_API s_logger *s_logger_python_new(void);
 
 
 /************************************************************************************/
@@ -98,4 +88,4 @@ S_END_C_DECLS
  * end documentation
  */
 
-#endif /* _SPCT_PYTHON_NATIVE_H__ */
+#endif /* _SPCT_PY_LOGGER_H__ */

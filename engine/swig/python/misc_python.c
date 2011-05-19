@@ -46,9 +46,9 @@
 		s_logger *logger = NULL;
 
 
-		logger = _s_logger_swig_new();
+		logger = s_logger_python_new();
 		if (logger == NULL)
-			SWIG_Error(SWIG_RuntimeError, "Call to \"s_logger_swig_new\" failed");
+			SWIG_Error(SWIG_RuntimeError, "Call to \"s_logger_python_new\" failed");
 
 		rv = speect_init(logger);
 		if (rv != S_SUCCESS)

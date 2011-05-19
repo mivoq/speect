@@ -17,12 +17,18 @@ as *objects* and *classes*.
 Objects
 =======
 
-.. speect:object:: SObject
+.. speect:object:: SObjectk
 
    The base object structure, it provides an interface to a generic data type. 
    It can encapsulate any other object, thereby providing abstraction.
    All objects that want to work with the Speect Generic Object System must inherit
    from this object.
+
+
+.. doxybridge:: SObject
+   :type: speect object
+   :members: none
+
 
 
 Object Methods

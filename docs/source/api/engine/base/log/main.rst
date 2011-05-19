@@ -6,6 +6,12 @@
 Logger
 ======
 
+.. toctree::
+   :hidden: 
+
+   implementation
+
+
 .. todo::
    
    add reference for main function
@@ -27,7 +33,11 @@ Definition
 
 .. doxybridge:: s_logger
    :type: typedef struct
-  
+   :members: none
+   	    
+   
+.. seealso:: :doc:`implementation`.
+
 
 Logger Creators
 ===============

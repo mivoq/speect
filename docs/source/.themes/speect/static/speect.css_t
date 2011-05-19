@@ -455,3 +455,12 @@ table.docutils.field-list td {
     background-color:transparent;
 }
 
+
+
+
+/* -- footer logo ----------------------------------------------------------- */
+
+.footer_floatleft {
+    padding:10px;
+    float:left;
+}

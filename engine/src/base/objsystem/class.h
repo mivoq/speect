@@ -104,6 +104,25 @@ S_BEGIN_C_DECLS
 
 /************************************************************************************/
 /*                                                                                  */
+/* Macros                                                                           */
+/*                                                                                  */
+/************************************************************************************/
+
+/**
+ * @hideinitializer
+ * Get the given class's base class.
+ *
+ * @param SELF The given class.
+ *
+ * @return Pointer to the #SObjectClass class of the given class.
+ *
+ * @note This casting is not safety checked.
+ */
+#define S_OBJECTCLASS(SELF) ((SObjectClass*)SELF)
+
+
+/************************************************************************************/
+/*                                                                                  */
 /* Function prototypes                                                              */
 /*                                                                                  */
 /************************************************************************************/
@@ -117,7 +136,7 @@ S_BEGIN_C_DECLS
  *
  * @note Class names must be unique.
  */
-S_API void s_class_add(const void *cls, s_erc *error);
+S_API void s_class_add(const SObjectClass *cls, s_erc *error);
 
 
 /**
@@ -128,7 +147,7 @@ S_API void s_class_add(const void *cls, s_erc *error);
  * @param cls Class object to initialize.
  * @param error Error Code.
  */
-S_API void s_class_init(const void *cls, s_erc *error);
+S_API void s_class_init(const SObjectClass *cls, s_erc *error);
 
 
 /**
@@ -139,7 +158,7 @@ S_API void s_class_init(const void *cls, s_erc *error);
  * @param cls Class object to register.
  * @param error Error Code.
  */
-S_API void s_class_reg(const void *cls, s_erc *error);
+S_API void s_class_reg(const SObjectClass *cls, s_erc *error);
 
 
 /**
@@ -151,7 +170,7 @@ S_API void s_class_reg(const void *cls, s_erc *error);
  * @param cls Class object to free.
  * @param error Error Code.
  */
-S_API void s_class_free(const void *cls, s_erc *error);
+S_API void s_class_free(const SObjectClass *cls, s_erc *error);
 
 
 /**

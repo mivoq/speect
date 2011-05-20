@@ -9,7 +9,7 @@ Logger
 .. toctree::
    :hidden: 
 
-   implementation
+   s_logger_detail
 
 
 .. todo::
@@ -20,14 +20,6 @@ Logger
 
    add reference to doxygen 
 
-Basic logging facilities. The logging system provides a very basic mechanism to write
-messages to different types of streams. It is used by all the error and debug reporting 
-facilities in :doc:`../errdbg/main`, and therefore aims to be as robust as possible. If
-any error occurs during one of the logger functions, an error will be printed to ``stderr``.
-If a logger is unsuccessful at writing the log message to the log stream then it will log
-the message to ``stdout``.
-
-
 Definition
 ==========
 
@@ -36,7 +28,7 @@ Definition
    :members: none
    	    
    
-.. seealso:: :doc:`implementation`.
+.. seealso:: :doc:`s_logger_detail`.
 
 
 Logger Creators

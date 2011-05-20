@@ -8,12 +8,19 @@ String Printing Functions
 =========================
 
 
+Variable Argument List
+======================
+
 .. doxybridge:: s_vszprintf
 
 .. doxybridge:: s_vsprintf
    :type: macro
 
 .. doxybridge:: s_vasprintf
+
+
+Formatted String
+================
 
 .. doxybridge:: s_sprintf
 

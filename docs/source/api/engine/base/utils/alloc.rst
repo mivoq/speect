@@ -6,9 +6,8 @@
 Memory Allocation 
 =================
 
-Macros defined for use in dynamic memory allocation and de-allocation.
-These macros wrap the standard *malloc*, *calloc*, *realloc* and *free* functions. 
-
+Malloc
+======
 
 .. doxybridge:: S_MALLOC
    :type: macro
@@ -16,17 +15,29 @@ These macros wrap the standard *malloc*, *calloc*, *realloc* and *free* function
 .. doxybridge:: S_MALLOC_SIZE
    :type: macro
 
+
+Calloc
+======
+
 .. doxybridge:: S_CALLOC
    :type: macro
 
 .. doxybridge:: S_CALLOC_SIZE
    :type: macro
 
+
+Realloc
+=======
+
 .. doxybridge:: S_REALLOC
    :type: macro
 
 .. doxybridge:: S_REALLOC_SIZE
    :type: macro
+
+
+Free
+====
 
 .. doxybridge:: S_FREE
    :type: macro

@@ -12,6 +12,7 @@ Base
    threads/main 
    strings/main 
    errdbg/main
+   iniparser/main
    objsystem/main
    containers/main
    log/main

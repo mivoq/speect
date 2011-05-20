@@ -9,31 +9,45 @@ Type Definitions
 Definition of types used in the Speect engine. These types are platform independent.
 
 
-
-.. doxybridge:: s_bool
+Signed
+======
 
 .. doxybridge:: sint
 
-.. doxybridge:: uint
-
 .. doxybridge:: sint8
-
-.. doxybridge:: uint8
 
 .. doxybridge:: sint16
 
-.. doxybridge:: uint16
-
 .. doxybridge:: sint32
-
-.. doxybridge:: uint32
 
 .. doxybridge:: slong
 
-.. doxybridge:: ulong
-
 .. doxybridge:: schar
 
+
+Unsigned
+========
+
+.. doxybridge:: uint
+
+.. doxybridge:: uint8
+
+.. doxybridge:: uint16
+
+.. doxybridge:: uint32
+
+.. doxybridge:: ulong
+
 .. doxybridge:: uchar
+
+
+Boolean
+=======
+
+.. doxybridge:: s_bool
+
+
+Byte
+====
 
 .. doxybridge:: s_byte

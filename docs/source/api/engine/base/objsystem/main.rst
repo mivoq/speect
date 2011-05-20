@@ -1,6 +1,5 @@
 .. index:: ! Generic Object System (C API)
 
-
 .. _objsystem/main:
 
 .. todo:: build time macros and definitions
@@ -9,30 +8,29 @@
 Generic Object System
 =====================
 
-The object system provides basic object-oriented programming support (e.g., inheritance,
-polymorphism, abstraction, etc.) to the Speect Engine by using **ISO C** structures 
-as *objects* and *classes*.
- 
+.. toctree::
+   :hidden:
 
-Objects
-=======
+   SObject_detail
+   SObjectClass_detail
 
-.. speect:object:: SObjectk
 
-   The base object structure, it provides an interface to a generic data type. 
-   It can encapsulate any other object, thereby providing abstraction.
-   All objects that want to work with the Speect Generic Object System must inherit
-   from this object.
-
+SObject Definition
+==================
 
 .. doxybridge:: SObject
    :type: speect object
    :members: none
 
 
+.. seealso:: :doc:`SObject_detail`.
 
-Object Methods
-==============
+
+SObject Functions
+=================
+
+Query
+-----
 
 .. doxybridge:: SObjectSize
 
@@ -42,83 +40,57 @@ Object Methods
 
 .. doxybridge:: SObjectInheritance
 
-.. doxybridge:: SObjectCompare
 
-.. doxybridge:: SObjectPrint
-
-.. doxybridge:: SObjectCopy
+Read/Write
+----------
 
 .. doxybridge:: SObjectRead
 
+
 .. doxybridge:: SObjectWrite
+
+
+Reference Counting
+------------------
 
 .. doxybridge:: SObjectIncRef
 
 .. doxybridge:: SObjectDecRef
 
-.. doxybridge:: S_NEW
-   :type: macro
-
-.. doxybridge:: S_DELETE
-   :type: macro
-
-.. doxybridge:: S_FORCE_DELETE
-   :type: macro
-
-.. doxybridge:: S_CAST_SAFE
-   :type: macro
-
-.. doxybridge:: S_CAST_UNSAFE
-   :type: macro
-
-.. doxybridge:: S_CAST
-   :type: macro
-
-.. doxybridge:: S_OBJECT_CALL
-   :type: macro
-
-.. doxybridge:: S_OBJECT_METH_VALID
-   :type: macro
-
-.. doxybridge:: S_OBJECT
-   :type: macro
-
-.. doxybridge:: S_OBJECT_REF
-   :type: macro
-
-.. doxybridge:: S_OBJECT_CLS
-   :type: macro
+.. warning::
+   Reference counting functions should be used with utmost care. 
+   They are normally not required, and are here just for expert use.
 
 
 
-Classes
-=======
-	
-.. speect:class:: SObjectClass
+SObjectClass Definition
+=======================
 
-   The base class structure. The class defines a constructor and destructor for :c:type:`SObject`,
-   as well as class members, i.e. members that belong to all object instances of a specific class
-   type. All classes that want to work with the Speect Generic Object System must inherit from this
-   class structure.
+.. doxybridge:: SObjectClass
+   :type: speect class
+   :members: none
+
+.. seealso:: :doc:`SObjectClass_detail`.
 
 
-Class Methods
-=============
+SObjectClass Methods
+====================
 
-.. doxybridge:: s_class_add
+Query
+-----
 
-.. doxybridge:: s_class_init
+.. doxybridge:: SObjectCompare
 
-.. doxybridge:: s_class_reg
 
-.. doxybridge:: s_class_free
+Miscellaneous
+-------------
 
-.. doxybridge:: s_class_name
+.. doxybridge:: SObjectPrint
 
-.. doxybridge:: s_class_inheritance
 
-.. doxybridge:: s_class_is_reg
+Copy
+----
 
-.. doxybridge:: s_class_find
+.. doxybridge:: SObjectCopy
 
 

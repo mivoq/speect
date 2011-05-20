@@ -11,14 +11,9 @@ String Lists
 Definition
 ==========
 
-Internally a string list is just an :c:type:`s_list` that has strings as list
-elements. 
-
 .. doxybridge:: s_str_list
 
 .. doxybridge:: s_str_list_element
-
-
 
 
 Create/Delete

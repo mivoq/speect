@@ -6,14 +6,18 @@
 Version Numbers
 ===============
 
-Function relating to version information and data structures for 
-the storage of version information.
+Definitions
+===========
 
 .. doxybridge:: s_lib_version
    :type: typedef struct
 
 .. doxybridge:: s_version 
    :type: typedef struct
+
+
+Functions
+=========
 
 .. doxybridge:: s_speect_version
 

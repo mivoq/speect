@@ -92,12 +92,12 @@ S_LOCAL s_ini_parser *_s_load_speect_ini(s_erc *error)
 		return NULL;
 	}
 
-	spct_ini = s_iniparser_load(ini_file);
+	spct_ini = s_iniparser_new(ini_file);
 	if (spct_ini == NULL)
 	{
 		S_NEW_ERR(error, S_FAILURE);
 		S_ERR_PRINT(S_FAILURE, "_s_load_speect_ini",
-					"Call to \"s_iniparser_load\" failed");
+					"Call to \"s_iniparser_new\" failed");
 		return NULL;
 	}
 

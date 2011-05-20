@@ -199,7 +199,7 @@ S_API s_erc speect_init(s_logger *logger)
 		}
 	}
 
-	s_iniparser_free(spct_ini);
+	s_iniparser_delete(spct_ini);
 
 #ifdef SPCT_DEBUGMODE
 	_s_classes_print(&local_err);

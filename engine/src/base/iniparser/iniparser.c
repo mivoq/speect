@@ -143,7 +143,7 @@ static void parser_free(s_ini_parser *parser);
 /*                                                                                  */
 /************************************************************************************/
 
-S_API s_ini_parser *s_iniparser_load(const char *path)
+S_API s_ini_parser *s_iniparser_new(const char *path)
 {
 	FILE *fhandle;
     char line[S_ASCIILINESZ];
@@ -164,7 +164,7 @@ S_API s_ini_parser *s_iniparser_load(const char *path)
 
 	if (path == NULL)
 	{
-		S_ERR_PRINT(S_ARGERROR, "s_iniparser_load",
+		S_ERR_PRINT(S_ARGERROR, "s_iniparser_new",
 					"Argument \"path\" is NULL");
 		return NULL;
 	}
@@ -176,11 +176,11 @@ S_API s_ini_parser *s_iniparser_load(const char *path)
 
 #ifdef SPCT_USE_THREADS
 		fprintf(stderr, "[ERROR (%s) %lu] Failed to open ini file '%s'"
-				" (in function 's_iniparser_load', %s, %d)\n",
+				" (in function 's_iniparser_new', %s, %d)\n",
 				err_str, s_thread_id(), path, __FILE__, __LINE__);
 #else /* !SPCT_USE_THREADS */
 		fprintf(stderr, "[ERROR (%s)] Failed to open ini file '%s'"
-				" (in function 's_iniparser_load', %s, %d)\n",
+				" (in function 's_iniparser_new', %s, %d)\n",
 				err_str, path, __FILE__, __LINE__);
 #endif /* SPCT_USE_THREADS */
 		S_FREE(err_str);
@@ -192,7 +192,7 @@ S_API s_ini_parser *s_iniparser_load(const char *path)
 	parser = parser_create(path);
 	if (parser == NULL)
 	{
-		S_ERR_PRINT(S_FAILURE, "s_iniparser_load",
+		S_ERR_PRINT(S_FAILURE, "s_iniparser_new",
 					"Call to \"parser_create\" failed");
 		fclose(fhandle);
         return NULL;
@@ -220,11 +220,11 @@ S_API s_ini_parser *s_iniparser_load(const char *path)
 
 #ifdef SPCT_USE_THREADS
 			fprintf(stderr, "[ERROR (%s) %lu] input line too long in '%s' (%d)"
-					" (in function 's_iniparser_load', %s, %d)\n",
+					" (in function 's_iniparser_new', %s, %d)\n",
 					err_str, s_thread_id(), path, lineno, __FILE__, __LINE__);
 #else /* !SPCT_USE_THREADS */
 			fprintf(stderr, "[ERROR (%s)] input line too long in '%s' (%d)"
-					" (in function 's_iniparser_load', %s, %d)\n",
+					" (in function 's_iniparser_new', %s, %d)\n",
 					err_str, path, lineno, __FILE__, __LINE__);
 #endif /* SPCT_USE_THREADS */
 			S_FREE(err_str);
@@ -285,11 +285,11 @@ S_API s_ini_parser *s_iniparser_load(const char *path)
 
 #ifdef SPCT_USE_THREADS
 			fprintf(stderr, "[ERROR (%s) %lu] syntax error in '%s' (%d)"
-					" (in function 's_iniparser_load', %s, %d)\n",
+					" (in function 's_iniparser_new', %s, %d)\n",
 					err_str, s_thread_id(), path, lineno, __FILE__, __LINE__);
 #else /* !SPCT_USE_THREADS */
 			fprintf(stderr, "[ERROR (%s)] syntax error in '%s' (%d)"
-					" (in function 's_iniparser_load', %s, %d)\n",
+					" (in function 's_iniparser_new', %s, %d)\n",
 					err_str, path, lineno, __FILE__, __LINE__);
 #endif /* SPCT_USE_THREADS */
 			S_FREE(err_str);
@@ -308,11 +308,11 @@ S_API s_ini_parser *s_iniparser_load(const char *path)
 
 #ifdef SPCT_USE_THREADS
 			fprintf(stderr, "[ERROR (%s) %lu] failed to parse ini file '%s'"
-					" (in function 's_iniparser_load', %s, %d)\n",
+					" (in function 's_iniparser_new', %s, %d)\n",
 					err_str, s_thread_id(), path, __FILE__, __LINE__);
 #else /* !SPCT_USE_THREADS */
 			fprintf(stderr, "[ERROR (%s)] failed to parse ini file '%s'"
-					" (in function 's_iniparser_load', %s, %d)\n",
+					" (in function 's_iniparser_new', %s, %d)\n",
 					err_str, path, __FILE__, __LINE__);
 #endif /* SPCT_USE_THREADS */
 			S_FREE(err_str);
@@ -331,7 +331,7 @@ S_API s_ini_parser *s_iniparser_load(const char *path)
 }
 
 
-S_API void s_iniparser_free(s_ini_parser *inip)
+S_API void s_iniparser_delete(s_ini_parser *inip)
 {
 	if (inip == NULL)
 		return;

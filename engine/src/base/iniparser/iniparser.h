@@ -173,7 +173,7 @@ typedef struct s_ini_parser s_ini_parser;
 
 /************************************************************************************/
 /*                                                                                  */
-/* Function prototypes (do not use these directly, use above defined macros)        */
+/* Function prototypes                                                              */
 /*                                                                                  */
 /************************************************************************************/
 
@@ -181,7 +181,7 @@ typedef struct s_ini_parser s_ini_parser;
  * Parse an @c INI file and return an allocated parser object.
  * This is the parser for ini files. This function is called, providing
  * the name of the file to be read. It returns an opaque @c INI parser
- * structure that must be freed using #s_iniparser_free().
+ * structure that must be freed using #s_iniparser_delete.
  *
  * @param path The full path and file name of the @c INI file
  *
@@ -189,17 +189,18 @@ typedef struct s_ini_parser s_ini_parser;
  *
  * @note Not thread safe.
  */
-S_API s_ini_parser *s_iniparser_load(const char *path);
+S_API s_ini_parser *s_iniparser_new(const char *path);
 
 
 /**
- * Free the resources allocated to the given @c INI parser.
+ * Free the resources allocated to the given @c INI parser, and then
+ * free the INI parser itself.
  *
  * @param inip The opaque @c INI parser structure to free.
  *
  * @note Not thread safe.
  */
-S_API void s_iniparser_free(s_ini_parser *inip);
+S_API void s_iniparser_delete(s_ini_parser *inip);
 
 
 /**

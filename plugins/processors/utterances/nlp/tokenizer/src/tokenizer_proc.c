@@ -73,7 +73,7 @@ static void s_get_tokenizer_symbols(const SUttProcessor *uttProc, STokenizer *ts
 S_LOCAL void _s_tokenization_utt_proc_class_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(&TokenizationUttProcClass, error);
+	s_class_reg(S_OBJECTCLASS(&TokenizationUttProcClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_tokenization_utt_proc_class_reg",
 			  "Failed to register STokenizationUttProcClass");
@@ -83,7 +83,7 @@ S_LOCAL void _s_tokenization_utt_proc_class_reg(s_erc *error)
 S_LOCAL void _s_tokenization_utt_proc_class_free(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_free(&TokenizationUttProcClass, error);
+	s_class_free(S_OBJECTCLASS(&TokenizationUttProcClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_tokenization_utt_proc_class_free",
 			  "Failed to free STokenizationUttProcClass");

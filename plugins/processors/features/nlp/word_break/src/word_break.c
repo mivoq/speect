@@ -63,7 +63,7 @@ static SWordBreakFeatProcClass WordBreakFeatProcClass; /* SWordBreakFeatProc cla
 S_LOCAL void _s_word_break_class_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(&WordBreakFeatProcClass, error);
+	s_class_reg(S_OBJECTCLASS(&WordBreakFeatProcClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_word_break_class_reg",
 			  "Failed to register SWordBreakFeatProcClass");
@@ -73,7 +73,7 @@ S_LOCAL void _s_word_break_class_reg(s_erc *error)
 S_LOCAL void _s_word_break_class_free(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_free(&WordBreakFeatProcClass, error);
+	s_class_free(S_OBJECTCLASS(&WordBreakFeatProcClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_word_break_class_free",
 			  "Failed to free SWordBreakFeatProcClass");

@@ -74,7 +74,7 @@ static SEbmlUttFileClass EbmlUttFileClass; /* SEbmlUttFile  class declaration. *
 S_LOCAL void _s_serialized_ebml_utt_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(&EbmlUttFileClass, error);
+	s_class_reg(S_OBJECTCLASS(&EbmlUttFileClass), error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "_s_serialized_ebml_utt_reg",
 				  "Failed to register SEbmlUttFileClass"))
@@ -88,7 +88,7 @@ S_LOCAL void _s_serialized_ebml_utt_reg(s_erc *error)
 		s_erc local_err = S_SUCCESS;
 
 
-		s_class_free(&EbmlUttFileClass, &local_err);
+		s_class_free(S_OBJECTCLASS(&EbmlUttFileClass), &local_err);
 		return;
 	}
 }
@@ -107,7 +107,7 @@ S_LOCAL void _s_serialized_ebml_utt_free(s_erc *error)
 			  "_s_serialized_ebml_utt_free",
 			  "Failed to remove serialized file class SEbmlUttFileClass");
 
-	s_class_free(&EbmlUttFileClass, error);
+	s_class_free(S_OBJECTCLASS(&EbmlUttFileClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_serialized_ebml_utt_free",
 			  "Failed to free SEbmlUttFileClass");

@@ -62,7 +62,7 @@ static SRelpClass RelpClass; /* SRelp class declaration. */
 S_LOCAL void _s_relp_class_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(&RelpClass, error);
+	s_class_reg(S_OBJECTCLASS(&RelpClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_relp_class_reg",
 			  "Failed to register SRelpClass");
@@ -72,7 +72,7 @@ S_LOCAL void _s_relp_class_reg(s_erc *error)
 S_LOCAL void _s_relp_class_free(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_free(&RelpClass, error);
+	s_class_free(S_OBJECTCLASS(&RelpClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_relp_class_free",
 			  "Failed to free SRelpClass");

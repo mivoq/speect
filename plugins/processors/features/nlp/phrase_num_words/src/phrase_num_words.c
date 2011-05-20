@@ -62,7 +62,7 @@ static SPhraseNumWordsFeatProcClass PhraseNumWordsFeatProcClass; /* SPhraseNumWo
 S_LOCAL void _s_phrase_num_words_class_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(&PhraseNumWordsFeatProcClass, error);
+	s_class_reg(S_OBJECTCLASS(&PhraseNumWordsFeatProcClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_phrase_num_words_class_reg",
 			  "Failed to register SPhraseNumWordsFeatProcClass");
@@ -72,7 +72,7 @@ S_LOCAL void _s_phrase_num_words_class_reg(s_erc *error)
 S_LOCAL void _s_phrase_num_words_class_free(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_free(&PhraseNumWordsFeatProcClass, error);
+	s_class_free(S_OBJECTCLASS(&PhraseNumWordsFeatProcClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_phrase_num_words_class_free",
 			  "Failed to free SPhraseNumWordsFeatProcClass");

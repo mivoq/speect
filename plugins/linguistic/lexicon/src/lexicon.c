@@ -63,7 +63,7 @@ static SLexiconClass LexiconClass; /* SLexicon class declaration. */
 S_LOCAL void _s_lexicon_class_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(&LexiconClass, error);
+	s_class_reg(S_OBJECTCLASS(&LexiconClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_lexicon_class_reg",
 			  "Failed to register SLexiconClass");
@@ -73,7 +73,7 @@ S_LOCAL void _s_lexicon_class_reg(s_erc *error)
 S_LOCAL void _s_lexicon_class_free(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_free(&LexiconClass, error);
+	s_class_free(S_OBJECTCLASS(&LexiconClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_lexicon_class_free",
 			  "Failed to free SLexiconClass");

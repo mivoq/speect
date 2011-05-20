@@ -82,7 +82,7 @@ static void replace_B(const s_str_list *B, s_str_list *A,
 S_LOCAL void _s_syllabification_rewrites_class_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(&SyllabificationRewritesClass, error);
+	s_class_reg(S_OBJECTCLASS(&SyllabificationRewritesClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_syllabification_rewrites_class_reg",
 			  "Failed to register SSyllabificationRewritesClass");
@@ -92,7 +92,7 @@ S_LOCAL void _s_syllabification_rewrites_class_reg(s_erc *error)
 S_LOCAL void _s_syllabification_rewrites_class_free(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_free(&SyllabificationRewritesClass, error);
+	s_class_free(S_OBJECTCLASS(&SyllabificationRewritesClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_syllabification_rewrites_class_free",
 			  "Failed to free SSyllabificationRewritesClass");

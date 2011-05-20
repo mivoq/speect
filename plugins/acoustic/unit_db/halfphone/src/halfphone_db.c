@@ -62,7 +62,7 @@ static SHalfphoneDBClass HalfphoneDBClass; /* SHalfphoneDB class declaration. */
 S_LOCAL void _s_halfphone_db_class_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(&HalfphoneDBClass, error);
+	s_class_reg(S_OBJECTCLASS(&HalfphoneDBClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_halfphone_db_class_reg",
 			  "Failed to register SHalfphoneDBClass");
@@ -72,7 +72,7 @@ S_LOCAL void _s_halfphone_db_class_reg(s_erc *error)
 S_LOCAL void _s_halfphone_db_class_free(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_free(&HalfphoneDBClass, error);
+	s_class_free(S_OBJECTCLASS(&HalfphoneDBClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_halfphone_db_class_free",
 			  "Failed to free SHalfphoneDBClass");

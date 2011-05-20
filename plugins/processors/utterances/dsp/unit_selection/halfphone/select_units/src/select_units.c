@@ -87,7 +87,7 @@ static SViterbiCandidate *get_candidates(const SItem *s, SMap *features, s_erc *
 S_LOCAL void _s_select_units_utt_proc_class_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(&SelectUnitsUttProcClass, error);
+	s_class_reg(S_OBJECTCLASS(&SelectUnitsUttProcClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_select_units_utt_proc_class_reg",
 			  "Failed to register SSelectUnitsUttProcClass");
@@ -97,7 +97,7 @@ S_LOCAL void _s_select_units_utt_proc_class_reg(s_erc *error)
 S_LOCAL void _s_select_units_utt_proc_class_free(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_free(&SelectUnitsUttProcClass, error);
+	s_class_free(S_OBJECTCLASS(&SelectUnitsUttProcClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_select_units_utt_proc_class_free",
 			  "Failed to free SSelectUnitsUttProcClass");

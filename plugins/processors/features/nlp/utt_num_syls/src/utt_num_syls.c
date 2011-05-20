@@ -62,7 +62,7 @@ static SUttNumSylsFeatProcClass UttNumSylsFeatProcClass; /* SUttNumSylsFeatProc 
 S_LOCAL void _s_utt_num_syls_class_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(&UttNumSylsFeatProcClass, error);
+	s_class_reg(S_OBJECTCLASS(&UttNumSylsFeatProcClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_utt_num_syls_class_reg",
 			  "Failed to register SUttNumSylsFeatProcClass");
@@ -72,7 +72,7 @@ S_LOCAL void _s_utt_num_syls_class_reg(s_erc *error)
 S_LOCAL void _s_utt_num_syls_class_free(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_free(&UttNumSylsFeatProcClass, error);
+	s_class_free(S_OBJECTCLASS(&UttNumSylsFeatProcClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_utt_num_syls_class_free",
 			  "Failed to free SUttNumSylsFeatProcClass");

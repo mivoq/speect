@@ -71,7 +71,7 @@ static s_bool word_is_content(const SItem *word, s_erc *error);
 S_LOCAL void _s_word_content_all_in_class_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(&WordContentAllInFeatProcClass, error);
+	s_class_reg(S_OBJECTCLASS(&WordContentAllInFeatProcClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_word_content_all_in_class_reg",
 			  "Failed to register SWordContentAllInFeatProcClass");
@@ -81,7 +81,7 @@ S_LOCAL void _s_word_content_all_in_class_reg(s_erc *error)
 S_LOCAL void _s_word_content_all_in_class_free(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_free(&WordContentAllInFeatProcClass, error);
+	s_class_free(S_OBJECTCLASS(&WordContentAllInFeatProcClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_word_content_all_in_class_free",
 			  "Failed to free SWordContentAllInFeatProcClass");

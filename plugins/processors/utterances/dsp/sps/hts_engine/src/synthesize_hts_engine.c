@@ -121,7 +121,7 @@ static void load_hts_engine_data(const SMap *data, HTS_Engine *engine,
 S_LOCAL void _s_hts_engine_synth_utt_proc_class_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(&HTSEngineSynthUttProcClass, error);
+	s_class_reg(S_OBJECTCLASS(&HTSEngineSynthUttProcClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_hts_engine_synth_utt_proc_class_reg",
 			  "Failed to register SHTSEngineSynthUttProcClass");
@@ -131,7 +131,7 @@ S_LOCAL void _s_hts_engine_synth_utt_proc_class_reg(s_erc *error)
 S_LOCAL void _s_hts_engine_synth_utt_proc_class_free(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_free(&HTSEngineSynthUttProcClass, error);
+	s_class_free(S_OBJECTCLASS(&HTSEngineSynthUttProcClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_hts_engine_synth_utt_proc_class_free",
 			  "Failed to free SHTSEngineSynthUttProcClass");

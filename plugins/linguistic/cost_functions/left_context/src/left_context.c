@@ -62,7 +62,7 @@ static SLeftContextCostFuncClass LeftContextCostFuncClass; /* SLeftContextCostFu
 S_LOCAL void _s_left_context_class_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(&LeftContextCostFuncClass, error);
+	s_class_reg(S_OBJECTCLASS(&LeftContextCostFuncClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_left_context_class_reg",
 			  "Failed to register SLeftContextCostFuncClass");
@@ -72,7 +72,7 @@ S_LOCAL void _s_left_context_class_reg(s_erc *error)
 S_LOCAL void _s_left_context_class_free(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_free(&LeftContextCostFuncClass, error);
+	s_class_free(S_OBJECTCLASS(&LeftContextCostFuncClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_left_context_class_free",
 			  "Failed to free SLeftContextCostFuncClass");

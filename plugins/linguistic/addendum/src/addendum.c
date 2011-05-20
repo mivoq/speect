@@ -62,7 +62,7 @@ static SAddendumClass AddendumClass; /* SAddendum class declaration. */
 S_LOCAL void _s_addendum_class_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(&AddendumClass, error);
+	s_class_reg(S_OBJECTCLASS(&AddendumClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_addendum_class_reg",
 			  "Failed to register SAddendumClass");
@@ -72,7 +72,7 @@ S_LOCAL void _s_addendum_class_reg(s_erc *error)
 S_LOCAL void _s_addendum_class_free(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_free(&AddendumClass, error);
+	s_class_free(S_OBJECTCLASS(&AddendumClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_addendum_class_free",
 			  "Failed to free SAddendumClass");

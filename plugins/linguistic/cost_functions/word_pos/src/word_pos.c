@@ -62,7 +62,7 @@ static SWordPosCostFuncClass WordPosCostFuncClass; /* SWordPosCostFunc class dec
 S_LOCAL void _s_word_pos_class_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(&WordPosCostFuncClass, error);
+	s_class_reg(S_OBJECTCLASS(&WordPosCostFuncClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_word_pos_class_reg",
 			  "Failed to register SWordPosCostFuncClass");
@@ -72,7 +72,7 @@ S_LOCAL void _s_word_pos_class_reg(s_erc *error)
 S_LOCAL void _s_word_pos_class_free(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_free(&WordPosCostFuncClass, error);
+	s_class_free(S_OBJECTCLASS(&WordPosCostFuncClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_word_pos_class_free",
 			  "Failed to free SWordPosCostFuncClass");

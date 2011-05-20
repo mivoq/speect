@@ -63,7 +63,7 @@ static SPausesUttProcClass PausesUttProcClass;
 S_LOCAL void _s_pauses_utt_proc_class_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(&PausesUttProcClass, error);
+	s_class_reg(S_OBJECTCLASS(&PausesUttProcClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_pauses_utt_proc_class_reg",
 			  "Failed to register SPausesUttProcClass");
@@ -73,7 +73,7 @@ S_LOCAL void _s_pauses_utt_proc_class_reg(s_erc *error)
 S_LOCAL void _s_pauses_utt_proc_class_free(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_free(&PausesUttProcClass, error);
+	s_class_free(S_OBJECTCLASS(&PausesUttProcClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_pauses_utt_proc_class_free",
 			  "Failed to free SPausesUttProcClass");

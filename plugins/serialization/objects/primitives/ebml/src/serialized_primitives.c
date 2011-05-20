@@ -81,7 +81,7 @@ S_LOCAL void _s_serialized_ebml_primitives_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
 
-	s_class_reg(&EbmlPrimitivesClass, error);
+	s_class_reg(S_OBJECTCLASS(&EbmlPrimitivesClass), error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "_s_serialized_ebml_primitives_reg",
 				  "Failed to register SEbmlPrimitivesClass"))
@@ -107,7 +107,7 @@ S_LOCAL void _s_serialized_ebml_primitives_free(s_erc *error)
 			  "_s_serialized_ebml_primitives_free",
 			  "Failed to remove serialized object class SEbmlPrimitivesClass");
 
-	s_class_free(&EbmlPrimitivesClass, error);
+	s_class_free(S_OBJECTCLASS(&EbmlPrimitivesClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_serialized_ebml_primitives_free",
 			  "Failed to free SEbmlPrimitivesClass");

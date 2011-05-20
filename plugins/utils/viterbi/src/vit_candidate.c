@@ -100,7 +100,7 @@ static SViterbiCandidateClass ViterbiCandidateClass;
 S_LOCAL void _s_vit_candidate_class_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(&ViterbiCandidateClass, error);
+	s_class_reg(S_OBJECTCLASS(&ViterbiCandidateClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_vit_candidate_class_reg",
 			  "Failed to register SViterbiCandidateClass");
@@ -110,7 +110,7 @@ S_LOCAL void _s_vit_candidate_class_reg(s_erc *error)
 S_LOCAL void _s_vit_candidate_class_free(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_free(&ViterbiCandidateClass, error);
+	s_class_free(S_OBJECTCLASS(&ViterbiCandidateClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_vit_candidate_class_free",
 			  "Failed to free SViterbiCandidateClass");

@@ -62,7 +62,7 @@ static SEbmlReadClass EbmlReadClass; /* SEbmlRead class declaration. */
 S_LOCAL void _s_ebml_read_class_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(&EbmlReadClass, error);
+	s_class_reg(S_OBJECTCLASS(&EbmlReadClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_ebml_read_class_reg",
 			  "Failed to register SEbmlReadClass");
@@ -72,7 +72,7 @@ S_LOCAL void _s_ebml_read_class_reg(s_erc *error)
 S_LOCAL void _s_ebml_read_class_free(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_free(&EbmlReadClass, error);
+	s_class_free(S_OBJECTCLASS(&EbmlReadClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_ebml_read_class_free",
 			  "Failed to free SEbmlReadClass");

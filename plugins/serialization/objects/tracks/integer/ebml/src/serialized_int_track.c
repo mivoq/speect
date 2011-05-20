@@ -79,7 +79,7 @@ S_LOCAL void _s_serialized_ebml_track_int_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
 
-	s_class_reg(&EbmlTrackIntClass, error);
+	s_class_reg(S_OBJECTCLASS(&EbmlTrackIntClass), error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "_s_serialized_ebml_track_int_reg",
 				  "Failed to register SEbmlTrackIntClass"))
@@ -105,7 +105,7 @@ S_LOCAL void _s_serialized_ebml_track_int_free(s_erc *error)
 			  "_s_serialized_ebml_track_int_free",
 			  "Failed to remove serialized object class SEbmlTrackIntClass");
 
-	s_class_free(&EbmlTrackIntClass, error);
+	s_class_free(S_OBJECTCLASS(&EbmlTrackIntClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_serialized_ebml_track_int_free",
 			  "Failed to free SEbmlTrackIntClass");

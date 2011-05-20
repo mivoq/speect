@@ -62,7 +62,7 @@ static SUttNumPhrasesFeatProcClass UttNumPhrasesFeatProcClass; /* SUttNumPhrases
 S_LOCAL void _s_utt_num_phrases_class_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(&UttNumPhrasesFeatProcClass, error);
+	s_class_reg(S_OBJECTCLASS(&UttNumPhrasesFeatProcClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_utt_num_phrases_class_reg",
 			  "Failed to register SUttNumPhrasesFeatProcClass");
@@ -72,7 +72,7 @@ S_LOCAL void _s_utt_num_phrases_class_reg(s_erc *error)
 S_LOCAL void _s_utt_num_phrases_class_free(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_free(&UttNumPhrasesFeatProcClass, error);
+	s_class_free(S_OBJECTCLASS(&UttNumPhrasesFeatProcClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_utt_num_phrases_class_free",
 			  "Failed to free SUttNumPhrasesFeatProcClass");

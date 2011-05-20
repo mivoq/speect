@@ -78,7 +78,7 @@ static void process_cost_functions(const SList *costFunctions, const SItem *head
 S_LOCAL void _s_process_units_utt_proc_class_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(&ProcessUnitsUttProcClass, error);
+	s_class_reg(S_OBJECTCLASS(&ProcessUnitsUttProcClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_process_units_utt_proc_class_reg",
 			  "Failed to register SProcessUnitsUttProcClass");
@@ -88,7 +88,7 @@ S_LOCAL void _s_process_units_utt_proc_class_reg(s_erc *error)
 S_LOCAL void _s_process_units_utt_proc_class_free(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_free(&ProcessUnitsUttProcClass, error);
+	s_class_free(S_OBJECTCLASS(&ProcessUnitsUttProcClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_process_units_utt_proc_class_free",
 			  "Failed to free SProcessUnitsUttProcClass");

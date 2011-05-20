@@ -72,7 +72,7 @@ static s_bool syl_is_accented(const SItem *syl, s_erc *error);
 S_LOCAL void _s_syl_accent_all_out_class_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(&SylAccentAllOutFeatProcClass, error);
+	s_class_reg(S_OBJECTCLASS(&SylAccentAllOutFeatProcClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_syl_accent_all_out_class_reg",
 			  "Failed to register SSylAccentAllOutFeatProcClass");
@@ -82,7 +82,7 @@ S_LOCAL void _s_syl_accent_all_out_class_reg(s_erc *error)
 S_LOCAL void _s_syl_accent_all_out_class_free(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_free(&SylAccentAllOutFeatProcClass, error);
+	s_class_free(S_OBJECTCLASS(&SylAccentAllOutFeatProcClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_syl_accent_all_out_class_free",
 			  "Failed to free SSylAccentAllOutFeatProcClass");

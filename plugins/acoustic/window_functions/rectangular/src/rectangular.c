@@ -62,7 +62,7 @@ static SWinRectClass WinRectClass; /* SWinRect class declaration. */
 S_LOCAL void _s_winrect_class_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(&WinRectClass, error);
+	s_class_reg(S_OBJECTCLASS(&WinRectClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_winrect_class_reg",
 			  "Failed to register SWinRectClass");
@@ -72,7 +72,7 @@ S_LOCAL void _s_winrect_class_reg(s_erc *error)
 S_LOCAL void _s_winrect_class_free(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_free(&WinRectClass, error);
+	s_class_free(S_OBJECTCLASS(&WinRectClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_winrect_class_free",
 			  "Failed to free SWinRectClass");

@@ -80,7 +80,7 @@ static s_bool check_if_match(const SMap *singleEntry, const SMap *features,
 S_LOCAL void _s_lexicon_json_class_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(&LexiconJSONClass, error);
+	s_class_reg(S_OBJECTCLASS(&LexiconJSONClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_lexicon_json_class_reg",
 			  "Failed to register SLexiconJSONClass");
@@ -90,7 +90,7 @@ S_LOCAL void _s_lexicon_json_class_reg(s_erc *error)
 S_LOCAL void _s_lexicon_json_class_free(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_free(&LexiconJSONClass, error);
+	s_class_free(S_OBJECTCLASS(&LexiconJSONClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_lexicon_json_class_free",
 			  "Failed to free SLexiconJSONClass");

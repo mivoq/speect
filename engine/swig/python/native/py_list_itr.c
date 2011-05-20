@@ -249,7 +249,7 @@ clean_up:
 S_LOCAL void _s_list_py_iterator_class_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(&ListPyIteratorClass, error);
+	s_class_reg(S_OBJECTCLASS(&ListPyIteratorClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_list_py_iterator_class_reg",
 			  "Failed to add SListPyIteratorClass");

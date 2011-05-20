@@ -138,7 +138,7 @@ static void set_viterbi_params(SViterbi *self, const SMap *viterbiConfig, s_erc 
 S_LOCAL void _s_viterbi_class_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(&ViterbiClass, error);
+	s_class_reg(S_OBJECTCLASS(&ViterbiClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_viterbi_class_reg",
 			  "Failed to register SViterbiClass");
@@ -148,7 +148,7 @@ S_LOCAL void _s_viterbi_class_reg(s_erc *error)
 S_LOCAL void _s_viterbi_class_free(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_free(&ViterbiClass, error);
+	s_class_free(S_OBJECTCLASS(&ViterbiClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_viterbi_class_free",
 			  "Failed to free SViterbiClass");

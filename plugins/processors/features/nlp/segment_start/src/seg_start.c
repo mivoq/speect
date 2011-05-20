@@ -63,7 +63,7 @@ static SSegStartFeatProcClass SegStartFeatProcClass; /* SSegStartFeatProc class 
 S_LOCAL void _s_seg_start_class_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(&SegStartFeatProcClass, error);
+	s_class_reg(S_OBJECTCLASS(&SegStartFeatProcClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_seg_start_class_reg",
 			  "Failed to register SSegStartFeatProcClass");
@@ -73,7 +73,7 @@ S_LOCAL void _s_seg_start_class_reg(s_erc *error)
 S_LOCAL void _s_seg_start_class_free(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_free(&SegStartFeatProcClass, error);
+	s_class_free(S_OBJECTCLASS(&SegStartFeatProcClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_seg_start_class_free",
 			  "Failed to free SSegStartFeatProcClass");

@@ -77,7 +77,7 @@ static s_bool phone_is_syllabic_consonant(const SPhoneset *phoneset, const char 
 S_LOCAL void _s_syllab_zul_lwazi_class_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(&SyllabZulLwaziClass, error);
+	s_class_reg(S_OBJECTCLASS(&SyllabZulLwaziClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_syllab_zul_lwazi_class_reg",
 			  "Failed to register SSyllabZulLwaziClass");
@@ -87,7 +87,7 @@ S_LOCAL void _s_syllab_zul_lwazi_class_reg(s_erc *error)
 S_LOCAL void _s_syllab_zul_lwazi_class_free(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_free(&SyllabZulLwaziClass, error);
+	s_class_free(S_OBJECTCLASS(&SyllabZulLwaziClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_syllab_zul_lwazi_class_free",
 			  "Failed to free SSyllabZulLwaziClass");

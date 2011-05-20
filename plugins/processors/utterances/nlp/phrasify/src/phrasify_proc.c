@@ -75,7 +75,7 @@ static const char * const s_default_phrasing_end_punc_chars = "?.,:;";
 S_LOCAL void _s_phrasing_utt_proc_class_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(&PhrasingUttProcClass, error);
+	s_class_reg(S_OBJECTCLASS(&PhrasingUttProcClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_phrasing_utt_proc_class_reg",
 			  "Failed to register SPhrasingUttProcClass");
@@ -85,7 +85,7 @@ S_LOCAL void _s_phrasing_utt_proc_class_reg(s_erc *error)
 S_LOCAL void _s_phrasing_utt_proc_class_free(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_free(&PhrasingUttProcClass, error);
+	s_class_free(S_OBJECTCLASS(&PhrasingUttProcClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_phrasing_utt_proc_class_free",
 			  "Failed to free SPhrasingUttProcClass");

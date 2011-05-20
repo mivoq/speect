@@ -114,7 +114,7 @@ S_API PyObject *SPyObjectGet(const SPyObject *self, s_erc *error)
 S_LOCAL void _s_pyobject_class_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(&PyObjectClass, error);
+	s_class_reg(S_OBJECTCLASS(&PyObjectClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_pyobject_class_reg",
 			  "Failed to register SPyObjectClass");

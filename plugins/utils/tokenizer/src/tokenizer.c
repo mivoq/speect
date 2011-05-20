@@ -106,7 +106,7 @@ static const char * const s_default_postpunctuationsymbols = "\"'`.,:;!?(){}[]";
 S_LOCAL void _s_tokenizer_class_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(&TokenizerClass, error);
+	s_class_reg(S_OBJECTCLASS(&TokenizerClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_tokenizer_class_reg",
 			  "Failed to register STokenizerClass");
@@ -116,7 +116,7 @@ S_LOCAL void _s_tokenizer_class_reg(s_erc *error)
 S_LOCAL void _s_tokenizer_class_free(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_free(&TokenizerClass, error);
+	s_class_free(S_OBJECTCLASS(&TokenizerClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_tokenizer_class_free",
 			  "Failed to free STokenizerClass");

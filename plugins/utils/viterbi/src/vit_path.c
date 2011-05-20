@@ -100,7 +100,7 @@ static SViterbiPathClass ViterbiPathClass;
 S_LOCAL void _s_vit_path_class_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(&ViterbiPathClass, error);
+	s_class_reg(S_OBJECTCLASS(&ViterbiPathClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_vit_path_class_reg",
 			  "Failed to register SViterbiPathClass");
@@ -110,7 +110,7 @@ S_LOCAL void _s_vit_path_class_reg(s_erc *error)
 S_LOCAL void _s_vit_path_class_free(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_free(&ViterbiPathClass, error);
+	s_class_free(S_OBJECTCLASS(&ViterbiPathClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_vit_path_class_free",
 			  "Failed to free SViterbiPathClass");

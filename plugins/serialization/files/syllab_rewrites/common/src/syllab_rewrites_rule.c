@@ -184,7 +184,7 @@ const s_list *SSyllabificationRewritesRuleGetReplacement(const SSyllabificationR
 S_LOCAL void _s_syllabification_rewrites_rule_class_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(&SyllabificationRewritesRuleClass, error);
+	s_class_reg(S_OBJECTCLASS(&SyllabificationRewritesRuleClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_syllabification_rewrites_rule_class_reg",
 			  "Failed to register SSyllabificationRewritesRuleClass");
@@ -194,7 +194,7 @@ S_LOCAL void _s_syllabification_rewrites_rule_class_reg(s_erc *error)
 S_LOCAL void _s_syllabification_rewrites_rule_class_free(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_free(&SyllabificationRewritesRuleClass, error);
+	s_class_free(S_OBJECTCLASS(&SyllabificationRewritesRuleClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_syllabification_rewrites_rule_class_free",
 			  "Failed to free SSyllabificationRewritesRuleClass");

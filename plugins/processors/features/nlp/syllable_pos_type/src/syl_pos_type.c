@@ -62,7 +62,7 @@ static SSylPosTypeFeatProcClass SylPosTypeFeatProcClass; /* SSylPosTypeFeatProc 
 S_LOCAL void _s_syl_pos_type_class_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(&SylPosTypeFeatProcClass, error);
+	s_class_reg(S_OBJECTCLASS(&SylPosTypeFeatProcClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_syl_pos_type_class_reg",
 			  "Failed to register SSylPosTypeFeatProcClass");
@@ -72,7 +72,7 @@ S_LOCAL void _s_syl_pos_type_class_reg(s_erc *error)
 S_LOCAL void _s_syl_pos_type_class_free(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_free(&SylPosTypeFeatProcClass, error);
+	s_class_free(S_OBJECTCLASS(&SylPosTypeFeatProcClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_syl_pos_type_class_free",
 			  "Failed to free SSylPosTypeFeatProcClass");

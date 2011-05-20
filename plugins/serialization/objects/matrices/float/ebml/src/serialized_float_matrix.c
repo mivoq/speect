@@ -79,7 +79,7 @@ S_LOCAL void _s_serialized_ebml_matrix_float_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
 
-	s_class_reg(&EbmlMatrixFloatClass, error);
+	s_class_reg(S_OBJECTCLASS(&EbmlMatrixFloatClass), error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "_s_serialized_ebml_matrix_float_reg",
 				  "Failed to register SEbmlMatrixFloatClass"))
@@ -105,7 +105,7 @@ S_LOCAL void _s_serialized_ebml_matrix_float_free(s_erc *error)
 			  "_s_serialized_ebml_matrix_float_free",
 			  "Failed to remove serialized object class SEbmlMatrixFloatClass");
 
-	s_class_free(&EbmlMatrixFloatClass, error);
+	s_class_free(S_OBJECTCLASS(&EbmlMatrixFloatClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_serialized_ebml_matrix_float_free",
 			  "Failed to free SEbmlMatrixFloatClass");

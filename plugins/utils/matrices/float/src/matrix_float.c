@@ -64,7 +64,7 @@ static SMatrixFloatClass MatrixFloatClass; /* SMatrixFloat class declaration. */
 S_LOCAL void _s_matrix_float_class_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(&MatrixFloatClass, error);
+	s_class_reg(S_OBJECTCLASS(&MatrixFloatClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_matrix_float_class_reg",
 			  "Failed to register SMatrixFloatClass");
@@ -74,7 +74,7 @@ S_LOCAL void _s_matrix_float_class_reg(s_erc *error)
 S_LOCAL void _s_matrix_float_class_free(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_free(&MatrixFloatClass, error);
+	s_class_free(S_OBJECTCLASS(&MatrixFloatClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_matrix_float_class_free",
 			  "Failed to free SMatrixFloatClass");

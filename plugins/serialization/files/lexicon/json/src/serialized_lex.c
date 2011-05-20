@@ -74,7 +74,7 @@ static SJSONLexiconFileClass JSONLexiconFileClass; /* SJSONLexiconFile class dec
 S_LOCAL void _s_serialized_json_lexicon_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(&JSONLexiconFileClass, error);
+	s_class_reg(S_OBJECTCLASS(&JSONLexiconFileClass), error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "_s_serialized_json_lexicon_reg",
 				  "Failed to register SJSONLexiconFileClass"))
@@ -88,7 +88,7 @@ S_LOCAL void _s_serialized_json_lexicon_reg(s_erc *error)
 		s_erc local_err = S_SUCCESS;
 
 
-		s_class_free(&JSONLexiconFileClass, &local_err);
+		s_class_free(S_OBJECTCLASS(&JSONLexiconFileClass), &local_err);
 		return;
 	}
 }
@@ -107,7 +107,7 @@ S_LOCAL void _s_serialized_json_lexicon_free(s_erc *error)
 			  "_s_serialized_json_lexicon_free",
 			  "Failed to remove serialized file class SJSONLexiconFileClass");
 
-	s_class_free(&JSONLexiconFileClass, error);
+	s_class_free(S_OBJECTCLASS(&JSONLexiconFileClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_serialized_json_lexicon_free",
 			  "Failed to free SJSONLexiconFileClass");

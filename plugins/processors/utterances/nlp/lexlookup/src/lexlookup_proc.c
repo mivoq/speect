@@ -77,7 +77,7 @@ static void s_get_lexical_objects(const SUttProcessor *self, SUtterance *utt,
 S_LOCAL void _s_lexlookup_utt_proc_class_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(&LexLookupUttProcClass, error);
+	s_class_reg(S_OBJECTCLASS(&LexLookupUttProcClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_lexlookup_utt_proc_class_reg",
 			  "Failed to register SLexLookupUttProcClass");
@@ -87,7 +87,7 @@ S_LOCAL void _s_lexlookup_utt_proc_class_reg(s_erc *error)
 S_LOCAL void _s_lexlookup_utt_proc_class_free(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_free(&LexLookupUttProcClass, error);
+	s_class_free(S_OBJECTCLASS(&LexLookupUttProcClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_lexlookup_utt_proc_class_free",
 			  "Failed to free SLexLookupUttProcClass");

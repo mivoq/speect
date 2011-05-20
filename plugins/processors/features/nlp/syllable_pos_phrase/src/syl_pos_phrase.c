@@ -81,7 +81,7 @@ static sint32 word_num_syls(const SItem *item, s_erc *error);
 S_LOCAL void _s_syl_pos_phrase_class_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(&SylPosPhraseFeatProcClass, error);
+	s_class_reg(S_OBJECTCLASS(&SylPosPhraseFeatProcClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_syl_pos_phrase_class_reg",
 			  "Failed to register SSylPosPhraseFeatProcClass");
@@ -91,7 +91,7 @@ S_LOCAL void _s_syl_pos_phrase_class_reg(s_erc *error)
 S_LOCAL void _s_syl_pos_phrase_class_free(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_free(&SylPosPhraseFeatProcClass, error);
+	s_class_free(S_OBJECTCLASS(&SylPosPhraseFeatProcClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_syl_pos_phrase_class_free",
 			  "Failed to free SSylPosPhraseFeatProcClass");

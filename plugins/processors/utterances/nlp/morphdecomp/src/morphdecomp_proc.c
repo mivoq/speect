@@ -75,7 +75,7 @@ static const SItem *word_get_next_item(const SItem *wordItem, s_erc *error);
 S_LOCAL void _s_morphdecomp_utt_proc_class_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(&MorphDecompUttProcClass, error);
+	s_class_reg(S_OBJECTCLASS(&MorphDecompUttProcClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_morphdecomp_utt_proc_class_reg",
 			  "Failed to register SMorphDecompUttProcClass");
@@ -85,7 +85,7 @@ S_LOCAL void _s_morphdecomp_utt_proc_class_reg(s_erc *error)
 S_LOCAL void _s_morphdecomp_utt_proc_class_free(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_free(&MorphDecompUttProcClass, error);
+	s_class_free(S_OBJECTCLASS(&MorphDecompUttProcClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_morphdecomp_utt_proc_class_free",
 			  "Failed to free SMorphDecompUttProcClass");

@@ -63,7 +63,7 @@ static SSegPosSylRevFeatProcClass SegPosSylRevFeatProcClass; /* SSegPosSylRevFea
 S_LOCAL void _s_seg_pos_syl_rev_class_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(&SegPosSylRevFeatProcClass, error);
+	s_class_reg(S_OBJECTCLASS(&SegPosSylRevFeatProcClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_seg_pos_syl_rev_class_reg",
 			  "Failed to register SSegPosSylRevFeatProcClass");
@@ -73,7 +73,7 @@ S_LOCAL void _s_seg_pos_syl_rev_class_reg(s_erc *error)
 S_LOCAL void _s_seg_pos_syl_rev_class_free(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_free(&SegPosSylRevFeatProcClass, error);
+	s_class_free(S_OBJECTCLASS(&SegPosSylRevFeatProcClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_seg_pos_syl_rev_class_free",
 			  "Failed to free SSegPosSylRevFeatProcClass");

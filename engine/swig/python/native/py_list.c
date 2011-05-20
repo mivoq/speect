@@ -138,7 +138,7 @@ error_clean_up:
 S_LOCAL void _s_list_py_class_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(&ListPyClass, error);
+	s_class_reg(S_OBJECTCLASS(&ListPyClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_list_py_class_add",
 			  "Failed to add SListPyClass");

@@ -64,7 +64,7 @@ static SRELPSynthUnitsUttProcClass RELPSynthUnitsUttProcClass;
 S_LOCAL void _s_relp_synth_units_utt_proc_class_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(&RELPSynthUnitsUttProcClass, error);
+	s_class_reg(S_OBJECTCLASS(&RELPSynthUnitsUttProcClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_relp_synth_units_utt_proc_class_reg",
 			  "Failed to register SRELPSynthUnitsUttProcClass");
@@ -74,7 +74,7 @@ S_LOCAL void _s_relp_synth_units_utt_proc_class_reg(s_erc *error)
 S_LOCAL void _s_relp_synth_units_utt_proc_class_free(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_free(&RELPSynthUnitsUttProcClass, error);
+	s_class_free(S_OBJECTCLASS(&RELPSynthUnitsUttProcClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_relp_synth_units_utt_proc_class_free",
 			  "Failed to free SRELPSynthUnitsUttProcClass");

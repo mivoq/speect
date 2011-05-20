@@ -63,7 +63,7 @@ static SWordStartFeatProcClass WordStartFeatProcClass; /* SWordStartFeatProc cla
 S_LOCAL void _s_word_start_class_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(&WordStartFeatProcClass, error);
+	s_class_reg(S_OBJECTCLASS(&WordStartFeatProcClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_word_start_class_reg",
 			  "Failed to register SWordStartFeatProcClass");
@@ -73,7 +73,7 @@ S_LOCAL void _s_word_start_class_reg(s_erc *error)
 S_LOCAL void _s_word_start_class_free(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_free(&WordStartFeatProcClass, error);
+	s_class_free(S_OBJECTCLASS(&WordStartFeatProcClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_word_start_class_free",
 			  "Failed to free SWordStartFeatProcClass");

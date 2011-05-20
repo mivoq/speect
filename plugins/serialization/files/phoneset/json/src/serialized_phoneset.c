@@ -74,7 +74,7 @@ static SJSONPhonesetFileClass JSONPhonesetFileClass; /* SJSONPhonesetFile class 
 S_LOCAL void _s_serialized_json_phoneset_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(&JSONPhonesetFileClass, error);
+	s_class_reg(S_OBJECTCLASS(&JSONPhonesetFileClass), error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "_s_serialized_json_phoneset_reg",
 				  "Failed to register SJSONPhonesetFileClass"))
@@ -88,7 +88,7 @@ S_LOCAL void _s_serialized_json_phoneset_reg(s_erc *error)
 		s_erc local_err = S_SUCCESS;
 
 
-		s_class_free(&JSONPhonesetFileClass, &local_err);
+		s_class_free(S_OBJECTCLASS(&JSONPhonesetFileClass), &local_err);
 		return;
 	}
 }
@@ -107,7 +107,7 @@ S_LOCAL void _s_serialized_json_phoneset_free(s_erc *error)
 			  "_s_serialized_json_phoneset_free",
 			  "Failed to remove serialized file class SJSONPhonesetFileClass");
 
-	s_class_free(&JSONPhonesetFileClass, error);
+	s_class_free(S_OBJECTCLASS(&JSONPhonesetFileClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_serialized_json_phoneset_free",
 			  "Failed to free SJSONPhonesetFileClass");

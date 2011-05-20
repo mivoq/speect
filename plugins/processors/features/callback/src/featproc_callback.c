@@ -63,7 +63,7 @@ static SFeatProcessorCBClass FeatProcessorCBClass; /* SFeatProcessorCB class dec
 S_LOCAL void _s_featprocessor_cb_class_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(&FeatProcessorCBClass, error);
+	s_class_reg(S_OBJECTCLASS(&FeatProcessorCBClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_featprocessor_cb_class_reg",
 			  "Failed to register SFeatProcessorCBClass");
@@ -73,7 +73,7 @@ S_LOCAL void _s_featprocessor_cb_class_reg(s_erc *error)
 S_LOCAL void _s_featprocessor_cb_class_free(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_free(&FeatProcessorCBClass, error);
+	s_class_free(S_OBJECTCLASS(&FeatProcessorCBClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_featprocessor_cb_class_free",
 			  "Failed to free SFeatProcessorCBClass");

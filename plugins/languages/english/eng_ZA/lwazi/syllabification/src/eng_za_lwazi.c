@@ -146,7 +146,7 @@ static s_cluster get_cluster_type(const char *current_cluster, s_erc *error);
 S_LOCAL void _s_syllab_eng_za_lwazi_class_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(&SyllabEngZaLwaziClass, error);
+	s_class_reg(S_OBJECTCLASS(&SyllabEngZaLwaziClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_syllab_eng_za_lwazi_class_reg",
 			  "Failed to register SSyllabEngZaLwaziClass");
@@ -156,7 +156,7 @@ S_LOCAL void _s_syllab_eng_za_lwazi_class_reg(s_erc *error)
 S_LOCAL void _s_syllab_eng_za_lwazi_class_free(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_free(&SyllabEngZaLwaziClass, error);
+	s_class_free(S_OBJECTCLASS(&SyllabEngZaLwaziClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_syllab_eng_za_lwazi_class_free",
 			  "Failed to free SSyllabEngZaLwaziClass");

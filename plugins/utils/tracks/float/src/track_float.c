@@ -63,7 +63,7 @@ static STrackFloatClass TrackFloatClass; /* STrackFloat class declaration. */
 S_LOCAL void _s_track_float_class_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(&TrackFloatClass, error);
+	s_class_reg(S_OBJECTCLASS(&TrackFloatClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_track_float_class_reg",
 			  "Failed to register STrackFloatClass");
@@ -73,7 +73,7 @@ S_LOCAL void _s_track_float_class_reg(s_erc *error)
 S_LOCAL void _s_track_float_class_free(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_free(&TrackFloatClass, error);
+	s_class_free(S_OBJECTCLASS(&TrackFloatClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_track_float_class_free",
 			  "Failed to free STrackFloatClass");

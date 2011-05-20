@@ -105,7 +105,7 @@ static uint num_file_tokenizers = 0;
 S_LOCAL void _s_tokenizer_file_class_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(&TokenizerFileClass, error);
+	s_class_reg(S_OBJECTCLASS(&TokenizerFileClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_tokenizer_file_class_reg",
 			  "Failed to register STokenizerFileClass");
@@ -115,7 +115,7 @@ S_LOCAL void _s_tokenizer_file_class_reg(s_erc *error)
 S_LOCAL void _s_tokenizer_file_class_free(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_free(&TokenizerFileClass, error);
+	s_class_free(S_OBJECTCLASS(&TokenizerFileClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_tokenizer_file_class_free",
 			  "Failed to free STokenizerFileClass");

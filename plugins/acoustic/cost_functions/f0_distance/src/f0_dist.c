@@ -63,7 +63,7 @@ static SF0DistCostFuncClass F0DistCostFuncClass; /* SF0DistCostFunc class declar
 S_LOCAL void _s_f0_dist_class_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(&F0DistCostFuncClass, error);
+	s_class_reg(S_OBJECTCLASS(&F0DistCostFuncClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_f0_dist_class_reg",
 			  "Failed to register SF0DistCostFuncClass");
@@ -73,7 +73,7 @@ S_LOCAL void _s_f0_dist_class_reg(s_erc *error)
 S_LOCAL void _s_f0_dist_class_free(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_free(&F0DistCostFuncClass, error);
+	s_class_free(S_OBJECTCLASS(&F0DistCostFuncClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_f0_dist_class_free",
 			  "Failed to free SF0DistCostFuncClass");

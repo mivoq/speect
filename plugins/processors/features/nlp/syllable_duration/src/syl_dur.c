@@ -63,7 +63,7 @@ static SSylDurFeatProcClass SylDurFeatProcClass; /* SSylDurFeatProc class declar
 S_LOCAL void _s_syl_dur_class_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(&SylDurFeatProcClass, error);
+	s_class_reg(S_OBJECTCLASS(&SylDurFeatProcClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_syl_dur_class_reg",
 			  "Failed to register SSylDurFeatProcClass");
@@ -73,7 +73,7 @@ S_LOCAL void _s_syl_dur_class_reg(s_erc *error)
 S_LOCAL void _s_syl_dur_class_free(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_free(&SylDurFeatProcClass, error);
+	s_class_free(S_OBJECTCLASS(&SylDurFeatProcClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_syl_dur_class_free",
 			  "Failed to free SSylDurFeatProcClass");

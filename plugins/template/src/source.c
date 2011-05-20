@@ -46,7 +46,7 @@ static SYourClass YourClass; /* TODO: SYour class declaration. */
 S_LOCAL void _s_your_class_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(&YourClass, error);
+	s_class_reg(S_OBJECTCLASS(&YourClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_your_class_reg",
 			  "Failed to register SYourClass");
@@ -56,7 +56,7 @@ S_LOCAL void _s_your_class_reg(s_erc *error)
 S_LOCAL void _s_your_class_free(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_free(&YourClass, error);
+	s_class_free(S_OBJECTCLASS(&YourClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_your_class_free",
 			  "Failed to free SYourClass");

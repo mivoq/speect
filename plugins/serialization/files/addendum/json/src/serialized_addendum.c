@@ -74,7 +74,7 @@ static SJSONAddendumFileClass JSONAddendumFileClass; /* SJSONAddendumFile class 
 S_LOCAL void _s_serialized_json_addendum_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(&JSONAddendumFileClass, error);
+	s_class_reg(S_OBJECTCLASS(&JSONAddendumFileClass), error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "_s_serialized_json_addendum_reg",
 				  "Failed to register SJSONAddendumFileClass"))
@@ -88,7 +88,7 @@ S_LOCAL void _s_serialized_json_addendum_reg(s_erc *error)
 		s_erc local_err = S_SUCCESS;
 
 
-		s_class_free(&JSONAddendumFileClass, &local_err);
+		s_class_free(S_OBJECTCLASS(&JSONAddendumFileClass), &local_err);
 		return;
 	}
 }
@@ -107,7 +107,7 @@ S_LOCAL void _s_serialized_json_addendum_free(s_erc *error)
 			  "_s_serialized_json_addendum_free",
 			  "Failed to remove serialized file class SJSONAddendumFileClass");
 
-	s_class_free(&JSONAddendumFileClass, error);
+	s_class_free(S_OBJECTCLASS(&JSONAddendumFileClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_serialized_json_addendum_free",
 			  "Failed to free SJSONAddendumFileClass");

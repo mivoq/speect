@@ -138,7 +138,7 @@ error_clean_up:
 S_LOCAL void _s_map_py_class_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(&MapPyClass, error);
+	s_class_reg(S_OBJECTCLASS(&MapPyClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_map_py_class_reg",
 			  "Failed to add SMapPyClass");

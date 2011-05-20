@@ -232,7 +232,7 @@ static char *create_J_context(const SItem *item, s_erc *error);
 S_LOCAL void _s_hts_labels_simple2_class_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(&HTSLabelsSimple2FeatProcClass, error);
+	s_class_reg(S_OBJECTCLASS(&HTSLabelsSimple2FeatProcClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_hts_labels_simple2_class_reg",
 			  "Failed to register SHTSLabelsSimple2FeatProcClass");
@@ -242,7 +242,7 @@ S_LOCAL void _s_hts_labels_simple2_class_reg(s_erc *error)
 S_LOCAL void _s_hts_labels_simple2_class_free(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_free(&HTSLabelsSimple2FeatProcClass, error);
+	s_class_free(S_OBJECTCLASS(&HTSLabelsSimple2FeatProcClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_hts_labels_simple2_class_free",
 			  "Failed to free SHTSLabelsSimple2FeatProcClass");

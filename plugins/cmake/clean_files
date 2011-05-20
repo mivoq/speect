@@ -1,6 +1,0 @@
-#!/bin/sh
-
-rm -f *~
-
-# pluginInstall.cmake is auto generated from config/pluginInstall.cmake.in
-rm -f pluginInstall.cmake

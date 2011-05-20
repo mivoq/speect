@@ -192,7 +192,7 @@ typedef s_mutex_t s_mutex;
 
 /**
  * Unlock a mutex. Unlocks the given #s_mutex mutex that has
- * previously been locked by #s_mutex_lock, so that it is accessiable
+ * previously been locked by #s_mutex_lock, so that it is accessible
  * to all threads.
  * @hideinitializer
  *

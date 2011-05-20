@@ -120,7 +120,7 @@ S_BEGIN_C_DECLS
  *
  * @return Pointer to the newly created object.
  *
- * @todo check that everything is free'd on error.
+ * @todo check that everything is freed on error.
  */
 S_API SObject *SObjectNew(SObjectClass *cls, s_erc *error);
 

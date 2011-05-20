@@ -144,14 +144,14 @@ typedef struct SSerializedObject SSerializedObject;
 /************************************************************************************/
 
 /* Forward definition of the base class */
-typedef struct SObjectClass SObjectClass; /*!< Base class structure */
+typedef struct SObjectClass SObjectClass;
 
 
 /**
- * The base object structure. The base object defines the object data
- * members and inherited data members of the object. All objects that
- * want to work with the @ref SObjSystem must inherit from this
- * object.
+ * The base object structure, it provides an interface to a generic
+ * data type. It can encapsulate any other object, thereby providing
+ * abstraction. All objects that want to work with the Speect Generic
+ * Object System must have this object in their inheritance hierarchy.
  */
 typedef struct
 {
@@ -182,7 +182,8 @@ typedef struct
  * The base class structure. The class defines a constructor and
  * destructor for the class objects, as well as class members, i.e.
  * members that belong to all object instances of a specific class
- * type. All classes inherit from this class structure.
+ * type. All classes that want to work with the Speect Generic
+ * Object System must have this class in their inheritance hierarchy.
  *
  * @todo better docs for class methods?
  * @todo destroy must check all object members before delete (for
@@ -192,7 +193,12 @@ struct SObjectClass
 {
 	/* Class members */
 	/**
-	 * @protected Class hierarchy name.
+	 * @protected Object hierarchy name.
+	 * The object hierarchy name must be a colon (":") separated list
+	 * of object names, with the last object being the object
+	 * implementation. The base class's object (SObject) must not be
+	 * included, as it is assumed to be the base object of all other
+	 * objects.
 	 */
 	const char *name;
 
@@ -210,7 +216,7 @@ struct SObjectClass
 	/**
 	 * @protected Constructor function pointer.
 	 * Initialize the members of the objects of this class type.
-	 * This function receives a chunck of allocated memory for the
+	 * This function receives a chunk of allocated memory for the
 	 * object (will @a always be valid memory), and
 	 * initializes/allocated the members of the object of this class
 	 * type.

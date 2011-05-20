@@ -396,10 +396,12 @@ S_API void s_hash_element_set_data(s_hash_element *self, void *data, s_erc *erro
  *
  * @note Prints out information as follows:
  * @verbatim
- items 0:  <number of buckets with zero items> buckets
- items 1:  <number of buckets with 1 item> buckets
+ s_hash_table_stats:
+ items 0: <number of buckets with 0 items> buckets
+ items 1: <number of buckets with 1 item> buckets
  ...
- buckets: number of buckets  items: number of items  existing: x
+
+ buckets: <number of buckets> items: <number of items> existing: <x>
  @endverbatim
  * ( @a x is the average length of the list when you look for an
  * item that exists.  When the item does not exists, the average

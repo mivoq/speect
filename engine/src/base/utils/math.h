@@ -202,7 +202,7 @@ S_API double s_rel_diff(double a, double b);
 
 /**
  * Test if two floating point numbers are equal within a certain
- * tolerance. If the relative diffence s_rel_diff() between the two
+ * tolerance. If the relative difference (#s_rel_diff) between the two
  * values are less or equal to #S_FLOAT_TOLERANCE then they are equal.
  *
  * @param a floating point value.

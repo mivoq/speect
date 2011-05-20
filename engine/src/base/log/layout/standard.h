@@ -131,7 +131,7 @@ S_BEGIN_C_DECLS
 /************************************************************************************/
 
 /**
- * Create a new @a standard layout formatter. The layout implementes
+ * Create a new @a standard layout formatter. The layout implements
  * the function pointers of #s_layout (#s_layout::format and
  * #s_layout::destroy).
  *

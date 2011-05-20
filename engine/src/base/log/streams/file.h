@@ -76,11 +76,11 @@ S_BEGIN_C_DECLS
 /************************************************************************************/
 
 /**
- * Create a new file stream. The file stream implementes the
+ * Create a new file stream. The file stream implements the
  * function pointers of #s_stream (#s_stream::v_write and
  * #s_stream::destroy).
  *
- * @param path The full path and filename of the file which to
+ * @param path The full path and file name of the file which to
  * log to. If the file already exists, then it will be overwritten.
  *
  * @return Pointer to newly created file stream that can be used with

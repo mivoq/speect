@@ -45,10 +45,10 @@
 /**
  * @ingroup SBase
  * @defgroup SErrDbg Error handling and Debugging
- * Error handling and debugging module, utilities, macros and defintions.
+ * Error handling and debugging module, utilities, macros and definitions.
  *
  * The error handling mechanism works on the basis that @a all functions are passed
- * a pointer to an error code variable as a function parameter. If an error occured
+ * a pointer to an error code variable as a function parameter. If an error occurred
  * during function execution, then the function can set an appropriate error code in this
  * pointer (there are exceptions to this rule, i.e. @ref SThreads and @ref SLogging).
  *
@@ -60,7 +60,7 @@
  *
  * There are two types of errors, @a fatal errors and @a non-fatal errors. Fatal errors
  * are usually programming errors, memory errors and so forth, where there are no alternative
- * options if such an error occured. Non-fatal errors are errors that occured from which
+ * options if such an error occurred. Non-fatal errors are errors that occurred from which
  * the system can recover or reset to a previous state and continue.
  *
  * The error handling system as described enables one to have a detailed "backtrace" that has

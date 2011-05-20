@@ -86,9 +86,9 @@ S_BEGIN_C_DECLS
  * @hideinitializer
  * @def S_NEW_ERR
  * Set a new error with no context. Set @a ERROR to the error code
- * that occured, @a ERROR_CODE. This macro is useful in deeply nested
+ * that occurred, @a ERROR_CODE. This macro is useful in deeply nested
  * functions where there is not enough context to add, i.e. it is only
- * known that an error of @a ERROR_CODE type occured, but not why it
+ * known that an error of @a ERROR_CODE type occurred, but not why it
  * occurred.
  *
  * @param ERROR Pointer to error code variable to set.
@@ -138,7 +138,7 @@ S_BEGIN_C_DECLS
  * @hideinitializer
  * @def S_CTX_ERR
  * Set a new error with a context. Sets @a ERROR to the error code
- * that occured, @a NEW_ERROR, as well as giving the error logger the
+ * that occurred, @a NEW_ERROR, as well as giving the error logger the
  * function name and a variable length argument string of the context
  * wherein this error occurred.
  *
@@ -166,7 +166,7 @@ S_BEGIN_C_DECLS
  * @hideinitializer
  * @def S_FTL_ERR
  * Set a new @b fatal context error. Sets @a ERROR to the fatal error
- * code that occured, @a NEW_ERROR, as well as giving the error logger
+ * code that occurred, @a NEW_ERROR, as well as giving the error logger
  * the function name and a variable length argument string of the
  * context wherein this error occurred. The same as #S_CTX_ERR except
  * that if the build option @b SPCT_ERROR_ABORT_FATAL is set then the
@@ -195,14 +195,14 @@ S_BEGIN_C_DECLS
  * @ingroup SErrDbgMacros
  * @hideinitializer
  * @def S_CHK_ERR
- * Check if an error has been set. Test if an error has occured (if @a ERROR is
+ * Check if an error has been set. Test if an error has occurred (if @a ERROR is
  * set, i.e. not equal to #S_SUCCESS), and if so set a new context
  * error (same as #S_CTX_ERR), and return #TRUE. If no error was
  * set, (*@a ERROR = #S_SUCCESS) then nothing is done and #FALSE is
  * returned. This macro can be used in @c if statements directly after
  * calling a function with an error code parameter, testing if an
- * error occured, setting a new error context and executing the @c if
- * statement. If no error occured then no new context is set and the
+ * error occurred, setting a new error context and executing the @c if
+ * statement. If no error occurred then no new context is set and the
  * @c if statement is not executed.
  *
  * @param ERROR Pointer to error code variable to set.
@@ -254,7 +254,7 @@ S_BEGIN_C_DECLS
  * @hideinitializer
  * @def S_DEBUG
  * Macro that sets a debug message. The debug message is logged only
- * if the the given debug level is equal or lower that  the set level
+ * if the given debug level is equal or lower that  the set level
  * of the @ref SErrDbg module. This level can be changed with the
  * #s_errdbg_level function.
  *
@@ -291,7 +291,7 @@ S_BEGIN_C_DECLS
  *
  * Print an error to stderr.
  * ERR The error, of type s_erc.
- * FUNC String function name in which the error occured.
+ * FUNC String function name in which the error occurred.
  * MSG String error message.
  *
  * -------------------------------------
@@ -300,7 +300,7 @@ S_BEGIN_C_DECLS
  *
  * Print a fatal error to stderr and abort.
  * ERR The error, of type s_erc.
- * FUNC String function name in which the error occured.
+ * FUNC String function name in which the error occurred.
  * MSG String error message.
  *
  * -------------------------------------

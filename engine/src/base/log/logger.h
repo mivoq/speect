@@ -49,7 +49,7 @@
  * Basic logging facilities.
  * The logging system provides a very basic mechanism to write
  * messages to different types of streams. It is used by all the error
- * and debug reporting facilites in @ref SErrDbg, and therefore aims
+ * and debug reporting facilities in @ref SErrDbg, and therefore aims
  * to be as robust as possible. If any error occurs during one of the
  * logger functions, an error will be printed to @c stderr. If a
  * logger is unsuccessful at writing the log message to the log stream
@@ -142,7 +142,7 @@ struct s_logger
 
 	/**
 	 * Destroy the logger object's associated resources. The logger's
-	 * memory itself must @b not be free'd. Must be implemented by
+	 * memory itself must @b not be freed. Must be implemented by
 	 * each logger as it is called by #s_logger_destroy.
 	 *
 	 * @param logger This logger object.
@@ -171,7 +171,7 @@ struct s_logger
  * Create a new file stream logger, see @ref SFileStream. The logging
  * message will be in the @ref SLayoutStd layout format.
  *
- * @param path The full path and filename of the file which to
+ * @param path The full path and file name of the file which to
  * log to. If the file already exists, then it will be overwritten.
  *
  * @return Pointer to newly created file stream logger, or @c NULL on error.

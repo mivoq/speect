@@ -76,14 +76,14 @@ S_BEGIN_C_DECLS
 /************************************************************************************/
 
 /**
- * Initialize the time module. This intialization is required because
+ * Initialize the time module. This initialization is required because
  * the standard time functions return values that are statically
  * allocated, and are therefore neither re-entrant or thread safe.
  * @private
  *
  * @param error Error code.
  *
- * @note Dependant on the @ref SErrDbg module being intialized.
+ * @note Dependant on the @ref SErrDbg module being initialized.
  */
 S_LOCAL void _s_time_init(s_erc *error);
 

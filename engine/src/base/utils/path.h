@@ -80,7 +80,7 @@ S_BEGIN_C_DECLS
  * certain mode (i.e. reading, writing, ...)
  *
  * @param path The path and name of the file to query.
- * @param mode The mode string as used by the standard function fopen().
+ * @param mode The mode string as used by the standard function @c fopen().
  * @param error Error code.
  *
  * @return TRUE if the file exists and can be manipulated with @c

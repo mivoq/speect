@@ -106,7 +106,7 @@ typedef enum
 
 
 /**
- * Debug level definitions. If the debug level is set to #S_DBG_TRACE then
+ * Debug level definitions. If the debug level is set to @c S_DBG_TRACE then
  * all debug messages with a debug level equal and lower will be output
  * to the @ref SLogging system.
  * @sa s_log_event.

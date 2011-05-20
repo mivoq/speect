@@ -71,7 +71,7 @@
  * @defgroup SUtf8Regex Regular Expressions
  * Provides utf-8 aware regular expressions.
  * The Speect regular expression syntax is a bit different from the
- * POSIX or Perl syntaxes. The supported metacharacter (operators) are
+ * POSIX or Perl syntax's. The supported meta-character (operators) are
  * mostly the same, that is: <tt> . | ( ) [ ] ? + * ^ $ </tt>
  *
  *

@@ -57,10 +57,3 @@ if(NOT SPCT_BIG_ENDIAN)
 endif(NOT SPCT_BIG_ENDIAN)
 
 
-#------------------------------------------------------------------------------------#
-#                                    Types                                           #
-#------------------------------------------------------------------------------------#
-
-# Check for long double 
-check_type_size("long double" SPCT_LONG_DOUBLE)
-

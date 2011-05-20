@@ -195,28 +195,6 @@ S_API double s_swapdbl(double v)
 }
 
 
-#ifdef SPCT_LONG_DOUBLE
-/*
- * Swap long double
- */
-S_API long double s_swapldbl(long double v)
-{
-	union { uint8 data[10]; long double v; } u_in;
-	union { uint8 data[10]; long double v; } u_out;
-	int i;
-
-	u_in.v = v;
-
-	for (i = 0; i < 10; i++)
-	{
-		u_out.data[i] = u_in.data[9-i];
-	}
-
-	return u_out.v;
-}
-#endif /* SPCT_LONG_DOUBLE */
-
-
 /*
  * Swap s_byte
  */

@@ -207,57 +207,6 @@ S_API void s_double_write_at(SDatasource *ds, double d, long pos, s_erc *error);
  */
 
 
-#ifdef SPCT_LONG_DOUBLE
-/**
- * @name long double Read/Write
- * @{
- */
-
-
-/**
- * Read a long double value from a datasource.
- * @param ds The datasource form which to read the long double value.
- * @param error Error code.
- * @return The read long double value.
- */
-S_API long double s_ldouble_read(SDatasource *ds, s_erc *error);
-
-
-/**
- * Read a long double value from a datasource starting at a given offset position.
- * @param ds The datasource form which to read the long double value.
- * @param pos The offset to start reading from.
- * @param error Error code.
- * @return The read long double value.
- */
-S_API long double s_ldouble_read_at(SDatasource *ds, long pos, s_erc *error);
-
-
-/**
- * Write a long double value to a data source.
- * @param ds The datasource which to write the long double value to.
- * @param ld The long double value to write.
- * @param error Error code.
- */
-S_API void s_ldouble_write(SDatasource *ds, long double ld, s_erc *error);
-
-
-/**
- * Write a long double value to a datasource with an offset.
- * @param ds The datasource which to write the long double value to.
- * @param ld The long double value to write.
- * @param pos The offset.
- * @param error Error code.
- */
-S_API void s_ldouble_write_at(SDatasource *ds, long double ld, long pos, s_erc *error);
-
-
-/**
- * @}
- */
-#endif /* SPCT_LONG_DOUBLE */
-
-
 /************************************************************************************/
 /*                                                                                  */
 /* End external c declaration                                                       */

@@ -115,10 +115,6 @@ S_API float s_swapflt(float v);
 
 S_API double s_swapdbl(double v);
 
-#ifdef SPCT_LONG_DOUBLE
-S_API long double s_swapldbl(long double v);
-#endif /* SPCT_LONG_DOUBLE */
-
 S_API s_byte *s_swap_bytes(s_byte *self, size_t length, s_erc *error);
 
 S_API uint16 *s_swap_bytes16(uint16 *self, size_t length, s_erc *error);
@@ -131,7 +127,6 @@ S_API uint32 *s_swap_bytes32(uint32 *self, uint32 length, s_erc *error);
 /* Defines                                                                          */
 /*                                                                                  */
 /************************************************************************************/
-
 
 /**
  * @def s_swap_le16
@@ -298,29 +293,6 @@ S_API uint32 *s_swap_bytes32(uint32 *self, uint32 length, s_erc *error);
  * @return A byte-swapped double.
  */
 
-#ifdef SPCT_LONG_DOUBLE
-/**
- * @def s_swap_le_ldbl
- * Swap a little endian long double data representation.
- * @hideinitializer
- *
- * @param SELF The little endian long double data to swap.
- *
- * @return A byte-swapped long double.
- */
-
-
-/**
- * @def s_swap_be_ldbl
- * Swap a big endian long double data representation.
- * @hideinitializer
- *
- * @param SELF The big endian long double data to swap.
- *
- * @return A byte-swapped long double.
- */
-#endif /* SPCT_LONG_DOUBLE */
-
 
 #ifdef SPCT_BIG_ENDIAN
 #  define s_swap_le16(SELF)	s_swap16(SELF)
@@ -337,10 +309,6 @@ S_API uint32 *s_swap_bytes32(uint32 *self, uint32 length, s_erc *error);
 #  define s_swap_be_flt(SELF)   (SELF)
 #  define s_swap_le_dbl(SELF)   s_swapdbl(SELF)
 #  define s_swap_be_dbl(SELF)   (SELF)
-#  ifdef SPCT_LONG_DOUBLE
-#    define s_swap_le_ldbl(SELF)s_swapldbl(SELF)
-#    define s_swap_be_ldbl(SELF)(SELF)
-#  endif /* SPCT_LONG_DOUBLE */
 #else /* !SPCT_BIG_ENDIAN */
 #  define s_swap_le16(SELF)	(SELF)
 #  define s_swap_le_bytes16(SELF, LENGTH, E) (SELF)
@@ -356,10 +324,6 @@ S_API uint32 *s_swap_bytes32(uint32 *self, uint32 length, s_erc *error);
 #  define s_swap_be_flt(SELF)   s_swapflt(SELF)
 #  define s_swap_le_dbl(SELF)   (SELF)
 #  define s_swap_be_dbl(SELF)   s_swapdbl(SELF)
-#  ifdef SPCT_LONG_DOUBLE
-#    define s_swap_le_ldbl(SELF)(SELF)
-#    define s_swap_be_ldbl(SELF)s_swapldbl(SELF)
-#  endif /* SPCT_LONG_DOUBLE */
 #endif /* SPCT_BIG_ENDIAN */
 
 

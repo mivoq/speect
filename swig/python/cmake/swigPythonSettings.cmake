@@ -31,5 +31,5 @@ configure_file(${CMAKE_SOURCE_DIR}/engine/swig/python/native/config/py_logger_co
 #                Copy logging configuration file to home directory                   #
 #------------------------------------------------------------------------------------#
 
-speect_file_copy(${CMAKE_SOURCE_DIR}/engine/swig/python/spct_python_log.conf ${CMAKE_BINARY_DIR}/spct_python_log.conf)
+speect_file_copy(${CMAKE_SOURCE_DIR}/engine/swig/python/native/spct_python_log.conf ${CMAKE_BINARY_DIR}/spct_python_log.conf)
  

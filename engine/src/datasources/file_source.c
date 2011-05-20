@@ -205,7 +205,7 @@ S_API SDatasource *SFilesourceOpenFile(const char *path, const char *mode, s_erc
 S_LOCAL void _s_file_source_class_add(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_add(&FilesourceClass, error);
+	s_class_add(S_OBJECTCLASS(&FilesourceClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_file_source_class_add",
 			  "Failed to add SFilesourceClass");

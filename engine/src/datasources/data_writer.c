@@ -61,7 +61,7 @@ static SDataWriterClass DataWriterClass; /* Data writer class declaration. */
 S_LOCAL void _s_data_writer_class_add(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_add(&DataWriterClass, error);
+	s_class_add(S_OBJECTCLASS(&DataWriterClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 		  "_s_data_writer_class_add",
 		  "Failed to add SDataWriterClass");

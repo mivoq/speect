@@ -155,7 +155,7 @@ S_API void SSerializedObjectWrite(const SSerializedObject *self, SDataWriter *wr
 S_LOCAL void _s_serialized_object_class_add(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_add(&SerializedObjectClass, error);
+	s_class_add(S_OBJECTCLASS(&SerializedObjectClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_serialized_object_class_add",
 			  "Failed to add SSerializedObjectClass");

@@ -331,7 +331,7 @@ S_API void SUttProcessorDelFeature(SUttProcessor *self, const char *name,
 S_LOCAL void _s_uttprocessor_class_add(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_add(&UttProcessorClass, error);
+	s_class_add(S_OBJECTCLASS(&UttProcessorClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_uttprocessor_class_add",
 			  "Failed to add SUttProcessorClass");

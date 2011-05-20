@@ -1023,7 +1023,7 @@ S_API SMap *SMapCopy(SMap *dst, const SMap *src, s_erc *error)
 S_LOCAL void _s_map_class_add(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_add(&MapClass, error);
+	s_class_add(S_OBJECTCLASS(&MapClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_map_class_add",
 			  "Failed to add SMapClass");

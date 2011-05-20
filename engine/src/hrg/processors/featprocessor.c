@@ -155,7 +155,7 @@ S_API SObject *SFeatProcessorRun(const SFeatProcessor *self, const SItem *item, 
 S_LOCAL void _s_featprocessor_class_add(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_add(&FeatProcessorClass, error);
+	s_class_add(S_OBJECTCLASS(&FeatProcessorClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_featprocessor_class_add",
 			  "Failed to add SFeatProcessorClass");

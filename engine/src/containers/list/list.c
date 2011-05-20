@@ -647,7 +647,7 @@ S_API s_bool SListValPresent(const SList *self, const SObject *object, s_erc *er
 S_LOCAL void _s_list_class_add(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_add(&ListClass, error);
+	s_class_add(S_OBJECTCLASS(&ListClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_list_class_add",
 			  "Failed to add SListClass");

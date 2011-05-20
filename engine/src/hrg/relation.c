@@ -376,7 +376,7 @@ S_API SItem *SRelationPrepend(SRelation *self, const SItem *toShare, s_erc *erro
 S_LOCAL void _s_relation_class_add(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_add(&RelationClass, error);
+	s_class_add(S_OBJECTCLASS(&RelationClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 		  "_s_relation_class_add",
 		  "Failed to add SRelationClass");

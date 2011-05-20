@@ -185,7 +185,7 @@ clean_up:
 S_LOCAL void _s_map_list_iterator_class_add(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_add(&MapListIteratorClass, error);
+	s_class_add(S_OBJECTCLASS(&MapListIteratorClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_map_list_iterator_class_add",
 			  "Failed to add SMapListIteratorClass");

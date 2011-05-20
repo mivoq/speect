@@ -170,7 +170,7 @@ clean_up:
 S_LOCAL void _s_map_hash_table_iterator_class_add(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_add(&MapHashTableIteratorClass, error);
+	s_class_add(S_OBJECTCLASS(&MapHashTableIteratorClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_map_hash_table_iterator_class_add",
 			  "Failed to add SMapHashTableIteratorClass");

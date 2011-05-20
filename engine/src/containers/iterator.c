@@ -208,7 +208,7 @@ S_API SObject *SIteratorUnlink(SIterator *self, s_erc *error)
 S_LOCAL void _s_iterator_class_add(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_add(&IteratorClass, error);
+	s_class_add(S_OBJECTCLASS(&IteratorClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_iterator_class_add",
 			  "Failed to add SIteratorClass");

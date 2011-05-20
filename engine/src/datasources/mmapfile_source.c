@@ -163,7 +163,7 @@ S_API SDatasource *SMMapFilesourceOpenFile(const char *path, s_erc *error)
 S_LOCAL void _s_mmap_file_source_class_add(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_add(&MMapFilesourceClass, error);
+	s_class_add(S_OBJECTCLASS(&MMapFilesourceClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_mmap_file_source_class_add",
 			  "Failed to add SMMapFilesourceClass");

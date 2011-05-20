@@ -153,7 +153,7 @@ S_LOCAL void SSerializedFileSave(const SSerializedFile *self, const SObject *obj
 S_LOCAL void _s_serialized_file_class_add(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_add(&SerializedFileClass, error);
+	s_class_add(S_OBJECTCLASS(&SerializedFileClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_serialized_file_class_add",
 			  "Failed to add SSerializedFileClass");

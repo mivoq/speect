@@ -396,7 +396,7 @@ S_API size_t SItmContentNumRelations(const SItmContent *self, s_erc *error)
 S_LOCAL void _s_itm_content_class_add(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_add(&ItmContentClass, error);
+	s_class_add(S_OBJECTCLASS(&ItmContentClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_itm_content_class_add",
 			  "Failed to add SItmContentClass");

@@ -111,7 +111,7 @@ static void s_list_list_del_function(void *le, s_erc *error);
 S_LOCAL void _s_list_list_class_add(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_add(&ListListClass, error);
+	s_class_add(S_OBJECTCLASS(&ListListClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_list_list_class_add",
 			  "Failed to add SListListClass");

@@ -678,7 +678,7 @@ S_API SList *SUtteranceFeatKeys(const SUtterance *self, s_erc *error)
 S_LOCAL void _s_utterance_class_add(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_add(&UtteranceClass, error);
+	s_class_add(S_OBJECTCLASS(&UtteranceClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_utterance_class_add",
 			  "Failed to add SUtteranceClass");

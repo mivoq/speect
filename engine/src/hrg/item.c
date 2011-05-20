@@ -1414,7 +1414,7 @@ S_API s_bool SItemEqual(const SItem *a, const SItem *b, s_erc *error)
 S_LOCAL void _s_item_class_add(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_add(&ItemClass, error);
+	s_class_add(S_OBJECTCLASS(&ItemClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_item_class_add",
 			  "Failed to add SItemClass");

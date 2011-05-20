@@ -124,7 +124,7 @@ S_LOCAL void _s_map_hash_table_class_add(s_erc *error)
 {
 	S_CLR_ERR(error);
 
-	s_class_add(&MapHashTableClass, error);
+	s_class_add(S_OBJECTCLASS(&MapHashTableClass), error);
 
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_map_hash_table_class_add",

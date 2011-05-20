@@ -391,7 +391,7 @@ S_API void SDatasourceSeek(SDatasource *self, long pos, s_seek_mode mode, s_erc 
 S_LOCAL void _s_data_source_class_add(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_add(&DatasourceClass, error);
+	s_class_add(S_OBJECTCLASS(&DatasourceClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 		  "_s_data_source_class_add",
 		  "Failed to add SDatasourceClass");

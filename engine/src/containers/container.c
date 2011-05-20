@@ -125,7 +125,7 @@ S_API SIterator *_s_container_get_iterator_check(const void *self, s_erc *error)
 S_LOCAL void _s_container_class_add(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_add(&ContainerClass, error);
+	s_class_add(S_OBJECTCLASS(&ContainerClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 		  "_s_container_class_add",
 		  "Failed to add SContainerClass");

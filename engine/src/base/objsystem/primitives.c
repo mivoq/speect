@@ -859,31 +859,31 @@ S_LOCAL void _s_primitive_class_add(s_erc *error)
 {
 	S_CLR_ERR(error);
 
-	s_class_add(&IntClass, error);
+	s_class_add(S_OBJECTCLASS(&IntClass), error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "_s_primitive_class_add",
 				  "Failed to add SIntClass"))
 		return;
 
-	s_class_add(&FloatClass, error);
+	s_class_add(S_OBJECTCLASS(&FloatClass), error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "_s_primitive_class_add",
 				  "Failed to add SFloatClass"))
 		return;
 
-	s_class_add(&StringClass, error);
+	s_class_add(S_OBJECTCLASS(&StringClass), error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "_s_primitive_class_add",
 				  "Failed to add SStringClass"))
 		return;
 
-	s_class_add(&VoidStructClass, error);
+	s_class_add(S_OBJECTCLASS(&VoidStructClass), error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "_s_primitive_class_add",
 				  "Failed to add SVoidClass"))
 		return;
 
-	s_class_add(&VoidClass, error);
+	s_class_add(S_OBJECTCLASS(&VoidClass), error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "_s_primitive_class_add",
 				  "Failed to add SVoidClass"))

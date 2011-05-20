@@ -123,7 +123,7 @@ S_LOCAL void SPluginSetReady(SPlugin *self)
 S_LOCAL void _s_plugin_class_add(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_add(&PluginClass, error);
+	s_class_add(S_OBJECTCLASS(&PluginClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 		  "_s_plugin_class_add",
 		  "Failed to add SPluginClass");

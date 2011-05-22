@@ -24,7 +24,9 @@ dl.struct,
 dl.variable,
 dl.define,
 dl.function,
-dl.macro
+dl.macro,
+dl.speectclass,
+dl.speectobject
 {
     border-top: 2px solid #888;
 }

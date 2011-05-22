@@ -12,6 +12,7 @@ Generic Object System
    :maxdepth: 2
 
    SObject
+   primitives
    SObjectClass
 
 
@@ -63,8 +64,4 @@ Function Methods
 .. doxybridge:: S_OBJECT_CLS
    :type: macro
 
-
-
-Primitives
-==========
 

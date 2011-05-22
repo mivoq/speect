@@ -1,5 +1,6 @@
 
-.. index:: Generic Object System (C API), SObject
+.. index:: 
+   single: Generic Object System (C API); SObject
 
 =======
 SObject

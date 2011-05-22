@@ -9,88 +9,62 @@ Generic Object System
 =====================
 
 .. toctree::
-   :hidden:
+   :maxdepth: 2
 
-   SObject_detail
-   SObjectClass_detail
-
-
-SObject Definition
-==================
-
-.. doxybridge:: SObject
-   :type: speect object
-   :members: none
+   SObject
+   SObjectClass
 
 
-.. seealso:: :doc:`SObject_detail`.
+Macros
+======
 
 
-SObject Functions
-=================
-
-Query
------
-
-.. doxybridge:: SObjectSize
-
-.. doxybridge:: SObjectIsType
-
-.. doxybridge:: SObjectType
-
-.. doxybridge:: SObjectInheritance
-
-
-Read/Write
+New/Delete
 ----------
 
-.. doxybridge:: SObjectRead
+.. doxybridge:: S_NEW
+   :type: macro
+
+.. doxybridge:: S_DELETE
+   :type: macro
+
+.. doxybridge:: S_FORCE_DELETE
+   :type: macro
 
 
-.. doxybridge:: SObjectWrite
-
-
-Reference Counting
-------------------
-
-.. doxybridge:: SObjectIncRef
-
-.. doxybridge:: SObjectDecRef
-
-.. warning::
-   Reference counting functions should be used with utmost care. 
-   They are normally not required, and are here just for expert use.
-
-
-
-SObjectClass Definition
-=======================
-
-.. doxybridge:: SObjectClass
-   :type: speect class
-   :members: none
-
-.. seealso:: :doc:`SObjectClass_detail`.
-
-
-SObjectClass Methods
-====================
-
-Query
------
-
-.. doxybridge:: SObjectCompare
-
-
-Miscellaneous
--------------
-
-.. doxybridge:: SObjectPrint
-
-
-Copy
+Cast
 ----
 
-.. doxybridge:: SObjectCopy
+.. doxybridge:: S_CAST_SAFE
+   :type: macro
 
+.. doxybridge:: S_CAST_UNSAFE
+   :type: macro
+
+.. doxybridge:: S_CAST
+   :type: macro
+
+
+Function Methods
+----------------
+
+.. doxybridge:: S_OBJECT_CALL
+   :type: macro
+
+.. doxybridge:: S_OBJECT_METH_VALID
+   :type: macro
+
+.. doxybridge:: S_OBJECT
+   :type: macro
+
+.. doxybridge:: S_OBJECT_REF
+   :type: macro
+
+.. doxybridge:: S_OBJECT_CLS
+   :type: macro
+
+
+
+Primitives
+==========
 

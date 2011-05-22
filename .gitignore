@@ -64,6 +64,7 @@ swig/python/speect/*.pyc
 
 docs/build/*
 docs/sphinxext/*.pyc
+docs/doxygen/*
 
 
 ##########################################################################

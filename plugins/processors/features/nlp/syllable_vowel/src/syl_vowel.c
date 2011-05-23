@@ -60,7 +60,7 @@ static SSylVowelFeatProcClass SylVowelFeatProcClass; /* SSylVowelFeatProc class 
 /*                                                                                  */
 /************************************************************************************/
 
-static const SPhoneset *_get_phoneset(const SItem *item, s_erc *error);
+static const SPhoneset *_get_phoneset(const SItem *item, s_bool *multilingual, s_erc *error);
 
 
 /************************************************************************************/
@@ -97,7 +97,7 @@ S_LOCAL void _s_syl_vowel_class_free(s_erc *error)
 /*                                                                                  */
 /************************************************************************************/
 
-static const SPhoneset *_get_phoneset(const SItem *item, s_erc *error)
+static const SPhoneset *_get_phoneset(const SItem *item, s_bool *multilingual, s_erc *error)
 {
 	const SPhoneset *phoneset;
 	const SVoice *voice;
@@ -143,7 +143,8 @@ static const SPhoneset *_get_phoneset(const SItem *item, s_erc *error)
 		const SVoice *thisVoice;
 
 
-		tokenItem = s_path_to_item(item, "R:SylStructure.parent.parent.R:Token.parent",
+		(*multilingual) = TRUE;
+		tokenItem = s_path_to_item(item, "R:SylStructure.parent.R:Token.parent",
 								   error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "_get_phoneset",
@@ -171,7 +172,7 @@ static const SPhoneset *_get_phoneset(const SItem *item, s_erc *error)
 					  "Call to \"SVoiceGetFeature\" failed"))
 			return NULL;
 
-		thisVoice = SMapGetObjectDef(voicesMap, lang, NULL, error);
+		thisVoice = (const SVoice*)SMapGetObjectDef(voicesMap, lang, NULL, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "_get_phoneset",
 					  "Call to \"SMapGetObjectDef\" failed"))
@@ -185,7 +186,7 @@ static const SPhoneset *_get_phoneset(const SItem *item, s_erc *error)
 			return NULL;
 		}
 
-		phoneset = SVoiceGetData(thisVoice, "phoneset", error);
+		phoneset = S_PHONESET(SVoiceGetData(thisVoice, "phoneset", error));
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "_get_phoneset",
 					  "Call to \"SVoiceGetData\" failed"))
@@ -194,6 +195,8 @@ static const SPhoneset *_get_phoneset(const SItem *item, s_erc *error)
 	else
 	{
 		/* not multilingual voice */
+		(*multilingual) = FALSE;
+
 		phoneset = S_PHONESET(SVoiceGetData(voice, "phoneset", error));
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "Run",
@@ -233,6 +236,7 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 	const SItem *itemInSylStructRel;
 	const SItem *segment;
 	const SPhoneset *phoneset;
+	s_bool multilingual = FALSE;
 
 
 	S_CLR_ERR(error);
@@ -241,7 +245,7 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 		return NULL;
 
 	/* get the phoneset */
-	phoneset = _get_phoneset(item, error);
+	phoneset = _get_phoneset(item, &multilingual, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Run",
 				  "Call to \"_get_phoneset\" failed"))
@@ -285,11 +289,24 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 
 		if (is_vowel)
 		{
-			extractedFeat = SObjectSetString(item_name, error);
-			if (S_CHK_ERR(error, S_CONTERR,
-						  "Run",
-						  "Call to \"SObjectSetString\" failed"))
-				goto quit_error;
+			if (multilingual)
+			{
+				extractedFeat = s_path_to_featproc(segment,
+												   "segment_name_multilingual",
+												   error);
+				if (S_CHK_ERR(error, S_CONTERR,
+							  "Run",
+							  "Call to \"s_path_to_featproc\" failed"))
+					goto quit_error;
+			}
+			else
+			{
+				extractedFeat = SObjectSetString(item_name, error);
+				if (S_CHK_ERR(error, S_CONTERR,
+							  "Run",
+							  "Call to \"SObjectSetString\" failed"))
+					goto quit_error;
+			}
 
 			return extractedFeat;
 		}

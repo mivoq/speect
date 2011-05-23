@@ -50,7 +50,7 @@
 /*                                                                                  */
 /************************************************************************************/
 
-#define MAX_PHONE_NAME_LENGTH 8
+#define MAX_PHONE_NAME_LENGTH 32
 
 
 /************************************************************************************/
@@ -70,8 +70,6 @@ static const char *none_string = "x";
 /* Static function prototypes                                                       */
 /*                                                                                  */
 /************************************************************************************/
-
-static const SPhoneset *_get_phoneset(const SItem *item, s_erc *error);
 
 static s_bool segment_is_pause(const SItem *item, s_erc *error);
 
@@ -257,135 +255,45 @@ S_LOCAL void _s_hts_labels_simple5_class_free(s_erc *error)
 /*                                                                                  */
 /************************************************************************************/
 
-static const SPhoneset *_get_phoneset(const SItem *item, s_erc *error)
+static s_bool segment_is_pause(const SItem *item, s_erc *error)
 {
 	const SPhoneset *phoneset;
 	const SVoice *voice;
-	s_bool is_present;
+	s_bool is_pause;
 
 
+	/* we cannot use _get_phoneset (as in syllable_vowel processor)
+	 * here because the pause items do not have tokens
+	 */
 	S_CLR_ERR(error);
 
-	/* get the voice */
 	voice = SItemVoice(item, error);
 	if (S_CHK_ERR(error, S_CONTERR,
-				  "_get_phoneset",
+				  "segment_is_pause",
 				  "Call to \"SItemVoice\" failed"))
-		return NULL;
+		return FALSE;
 
 	if (voice == NULL)
 	{
 		S_CTX_ERR(error, S_FAILURE,
-				  "_get_phoneset",
+				  "segment_is_pause",
 				  "Item voice is NULL, voice is required to get phoneset");
-		return NULL;
+		return FALSE;
 	}
 
-	/*
-	 * do we have a 'voices' feature in the voice,
-	 * i.e. is this a multilingual voice
-	 */
-	is_present = SVoiceFeatureIsPresent(voice, "voices", error);
+	phoneset = S_PHONESET(SVoiceGetData(voice, "phoneset", error));
 	if (S_CHK_ERR(error, S_CONTERR,
-				  "_get_phoneset",
-				  "Call to \"SVoiceFeatureIsPresent\" failed"))
-		return NULL;
-
-	if (is_present)
-	{
-		/* This is a multilingual voice.
-		 * Get language feature of item, which is language feature
-		 * of item's token.
-		 */
-		const SItem *tokenItem;
-		const char *lang;
-		const SMap *voicesMap;
-		const SVoice *thisVoice;
-
-
-		tokenItem = s_path_to_item(item, "R:SylStructure.parent.parent.R:Token.parent",
-								   error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "_get_phoneset",
-					  "Call to \"s_path_to_item\" failed"))
-			return NULL;
-
-		if (tokenItem == NULL)
-		{
-			S_CTX_ERR(error, S_FAILURE,
-					  "_get_phoneset",
-					  "Failed to find item's token, which is required to get language feature");
-			return NULL;
-		}
-
-		lang = SItemGetString(tokenItem, "lang", error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "_get_phoneset",
-					  "Call to \"SItemGetString\" failed"))
-			return NULL;
-
-		/* now get the phoneset */
-		voicesMap = (const SMap*)SVoiceGetFeature(voice, "voices", error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "_get_phoneset",
-					  "Call to \"SVoiceGetFeature\" failed"))
-			return NULL;
-
-		thisVoice = SMapGetObjectDef(voicesMap, lang, NULL, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "_get_phoneset",
-					  "Call to \"SMapGetObjectDef\" failed"))
-			return NULL;
-
-		if (thisVoice == NULL)
-		{
-			S_CTX_ERR(error, S_FAILURE,
-					  "_get_phoneset",
-					  "Failed to find the voice for language '%s', which is required to get the phoneset", lang);
-			return NULL;
-		}
-
-		phoneset = SVoiceGetData(thisVoice, "phoneset", error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "_get_phoneset",
-					  "Call to \"SVoiceGetData\" failed"))
-			return NULL;
-	}
-	else
-	{
-		/* not multilingual voice */
-		phoneset = S_PHONESET(SVoiceGetData(voice, "phoneset", error));
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "Run",
-					  "Call to \"SVoiceGetData\" failed"))
-			return NULL;
-	}
+				  "segment_is_pause",
+				  "Call to \"SVoiceGetData\" failed"))
+		return FALSE;
 
 	if (phoneset == NULL)
 	{
 		S_CTX_ERR(error, S_FAILURE,
-				  "_get_phoneset",
-				  "Item phoneset is NULL, required to extract phone features");
-		return NULL;
-	}
-
-	return phoneset;
-}
-
-
-static s_bool segment_is_pause(const SItem *item, s_erc *error)
-{
-	const SPhoneset *phoneset;
-	s_bool is_pause;
-
-
-	S_CLR_ERR(error);
-
-	phoneset = _get_phoneset(item, error);
-	if (S_CHK_ERR(error, S_CONTERR,
 				  "segment_is_pause",
-				  "Call to \"_get_phoneset\" failed"))
+				  "Phoneset is NULL, phoneset is required to get silence phone");
 		return FALSE;
+	}
 
 	is_pause = S_PHONESET_CALL(phoneset, phone_has_feature)(phoneset,
 															SItemGetName(item, error),
@@ -416,26 +324,27 @@ static char *create_phone_context(const SItem *item, s_erc *error)
 	char p3[MAX_PHONE_NAME_LENGTH] = "";
 	char p4[MAX_PHONE_NAME_LENGTH] = "";
 	char p5[MAX_PHONE_NAME_LENGTH] = "";
-	const SObject *featPath;
-	const char *tmp;
+	SObject *dFeat;
 
 
 	S_CLR_ERR(error);
 
 	/* p1 = p.p.name */
-	featPath = s_path_to_feature(item, "p.p.name", error);
+	dFeat = s_path_to_featproc(item, "p.p.segment_name_multilingual", error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "create_phone_context",
-				  "Call to \"s_path_to_feature\" failed"))
+				  "Call to \"s_path_to_featproc\" failed"))
 		return NULL;
 
-	if (featPath != NULL)
+	if (dFeat != NULL)
 	{
-		s_strcpy(p1, SObjectGetString(featPath, error), error);
+		s_strcpy(p1, SObjectGetString(dFeat, error), error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "create_phone_context",
 					  "Call to \"s_strcpy/SObjectGetString\" failed"))
 			return NULL;
+
+		S_DELETE(dFeat, "create_phone_context", error);
 	}
 	else
 	{
@@ -447,19 +356,21 @@ static char *create_phone_context(const SItem *item, s_erc *error)
 	}
 
 	/* p2 = p.name */
-	featPath = s_path_to_feature(item, "p.name", error);
+	dFeat = s_path_to_featproc(item, "p.segment_name_multilingual", error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "create_phone_context",
-				  "Call to \"s_path_to_feature\" failed"))
+				  "Call to \"s_path_to_featproc\" failed"))
 		return NULL;
 
-	if (featPath != NULL)
+	if (dFeat != NULL)
 	{
-		s_strcpy(p2, SObjectGetString(featPath, error), error);
+		s_strcpy(p2, SObjectGetString(dFeat, error), error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "create_phone_context",
 					  "Call to \"s_strcpy/SObjectGetString\" failed"))
 			return NULL;
+
+		S_DELETE(dFeat, "create_phone_context", error);
 	}
 	else
 	{
@@ -471,19 +382,21 @@ static char *create_phone_context(const SItem *item, s_erc *error)
 	}
 
 	/* p3 = name */
-	tmp = SItemGetName(item, error);
+	dFeat = s_path_to_featproc(item, "segment_name_multilingual", error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "create_phone_context",
-				  "Call to \"SItemGetName\" failed"))
+				  "Call to \"s_path_to_featproc\" failed"))
 		return NULL;
 
-	if (tmp != NULL)
+	if (dFeat != NULL)
 	{
-		s_strcpy(p3, tmp, error);
+		s_strcpy(p3, SObjectGetString(dFeat, error), error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "create_phone_context",
-					  "Call to \"s_strcpy\" failed"))
+					  "Call to \"s_strcpy/SObjectGetString\" failed"))
 			return NULL;
+
+		S_DELETE(dFeat, "create_phone_context", error);
 	}
 	else
 	{
@@ -495,19 +408,21 @@ static char *create_phone_context(const SItem *item, s_erc *error)
 	}
 
 	/* p4 = n.name */
-	featPath = s_path_to_feature(item, "n.name", error);
+	dFeat = s_path_to_featproc(item, "n.segment_name_multilingual", error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "create_phone_context",
-				  "Call to \"s_path_to_feature\" failed"))
+				  "Call to \"s_path_to_featproc\" failed"))
 		return NULL;
 
-	if (featPath != NULL)
+	if (dFeat != NULL)
 	{
-		s_strcpy(p4, SObjectGetString(featPath, error), error);
+		s_strcpy(p4, SObjectGetString(dFeat, error), error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "create_phone_context",
 					  "Call to \"s_strcpy/SObjectGetString\" failed"))
 			return NULL;
+
+		S_DELETE(dFeat, "create_phone_context", error);
 	}
 	else
 	{
@@ -519,19 +434,21 @@ static char *create_phone_context(const SItem *item, s_erc *error)
 	}
 
 	/* p5 = n.n.name */
-	featPath = s_path_to_feature(item, "n.n.name", error);
+	dFeat = s_path_to_featproc(item, "n.n.segment_name_multilingual", error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "create_phone_context",
-				  "Call to \"s_path_to_feature\" failed"))
+				  "Call to \"s_path_to_featproc\" failed"))
 		return NULL;
 
-	if (featPath != NULL)
+	if (dFeat != NULL)
 	{
-		s_strcpy(p5, SObjectGetString(featPath, error), error);
+		s_strcpy(p5, SObjectGetString(dFeat, error), error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "create_phone_context",
 					  "Call to \"s_strcpy/SObjectGetString\" failed"))
 			return NULL;
+
+		S_DELETE(dFeat, "create_phone_context", error);
 	}
 	else
 	{

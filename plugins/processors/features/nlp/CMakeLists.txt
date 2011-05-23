@@ -17,6 +17,7 @@
 add_subdirectory(segment_duration)
 add_subdirectory(segment_end)
 add_subdirectory(segment_mid)
+add_subdirectory(segment_name_multilingual)
 add_subdirectory(segment_pos_syl)
 add_subdirectory(segment_pos_syl_rev)
 add_subdirectory(segment_start)

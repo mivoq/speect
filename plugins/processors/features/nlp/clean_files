@@ -54,6 +54,15 @@ cd ..
 
 ########################################################################
 
+echo "--cleaning segment_name_multilingual--"
+
+cd ./segment_name_multilingual/
+./clean_files
+cd ..
+
+
+########################################################################
+
 echo "--cleaning segment_pos_syl--"
 
 cd ./segment_pos_syl/

@@ -1489,7 +1489,7 @@ S_LOCAL void _s_voice_load_data(SVoice *self, const SMap *dataConfig, s_erc *err
 S_LOCAL void _s_voice_class_add(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_add(&VoiceClass, error);
+	s_class_add(S_OBJECTCLASS(&VoiceClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_voice_class_add",
 			  "Failed to add SVoiceClass");

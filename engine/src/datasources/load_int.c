@@ -236,7 +236,7 @@ S_API uint16 s_uint16_read_at(SDatasource *ds, long pos, s_erc *error)
 }
 
 
-S_API void s_write_uint16(SDatasource *ds, uint16 i, s_erc *error)
+S_API void s_uint16_write(SDatasource *ds, uint16 i, s_erc *error)
 {
 	S_CLR_ERR(error);
 
@@ -261,7 +261,7 @@ S_API void s_write_uint16(SDatasource *ds, uint16 i, s_erc *error)
 }
 
 
-S_API void s_write_uint16_at(SDatasource *ds, uint16 i, long pos, s_erc *error)
+S_API void s_uint16_write_at(SDatasource *ds, uint16 i, long pos, s_erc *error)
 {
 	S_CLR_ERR(error);
 
@@ -348,7 +348,7 @@ S_API uint32 s_uint32_read_at(SDatasource *ds, long pos, s_erc *error)
 }
 
 
-S_API void s_write_uint32(SDatasource *ds, uint32 i, s_erc *error)
+S_API void s_uint32_write(SDatasource *ds, uint32 i, s_erc *error)
 {
 	S_CLR_ERR(error);
 
@@ -373,7 +373,7 @@ S_API void s_write_uint32(SDatasource *ds, uint32 i, s_erc *error)
 }
 
 
-S_API void s_write_uint32_at(SDatasource *ds, uint32 i, long pos, s_erc *error)
+S_API void s_uint32_write_at(SDatasource *ds, uint32 i, long pos, s_erc *error)
 {
 	S_CLR_ERR(error);
 
@@ -552,7 +552,7 @@ S_API sint16 s_sint16_read_at(SDatasource *ds, long pos, s_erc *error)
 }
 
 
-S_API void s_write_sint16(SDatasource *ds, sint16 i, s_erc *error)
+S_API void s_sint16_write(SDatasource *ds, sint16 i, s_erc *error)
 {
 	S_CLR_ERR(error);
 
@@ -577,7 +577,7 @@ S_API void s_write_sint16(SDatasource *ds, sint16 i, s_erc *error)
 }
 
 
-S_API void s_write_sint16_at(SDatasource *ds, sint16 i, long pos, s_erc *error)
+S_API void s_sint16_write_at(SDatasource *ds, sint16 i, long pos, s_erc *error)
 {
 	S_CLR_ERR(error);
 
@@ -664,7 +664,7 @@ S_API sint32 s_sint32_read_at(SDatasource *ds, long pos, s_erc *error)
 }
 
 
-S_API void s_write_sint32(SDatasource *ds, sint32 i, s_erc *error)
+S_API void s_sint32_write(SDatasource *ds, sint32 i, s_erc *error)
 {
 	S_CLR_ERR(error);
 
@@ -689,7 +689,7 @@ S_API void s_write_sint32(SDatasource *ds, sint32 i, s_erc *error)
 }
 
 
-S_API void s_write_sint32_at(SDatasource *ds, sint32 i, long pos, s_erc *error)
+S_API void s_sint32_write_at(SDatasource *ds, sint32 i, long pos, s_erc *error)
 {
 	S_CLR_ERR(error);
 

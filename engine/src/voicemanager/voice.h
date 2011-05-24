@@ -448,48 +448,6 @@ S_API const s_version *SVoiceGetVersion(const SVoice *self, s_erc *error);
 
 
 /**
- * @name Data Configuration
- * @{
- */
-
-/**
- * Get a copy of the data configuration of the given voice. It is a
- * shallow copy, and therefore objects can be deleted from the
- * returned map, but @b not modified.
- *
- * @public @memberof SVoice
- * @param self The given voice.
- * @param error Error code.
- *
- * @return #SMap of the data configuration.
- */
-S_API SMap *SVoiceGetDataConfig(const SVoice *self, s_erc *error);
-
-
-/**
- * Set the data configuration of the given voice. If the data
- * configuration and the voice data do not correspond then the voice
- * data is updated (data is loaded or unloaded) to be in sync with the
- * configuration.
- *
- * @public @memberof SVoice
- * @param self The given voice.
- * @param dataConfig The new data configuration.
- * @param error Error code.
- *
- * @return #SMap of the data configuration.
- *
- * @note The voice takes hold of the new data configuration @c dataConfig.
- */
-S_API void SVoiceSetDataConfig(SVoice *self, SMap *dataConfig, s_erc *error);
-
-
-/**
- * @}
- */
-
-
-/**
  * @name Data
  * @{
  */
@@ -551,11 +509,6 @@ S_API const SObject *SVoiceGetData(const SVoice *self, const char *key,
  * @param object Pointer to the data object of the named key.
  * @param error Error code.
  *
- * @note The given data object will not be shared among voices. To
- * add a data object that is shareable one must get the data
- * configuration with the #SVoiceGetDataConfig, edit it, and
- * set it again with #SVoiceSetDataConfig.
- *
  * @note The voice takes hold of the @c object #SObject.
  */
 S_API void SVoiceSetData(SVoice *self, const char *key,
@@ -572,21 +525,6 @@ S_API void SVoiceSetData(SVoice *self, const char *key,
  * @param error Error code.
  */
 S_API void SVoiceDelData(SVoice *self, const char *key, s_erc *error);
-
-
-/**
- * Load the voice data in the voice data configuration. This function is used
- * after a voice is loaded with #s_vm_load_voice with the @c load_data
- * flag set to @c FALSE. This allows one to change the voice data
- * configuration before loading the voice data, thereby eliminating
- * lengthy load times for data that is not required for specific
- * utterance types. If data has already been loaded then this function
- * will issue a warning.
- *
- * @param self The given voice.
- * @param error Error code.
- */
-S_API void SVoiceLoadData(SVoice *self, s_erc *error);
 
 
 /**
@@ -965,19 +903,19 @@ S_API void SVoiceDelUttType(SVoice *self, const char *key, s_erc *error);
 
 
 /**
- * Get the voice data configuration from the given #SMap which has been loaded from
- * a voice configuration file with #s_json_parse_config_file. Used
- * internally by VoiceManager.
- * @note Data is @b not loaded.
+ * Load the voice data in the voice data configuration. This function is used
+ * after a voice is loaded with #s_vm_load_voice with the @c load_data
+ * flag set to @c FALSE. This allows one to change the voice data
+ * configuration before loading the voice data, thereby eliminating
+ * lengthy load times for data that is not required for specific
+ * utterance types. If data has already been loaded then this function
+ * will issue a warning.
  *
- * @private
- * @param self The voice.
- * @param voiceConfig voiceConfig The #SMap containing the voice configuration.
+ * @param self The given voice.
+ * @param dataConfig A map with the data configuration.
  * @param error Error code.
- * @note Not thread safe, VoiceManager does mutex locking.
  */
-S_LOCAL void SVoiceLoadDataConfig(SVoice *self, const SMap *voiceConfig,
-								  s_erc *error);
+S_LOCAL void _s_voice_load_data(SVoice *self, const SMap *dataConfig, s_erc *error);
 
 
 /**

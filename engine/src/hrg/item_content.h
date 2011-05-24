@@ -215,7 +215,7 @@ S_BEGIN_C_DECLS
 /************************************************************************************/
 
 /**
- * The SItmContent structure.
+ * The item content object structure.
  * A class for containing the shared contents of items, that is
  * the individual linguistic features and references to relations.
  * @extends SObject
@@ -251,7 +251,9 @@ struct SItmContent
 /************************************************************************************/
 
 /**
- * The SItmContentClass structure.
+ * The item content class structure.
+ * A class for containing the shared contents of items, that is
+ * the individual linguistic features and references to relations.
  * @extends SObjectClass
  */
 typedef struct

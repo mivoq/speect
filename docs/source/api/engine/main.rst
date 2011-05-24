@@ -12,3 +12,4 @@ Speect Engine C API
    base/main
    containers/main
    datasources/main
+   hrg/main

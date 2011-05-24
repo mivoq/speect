@@ -84,12 +84,6 @@ S_BEGIN_C_DECLS
  * reduces the need for multiple redundant calls.
  *
  * @param path The full path and name of the voice to load.
- * @param load_data Flag to load the voice's data or not. If @c FALSE
- * then only the voice data configuration is loaded. This allows one
- * to change the data configuration of the voice with the
- * #SVoiceSetData, and #SVoiceDelData functions before the data is
- * loaded. The voice data can then be loaded with the #SVoiceLoadData
- * function.
  * @param error Error code.
  *
  * @return Pointer to the loaded voice.
@@ -97,8 +91,7 @@ S_BEGIN_C_DECLS
  * @note The returned voice can be normally deleted with #S_DELETE.
  * @note Thread safe.
  */
-S_API SVoice *s_vm_load_voice(const char *path, s_bool load_data,
-							  s_erc *error);
+S_API SVoice *s_vm_load_voice(const char *path, s_erc *error);
 
 
 /**
@@ -146,6 +139,22 @@ S_LOCAL void _s_vm_unload_data(SObject *dataObject, s_erc *error);
  * @return #TRUE or #FALSE.
  */
 S_LOCAL s_bool _s_vm_data_loaded(SObject *dataObject, s_erc *error);
+
+
+/**
+ * Query if a data object has been loaded by the VoiceManager. If so
+ * increment it's reference count in the VoiceManager's data
+ * containers.
+ * Used internally by #SVoice.
+ *
+ * @private
+ * @param dataObject The voice data object to query for.
+ * @param error Error code.
+ *
+ * @return  #TRUE or #FALSE.
+ */
+S_LOCAL s_bool _s_vm_data_loaded_inc_ref(SObject *dataObject,
+										 s_erc *error);
 
 
 /**

@@ -8,5 +8,6 @@ Speect Engine C API
 .. toctree::
    :maxdepth: 2
 
+   include/main
    base/main
    containers/main

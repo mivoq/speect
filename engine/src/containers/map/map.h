@@ -185,7 +185,9 @@ S_BEGIN_C_DECLS
 /************************************************************************************/
 
 /**
- * The SMap structure.
+ * A map object. An abstract data type composed of a collection of
+ * unique string keys and a collection of values (of type #SObject),
+ * where each key is associated with one value.
  * @extends SContainer
  */
 typedef struct
@@ -207,7 +209,6 @@ typedef struct
  * The map class structure. It inherits from #SContainer so that it supports
  * different map implementations.
  * @extends SContainerClass
- * @todo freed or free'd ?
  */
 typedef struct
 {
@@ -573,7 +574,7 @@ S_API void SMapObjectDelete(SMap *self, const char *key, s_erc *error);
 
 
 /**
- * Remove named key-value pair from the map. Key is removed (free'd)
+ * Remove named key-value pair from the map. Key is removed (freed)
  * from list and value object is returned.
  * @public @memberof SMap
  *

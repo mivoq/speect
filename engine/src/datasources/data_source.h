@@ -134,7 +134,10 @@ S_BEGIN_C_DECLS
  * @param SELF The given #SDatasource*.
  * @param FUNC The function method of the given object to call.
  * @note This casting is not safety checked.
- * @note Example usage: @code S_DATASOURCE_CALL(self, func)(param1, param2, ..., paramN); @endcode
+ * @note Example usage:
+ @verbatim
+ S_DATASOURCE_CALL(self, func)(param1, param2, ..., paramN);
+ @endverbatim
  * where @c param1, @c param2, ..., @c paramN are the parameters passed to the object function
  * @c func.
  */

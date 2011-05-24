@@ -147,8 +147,8 @@ S_BEGIN_C_DECLS
 
 /**
  * @ingroup SIterator
- * The SIterator structure.
- * An abstract iterator for container data types.
+ * An abstract iterator for container data types. All container
+ * iterators inherit from this object.
  * @extends SObject
  */
 typedef struct
@@ -167,7 +167,8 @@ typedef struct
 /************************************************************************************/
 
 /**
- * The SIteratorClass structure.
+ * The iterator class structure.
+ * All container iterators classes inherit from this class.
  * @extends SObjectClass
  */
 typedef struct

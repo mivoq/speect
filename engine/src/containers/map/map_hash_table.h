@@ -147,25 +147,27 @@ typedef SMapClass SMapHashTableClass;
  * estimate of the number of objects that will be contained
  * in the map is known beforehand, as it can save some
  * memory, and growing a table is an relatively expensive
- * operation. Resizing a SMapHashTable @e before any objects are added
- * is comparatively cheap.
+ * operation. Resizing @e before any objects are added is
+ * comparatively cheap.
  *
  *
  * The hash table can be resized to any size as long as it can still
  * contain all the existing objects in it. There are a few outcomes
- * based on the given size and the elements contained in the hash table:
+ * based on the given size and the elements contained in the hash
+ * table:
+ @verbatim embed:rst
+	 * ``size = -1``, the hash table is resized to the minimum possible size (power of 2) that will still contain all elements.
+	 * ``size = 0``, nothing is done and the function returns.
+	 * ``size <= number_of_objects``, nothing is done and the function returns.
+	 * In all other cases the hash table is resized to closest power of 2 bigger than ``size``.
+ @endverbatim
  *
  * <ul>
- * <li> <tt> size = -1 </tt>, the hash table is resized to the
- * minimum possible size (power of 2) that will still contain all
- * elements.</li>
- * <li> <tt> size = 0 </tt>, nothing is done and the function
- * returns.</li>
- * <li> <tt> size <= number_of_objects </tt>, nothing is done and
- * the function returns.</li>
- * <li> In all other cases the hash table is resized to closest power
- * of 2 bigger than <tt>size</tt>.
- </li></ul></p>
+ * <li> <tt> size = -1 </tt>, the hash table is resized to the minimum possible size (power of 2) that will still contain all elements.</li>
+ * <li> <tt> size = 0 </tt>, nothing is done and the function returns.</li>
+ * <li> <tt> size <= number_of_objects </tt>, nothing is done and the function returns.</li>
+ * <li> In all other cases the hash table is resized to closest power of 2 bigger than <tt>size</tt>. </li>
+ * </ul>
  *
  * @public @memberof SMapHashTable
  *

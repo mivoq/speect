@@ -6,7 +6,7 @@
 SMap
 ====
 
-..todo:: check if normal accessing will fail if key not in map
+.. todo:: check if normal accessing will fail if key not in map
 
 .. toctree::
    :hidden:

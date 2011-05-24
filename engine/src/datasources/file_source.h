@@ -115,7 +115,8 @@ S_BEGIN_C_DECLS
 /************************************************************************************/
 
 /**
- * The file source structure. Provides an interface to a file based datasource.
+ * The file source structure. Provides an interface to a file based
+ * data source.
  * @extends SDatasource
  */
 typedef struct
@@ -144,7 +145,7 @@ typedef struct
 /************************************************************************************/
 
 /**
- * Filesource class structure. Same as #SDatasourceClass as
+ * File source class structure. Same as #SDatasourceClass as
  * we are not adding any new methods.
  */
 typedef SDatasourceClass SFilesourceClass;
@@ -157,22 +158,29 @@ typedef SDatasourceClass SFilesourceClass;
 /************************************************************************************/
 
 /**
- * Creates a data source from a previously opened file.
+ * Create a data source from a previously opened file.
  * @public @memberof SFilesource
- * @param f A FILE handle pointer to a previously opened file.
+ *
+ * @param f A file handle pointer to a previously opened file.
  * @param error Error code.
+ *
  * @return Pointer to the newly created data source.
  */
 S_API SDatasource *SFilesourceOpenHandle(FILE *f, s_erc *error);
 
 
 /**
- * Opens a file to be used as a data source.
+ * Open a file to be used as a data source.
+ * Open the file at path, where mode is character string as
+ * used by the standard function @c fopen().
+
  * @public @memberof SFilesource
- * Open the file at path, where mode is character string as used by fopen().
+ *
  * @param path The path and name of the file to open.
- * @param mode The mode string as used by fopen().
+ * @param mode The mode string as used by the standard
+ * function @c fopen().
  * @param error Error code.
+ *
  * @return Pointer to the newly created data source.
  */
 S_API SDatasource *SFilesourceOpenFile(const char *path, const char *mode, s_erc *error);

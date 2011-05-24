@@ -11,3 +11,4 @@ Speect Engine C API
    include/main
    base/main
    containers/main
+   datasources/main

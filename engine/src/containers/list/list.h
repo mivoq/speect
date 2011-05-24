@@ -189,7 +189,9 @@ S_BEGIN_C_DECLS
 /************************************************************************************/
 
 /**
- * The SList structure.
+ * A list class. An abstract data structure that implements an ordered
+ * collection of values (of type #SObject), where the same value may
+ * occur more than once.
  * @extends SContainer
  */
 typedef struct
@@ -208,7 +210,7 @@ typedef struct
 /************************************************************************************/
 
 /**
- * The SListClass structure. It inherits from #SContainer so that it supports
+ * The list class structure. It inherits from #SContainer so that it supports
  * different list implementations.
  * @extends SContainerClass
  */

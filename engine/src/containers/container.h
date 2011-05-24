@@ -183,8 +183,8 @@ S_BEGIN_C_DECLS
 /************************************************************************************/
 
 /**
- * The SContainer structure.
  * An abstract data type which is a collections of other objects.
+ * All containers inherit from this object.
  * @extends SObject
  */
 typedef struct SContainer
@@ -208,7 +208,8 @@ typedef struct SContainer
 /************************************************************************************/
 
 /**
- * The SContainerClass structure.
+ * The container class structure.
+ * All containers classes inherit from this class.
  * @extends SObjectClass
  */
 typedef struct

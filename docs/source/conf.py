@@ -30,12 +30,9 @@ extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.todo',
               'sphinx.ext.pngmath',
               'sphinx.ext.ifconfig',
+              'sphinx.ext.graphviz',
               'doxybridge',
               ]
-
-# The output format for Graphviz when building HTML files.
-# This must be either 'png' or 'svg'; the default is 'png'.
-graphviz_output_format = 'png'
 
 # include todo's
 todo_include_todos = True

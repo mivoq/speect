@@ -14,3 +14,4 @@ Speect Engine C API
    datasources/main
    hrg/main
    main/main
+   pluginmanager/main

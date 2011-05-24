@@ -6,12 +6,12 @@
 Containers
 ==========
 
+	
+.. toctree::
+   :maxdepth: 2
 
-SContainer Definition
-=====================
-
-.. doxybridge:: SContainer
-   :type: speect object
-   :members: none
-   :inheritance: SObject,SContainer
-
+   container
+   iterator
+   map
+   list
+ 

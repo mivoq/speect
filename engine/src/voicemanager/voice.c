@@ -55,12 +55,13 @@
 /************************************************************************************/
 
 /**
- * Type definition of the opaque voice data.
+ * Type definition of the opaque voice data. It is just an SMap, but
+ * we do not want anybody to have access to the normal SMap from the
+ * outside.
  */
 struct s_voice_data
 {
 	SMap *dataObjects;
-	SMap *dataConfig;
 };
 
 
@@ -90,23 +91,9 @@ static SVoiceClass VoiceClass;  /* Voice class declaration. */
 /*                                                                                  */
 /************************************************************************************/
 
-static void sync_data_config(SVoice *self, SMap *dataConfig, s_erc *error);
-
-static const SObject *load_data_entry(SMap *newDataConfig, const SMap *dataConfig,
-									  const char *data_name, s_erc *error);
-
-static void unload_data_entry(SVoice *self, SMap *dataConfig, const char *data_name,
-							  s_erc *error);
-
-static s_bool compare_data_config_entries(const SMap *newDataConfig,
-										  const SMap *currentDataConfig,
-										  const char *data_name,
-										  s_erc *error);
+static void unload_data_entry(SVoice *self, const char *data_name, s_erc *error);
 
 static s_data_info *get_data_info(const SMap *map, s_erc *error);
-
-static s_bool compare_data_info(const s_data_info *d1, const s_data_info *d2,
-								s_erc *error);
 
 static void free_voice_info(s_voice_info *info);
 
@@ -367,63 +354,6 @@ S_API const s_version *SVoiceGetVersion(const SVoice *self, s_erc *error)
 }
 
 
-/* data configuration */
-
-S_API SMap *SVoiceGetDataConfig(const SVoice *self, s_erc *error)
-{
-	SMap *dataConfigCopy;
-
-
-	S_CLR_ERR(error);
-
-	if (self == NULL)
-	{
-		S_CTX_ERR(error, S_ARGERROR,
-				  "SVoiceGetDataConfig",
-				  "Argument \"self\" is NULL");
-		return NULL;
-	}
-
-	dataConfigCopy = SMapCopy(NULL, self->data->dataConfig, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "SVoiceGetDataConfig",
-				  "Call to \"SMapCopy\" failed"))
-		return NULL;
-
-	return dataConfigCopy;
-}
-
-
-S_API void SVoiceSetDataConfig(SVoice *self, SMap *dataConfig, s_erc *error)
-{
-	S_CLR_ERR(error);
-
-	if (self == NULL)
-	{
-		S_CTX_ERR(error, S_ARGERROR,
-				  "SVoiceSetDataConfig",
-				  "Argument \"self\" is NULL");
-		return;
-	}
-
-	if (dataConfig == NULL)
-	{
-		S_CTX_ERR(error, S_ARGERROR,
-				  "SVoiceSetDataConfig",
-				  "Argument \"self\" is NULL");
-		return;
-	}
-
-	s_mutex_lock(&self->voice_mutex);
-	sync_data_config(self, dataConfig, error);
-	s_mutex_unlock(&self->voice_mutex);
-
-	S_CHK_ERR(error, S_CONTERR,
-			  "SVoiceSetDataConfig",
-			  "Call to \"sync_data_config\" failed");
-}
-
-
 /* data */
 
 S_API SList *SVoiceGetDataKeys(const SVoice *self, s_erc *error)
@@ -441,7 +371,7 @@ S_API SList *SVoiceGetDataKeys(const SVoice *self, s_erc *error)
 		return NULL;
 	}
 
-	tmp = SMapGetKeys(self->data->dataConfig, error);
+	tmp = SMapGetKeys(self->data->dataObjects, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "SVoiceGetDataKeys",
 				  "Call to \"SMapGetKeys\" failed"))
@@ -522,7 +452,8 @@ S_API void SVoiceSetData(SVoice *self, const char *key,
 						 SObject *object,  s_erc *error)
 {
 	s_bool key_present;
-	SMap *dataObjectMap;
+	s_bool vm_loaded_data;
+
 
 
 	S_CLR_ERR(error);
@@ -553,8 +484,8 @@ S_API void SVoiceSetData(SVoice *self, const char *key,
 
 	s_mutex_lock(&self->voice_mutex);
 
-	/* check if the data is in the configuration */
-	key_present = SMapObjectPresent(self->data->dataConfig, key, error);
+	/* check if the data is in the data objects map */
+	key_present = SMapObjectPresent(self->data->dataObjects, key, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "SVoiceSetData",
 				  "Call to \"SMapObjectPresent\" failed"))
@@ -566,7 +497,7 @@ S_API void SVoiceSetData(SVoice *self, const char *key,
 	if (key_present)
 	{
 		/* delete the data and config key */
-		unload_data_entry(self, self->data->dataConfig, key, error);
+		unload_data_entry(self, key, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "SVoiceSetData",
 					  "Call to \"unload_data_entry\" failed"))
@@ -576,61 +507,35 @@ S_API void SVoiceSetData(SVoice *self, const char *key,
 		}
 	}
 
-	/* add data and dummy data object map */
-	dataObjectMap = S_MAP(S_NEW("SMapList", error));
+	vm_loaded_data = _s_vm_data_loaded_inc_ref(object, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "SVoiceSetData",
-				  "Failed to create new data object map"))
+				  "Call to \"_s_vm_data_loaded_inc_ref\" failed"))
 	{
 		s_mutex_unlock(&self->voice_mutex);
 		return;
 	}
 
-	/* add dummy entries */
-	SMapSetString(dataObjectMap, "format", "NULL", error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "SVoiceSetData",
-				  "Call to \"SMapSetString\" failed"))
+	if (vm_loaded_data)
 	{
-		S_DELETE(dataObjectMap, "SVoiceSetData", error);
+		/* it was loaded previously by vm, just incremented reference
+		 * in _s_vm_data_loaded_inc_ref. Set it in data objects and
+		 * return.
+		 */
+		SMapSetObject(self->data->dataObjects, key, object, error);
+		S_CHK_ERR(error, S_CONTERR,
+				  "SVoiceSetData",
+				  "Call to \"SMapSetObject\" for data '%s' in data config failed",
+				  key); /* data is probably corrupted */
 		s_mutex_unlock(&self->voice_mutex);
 		return;
 	}
 
-	SMapSetString(dataObjectMap, "plug-in", "NULL", error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "SVoiceSetData",
-				  "Call to \"SMapSetString\" failed"))
-	{
-		S_DELETE(dataObjectMap, "SVoiceSetData", error);
-		return;
-	}
-
-	SMapSetString(dataObjectMap, "path", "NULL", error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "SVoiceSetData",
-				  "Call to \"SMapSetString\" failed"))
-	{
-		S_DELETE(dataObjectMap, "SVoiceSetData", error);
-		s_mutex_unlock(&self->voice_mutex);
-		return;
-	}
-
-	SMapSetObject(self->data->dataConfig, key, S_OBJECT(dataObjectMap), error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "SVoiceSetData",
-				  "Call to \"SMapSetObject\" failed"))
-	{
-		S_DELETE(dataObjectMap, "SVoiceSetData", error);
-		s_mutex_unlock(&self->voice_mutex);
-		return;
-	}
-
+	/* not previously loaded in voice manager */
 	SMapSetObject(self->data->dataObjects, key, object, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "SVoiceSetData",
-				  "Call to \"SMapSetObject\" failed"))
-		SMapObjectDelete(self->data->dataConfig, key, error);
+	S_CHK_ERR(error, S_CONTERR,
+			  "SVoiceSetData",
+			  "Call to \"SMapSetObject\" failed");
 
 	s_mutex_unlock(&self->voice_mutex);
 }
@@ -661,7 +566,7 @@ S_API void SVoiceDelData(SVoice *self, const char *key, s_erc *error)
 
 	/* check if the data is in the configuration */
 	s_mutex_lock(&self->voice_mutex);
-	key_present = SMapObjectPresent(self->data->dataConfig, key, error);
+	key_present = SMapObjectPresent(self->data->dataObjects, key, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "SVoiceDelData",
 				  "Call to \"SMapObjectPresent\" failed"))
@@ -673,183 +578,13 @@ S_API void SVoiceDelData(SVoice *self, const char *key, s_erc *error)
 	if (key_present)
 	{
 		/* delete the data and config key */
-		unload_data_entry(self, self->data->dataConfig, key, error);
+		unload_data_entry(self, key, error);
 		S_CHK_ERR(error, S_CONTERR,
 				  "SVoiceDelData",
 				  "Call to \"unload_data_entry\" failed");
 	}
 
 	s_mutex_unlock(&self->voice_mutex);
-}
-
-
-S_API void SVoiceLoadData(SVoice *self, s_erc *error)
-{
-	SIterator *itr;
-	size_t num_data_objects;
-	const char *data_name;
-	const SObject *loaded;
-	const SMap *dataObjectMap;
-	s_data_info *data_info;
-	const SObject *vcfgObject;
-	char *voice_base_path;
-
-
-	S_CLR_ERR(error);
-
-	if (self == NULL)
-	{
-		S_CTX_ERR(error, S_ARGERROR,
-				  "SVoiceLoadData",
-				  "Argument \"self\" is NULL");
-		return;
-	}
-
-	/* get voice base path */
-	vcfgObject = SVoiceGetFeature(self, "config_file", error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "SVoiceLoadData",
-				  "Call to \"SVoiceGetFeature\" failed, failed to get voice config file"))
-		return;
-
-	voice_base_path = s_get_base_path(SObjectGetString(vcfgObject, error), error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "SVoiceLoadData",
-				  "Call to \"s_get_base_path/SObjectGetString\" failed"))
-		return;
-
-	num_data_objects = SMapSize(self->data->dataObjects, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "SVoiceLoadData",
-				  "Call to \"SMapSize\" failed"))
-	{
-		S_FREE(voice_base_path);
-		return;
-	}
-
-	if (num_data_objects != 0)
-	{
-		S_WARNING(S_FAILURE,
-				  "SVoiceLoadData",
-				  "SVoiceLoadData can only be used when no objects have been loaded");
-		S_FREE(voice_base_path);
-		return;
-	}
-
-	/*
-	 * now iterate through data config and load everything
-	 */
-	itr = S_ITERATOR_GET(self->data->dataConfig, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "SVoiceLoadData",
-				  "Call to \"S_ITERATOR_GET\" failed"))
-	{
-		S_DELETE(itr, "SVoiceLoadData", error);
-		S_FREE(voice_base_path);
-		return;
-	}
-
-	while (itr)
-	{
-		char *combined_path;
-
-
-		data_name = SIteratorKey(itr, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "SVoiceLoadData",
-					  "Call to \"SIteratorKey\" failed"))
-		{
-			S_DELETE(itr, "SVoiceLoadData", error);
-			S_FREE(voice_base_path);
-			return;
-		}
-
-		/*
-		 * We have already checked this cast in
-		 * SVoiceLoadDataConfig (_s_load_voice_data_config)
-		 */
-		dataObjectMap = (const SMap*)SMapGetObjectDef(self->data->dataConfig, data_name, NULL, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "SVoiceLoadData",
-					  "Call to \"SMapGetObjectDef\" for data '%s' failed",
-					  data_name))
-		{
-			S_DELETE(itr, "SVoiceLoadData", error);
-			S_FREE(voice_base_path);
-			return;
-		}
-
-		if (dataObjectMap == NULL)
-		{
-			S_CTX_ERR(error, S_CONTERR,
-					  "SVoiceLoadData",
-					  "Data object map for data '%s' in data config in NULL",
-					  data_name);
-			S_DELETE(itr, "SVoiceLoadData", error);
-			S_FREE(voice_base_path);
-			return;
-		}
-
-		data_info = get_data_info(dataObjectMap, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "SVoiceLoadData",
-					  "Call to \"get_data_info\" for data '%s' in data config failed",
-					  data_name))
-		{
-			S_DELETE(itr, "SVoiceLoadData", error);
-			S_FREE(voice_base_path);
-			return;
-		}
-
-		/* get data path, the one in the config file may be relative
-		 * to the voice base path
-		 */
-		combined_path = s_path_combine(voice_base_path, data_info->path,
-									   error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "SVoiceLoadData",
-					  "Call to \"s_path_combine\" failed"))
-		{
-			S_DELETE(itr, "SVoiceLoadData", error);
-			S_FREE(voice_base_path);
-			return;
-		}
-
-		loaded = _s_vm_load_data(data_info->plugin, combined_path,
-								 data_info->format, error);
-		S_FREE(combined_path);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "SVoiceLoadData",
-					  "Call to \"_s_vm_load_voice_data\" for data '%s' in data config failed",
-					  data_name))
-		{
-			S_FREE(data_info);
-			S_DELETE(itr, "SVoiceLoadData", error);
-			S_FREE(voice_base_path);
-			return;
-		}
-
-		S_FREE(data_info);
-
-		SMapSetObject(self->data->dataObjects, data_name, loaded, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "SVoiceLoadData",
-					  "Call to \"SMapSetObject\" for data '%s' in data config failed",
-					  data_name))
-		{
-			s_erc local_err = S_SUCCESS;
-
-
-			S_FREE(voice_base_path);
-			S_DELETE(itr, "SVoiceLoadData", error);
-			_s_vm_unload_data((SObject*)loaded, &local_err); /* error is already set */
-			return;
-		}
-
-		itr = SIteratorNext(itr);
-	}
-
-	S_FREE(voice_base_path);
 }
 
 
@@ -1594,39 +1329,154 @@ S_API void SVoiceDelUttType(SVoice *self, const char *key, s_erc *error)
 }
 
 
-S_LOCAL void SVoiceLoadDataConfig(SVoice *self, const SMap *voiceConfig,
-								  s_erc *error)
+S_LOCAL void _s_voice_load_data(SVoice *self, const SMap *dataConfig, s_erc *error)
 {
+	SIterator *itr;
+	const char *data_name;
+	const SObject *loaded;
+	const SMap *dataObjectMap;
+	s_data_info *data_info;
+	const SObject *vcfgObject;
+	char *voice_base_path;
+
+
 	S_CLR_ERR(error);
 
 	if (self == NULL)
 	{
 		S_CTX_ERR(error, S_ARGERROR,
-				  "SVoiceLoadDataConfig",
+				  "_s_voice_load_data",
 				  "Argument \"self\" is NULL");
 		return;
 	}
 
-	if (voiceConfig == NULL)
+	/* get voice base path */
+	vcfgObject = SVoiceGetFeature(self, "config_file", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "_s_voice_load_data",
+				  "Call to \"SVoiceGetFeature\" failed, failed to get voice config file"))
+		return;
+
+	voice_base_path = s_get_base_path(SObjectGetString(vcfgObject, error), error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "_s_voice_load_data",
+				  "Call to \"s_get_base_path/SObjectGetString\" failed"))
+		return;
+
+	/*
+	 * now iterate through data config and load everything
+	 */
+	itr = S_ITERATOR_GET(dataConfig, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "_s_voice_load_data",
+				  "Call to \"S_ITERATOR_GET\" failed"))
 	{
-		S_CTX_ERR(error, S_ARGERROR,
-				  "SVoiceLoadDataConfig",
-				  "Argument \"voiceConfig\" is NULL");
+		S_DELETE(itr, "_s_voice_load_data", error);
+		S_FREE(voice_base_path);
 		return;
 	}
 
-	if (self->data->dataConfig != NULL)
+	while (itr)
 	{
-		S_WARNING(S_FAILURE,
-				  "SVoiceLoadDataConfig",
-				  "Voice configuration already loaded, ignoring request");
-		return;
+		char *combined_path;
+
+
+		data_name = SIteratorKey(itr, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "_s_voice_load_data",
+					  "Call to \"SIteratorKey\" failed"))
+		{
+			S_DELETE(itr, "_s_voice_load_data", error);
+			S_FREE(voice_base_path);
+			return;
+		}
+
+		/*
+		 * We have already checked this cast in
+		 * _s_voice_load_dataConfig (_s_load_voice_data_config)
+		 */
+		dataObjectMap = (const SMap*)SMapGetObjectDef(dataConfig, data_name, NULL, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "_s_voice_load_data",
+					  "Call to \"SMapGetObjectDef\" for data '%s' failed",
+					  data_name))
+		{
+			S_DELETE(itr, "_s_voice_load_data", error);
+			S_FREE(voice_base_path);
+			return;
+		}
+
+		if (dataObjectMap == NULL)
+		{
+			S_CTX_ERR(error, S_CONTERR,
+					  "_s_voice_load_data",
+					  "Data object map for data '%s' in data config in NULL",
+					  data_name);
+			S_DELETE(itr, "_s_voice_load_data", error);
+			S_FREE(voice_base_path);
+			return;
+		}
+
+		data_info = get_data_info(dataObjectMap, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "_s_voice_load_data",
+					  "Call to \"get_data_info\" for data '%s' in data config failed",
+					  data_name))
+		{
+			S_DELETE(itr, "_s_voice_load_data", error);
+			S_FREE(voice_base_path);
+			return;
+		}
+
+		/* get data path, the one in the config file may be relative
+		 * to the voice base path
+		 */
+		combined_path = s_path_combine(voice_base_path, data_info->path,
+									   error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "_s_voice_load_data",
+					  "Call to \"s_path_combine\" failed"))
+		{
+			S_DELETE(itr, "_s_voice_load_data", error);
+			S_FREE(voice_base_path);
+			return;
+		}
+
+		loaded = _s_vm_load_data(data_info->plugin, combined_path,
+								 data_info->format, error);
+		S_FREE(combined_path);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "_s_voice_load_data",
+					  "Call to \"_s_vm_load_data\" for data '%s' in data config failed",
+					  data_name))
+		{
+			S_FREE(data_info);
+			S_DELETE(itr, "_s_voice_load_data", error);
+			S_FREE(voice_base_path);
+			return;
+		}
+
+		S_FREE(data_info);
+
+		SMapSetObject(self->data->dataObjects, data_name, loaded, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "_s_voice_load_data",
+					  "Call to \"SMapSetObject\" for data '%s' in data config failed",
+					  data_name))
+		{
+			s_erc local_err = S_SUCCESS;
+
+
+			S_FREE(voice_base_path);
+			S_DELETE(itr, "_s_voice_load_data", error);
+			_s_vm_unload_data((SObject*)loaded, &local_err); /* error is already set */
+			return;
+		}
+
+		itr = SIteratorNext(itr);
 	}
 
-	self->data->dataConfig = _s_load_voice_data_config(voiceConfig, error);
-	S_CHK_ERR(error, S_CONTERR,
-			  "SVoiceLoadDataConfig",
-			  "Call to \"_s_load_voice_data_config\" failed");
+	S_FREE(voice_base_path);
 }
 
 
@@ -1639,7 +1489,7 @@ S_LOCAL void SVoiceLoadDataConfig(SVoice *self, const SMap *voiceConfig,
 S_LOCAL void _s_voice_class_add(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_add(S_OBJECTCLASS(&VoiceClass), error);
+	s_class_add(&VoiceClass, error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_voice_class_add",
 			  "Failed to add SVoiceClass");
@@ -1651,289 +1501,6 @@ S_LOCAL void _s_voice_class_add(s_erc *error)
 /* Static function implementations                                                  */
 /*                                                                                  */
 /************************************************************************************/
-
-static void sync_data_config(SVoice *self, SMap *dataConfig, s_erc *error)
-{
-	SMap *newDataConfig;
-	SIterator *itr;
-	s_bool key_present;
-	s_bool entries_match;
-	const char *data_name;
-
-
-	S_CLR_ERR(error);
-	newDataConfig = S_MAP(S_NEW("SMapList", error));
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "sync_data_config",
-				  "Failed to create a new data config map object"))
-		return;
-
-	/* iterate through given map */
-	itr = S_ITERATOR_GET(dataConfig, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "sync_data_config",
-				  "Call to \"S_ITERATOR_GET\" failed"))
-	{
-		S_DELETE(newDataConfig, "sync_data_config", error);
-		return;
-	}
-
-	while (itr)
-	{
-		data_name = SIteratorKey(itr, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "sync_data_config",
-					  "Call to \"SIteratorKey\" failed"))
-		{
-			S_DELETE(itr, "sync_data_config", error);
-			S_DELETE(newDataConfig, "sync_data_config", error);
-			return;
-		}
-
-		/* check if data_name is in current dataConfig */
-		key_present = SMapObjectPresent(self->data->dataConfig, data_name, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "sync_data_config",
-					  "Call to \"SMapObjectPresent\" failed"))
-		{
-			S_DELETE(itr, "sync_data_config", error);
-			S_DELETE(newDataConfig, "sync_data_config", error);
-			return;
-		}
-
-		if (key_present)
-		{
-			/*
-			 * compare the entries of data_name of current dataConfig
-			 * and given dataConfig
-			 */
-			entries_match = compare_data_config_entries(dataConfig,
-														self->data->dataConfig,
-														data_name,
-														error);
-			if (S_CHK_ERR(error, S_CONTERR,
-						  "sync_data_config",
-						  "Call to \"compare_data_config_entries\" for data name '%s' failed",
-						  data_name))
-			{
-				S_DELETE(itr, "sync_data_config", error);
-				S_DELETE(newDataConfig, "sync_data_config", error);
-				return;
-			}
-
-			if (!entries_match)
-			{
-				const SObject *loaded;
-
-
-				/* load new entry */
-				loaded = load_data_entry(newDataConfig, dataConfig, data_name, error);
-				if (S_CHK_ERR(error, S_CONTERR,
-							  "sync_data_config",
-							  "Call to \"load_data_entry\" for data name '%s' failed",
-							  data_name))
-				{
-					S_DELETE(itr, "sync_data_config", error);
-					S_DELETE(newDataConfig, "sync_data_config", error);
-					return;
-				}
-
-				/* unload old one */
-				unload_data_entry(self, self->data->dataConfig, data_name, error);
-				if (S_CHK_ERR(error, S_CONTERR,
-							  "sync_data_config",
-							  "Call to \"unload_data_entry\" for data name '%s' failed",
-							  data_name))
-				{
-					S_DELETE(itr, "sync_data_config", error);
-					S_DELETE(newDataConfig, "sync_data_config", error);
-					return;
-				}
-
-				/* add loaded to dataObjects map */
-				SMapSetObject(self->data->dataObjects, data_name, loaded, error);
-				if (S_CHK_ERR(error, S_CONTERR,
-							  "sync_data_config",
-							  "Call to \"SMapSetObject\" for data name '%s' failed",
-							  data_name))
-				{
-					S_DELETE(itr, "sync_data_config", error);
-					S_DELETE(newDataConfig, "sync_data_config", error);
-					return;
-				}
-			}
-		}
-		else
-		{
-			const SObject *loaded;
-
-
-			/* load new entry */
-			loaded = load_data_entry(newDataConfig, dataConfig, data_name, error);
-			if (S_CHK_ERR(error, S_CONTERR,
-						  "sync_data_config",
-						  "Call to \"load_data_entry\" for data name '%s' failed",
-						  data_name))
-			{
-				S_DELETE(itr, "sync_data_config", error);
-				S_DELETE(newDataConfig, "sync_data_config", error);
-				return;
-			}
-
-			/* add loaded to dataObjects map */
-			SMapSetObject(self->data->dataObjects, data_name, loaded, error);
-			if (S_CHK_ERR(error, S_CONTERR,
-						  "sync_data_config",
-						  "Call to \"SMapSetObject\" for data name '%s' failed",
-						  data_name))
-			{
-				S_DELETE(itr, "sync_data_config", error);
-				S_DELETE(newDataConfig, "sync_data_config", error);
-				return;
-			}
-		}
-
-		itr = SIteratorNext(itr);
-	}
-
-	/*
-	 * now iterate through current data config and delete everything
-	 * that is left over.
-	 */
-	itr = S_ITERATOR_GET(self->data->dataConfig, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "sync_data_config",
-				  "Call to \"S_ITERATOR_GET\" failed"))
-	{
-		S_DELETE(newDataConfig, "sync_data_config", error);
-		return;
-	}
-
-	while (itr)
-	{
-		SObject *toUnload;
-
-
-		data_name = SIteratorKey(itr, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "sync_data_config",
-					  "Call to \"SIteratorKey\" failed"))
-		{
-			S_DELETE(itr, "sync_data_config", error);
-			S_DELETE(newDataConfig, "sync_data_config", error);
-			return;
-		}
-
-		/* unload data */
-		toUnload = SMapObjectUnlink(self->data->dataObjects, data_name, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "sync_data_config",
-					  "Call to \"SMapObjectUnlink\" for data '%s' failed",
-					  data_name))
-		{
-			S_DELETE(itr, "sync_data_config", error);
-			S_DELETE(newDataConfig, "sync_data_config", error);
-			return;
-		}
-
-		_s_vm_unload_data(toUnload, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "sync_data_config",
-					  "Call to \"_s_vm_unload_data\" for data '%s' failed",
-					  data_name))
-		{
-			S_DELETE(itr, "sync_data_config", error);
-			S_DELETE(newDataConfig, "sync_data_config", error);
-			return;
-		}
-
-		itr = SIteratorNext(itr);
-	}
-
-	/* delete old config */
-	S_DELETE(self->data->dataConfig, "sync_data_config", error);
-
-	/* set new one */
-	self->data->dataConfig = newDataConfig;
-
-	/* delete the given one */
-	S_DELETE(dataConfig, "sync_data_config", error);
-}
-
-
-static s_bool compare_data_config_entries(const SMap *newDataConfig,
-										  const SMap *currentDataConfig,
-										  const char *data_name,
-										  s_erc *error)
-{
-	const SObject *tmp;
-	const SMap *newDataObjectMap;
-	const SMap *currentDataObjectMap;
-	s_data_info *new_data_info;
-	s_data_info *current_data_info;
-	s_bool entries_match;
-
-
-	S_CLR_ERR(error);
-
-	tmp = SMapGetObject(newDataConfig, data_name, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "compare_data_config_entries",
-				  "Call to \"SMapGetObject\" for new data config map failed"))
-		return FALSE;
-
-	newDataObjectMap = S_CAST(tmp, SMap, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "compare_data_config_entries",
-				  "Call to \"S_CAST (SMap)\" for new data config map failed"))
-		return FALSE;
-
-	/* We put this one in, so unsafe cast */
-	currentDataObjectMap = (const SMap*)SMapGetObjectDef(currentDataConfig, data_name, NULL, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "compare_data_config_entries",
-				  "Call to \"SMapGetObjectDef\" for current data config map failed"))
-		return FALSE;
-
-	if (currentDataObjectMap == NULL)
-	{
-		S_CTX_ERR(error, S_CONTERR,
-				  "compare_data_config_entries",
-				  "Current data object map is NULL");
-		return FALSE;
-	}
-
-	new_data_info = get_data_info(newDataObjectMap, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "compare_data_config_entries",
-				  "Call to \"get_data_info\" for new data config map failed"))
-		return FALSE;
-
-	current_data_info = get_data_info(currentDataObjectMap, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "compare_data_config_entries",
-				  "Call to \"get_data_info\" for current data config map failed"))
-	{
-		S_FREE(new_data_info);
-		return FALSE;
-	}
-
-	entries_match = compare_data_info(new_data_info, current_data_info, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "compare_data_config_entries",
-				  "Call to \"compare_data_info\" failed"))
-	{
-		S_FREE(new_data_info);
-		S_FREE(current_data_info);
-		return FALSE;
-	}
-
-	S_FREE(new_data_info);
-	S_FREE(current_data_info);
-
-	return entries_match;
-}
-
 
 static s_data_info *get_data_info(const SMap *map, s_erc *error)
 {
@@ -2019,111 +1586,7 @@ static s_data_info *get_data_info(const SMap *map, s_erc *error)
 }
 
 
-static s_bool compare_data_info(const s_data_info *d1, const s_data_info *d2,
-								s_erc *error)
-{
-	int rv;
-
-	S_CLR_ERR(error);
-
-	/* format */
-	rv = s_strcmp(d1->format, d2->format, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "compare_data_info",
-				  "Call to \"s_strcmp\" for 'format' values '%s' and '%s' failed",
-				  d1->format, d2->format))
-		return FALSE;
-
-	if (rv != 0)
-		return FALSE;
-
-	/* plug-in */
-	rv = s_strcmp(d1->plugin, d2->plugin, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "compare_data_info",
-				  "Call to \"s_strcmp\" for 'plug-in' values '%s' and '%s' failed",
-				  d1->plugin, d2->plugin))
-		return FALSE;
-
-	if (rv != 0)
-		return FALSE;
-
-	/* path */
-	rv = s_strcmp(d1->path, d2->path, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "compare_data_info",
-				  "Call to \"s_strcmp\" for 'path' values '%s' and '%s' failed",
-				  d1->path, d2->path))
-		return FALSE;
-
-	if (rv != 0)
-		return FALSE;
-
-	return TRUE;
-}
-
-
-static const SObject *load_data_entry(SMap *newDataConfig, const SMap *dataConfig,
-									  const char *data_name, s_erc *error)
-{
-	s_data_info *data_info;
-	const SMap *newDataObjectMap;
-	const SObject *loaded;
-
-
-	S_CLR_ERR(error);
-
-	/* We have already checked this cast in compare_data_config_entries */
-	newDataObjectMap = (const SMap*)SMapGetObjectDef(dataConfig, data_name, NULL, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "load_data_entry",
-				  "Call to \"SMapGetObjectDef\" for current data config map failed"))
-		return NULL;
-
-	if (newDataObjectMap == NULL)
-	{
-		S_CTX_ERR(error, S_CONTERR,
-				  "load_data_entry",
-				  "Current data object map is NULL");
-		return NULL;
-	}
-
-	data_info = get_data_info(newDataObjectMap, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "load_data_entry",
-				  "Call to \"get_data_info\" for current data object map failed"))
-		return NULL;
-
-	loaded = _s_vm_load_data(data_info->plugin, data_info->path,
-							 data_info->format, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "load_data_entry",
-				  "Call to \"_s_vm_load_voice_data\" failed"))
-	{
-		S_FREE(data_info);
-		return NULL;
-	}
-
-	SMapSetObject(newDataConfig, data_name, S_OBJECT(newDataObjectMap), error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "load_data_entry",
-				  "Call to \"SMapSetObject\" failed"))
-	{
-		s_erc local_err = S_SUCCESS;
-
-
-		S_FREE(data_info);
-		_s_vm_unload_data(S_OBJECT(loaded), &local_err); /* error is already set */
-		return NULL;
-	}
-
-
-	return loaded;
-}
-
-
-static void unload_data_entry(SVoice *self, SMap *dataConfig, const char *data_name,
-							  s_erc *error)
+static void unload_data_entry(SVoice *self, const char *data_name, s_erc *error)
 {
 	SObject *toUnload;
 	s_bool data_loaded;
@@ -2163,12 +1626,6 @@ static void unload_data_entry(SVoice *self, SMap *dataConfig, const char *data_n
 		 */
 		S_DELETE(toUnload, "unload_data_entry", error);
 	}
-
-	/* remove entry from data config */
-	SMapObjectDelete(dataConfig, data_name, error);
-	S_CHK_ERR(error, S_CONTERR,
-			  "unload_data_entry",
-			  "Call to \"SMapObjectDelete\" failed");
 }
 
 
@@ -2306,13 +1763,12 @@ static void DestroyVoice(void *obj, s_erc *error)
 		/*
 		 * now iterate through data config and delete everything
 		 */
-		itr = S_ITERATOR_GET(self->data->dataConfig, error);
+		itr = S_ITERATOR_GET(self->data->dataObjects, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "DestroyVoice",
 					  "Call to \"S_ITERATOR_GET\" failed"))
 		{
 			S_DELETE(itr, "DestroyVoice", error);
-			S_DELETE(self->data->dataConfig, "DestroyVoice", error);
 
 			/*
 			 * leave data objects, this will probably cause
@@ -2333,7 +1789,6 @@ static void DestroyVoice(void *obj, s_erc *error)
 						  "Call to \"SIteratorKey\" failed"))
 			{
 				S_DELETE(itr, "DestroyVoice", error);
-				S_DELETE(self->data->dataConfig, "DestroyVoice", error);
 
 				/*
 				 * leave data objects, this will probably cause
@@ -2346,13 +1801,12 @@ static void DestroyVoice(void *obj, s_erc *error)
 				return;
 			}
 
-			unload_data_entry(self, self->data->dataConfig, data_name, error);
+			unload_data_entry(self, data_name, error);
 			if (S_CHK_ERR(error, S_CONTERR,
 						  "DestroyVoice",
 						  "Call to \"unload_data_entry\" failed"))
 			{
 				S_DELETE(itr, "DestroyVoice", error);
-				S_DELETE(self->data->dataConfig, "DestroyVoice", error);
 
 				/*
 				 * leave data objects, this will probably cause
@@ -2368,7 +1822,6 @@ static void DestroyVoice(void *obj, s_erc *error)
 			itr = SIteratorNext(itr);
 		}
 
-		S_DELETE(self->data->dataConfig, "DestroyVoice", error);
 		S_DELETE(self->data->dataObjects, "DestroyVoice", error);
 		S_FREE(self->data);
 	}

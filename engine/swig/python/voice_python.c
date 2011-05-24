@@ -45,7 +45,7 @@
 	PyObject *featProcessors;
 
 
-	SVoice(const char *path, s_bool load_data=TRUE, s_erc *error)
+	SVoice(const char *path, s_erc *error)
 	{
 		SVoice *voice;
 		PyObject *osPathModule;
@@ -724,7 +724,7 @@
 		}
 
 		/* it's not a Python file, do normal loading */
-		voice = s_vm_load_voice(full_path, load_data, error);
+		voice = s_vm_load_voice(full_path, error);
 		S_FREE(full_path);
 		Py_DECREF(tmpObject1);
 		Py_DECREF(tmpObject2);

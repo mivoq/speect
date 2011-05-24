@@ -108,11 +108,13 @@ static void cache_add(const SObject *dataEntry, const char *data_path,
 static void cache_remove(const char *data_path, const char *data_identity,
 						 s_erc *error);
 
-static SVoice *load_voice_no_data(const char *path, s_erc *error);
+static SVoice *load_voice_no_data(const char *path, SMap **dataConfig, s_erc *error);
 
 static s_bool data_loaded(SObject *dataObject, s_erc *error);
 
 static void free_dataType(void *ptr, s_erc *error);
+
+static s_bool data_loaded_inc_ref(SObject *dataObject, s_erc *error);
 
 
 /************************************************************************************/
@@ -121,9 +123,10 @@ static void free_dataType(void *ptr, s_erc *error);
 /*                                                                                  */
 /************************************************************************************/
 
-S_API SVoice *s_vm_load_voice(const char *path, s_bool load_data, s_erc *error)
+S_API SVoice *s_vm_load_voice(const char *path, s_erc *error)
 {
 	SVoice *voice;
+	SMap *dataConfig;
 
 
 	S_CLR_ERR(error);
@@ -137,7 +140,7 @@ S_API SVoice *s_vm_load_voice(const char *path, s_bool load_data, s_erc *error)
 	}
 
 	s_mutex_lock(&vm_mutex);
-	voice = load_voice_no_data(path, error);
+	voice = load_voice_no_data(path, &dataConfig, error);
 	s_mutex_unlock(&vm_mutex);
 
 	if (S_CHK_ERR(error, S_CONTERR,
@@ -145,20 +148,51 @@ S_API SVoice *s_vm_load_voice(const char *path, s_bool load_data, s_erc *error)
 				  "Call to \"load_voice_no_data\" failed"))
 		return NULL;
 
-	if (!load_data)
-		return voice; /* don't load data */
-
-	/* now load data */
-	SVoiceLoadData(voice, error);  /* mutex is locked by _s_vm_load_voice_data */
+	/*
+	 * Now load data.
+	 * Data is loaded by voice and not above because the voice data
+	 * type is opaque and defined in the voice.
+	 */
+	_s_voice_load_data(voice, dataConfig, error); /* mutex is locked by _s_vm_load_data */
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "s_vm_load_voice",
-				  "Call to \"SVoiceLoadData\" failed"))
+				  "Call to \"_s_voice_load_data\" failed"))
 	{
 		S_DELETE(voice, "s_vm_load_voice", error);
+		S_DELETE(dataConfig, "s_vm_load_voice", error);
 		return NULL;
 	}
 
+	S_DELETE(dataConfig, "s_vm_load_voice", error);
 	return voice;
+}
+
+
+S_LOCAL s_bool _s_vm_data_loaded_inc_ref(SObject *dataObject, s_erc *error)
+{
+	s_bool loaded;
+
+
+	S_CLR_ERR(error);
+
+	if (dataObject == NULL)
+	{
+		S_CTX_ERR(error, S_ARGERROR,
+				  "_s_vm_data_loaded_inc_ref",
+				  "Argument \"dataObject\" is NULL");
+		return FALSE;
+	}
+
+	s_mutex_lock(&vm_mutex);
+	loaded = data_loaded_inc_ref(dataObject, error);
+	s_mutex_unlock(&vm_mutex);
+
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "_s_vm_data_loaded_inc_ref",
+				  "Call to \"data_loaded_inc_ref\" failed"))
+		return FALSE;
+
+	return loaded;
 }
 
 
@@ -320,7 +354,7 @@ S_LOCAL void _s_vm_quit(s_erc *error)
 /*                                                                                  */
 /************************************************************************************/
 
-static SVoice *load_voice_no_data(const char *path, s_erc *error)
+static SVoice *load_voice_no_data(const char *path, SMap **dataConfig, s_erc *error)
 {
 	SVoice *voice;
 	SMap *voiceConfig;
@@ -424,10 +458,10 @@ static SVoice *load_voice_no_data(const char *path, s_erc *error)
 		return NULL;
 	}
 
-	SVoiceLoadDataConfig(voice, voiceConfig, error);
+	(*dataConfig) = _s_load_voice_data_config(voiceConfig, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "load_voice_no_data",
-				  "Call to \"SVoiceLoadDataConfig\" failed for '%s' voice config file",
+				  "Call to \"_s_load_voice_data_config\" failed for '%s' voice config file",
 				  path))
 	{
 		S_DELETE(voice, "load_voice_no_data", error);
@@ -465,8 +499,8 @@ static const SObject *load_data(const char *plugin_path,
 	if (tmp != NULL)
 	{
 		/*
-		 * it's loaded, get the data object's plug-in, increase both
-		 * their reference counts, and return the data object.
+		 * it's loaded, increase the dataType object tmp's reference
+		 * count, and return the data object.
 		 */
 		dataEntry = (dataType*)SObjectGetVoid(tmp, "dataType", error);
 		if (S_CHK_ERR(error, S_CONTERR,
@@ -555,12 +589,78 @@ static const SObject *load_data(const char *plugin_path,
 }
 
 
+static s_bool data_loaded_inc_ref(SObject *dataObject, s_erc *error)
+{
+	const SObject *dataPath;
+	const char *data_path;
+	SObject *tmp;
+	char *data_identity;
+
+
+	S_CLR_ERR(error);
+
+	data_identity = get_string_of_pointer(dataObject, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "data_loaded_inc_ref",
+				  "Call to \"get_string_of_pointer\" failed"))
+		return FALSE;
+
+	dataPath = SMapGetObjectDef(dataIdentity, data_identity, NULL, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "data_loaded_inc_ref",
+				  "Call to \"SMapGetObjectDef\" failed"))
+	{
+		S_FREE(data_identity);
+		return FALSE;
+	}
+
+	S_FREE(data_identity);
+
+	if (dataPath == NULL)
+	{
+		/* not loaded */
+		return FALSE;
+	}
+
+	/* loaded, inc ref */
+	data_path = SObjectGetString(dataPath, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "data_loaded_inc_ref",
+				  "Call to \"SObjectGetString\" failed"))
+		return FALSE;
+
+	tmp = S_OBJECT(SMapGetObjectDef(dataTypes, data_path, NULL, error));
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "data_loaded_inc_ref",
+				  "Call to \"SMapGetObjectDef\" for data object at path \'%s\' failed",
+				  data_path))
+		return FALSE;
+
+	if (tmp != NULL)
+	{
+		/*
+		 * it's loaded, increase reference count.
+		 */
+		SObjectIncRef(tmp);
+		return TRUE;
+	}
+
+	/* error here, dataIdentity says it's loaded, but we can't find
+	 * it in dataTypes
+	 */
+	S_CTX_ERR(error, S_FAILURE,
+			  "data_loaded_inc_ref",
+			  "Given object appears to be loaded, but could not be found in cache.");
+	return FALSE;
+}
+
+
 static void unload_data(SObject *dataObject, s_erc *error)
 {
 	char *data_identity;
 	const char *data_path;
 	const SObject *tmp;
-	dataType *dataEntry;
+
 
 	S_CLR_ERR(error);
 
@@ -608,16 +708,6 @@ static void unload_data(SObject *dataObject, s_erc *error)
 				  "unload_data",
 				  "Data at path \'%s\' was not loaded",
 				  data_path);
-		S_FREE(data_identity);
-		return;
-	}
-
-	dataEntry = (dataType*)SObjectGetVoid(tmp, "dataType", error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "unload_data",
-				  "Call to \"SObjectGetVoid\" for data path \'%s\' failed",
-				  data_path))
-	{
 		S_FREE(data_identity);
 		return;
 	}

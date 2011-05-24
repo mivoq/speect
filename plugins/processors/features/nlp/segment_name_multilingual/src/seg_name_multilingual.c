@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2010-2011 The Department of Arts and Culture,                      */
+/* Copyright (c) 2011 The Department of Arts and Culture,                           */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -24,11 +24,11 @@
 /************************************************************************************/
 /*                                                                                  */
 /* AUTHOR  : Aby Louw                                                               */
-/* DATE    : February 2010                                                          */
+/* DATE    : May 2011                                                               */
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* Syllable vowel feature processor.                                                */
+/* Segment name in multilingual format feature processor.                           */
 /*                                                                                  */
 /*                                                                                  */
 /************************************************************************************/
@@ -40,9 +40,8 @@
 /*                                                                                  */
 /************************************************************************************/
 
-#include "syl_vowel.h"
 #include "phoneset.h"
-#include "plugin_info.h"
+#include "seg_name_multilingual.h"
 
 
 /************************************************************************************/
@@ -51,7 +50,8 @@
 /*                                                                                  */
 /************************************************************************************/
 
-static SSylVowelFeatProcClass SylVowelFeatProcClass; /* SSylVowelFeatProc class declaration. */
+/* SSegNameMultilingualFeatProc class declaration. */
+static SSegNameMultilingualFeatProcClass SegNameMultilingualFeatProcClass;
 
 
 /************************************************************************************/
@@ -60,7 +60,7 @@ static SSylVowelFeatProcClass SylVowelFeatProcClass; /* SSylVowelFeatProc class 
 /*                                                                                  */
 /************************************************************************************/
 
-static const SPhoneset *_get_phoneset(const SItem *item, s_bool *multilingual, s_erc *error);
+static s_bool segment_is_pause(const SItem *item, s_erc *error);
 
 
 /************************************************************************************/
@@ -71,23 +71,23 @@ static const SPhoneset *_get_phoneset(const SItem *item, s_bool *multilingual, s
 
 
 /* local functions to register and free classes */
-S_LOCAL void _s_syl_vowel_class_reg(s_erc *error)
+S_LOCAL void _s_seg_name_multilingual_class_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(S_OBJECTCLASS(&SylVowelFeatProcClass), error);
+	s_class_reg(&SegNameMultilingualFeatProcClass, error);
 	S_CHK_ERR(error, S_CONTERR,
-			  "_s_syl_vowel_class_reg",
-			  "Failed to register SSylVowelFeatProcClass");
+			  "_s_seg_name_multilingual_class_reg",
+			  "Failed to register SSegNameMultilingualFeatProcClass");
 }
 
 
-S_LOCAL void _s_syl_vowel_class_free(s_erc *error)
+S_LOCAL void _s_seg_name_multilingual_class_free(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_free(S_OBJECTCLASS(&SylVowelFeatProcClass), error);
+	s_class_free(&SegNameMultilingualFeatProcClass, error);
 	S_CHK_ERR(error, S_CONTERR,
-			  "_s_syl_vowel_class_free",
-			  "Failed to free SSylVowelFeatProcClass");
+			  "_s_seg_name_multilingual_class_free",
+			  "Failed to free SSegNameMultilingualFeatProcClass");
 }
 
 
@@ -97,122 +97,54 @@ S_LOCAL void _s_syl_vowel_class_free(s_erc *error)
 /*                                                                                  */
 /************************************************************************************/
 
-static const SPhoneset *_get_phoneset(const SItem *item, s_bool *multilingual, s_erc *error)
+/* check if item is a pause in main language */
+static s_bool segment_is_pause(const SItem *item, s_erc *error)
 {
 	const SPhoneset *phoneset;
 	const SVoice *voice;
-	s_bool is_present;
+	s_bool is_pause;
 
 
 	S_CLR_ERR(error);
 
-	/* get the voice */
 	voice = SItemVoice(item, error);
 	if (S_CHK_ERR(error, S_CONTERR,
-				  "_get_phoneset",
+				  "segment_is_pause",
 				  "Call to \"SItemVoice\" failed"))
-		return NULL;
+		return FALSE;
 
 	if (voice == NULL)
 	{
 		S_CTX_ERR(error, S_FAILURE,
-				  "_get_phoneset",
+				  "segment_is_pause",
 				  "Item voice is NULL, voice is required to get phoneset");
-		return NULL;
+		return FALSE;
 	}
 
-	/*
-	 * do we have a 'voices' feature in the voice,
-	 * i.e. is this a multilingual voice
-	 */
-	is_present = SVoiceFeatureIsPresent(voice, "voices", error);
+	phoneset = S_PHONESET(SVoiceGetData(voice, "phoneset", error));
 	if (S_CHK_ERR(error, S_CONTERR,
-				  "_get_phoneset",
-				  "Call to \"SVoiceFeatureIsPresent\" failed"))
-		return NULL;
-
-	if (is_present)
-	{
-		/* This is a multilingual voice.
-		 * Get language feature of item, which is language feature
-		 * of item's token.
-		 */
-		const SItem *tokenItem;
-		const char *lang;
-		const SMap *voicesMap;
-		const SVoice *thisVoice;
-
-
-		(*multilingual) = TRUE;
-		tokenItem = s_path_to_item(item, "R:SylStructure.parent.R:Token.parent",
-								   error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "_get_phoneset",
-					  "Call to \"s_path_to_item\" failed"))
-			return NULL;
-
-		if (tokenItem == NULL)
-		{
-			S_CTX_ERR(error, S_FAILURE,
-					  "_get_phoneset",
-					  "Failed to find item's token, which is required to get language feature");
-			return NULL;
-		}
-
-		lang = SItemGetString(tokenItem, "lang", error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "_get_phoneset",
-					  "Call to \"SItemGetString\" failed"))
-			return NULL;
-
-		/* now get the phoneset */
-		voicesMap = (const SMap*)SVoiceGetFeature(voice, "voices", error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "_get_phoneset",
-					  "Call to \"SVoiceGetFeature\" failed"))
-			return NULL;
-
-		thisVoice = (const SVoice*)SMapGetObjectDef(voicesMap, lang, NULL, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "_get_phoneset",
-					  "Call to \"SMapGetObjectDef\" failed"))
-			return NULL;
-
-		if (thisVoice == NULL)
-		{
-			S_CTX_ERR(error, S_FAILURE,
-					  "_get_phoneset",
-					  "Failed to find the voice for language '%s', which is required to get the phoneset", lang);
-			return NULL;
-		}
-
-		phoneset = S_PHONESET(SVoiceGetData(thisVoice, "phoneset", error));
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "_get_phoneset",
-					  "Call to \"SVoiceGetData\" failed"))
-			return NULL;
-	}
-	else
-	{
-		/* not multilingual voice */
-		(*multilingual) = FALSE;
-
-		phoneset = S_PHONESET(SVoiceGetData(voice, "phoneset", error));
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "Run",
-					  "Call to \"SVoiceGetData\" failed"))
-			return NULL;
-	}
+				  "segment_is_pause",
+				  "Call to \"SVoiceGetData\" failed"))
+		return FALSE;
 
 	if (phoneset == NULL)
 	{
 		S_CTX_ERR(error, S_FAILURE,
-				  "_get_phoneset",
-				  "Item phoneset is NULL, required to extract phone features");
-		return NULL;
+				  "segment_is_pause",
+				  "Phoneset is NULL, phoneset is required to get silence phone");
+		return FALSE;
 	}
 
-	return phoneset;
+	is_pause = S_PHONESET_CALL(phoneset, phone_has_feature)(phoneset,
+															SItemGetName(item, error),
+															"pause",
+															error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "segment_is_pause",
+				  "Call to \"phone_has_feature/SItemGetName\" failed"))
+		return FALSE;
+
+	return is_pause;
 }
 
 
@@ -232,11 +164,12 @@ static void Dispose(void *obj, s_erc *error)
 static SObject *Run(const SFeatProcessor *self, const SItem *item,
 					s_erc *error)
 {
+	const char *lang;
+	const char *name;
+	const SItem *tokenItem;
+	char *lang_name = NULL;
 	SObject *extractedFeat = NULL;
-	const SItem *itemInSylStructRel;
-	const SItem *segment;
-	const SPhoneset *phoneset;
-	s_bool multilingual = FALSE;
+	s_bool is_pause;
 
 
 	S_CLR_ERR(error);
@@ -244,112 +177,92 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 	if (item == NULL)
 		return NULL;
 
-	/* get the phoneset */
-	phoneset = _get_phoneset(item, &multilingual, error);
+	/* get item name */
+	name = SItemGetString(item, "name", error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Run",
-				  "Call to \"_get_phoneset\" failed"))
+				  "Call to \"SItemGetString\" failed"))
 		return NULL;
 
-	itemInSylStructRel = SItemAs(item, "SylStructure", error);
+	if (name == NULL)
+		return NULL;
+
+
+	is_pause = segment_is_pause(item, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Run",
-				  "Call to \"SItemAs\" failed"))
-		goto quit_error;
+				  "Call to \"segment_is_pause\" failed"))
+		return NULL;
 
-	segment = SItemDaughter(itemInSylStructRel, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "Run",
-				  "Call to \"SItemDaughter\" failed"))
-		goto quit_error;
-
-	while (segment != NULL)
+	if (is_pause)
 	{
-		s_bool is_vowel;
-		const char *item_name;
-
-
-		item_name = SItemGetName(segment, error);
+		/* it is a pause in main language, so just return the name */
+		extractedFeat = SObjectSetString(name, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "Run",
-					  "Call to \"SItemGetName\" failed"))
-			goto quit_error;
+					  "Call to \"SObjectSetString\" failed"))
+			return NULL;
 
-		if (item_name == NULL)
-			continue;
-
-		is_vowel = S_PHONESET_CALL(phoneset, phone_has_feature)(phoneset,
-																item_name,
-																"vowel",
-																error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "Run",
-					  "Call to \"phone_has_feature\" failed"))
-			goto quit_error;
-
-		if (is_vowel)
-		{
-			if (multilingual)
-			{
-				extractedFeat = s_path_to_featproc(segment,
-												   "segment_name_multilingual",
-												   error);
-				if (S_CHK_ERR(error, S_CONTERR,
-							  "Run",
-							  "Call to \"s_path_to_featproc\" failed"))
-					goto quit_error;
-			}
-			else
-			{
-				extractedFeat = SObjectSetString(item_name, error);
-				if (S_CHK_ERR(error, S_CONTERR,
-							  "Run",
-							  "Call to \"SObjectSetString\" failed"))
-					goto quit_error;
-			}
-
-			return extractedFeat;
-		}
-
-		segment = SItemNext(segment, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "Run",
-					  "Call to \"SItemNext\" failed"))
-			goto quit_error;
+		return extractedFeat;
 	}
 
-	/* did not find a vowel */
-	extractedFeat = SObjectSetString("novowel", error);
+	/* not a pause */
+
+	/* get item's token */
+	tokenItem = s_path_to_item(item, "R:SylStructure.parent.parent.R:Token.parent",
+							   error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "Run",
+				  "Call to \"s_path_to_item\" failed"))
+		return NULL;
+
+	if (tokenItem == NULL)
+		return NULL;
+
+	/* get language feature */
+	lang = SItemGetString(tokenItem, "lang", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "Run",
+				  "Call to \"SItemGetString\" failed"))
+		return NULL;
+
+	if (lang == NULL)
+		return NULL;
+
+	s_asprintf(&lang_name, error, "%s_%s", lang, name);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "Run",
+				  "Call to \"s_asprintf\" failed"))
+		return NULL;
+
+	extractedFeat = SObjectSetString(lang_name, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Run",
 				  "Call to \"SObjectSetString\" failed"))
-		goto quit_error;
+	{
+		S_FREE(lang_name);
+		return NULL;
+	}
 
-	/* all OK here */
+	S_FREE(lang_name);
 	return extractedFeat;
 
-	/* error cleanup */
-quit_error:
-	if (extractedFeat != NULL)
-		S_DELETE(extractedFeat, "Run", error);
-
 	self = NULL; /* compiler noise about unused parameters */
-	return NULL;
 }
 
 
 /************************************************************************************/
 /*                                                                                  */
-/* SSylVowelFeatProc class initialization                                           */
+/* SSegNameMultilingualFeatProc class initialization                                */
 /*                                                                                  */
 /************************************************************************************/
 
-static SSylVowelFeatProcClass SylVowelFeatProcClass =
+static SSegNameMultilingualFeatProcClass SegNameMultilingualFeatProcClass =
 {
 	/* SObjectClass */
 	{
-		"SFeatProcessor:SSylVowelFeatProc",
-		sizeof(SSylVowelFeatProc),
+		"SFeatProcessor:SSegNameMultilingualFeatProc",
+		sizeof(SSegNameMultilingualFeatProc),
 		{ 0, 1},
 		NULL,            /* init    */
 		NULL,            /* destroy */

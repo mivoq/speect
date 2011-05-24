@@ -37,7 +37,7 @@
 
 %define voice_ctor_DOCSTRING
 """
-SVoice(path[, load_data=TRUE])
+SVoice(path)
 
 Load a voice, from the voice configuration at the given path. If any
 of the voice's data objects have already been loaded, then they are shared.
@@ -45,8 +45,6 @@ This reduces the need for multiple redundant calls.
 
 :param path: The name of the voice configuration file to load.
 :type path: string
-:param load_data: This flag currently defaults to ``TRUE`` and should not be used.
-:type load_data: bool
 :return: Voice object
 :rtype: SVoice
 :raises: RuntimeError if Speect was unable to load the voice.

@@ -2,9 +2,11 @@
 .. index:: 
    single: Generic Object System (C API); Primitives
 
-=======================
-Primitive SObject Types
-=======================
+==========
+Primitives
+==========
+Primitive data types (int, float, string) and void types as SObjects.
+
 
 Integer
 =======
@@ -35,7 +37,6 @@ String
 
 .. doxybridge:: SObjectGetString
 
-
 Void
 ====
 
@@ -44,3 +45,6 @@ Void
 .. doxybridge:: SObjectResetVoid
 
 .. doxybridge:: SObjectGetVoid
+
+.. doxybridge:: s_svoid_free_fp
+   :type: typedef function pointer

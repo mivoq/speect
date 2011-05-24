@@ -1,33 +1,14 @@
 
 .. index:: 
-   single: Generic Object System (C API); SObject
+   single: Generic Object System (C API); Object Functions
 
-=======
-SObject
-=======
+================
+Object Functions
+================
 
-.. toctree::
-   :hidden:
-
-   SObject_detail
-   
-
-Definition
-==========
-
-.. doxybridge:: SObject
-   :type: speect object
-   :members: none
-
-
-.. seealso:: :doc:`SObject_detail`.
-
-
-Functions
-=========
 
 Query
------
+=====
 
 .. doxybridge:: SObjectSize
 
@@ -37,18 +18,32 @@ Query
 
 .. doxybridge:: SObjectInheritance
 
+.. doxybridge:: SObjectCompare
+
 
 Read/Write
-----------
+==========
 
 .. doxybridge:: SObjectRead
 
-
 .. doxybridge:: SObjectWrite
+
+.. doxybridge:: SObjectTypeIsReadable 
+
+.. doxybridge:: SObjectIsWritable
+
+
+Save/Load
+=========
+
+.. doxybridge:: SObjectSave
+
+.. doxybridge:: SObjectLoad
+
 
 
 Reference Counting
-------------------
+==================
 
 .. doxybridge:: SObjectIncRef
 
@@ -57,3 +52,15 @@ Reference Counting
 .. warning::
    Reference counting functions should be used with utmost care. 
    They are normally not required, and are here just for expert use.
+
+
+Miscellaneous
+=============
+
+.. doxybridge:: SObjectPrint
+
+
+Copy
+====
+
+.. doxybridge:: SObjectCopy

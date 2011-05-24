@@ -14,7 +14,7 @@ Definition
 .. doxybridge:: s_list
 
 .. doxybridge:: s_list_element
-   
+
 
 Create/Delete
 =============

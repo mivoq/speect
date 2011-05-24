@@ -92,9 +92,9 @@ S_BEGIN_C_DECLS
  * @param TYPE The data type to allocate.
  * @param NMEMB The number of @a TYPE data type to allocate.
  *
- * @return Pointer to the allocated memory or @c NULL if failed.
+ * @return Pointer to the allocated memory or #NULL if failed.
  *
- * @note If (sizeof(TYPE) * NMEMB) = 0 then returns @c NULL.
+ * @note If (sizeof(TYPE) * NMEMB) = 0 then returns #NULL.
  */
 #define S_MALLOC(TYPE, NMEMB) (_s_malloc(sizeof(TYPE)*(NMEMB)))
 
@@ -106,9 +106,9 @@ S_BEGIN_C_DECLS
  *
  * @param SIZE The number bytes to allocate.
  *
- * @return Pointer to the allocated memory or @c NULL if failed.
+ * @return Pointer to the allocated memory or #NULL if failed.
  *
- * @note If SIZE = 0 then returns @c NULL.
+ * @note If SIZE = 0 then returns #NULL.
  */
 #define S_MALLOC_SIZE(SIZE) (_s_malloc(SIZE))
 
@@ -122,10 +122,10 @@ S_BEGIN_C_DECLS
  * @param TYPE The data type to allocate.
  * @param NMEMB The number of @a TYPE data type to allocate.
  *
- * @return Pointer to the allocated memory (set to zero) or @c NULL if
+ * @return Pointer to the allocated memory (set to zero) or #NULL if
  * failed.
  *
- * @note If (sizeof(TYPE) * NMEMB) = 0 then returns @c NULL.
+ * @note If (sizeof(TYPE) * NMEMB) = 0 then returns #NULL.
  */
 #define S_CALLOC(TYPE,NMEMB) (_s_calloc(sizeof(TYPE)*(NMEMB)))
 
@@ -138,10 +138,10 @@ S_BEGIN_C_DECLS
  *
  * @param SIZE The number bytes to allocate.
  *
- * @return Pointer to the allocated memory (set to zero) or @c NULL if
+ * @return Pointer to the allocated memory (set to zero) or #NULL if
  * failed.
  *
- * @note If SIZE = 0 then returns @c NULL.
+ * @note If SIZE = 0 then returns #NULL.
  */
 #define S_CALLOC_SIZE(SIZE) (_s_calloc(SIZE))
 
@@ -156,9 +156,9 @@ S_BEGIN_C_DECLS
  * @param TYPE The data type to allocate.
  * @param NMEMB The number of @a TYPE data type to allocate.
  *
- * @return Pointer to the allocated memory or @c NULL if failed.
+ * @return Pointer to the allocated memory or #NULL if failed.
  *
- * @note If (sizeof(TYPE) * NMEMB) = 0 then frees @a P and returns @c NULL.
+ * @note If (sizeof(TYPE) * NMEMB) = 0 then frees @a P and returns #NULL.
  * @note If memory allocation failed then @a P is freed.
  */
 #define S_REALLOC(P,TYPE,NMEMB) (_s_realloc((void *)(P),sizeof(TYPE)*(NMEMB)))
@@ -173,9 +173,9 @@ S_BEGIN_C_DECLS
  * @param P The pointer to the memory of which to change the size.
  * @param SIZE The number of bytes to allocate.
  *
- * @return Pointer to the allocated memory or @c NULL if failed.
+ * @return Pointer to the allocated memory or #NULL if failed.
  *
- * @note If SIZE = 0 then frees @a P and returns @c NULL.
+ * @note If SIZE = 0 then frees @a P and returns #NULL.
  * @note If memory allocation failed then @a P is freed.
  */
 #define S_REALLOC_SIZE(P,SIZE) (_s_realloc((void *)(P),SIZE))
@@ -187,7 +187,7 @@ S_BEGIN_C_DECLS
  *
  * @param P The memory space to free.
  *
- * @note Sets @a P to @c NULL.
+ * @note Sets @a P to #NULL.
  */
 #define S_FREE(P)								\
 	do {										\

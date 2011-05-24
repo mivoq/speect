@@ -138,11 +138,11 @@ S_API size_t SObjectSize(const SObject *self, s_erc *error);
 
 
 /**
- * Test if an object is derived from the given class.
+ * Test if an object is derived from the given object type.
  * @public @memberof SObject
  *
  * @param self The object to test.
- * @param type The class to test against.
+ * @param type The object type to test against.
  * @param error Error code.
  *
  * @return #TRUE or #FALSE.
@@ -151,25 +151,25 @@ S_API s_bool SObjectIsType(const SObject *self, const char *type, s_erc *error);
 
 
 /**
- * Get the given object's class type name.
+ * Get the given object's type name.
  * @public @memberof SObject
  *
  * @param self The given object.
  * @param error Error code.
  *
- * @return Pointer to the given object's class type name.
+ * @return Pointer to the given object's type name.
  */
 S_API const char *SObjectType(const SObject *self, s_erc *error);
 
 
 /**
- * Get the given object's class inheritance.
+ * Get the given object's inheritance.
  * @public @memberof SObject
  *
  * @param self The given object.
  * @param error Error Code.
  *
- * @return A ":" separated string of the given classes inheritance
+ * @return A colon (":") separated string of the given object's inheritance
  * hierarchy, excluding #SObject.
  */
 S_API const char *SObjectInheritance(const SObject *self, s_erc *error);
@@ -292,7 +292,7 @@ S_API void SObjectDecRef(SObject *self);
  * @param error Error code.
  *
  * @return A void pointer to the given object if it can be cast to the
- * given object type, otherwise @a NULL.
+ * given object type, otherwise #NULL.
  *
  * @note Use macros #S_CAST, #S_CAST_SAFE and #S_CAST_UNSAFE.
  */

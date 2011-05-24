@@ -174,7 +174,7 @@ struct s_logger
  * @param path The full path and file name of the file which to
  * log to. If the file already exists, then it will be overwritten.
  *
- * @return Pointer to newly created file stream logger, or @c NULL on error.
+ * @return Pointer to newly created file stream logger, or #NULL on error.
  *
  * @note Only thread safe if compiled with threading library, and
  * whether the standard vfprintf() function is thread-safe,
@@ -192,7 +192,7 @@ S_API s_logger *s_logger_file_new(const char *path);
  * @param log_to_stdout If #TRUE then logging will be to @c stdout,
  * otherwise streaming will be to @c stderr.
  *
- * @return Pointer to newly created console stream logger, or @c NULL
+ * @return Pointer to newly created console stream logger, or #NULL
  * on error.
  *
  * @note Only thread safe if compiled with threading library, and

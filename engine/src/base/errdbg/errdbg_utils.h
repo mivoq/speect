@@ -74,7 +74,7 @@ S_BEGIN_C_DECLS
  * @param error Error code.
  *
  * @return Pointer to string representation of the given error code. If the error
- * code is unknown then "<i>Undefined error</i>" is returned.
+ * code is unknown then "<em>Undefined error</em>" is returned.
  *
  * @note Caller is responsible for returned character buffer's memory.
  * @note Thread-safe.

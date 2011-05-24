@@ -141,14 +141,14 @@ S_API void s_str_list_delete(s_str_list *self, s_erc *error);
  * @c NULL then start from first string element.
  * @param string The string to match.
  * @param index A variable to hold the index of the string element found
- * which matches the data. -1 if not found. Set to @c NULL if not required.
+ * which matches the data. -1 if not found. Set to #NULL if not required.
  * @param error Error code.
  *
  * @return Pointer to the string list element which matches the data,
  * else @c NULL.
  *
  * @note String lists are indexed starting from 0.
- * @note The index variable will be relative if f is @b not @c NULL.
+ * @note The index variable will be relative if f is @b not #NULL.
  */
 S_API const s_str_list_element *s_str_list_find_index(const s_str_list *self,
 													  const s_str_list_element *f,
@@ -193,7 +193,7 @@ S_API const s_str_list_element *s_str_list_last(const s_str_list *self,
  * @param error Error code.
  *
  * @return Pointer to the string list element which matches the data,
- * else @c NULL.
+ * else #NULL.
  *
  * @note String lists are indexed starting from 0.
  */
@@ -208,7 +208,7 @@ S_API const s_str_list_element *s_str_list_last(const s_str_list *self,
  * @param n Index of string element to find.
  * @param error Error code.
  *
- * @return Pointer to the nth string list element or @c NULL if index
+ * @return Pointer to the nth string list element or #NULL if index
  * is out of bounds.
  *
  * @note The string list elements are indexed from 0.
@@ -225,7 +225,7 @@ S_API const s_str_list_element *s_str_list_nth(const s_str_list *self,
  * @param n Index of string to find.
  * @param error Error code.
  *
- * @return Pointer to the nth string or @c NULL if index
+ * @return Pointer to the nth string or #NULL if index
  * is out of bounds.
  *
  * @note The string list elements are indexed from 0.
@@ -283,7 +283,7 @@ S_API char *s_str_list_element_unlink(s_str_list_element *self, s_erc *error);
  * @param self The string list element to be deleted.
  * @param error Error code.
  *
- * @return Pointer to the previous string list element or @c NULL if none.
+ * @return Pointer to the previous string list element or #NULL if none.
  *
  */
 S_API s_str_list_element *s_str_list_element_delete(s_str_list_element *self,
@@ -326,7 +326,7 @@ S_API const s_str_list_element *s_str_list_element_prev(const s_str_list_element
  * @param error Error code.
  *
  * @return Pointer to the string list element which matches the given
- * string, else @c NULL if no match.
+ * string, else #NULL if no match.
  *
  * @note Returns the first match.
  */
@@ -481,7 +481,7 @@ S_API s_str_list *s_str_list_dup(const s_str_list *src, s_erc *error);
  *
  * @param src The source string list.
  * @param a Start position of the slice in the source string list. If
- * a is greater than or equal to the list size then @c NULL is returned.
+ * a is greater than or equal to the list size then #NULL is returned.
  * @param b End position of the slice in the source string list. If b = -1, or
  * b is greater than the number of elements in the source string list then
  * the slice is to the end of the source string list

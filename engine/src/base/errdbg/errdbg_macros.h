@@ -145,7 +145,7 @@ S_BEGIN_C_DECLS
  * @param ERROR Pointer to error code variable to set.
  * @param NEW_ERROR The new error code.
  * @param FUNCTION_NAME The name of the function where the error
- *        occurred (optional, can be @c NULL).
+ *        occurred (optional, can be #NULL).
  * @param MSG A format string specifying the error message and the
  *        format of the variable length argument list. Same as the
  *        standard @c printf() function.
@@ -175,7 +175,7 @@ S_BEGIN_C_DECLS
  * @param ERROR Pointer to error code variable to set.
  * @param NEW_ERROR The new error code.
  * @param FUNCTION_NAME The name of the function where the error
- *        occurred (optional, can be @c NULL).
+ *        occurred (optional, can be #NULL).
  * @param MSG A format string specifying the error message and the
  *        format of the variable length argument list. Same as the
  *        standard @c printf() function.
@@ -208,7 +208,7 @@ S_BEGIN_C_DECLS
  * @param ERROR Pointer to error code variable to set.
  * @param NEW_ERROR The new error code.
  * @param FUNCTION_NAME The name of the function where the error
- *        occurred (optional, can be @c NULL).
+ *        occurred (optional, can be #NULL).
  * @param MSG A format string specifying the error message and the
  *        format of the variable length argument list. Same as the
  *        standard @c printf() function.
@@ -233,7 +233,7 @@ S_BEGIN_C_DECLS
  *
  * @param ERROR Pointer to error code variable to set.
  * @param FUNCTION_NAME The name of the function where the error
- *        occurred (optional, can be @c NULL).
+ *        occurred (optional, can be #NULL).
  * @param MSG A format string specifying the error message and the
  *        format of the variable length argument list. Same as the
  *        standard @c printf() function.

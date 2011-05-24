@@ -229,13 +229,13 @@ S_API s_regex *s_regex_comp(const char *string, s_regex_flags flags, s_erc *erro
 /**
  * Matches a null-terminated string against the given compiled regular
  * expression in @c rxcomp. If it matches, and the sub-expression
- * elements structure @c rsub is not @c NULL, @c rsub will be
+ * elements structure @c rsub is not #NULL, @c rsub will be
  * filled with character pointers to the groups of strings that
  * correspond to the parenthesized sub-expressions of the expression.
  *
  * @param rxcomp The compiled regular expression.
  * @param string String to run regular expression on.
- * @param rsub Sub-expression elements, or @c NULL.
+ * @param rsub Sub-expression elements, or #NULL.
  * @param error Error code.
  *
  * @retval 0 if no match
@@ -267,7 +267,7 @@ S_API uint8 s_regexsub_num_groups(s_regexsub *rsub, s_erc *error);
  * @param n The group number to extract.
  * @param error Error code.
  *
- * @return Character string of the given numbered group, can be @c NULL.
+ * @return Character string of the given numbered group, can be #NULL.
  *
  * @note Caller is responsible for memory of returned string.
  * @note Group @c 0 is always the whole match.

@@ -70,8 +70,7 @@
  * @def S_BEGIN_C_DECLS
  * Start block for enclosing C code for inclusion in C++ programs.
  * This allows C++ programs to include the C header files of the Speect
- * engine.
- @code extern "C" { @endcode
+ * engine. @code extern "C" { @endcode
  * @hideinitializer
  */
 
@@ -80,8 +79,7 @@
  * @def S_END_C_DECLS
  * End block for enclosing C code for inclusion in C++ programs.
  * This allows C++ programs to include the C header files of the Speect
- * engine.
- @code } @endcode
+ * engine. @code } @endcode
  * @hideinitializer
  */
 
@@ -99,7 +97,8 @@
 
 /**
  * @def NULL
- * Define NULL pointer if it is not defined.
+ * Defined NULL pointer if it has not previously been defined.
+ * Platform specific value.
  * @hideinitializer
  */
 #if !defined(__MACH__)
@@ -115,7 +114,7 @@
 
 /**
  * @def S_MAX_PATH_LENGTH
- * Define the maximum length (size in bytes) of a string
+ * Defined maximum length (size in bytes) of a string
  * buffer for file paths.
  */
 #define S_MAX_PATH_LENGTH 1024
@@ -123,7 +122,8 @@
 
 /**
  * @def S_PATH_SEP
- * Define the path separator of the file system.
+ * Defined path separator of the file system.
+ * Platform specific value.
  */
 #ifdef SPCT_WIN32
 #  define S_PATH_SEP '\\'
@@ -192,7 +192,7 @@
  *
  * @param S Argument to turn into a string.
  *
- * @return @code "S" @endcode
+ * @return @c "S"
  */
 #define S_TOSTRING(S) # S
 
@@ -205,7 +205,7 @@
  *
  * @param PTR Pointer to cast to void pointer.
  *
- * @return @code (void*)PTR @endcode
+ * @return <tt> (void*)PTR </tt>
  */
 #define S_VOIDPTR(PTR) ((void*)PTR)
 

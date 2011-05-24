@@ -279,8 +279,8 @@ S_API char *s_strzncpy(char *dest, const char *src, size_t n,
  * @param size The size of the destination string.
  * @param error Error code.
  *
- * @return The concatenation of @a dest and @a src or @c NULL if size
- * if 0 or src or dst is @a NULL.
+ * @return The concatenation of @a dest and @a src or #NULL if
+ * <tt> size <= 0 </tt> or src or dst is #NULL.
  *
  * @note The @c dest string will be zero terminated.
  */
@@ -333,7 +333,7 @@ S_API char *s_strzcat(char *dest, const char *src, size_t size, s_erc *error);
  * @param error Error code.
  *
  * @return The concatenation of @a dest and @a n characters of @a src
- * or @c NULL if src or dst is @c NULL or n or size is 0.
+ * or #NULL if src or dst is #NULL or n or size is 0.
  *
  * @note The @c dest string will be zero terminated.
  */
@@ -599,7 +599,7 @@ S_API double s_atof(const char *s, s_erc *error);
  * 0. See ANSI C strtol
  *
  * @param s The string.
- * @param endp If not @a NULL, address of first valid character is
+ * @param endp If not #NULL, address of first valid character is
  * stored here.
  * @param base Between 2 and 36 inclusive, or be the special value 0.
  * @param error Error code.
@@ -613,7 +613,7 @@ S_API long s_strtol(const char *s, char **endp, uint base, s_erc *error);
  * Convert string to double.
  *
  * @param s The string.
- * @param endp If not @a NULL, address of first valid character is
+ * @param endp If not #NULL, address of first valid character is
  * stored here.
  * @param error Error code.
  *
@@ -710,7 +710,7 @@ S_API char *s_sbefore(const char *haystack, const char *needle, s_erc *error);
 
 
 /**
- * Append two strings. If the string @a str1 is @c NULL,
+ * Append two strings. If the string @a str1 is #NULL,
  * then this function performs the same task as #s_strdup.
  *
  * @param str1 First string.
@@ -727,7 +727,7 @@ S_API void s_sappend(char **str1, const char *str2, s_erc *error);
  *
  * @param str The string to copy.
  *
- * @return A copy of @a str or @c NULL.
+ * @return A copy of @a str or #NULL.
  */
 S_LOCAL char *s_strdup_clib(const char *str);
 

@@ -96,8 +96,6 @@ S_BEGIN_C_DECLS
  * A pointer to a function that frees the dynamically allocated
  * memory of a hash table element.
  *
- * @param s_hash_table_free_fp A pointer to the function that frees
- * the memory.
  * @param key Hash table element key to free.
  * @param data Hash table element data to free.
  * @param error Error code.
@@ -155,7 +153,7 @@ S_API s_hash_table *s_hash_table_new(s_hash_table_free_fp free_func,
 /**
  * Delete a hash table.
  * Delete a hash table and all it's elements. If the
- * #s_hash_table_free_fp is @c NULL then the elements memory @b wont
+ * #s_hash_table_free_fp is #NULL then the elements memory @b wont
  * be freed.
  *
  * @param self The hash table.
@@ -208,7 +206,7 @@ S_API void s_hash_element_unlink(s_hash_element *self, s_erc *error);
 
 /**
  * Delete the given hash table element. If the #s_hash_table_free_fp
- * function pointer is @c NULL then the memory of the key and data of
+ * function pointer is #NULL then the memory of the key and data of
  * the element will not be freed.
  *
  * @param self The hash table element.
@@ -288,7 +286,7 @@ S_API void s_hash_table_resize(s_hash_table *self, sint32 size,
  * @param key_length The length of the key in bytes.
  * @param error Error code.
  *
- * @return Pointer to the hash table element or @c NULL if the given
+ * @return Pointer to the hash table element or #NULL if the given
  * key does not have an associated hash table element.
  */
 S_API const s_hash_element *s_hash_table_find(const s_hash_table *self, const void *key,
@@ -301,7 +299,7 @@ S_API const s_hash_element *s_hash_table_find(const s_hash_table *self, const vo
  * @param self The hash table.
  * @param error Error code.
  *
- * @return Pointer to the first hash table element, or @c NULL if not
+ * @return Pointer to the first hash table element, or #NULL if not
  * found or the hash table is empty.
  */
 S_API const s_hash_element *s_hash_table_first(const s_hash_table *self, s_erc *error);
@@ -314,7 +312,7 @@ S_API const s_hash_element *s_hash_table_first(const s_hash_table *self, s_erc *
  * @param error Error code.
  *
  * @return Pointer to next hash table element relative to given one,
- * or @c NULL if none.
+ * or #NULL if none.
  */
 S_API const s_hash_element *s_hash_element_next(const s_hash_element *self, s_erc *error);
 

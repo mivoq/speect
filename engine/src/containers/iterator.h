@@ -107,7 +107,10 @@ S_BEGIN_C_DECLS
  * @param FUNC The function method of the given object to call.
  *
  * @note This casting is not safety checked.
- * @note Example usage: @code S_ITERATOR_CALL(self, func)(param1, param2, ..., paramN); @endcode
+ * @note Example usage:
+ @verbatim
+ S_ITERATOR_CALL(self, func)(param1, param2, ..., paramN);
+ @endverbatim
  * where @c param1, @c param2, ..., @c paramN are the parameters
  * passed to the object function @c func.
  */
@@ -185,7 +188,7 @@ typedef struct
 	 * @param error Error code.
 	 *
 	 * @return Iterator to the next object of the container. If there
-	 * are no more objects in the container, then @c NULL must be
+	 * are no more objects in the container, then #NULL must be
 	 * returned so that #SIteratorNext can delete the iterator.
 	 *
 	 * @note If an error occurs then @c error must be set so that
@@ -259,7 +262,7 @@ typedef struct
  * @c NULL will be returned.
  *
  * @note If an error occurred, then the iterator @c self will be
- * deleted, the error will be logged and @c NULL will be returned.
+ * deleted, the error will be logged and #NULL will be returned.
  */
 S_API SIterator *SIteratorNext(SIterator *self);
 
@@ -267,7 +270,7 @@ S_API SIterator *SIteratorNext(SIterator *self);
 /**
  * Return the key that is pointed to by the iterator.
  * This is only useful for mapping type containers (e.g. @ref SMap)
- * and will return @c NULL for any other type of container.
+ * and will return #NULL for any other type of container.
  *
  * @param self The given iterator.
  * @param error Error code.

@@ -81,7 +81,7 @@ S_BEGIN_C_DECLS
 
 /**
  * @typedef s_bool
- * Type definition of a boolean type.
+ * Type definition of a boolean type (#TRUE or #FALSE).
  */
 
 

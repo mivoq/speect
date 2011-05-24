@@ -83,8 +83,8 @@ S_BEGIN_C_DECLS
  * @param mode The mode string as used by the standard function @c fopen().
  * @param error Error code.
  *
- * @return TRUE if the file exists and can be manipulated with @c
- * mode, or FALSE.
+ * @return #TRUE if the file exists and can be manipulated with @c
+ * mode, or #FALSE.
  */
 S_API s_bool s_file_exists(const char *path, const char *mode, s_erc *error);
 

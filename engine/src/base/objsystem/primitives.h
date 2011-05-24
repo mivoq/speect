@@ -137,10 +137,15 @@ S_BEGIN_C_DECLS
 /*                                                                                  */
 /************************************************************************************/
 
-/*
- * Type definiton of a callback function to free a unknown data type.
+/**
+ * The SVoid SObject type free function typedef.
+ * A pointer to a function that frees the data of the SVoid type
+ * SObject void pointer.
+ *
+ * @param ptr The void type pointer data to free.
+ * @param error Error code.
  */
-typedef void (*s_sobject_free_callback_fp)(void *ptr, s_erc *error);
+typedef void (*s_svoid_free_fp)(void *ptr, s_erc *error);
 
 
 /************************************************************************************/
@@ -168,7 +173,7 @@ S_API SObject *SObjectSetInt(sint32 i, s_erc *error);
 
 
 /**
- * Changed the data value (singed integer) of an SObject that has been
+ * Change the data value (singed integer) of an SObject that has been
  * previously created by #SObjectSetInt.
  * @public @memberof SObject
  *
@@ -215,7 +220,7 @@ S_API SObject *SObjectSetFloat(float f, s_erc *error);
 
 
 /**
- * Changed the data value (float) of an SObject that has been
+ * Change the data value (float) of an SObject that has been
  * previously created by #SObjectSetFloat.
  * @public @memberof SObject
  *
@@ -264,7 +269,7 @@ S_API SObject *SObjectSetString(const char *s, s_erc *error);
 
 
 /**
- * Changed the data value (string) of an SObject that has been
+ * Change the data value (string) of an SObject that has been
  * previously created by #SObjectSetString.
  * @public @memberof SObject
  *
@@ -293,7 +298,7 @@ S_API const char *SObjectGetString(const SObject *self, s_erc *error);
 
 
 /**
- * @name VoidStruct
+ * @name Void
  * @{
  */
 
@@ -313,7 +318,7 @@ S_API const char *SObjectGetString(const SObject *self, s_erc *error);
  * @note The @c type_name is copied and not referenced.
  */
 S_API SObject *SObjectSetVoid(void *ptr, const char *type_name,
-							  s_sobject_free_callback_fp free_func,
+							  s_svoid_free_fp free_func,
 							  s_erc *error);
 
 
@@ -334,7 +339,7 @@ S_API SObject *SObjectSetVoid(void *ptr, const char *type_name,
  */
 S_API void SObjectResetVoid(SObject *self, void *ptr,
 							const char *type_name,
-							s_sobject_free_callback_fp free_func,
+							s_svoid_free_fp free_func,
 							s_erc *error);
 
 

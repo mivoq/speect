@@ -185,7 +185,7 @@ typedef struct s_ini_parser s_ini_parser;
  *
  * @param path The full path and file name of the @c INI file
  *
- * @return An opaque @c INI parser structure, or @c NULL on error.
+ * @return An opaque @c INI parser structure, or #NULL on error.
  *
  * @note Not thread safe.
  */

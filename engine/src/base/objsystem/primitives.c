@@ -180,10 +180,10 @@ typedef SObjectClass SVoidClass;
  */
 typedef struct
 {
-	SObject                    obj;        /*!< Inherit from SObject.                     */
-	void                      *ptr;        /*!< Pointer to the void data.                 */
-	s_sobject_free_callback_fp free_func;  /*!< Callback function to free void data.      */
-	char                      *type_name;  /*!< An identifier for this void object type.  */
+	SObject         obj;        /*!< Inherit from SObject.                     */
+	void           *ptr;        /*!< Pointer to the void data.                 */
+	s_svoid_free_fp free_func;  /*!< Callback function to free void data.      */
+	char           *type_name;  /*!< An identifier for this void object type.  */
 } SVoid;
 
 
@@ -500,7 +500,7 @@ S_API const char *SObjectGetString(const SObject *self, s_erc *error)
 
 S_API SObject *SObjectSetVoid(void *ptr,
 							  const char *type_name,
-							  s_sobject_free_callback_fp free_func,
+							  s_svoid_free_fp free_func,
 							  s_erc *error)
 {
 	SVoid *self;
@@ -548,7 +548,7 @@ S_API SObject *SObjectSetVoid(void *ptr,
 
 S_API void SObjectResetVoid(SObject *self, void *ptr,
 							const char *type_name,
-							s_sobject_free_callback_fp free_func,
+							s_svoid_free_fp free_func,
 							s_erc *error)
 {
 	s_bool type_is_good;

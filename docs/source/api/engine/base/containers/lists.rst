@@ -7,6 +7,37 @@
 Doubly Linked List
 ==================
 
+Summary
+=======
+
+.. doxybridge-autosummary::
+   :nosignatures:
+
+   s_list_new
+   s_list_delete
+   s_list_find_index
+   macro s_list_find
+   macro s_list_index
+   s_list_nth
+   s_list_first
+   s_list_last
+   s_list_element_get
+   s_list_element_replace
+   s_list_element_unlink
+   s_list_element_delete
+   s_list_element_next
+   s_list_element_prev
+   s_list_isempty
+   s_list_size
+   s_list_push
+   s_list_pop
+   s_list_reverse
+   s_list_prepend
+   s_list_append
+   s_list_insert_before
+   s_list_insert_after
+
+
 
 Definition
 ==========

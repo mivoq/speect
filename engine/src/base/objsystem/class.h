@@ -225,7 +225,7 @@ S_API const SObjectClass *s_class_find(const char *name, s_erc *error);
  * @ingroup SBaseObject
  * Delete an object.
  * Free up any resources allocated to the object by the
- * #SObjectClass::init function.
+ * #SObjectClass @c init function pointer.
  * @private @memberof SObject
  *
  * @param self Object to delete.

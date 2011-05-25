@@ -7,6 +7,29 @@
 Hash Table
 ==========
 
+Summary
+=======
+
+.. doxybridge-autosummary::
+   :nosignatures:
+
+   s_hash_table_new
+   s_hash_table_delete
+   s_hash_table_add
+   s_hash_element_unlink
+   s_hash_element_delete
+   s_hash_table_size
+   s_hash_table_resize
+   s_hash_table_find
+   s_hash_table_first
+   s_hash_element_next
+   s_hash_element_key
+   s_hash_element_key_length	
+   s_hash_element_get_data
+   s_hash_element_set_data
+   s_hash_table_stats
+   s_hash_element_pos
+
 
 Definition
 ==========

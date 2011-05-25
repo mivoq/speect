@@ -1,12 +1,33 @@
 .. _include/main:
 
-==============
-System Defines
-==============
+=====================
+System Defines/Macros
+=====================
 
-..todo:: build time stuff
+.. todo:: build time stuff
 
-Standard defines for the Speect Engine.
+Standard defines/macros for the Speect Engine.
+
+
+Summary
+=======
+
+.. doxybridge-autosummary::
+   :nosignatures:
+   
+   macro S_BEGIN_C_DECLS
+   macro S_END_C_DECLS
+   macro NULL
+   macro S_MAX_PATH_LENGTH
+   macro S_PATH_SEP
+   macro TRUE
+   macro FALSE
+   macro S_CONCAT
+   macro S_TOSTRING
+   macro S_VOIDPTR
+   macro S_API
+   macro S_LOCAL
+
 
 Defines
 =======

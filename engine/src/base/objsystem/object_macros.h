@@ -120,7 +120,7 @@ S_BEGIN_C_DECLS
  * The delete macro works in two stages, first a call is made to
  * the @c dispose method of #SObjectClass, then if the object is no
  * longer referenced, a call is made to the @c destroy method of
- * #SObjectClass@c. The given object pointer, @a SELF, is set to
+ * #SObjectClass. The given object pointer, @a SELF, is set to
  * #NULL, regardless of whether the object was deleted or not.
  *
  *
@@ -319,8 +319,7 @@ S_BEGIN_C_DECLS
 
 /**
  * @hideinitializer
- * Call the given function method of the given #SObject,
- * see full description #S_OBJECT_CALL for usage.
+ * Call the given function method of the given #SObject
  *
  * @param SELF The given #SObject*.
  * @param FUNC The function method of the given object to call.

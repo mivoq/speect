@@ -256,7 +256,7 @@ S_BEGIN_C_DECLS
  * Macro that sets a debug message. The debug message is logged only
  * if the given debug level is equal or lower that  the set level
  * of the @ref SErrDbg module. This level can be changed with the
- * #s_errdbg_level function.
+ * #s_set_errdbg_level function.
  *
  * @param LEVEL The debug level (#s_dbg_lvl) of this message.
  * @param MSG A format string specifying the error message and the

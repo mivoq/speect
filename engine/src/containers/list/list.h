@@ -382,8 +382,8 @@ typedef struct
 	 *
 	 * @return #TRUE or #FALSE.
 	 *
-	 * @note The #SObjectClass::compare function must be implemented for the given
-	 * object type (class).
+	 * @note The #SObjectClass function pointer @c compare must be
+	 * implemented for the given object type (class).
 	 */
 	s_bool         (*val_present)  (const SList *self, const SObject *object,
 									s_erc *error);
@@ -436,8 +436,8 @@ S_API size_t SListSize(const SList *self, s_erc *error);
  *
  * @return #TRUE or #FALSE.
  *
- * @note The #SObjectClass::compare function must be implemented for
- * the given object type.
+ * @note The #SObjectClass function pointer @c compare must be
+ * implemented for the given object type.
  */
 S_API s_bool SListValPresent(const SList *self, const SObject *object, s_erc *error);
 

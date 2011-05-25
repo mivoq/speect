@@ -229,8 +229,8 @@ struct SObjectClass
 	/**
 	 * @protected Destructor function pointer.
 	 * Free up any resources allocated to the object by the
-	 * #SObjectClass::init function. The object's memory itself must
-	 * @b not be freed.
+	 * #SObjectClass function pointer @c init. The object's memory
+	 * itself must @b not be freed.
 	 *
 	 * @param obj The object to be destroyed.
 	 * @param error Error code.

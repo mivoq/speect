@@ -7,6 +7,20 @@
 Buffer
 ======
 
+Summary
+=======
+
+.. doxybridge-autosummary::
+   :nosignatures:
+
+   s_buffer_new
+   s_buffer_delete
+   s_buffer_append
+   s_buffer_clear
+   s_buffer_data
+   s_buffer_size
+   s_buffer_truncate
+
 
 Definition
 ==========

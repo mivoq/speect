@@ -78,8 +78,7 @@ S_BEGIN_C_DECLS
 
 /**
  * Create a new console stream. The console stream implements the
- * function pointers of #s_stream (#s_stream::v_write and
- * #s_stream::destroy).
+ * function pointers of #s_stream (v_write and destroy).
  *
  * @param log_to_stdout If #TRUE then logging will be to @c stdout,
  * otherwise streaming will be to @c stderr.

@@ -6,6 +6,21 @@
 Initialization File Parser
 ==========================
 
+Summary
+=======
+
+.. doxybridge-autosummary::
+   :nosignatures:
+   
+   s_iniparser_new
+   s_iniparser_delete
+   s_iniparser_get_string
+   s_iniparser_get_int
+   s_iniparser_get_double
+   s_iniparser_get_boolean
+   s_iniparser_entry_present  
+   
+
 Definition
 ==========
 

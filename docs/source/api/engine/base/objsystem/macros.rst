@@ -6,6 +6,25 @@
 Macros
 ======
 
+Summary
+=======
+
+.. doxybridge-autosummary::
+   :nosignatures:
+
+   macro S_NEW
+   macro S_DELETE
+   macro S_FORCE_DELETE
+   macro S_CAST_SAFE
+   macro S_CAST_UNSAFE
+   macro S_CAST
+   macro S_OBJECT_CALL
+   macro S_OBJECT_METH_VALID
+   macro S_OBJECT
+   macro S_OBJECT_REF
+   macro S_OBJECT_CLS
+   macro S_OBJECTCLASS
+
 
 New/Delete
 ==========

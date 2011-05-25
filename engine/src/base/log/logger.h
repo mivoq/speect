@@ -168,8 +168,8 @@ struct s_logger
 
 
 /**
- * Create a new file stream logger, see @ref SFileStream. The logging
- * message will be in the @ref SLayoutStd layout format.
+ * Create a new file stream logger. The logging
+ * message will be in the standard layout format.
  *
  * @param path The full path and file name of the file which to
  * log to. If the file already exists, then it will be overwritten.
@@ -177,8 +177,10 @@ struct s_logger
  * @return Pointer to newly created file stream logger, or #NULL on error.
  *
  * @note Only thread safe if compiled with threading library, and
- * whether the standard vfprintf() function is thread-safe,
+ * whether the standard ANSI C vfprintf() function is thread-safe,
  * see @ref SThreads.
+ *
+ * @sa @ref SFileStream, @ref SLayoutStd
  *
  * @todo check MT safety
  */
@@ -186,8 +188,8 @@ S_API s_logger *s_logger_file_new(const char *path);
 
 
 /**
- * Create a new console stream logger, see @ref SConsoleStream. The
- * logging message will be in the @ref SLayoutStd layout format.
+ * Create a new console stream logger. The logging message will be in
+ * the standard layout format.
  *
  * @param log_to_stdout If #TRUE then logging will be to @c stdout,
  * otherwise streaming will be to @c stderr.
@@ -196,9 +198,11 @@ S_API s_logger *s_logger_file_new(const char *path);
  * on error.
  *
  * @note Only thread safe if compiled with threading library, and
- * whether the standard vfprintf() function is thread-safe,
+ * whether the standard ANSI C vfprintf() function is thread-safe,
  * see @ref SThreads.
-
+ *
+ * @sa @ref SConsoleStream, @ref SLayoutStd
+ *
  * @todo check MT safety
  */
 S_API s_logger *s_logger_console_new(s_bool log_to_stdout);
@@ -238,9 +242,9 @@ S_API s_erc s_logger_write(const s_logger *logger, s_log_event level, const char
 
 /**
  * Format and write the given logging event information to the
- * logger. Equivalent to the #s_logger_write except that it is called
- * with a va_list instead of a variable number of arguments,
- * same as the standard function @c vprintf().
+ * logger (called with @a va_list). Equivalent to the #s_logger_write
+ * except that it is called with a va_list instead of a variable
+ * number of arguments, same as the standard function @c vprintf().
  *
  * @param logger The logger to write to.
  * @param level The event level.
@@ -250,9 +254,9 @@ S_API s_erc s_logger_write(const s_logger *logger, s_log_event level, const char
  * @param line_num Calling line number in function.
  * @param user_msg A format string specifying the string to write
  * and the format of the arguments in the va_list.
- * @param argp The va_list, see the standard function @c
- * vprintf(). The value of argp is undefined after the call to
- * this function.
+ * @param argp The va_list, see the standard function
+ * ANSI C @c vprintf(). The value of @c argp is undefined after the call
+ * to this function.
  *
  * @return Error code.
  */

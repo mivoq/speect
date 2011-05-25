@@ -6,6 +6,16 @@
 Version Numbers
 ===============
 
+Summary
+=======
+
+.. doxybridge-autosummary::
+   :nosignatures:
+   
+   s_speect_version
+   s_lib_version_ok
+
+
 Definitions
 ===========
 

@@ -1,11 +1,32 @@
 
 .. index:: 
-   single: Generic Object System (C API); Primitives
+   single: Generic Object System (C API); SObject Primitives
 
-==========
-Primitives
-==========
+==================
+SObject Primitives
+==================
 Primitive data types (int, float, string) and void types as SObjects.
+
+
+Summary
+=======
+
+.. doxybridge-autosummary::
+   :nosignatures:
+   
+   SObjectSetInt
+   SObjectResetInt
+   SObjectGetInt
+   SObjectSetFloat
+   SObjectResetFloat
+   SObjectGetFloat
+   SObjectSetString
+   SObjectResetString	
+   SObjectGetString
+   SObjectSetVoid
+   SObjectResetVoid
+   SObjectGetVoid
+ 
 
 
 Integer

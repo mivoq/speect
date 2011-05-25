@@ -6,6 +6,23 @@
 Math Functions
 ==============
 
+Summary
+=======
+
+.. doxybridge-autosummary::
+   :nosignatures:
+   
+   macro S_ABS
+   macro S_MIN
+   macro S_MAX
+   macro S_NUM_LE
+   macro S_NUM_SE
+   macro S_NUM_IN_RANGE
+   s_rel_diff
+   s_float_equal
+   s_log2
+
+
 Constants
 =========
 

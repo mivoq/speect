@@ -20,6 +20,22 @@ Logger
 
    add reference to doxygen 
 
+
+Summary
+=======
+
+.. doxybridge-autosummary::
+   :nosignatures:
+   
+   s_logger_file_new
+   s_logger_console_new
+   s_logger_write
+   s_logger_vwrite
+   s_logger_destroy
+   s_log_event_str
+   
+
+
 Definition
 ==========
 

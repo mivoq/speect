@@ -6,13 +6,35 @@
 Threads
 =======
 
+Summary
+=======
+
+.. doxybridge-autosummary::
+   :nosignatures:
+
+   macro S_DECLARE_MUTEX
+   macro S_DECLARE_MUTEX_STATIC
+   macro s_mutex_init
+   macro s_mutex_destroy
+   macro s_mutex_lock
+   macro s_mutex_unlock
+   macro s_thread_id
+
+
+Definitions
+===========
+
+.. doxybridge:: s_mutex
+   :type: typedef 
+
+
 Declarations
 ============
 
-.. doxybridge:: S_DECLARE_MUTEX_STATIC
+.. doxybridge:: S_DECLARE_MUTEX
    :type: macro
 
-.. doxybridge:: S_DECLARE_MUTEX
+.. doxybridge:: S_DECLARE_MUTEX_STATIC
    :type: macro
 
 

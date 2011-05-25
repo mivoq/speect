@@ -363,8 +363,8 @@ S_API uint32 s_str_list_size(const s_str_list *self, s_erc *error);
  * #s_str_list_append.
  *
  * @param self The string list.
+ * @param string The string to append.
  * @param error Error code.
- * @param data The string to append.
  *
  * @note Internally a duplicate of @c string is made and ownership
  * taken thereof.
@@ -405,8 +405,8 @@ S_API void s_str_list_reverse(s_str_list *self, s_erc *error);
  * Prepend a string to beginning of the given string list.
  *
  * @param self The string list.
- * @param error Error code.
  * @param string The string to prepend.
+ * @param error Error code.
  *
  * @note Internally a duplicate of @c string is made and ownership
  * taken thereof.
@@ -419,8 +419,8 @@ S_API void s_str_list_prepend(s_str_list *self, const char *string,
  * Append a string to end of the given string list.
  *
  * @param self The string list.
- * @param error Error code.
  * @param string The string to append.
+ * @param error Error code.
  *
  * @note Internally a duplicate of @c string is made and ownership
  * taken thereof.

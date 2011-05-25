@@ -1,10 +1,33 @@
 
 .. index:: 
-   single: Generic Object System (C API); Object Functions
+   single: Generic Object System (C API); SObject Functions
 
-================
-Object Functions
-================
+=================
+SObject Functions
+=================
+
+
+Summary
+=======
+
+.. doxybridge-autosummary::
+   :nosignatures:
+   
+   SObjectSize
+   SObjectIsType
+   SObjectType
+   SObjectInheritance
+   SObjectCompare
+   SObjectRead
+   SObjectWrite
+   SObjectTypeIsReadable
+   SObjectIsWritable
+   SObjectSave
+   SObjectLoad
+   SObjectIncRef
+   SObjectDecRef
+   SObjectPrint
+   SObjectCopy
 
 
 Query

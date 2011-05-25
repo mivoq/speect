@@ -6,6 +6,21 @@
 Memory Allocation 
 =================
 
+Summary
+=======
+
+.. doxybridge-autosummary::
+   :nosignatures:
+   
+   macro S_MALLOC
+   macro S_MALLOC_SIZE
+   macro S_CALLOC
+   macro S_CALLOC_SIZE
+   macro S_REALLOC
+   macro S_REALLOC_SIZE
+   macro S_FREE
+
+
 Malloc
 ======
 

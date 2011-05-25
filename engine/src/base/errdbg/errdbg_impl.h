@@ -83,7 +83,7 @@ S_BEGIN_C_DECLS
  * @param logger The logger stream where errors, warnings and debug
  * messages are logged.
  * @param level The initial debugging level. The debugging level can
- * be changed with #s_errdbg_level.
+ * be changed with #s_set_errdbg_level.
  * @param error Error code.
  *
  * @note The Error and debugging module takes ownership of the

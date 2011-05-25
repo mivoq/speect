@@ -229,7 +229,7 @@ typedef struct
 /**
  * Execute the FeatProcessor on the given item.
  *
- * @public @memberof SFeatProcessor
+ * @public
  * @param self The FeatProcessor to execute.
  * @param item The item to extract features from.
  * @param error Error code.

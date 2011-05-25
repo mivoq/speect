@@ -1,10 +1,29 @@
 
 .. index:: 
-   single: Generic Object System (C API); Class Functions
+   single: Generic Object System (C API); SObjectClass Functions
 
-===============
-Class Functions
-===============
+======================
+SObjectClass Functions
+======================
+
+Summary
+=======
+
+.. doxybridge-autosummary::
+   :nosignatures:
+   
+   s_class_add
+   s_class_init	
+   s_class_reg
+   s_class_free
+   s_class_name
+   s_class_inheritance
+   s_class_is_reg
+   s_class_find
+
+
+Functions
+=========
 
 .. doxybridge:: s_class_add
 

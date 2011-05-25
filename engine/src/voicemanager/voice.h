@@ -279,8 +279,8 @@ typedef struct
 	 * input.
 	 *
 	 * @param self The voice used for synthesis.
-	 * @param utt_type The key of the utterance type as registered in the #SVoice::uttTypes
-	 * container.
+	 * @param utt_type The key of the utterance type as registered in
+	 * the #SVoice @c uttTypes container.
 	 * @param input The input to the synthesizer.
 	 * @param error Error code.
 	 *
@@ -299,8 +299,8 @@ typedef struct
 	 * utterance type.
 	 *
 	 * @param self The voice used for synthesis.
-	 * @param utt_type The key of the utterance type as registered in the #SVoice::uttTypes
-	 * container.
+	 * @param utt_type The key of the utterance type as registered in
+	 * the #SVoice @c uttTypes container.
 	 * @param utt The utterance to re-synthesize.
 	 * @param error Error code.
 	 */
@@ -327,7 +327,7 @@ typedef struct
  * @public @memberof SVoice
  * @param self The voice used for synthesis.
  * @param utt_type The key of the utterance type as registered in the
- * #SVoice::uttTypes container.
+ * #SVoice @c uttTypes container.
  * @param input The input to the synthesizer.
  * @param error Error code.
  *
@@ -348,7 +348,7 @@ S_API SUtterance *SVoiceSynthUtt(const SVoice *self, const char *utt_type,
  * @public @memberof SVoice
  * @param self The voice used for synthesis.
  * @param utt_type The key of the utterance type as registered in the
- * #SVoice::uttTypes container.
+ * #SVoice @c uttTypes container.
  * @param utt The utterance to re-synthesize.
  * @param error Error code.
  */

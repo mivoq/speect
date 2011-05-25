@@ -322,7 +322,7 @@ typedef struct
 	 * @protected NewRelation function pointer.
 	 * Create a new named relation in given utterance. Creates a
 	 * relation, initializes it (#SRelationInit), and sets it in the
-	 * utterance (#SUtteranceClass::set_relation).
+	 * utterance (#SUtteranceClass function pointer @c set_relation).
 	 *
 	 * @param self The given utterance.
 	 * @param name The new relation's name.

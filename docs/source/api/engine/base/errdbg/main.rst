@@ -6,6 +6,23 @@
 Error Handling And Debugging
 ============================
 
+Summary
+=======
+
+.. doxybridge-autosummary::
+   :nosignatures:
+
+   macro S_NEW_ERR
+   macro S_CLR_ERR
+   macro S_CTX_ERR
+   macro S_FTL_ERR
+   macro S_CHK_ERR
+   macro S_WARNING
+   macro S_DEBUG
+   s_set_errdbg_level
+   s_get_errdbg_level
+   s_error_str
+   
 
 Definitions
 ===========

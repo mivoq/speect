@@ -95,12 +95,12 @@ S_BEGIN_C_DECLS
 /************************************************************************************/
 
 /**
- * Absolute of a value.
+ * Get the absolute value of the given number.
  * @hideinitializer
  *
  * @param X Number of which to get absolute value of.
  *
- * @return Absolute value of @a X.
+ * @return Absolute value of @c X.
  *
  * @note Macro is type independent.
  */
@@ -108,13 +108,13 @@ S_BEGIN_C_DECLS
 
 
 /**
- * Minimum of two values.
+ * Get the minimum of two given values.
  * @hideinitializer
  *
  * @param X Number x.
  * @param Y Number y.
  *
- * @return The minimum of @a X and @a Y.
+ * @return The minimum of @c X and @c Y.
  *
  * @note Macro is type independent.
  */
@@ -122,13 +122,13 @@ S_BEGIN_C_DECLS
 
 
 /**
- * Maximum of two values.
+ * Get the maximum of two given values.
  * @hideinitializer
  *
  * @param X Number x.
  * @param Y Number y.
  *
- * @return The maximum of @a X and @a Y.
+ * @return The maximum of @c X and @c Y.
  *
  * @note Macro is type independent.
  */
@@ -136,14 +136,13 @@ S_BEGIN_C_DECLS
 
 
 /**
- * Test if number is larger or equal to another number,
- * A >= X.
+ * Test if number is larger or equal to another number, A >= X.
  * @hideinitializer
  *
  * @param A Number to test.
  * @param X Number to test against.
  *
- * @return 1 if A is larger or equal to X, else 0.
+ * @return 1 if @c A is larger or equal to @c X, else 0.
  *
  * @note Macro is type independent.
  */
@@ -151,14 +150,13 @@ S_BEGIN_C_DECLS
 
 
 /**
- * Test if number is smaller or equal to another number,
- * A <= X.
+ * Test if number is smaller or equal to another number, A <= X.
  * @hideinitializer
  *
  * @param A Number to test.
  * @param X Number to test against.
  *
- * @return 1 if A is smaller or equal to X, else 0.
+ * @return 1 if @c A is smaller or equal to @c X, else 0.
  *
  * @note Macro is type independent.
  */
@@ -166,7 +164,7 @@ S_BEGIN_C_DECLS
 
 
 /**
- * Number in range, X <= A <= Y. Tests whether the given
+ * Test if a number is in a range, X <= A <= Y. Tests whether the given
  * number lies in the given range (inclusive).
  * @hideinitializer
  *
@@ -195,7 +193,7 @@ S_BEGIN_C_DECLS
  * @param a floating point value.
  * @param b floating point value.
  *
- * @return Relative difference between @a a and @a b.
+ * @return Relative difference between @c a and @c b.
  */
 S_API double s_rel_diff(double a, double b);
 
@@ -218,8 +216,7 @@ S_API s_bool s_float_equal(double a, double b);
  *
  * @param a floating point value of which to calculate log2.
  *
- * @return logarithm (base 2) or @c -HUGE_VAL if @a a is
- * s_float_equal() to 0.
+ * @return logarithm (base 2) or @c -HUGE_VAL if @c a is #s_float_equal to 0.
  */
 S_API double s_log2(double a);
 

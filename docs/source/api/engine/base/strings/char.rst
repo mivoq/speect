@@ -7,6 +7,28 @@
 Character Functions
 ===================
 
+Summary
+=======
+
+.. doxybridge-autosummary::
+   :nosignatures:
+
+   s_getc
+   s_getx
+   s_getat
+   s_setc
+   s_setat
+   s_width
+   s_cwidth
+   s_offset
+   s_insert
+   s_remove
+   s_tolower
+   s_toupper
+   s_isspace
+   s_isdigit
+
+
 
 Getters
 =======

@@ -111,7 +111,7 @@ S_BEGIN_C_DECLS
 
 
 /**
- * Returns the size of the specified string in bytes, excluding the
+ * Return the size of the given UTF-8 string in bytes, excluding the
  * trailing zero.
  *
  * @param s The string of which the size is to be determined.
@@ -123,20 +123,20 @@ S_API size_t s_strsize(const char *s, s_erc *error);
 
 
 /**
- * Returns the size of @a n characters of the specified string in
+ * Return the size of @a n characters of the given UTF-8 string in
  * bytes.
  *
  * @param s The string of which the size is to be determined.
  * @param n The number of characters.
  * @param error Error code.
  *
- * @return Size of @a n characters of @a s in bytes.
+ * @return Size of @a n characters of @c s in bytes.
  */
 S_API size_t s_strnsize(const char *s, size_t n, s_erc *error);
 
 
 /**
- * Returns the size of the specified string in bytes, including the
+ * Return the size of the given UTF-8 string in bytes, including the
  * trailing zero.
  *
  * @param s The string of which the size is to be determined.
@@ -148,7 +148,7 @@ S_API size_t s_strzsize(const char *s, s_erc *error);
 
 
 /**
- * Return the length (number of characters) of the given string.
+ * Return the length (number of characters) of the given UTF-8 string.
  *
  * @param s The string.
  * @param error Error code.
@@ -170,13 +170,14 @@ S_API size_t s_strlen(const char *s, s_erc *error);
 
 
 /**
- * Returns a newly allocated copy of the src string, which must later
- * be freed by the caller.
+ * Return a newly allocated copy of the given UTF-8 string.
  *
  * @param src The source string.
  * @param error Error code.
  *
- * @return A copy of @a src.
+ * @return A copy of @c src.
+ *
+ * @note Caller is responsible for the memory of the returned string.
  */
 S_API char *s_strdup(const char *src, s_erc *error);
 
@@ -193,15 +194,15 @@ S_API char *s_strdup(const char *src, s_erc *error);
 
 
 /**
- * Copies string @a src to @a dest. The size of @a dest is specified
- * by @a size.
+ * Copy the given UTF-8 string @c src to @c dest, size specified. The
+ * size of @c dest is specified by @a size.
  *
  * @param dest The destination string.
  * @param src The source string.
  * @param size The size of the destination string.
  * @param error Error code.
  *
- * @return The destination string @a dest.
+ * @return The destination string @c dest.
  *
  * @note The trailing zero is copied.
  */
@@ -210,8 +211,8 @@ S_API char *s_strzcpy(char *dest, const char *src,
 
 
 /**
- * Copies string @a src to @a dest. The size of @a dest is ignored
- * (should be set correctly by caller).
+ * Copy the given UTF-8 string @c src to @c dest. The size of @c dest
+ * is ignored (should be set correctly by caller).
  *
  * @param dest Pointer to the destination string.
  * @param src Pointer to the source string.
@@ -227,15 +228,15 @@ S_API char *s_strzcpy(char *dest, const char *src,
 
 
 /**
- * Copies n characters of string @a src to @a dest. The size of @a
- * dest is ignored (should be set correctly by caller).
+ * Copy @a n characters of the given UTF-8 string @c src to @c dest. The
+ * size of @c dest is ignored (should be set correctly by caller).
  *
  * @param dest Pointer to the destination string.
  * @param src Pointer to the source string.
  * @param n Number of characters to copy.
  * @param error Error code.
  *
- * @return The destination string @a dest.
+ * @return The destination string @c dest.
  *
  * @sa s_strzncpy
  */
@@ -244,8 +245,8 @@ S_API char *s_strzcpy(char *dest, const char *src,
 
 
 /**
- * Copies n characters of string @a src to @a dest. The size of @a
- * dest is specified by @a size.
+ * Copy @a n characters of the given UTF-8 string @c src to @c dest,
+ * size specified. The size of @c dest is specified by @a size.
  *
  * @param dest The destination string.
  * @param src The source string.
@@ -253,7 +254,7 @@ S_API char *s_strzcpy(char *dest, const char *src,
  * @param size The size of the destination string.
  * @param error Error code.
  *
- * @return The destination string @a dest.
+ * @return The destination string @c dest.
  */
 S_API char *s_strzncpy(char *dest, const char *src, size_t n,
 					   size_t size, s_erc *error);
@@ -271,16 +272,17 @@ S_API char *s_strzncpy(char *dest, const char *src, size_t n,
 
 
 /**
- * Concatenate two strings. The size of @a dest is specified by
- * @a size.
+ * Concatenate two UTF-8 strings, size specified. The size of @c dest
+ * is specified by @a size.
+
  *
  * @param dest The destination string.
  * @param src The source string.
  * @param size The size of the destination string.
  * @param error Error code.
  *
- * @return The concatenation of @a dest and @a src or #NULL if
- * <tt> size <= 0 </tt> or src or dst is #NULL.
+ * @return The concatenation of @c dest and @c src or #NULL if
+ * <tt> size <= 0 </tt> or @c src or @c dest is #NULL.
  *
  * @note The @c dest string will be zero terminated.
  */
@@ -288,14 +290,14 @@ S_API char *s_strzcat(char *dest, const char *src, size_t size, s_erc *error);
 
 
 /**
- * Concatenate two strings. The size of @a dest is ignored (should be set
- * correctly by caller).
+ * Concatenate two UTF-8 strings. The size of @c dest is ignored
+ * (should be set correctly by caller).
  *
  * @param dest Pointer to the destination string.
  * @param src Pointer to the source string.
  * @param error Error code.
  *
- * @return The concatenation of @a dest and @a src.
+ * @return The concatenation of @c dest and @c src.
  * @sa s_strzcat.
  *
  * @note The @c dest string will be zero terminated.
@@ -305,15 +307,16 @@ S_API char *s_strzcat(char *dest, const char *src, size_t size, s_erc *error);
 
 
 /**
- * Concatenate n characters of source to destination string. The size
- * of @a dest is ignored (should be set correctly by caller).
+ * Concatenate @a n characters of the given UTF-8 string @c src
+ * to @c dest. The size of @c dest is ignored (should be set correctly
+ * by caller).
  *
  * @param dest Pointer to the destination string.
  * @param src Pointer to the source string.
  * @param n Number of characters to concatenate.
  * @param error Error code.
  *
- * @return The concatenation of @a dest and @a n characters of @a src.
+ * @return The concatenation of @c dest and @a n characters of @c src.
  * @sa s_strzncat
  *
  * @note The @c dest string will be zero terminated.
@@ -323,8 +326,8 @@ S_API char *s_strzcat(char *dest, const char *src, size_t size, s_erc *error);
 
 
 /**
- * Concatenate n characters of source to destination string. The size
- * of @a dest is specified by @a size.
+ * Concatenate @a n characters of the given UTF-8 string @c src
+ * to @c dest, size specified. The size of @c dest is specified by @a size.
  *
  * @param dest The destination string.
  * @param src The source string.
@@ -332,8 +335,8 @@ S_API char *s_strzcat(char *dest, const char *src, size_t size, s_erc *error);
  * @param size The size of the destination string.
  * @param error Error code.
  *
- * @return The concatenation of @a dest and @a n characters of @a src
- * or #NULL if src or dst is #NULL or n or size is 0.
+ * @return The concatenation of @c dest and @a n characters of @c src
+ * or #NULL if @c src or @c dest is #NULL or n or size is 0.
  *
  * @note The @c dest string will be zero terminated.
  */
@@ -359,9 +362,9 @@ S_API char *s_strzncat(char *dest, const char *src, size_t n,
  * @param s2 String to compare.
  * @param error Error code.
  *
- * @return Integer less than, equal to, or greater than zero if s1 is
- * found, respectively, to be less than, to match, or be greater than
- * s2.
+ * @return Integer less than, equal to, or greater than zero if @c s1
+ * is found, respectively, to be less than, to match, or be greater
+ * than @c s2.
  */
 S_API int s_strcmp(const char *s1, const char *s2, s_erc *error);
 
@@ -374,23 +377,23 @@ S_API int s_strcmp(const char *s1, const char *s2, s_erc *error);
  * @param n Number of characters to compare.
  * @param error Error code.
  *
- * @return Integer less than, equal to, or greater than zero if s1 is
- * found, respectively, to be less than, to match, or be greater than
- * s2.
+ * @return Integer less than, equal to, or greater than zero if @c s1
+ * is found, respectively, to be less than, to match, or be greater
+ * than @c s2.
  */
 S_API int s_strncmp(const char *s1, const char *s2, size_t n, s_erc *error);
 
 
 /**
- * Case insensitive comparison function.
+ * Compare two UTF-8 strings (case insensitive).
  *
  * @param s1 String to compare.
  * @param s2 String to compare.
  * @param error Error code.
  *
- * @return Integer less than, equal to, or greater than zero if s1 is
- * found, respectively, to be less than, to match, or be greater than
- * s2.
+ * @return Integer less than, equal to, or greater than zero if @c s1
+ * is found, respectively, to be less than, to match, or be greater
+ * than @c s2.
  *
  * @sa s_strcmp.
  */
@@ -398,16 +401,16 @@ S_API int s_stricmp(const char *s1, const char *s2, s_erc *error);
 
 
 /**
- * Case insensitive comparison of @a n characters function.
+ * Compare @a n characters of two UTF-8 strings (case insensitive).
  *
  * @param s1 String to compare.
  * @param s2 String to compare.
  * @param n Number of characters to compare.
  * @param error Error code.
  *
- * @return Integer less than, equal to, or greater than zero if s1 is
- * found, respectively, to be less than, to match, or be greater than
- * s2.
+ * @return Integer less than, equal to, or greater than zero if @c s1
+ * is found, respectively, to be less than, to match, or be greater
+ * than @c s2.
  *
  * @sa s_strncmp.
  */
@@ -426,29 +429,29 @@ S_API int s_strnicmp(const char *s1, const char *s2, size_t n, s_erc *error);
 
 
 /**
- * Replace all upper case characters in string with lower case
- * characters.
+ * Replace all upper case characters in the given UTF-8 string with
+ * lower case characters.
  *
  * @param s The string.
  * @param error Error code.
  *
  * @return Modified string.
  *
- * @note The string s is modified in place.
+ * @note The string @c s is modified in place.
  */
 S_API char *s_strlwr(char *s, s_erc *error);
 
 
 /**
- * Replace all lower case characters in string with upper case
- * characters.
+ * Replace all lower case characters in the given UTF-8 string with
+ * upper case characters.
  *
  * @param s The string.
  * @param error Error code.
  *
  * @return Modified string.
  *
- * @note The string s is modified in place.
+ * @note The string @c s is modified in place.
  */
 S_API char *s_strupr(char *s, s_erc *error);
 
@@ -465,25 +468,25 @@ S_API char *s_strupr(char *s, s_erc *error);
 
 
 /**
- * Locate a character in a string.
+ * Locate a character in the given UTF-8 string.
  *
  * @param s The string.
  * @param c The character to locate.
  * @param error Error code.
  *
- * @return Pointer to @b first occurance of @a c in @a s.
+ * @return Pointer to @b first occurance of @c c in @c s.
  */
 S_API const char *s_strchr(const char *s, uint32 c, s_erc *error);
 
 
 /**
- * Reverse locate a character in a string.
+ * Reverse locate a character in the given UTF-8 string.
  *
  * @param s The string.
  * @param c The character to locate.
  * @param error Error code.
  *
- * @return Pointer to @b last occurance of @a c in @a s.
+ * @return Pointer to @b last occurance of @c c in @c s.
  */
 S_API const char *s_strrchr(const char *s, uint32 c, s_erc *error);
 
@@ -500,26 +503,26 @@ S_API const char *s_strrchr(const char *s, uint32 c, s_erc *error);
 
 
 /**
- * Locate a sub-string in a string.
+ * Locate a sub-string in the given UTF-8 string.
  *
  * @param haystack String to search in.
  * @param needle String to search for.
  * @param error Error code.
  *
- * @return Pointer to first occurance of @a needle in @a haystack.
+ * @return Pointer to first occurance of @c needle in @c haystack.
  */
 S_API char *s_strstr(const char *haystack, const char *needle, s_erc *error);
 
 
 /**
- * Search a string for any of a set of characters.
+ * Search the given UTF-8 string for any of a set of characters.
  *
  * @param s The string.
  * @param set The set of characters.
  * @param error Error code.
  *
- * @return Pointer to first occurance of any characters in @a set in
- * string @a s.
+ * @return Pointer to first occurance of any characters in @c set in
+ * string @c s.
  */
 S_API char *s_strpbrk(const char *s, const char *set, s_erc *error);
 
@@ -536,14 +539,14 @@ S_API char *s_strpbrk(const char *s, const char *set, s_erc *error);
 
 
 /**
- * Extract tokens from string. UTF-8 aware replacement for standard c
- * library function @c strtok().
+ * Extract tokens from the given UTF-8 string. UTF-8 aware replacement
+ * for standard c library function @c strtok().
  *
  * @param s The string.
  * @param set The set of tokens.
  * @param error Error code.
  *
- * @return Pointer to next token in @a s.
+ * @return Pointer to next token in @c s.
  *
  * @note Not thread-safe.
  */
@@ -551,17 +554,16 @@ S_API char *s_strtok(char *s, const char *set, s_erc *error);
 
 
 /**
- * Re-entrant version #s_strtok. The @a last
- * argument is a pointer to a char * variable that is used internally
- * in order to maintain context between successive calls that
- * parse the same string.
+ * Re-entrant version #s_strtok. The @c last argument is a pointer to
+ * a char* variable that is used internally in order to maintain
+ * context between successive calls that parse the same string.
  *
  * @param s The string to parse.
  * @param set The set of tokens.
  * @param last Pointer to maintain context.
  * @param error Error code.
  *
- * @return Pointer to next token in @a s.
+ * @return Pointer to next token in @c s.
  *
  * @note Thread-safe.
  */
@@ -580,23 +582,25 @@ S_API char *s_strtok_r(char *s, const char *set, char **last, s_erc *error);
 
 
 /**
- * Convert the given utf8 string to a double.
+ * Convert the given UTF-8 string to a double.
  *
  * @param s The string.
  * @param error Error code.
  *
- * @return Double point value of @a s.
+ * @return Double point value of @c s.
  *
- * @note This is merely a wrapper to the ANSI C atof() function.
+ * @note This is merely a wrapper to the standard ANSI C @c atof()
+ * function.
  */
 S_API double s_atof(const char *s, s_erc *error);
 
 
 /**
- * Return long int value of string. Converts the initial part of the
- * string in @a s to a long integer value according to the given base,
- * which must be between 2 and 36 inclusive, or be the special value
- * 0. See ANSI C strtol
+ * Return long int value of the given UTF-8 string. Converts the
+ * initial part of the string in @c s to a long integer value
+ * according to the given base, which must be between 2 and 36
+ * inclusive, or be the special value 0. Also see the standard
+ * ANSI C @c strtol() function.
  *
  * @param s The string.
  * @param endp If not #NULL, address of first valid character is
@@ -604,20 +608,22 @@ S_API double s_atof(const char *s, s_erc *error);
  * @param base Between 2 and 36 inclusive, or be the special value 0.
  * @param error Error code.
  *
- * @return Long value of string s.
+ * @return Long value of string @c s.
  */
 S_API long s_strtol(const char *s, char **endp, uint base, s_erc *error);
 
 
 /**
- * Convert string to double.
+ * Convert the given UTF-8 string to a double, first valid character
+ * address. UTF-8 ware version of the standard ANSI C @c strtod()
+ * function.
  *
  * @param s The string.
  * @param endp If not #NULL, address of first valid character is
  * stored here.
  * @param error Error code.
  *
- * @return Double value of string s.
+ * @return Double value of string @c s.
  */
 S_API double s_strtod(const char *s, char **endp, s_erc *error);
 
@@ -634,7 +640,7 @@ S_API double s_strtod(const char *s, char **endp, s_erc *error);
 
 
 /**
- * Convert strerror to UTF-8 string.
+ * Convert the given error number to a UTF-8 string.
  *
  * @param err Error value.
  *
@@ -657,7 +663,7 @@ S_API const char *s_strerror(int err);
 
 
 /**
- * Validate a given UTF-8 string.
+ * Validate the given UTF-8 string.
  *
  * @param s The string to validate.
  * @param error Error code.
@@ -668,7 +674,8 @@ S_API s_bool s_isvalid(const char *s, s_erc *error);
 
 
 /**
- * Test to see if string matches a regular expression.
+ * Test to see if the given UTF-8 string matches the given regular
+ * expression.
  *
  * @param string The string to test.
  * @param regex The regular expression string.
@@ -680,8 +687,8 @@ S_API s_bool s_smatches(const char *string, const char *regex, s_erc *error);
 
 
 /**
- * Return the string that is after the first occurrence of the given
- * character in the given string.
+ * Return the UTF-8 string that is after the first occurrence of the given
+ * character in the given UTF-8 string.
  *
  * @param haystack The given string.
  * @param needle The given character.
@@ -695,8 +702,8 @@ S_API char *s_safter(const char *haystack, const char *needle, s_erc *error);
 
 
 /**
- * Return the string that is before the first occurrence of the given
- * character in the given string.
+ * Return the UTF-8 string that is before the first occurrence of the given
+ * character in the given UTF-8 string.
  *
  * @param haystack The given string.
  * @param needle The given character.
@@ -710,7 +717,7 @@ S_API char *s_sbefore(const char *haystack, const char *needle, s_erc *error);
 
 
 /**
- * Append two strings. If the string @a str1 is #NULL,
+ * Append two UTF-8 strings. If the string @c str1 is #NULL,
  * then this function performs the same task as #s_strdup.
  *
  * @param str1 First string.

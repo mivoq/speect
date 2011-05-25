@@ -455,7 +455,10 @@ table.docutils.field-list td {
     background-color:transparent;
 }
 
-
+table.docutils caption { 
+    font-weight:bold;
+    text-align: left;
+ }
 
 
 /* -- footer logo ----------------------------------------------------------- */

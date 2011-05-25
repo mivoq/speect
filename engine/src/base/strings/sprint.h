@@ -106,8 +106,8 @@ S_BEGIN_C_DECLS
 /************************************************************************************/
 
 /**
- * Print a variable argument list to a string buffer. This function
- * can handle the size of the buffer.
+ * Print a variable argument list to a UTF-8 string buffer (handles
+ * size). The size of the buffer is specified with @c count.
  *
  * @param buf The buffer to print to.
  * @param count Not more than @a count characters will be printed to
@@ -124,8 +124,8 @@ S_API int s_vszprintf(char *buf, size_t count, const char *format,
 
 /**
  * @hideinitializer
- * Print a variable argument list to a string buffer. This function
- * does not handle the size of the buffer.
+ * Print a variable argument list to a UTF-8 string buffer. This
+ * function does not handle the size of the buffer.
  *
  * @param buf The buffer to print to.
  * @param format The format of the output.
@@ -141,8 +141,9 @@ S_API int s_vszprintf(char *buf, size_t count, const char *format,
 
 
 /**
- * Print a formatted string to a buffer. Allocates memory to
- * buffer as required. Uses #s_vsprintf internally.
+ * Print a formatted UTF-8 string to a buffer (allocates
+ * memory). Allocates memory to buffer as required. Uses #s_vsprintf
+ * internally.
  *
  * @param ret The buffer to print to.
  * @param format The format of the output.
@@ -157,8 +158,8 @@ S_API int s_vasprintf(char **ret, const char *format, va_list args, s_erc *error
 
 
 /**
- * Print a formatted string to a buffer. This function does not handle
- * the size of the buffer. Uses #s_vsprintf internally.
+ * Print a formatted UTF-8 string to a buffer. This function does not
+ * handle the size of the buffer. Uses #s_vsprintf internally.
  *
  * @param buf The buffer to print to.
  * @param error Error code.
@@ -170,8 +171,8 @@ S_API int s_sprintf(char *buf, s_erc *error, const char *format, ...);
 
 
 /**
- * Print a formatted string to a buffer. This function can handle
- * the size of the buffer. Uses #s_vszprintf internally.
+ * Print a formatted UTF-8 string to a buffer (handles size). This
+ * function can handle the size of the buffer. Uses #s_vszprintf internally.
  *
  * @param buf The buffer to print to.
  * @param format The format of the output.
@@ -185,8 +186,9 @@ S_API int s_szprintf(char *buf, size_t count, s_erc *error, const char *format, 
 
 
 /**
- * Print a formatted string to a buffer. Allocates memory to
- * buffer as required. Uses #s_vasprintf internally.
+ * Print a formatted UTF-8 string to a buffer (allocates
+ * memory). Allocates memory to buffer as required. Uses #s_vasprintf
+ * internally.
  *
  * @param ret The buffer to print to.
  * @param error Error code.

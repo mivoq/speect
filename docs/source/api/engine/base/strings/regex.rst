@@ -7,6 +7,17 @@
 Regular Expressions
 ===================
 
+Summary
+=======
+
+.. doxybridge-autosummary::
+   :nosignatures:
+
+   s_regex_comp
+   s_regex_match
+   s_regexsub_num_groups
+   s_regexsub_group
+
 
 Definitions
 ===========

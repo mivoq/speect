@@ -64,7 +64,7 @@ static void s_str_list_free_fp(void *le, s_erc *error);
 /*                                                                                  */
 /************************************************************************************/
 
-/**
+/*
  * Create a new string list.
  */
 S_API s_str_list *s_str_list_new(s_erc *error)
@@ -83,11 +83,11 @@ S_API s_str_list *s_str_list_new(s_erc *error)
 }
 
 
-/**
- * Create a new string list from sub-strings of @c string divided
- * by @c split_string.
+/*
+ * Create a new string list by splitting the given @c string with
+ * the given @c separator.
  */
-S_API s_str_list *s_str_list_split(const char *string, const char *split_string,
+S_API s_str_list *s_str_list_split(const char *string, const char *separator,
 								   s_erc *error)
 {
 	s_str_list *self = NULL;
@@ -97,7 +97,7 @@ S_API s_str_list *s_str_list_split(const char *string, const char *split_string,
 
 
 	S_CLR_ERR(error);
-	if ((string == NULL) || (split_string == NULL))
+	if ((string == NULL) || (separator == NULL))
 		goto error_return;
 
 	self = s_str_list_new(error);
@@ -113,7 +113,7 @@ S_API s_str_list *s_str_list_split(const char *string, const char *split_string,
 		goto error_return;
 
 	nstr_copy = str_copy;
-	s = s_strtok_r(NULL, split_string, &nstr_copy, error);
+	s = s_strtok_r(NULL, separator, &nstr_copy, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "s_str_list_split",
 				  "Call to \"s_strtok_r\" failed"))
@@ -127,7 +127,7 @@ S_API s_str_list *s_str_list_split(const char *string, const char *split_string,
 					  "Call to \"s_str_list_append\" failed"))
 			goto error_return;
 
-		s = s_strtok_r(NULL, split_string, &nstr_copy, error);
+		s = s_strtok_r(NULL, separator, &nstr_copy, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "s_str_list_split",
 					  "Call to \"s_strtok_r\" failed"))
@@ -892,7 +892,7 @@ S_API void s_str_list_merge(s_str_list *self, const s_str_list *with,
 }
 
 
-S_API char *s_str_list_to_string(s_str_list *self, const char *sep,
+S_API char *s_str_list_to_string(s_str_list *self, const char *separator,
 								 s_erc *error)
 {
 	char *buf = NULL;
@@ -900,7 +900,7 @@ S_API char *s_str_list_to_string(s_str_list *self, const char *sep,
 
 
 	S_CLR_ERR(error);
-	if ((self == NULL) || (sep == NULL))
+	if ((self == NULL) || (separator == NULL))
 		return NULL;
 
 	itr = s_str_list_first(self, error);
@@ -923,7 +923,7 @@ S_API char *s_str_list_to_string(s_str_list *self, const char *sep,
 		if (buf == NULL)
 			s_asprintf(&buf, error, "%s", element);
 		else
-			s_asprintf(&buf, error, "%s%s%s", buf, sep, element);
+			s_asprintf(&buf, error, "%s%s%s", buf, separator, element);
 
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "s_str_list_to_string",

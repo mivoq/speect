@@ -8,6 +8,45 @@ String Lists
 ============
 
 
+Summary
+=======
+
+.. doxybridge-autosummary::
+   :nosignatures:
+
+   s_str_list_new
+   s_str_list_split
+   s_str_list_delete
+   s_str_list_find_index
+   macro s_str_list_find
+   macro s_str_list_index
+   s_str_list_nth
+   s_str_list_nth_string
+   s_str_list_first
+   s_str_list_last
+   s_str_list_element_get
+   s_str_list_element_replace
+   s_str_list_element_unlink
+   s_str_list_element_delete
+   s_str_list_element_next
+   s_str_list_element_prev
+   s_str_list_isempty
+   s_str_list_size
+   s_str_list_push
+   s_str_list_pop
+   s_str_list_reverse
+   s_str_list_prepend
+   s_str_list_append
+   s_str_list_insert_before
+   s_str_list_insert_after
+   s_str_list_dup
+   s_str_list_slice
+   s_str_list_cmp
+   s_str_list_merge
+   s_str_list_to_string
+   
+
+
 Definition
 ==========
 

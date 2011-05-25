@@ -8,6 +8,20 @@ String Printing Functions
 =========================
 
 
+Summary
+=======
+
+.. doxybridge-autosummary::
+   :nosignatures:
+
+   s_vszprintf
+   macro s_vsprintf
+   s_vasprintf
+   s_sprintf
+   s_szprintf
+   s_asprintf
+
+
 Variable Argument List
 ======================
 

@@ -213,7 +213,7 @@ typedef enum
 /************************************************************************************/
 
 /**
- * Compile a regular expression and return a pointer to the generated
+ * Compile a UTF-8 regular expression and return a pointer to the generated
  * description.
  *
  * @param string String containing the regular expression to compile.
@@ -227,7 +227,7 @@ S_API s_regex *s_regex_comp(const char *string, s_regex_flags flags, s_erc *erro
 
 
 /**
- * Matches a null-terminated string against the given compiled regular
+ * Matches a null-terminated UTF-8 string against the given compiled regular
  * expression in @c rxcomp. If it matches, and the sub-expression
  * elements structure @c rsub is not #NULL, @c rsub will be
  * filled with character pointers to the groups of strings that
@@ -248,8 +248,7 @@ S_API int s_regex_match(s_regex *rxcomp, const char *string,
 
 /**
  * Query the number of groups that correspond to the parenthesized
- * sub-expressions of the expression matches of the given matched
- * regular expression.
+ * sub-expressions of the given matched regular expression.
  *
  * @param rsub Sub-expression elements of a matched regular expression.
  * @param error Error code.

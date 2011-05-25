@@ -111,7 +111,7 @@ S_BEGIN_C_DECLS
 
 
 /**
- * Reads the first character from a UTF-8 string.
+ * Read the first character from a UTF-8 string.
  *
  * @param s String to read character from.
  * @param error Error code.
@@ -137,7 +137,7 @@ S_API uint32 s_getx(char **s, s_erc *error);
 
 /**
  * Return the character from the specified index within the
- * string. Indexing in strings start at 0.
+ * UTF-8 string. Indexing in strings start at 0.
  *
  * @param s The string.
  * @param index The index of the character to return.
@@ -173,7 +173,7 @@ S_API size_t s_setc(char *s, uint32 c, s_erc *error);
 
 
 /**
- * Modifies the character at the specified index within the string,
+ * Modify the character at the specified index within the UTF-8 string,
  * handling adjustments for variable width data. Returns how far the
  * rest of the string was moved in bytes. Indexing in strings start at
  * 0.
@@ -213,7 +213,7 @@ S_API size_t s_width(const char *s, s_erc *error);
 
 /**
  * Return the width (number of bytes) of a UTF-8 character represented
- * as a 4-byte unsigned integer.
+ * by the given 4-byte unsigned integer.
  *
  * @param c The UTF-8 character.
  * @param error Error code.
@@ -235,10 +235,10 @@ S_API size_t s_cwidth(uint32 c, s_erc *error);
 
 
 /**
- * Return the offset in bytes from the start of the string to the
- * character at the specified index. If the index is negative, counts
- * backward from the end of the string (-1 returns an offset to the
- * last character).
+ * Return the offset in bytes from the start of the UTF-8 string to
+ * the character at the specified index. If the index is negative,
+ * counts backward from the end of the string (-1 returns an offset to
+ * the last character).
  *
  * @param s The string.
  * @param index The index of the character.
@@ -261,9 +261,9 @@ S_API size_t s_offset(const char *s, int index, s_erc *error);
 
 
 /**
- * Inserts a character at the specified index within a string, sliding
- * following data along to make room. Returns how far the data was
- * moved in bytes.
+ * Insert a character at the specified index within a UTF-8 string,
+ * sliding following data along to make room. Returns how far the data
+ * was moved in bytes.
  *
  * @param s The string. Indexing in strings start at 0.
  * @param index The index where to insert the new character.
@@ -279,9 +279,9 @@ S_API size_t s_insert(char *s, uint index, uint32 c, s_erc *error);
 
 
 /**
- * Removes the character at the specified index within the string, sliding
- * following data back to make room. Returns how far the data was
- * moved in bytes.
+ * Remove the character at the specified index within the UTF-8
+ * string, sliding following data back to make room. Returns how far
+ * the data was moved in bytes.
  *
  * @param s The string. Indexing in strings start at 0.
  * @param index The index of the character to remove.
@@ -304,7 +304,7 @@ S_API size_t s_remove(char *s, uint index, s_erc *error);
 
 
 /**
- * Convert UTF-8 character to lower case.
+ * Convert the given UTF-8 character to lower case.
  *
  * @param c The character to convert.
  * @param error Error code.
@@ -315,7 +315,7 @@ S_API uint32 s_tolower(uint32 c, s_erc *error);
 
 
 /**
- * Convert UTF-8 character to upper case.
+ * Convert the given UTF-8 character to upper case.
  *
  * @param c The character to convert.
  * @param error Error code.
@@ -337,7 +337,7 @@ S_API uint32 s_toupper(uint32 c, s_erc *error);
 
 
 /**
- * Check whether UTF-8 character is a white-space. White-space is
+ * Check whether the given UTF-8 character is a white-space. White-space is
  * space (' '), form-feed ('\\f'), newline ('\\n'), carriage return
  * ('\\r'), horizontal tab ('\\t'), and vertical tab ('\\v').
  *
@@ -350,7 +350,7 @@ S_API int s_isspace(uint32 c, s_erc *error);
 
 
 /**
- * Check whether UTF-8 character is a digit.
+ * Check whether the given UTF-8 character is a digit.
  *
  * @param c The UTF-8 character to test.
  * @param error Error code.

@@ -8,6 +8,48 @@ String Functions
 ================
 
 
+Summary
+=======
+
+.. doxybridge-autosummary::
+   :nosignatures:
+
+   s_strsize
+   s_strnsize
+   s_strzsize
+   s_strlen
+   s_strdup
+   s_strzcpy
+   macro s_strcpy
+   macro s_strncpy
+   s_strzncpy
+   s_strzcat
+   macro s_strcat
+   macro s_strncat
+   s_strzncat
+   s_strcmp
+   s_strncmp
+   s_stricmp
+   s_strnicmp
+   s_strlwr
+   s_strupr
+   s_strchr
+   s_strrchr
+   s_strstr
+   s_strpbrk
+   s_strtok
+   s_strtok_r
+   s_atof
+   s_strtol
+   s_strtod
+   s_strerror
+   s_isvalid
+   s_smatches
+   s_safter
+   s_sbefore
+   s_sappend
+
+
 Size/Length
 ===========
 
@@ -48,7 +90,7 @@ Concatenate
 .. doxybridge:: s_strcat
    :type: macro
 
-.. doxybridge: s_strncat
+.. doxybridge:: s_strncat
    :type: macro
 
 .. doxybridge:: s_strzncat

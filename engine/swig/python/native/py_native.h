@@ -58,7 +58,6 @@
 #include "py_list_itr.h"           /* Speect Python list iterator wrapper.     */
 #include "py_map.h"                /* SMapPy Speect Python dict wrapper.       */
 #include "py_map_itr.h"            /* Speect Python dict iterator wrapper.     */
-#include "py_logger_config.h"      /* Speect Python logging config file.       */
 #include "py_logger.h"             /* Python s_logger for Speect.              */
 
 

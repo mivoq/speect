@@ -67,12 +67,22 @@ S_BEGIN_C_DECLS
 /************************************************************************************/
 
 /**
- * Create a new logger, that uses Python's logging module for
- * message output.
+ * Set the Speect Engine logger to the given Python logger.
+ * Speect Engine debugging level is set to @c S_DBG_ALL, because
+ * the Python logger will filter the messages. The logger fills the
+ * logging info dictionary with the following values:
+ * <ul>
+ * <li> se_event : #s_log_event_str(#s_log_event level)  </li>
+ * <li> se_function : Function name where error occurred or "unknown"  </li>
+ * <li> se_file : File name where error occurred or "unknown"  </li>
+ * <li> se_line : Line number where error occurred or "unknown"  </li>
+ * <li> se_user_msg : User message.  </li>
+ * </ul>
  *
- * @return Pointer to newly created Python logger, or @c NULL on error.
+ * @param logger A Python logger of instance @c logging.Logger type.
+ * @param error Error code.
  */
-S_API s_logger *s_logger_python_new(void);
+S_API void s_set_py_logger(PyObject *logger, s_erc *error);
 
 
 /************************************************************************************/

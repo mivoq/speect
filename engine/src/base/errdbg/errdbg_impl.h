@@ -107,6 +107,16 @@ S_LOCAL void _s_errdbg_quit(s_erc *error);
 
 
 /**
+ * Set the error and debugging system logger to the given one. The
+ * current logger (if any) will be freed. This is useful when the
+ * logger needs to be changed after Speect has started up.
+ *
+ * @param logger The new logger for the error and debugging system
+ */
+S_API void s_errdbg_set_logger(s_logger *logger);
+
+
+/**
  * Change the debugging level.
  *
  * @param level The new debugging level.

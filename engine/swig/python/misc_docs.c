@@ -48,35 +48,3 @@ version number, patch number, release name).
 %feature("autodoc", version_DOCSTRING) version;
 
 
-%define setDebugLevel_DOCSTRING
-"""
-setDebugLevel(level)
-
-Set the debugging level of the Speect Engine logging system.
-The levels are:
-    :S_DBG_NONE:   0, No debugging output.
-	:S_DBG_INFO:   1, Basic debug level.
-	:S_DBG_TRACE:  2, Verbose debug level.
-	:S_DBG_ALL:    3, All debugging logged.
-
-:param v: The debugging level.
-"""
-%enddef
-
-%feature("autodoc", setDebugLevel_DOCSTRING) setDebugLevel;
-
-
-%define getDebugLevel_DOCSTRING
-"""
-Get the debugging level of the Speect Engine logging system.
-The levels are:
-    :S_DBG_NONE:   0, No debugging output.
-	:S_DBG_INFO:   1, Basic debug level.
-	:S_DBG_TRACE:  2, Verbose debug level.
-	:S_DBG_ALL:    3, All debugging logged.
-
-:rtype: int
-"""
-%enddef
-
-%feature("autodoc", getDebugLevel_DOCSTRING) getDebugLevel;

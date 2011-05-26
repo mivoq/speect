@@ -24,44 +24,50 @@
 /************************************************************************************/
 /*                                                                                  */
 /* AUTHOR  : Aby Louw                                                               */
-/* DATE    : 21 April 2011                                                          */
+/* DATE    : May 2011                                                               */
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* Locate the Speect Python logging config file.                                    */
-/* py_logger_config.c is auto generated from config/py_logger_config.c.in, do not   */
-/* edit py_logger_config.c                                                          */
+/* C convenience functions for giving Speect a Python logger.                       */
+/*                                                                                  */
 /*                                                                                  */
 /************************************************************************************/
-
-
-/************************************************************************************/
-/*                                                                                  */
-/* Modules used                                                                     */
-/*                                                                                  */
-/************************************************************************************/
-
-#include "py_logger_config.h"
 
 
 /************************************************************************************/
 /*                                                                                  */
-/* Defines (done by CMake configuration in                                          */
-/* speect/swig/python/cmake/swigPythonSettings.cmake)                               */
+/* Inline helper functions.                                                         */
+/*                                                                                  */
 /*                                                                                  */
 /************************************************************************************/
 
-/* The initialization file path for a speect build */
-#define S_PYTHON_LOG_CONFIG_FILE "@SPCT_PYTHON_LOG_CONFIG_FILE@"
+%inline
+%{
+	void _s_set_speect_py_logger(PyObject *logger, s_erc *error)
+	{
+		S_CLR_ERR(error);
+		s_set_py_logger(logger, error); /* Python native function in py_logger.c */
+	}
+%}
 
 
-/************************************************************************************/
-/*                                                                                  */
-/* Function implementations                                                         */
-/*                                                                                  */
-/************************************************************************************/
 
-S_LOCAL const char *_s_get_spct_python_log_config_file(void)
-{
-	return S_PYTHON_LOG_CONFIG_FILE;
-}
+%pythoncode
+%{
+def setLogger(logger):
+    """
+    Set the given logger (instance of the logging.Logger
+    module) as the logger to be used by the Speect Engine
+    for error and debugging purposes.
+
+    :param logger: The logger to be used by the Speect Engine.
+    :type logger: Instance of the logging.Logger module.
+    """
+
+    import logging
+
+    if not isinstance(logger, logging.Logger):
+        raise TypeError("'logger' must be an instance of the logging.Logger module")
+
+    _s_set_speect_py_logger(logger)
+%}

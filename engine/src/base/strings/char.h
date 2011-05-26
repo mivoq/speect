@@ -74,7 +74,7 @@
 /**
  * @ingroup SBaseStrings
  * @defgroup SUtf8Chars Character Functions
- * Provides utf-8 aware character functions.
+ * Provides UTF-8 aware character functions.
  * @{
  */
 

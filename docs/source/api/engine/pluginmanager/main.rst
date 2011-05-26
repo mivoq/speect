@@ -1,14 +1,17 @@
 .. _pluginmanager/main:
 
-.. index:: ! Plug-in Manager (C API)
+.. index:: ! Plug-ins (C API)
 
-===============
-Plug-in Manager
-===============
+========
+Plug-ins
+========
 
-The Plug-in Manager provides methods for loading plug-ins that are
-then available to the Speect Engine and all other loaded plug-ins.
-Loaded plug-ins are chached for reuse.
+	
+.. toctree::
+   :maxdepth: 2
 
-
-
+   plugin_manager
+   plugin_def
+   plugin_object
+   dso
+  

@@ -213,7 +213,7 @@ typedef struct
 	 *
 	 * @param self The plug-in to query.
 	 *
-	 * @return @c TRUE if ready for use, otherwise @c FALSE.
+	 * @return #TRUE if ready for use, otherwise #FALSE.
 	 */
 	s_bool (*is_ready) (const SPlugin *self);
 
@@ -247,7 +247,7 @@ typedef struct
  *
  * @param self The plug-in to query.
  *
- * @return @c TRUE if ready for use, otherwise @c FALSE.
+ * @return #TRUE if ready for use, otherwise #FALSE.
  */
 S_LOCAL s_bool SPluginIsReady(const SPlugin *self);
 

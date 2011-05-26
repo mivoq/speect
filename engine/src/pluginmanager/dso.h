@@ -207,7 +207,7 @@ typedef struct
 /************************************************************************************/
 
 /**
- * Load a <i> dynamic shared object </i> from the given path into the
+ * Load a <i>dynamic shared object</i> from the given path into the
  * given #SDso object.
  * @public @memberof SDso
  * @param self The given SDso object.

@@ -98,17 +98,19 @@ S_BEGIN_C_DECLS
 
 /**
  * Open a <i>dynamic shared object</i>.
+ * @private
  *
  * @param filename The full path and filename of the dynamic shared object.
  * @param error Error code.
  *
  * @return Handle to the dynamic shared object.
  */
-S_API void *s_dso_open(const char *filename, s_erc *error);
+S_LOCAL void *s_dso_open(const char *filename, s_erc *error);
 
 
 /**
  * Get a symbol from a given <i>dynamic shared object</i>.
+ * @private
  *
  * @param dso_handle Handle to the dynamic shared object.
  * @param symbol The name of the symbol to get.
@@ -116,16 +118,17 @@ S_API void *s_dso_open(const char *filename, s_erc *error);
  *
  * @return  Handle to the symbol.
  */
-S_API void *s_dso_sym(void *dso_handle, const char *symbol, s_erc *error);
+S_LOCAL void *s_dso_sym(void *dso_handle, const char *symbol, s_erc *error);
 
 
 /**
  * Close the given <i>dynamic shared object</i>.
+ * @private
  *
  * @param dso_handle Handle to the dynamic shared object to close.
  * @param error Error code.
  */
-S_API void s_dso_close(void *dso_handle, s_erc *error);
+S_LOCAL void s_dso_close(void *dso_handle, s_erc *error);
 
 
 /**

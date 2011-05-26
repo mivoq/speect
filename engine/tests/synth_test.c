@@ -190,7 +190,7 @@ int main(int argc, char **argv)
 	SPCT_PRINT_AND_WAIT("loaded audio riff plug-in, loading voice, press ENTER\n");
 
 	/* load voice */
-	voice = s_vm_load_voice(voicefile, TRUE, &error);
+	voice = s_vm_load_voice(voicefile, &error);
 	if (S_CHK_ERR(&error, S_CONTERR,
 				  "main",
 				  "Call to \"s_vm_load_voice\" failed"))

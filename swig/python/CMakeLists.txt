@@ -45,6 +45,9 @@ if(NOT "${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_BINARY_DIR}")
   # server.conf.example
   speect_file_copy(${CMAKE_SOURCE_DIR}/swig/python/server.conf.example ${CMAKE_BINARY_DIR}/swig/python)
 
+  # spct_python_log.conf Python logger configuration example
+  speect_file_copy(${CMAKE_SOURCE_DIR}/swig/python/spct_python_log.conf ${CMAKE_BINARY_DIR}/swig/python)
+
   # speect/modules
   file(GLOB python_modules "${CMAKE_SOURCE_DIR}/swig/python/speect/modules/*.py")
   file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/swig/python/speect/modules)

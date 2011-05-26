@@ -55,8 +55,6 @@
 typedef struct _s_logger_private_info
 {
 	PyObject *logFunction;        /* Python "logger.log" function */
-	PyObject *loggingModule;      /* Python "logging" module      */
-	int       loggingLevel;       /* Python highest log level     */
 } _s_logger_private_info;
 
 
@@ -65,6 +63,26 @@ typedef struct _s_logger_private_info
 /* Static function implementations                                                  */
 /*                                                                                  */
 /************************************************************************************/
+
+/* convert Speect event levels to Python severity levels. */
+static int _s_spct_event_2_python(s_log_event level)
+{
+	if (level == S_FATAL_EVENT)
+		return 50;
+	if (level == S_ERROR_EVENT)
+		return 40;
+	if (level == S_WARN_EVENT)
+		return 30;
+	if (level == S_INFO_EVENT)
+		return 20;
+	if (level == S_DEBUG_EVENT)
+		return 10;
+	if (level == S_TRACE_EVENT)
+		return 10;
+
+	return 10;
+}
+
 
 static s_erc _v_write_swig(const s_logger *logger, s_log_event level, const char *error_msg,
 						   const char *func_name, const char *file_name, int line_num,
@@ -113,7 +131,7 @@ static s_erc _v_write_swig(const s_logger *logger, s_log_event level, const char
 	}
 
 	/* create a tuple with the arguments for the log function call */
-	args = Py_BuildValue("(is)", private_data->loggingLevel, error_msg);
+	args = Py_BuildValue("(is)", _s_spct_event_2_python(level), error_msg);
 	if (args == NULL)
 	{
 		S_ERR_PRINT(S_FAILURE, "_v_write_swig",
@@ -152,43 +170,13 @@ static s_erc _v_write_swig(const s_logger *logger, s_log_event level, const char
 static s_erc _destroy_swig(s_logger *self)
 {
 	s_erc this_error;
-	PyObject *loggingShutdownFuntion;
 	_s_logger_private_info *private_data;
 
 
 	S_CLR_ERR(&this_error);
 
 	private_data = (_s_logger_private_info*)self->data;
-
-	/* get shutdown function */
-	loggingShutdownFuntion = PyObject_GetAttrString(private_data->loggingModule, "shutdown");
-	if (loggingShutdownFuntion == NULL)
-	{
-		S_NEW_ERR(&this_error,S_FAILURE);
-		S_ERR_PRINT(this_error, "s_logger_swig_new",
-					"Call to \"PyObject_GetAttrString\" failed");
-	}
-	else
-	{
-		/* call shutdown function */
-		PyObject *returnValue;
-
-		/* set the logging config file */
-		returnValue = PyObject_CallFunctionObjArgs(loggingShutdownFuntion, NULL);
-		if (returnValue == NULL)
-		{
-			S_NEW_ERR(&this_error,S_FAILURE);
-			S_ERR_PRINT(this_error, "s_logger_swig_new",
-						"Call to \"PyObject_CallFunctionObjArgs\" failed");
-		}
-		else
-		{
-			Py_DECREF(returnValue); /* not used */
-		}
-	}
-
 	Py_DECREF(private_data->logFunction);
-	Py_DECREF(private_data->loggingModule);
 	S_FREE(private_data);
 
 	self->v_write = NULL;
@@ -204,154 +192,81 @@ static s_erc _destroy_swig(s_logger *self)
 /*                                                                                  */
 /************************************************************************************/
 
-s_logger *s_logger_python_new(void)
+S_API void s_set_py_logger(PyObject *logger, s_erc *error)
 {
-	s_logger               *logger;
+	PyObject *logFunction;  /* logger.log */
+	s_logger *slogger;
 	_s_logger_private_info *private_data;
-	PyObject               *loggingModule;
-	PyObject               *loggingConfigModule;
-	PyObject               *fileConfigFunction;
-	PyObject               *returnValue;
-	PyObject               *getLoggerFunction;
-	PyObject               *loggerFunction;
-	PyObject               *logFunction;
-	PyObject               *loggingLevel;
-	int                     loggingLevelInt;
-	const char             *config_file;
 
 
-	loggingModule = PyImport_ImportModule("logging");
-	if (loggingModule == NULL)
-	{
-		S_ERR_PRINT(S_FAILURE, "s_logger_python_new",
-					"Call to \"PyImport_ImportModule\" failed");
-		return NULL;
-	}
-
-	loggingConfigModule = PyImport_ImportModule("logging.config");
-	if (loggingConfigModule == NULL)
-	{
-		S_ERR_PRINT(S_FAILURE, "s_logger_python_new",
-					"Call to \"PyImport_ImportModule\" failed");
-		Py_DECREF(loggingModule);
-		return NULL;
-	}
-
-	/* get highest logging level, so that all messages sent to the
-	 * logger will be logged. Speect decides what is sent to the
-	 * logger.
-	 */
-	loggingLevel = PyObject_GetAttrString(loggingModule, "CRITICAL");
-	if (loggingLevel == NULL)
-	{
-		S_ERR_PRINT(S_FAILURE, "s_logger_python_new",
-					"Call to \"PyObject_GetAttrString\" failed");
-		Py_DECREF(loggingModule);
-		Py_DECREF(loggingConfigModule);
-		return NULL;
-	}
-
-	loggingLevelInt = (int)PyInt_AS_LONG(loggingLevel);
-	Py_DECREF(loggingLevel); /* not needed anymore */
-
-	/* get fileConfig function */
-	fileConfigFunction = PyObject_GetAttrString(loggingConfigModule, "fileConfig");
-	if (fileConfigFunction == NULL)
-	{
-		S_ERR_PRINT(S_FAILURE, "s_logger_python_new",
-					"Call to \"PyObject_GetAttrString\" failed");
-		Py_DECREF(loggingModule);
-		Py_DECREF(loggingConfigModule);
-		return NULL;
-	}
-
-	config_file = _s_get_spct_python_log_config_file();
-
-	/* set the logging config file */
-	returnValue = PyObject_CallFunction(fileConfigFunction, "s", config_file);
-	if (returnValue == NULL)
-	{
-		S_ERR_PRINT(S_FAILURE, "s_logger_python_new",
-					"Call to \"PyObject_CallFunction\" failed");
-
-		Py_DECREF(loggingModule);
-		Py_DECREF(fileConfigFunction);
-		Py_DECREF(loggingConfigModule);
-		return NULL;
-	}
-
-	Py_DECREF(returnValue); /* not used */
-	Py_DECREF(fileConfigFunction); /* not needed any more */
-	Py_DECREF(loggingConfigModule); /* not needed any more */
-
-	/* get getLogger function */
-	getLoggerFunction = PyObject_GetAttrString(loggingModule, "getLogger");
-	if (getLoggerFunction == NULL)
-	{
-		S_ERR_PRINT(S_FAILURE, "s_logger_python_new",
-					"Call to \"PyObject_GetAttrString\" failed");
-		Py_DECREF(loggingModule);
-		return NULL;
-	}
-
-	/* create the logger */
-	loggerFunction = PyObject_CallFunction(getLoggerFunction, "s", "Speect Engine");
-	if (loggerFunction == NULL)
-	{
-		S_ERR_PRINT(S_FAILURE, "s_logger_python_new",
-					"Call to \"PyObject_CallFunction\" failed");
-		Py_DECREF(getLoggerFunction);
-		Py_DECREF(loggingModule);
-		return NULL;
-	}
-
-	Py_DECREF(getLoggerFunction);  /* not needed anymore */
+	S_CLR_ERR(error);
+	Py_INCREF(logger);
 
 	/* get log function */
-	logFunction = PyObject_GetAttrString(loggerFunction, "log");
+	logFunction = PyObject_GetAttrString(logger, "log");
 	if (logFunction == NULL)
 	{
-		S_ERR_PRINT(S_FAILURE, "s_logger_python_new",
-					"Call to \"PyObject_GetAttrString\" failed");
-		Py_DECREF(loggerFunction);
-		Py_DECREF(loggingModule);
-		return NULL;
+		char *py_error = s_get_python_error_str();
+
+
+		if (py_error)
+		{
+			S_CTX_ERR(error, S_FAILURE,
+					  "s_set_py_logger",
+					  "Call to \"PyObject_GetAttrString\" failed. Reported error: %s",
+					  py_error);
+			S_FREE(py_error);
+		}
+		else
+		{
+			S_CTX_ERR(error, S_FAILURE,
+					  "s_set_py_logger",
+					  "Call to \"PyObject_GetAttrString\" failed");
+		}
+
+		Py_DECREF(logger);
+		return;
 	}
 
-	Py_DECREF(loggerFunction); /* not needed anymore */
+	Py_DECREF(logger); /* done with logger */
 
 	private_data = S_MALLOC(_s_logger_private_info, 1);
 	if (private_data == NULL)
 	{
-		S_FTL_ERR_PRINT(S_MEMERROR, "s_logger_python_new",
-						"Failed to allocate memory for logger private data");
+		S_FTL_ERR(error, S_MEMERROR,
+				  "s_set_py_logger",
+				  "Failed to allocate memory for logger private data");
 		Py_DECREF(logFunction);
-		Py_DECREF(loggingModule);
-		return NULL;
+		return;
 	}
 
 	private_data->logFunction = logFunction;
-	private_data->loggingModule = loggingModule;
-	private_data->loggingLevel = loggingLevelInt;
 
-	/* create logger */
-	logger = S_MALLOC(s_logger, 1);
-	if (logger == NULL)
+	/* create s_logger */
+	slogger = S_MALLOC(s_logger, 1);
+	if (slogger == NULL)
 	{
-		S_FTL_ERR_PRINT(S_MEMERROR, "s_logger_python_new",
-						"Failed to allocate memory for logger object");
+		S_FTL_ERR(error, S_MEMERROR,
+				  "s_set_py_logger",
+				  "Failed to allocate memory for \'s_logger\' object");
 		S_FREE(private_data);
 		Py_DECREF(logFunction);
-		Py_DECREF(loggingModule);
-		return NULL;
+		return;
 	}
 
-	logger->data = (s_logger_private_info*)private_data;
+	slogger->data = (s_logger_private_info*)private_data;
+
 
 	/* initialize file writer function pointers */
-	logger->v_write = &_v_write_swig;
-	logger->destroy = &_destroy_swig;
+	slogger->v_write = &_v_write_swig;
+	slogger->destroy = &_destroy_swig;
 
+	/*
+	 * all Speect Engine logging must come through, logger from
+	 * Python decides what gets logged.
+	 */
+	s_set_errdbg_level(S_DBG_ALL, NULL);
 
-	return logger;
+	s_errdbg_set_logger(slogger);
 }
+

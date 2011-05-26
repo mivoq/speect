@@ -141,7 +141,7 @@ static const char *error_file_name;
 
 static int error_line;
 
-static s_dbg_lvl dbg_level = S_DBG_INFO;
+static s_dbg_lvl dbg_level = S_DBG_ALL; /* start-up with all debugging logged */
 
 static s_logger *ewd_logger = NULL;
 
@@ -255,6 +255,27 @@ S_LOCAL void _s_errdbg_quit(s_erc *error)
 		S_ERR_PRINT(S_FAILURE, "_s_errdbg_quit",
 					"Call to \"_s_time_quit\" failed");
 	}
+}
+
+
+S_API void s_errdbg_set_logger(s_logger *logger)
+{
+	if (ewd_logger != NULL)
+	{
+		s_erc local_err;
+
+
+		local_err = s_logger_destroy(ewd_logger);
+		if (local_err != S_SUCCESS)
+		{
+			S_ERR_PRINT(local_err, "s_errdbg_set_logger",
+						"Failed to destroy old logger");
+		}
+		S_FREE(ewd_logger);
+	}
+
+
+	ewd_logger = logger;
 }
 
 

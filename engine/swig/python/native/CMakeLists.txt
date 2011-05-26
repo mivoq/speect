@@ -89,7 +89,6 @@ list(APPEND SPCT_PYTHON_NATIVE_INCLUDES
   "${CMAKE_CURRENT_SOURCE_DIR}/py_list_itr.h"
   "${CMAKE_CURRENT_SOURCE_DIR}/py_map.h"
   "${CMAKE_CURRENT_SOURCE_DIR}/py_map_itr.h"
-  "${CMAKE_CURRENT_SOURCE_DIR}/py_logger_config.h"
   "${CMAKE_CURRENT_SOURCE_DIR}/py_logger.h"
   )
 
@@ -106,7 +105,6 @@ list(APPEND SPCT_PYTHON_NATIVE_SOURCES
   "${CMAKE_CURRENT_SOURCE_DIR}/py_list_itr.c"
   "${CMAKE_CURRENT_SOURCE_DIR}/py_map.c"
   "${CMAKE_CURRENT_SOURCE_DIR}/py_map_itr.c"
-  "${CMAKE_CURRENT_BINARY_DIR}/py_logger_config.c"
   "${CMAKE_CURRENT_SOURCE_DIR}/py_logger.c"
   "${CMAKE_CURRENT_BINARY_DIR}/swigpyrun.h"
   )

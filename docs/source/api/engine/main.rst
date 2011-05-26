@@ -15,3 +15,5 @@ Speect Engine C API
    hrg/main
    main/main
    pluginmanager/main
+   serialization/main
+   voicemanager/main

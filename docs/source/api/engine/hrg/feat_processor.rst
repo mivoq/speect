@@ -15,7 +15,7 @@ Definitions
 ===========
 
 .. index:: 
-   single: Heterogeneous FeatProcessor Graphs (C API); SFeatProcessor
+   single: Heterogeneous Relation Graphs (C API); SFeatProcessor
 
 .. doxybridge:: SFeatProcessor
    :type: speect object
@@ -23,7 +23,7 @@ Definitions
    :inheritance: SObject.SFeatProcessor
 
 .. index:: 
-   single: Heterogeneous FeatProcessor Graphs (C API); SFeatProcessorClass
+   single: Heterogeneous Relation Graphs (C API); SFeatProcessorClass
 
 .. doxybridge:: SFeatProcessorClass
    :type: speect class

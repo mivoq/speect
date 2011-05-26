@@ -46,7 +46,7 @@
 /**
  * @ingroup SVoices
  * @defgroup SVoiceManager VoiceManager
- * The @c VoiceManager provides methods for loading voices that
+ * The @a VoiceManager provides methods for loading voices that
  * are then available to the Speect Engine.
  * The loaded voice's data is chached for reuse.
  * @{

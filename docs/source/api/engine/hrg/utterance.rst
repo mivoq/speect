@@ -15,7 +15,7 @@ Definitions
 ===========
 
 .. index:: 
-   single: Heterogeneous Utterance Graphs (C API); SUtterance
+   single: Heterogeneous Relation Graphs (C API); SUtterance
 
 .. doxybridge:: SUtterance
    :type: speect object
@@ -23,7 +23,7 @@ Definitions
    :inheritance: SObject.SUtterance
 
 .. index:: 
-   single: Heterogeneous Utterance Graphs (C API); SUtteranceClass
+   single: Heterogeneous Relation Graphs (C API); SUtteranceClass
 
 .. doxybridge:: SUtteranceClass
    :type: speect class

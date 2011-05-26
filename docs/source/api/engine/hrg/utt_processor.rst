@@ -16,7 +16,7 @@ Definitions
 ===========
 
 .. index:: 
-   single: Heterogeneous UttProcessor Graphs (C API); SUttProcessor
+   single: Heterogeneous Relation Graphs (C API); SUttProcessor
 
 .. doxybridge:: SUttProcessor
    :type: speect object
@@ -24,7 +24,7 @@ Definitions
    :inheritance: SObject.SUttProcessor
 
 .. index:: 
-   single: Heterogeneous UttProcessor Graphs (C API); SUttProcessorClass
+   single: Heterogeneous Relation Graphs (C API); SUttProcessorClass
 
 .. doxybridge:: SUttProcessorClass
    :type: speect class

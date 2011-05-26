@@ -460,7 +460,7 @@ S_API const s_version *SVoiceGetVersion(const SVoice *self, s_erc *error);
  * @param self The given voice.
  * @param error Error code.
  *
- * @return #SList of keys, or @a NULL if the data container is empty.
+ * @return #SList of keys, or #NULL if the data container is empty.
  *
  * The list objects (keys) are string objects and are accessed with #SObjectGetString.
  * @note The caller is responsible for the memory of the returned #SList object.
@@ -490,7 +490,7 @@ S_API s_bool SVoiceDataIsPresent(const SVoice *self, const char *name,
  * @param key The string key of the data object to get.
  * @param error Error code.
  *
- * @return Pointer to the data object of the named key, or @a NULL if
+ * @return Pointer to the data object of the named key, or #NULL if
  * data of named key is not present in voice.
  */
 S_API const SObject *SVoiceGetData(const SVoice *self, const char *key,
@@ -545,7 +545,7 @@ S_API void SVoiceDelData(SVoice *self, const char *key, s_erc *error);
  * @param self The given voice.
  * @param error Error code.
  *
- * @return #SList of keys, or @a NULL if the @a feature container is empty.
+ * @return #SList of keys, or #NULL if the @a feature container is empty.
  * The list objects (keys) are string objects and are accessed with
  * #SObjectGetString.
  *
@@ -576,7 +576,7 @@ S_API s_bool SVoiceFeatureIsPresent(const SVoice *self, const char *name,
  * @param key The string key of the feature object to get.
  * @param error Error code.
  *
- * @return Pointer to the feature object of the named key, or @a NULL if
+ * @return Pointer to the feature object of the named key, or #NULL if
  * feature of named key is not present in voice.
  */
 S_API const SObject *SVoiceGetFeature(const SVoice *self, const char *key, s_erc *error);
@@ -645,13 +645,13 @@ S_API void SVoiceDelFeature(SVoice *self, const char *key, s_erc *error);
 
 
 /**
- * Get a list of the <i> feature processor </i> keys in the voice.
+ * Get a list of the <i>feature processor</i> keys in the voice.
  *
  * @public @memberof SVoice
  * @param self The given voice.
  * @param error Error code.
  *
- * @return #SList of keys, or @a NULL if the <i> feature processor </i> container is empty.
+ * @return #SList of keys, or #NULL if the <i> feature processor </i> container is empty.
  * The list objects (keys) are string objects and are accessed with
  * #SObjectGetString.
  *
@@ -661,7 +661,7 @@ S_API SList *SVoiceGetFeatProcKeys(const SVoice *self, s_erc *error);
 
 
 /**
- * Query if named <i> feature processor </i> is present in the given
+ * Query if named <i>feature processor</i> is present in the given
  * voice.
  *
  * @public @memberof SVoice
@@ -676,14 +676,14 @@ S_API s_bool SVoiceFeatProcIsPresent(const SVoice *self, const char *name,
 
 
 /**
- * Get the voice <i> feature processor </i> object of the named key.
+ * Get the voice <i>feature processor</i> object of the named key.
  *
  * @public @memberof SVoice
  * @param self The given voice.
  * @param key The string key of the feature processor object to get.
  * @param error Error code.
  *
- * @return Pointer to the feature processor object of the named key, or @a NULL if
+ * @return Pointer to the feature processor object of the named key, or #NULL if
  * feature processor of named key is not present in voice.
  */
 S_API const SFeatProcessor *SVoiceGetFeatProc(const SVoice *self, const char *key,
@@ -691,7 +691,7 @@ S_API const SFeatProcessor *SVoiceGetFeatProc(const SVoice *self, const char *ke
 
 
 /**
- * Set the value of the named voice <i> feature processor </i> key to the
+ * Set the value of the named voice <i>feature processor</i> key to the
  * given #SFeatProcessor. If the named key already exists
  * then it's #SFeatProcessor will be deleted (if not referenced) and
  * replaced.
@@ -709,7 +709,7 @@ S_API void SVoiceSetFeatProc(SVoice *self, const char *key,
 
 
 /**
- * Delete the value of the named key from the voice <i> feature processor </i> container.
+ * Delete the value of the named key from the voice <i>feature processor</i> container.
  * The key is removed and value deleted if it is not referenced.
  *
  * @public @memberof SVoice
@@ -732,13 +732,13 @@ S_API void SVoiceDelFeatProc(SVoice *self, const char *key, s_erc *error);
 
 
 /**
- * Get a list of the <i> utterance processor </i> keys in the voice.
+ * Get a list of the <i>utterance processor</i> keys in the voice.
  *
  * @public @memberof SVoice
  * @param self The given voice.
  * @param error Error code.
  *
- * @return #SList of keys, or @a NULL if the <i> utterance processor </i> container is empty.
+ * @return #SList of keys, or #NULL if the <i>utterance processor</i> container is empty.
  * The list objects (keys) are string objects and are accessed with
  * #SObjectGetString.
  *
@@ -748,7 +748,7 @@ S_API SList *SVoiceGetUttProcKeys(const SVoice *self, s_erc *error);
 
 
 /**
- * Query if named <i> utterance processor </i> is present in the given
+ * Query if named <i>utterance processor</i> is present in the given
  * voice.
  *
  * @public @memberof SVoice
@@ -763,14 +763,14 @@ S_API s_bool SVoiceUttProcIsPresent(const SVoice *self, const char *name,
 
 
 /**
- * Get the voice <i> utterance processor </i> object of the named key.
+ * Get the voice <i>utterance processor</i> object of the named key.
  *
  * @public @memberof SVoice
  * @param self The given voice.
  * @param key The string key of the utterance processor object to get.
  * @param error Error code.
  *
- * @return Pointer to the utterance processor object of the named key, or @a NULL if
+ * @return Pointer to the utterance processor object of the named key, or #NULL if
  * utterance processor of named key is not present in voice.
  */
 S_API const SUttProcessor *SVoiceGetUttProc(const SVoice *self, const char *key,
@@ -778,7 +778,7 @@ S_API const SUttProcessor *SVoiceGetUttProc(const SVoice *self, const char *key,
 
 
 /**
- * Set the value of the named voice <i> utterance processor </i> key to the
+ * Set the value of the named voice <i>utterance processor</i> key to the
  * given #SUttProcessor. If the named key already exists
  * then it's #SUttProcessor will be deleted (if not referenced) and
  * replaced.
@@ -796,7 +796,7 @@ S_API void SVoiceSetUttProc(SVoice *self, const char *key,
 
 
 /**
- * Delete the value of the named key from the voice <i> utterance processor </i> container.
+ * Delete the value of the named key from the voice <i>utterance processor</i> container.
  * The key is removed and value deleted if it is not referenced.
  *
  * @public @memberof SVoice
@@ -819,13 +819,13 @@ S_API void SVoiceDelUttProc(SVoice *self, const char *key, s_erc *error);
 
 
 /**
- * Get a list of the voice <i> utterance type </i> keys in the voice.
+ * Get a list of the voice <i>utterance type</i> keys in the voice.
  *
  * @public @memberof SVoice
  * @param self The given voice.
  * @param error Error code.
  *
- * @return #SList of keys, or @a NULL if the <i> utterance type </i> container is empty.
+ * @return #SList of keys, or #NULL if the <i>utterance type</i> container is empty.
  * The list objects (keys) are string objects and are accessed with
  * #SObjectGetString.
  *
@@ -835,7 +835,7 @@ S_API SList *SVoiceGetUttTypesKeys(const SVoice *self, s_erc *error);
 
 
 /**
- * Query if named <i> utterance type </i> is present in the given
+ * Query if named <i>utterance type</i> is present in the given
  * voice.
  *
  * @public @memberof SVoice
@@ -850,7 +850,7 @@ S_API s_bool SVoiceUttTypeIsPresent(const SVoice *self, const char *name,
 
 
 /**
- * Get the voice <i> utterance type </i> object of the named key.
+ * Get the voice <i>utterance type</i> object of the named key.
  *
  * @public @memberof SVoice
  * @param self The given voice.
@@ -858,16 +858,16 @@ S_API s_bool SVoiceUttTypeIsPresent(const SVoice *self, const char *name,
  * @param error Error code.
  *
  * @return #SList of string objects (access with #SObjectGetString)
- * of the <i> utterance processors </i> defined for the named
- * utterance type, or @a NULL if utterance type of named key is
+ * of the <i>utterance processors</i> defined for the named
+ * utterance type, or #NULL if utterance type of named key is
  * not present in voice.
  */
 S_API const SList *SVoiceGetUttType(const SVoice *self, const char *key, s_erc *error);
 
 
 /**
- * Set the value of the named voice <i> utterance type </i> key to the
- * given #SList of string objects of the <i> utterance processors </i>
+ * Set the value of the named voice <i>utterance type</i> key to the
+ * given #SList of string objects of the <i>utterance processors</i>
  * defined for the utterance type.
  * If the named key already exists then it's #SList will be deleted
  * (if not referenced) and replaced.
@@ -886,7 +886,7 @@ S_API void SVoiceSetUttType(SVoice *self, const char *key,
 
 
 /**
- * Delete the value of the named key from the voice <i> utterance type </i> container.
+ * Delete the value of the named key from the voice <i>utterance type</i> container.
  * The key is removed and value deleted if it is not referenced.
  *
  * @public @memberof SVoice
@@ -903,13 +903,10 @@ S_API void SVoiceDelUttType(SVoice *self, const char *key, s_erc *error);
 
 
 /**
- * Load the voice data in the voice data configuration. This function is used
- * after a voice is loaded with #s_vm_load_voice with the @c load_data
- * flag set to @c FALSE. This allows one to change the voice data
- * configuration before loading the voice data, thereby eliminating
- * lengthy load times for data that is not required for specific
- * utterance types. If data has already been loaded then this function
- * will issue a warning.
+ * Load the voice data in the voice data configuration. This function
+ * is used by the <i>Voice Manager</i> in #s_vm_load_voice. The reason
+ * for this is that the voice must load its own data as it's data
+ * structure is opaque.
  *
  * @param self The given voice.
  * @param dataConfig A map with the data configuration.

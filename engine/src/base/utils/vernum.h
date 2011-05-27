@@ -124,9 +124,9 @@ typedef struct
 	uint8 minor;
 
 	/**
-	 * Patch number.
+	 * Patch name.
 	 */
-	uint8 patch;
+	const char *patch;
 
 	/**
 	 * Release name.

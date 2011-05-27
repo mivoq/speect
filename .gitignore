@@ -77,3 +77,9 @@ docs/doxygen/*
 # Ignore cscope files
 
 cscope*
+
+
+##########################################################################
+# Ignore VERSION file
+
+VERSION

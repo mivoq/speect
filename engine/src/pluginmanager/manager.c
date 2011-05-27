@@ -503,7 +503,7 @@ static void load_plugin(SPlugin *self, const char *path, s_erc *error)
 	{
 		S_CTX_ERR(error, S_FAILURE,
 				  "load_plugin",
-				  "Plug-in at \"%s\" (compiled ABI version %d.%d) is not compatible with this ABI version (%d.%d.%d) of the Speect Engine",
+				  "Plug-in at \"%s\" (compiled ABI version %d.%d) is not compatible with this ABI version (%d.%d.%s) of the Speect Engine",
 				  path, self->plugin_info->s_abi.major, self->plugin_info->s_abi.minor,
 				  S_MAJOR_VERSION, S_MINOR_VERSION, S_PATCHLEVEL);
 		S_DELETE(pluginDso, "PluginLoad", error);

@@ -63,7 +63,9 @@
  * Release name of this version of Speect. This is a
  * string.
  * Printable format version name, for example:
- * @code printf("%s", S_RELEASE); @endcode
+ @verbatim
+ printf("%s", S_RELEASE);
+ @endverbatim
  */
 #define S_RELEASE "@SPCT_VERSION_RELEASE@"
 
@@ -73,7 +75,9 @@
  * @hideinitializer
  * Major version. This is an integer.
  * Printable format version number, for example:
- * @code printf("%d", S_MAJOR_VERSION); @endcode
+ @verbatim
+ printf("%d", S_MAJOR_VERSION);
+ @endverbatim
  */
 #define S_MAJOR_VERSION	@SPCT_VERSION_MAJOR@
 
@@ -83,7 +87,9 @@
  * @hideinitializer
  * Minor version. This is an integer.
  * Printable format version number, for example:
- * @code printf("%d", S_MINOR_VERSION); @endcode
+ @verbatim
+ printf("%d", S_MINOR_VERSION);
+ @endverbatim
  */
 #define S_MINOR_VERSION	@SPCT_VERSION_MINOR@
 
@@ -91,11 +97,13 @@
 /**
  * @def S_PATCHLEVEL
  * @hideinitializer
- * Patchlevel version. This is an integer.
+ * Patchlevel version. This is a string.
  * Printable format version number, for example:
- * @code printf("%d", S_PATCHLEVEL); @endcode
+ @verbatim
+ printf("%s", S_PATCHLEVEL);
+ @verbatim
  */
-#define S_PATCHLEVEL @SPCT_VERSION_PATCH@
+#define S_PATCHLEVEL "@SPCT_VERSION_PATCH@"
 
 
 /**
@@ -104,9 +112,11 @@
  * Speect full version number, that is
  * #S_MAJOR_VERSION.#S_MINOR_VERSION.#S_PATCHLEVEL as a string.
  * Printable format full version string, for example:
- * @code printf("%s", S_VERSION_STR); @endcode
+ @verbatim
+ printf("%s", S_VERSION_STR);
+ @endverbatim
  */
-#define S_VERSION_STR @SPCT_VERSION@
+#define S_VERSION_STR "@SPCT_VERSION@"
 
 
 /**
@@ -114,7 +124,9 @@
  * @hideinitializer
  * Compilation date. This is a string.
  * Printable date of compilation string, for example:
- * @code printf("%s", S_COMPILE_DATE); @endcode
+ @verbatim
+ printf("%s", S_COMPILE_DATE);
+ @endverbatim
  */
 #define S_COMPILE_DATE	__DATE__
 
@@ -124,7 +136,9 @@
  * @hideinitializer
  * Compilation time. This is a string.
  * Printable time of compilation string, for example:
- * @code printf("%s", S_COMPILE_TIME); @endcode
+ @verbatim
+ printf("%s", S_COMPILE_TIME);
+ @verbatim
  */
 #define S_COMPILE_TIME	__TIME__
 

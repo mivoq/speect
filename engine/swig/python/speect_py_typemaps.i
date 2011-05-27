@@ -111,7 +111,7 @@
 	versionTuple = PyTuple_New(4);
 	versionMajor = PyLong_FromLong((long)output.major);
 	versionMinor = PyLong_FromLong((long)output.minor);
-	versionPatchLevel = PyLong_FromLong((long)output.patch);
+	versionPatchLevel = s_set_pyobject_str(output.patch, &local_err);
 	versionRelease = s_set_pyobject_str(output.release, &local_err);
 
 
@@ -141,11 +141,7 @@
 	}
 	else
 	{
-#if PY_VERSION_HEX >= 0x03000000
-		$result = PyUnicode_FromStringAndSize($1, slen);
-#else /* ! PY_VERSION_HEX >= 0x03000000 */
-		$result = PyUnicode_DecodeUTF8($1, slen, NULL);
-#endif /* PY_VERSION_HEX >= 0x03000000 */
+		$result = s_set_pyobject_str($1, &error);
 	}
 }
 

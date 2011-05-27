@@ -39,7 +39,7 @@
 %define version_DOCSTRING
 """
 Return the Speect Engine library version in a tuple, (major version number, minor
-version number, patch number, release name).
+version number, patch name, release name).
 
 :rtype: tuple
 """

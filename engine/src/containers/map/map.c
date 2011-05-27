@@ -87,6 +87,25 @@
 
 /************************************************************************************/
 /*                                                                                  */
+/* Macros                                                                           */
+/*                                                                                  */
+/************************************************************************************/
+
+/**
+ * @hideinitializer
+ * Test if the given function method of the given #SMap
+ * can be called.
+ * @param SELF The given #SMap*.
+ * @param FUNC The function method of the given object to check.
+ * @return #TRUE if function can be called, otherwise #FALSE.
+ * @note This casting is not safety checked.
+ */
+#define S_MAP_METH_VALID(SELF, FUNC)			\
+	S_MAP_CALL(SELF, FUNC) ? TRUE : FALSE
+
+
+/************************************************************************************/
+/*                                                                                  */
 /*  Static variables                                                                */
 /*                                                                                  */
 /************************************************************************************/

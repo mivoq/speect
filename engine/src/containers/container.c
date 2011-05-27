@@ -46,6 +46,28 @@
 
 /************************************************************************************/
 /*                                                                                  */
+/* Macros                                                                           */
+/*                                                                                  */
+/************************************************************************************/
+
+/**
+* @hideinitializer
+* Test if the given function method of the given #SContainer
+* can be called.
+*
+* @param SELF The given #SContainer*.
+* @param FUNC The function method of the given object to check.
+*
+* @return #TRUE if function can be called, otherwise #FALSE.
+*
+* @note This casting is not safety checked.
+*/
+#define S_CONTAINER_METH_VALID(SELF, FUNC)		\
+	S_CONTAINER_CALL(SELF, FUNC) ? TRUE : FALSE
+
+
+/************************************************************************************/
+/*                                                                                  */
 /* Static variables                                                                 */
 /*                                                                                  */
 /************************************************************************************/

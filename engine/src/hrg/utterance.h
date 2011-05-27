@@ -213,34 +213,6 @@ S_BEGIN_C_DECLS
 
 
 /**
- * @hideinitializer
- * Call the given function method of the given #SUtterance,
- * see full description #S_UTTERANCE_CALL for usage.
- * @param SELF The given #SUtterance*.
- * @param FUNC The function method of the given object to call.
- * @note This casting is not safety checked.
- * @note Example usage: @code S_UTTERANCE_CALL(self, func)(param1, param2, ..., paramN); @endcode
- * where @c param1, @c param2, ..., @c paramN are the parameters passed to the object function
- * @c func.
- */
-#define S_UTTERANCE_CALL(SELF, FUNC)				\
-	((SUtteranceClass *)S_OBJECT_CLS(SELF))->FUNC
-
-
-/**
- * @hideinitializer
- * Test if the given function method of the given #SUtterance
- * can be called.
- * @param SELF The given #SUtterance*.
- * @param FUNC The function method of the given object to check.
- * @return #TRUE if function can be called, otherwise #FALSE.
- * @note This casting is not safety checked.
- */
-#define S_UTTERANCE_METH_VALID(SELF, FUNC)		\
-	S_UTTERANCE_CALL(SELF, FUNC) ? TRUE : FALSE
-
-
-/**
  * @}
  */
 

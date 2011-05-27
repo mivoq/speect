@@ -102,8 +102,7 @@ S_BEGIN_C_DECLS
 
 /**
  * @hideinitializer
- * Call the given function method of the given #SContainer,
- * see full description #S_CONTAINER_CALL for usage.
+ * Call the given function method of the given #SContainer.
  *
  * @param SELF The given #SContainer*.
  * @param FUNC The function method of the given object to call.
@@ -118,22 +117,6 @@ S_BEGIN_C_DECLS
  */
 #define S_CONTAINER_CALL(SELF, FUNC)					\
 	((SContainerClass *)S_OBJECT_CLS(SELF))->FUNC
-
-
-/**
- * @hideinitializer
- * Test if the given function method of the given #SContainer
- * can be called.
- *
- * @param SELF The given #SContainer*.
- * @param FUNC The function method of the given object to check.
- *
- * @return #TRUE if function can be called, otherwise #FALSE.
- *
- * @note This casting is not safety checked.
- */
-#define S_CONTAINER_METH_VALID(SELF, FUNC)		\
-	S_CONTAINER_CALL(SELF, FUNC) ? TRUE : FALSE
 
 
 /**

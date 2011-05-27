@@ -147,30 +147,19 @@ S_BEGIN_C_DECLS
 
 /**
  * @hideinitializer
- * Call the given function method of the given #SMap,
- * see full description #S_MAP_CALL for usage.
+ * Call the given function method of the given #SMap.
  * @param SELF The given #SMap*.
  * @param FUNC The function method of the given object to call.
  * @note This casting is not safety checked.
- * @note Example usage: @code S_MAP_CALL(self, func)(param1, param2, ..., paramN); @endcode
+ * @note Example usage:
+ @verbatim
+ S_MAP_CALL(self, func)(param1, param2, ..., paramN);
+ @endverbatim
  * where @c param1, @c param2, ..., @c paramN are the parameters passed to the object function
  * @c func.
  */
 #define S_MAP_CALL(SELF, FUNC)					\
 	((SMapClass *)S_OBJECT_CLS(SELF))->FUNC
-
-
-/**
- * @hideinitializer
- * Test if the given function method of the given #SMap
- * can be called.
- * @param SELF The given #SMap*.
- * @param FUNC The function method of the given object to check.
- * @return #TRUE if function can be called, otherwise #FALSE.
- * @note This casting is not safety checked.
- */
-#define S_MAP_METH_VALID(SELF, FUNC)			\
-	S_MAP_CALL(SELF, FUNC) ? TRUE : FALSE
 
 
 /**

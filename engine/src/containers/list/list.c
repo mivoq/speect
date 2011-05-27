@@ -86,6 +86,25 @@
 
 /************************************************************************************/
 /*                                                                                  */
+/* Macros                                                                           */
+/*                                                                                  */
+/************************************************************************************/
+
+/**
+ * @hideinitializer
+ * Test if the given function method of the given #SList
+ * can be called.
+ * @param SELF The given #SList*.
+ * @param FUNC The function method of the given object to check.
+ * @return #TRUE if function can be called, otherwise #FALSE.
+ * @note This casting is not safety checked.
+ */
+#define S_LIST_METH_VALID(SELF, FUNC)			\
+	S_LIST_CALL(SELF, FUNC) ? TRUE : FALSE
+
+
+/************************************************************************************/
+/*                                                                                  */
 /*  Static variables                                                                */
 /*                                                                                  */
 /************************************************************************************/

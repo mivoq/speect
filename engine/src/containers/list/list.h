@@ -151,30 +151,19 @@ S_BEGIN_C_DECLS
 
 /**
  * @hideinitializer
- * Call the given function method of the given #SList,
- * see full description #S_LIST_CALL for usage.
+ * Call the given function method of the given #SList.
  * @param SELF The given #SList*.
  * @param FUNC The function method of the given object to call.
  * @note This casting is not safety checked.
- * @note Example usage: @code S_LIST_CALL(self, func)(param1, param2, ..., paramN); @endcode
+ * @note Example usage:
+ @verbatim
+ S_LIST_CALL(self, func)(param1, param2, ..., paramN);
+ @endverbatim
  * where @c param1, @c param2, ..., @c paramN are the parameters passed to the object function
  * @c func.
  */
 #define S_LIST_CALL(SELF, FUNC)					\
 	((SListClass *)S_OBJECT_CLS(SELF))->FUNC
-
-
-/**
- * @hideinitializer
- * Test if the given function method of the given #SList
- * can be called.
- * @param SELF The given #SList*.
- * @param FUNC The function method of the given object to check.
- * @return #TRUE if function can be called, otherwise #FALSE.
- * @note This casting is not safety checked.
- */
-#define S_LIST_METH_VALID(SELF, FUNC)			\
-	S_LIST_CALL(SELF, FUNC) ? TRUE : FALSE
 
 
 /**

@@ -284,7 +284,7 @@ S_API s_erc s_logger_vwrite(const s_logger *logger, s_log_event level, const cha
  *
  * @return error Error code.
  *
- * @note Thread-safety is dependant on the underlying implementation.
+ * @note Thread-safety is dependent on the underlying implementation.
  */
 S_API s_erc s_logger_destroy(s_logger *logger);
 

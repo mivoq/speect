@@ -148,7 +148,7 @@ def get_word(self, word, features=None):
                      entries of the word exists in the lexicon. If ``None`` then the
                      first entry of the word is returned.
     :type features: dict
-    :return: The return value is dependant on the word definition in the lexicon, and can be:
+    :return: The return value is dependent on the word definition in the lexicon, and can be:
 
                  * A list of phones for the given word (no syllables were defined in the lexicon).
                  * A list of syllables, where the syllables are lists of phones.

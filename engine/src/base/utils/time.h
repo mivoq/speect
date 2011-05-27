@@ -83,7 +83,7 @@ S_BEGIN_C_DECLS
  *
  * @param error Error code.
  *
- * @note Dependant on the @ref SErrDbg module being initialized.
+ * @note Dependent on the @ref SErrDbg module being initialized.
  */
 S_LOCAL void _s_time_init(s_erc *error);
 

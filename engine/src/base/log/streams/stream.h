@@ -166,7 +166,7 @@ struct s_stream
  *
  * @return Error code.
  *
- * @note Thread-safety is dependant on the underlying implementation.
+ * @note Thread-safety is dependent on the underlying implementation.
  */
 S_API s_erc s_stream_write(const s_stream *stream, const char *fmt, ...);
 
@@ -186,7 +186,7 @@ S_API s_erc s_stream_write(const s_stream *stream, const char *fmt, ...);
  *
  * @return error Error code.
  *
- * @note Thread-safety is dependant on the underlying implementation.
+ * @note Thread-safety is dependent on the underlying implementation.
  */
 S_API s_erc s_stream_vwrite(const s_stream *stream, const char *fmt, va_list argp);
 
@@ -199,7 +199,7 @@ S_API s_erc s_stream_vwrite(const s_stream *stream, const char *fmt, va_list arg
  *
  * @return error Error code.
  *
- * @note Thread-safety is dependant on the underlying implementation.
+ * @note Thread-safety is dependent on the underlying implementation.
  */
 S_API s_erc s_stream_destroy(s_stream *stream);
 

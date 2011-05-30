@@ -145,8 +145,3 @@ Macros
 .. doxybridge:: S_DATASOURCE
   :type: macro
 
-.. doxybridge:: S_DATASOURCE_CALL
-  :type: macro
-
-.. doxybridge:: S_DATASOURCE_METH_VALID
-  :type: macro

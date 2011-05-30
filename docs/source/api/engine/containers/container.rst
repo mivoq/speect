@@ -44,5 +44,4 @@ Macros
 .. doxybridge:: S_CONTAINER_CALL
   :type: macro
 
-.. doxybridge:: S_CONTAINER_METH_VALID
-  :type: macro
+

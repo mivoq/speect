@@ -8,4 +8,5 @@ Documentation
    :maxdepth: 2
 
    api/main
+   topics/main
    todo

@@ -46,11 +46,5 @@ Macros
 .. doxybridge:: S_ITERATOR
   :type: macro
 
-.. doxybridge:: S_ITERATOR_CALL
-  :type: macro
-
-.. doxybridge:: S_ITERATOR_METH_VALID
-  :type: macro
-
 .. doxybridge:: S_ITERATOR_GET
   :type: macro

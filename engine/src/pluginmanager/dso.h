@@ -156,7 +156,7 @@ typedef struct
 	 * @param path The full path and name of the dso.
 	 * @param error Error code.
 	 */
-	void  (*load)       (SDso *self, const char *path, s_erc *error);
+	void  (* const load)       (SDso *self, const char *path, s_erc *error);
 
 
 	/**
@@ -168,7 +168,7 @@ typedef struct
 	 * @param error Error code.
 	 * @return Handle to the symbol.
 	 */
-	void *(*get_symbol) (const SDso *self, const char *name, s_erc *error);
+	void *(* const get_symbol) (const SDso *self, const char *name, s_erc *error);
 } SDsoClass;
 
 

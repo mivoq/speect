@@ -215,7 +215,7 @@ typedef struct
 	 * are no objects in the container, then #NULL must be
 	 * returned.
 	 */
-	SIterator  *(*get_iterator)(const SContainer *self, s_erc *error);
+	SIterator  *(* const get_iterator)(const SContainer *self, s_erc *error);
 } SContainerClass;
 
 

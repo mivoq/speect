@@ -202,7 +202,8 @@ typedef struct
 	 * @note If an error occurs the @c error variable must be set so
 	 * that #SUttProcessorInit can delete the utterance processor.
 	 */
-	void (*initialize)(SUttProcessor *self, const SVoice *voice, s_erc *error);
+	void (* const initialize)(SUttProcessor *self, const SVoice *voice,
+							  s_erc *error);
 
  	/**
 	 * @protected Run function pointer.
@@ -212,7 +213,7 @@ typedef struct
 	 * @param utt The utterance on which to execute the UttProcessor.
 	 * @param error Error code.
 	 */
-	void (*run) (const SUttProcessor *self, SUtterance *utt, s_erc *error);
+	void (* const run) (const SUttProcessor *self, SUtterance *utt, s_erc *error);
 } SUttProcessorClass;
 
 

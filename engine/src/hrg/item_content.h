@@ -250,8 +250,8 @@ typedef struct
 	 * @param item The item reference in the relation.
 	 * @param error Error code.
 	 */
-	void         (*add)           (SItmContent *self, const char *relation,
-								   const SItem *item, s_erc *error);
+	void         (* const add)           (SItmContent *self, const char *relation,
+										  const SItem *item, s_erc *error);
 
 	/**
 	 * @protected Get function pointer.
@@ -265,8 +265,8 @@ typedef struct
 	 * @return The item associated with this item content in the named
 	 * relation.
 	 */
-	const SItem *(*get)           (const SItmContent *self, const char *relation,
-								   s_erc *error);
+	const SItem *(* const get)           (const SItmContent *self, const char *relation,
+										  s_erc *error);
 
 	/**
 	 * @protected Remove function pointer.
@@ -277,8 +277,8 @@ typedef struct
 	 * @param relation The name of the relation/item (key-value) to remove.
 	 * @param error Error code.
 	 */
-	void         (*remove)        (SItmContent *self, const char *relation,
-								   s_erc *error);
+	void         (* const remove)        (SItmContent *self, const char *relation,
+										  s_erc *error);
 
 
 	/**
@@ -292,8 +292,8 @@ typedef struct
 	 *
 	 * @return #TRUE if relation is in content else #FALSE.
 	 */
-	s_bool       (*in_relation)   (const SItmContent *self, const char *relation,
-								   s_erc *error);
+	s_bool       (* const in_relation)   (const SItmContent *self, const char *relation,
+										  s_erc *error);
 
 	/**
 	 * @protected Features function pointer.
@@ -304,7 +304,7 @@ typedef struct
 	 *
 	 * @return A key-value map of the features for the given content.
 	 */
-	const SMap  *(*features)      (const SItmContent *self, s_erc *error);
+	const SMap  *(* const features)      (const SItmContent *self, s_erc *error);
 
 	/**
 	 * @protected NumRelations function pointer.
@@ -317,7 +317,7 @@ typedef struct
 	 * @return The number of relations in which the item content owner
 	 * item is in.
 	 */
-	size_t       (*num_relations) (const SItmContent *self, s_erc *error);
+	size_t       (* const num_relations) (const SItmContent *self, s_erc *error);
 } SItmContentClass;
 
 

@@ -182,7 +182,7 @@ typedef struct
 	 *
 	 * @return #TRUE if ready for use, otherwise #FALSE.
 	 */
-	s_bool (*is_ready) (const SPlugin *self);
+	s_bool (* const is_ready) (const SPlugin *self);
 
 	/**
 	 * @private SetReady function pointer.
@@ -192,7 +192,7 @@ typedef struct
 	 *
 	 * @param self The plug-in to set the ready flag for.
 	 */
-	void   (*set_ready)(SPlugin *self);
+	void   (* const set_ready)(SPlugin *self);
 } SPluginClass;
 
 

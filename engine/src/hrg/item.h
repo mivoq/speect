@@ -260,8 +260,8 @@ typedef struct
 	 * @param error Error code.
 	 * @return The given item as it is represented in the named relation.
 	 */
-	SItem            *(*item_as)       (const SItem *self, const char *relation,
-										s_erc *error);
+	SItem            *(* const item_as)       (const SItem *self, const char *relation,
+											   s_erc *error);
 
 	/**
 	 * @protected ItemIn function pointer
@@ -271,8 +271,8 @@ typedef struct
 	 * @param error Error code.
 	 * @return #TRUE if item is in relation else #FALSE.
 	 */
-	s_bool            (*item_in)       (const SItem *self, const char *relation,
-										s_erc *error);
+	s_bool            (* const item_in)       (const SItem *self, const char *relation,
+											   s_erc *error);
 
 	/**
 	 * @protected ItemNext function pointer
@@ -281,7 +281,7 @@ typedef struct
 	 * @param error Error code.
 	 * @return Pointer to the next item.
 	 */
-	SItem            *(*item_next)     (const SItem *self, s_erc *error);
+	SItem            *(* const item_next)     (const SItem *self, s_erc *error);
 
 	/**
 	 * @protected ItemPrev function pointer
@@ -290,7 +290,7 @@ typedef struct
 	 * @param error Error code.
 	 * @return Pointer to the prev item.
 	 */
-	SItem            *(*item_prev)     (const SItem *self, s_erc *error);
+	SItem            *(* const item_prev)     (const SItem *self, s_erc *error);
 
 	/**
 	 * @protected ItemAppend function pointer
@@ -304,8 +304,8 @@ typedef struct
 	 * @param error Error code.
 	 * @return Pointer to appended item.
 	 */
-	SItem            *(*item_append)   (SItem *self, const SItem *toShare,
-										s_erc *error);
+	SItem            *(* const item_append)   (SItem *self, const SItem *toShare,
+											   s_erc *error);
 
 	/**
 	 * @protected ItemPrepend function pointer
@@ -319,8 +319,8 @@ typedef struct
 	 * @param error Error code.
 	 * @return Pointer to prepended item.
 	 */
-	SItem            *(*item_prepend)  (SItem *self, const SItem *toShare,
-										s_erc *error);
+	SItem            *(* const item_prepend)  (SItem *self, const SItem *toShare,
+											   s_erc *error);
 
 	/**
 	 * @protected ItemParent function pointer
@@ -329,7 +329,7 @@ typedef struct
 	 * @param error Error code.
 	 * @return Pointer to the parent item of the given item.
 	 */
-	SItem            *(*item_parent)   (const SItem *self, s_erc *error);
+	SItem            *(* const item_parent)   (const SItem *self, s_erc *error);
 
 	/**
 	 * @protected ItemDaughter function pointer
@@ -338,7 +338,7 @@ typedef struct
 	 * @param error Error code.
 	 * @return Pointer to the first daughter item of the given item.
 	 */
-	SItem            *(*item_daughter) (const SItem *self, s_erc *error);
+	SItem            *(* const item_daughter) (const SItem *self, s_erc *error);
 
 	/**
 	 * @protected ItemNth function pointer
@@ -349,7 +349,8 @@ typedef struct
 	 * @param error Error code.
 	 * @return Pointer to the @c nth daughter item of the given item.
 	 */
-	SItem            *(*nth_daughter)  (const SItem *self, uint32 n, s_erc *error);
+	SItem            *(* const nth_daughter)  (const SItem *self, uint32 n,
+											   s_erc *error);
 
 	/**
 	 * @protected LastDaughter function pointer
@@ -358,7 +359,7 @@ typedef struct
 	 * @param error Error code.
 	 * @return Pointer to the last daughter item of the given item.
 	 */
-	SItem            *(*last_daughter) (const SItem *self, s_erc *error);
+	SItem            *(* const last_daughter) (const SItem *self, s_erc *error);
 
 	/**
 	 * @protected AddDaughter function pointer
@@ -372,8 +373,8 @@ typedef struct
 	 * @param error Error code.
 	 * @return Pointer to newly added daughter item.
 	 */
-	SItem            *(*add_daughter)  (SItem *self, const SItem *toShare,
-										s_erc *error);
+	SItem            *(* const add_daughter)  (SItem *self, const SItem *toShare,
+											   s_erc *error);
 
 	/**
 	 * @protected GetName function pointer
@@ -382,7 +383,7 @@ typedef struct
 	 * @param error Error code.
 	 * @return Pointer to the given item's name.
 	 */
-	const char       *(*get_name)      (const SItem *self, s_erc *error);
+	const char       *(* const get_name)      (const SItem *self, s_erc *error);
 
 	/**
 	 * @protected SetName function pointer
@@ -391,8 +392,8 @@ typedef struct
 	 * @param name The name of the item.
 	 * @param error Error code.
 	 */
-	void              (*set_name)      (SItem *self, const char *name,
-										s_erc *error);
+	void              (* const set_name)      (SItem *self, const char *name,
+											   s_erc *error);
 
 	/**
 	 * @protected FeatPresent function pointer
@@ -402,8 +403,8 @@ typedef struct
 	 * @param error Error code.
 	 * @return #TRUE if present or #FALSE if not.
 	 */
-	s_bool            (*feat_present)  (const SItem *self, const char *name,
-										s_erc *error);
+	s_bool            (* const feat_present)  (const SItem *self, const char *name,
+											   s_erc *error);
 
 	/**
 	 * @protected FeatDelete function pointer
@@ -412,8 +413,8 @@ typedef struct
 	 * @param name The feature name.
 	 * @param error Error code.
 	 */
-	void              (*feat_delete)   (SItem *self, const char *name,
-										s_erc *error);
+	void              (* const feat_delete)   (SItem *self, const char *name,
+											   s_erc *error);
 
 	/**
 	 * @protected FeatKeys function pointer
@@ -429,7 +430,7 @@ typedef struct
 	 * @note Caller is responsible for the memory of the returned #SList
 	 * object.
 	 */
-	SList            *(*feat_keys)     (const SItem *self, s_erc *error);
+	SList            *(* const feat_keys)     (const SItem *self, s_erc *error);
 
 	/**
 	 * @protected GetObject function pointer
@@ -439,8 +440,8 @@ typedef struct
 	 * @param error Error code.
 	 * @return Pointer to the #SObject object.
 	 */
-	const SObject    *(*get_object)    (const SItem *self, const char *name,
-										s_erc *error);
+	const SObject    *(* const get_object)    (const SItem *self, const char *name,
+											   s_erc *error);
 
 	/**
 	 * @protected GetInt function pointer
@@ -450,8 +451,8 @@ typedef struct
 	 * @param error Error code.
 	 * @return Integer value of named feature.
 	 */
-	sint32           (*get_int)        (const SItem *self, const char *name,
-										s_erc *error);
+	sint32           (* const get_int)        (const SItem *self, const char *name,
+											   s_erc *error);
 
 	/**
 	 * @protected GetFloat function pointer
@@ -461,8 +462,8 @@ typedef struct
 	 * @param error Error code.
 	 * @return Float value of named feature.
 	 */
-	float            (*get_float)      (const SItem *self, const char *name,
-										s_erc *error);
+	float            (* const get_float)      (const SItem *self, const char *name,
+											   s_erc *error);
 
 
 	/**
@@ -473,8 +474,8 @@ typedef struct
 	 * @param error Error code.
 	 * @return Pointer to the string.
 	 */
-	const char      *(*get_string)     (const SItem *self, const char *name,
-										s_erc *error);
+	const char      *(* const get_string)     (const SItem *self, const char *name,
+											   s_erc *error);
 
 	/**
 	 * @protected SetObject function pointer
@@ -484,8 +485,8 @@ typedef struct
 	 * @param obejct The #SObject.
 	 * @param error Error code.
 	 */
-	void             (*set_object)     (SItem *self, const char *name,
-										const SObject *object, s_erc *error);
+	void             (* const set_object)     (SItem *self, const char *name,
+											   const SObject *object, s_erc *error);
 
 	/**
 	 * @protected SetInt function pointer
@@ -495,8 +496,8 @@ typedef struct
 	 * @param i The integer value.
 	 * @param error Error code.
 	 */
-	void             (*set_int)        (SItem *self, const char *name,
-										sint32 i, s_erc *error);
+	void             (* const set_int)        (SItem *self, const char *name,
+											   sint32 i, s_erc *error);
 
 	/**
 	 * @protected SetFloat function pointer
@@ -506,8 +507,8 @@ typedef struct
 	 * @param f The float value.
 	 * @param error Error code.
 	 */
-	void             (*set_float)      (SItem *self, const char *name,
-										float f, s_erc *error);
+	void             (* const set_float)      (SItem *self, const char *name,
+											   float f, s_erc *error);
 
 
 	/**
@@ -518,8 +519,8 @@ typedef struct
 	 * @param string The string value.
 	 * @param error Error code.
 	 */
-	void             (*set_string)     (SItem *self, const char *name,
-										const char *string, s_erc *error);
+	void             (* const set_string)     (SItem *self, const char *name,
+											   const char *string, s_erc *error);
 
 	/**
 	 * @protected Relation function pointer
@@ -528,7 +529,7 @@ typedef struct
 	 * @param error Error code.
 	 * @return Pointer to the given item's relation.
 	 */
-	const SRelation  *(*relation)      (const SItem *self, s_erc *error);
+	const SRelation  *(* const relation)      (const SItem *self, s_erc *error);
 
 	/**
 	 * @protected Utterance function pointer
@@ -537,7 +538,7 @@ typedef struct
 	 * @param error Error code.
 	 * @return Pointer to the given item's utterance.
 	 */
-	const SUtterance *(*utterance)     (const SItem *self, s_erc *error);
+	const SUtterance *(* const utterance)     (const SItem *self, s_erc *error);
 
 	/**
 	 * @protected Voice function pointer
@@ -546,7 +547,7 @@ typedef struct
 	 * @param error Error code.
 	 * @return Pointer to the given item's voice.
 	 */
-	const SVoice     *(*voice)         (const SItem *self, s_erc *error);
+	const SVoice     *(* const voice)         (const SItem *self, s_erc *error);
 } SItemClass;
 
 

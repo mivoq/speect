@@ -224,7 +224,7 @@ struct SObjectClass
 	 * @param obj Memory for the newly created object.
 	 * @param error Error code.
 	 */
-	void     (*init)    (void *obj, s_erc *error);
+	void     (* const init)    (void *obj, s_erc *error);
 
 	/**
 	 * @protected Destructor function pointer.
@@ -237,7 +237,7 @@ struct SObjectClass
 	 *
 	 * @note See #S_DELETE and #S_FORCE_DELETE.
 	 */
-	void     (*destroy) (void *obj, s_erc *error);
+	void     (* const destroy) (void *obj, s_erc *error);
 
 	/**
 	 * @protected Dispose function pointer.
@@ -249,7 +249,7 @@ struct SObjectClass
 	 *
 	 * @note See #S_DELETE and #S_FORCE_DELETE.
 	 */
-	void     (*dispose) (void *obj, s_erc *error);
+	void     (* const dispose) (void *obj, s_erc *error);
 
 	/**
 	 * @protected Comparison function pointer.
@@ -265,7 +265,8 @@ struct SObjectClass
 	 *
 	 * @return #TRUE if the objects are the same, else #FALSE.
 	 */
-	s_bool   (*compare) (const SObject *first, const SObject *second, s_erc *error);
+	s_bool   (* const compare) (const SObject *first, const SObject *second,
+								s_erc *error);
 
 	/**
 	 * @protected Print function pointer.
@@ -277,7 +278,7 @@ struct SObjectClass
 	 * @return Pointer to a character buffer containing a textual
 	 * representation of the given object. Utf8 encoding is assumed.
 	 */
-	char    *(*print)   (const SObject *self, s_erc *error);
+	char    *(* const print)   (const SObject *self, s_erc *error);
 
 	/**
 	 * @protected Copy function pointer.
@@ -292,7 +293,7 @@ struct SObjectClass
 	 *
 	 * @return Pointer to new copy of the given object.
 	 */
-	SObject *(*copy)    (const SObject *self, s_erc *error);
+	SObject *(* const copy)    (const SObject *self, s_erc *error);
 };
 
 

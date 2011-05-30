@@ -241,8 +241,8 @@ typedef struct SDatasourceClass_s
 	 * @param error Error code.
 	 * @return The number of bytes read.
 	 */
-	size_t (*read)     (SDatasource *self, void *ptr, size_t size,
-						size_t nmemb, s_erc *error);
+	size_t (* const read)     (SDatasource *self, void *ptr, size_t size,
+							   size_t nmemb, s_erc *error);
 
 	/**
 	 * @protected ReadAt function pointer.
@@ -257,8 +257,8 @@ typedef struct SDatasourceClass_s
 	 * @param error Error code.
 	 * @return The number of bytes read.
 	 */
-	size_t (*read_at)  (SDatasource *self, void *ptr, size_t size,
-						size_t nmemb, long pos, s_erc *error);
+	size_t (* const read_at)  (SDatasource *self, void *ptr, size_t size,
+							   size_t nmemb, long pos, s_erc *error);
 
 	/**
 	 * @protected Write function pointer.
@@ -271,8 +271,8 @@ typedef struct SDatasourceClass_s
 	 * @param error Error code.
 	 * @return The number of bytes written.
 	 */
-	size_t (*write)    (SDatasource *self, const void *ptr, size_t size,
-						size_t nmemb, s_erc *error);
+	size_t (* const write)    (SDatasource *self, const void *ptr, size_t size,
+							   size_t nmemb, s_erc *error);
 
 	/**
 	 * @protected WriteAt function pointer.
@@ -287,8 +287,8 @@ typedef struct SDatasourceClass_s
 	 * @return The number of bytes written.
 	 */
 
-	size_t (*write_at) (SDatasource *self, const void *ptr, size_t size,
-						size_t nmemb, long pos, s_erc *error);
+	size_t (* const write_at) (SDatasource *self, const void *ptr, size_t size,
+							   size_t nmemb, long pos, s_erc *error);
 
 	/**
 	 * @protected Tell function pointer.
@@ -298,7 +298,7 @@ typedef struct SDatasourceClass_s
 	 * @param error Error code.
 	 * @return The offset position.
 	 */
-	long  (*tell)      (SDatasource *self, s_erc *error);
+	long  (* const tell)      (SDatasource *self, s_erc *error);
 
 	/**
 	 * @protected Seek function pointer.
@@ -309,7 +309,8 @@ typedef struct SDatasourceClass_s
 	 * @param mode The position relative to #s_seek_mode.
 	 * @param error Error code.
 	 */
-	void  (*seek)      (SDatasource *self, long pos, s_seek_mode mode, s_erc *error);
+	void  (* const seek)      (SDatasource *self, long pos,
+							   s_seek_mode mode, s_erc *error);
 } SDatasourceClass;
 
 

@@ -127,7 +127,7 @@ typedef struct
 	 *
 	 * @return The loaded object.
 	 */
-	SObject *(*load) (const char *path, s_erc *error);
+	SObject *(* const load) (const char *path, s_erc *error);
 
 	/**
 	 * @protected Save function pointer.
@@ -137,7 +137,8 @@ typedef struct
 	 * @param path The full path and file name of the object file.
 	 * @param error Error code.
 	 */
-	void     (*save) (const SObject *object, const char *path, s_erc *error);
+	void     (* const save) (const SObject *object, const char *path,
+							 s_erc *error);
 } SSerializedFileClass;
 
 

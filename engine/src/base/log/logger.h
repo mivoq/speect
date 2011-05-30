@@ -135,8 +135,9 @@ struct s_logger
 	 *
 	 * @return Error code.
 	 */
-	s_erc (*v_write)(const s_logger *self, s_log_event level, const char *error_msg,
-					 const char *func_name, const char *file_name, int line_num,
+	s_erc (*v_write)(const s_logger *self, s_log_event level,
+					 const char *error_msg, const char *func_name,
+					 const char *file_name, int line_num,
 					 const char *user_msg, va_list argp);
 
 

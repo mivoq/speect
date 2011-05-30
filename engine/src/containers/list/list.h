@@ -221,7 +221,7 @@ typedef struct
 	 *
 	 * @return #TRUE if empty else, #FALSE.
 	 */
-	s_bool         (*is_empty)     (const SList *self, s_erc *error);
+	s_bool         (* const is_empty)     (const SList *self, s_erc *error);
 
 	/**
 	 * @protected Size function pointer.
@@ -232,7 +232,7 @@ typedef struct
 	 *
 	 * @return The number of #SObject objects in the list.
 	 */
-	size_t         (*size)         (const SList *self, s_erc *error);
+	size_t         (* const size)         (const SList *self, s_erc *error);
 
 	/**
 	 * @protected Append function pointer.
@@ -242,7 +242,8 @@ typedef struct
 	 * @param object #SObject to append to end of list.
 	 * @param error Error code.
 	 */
-	void           (*append)       (SList *self, const SObject *object, s_erc *error);
+	void           (* const append)       (SList *self, const SObject *object,
+										   s_erc *error);
 
 	/**
 	 * @protected Prepend function pointer.
@@ -252,7 +253,8 @@ typedef struct
 	 * @param object #SObject to prepend to beginning of list.
 	 * @param error Error code.
 	 */
-	void           (*prepend)      (SList *self, const SObject *object, s_erc *error);
+	void           (* const prepend)      (SList *self, const SObject *object,
+										   s_erc *error);
 
 	/**
 	 * @protected InsertBefore function pointer.
@@ -264,8 +266,9 @@ typedef struct
 	 * @param object #SObject to insert.
 	 * @param error Error code.
 	 */
-	void           (*insert_before)(SList *self, SIterator *itr, const SObject *object,
-									s_erc *error);
+	void           (* const insert_before)(SList *self, SIterator *itr,
+										   const SObject *object,
+										   s_erc *error);
 
 	/**
 	 * @protected InsertAfter function pointer.
@@ -277,8 +280,9 @@ typedef struct
 	 * @param object #SObject to insert.
 	 * @param error Error code.
 	 */
-	void           (*insert_after) (SList *self, SIterator *itr, const SObject *object,
-									s_erc *error);
+	void           (* const insert_after) (SList *self, SIterator *itr,
+										   const SObject *object,
+										   s_erc *error);
 
 	/**
 	 * @protected Merge function pointer.
@@ -298,7 +302,8 @@ typedef struct
 	 * @param with The list to merge with @c self.
 	 * @param error Error code.
 	 */
-	void           (*merge)        (SList *self, const SList *with, s_erc *error);
+	void           (* const merge)        (SList *self, const SList *with,
+										   s_erc *error);
 
 	/**
 	 * @protected Copy (shallow) function pointer.
@@ -312,7 +317,8 @@ typedef struct
 	 *
 	 * @return Pointer to destination list.
 	 */
-	SList         *(*copy)         (SList *dst, const SList *src, s_erc *error);
+	SList         *(* const copy)         (SList *dst, const SList *src,
+										   s_erc *error);
 
 	/**
 	 * @protected Push function pointer.
@@ -322,7 +328,8 @@ typedef struct
 	 * @param object #SObject to push into end of list.
 	 * @param error Error code.
 	 */
-	void           (*push)         (SList *self, const SObject *object, s_erc *error);
+	void           (* const push)         (SList *self, const SObject *object,
+										   s_erc *error);
 
 	/**
 	 * @protected Pop function pointer.
@@ -336,7 +343,7 @@ typedef struct
 	 * @note The #SObject is unlinked from the list and it's memory
 	 * is the responsibility of the caller.
 	 */
-	SObject       *(*pop)          (SList *self, s_erc *error);
+	SObject       *(* const pop)          (SList *self, s_erc *error);
 
 	/**
 	 * @protected Reverse function pointer.
@@ -345,7 +352,7 @@ typedef struct
 	 * @param self The list container to reverse.
 	 * @param error Error code.
 	 */
-	void           (*reverse)      (SList *self, s_erc *error);
+	void           (* const reverse)      (SList *self, s_erc *error);
 
 	/**
 	 * @protected Nth function pointer.
@@ -359,7 +366,8 @@ typedef struct
 	 *
 	 * @note Indexing starts at 0.
 	 */
-	const SObject *(*nth)          (const SList *self, uint32 n, s_erc *error);
+	const SObject *(* const nth)          (const SList *self, uint32 n,
+										   s_erc *error);
 
 	/**
 	 * @protected ValPresent function pointer.
@@ -374,8 +382,9 @@ typedef struct
 	 * @note The #SObjectClass function pointer @c compare must be
 	 * implemented for the given object type (class).
 	 */
-	s_bool         (*val_present)  (const SList *self, const SObject *object,
-									s_erc *error);
+	s_bool         (* const val_present)  (const SList *self,
+										   const SObject *object,
+										   s_erc *error);
 } SListClass;
 
 

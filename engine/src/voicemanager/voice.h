@@ -255,8 +255,8 @@ typedef struct
 	 *
 	 * @note The voice takes hold of the @c input #SObject
 	 */
-	SUtterance  *(*synth_utt)(const SVoice *self, const char *utt_type,
-							  SObject *input, s_erc *error);
+	SUtterance  *(* const synth_utt)(const SVoice *self, const char *utt_type,
+									 SObject *input, s_erc *error);
 
 	/**
 	 * @protected ReSynthUtt function pointer.
@@ -271,8 +271,8 @@ typedef struct
 	 * @param utt The utterance to re-synthesize.
 	 * @param error Error code.
 	 */
-	void         (*re_synth_utt)(const SVoice *self, const char *utt_type,
-								 SUtterance *utt, s_erc *error);
+	void         (* const re_synth_utt)(const SVoice *self, const char *utt_type,
+										SUtterance *utt, s_erc *error);
 } SVoiceClass;
 
 

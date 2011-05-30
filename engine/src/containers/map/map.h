@@ -218,7 +218,8 @@ typedef struct
 	 *
 	 * @return Pointer to the #SObject of the named key.
 	 */
-	const SObject *(*val_get)    (const SMap *self, const char *key, s_erc *error);
+	const SObject *(* const val_get)    (const SMap *self, const char *key,
+										 s_erc *error);
 
 	/**
 	 * @protected ValSet function pointer.
@@ -231,8 +232,8 @@ typedef struct
 	 * @param object Pointer to the #SObject of the named key.
 	 * @param error Error code.
 	 */
-	void           (*val_set)    (SMap *self, const char *key,
-								  const SObject *val, s_erc *error);
+	void           (* const val_set)    (SMap *self, const char *key,
+										 const SObject *val, s_erc *error);
 
 	/**
 	 * @protected ValDelete function pointer.
@@ -244,7 +245,8 @@ typedef struct
 	 * @param key The string key of the object to delete.
 	 * @param error Error code.
 	 */
-	void           (*val_delete) (SMap *self, const char *key, s_erc *error);
+	void           (* const val_delete) (SMap *self, const char *key,
+										 s_erc *error);
 
 	/**
 	 * @protected ValUnlink function pointer.
@@ -257,7 +259,8 @@ typedef struct
 	 *
 	 * @return #SObject of named key.
 	 */
-	SObject       *(*val_unlink) (SMap *self, const char *key, s_erc *error);
+	SObject       *(* const val_unlink) (SMap *self, const char *key,
+										 s_erc *error);
 
 	/**
 	 * @protected ValPresent function pointer.
@@ -269,7 +272,8 @@ typedef struct
 	 *
 	 * @return #TRUE or #FALSE.
 	 */
-	s_bool         (*val_present)(const SMap *self, const char *key, s_erc *error);
+	s_bool         (* const val_present)(const SMap *self, const char *key,
+										 s_erc *error);
 
 	/**
 	 * @protected ValKeys function pointer.
@@ -285,7 +289,7 @@ typedef struct
 	 * @note The caller is responsible for the memory of the returned
 	 * #SList object.
 	 */
-	SList         *(*val_keys)   (const SMap *self, s_erc *error);
+	SList         *(* const val_keys)   (const SMap *self, s_erc *error);
 
 	/**
 	 * @protected Size function pointer.
@@ -296,7 +300,7 @@ typedef struct
 	 *
 	 * @return The number of key-value pairs in the map.
 	 */
-	size_t         (*size)       (const SMap *self, s_erc *error);
+	size_t         (* const size)       (const SMap *self, s_erc *error);
 
 	/**
 	 * @protected Copy (shallow) function pointer.
@@ -312,7 +316,8 @@ typedef struct
 	 * @note Values in @a dst with the same named keys as in @a src
 	 * will be overwritten with the values in @a src.
 	 */
-	SMap          *(*copy)       (SMap *dst, const SMap *src, s_erc *error);
+	SMap          *(* const copy)       (SMap *dst, const SMap *src,
+										 s_erc *error);
 } SMapClass;
 
 

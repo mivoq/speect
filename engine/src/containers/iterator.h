@@ -160,7 +160,7 @@ typedef struct
 	 * #SIteratorNext can catch the error and delete the
 	 * iterator.
 	 */
-	SIterator     *(*next)   (SIterator *self, s_erc *error);
+	SIterator     *(* const next)   (SIterator *self, s_erc *error);
 
 	/**
 	 * @protected Key iterator function pointer.
@@ -173,7 +173,7 @@ typedef struct
 	 *
 	 * @return The key pointed to by the iterator.
 	 */
-	const char    *(*key)    (SIterator *self, s_erc *error);
+	const char    *(* const key)    (SIterator *self, s_erc *error);
 
 	/**
 	 * @protected Object iterator function pointer.
@@ -186,7 +186,7 @@ typedef struct
 	 * be anything and depends on the specific container iterator
 	 * implementation.
 	 */
-	const SObject *(*object) (SIterator *self, s_erc *error);
+	const SObject *(* const  object) (SIterator *self, s_erc *error);
 
 	/**
 	 * @protected Unlink function pointer.
@@ -204,7 +204,7 @@ typedef struct
 	 * @note The caller is responsible for the memory of the returned
 	 * object.
 	 */
-	SObject       *(*unlink) (SIterator *iterator, s_erc *error);
+	SObject       *(* const unlink) (SIterator *iterator, s_erc *error);
 } SIteratorClass;
 
 

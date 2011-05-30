@@ -188,7 +188,7 @@ typedef struct
 	 *
 	 * @note The caller is responsible for the memory of the returned #SObject.
 	 */
-	SObject *(*run) (const SFeatProcessor *self, const SItem *item, s_erc *error);
+	SObject *(* const run) (const SFeatProcessor *self, const SItem *item, s_erc *error);
 } SFeatProcessorClass;
 
 

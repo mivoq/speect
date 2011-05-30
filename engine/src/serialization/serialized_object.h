@@ -133,7 +133,8 @@ typedef struct
 	 * @param object The object's data to read.
 	 * @param error Error code.
 	 */
-	void (*read) (SDataReader *reader, SObject *object, s_erc *error);
+	void (* const read) (SDataReader *reader, SObject *object,
+						 s_erc *error);
 
 	/**
 	 * @protected Write function pointer.
@@ -143,7 +144,8 @@ typedef struct
 	 * @param object The object's data to write.
 	 * @param error Error code.
 	 */
-	void (*write)(SDataWriter *writer, const SObject *object, s_erc *error);
+	void (* const write)(SDataWriter *writer, const SObject *object,
+						 s_erc *error);
 } SSerializedObjectClass;
 
 

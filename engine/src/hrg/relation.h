@@ -254,7 +254,7 @@ typedef struct
 	 * @param error Error code.
 	 * @return Pointer to the name of the given relation.
 	 */
-	const char       *(*name)    (const SRelation *self, s_erc *error);
+	const char       *(* const name)    (const SRelation *self, s_erc *error);
 
 	/**
 	 * @protected Utt function pointer.
@@ -263,7 +263,7 @@ typedef struct
 	 * @param error Error code.
 	 * @return Pointer to the utterance of the given relation.
 	 */
-	const SUtterance *(*utt)     (const SRelation *self, s_erc *error);
+	const SUtterance *(* const utt)     (const SRelation *self, s_erc *error);
 
 	/**
 	 * @protected Head function pointer.
@@ -272,7 +272,7 @@ typedef struct
 	 * @param error Error code.
 	 * @return Pointer to the head item of the given relation.
 	 */
-	const SItem      *(*head)    (const SRelation *self, s_erc *error);
+	const SItem      *(* const head)    (const SRelation *self, s_erc *error);
 
 	/**
 	 * @protected Tail function pointer.
@@ -281,7 +281,7 @@ typedef struct
 	 * @param error Error code.
 	 * @return Pointer to the tail item of the given relation.
 	 */
-	const SItem      *(*tail)    (const SRelation *self, s_erc *error);
+	const SItem      *(* const tail)    (const SRelation *self, s_erc *error);
 
 	/**
 	 * @protected Append function pointer.
@@ -296,7 +296,8 @@ typedef struct
 	 *
 	 * @return Pointer to the appended item as it is in the given relation.
 	 */
-	SItem            *(*append)  (SRelation *self, const SItem *toShare, s_erc *error);
+	SItem            *(* const append)  (SRelation *self, const SItem *toShare,
+										 s_erc *error);
 
 	/**
 	 * @protected Prepend function pointer.
@@ -311,7 +312,8 @@ typedef struct
 	 *
 	 * @return Pointer to the prepended item as it is in the given relation.
 	 */
-	SItem            *(*prepend) (SRelation *self, const SItem *toShare, s_erc *error);
+	SItem            *(* const prepend) (SRelation *self, const SItem *toShare,
+										 s_erc *error);
 } SRelationClass;
 
 

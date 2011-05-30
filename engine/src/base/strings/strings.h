@@ -589,7 +589,7 @@ S_API char *s_strtok_r(char *s, const char *set, char **last, s_erc *error);
  *
  * @return Double point value of @c s.
  *
- * @note This is merely a wrapper to the standard ANSI C @c atof()
+ * @note This is merely a wrapper to the standard ISO C @c atof()
  * function.
  */
 S_API double s_atof(const char *s, s_erc *error);
@@ -600,7 +600,7 @@ S_API double s_atof(const char *s, s_erc *error);
  * initial part of the string in @c s to a long integer value
  * according to the given base, which must be between 2 and 36
  * inclusive, or be the special value 0. Also see the standard
- * ANSI C @c strtol() function.
+ * ISO C @c strtol() function.
  *
  * @param s The string.
  * @param endp If not #NULL, address of first valid character is
@@ -615,7 +615,7 @@ S_API long s_strtol(const char *s, char **endp, uint base, s_erc *error);
 
 /**
  * Convert the given UTF-8 string to a double, first valid character
- * address. UTF-8 ware version of the standard ANSI C @c strtod()
+ * address. UTF-8 ware version of the standard ISO C @c strtod()
  * function.
  *
  * @param s The string.

@@ -288,7 +288,7 @@ typedef struct
 	 * @param error Error code.
 	 * @return Pointer to the voice.
 	 */
-	const SVoice    *(*voice)           (const SUtterance *self, s_erc *error);
+	const SVoice    *(* const voice)           (const SUtterance *self, s_erc *error);
 
 	/**
 	 * @protected NewRelation function pointer.
@@ -302,8 +302,8 @@ typedef struct
 	 *
 	 * @return Pointer to newly created relation.
 	 */
-	SRelation       *(*new_relation)    (SUtterance *self, const char *name,
-										 s_erc *error);
+	SRelation       *(* const new_relation)    (SUtterance *self, const char *name,
+												s_erc *error);
 
 	/**
 	 * @protected GetRelation function pointer.
@@ -313,8 +313,8 @@ typedef struct
 	 * @param error Error code.
 	 * @return Pointer to named relation.
 	 */
-	const SRelation *(*get_relation)    (const SUtterance *self, const char *name,
-										 s_erc *error);
+	const SRelation *(* const get_relation)    (const SUtterance *self, const char *name,
+												s_erc *error);
 
 	/**
 	 * @protected SetRelation function pointer.
@@ -328,8 +328,8 @@ typedef struct
 	 * utterance with this name. If a relation with the same name already
 	 * exists in the utterance then it will be deleted.
 	 */
-	void             (*set_relation)    (SUtterance *self, SRelation *rel,
-										 s_erc *error);
+	void             (* const set_relation)    (SUtterance *self, SRelation *rel,
+												s_erc *error);
 
 	/**
 	 * @protected DelRelation function pointer.
@@ -338,8 +338,8 @@ typedef struct
 	 * @param name The name of the relation to delete.
 	 * @param error Error code.
 	 */
-	void             (*del_relation)    (SUtterance *self, const char *name,
-										 s_erc *error);
+	void             (* const del_relation)    (SUtterance *self, const char *name,
+												s_erc *error);
 
 	/**
 	 * @protected HaveRelation function pointer.
@@ -349,8 +349,8 @@ typedef struct
 	 * @param error Error code.
 	 * @return #TRUE if found, else #FALSE.
 	 */
-	s_bool           (*have_relation)   (const SUtterance *self, const char *name,
-										 s_erc *error);
+	s_bool           (* const have_relation)   (const SUtterance *self, const char *name,
+												s_erc *error);
 
 	/**
 	 * @protected RelationKeys function pointer.
@@ -367,7 +367,7 @@ typedef struct
 	 * @note Caller is responsible for the memory of the returned
 	 * #SList object.
 	 */
-	SList           *(*relations_keys)  (const SUtterance *self, s_erc *error);
+	SList           *(* const relations_keys)  (const SUtterance *self, s_erc *error);
 } SUtteranceClass;
 
 

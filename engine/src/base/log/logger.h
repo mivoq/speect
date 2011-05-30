@@ -135,8 +135,9 @@ struct s_logger
 	 *
 	 * @return Error code.
 	 */
-	s_erc (*v_write)(const s_logger *self, s_log_event level, const char *error_msg,
-					 const char *func_name, const char *file_name, int line_num,
+	s_erc (*v_write)(const s_logger *self, s_log_event level,
+					 const char *error_msg, const char *func_name,
+					 const char *file_name, int line_num,
 					 const char *user_msg, va_list argp);
 
 
@@ -177,7 +178,7 @@ struct s_logger
  * @return Pointer to newly created file stream logger, or #NULL on error.
  *
  * @note Only thread safe if compiled with threading library, and
- * whether the standard ANSI C vfprintf() function is thread-safe,
+ * whether the standard ISO C vfprintf() function is thread-safe,
  * see @ref SThreads.
  *
  * @sa @ref SFileStream, @ref SLayoutStd
@@ -198,7 +199,7 @@ S_API s_logger *s_logger_file_new(const char *path);
  * on error.
  *
  * @note Only thread safe if compiled with threading library, and
- * whether the standard ANSI C vfprintf() function is thread-safe,
+ * whether the standard ISO C vfprintf() function is thread-safe,
  * see @ref SThreads.
  *
  * @sa @ref SConsoleStream, @ref SLayoutStd
@@ -255,7 +256,7 @@ S_API s_erc s_logger_write(const s_logger *logger, s_log_event level, const char
  * @param user_msg A format string specifying the string to write
  * and the format of the arguments in the va_list.
  * @param argp The va_list, see the standard function
- * ANSI C @c vprintf(). The value of @c argp is undefined after the call
+ * ISO C @c vprintf(). The value of @c argp is undefined after the call
  * to this function.
  *
  * @return Error code.

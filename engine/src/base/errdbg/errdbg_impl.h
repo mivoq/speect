@@ -120,7 +120,7 @@ S_API void s_errdbg_set_logger(s_logger *logger);
  * Query whether the <i>Error and Debugging System</i> is activated or
  * not. The system can be activated/deactivate with the compile time
  * definition of @c SPCT_ERROR_HANDLING. If deactivated then no
- * logging or checking or error codes will occur.
+ * logging or checking of error codes will occur.
  *
  * @return #TRUE if activated, else #FALSE.
  */

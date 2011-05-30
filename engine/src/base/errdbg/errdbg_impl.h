@@ -117,6 +117,17 @@ S_API void s_errdbg_set_logger(s_logger *logger);
 
 
 /**
+ * Query whether the <i>Error and Debugging System</i> is activated or
+ * not. The system can be activated/deactivate with the compile time
+ * definition of @c SPCT_ERROR_HANDLING. If deactivated then no
+ * logging or checking or error codes will occur.
+ *
+ * @return #TRUE if activated, else #FALSE.
+ */
+S_API s_bool s_errdbg_on(void);
+
+
+/**
  * Change the debugging level.
  *
  * @param level The new debugging level.
@@ -146,29 +157,68 @@ S_API s_dbg_lvl s_get_errdbg_level(s_erc *error);
 /************************************************************************************/
 
 /**
- * A dummy function, does nothing. Replaces @c _s_err, @c _s_fatal_err,
- * and @c _s_check_err when error handling is turned off.
+ * A dummy function, does nothing. Replaces @c _s_check_err
+ * in @c S_CHK_ERR when error handling is turned off.
  * @private
  *
- * @note Even though it replaces above mentioned, it never gets called
- * because the macros become <c> if (0 && _s_err_dummy) </c>
- * which @e always evaluates to @c FALSE @e before calling @c _s_err_dummy
+ * @note We need this function to gobble up the macros parameters (no
+ * vardiac macros like C99).
  */
 S_API int _s_err_dummy(s_erc *error_code, s_erc this_error,
 					   const char *function_name, const char *fmt, ...);
 
 
 /**
- * A dummy warning function, does nothing. Replaces @c _s_warn when
- * error handling is turned off.
+ * A dummy function, does nothing. Replaces @c _s_err in @c S_CTX_ERR
+ * when error handling is turned off. Also replaces @c _s_err
+ * in @c S_FTL_ERR when no error checking is done and aborting on
+ * error (@c SPCT_ERROR_ABORT_FATAL) is not set.
  * @private
  *
- * @note Even though it replaces above mentioned, it never gets called
- * because the macros become <c> if (0 && _s_warn_dummy) </c>
- * which @e always evaluates to @c FALSE @e before calling @c _s_warn_dummy
+ * A dummy function, does nothing. Replaces @c _s_err in @c S_CTX_ERR
+ * when error handling is turned off.
+ * @private
+ *
+ * @note We need this function to gobble up the macros parameters (no
+ * vardiac macros like C99).
  */
-S_API int _s_warn_dummy(s_erc this_error, const char *function_name,
-						const char *fmt, ...);
+S_API void _s_err_dummy_void(s_erc *error_code, s_erc this_error,
+							 const char *function_name, const char *fmt, ...);
+
+
+/**
+ * A dummy warning function, does nothing. Replaces @c _s_warn
+ * in @c S_WARNING when error handling is turned off.
+ * @private
+ *
+ * @note We need this function to gobble up the macros parameters (no
+ * vardiac macros like C99).
+ */
+S_API void _s_warn_dummy(s_erc this_error, const char *function_name,
+						 const char *fmt, ...);
+
+
+/**
+ * A dummy debug function, does nothing. Replaces @c _s_dbg
+ * in @c S_DEBUG when debug mode is turned off.
+ * @private
+ *
+ * @note We need this function to gobble up the macros parameters (no
+ * vardiac macros like C99).
+ */
+S_API void _s_debug_dummy(s_dbg_lvl level, const char *fmt, ...);
+
+
+/**
+ * A function to abort when error checking is off and aborting on
+ * error (@c SPCT_ERROR_ABORT_FATAL) is set. Used in @c S_FTL_ERR
+ * @private
+ *
+ * @note We need this function to gobble up the macros parameters (no
+ * vardiac macros like C99).
+ */
+S_API void _s_fatal_err_no_checking(s_erc *error_code, s_erc this_error,
+									const char *function_name, const char *fmt, ...);
 
 
 /**

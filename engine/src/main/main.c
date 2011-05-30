@@ -93,7 +93,10 @@ S_API s_erc speect_init(s_logger *logger)
 		return S_FAILURE;
 	}
 
-	/* create logger to stderr if no logger was given */
+#ifdef SPCT_ERROR_HANDLING
+	/* create logger to stderr if no logger was given and
+	 * SPCT_ERROR_HANDLING is defined
+	 */
 	if (logger == NULL)
 	{
 		local_logger = s_logger_console_new(FALSE); /* FALSE == log to stderr */
@@ -107,6 +110,9 @@ S_API s_erc speect_init(s_logger *logger)
 
 		logger = local_logger;
 	}
+#else /* !SPCT_ERROR_HANDLING */
+	local_logger = NULL;
+#endif /* SPCT_ERROR_HANDLING */
 
 	/* initialize error handling module */
 	_s_errdbg_init(logger, S_DBG_NONE, &local_err);
@@ -121,8 +127,10 @@ S_API s_erc speect_init(s_logger *logger)
 		 * it takes hold of the loggers and destroys them
 		 * when it is quit.
 		 */
+#ifdef SPCT_ERROR_HANDLING
 		_s_destroy_loggers(logger, &local_err);
 		logger = NULL;
+#endif /* SPCT_ERROR_HANDLING */
 		initialized_count--;
 		return S_FAILURE;
 	}

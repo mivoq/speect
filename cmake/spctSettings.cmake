@@ -69,12 +69,8 @@ endif(ERROR_ABORT_FATAL)
 
 
 # ERROR_HANDLING is a CMake option in speect/cmake/spctOptions.cmake
-
-# FIXME, for now this must be set otherwise we get undefined behaviour
-set(SPCT_ERROR_HANDLING 1)
-
-#if(ERROR_HANDLING)
-#  set(SPCT_ERROR_HANDLING 1)
-#else(ERROR_HANDLING)
-#  unset(SPCT_ERROR_HANDLING)
-#endif(ERROR_HANDLING)
+if(ERROR_HANDLING)
+  set(SPCT_ERROR_HANDLING 1)
+else(ERROR_HANDLING)
+  unset(SPCT_ERROR_HANDLING)
+endif(ERROR_HANDLING)

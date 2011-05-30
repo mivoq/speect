@@ -44,6 +44,7 @@
 #include <stdio.h>
 #include "base/utils/alloc.h"
 #include "base/errdbg/errdbg_macros.h"
+#include "base/errdbg/errdbg_impl.h"
 #include "base/errdbg/errdbg_utils.h"
 #include "base/log/layout/layout.h"
 

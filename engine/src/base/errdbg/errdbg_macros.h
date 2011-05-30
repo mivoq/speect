@@ -118,18 +118,17 @@ S_BEGIN_C_DECLS
  *
  * @param ERROR Pointer to error code to clear.
  */
+/*
+ * NOTE: always the same macro, irrespective of SPCT_ERROR_HANDLING.
+ */
 #ifdef SPCT_DOXYGEN_ONLY
 #  define S_CLR_ERR(ERROR)
 #else /* !SPCT_DOXYGEN_ONLY */
-#  ifdef SPCT_ERROR_HANDLING
-#    define S_CLR_ERR(ERROR)			\
+#  define S_CLR_ERR(ERROR)			\
 	do {								\
 		if ((ERROR) != NULL)			\
 			(*(ERROR)) = S_SUCCESS;		\
 	} while(0)
-#  else /* ! SPCT_ERROR_HANDLING */
-#    define S_CLR_ERR(ERROR) ((void) 0)
-#  endif /* SPCT_ERROR_HANDLING */
 #endif /* SPCT_DOXYGEN_ONLY */
 
 
@@ -156,7 +155,7 @@ S_BEGIN_C_DECLS
 #  ifdef SPCT_ERROR_HANDLING
 #    define S_CTX_ERR (*_s_err(__FILE__, __LINE__))
 #  else /* ! SPCT_ERROR_HANDLING */
-#    define S_CTX_ERR 1 ? 0 : _s_err_dummy
+#    define S_CTX_ERR _s_err_dummy_void
 #  endif /* SPCT_ERROR_HANDLING */
 #endif /* SPCT_DOXYGEN_ONLY */
 
@@ -183,11 +182,19 @@ S_BEGIN_C_DECLS
 #ifdef SPCT_DOXYGEN_ONLY
 #  define S_FTL_ERR(ERROR, NEW_ERROR, FUNCTION_NAME, MSG, ...)
 #else /* !SPCT_DOXYGEN_ONLY */
-#  ifdef SPCT_ERROR_ABORT_FATAL
-#    define S_FTL_ERR (*_s_fatal_err(__FILE__, __LINE__))
-#  else /* !S_ERROR_ABORT_FATAL */
-#    define S_FTL_ERR (*_s_err(__FILE__, __LINE__))
-#  endif /* S_ERROR_ABORT_FATAL */
+#  ifdef SPCT_ERROR_HANDLING
+#    ifdef SPCT_ERROR_ABORT_FATAL
+#      define S_FTL_ERR (*_s_fatal_err(__FILE__, __LINE__))
+#    else /* !S_ERROR_ABORT_FATAL */
+#      define S_FTL_ERR (*_s_err(__FILE__, __LINE__))
+#    endif /* S_ERROR_ABORT_FATAL */
+#  else /* !SPCT_ERROR_HANDLING */
+#    ifdef SPCT_ERROR_ABORT_FATAL
+#      define S_FTL_ERR _s_fatal_err_no_checking
+#    else /* !S_ERROR_ABORT_FATAL */
+#      define S_FTL_ERR _s_err_dummy_void
+#    endif /* S_ERROR_ABORT_FATAL */
+#  endif /* SPCT_ERROR_HANDLING */
 #endif /* SPCT_DOXYGEN_ONLY */
 
 
@@ -219,7 +226,7 @@ S_BEGIN_C_DECLS
 #  ifdef SPCT_ERROR_HANDLING
 #    define S_CHK_ERR (*_s_check_err(__FILE__, __LINE__))
 #  else /* ! SPCT_ERROR_HANDLING */
-#    define S_CHK_ERR 1 ? 0 : _s_err_dummy
+#    define S_CHK_ERR _s_err_dummy
 #  endif /* SPCT_ERROR_HANDLING */
 #endif /* SPCT_DOXYGEN_ONLY */
 
@@ -244,7 +251,7 @@ S_BEGIN_C_DECLS
 #  ifdef SPCT_ERROR_HANDLING
 #    define S_WARNING (*_s_warn(__FILE__, __LINE__))
 #  else /* ! SPCT_ERROR_HANDLING */
-#    define S_WARNING 1 ? 0 : _s_warn_dummy
+#    define S_WARNING _s_warn_dummy
 #  endif /* SPCT_ERROR_HANDLING */
 #endif /* SPCT_DOXYGEN_ONLY */
 
@@ -270,7 +277,7 @@ S_BEGIN_C_DECLS
 #  ifdef SPCT_DEBUGMODE
 #    define S_DEBUG _s_dbg
 #  else /* !SPCT_DEBUGMODE */
-#    define S_DEBUG 1 ? 0 : _s_dbg
+#    define S_DEBUG _s_debug_dummy
 #  endif /* SPCT_DEBUGMODE */
 #endif /* SPCT_DOXYGEN_ONLY */
 

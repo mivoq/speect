@@ -91,16 +91,15 @@ typedef enum
 
 	/* class/object method errors */
 	S_METHINVLD =     -4,     /*!< Class/Object method does not exist.       */
-	S_METHFAIL =      -5,     /*!< Method/function call failed.              */
 
 	/* end of file/stream */
-	S_IOEOF =         -6,     /*!< End of file/stream.                       */
+	S_IOEOF =         -5,     /*!< End of file/stream.                       */
 
 	/* warnings */
-	S_WARNERR =       -7,     /*!< Warning, possible error.                  */
+	S_WARNERR =       -6,     /*!< Warning, possible error.                  */
 
 	/* continue error context (must be last one in list) */
-	S_CONTERR =       -8      /*!< Error context continued.                  */
+	S_CONTERR =       -7      /*!< Error context continued.                  */
 } s_erc;
 
 

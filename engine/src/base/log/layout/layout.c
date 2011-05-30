@@ -122,7 +122,7 @@ S_API char *s_layout_format(const s_layout *layout, s_log_event level,
 
 	if (formated_mesg == NULL)
 	{
-		S_ERR_PRINT(S_METHFAIL, "s_layout_format",
+		S_ERR_PRINT(S_FAILURE, "s_layout_format",
 					"Call to object method \"format\" failed,"
 					" printing logging event to stdout");
 		_S_FAILED_PRINT_INFO_STDOUT;
@@ -164,7 +164,7 @@ S_API char *s_layout_vformat(const s_layout *layout, s_log_event level,
 
 	if (formated_mesg == NULL)
 	{
-		S_ERR_PRINT(S_METHFAIL, "s_layout_vformat",
+		S_ERR_PRINT(S_FAILURE, "s_layout_vformat",
 					"Call to object method \"format\" failed,"
 					" printing logging event to stdout");
 		_S_FAILED_PRINT_INFO_STDOUT;

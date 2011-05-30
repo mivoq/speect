@@ -374,7 +374,7 @@ static s_erc v_write_file(const s_logger *logger, s_log_event level, const char 
 		 * if layout made an error it should still output message
 		 * to stdout.
 		 */
-		S_NEW_ERR(&this_error, S_METHFAIL);
+		S_NEW_ERR(&this_error, S_FAILURE);
 		S_ERR_PRINT(this_error, "v_write_file",
 					"Call to \"s_layout_vformat\" failed");
 		return this_error;
@@ -418,7 +418,7 @@ static s_erc v_write_console(const s_logger *logger, s_log_event level, const ch
 		 * if layout made an error it should still output message
 		 * to stdout.
 		 */
-		S_NEW_ERR(&this_error, S_METHFAIL);
+		S_NEW_ERR(&this_error, S_FAILURE);
 		S_ERR_PRINT(this_error, "v_write_console",
 					"Call to \"s_layout_vformat\" failed");
 		return this_error;

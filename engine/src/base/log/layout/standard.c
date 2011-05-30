@@ -175,7 +175,7 @@ static char *format_std(s_log_event level, const char *error_msg,
 		out_buf = format_std_dbg(level, user_buf);
 		if (out_buf == NULL)
 		{
-			S_ERR_PRINT(S_METHFAIL, "format_std",
+			S_ERR_PRINT(S_FAILURE, "format_std",
 						"Call to \"format_std_dbg\" failed");
 		}
 	}
@@ -184,7 +184,7 @@ static char *format_std(s_log_event level, const char *error_msg,
 		out_buf = format_std_err(level, error_msg, func, file, line, user_buf);
 		if (out_buf == NULL)
 		{
-			S_ERR_PRINT(S_METHFAIL, "format_std",
+			S_ERR_PRINT(S_FAILURE, "format_std",
 						"Call to \"format_std_err\" failed");
 		}
 

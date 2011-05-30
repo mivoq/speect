@@ -192,8 +192,7 @@ typedef struct
 	 * @protected Initialize function pointer.
 	 * Initialize the utterance processor. Used for initialization of
 	 * the utterance processor feature classes on loading of the
-	 * voices. May not be implemented, use #S_UTTPROCESSOR_METH_VALID
-	 * to check.
+	 * voices.
 	 *
 	 * @param self The UttProcessor to initialize.
 	 * @param voice The voice that the utterance processor belongs to.
@@ -201,6 +200,7 @@ typedef struct
 	 *
 	 * @note If an error occurs the @c error variable must be set so
 	 * that #SUttProcessorInit can delete the utterance processor.
+	 * @note Not necessarily implemented.
 	 */
 	void (* const initialize)(SUttProcessor *self, const SVoice *voice,
 							  s_erc *error);

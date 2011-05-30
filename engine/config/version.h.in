@@ -101,7 +101,7 @@
  * Printable format version number, for example:
  @verbatim
  printf("%s", S_PATCHLEVEL);
- @verbatim
+ @endverbatim
  */
 #define S_PATCHLEVEL "@SPCT_VERSION_PATCH@"
 
@@ -138,7 +138,7 @@
  * Printable time of compilation string, for example:
  @verbatim
  printf("%s", S_COMPILE_TIME);
- @verbatim
+ @endverbatim
  */
 #define S_COMPILE_TIME	__TIME__
 

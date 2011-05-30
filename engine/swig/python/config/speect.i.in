@@ -89,6 +89,7 @@ be extended for other languages supported by SWIG."
 /*                                                                                  */
 /************************************************************************************/
 
+%include "${CMAKE_SOURCE_DIR}/engine/swig/python/errdbg_docs.c"
 %include "${CMAKE_SOURCE_DIR}/engine/swig/python/misc_docs.c"
 %include "${CMAKE_SOURCE_DIR}/engine/swig/python/utterance_docs.c"
 %include "${CMAKE_SOURCE_DIR}/engine/swig/python/relation_docs.c"

@@ -77,6 +77,8 @@
 /*                                                                                  */
 /************************************************************************************/
 
+%include "${CMAKE_SOURCE_DIR}/engine/swig/common/errdbg_common.c"
+
 %include "${CMAKE_SOURCE_DIR}/engine/swig/common/misc_common.c"
 
 

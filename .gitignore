@@ -29,8 +29,6 @@ engine/src/include/spctconfig.h
 engine/src/include/version.h
 engine/src/main/ini.c
 engine/src/pluginmanager/platform/dynamic_loading_impl.h
-engine/spct_debug.log
-engine/spct_error.log
 
 
 ##########################################################################

@@ -10,7 +10,22 @@ error occurred during function execution, then the function can set an appropria
 code in this pointer. 
 
 .. code-block:: c
-   
+
+   int main(float *d)
+   {
+	s_erc error = S_SUCCESS; /* start of with a clean slate */
+	size_t word_length;
+
+
+	/* initialize speect */
+	error = speect_init(NULL);
+	if (error != S_SUCCESS)
+	{
+		printf("Failed to initialize Speect\n");
+		return 1;
+	}
+   }
+
    s_erc error; /* declare the error return code variable */
 
 
@@ -51,3 +66,57 @@ task.
 
 .. [#] There are a few exceptions to this rule, especially where errors might occur before
        the *Error Handling And Debugging* module has been initialized.
+
+
+.. code-block:: python
+
+    class TTSClient(object):
+        END_OF_MESSAGE_STRING = "<EoM>"
+
+        def __init__(self, host=DEF_HOST, port=DEF_PORT, recv_size=RECV_SIZE):
+            self.host = host
+            self.port = port
+            self.recv_size = recv_size
+
+        def request(self, rtype="listvoices", voice=None, text=None):
+            try:
+                text = unicode(text, "latin-1").encode("utf-8")
+            except TypeError:
+                pass
+            message = {"type": rtype,
+                       "voicename": voice,
+                       "text": text}
+
+            fulls = pickle.dumps(message)
+            #create a socket
+            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            #connect to server
+            s.connect((self.host, self.port))
+            #send..
+            s.sendall(fulls)
+            s.sendall(TTSClient.END_OF_MESSAGE_STRING)
+            #recv reply..
+            replymsgfull = str()
+            while True:
+                replymsgpart = s.recv(self.recv_size)
+                if replymsgpart:
+                    replymsgfull += replymsgpart
+                else:
+                    break
+            #close connection..
+            s.close()
+            #recover reply..
+            reply = pickle.loads(replymsgfull)
+            if not reply["success"]:
+                raise Exception("Request failed..")
+
+            return reply
+
+        def write_audio(self, voice, text, filename):
+            reply = self.request("synth", voice, text)
+            if reply["sampletype"] != "int16":
+                raise Exception("Client currently only supports 16bit samplesize")
+            outwf = wave.open(filename, "w")
+            outwf.setparams((1, 2, reply["samplerate"], len(reply["samples"]) / 2, "NONE", "not compressed"))
+            outwf.writeframesraw(reply["samples"])
+        outwf.close()

@@ -25,6 +25,7 @@ Summary
    macro S_CONCAT
    macro S_TOSTRING
    macro S_VOIDPTR
+   macro S_UNUSED
    macro S_API
    macro S_LOCAL
 
@@ -64,6 +65,9 @@ Macros
    :type: macro
 
 .. doxybridge :: S_VOIDPTR
+   :type: macro
+
+.. doxybridge :: S_UNUSED
    :type: macro
 
 

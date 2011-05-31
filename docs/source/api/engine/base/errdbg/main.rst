@@ -21,6 +21,8 @@ Summary
    macro S_DEBUG
    s_set_errdbg_level
    s_get_errdbg_level
+   s_set_errdbg_logger
+   s_errdbg_on
    s_error_str
    
 
@@ -97,6 +99,10 @@ Functions
 .. doxybridge:: s_set_errdbg_level
 
 .. doxybridge:: s_get_errdbg_level
+
+.. doxybridge:: s_set_errdbg_logger
+
+.. doxybridge:: s_errdbg_on
 
 .. doxybridge:: s_error_str
 

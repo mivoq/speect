@@ -1,5 +1,8 @@
 .. _errdbg_topic/main:
 
+.. index:: 
+   single: Topic Guides (C API); Error handling and Debugging
+
 ============================
 Error handling and Debugging
 ============================

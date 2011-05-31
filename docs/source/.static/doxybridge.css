@@ -26,7 +26,8 @@ dl.define,
 dl.function,
 dl.macro,
 dl.speectclass,
-dl.speectobject
+dl.speectobject,
+dl.cmake
 {
     border-top: 2px solid #888;
 }

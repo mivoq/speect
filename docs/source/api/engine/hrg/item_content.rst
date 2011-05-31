@@ -29,7 +29,7 @@ Definitions
 .. doxybridge:: SItmContentClass
    :type: speect class
    :members: none
-  :inheritance: SObjectClass.SItmContentClass
+   :inheritance: SObjectClass.SItmContentClass
 
 .. seealso:: :doc:`SItmContent_detail`.
 

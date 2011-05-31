@@ -1,5 +1,7 @@
 .. _topics/main:
 
+.. index:: ! Topic Guides (C API)
+
 ============
 Topic Guides
 ============
@@ -9,7 +11,7 @@ Topic Guides
    :maxdepth: 2
 
    errdbg_topic
-   cmake_build
+   cmake_options_topic
 
 
 here be topic guides

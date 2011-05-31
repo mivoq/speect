@@ -65,7 +65,15 @@
 		 * Python native library does not wrap the primitives, it
 		 * creates new Speect objects.
 		 */
-
+#if PY_VERSION_HEX >= 0x03000000
+		if ((PyObject_IsInstance(val, (PyObject*)&PyLong_Type))
+			|| (PyObject_IsInstance(val, (PyObject*)&PyFloat_Type))
+			|| (PyObject_IsInstance(val, (PyObject*)&PyString_Type))
+			|| (PyObject_IsInstance(val, (PyObject*)&PyUnicode_Type)))
+		{
+			S_DELETE(object, "write_object", error);
+		}
+#else /* ! PY_VERSION_HEX >= 0x03000000 */
 		if ((PyObject_IsInstance(val, (PyObject*)&PyInt_Type))
 			|| (PyObject_IsInstance(val, (PyObject*)&PyFloat_Type))
 			|| (PyObject_IsInstance(val, (PyObject*)&PyString_Type))
@@ -73,6 +81,7 @@
 		{
 			S_DELETE(object, "write_object", error);
 		}
+#endif /* PY_VERSION_HEX >= 0x03000000 */
 
 		if ((error != NULL)
 			&& (local_err != S_SUCCESS)

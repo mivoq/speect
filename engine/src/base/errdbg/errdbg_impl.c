@@ -268,7 +268,7 @@ S_LOCAL void _s_errdbg_quit(s_erc *error)
 }
 
 
-S_API void s_errdbg_set_logger(s_logger *logger)
+S_API void s_set_errdbg_logger(s_logger *logger)
 {
 #ifdef SPCT_ERROR_HANDLING
 	if (ewd_logger != NULL)
@@ -279,8 +279,8 @@ S_API void s_errdbg_set_logger(s_logger *logger)
 		local_err = s_logger_destroy(ewd_logger);
 		if (local_err != S_SUCCESS)
 		{
-			S_ERR_PRINT(local_err, "s_errdbg_set_logger",
-						"Failed to destroy old logger");
+			S_ERR_PRINT(local_err, "s_set_errdbg_logger",
+						"Failed to destroy currently set logger");
 		}
 		S_FREE(ewd_logger);
 	}

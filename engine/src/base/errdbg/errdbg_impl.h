@@ -113,7 +113,7 @@ S_LOCAL void _s_errdbg_quit(s_erc *error);
  *
  * @param logger The new logger for the error and debugging system
  */
-S_API void s_errdbg_set_logger(s_logger *logger);
+S_API void s_set_errdbg_logger(s_logger *logger);
 
 
 /**

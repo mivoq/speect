@@ -9,6 +9,7 @@ Topic Guides
    :maxdepth: 2
 
    errdbg_topic
+   cmake_build
 
 
 here be topic guides

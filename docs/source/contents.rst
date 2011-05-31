@@ -9,4 +9,5 @@ Documentation
 
    api/main
    topics/main
+   installation
    todo

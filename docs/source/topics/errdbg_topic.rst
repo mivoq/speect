@@ -5,9 +5,17 @@ Error handling and Debugging
 ============================
 
 The error handling mechanism works on the basis that *all* [#]_ functions are passed
-a pointer to an error code variable as a function parameter (:c:type:`s_erc`). If an
+a pointer to an error code variable, :c:type:`s_erc`,  as a function parameter. If an
 error occurred during function execution, then the function can set an appropriate error
-code in this pointer. 
+code in this pointer. This of course requires us to *check everything everywhere*. 
+Basically, this consists in assuming that nearly every function call might fail for some
+reason. This scheme is simple, easy to understand, straightforward to implement and it
+is transparent, there are no ``setjmp``/``longjmp`` type macros that might hide
+implementation detail and make debugging a nightmare. It doesn't require runtime support,
+is highly portable, and supports multiple-threads by requiring only the most basic
+synchronisation primitives in most code. However, it demands discipline and commitment
+to check all function calls when writing, and maintaining code.
+
 
 .. code-block:: c
 

@@ -111,11 +111,6 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 
 	S_CLR_ERR(error);
 
-	/* we don't use this, set to NULL so that compiler doesn't
-	 * complain.
-	 */
-	self = NULL;
-
 	/* we require the word, segment and phrase relation */
 	wordRel = SUtteranceGetRelation(utt, "Word", error);
 	if (S_CHK_ERR(error, S_CONTERR,
@@ -295,6 +290,8 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 
 	/* here all is OK */
 	return;
+
+	S_UNUSED(self);
 }
 
 

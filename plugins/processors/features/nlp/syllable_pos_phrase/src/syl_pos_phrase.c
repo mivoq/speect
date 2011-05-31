@@ -336,7 +336,6 @@ quit_error:
 	if (extractedFeat != NULL)
 		S_DELETE(extractedFeat, "Run", error);
 
-	self = NULL; /* compiler noise about unused parameters */
 	return NULL;
 
 	/* return 0 */
@@ -348,6 +347,8 @@ quit_null:
 		goto quit_error;
 
 	return extractedFeat;
+
+	S_UNUSED(self);
 }
 
 

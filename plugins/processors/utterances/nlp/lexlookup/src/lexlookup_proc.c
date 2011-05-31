@@ -254,12 +254,7 @@ static void Initialize(SUttProcessor *self, const SVoice *voice, s_erc *error)
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Initialize",
 				  "Call to \"S_CAST (SMap)\" failed"))
-	{
-		/* this is here to silence the compiler's
-		 * messages about unused parameters */
-		voice = NULL;
 		return;
-	}
 
 	plugin_name = SMapGetString(syllInfo, "plug-in", error);
 	if (S_CHK_ERR(error, S_CONTERR,
@@ -316,6 +311,8 @@ static void Initialize(SUttProcessor *self, const SVoice *voice, s_erc *error)
 		S_DELETE(syllab, "Initialize", error);
 		return;
 	}
+
+	S_UNUSED(voice);
 }
 
 

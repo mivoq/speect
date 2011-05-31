@@ -142,9 +142,6 @@ static void Initialize(SUttProcessor *self, const SVoice *voice, s_erc *error)
 				  "Initialize",
 				  "Call to \"SMapGetObjectDef\" failed"))
 	{
-		/* this is here to silence the compiler's
-		 * messages about unused parameters */
-		voice = NULL;
 		return;
 	}
 
@@ -193,6 +190,8 @@ static void Initialize(SUttProcessor *self, const SVoice *voice, s_erc *error)
 		S_DELETE(winPlugin, "Initialize", error);
 		return;
 	}
+
+	S_UNUSED(voice);
 }
 
 

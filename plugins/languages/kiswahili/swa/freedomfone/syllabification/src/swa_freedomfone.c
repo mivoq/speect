@@ -1358,8 +1358,7 @@ quit_error:
 
 	return NULL;
 
-	/* for unused compiler warning */
-	self = NULL;
+	S_UNUSED(self);
 }
 
 

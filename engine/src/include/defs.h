@@ -211,6 +211,19 @@
 
 
 /**
+ * @def S_UNUSED(PARAM)
+ * @hideinitializer
+ *
+ * This macro is used to indicate that a given function parameter or
+ * static variable is unused. Its purpose is to eliminate compiler
+ * warnings when using high warning levels.
+ *
+ * @param PARAM The parameter to mark as being unused.
+ */
+#define S_UNUSED(PARAM) (PARAM)=(PARAM)
+
+
+/**
  * @}
  * end documentation
  */

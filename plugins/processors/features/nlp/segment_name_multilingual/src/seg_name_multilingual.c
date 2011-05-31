@@ -247,7 +247,7 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 	S_FREE(lang_name);
 	return extractedFeat;
 
-	self = NULL; /* compiler noise about unused parameters */
+	S_UNUSED(self);
 }
 
 

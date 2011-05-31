@@ -133,7 +133,8 @@ static void InitWindow(SWinFunc **self, sint32 size, sint32 centre, s_erc *error
 quit_error:
 	S_DELETE(*self, "InitWindow", error);
 	*self = NULL;
-	centre = 0; /* suppress compiler noise about unused parameters */
+
+	S_UNUSED(centre);
 }
 
 

@@ -551,11 +551,12 @@ static char *create_syl_context_pause(const SItem *item, s_erc *error)
 				  "create_syl_context_pause",
 				  "Call to \"s_strdup\" failed"))
 	{
-		item = NULL; /* compiler noise about unused parameters */
 		return NULL;
 	}
 
 	return syl_context;
+
+	S_UNUSED(item);
 }
 
 
@@ -891,11 +892,12 @@ static char *create_B_context_pause(const SItem *item, s_erc *error)
 				  "create_B_context_pause",
 				  "Call to \"s_strdup\" failed"))
 	{
-		item = NULL; /* compiler noise about unused parameters */
 		return NULL;
 	}
 
 	return b_context;
+
+	S_UNUSED(item);
 }
 
 
@@ -1238,11 +1240,12 @@ static char *create_E_context_pause(const SItem *item, s_erc *error)
 				  "create_E_context_pause",
 				  "Call to \"s_strdup\" failed"))
 	{
-		item = NULL; /* compiler noise about unused parameters */
 		return NULL;
 	}
 
 	return e_context;
+
+	S_UNUSED(item);
 }
 
 
@@ -2430,8 +2433,9 @@ quit_error:
 	if (extractedFeat != NULL)
 		S_DELETE(extractedFeat, "Run", error);
 
-	self = NULL; /* compiler noise about unused parameters */
 	return NULL;
+
+	S_UNUSED(self);
 }
 
 

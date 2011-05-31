@@ -450,12 +450,7 @@ static void Initialize(SUttProcessor *self, const SVoice *voice, s_erc *error)
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Initialize",
 				  "Call to \"S_CAST (SMap)\" failed"))
-	{
-		/* this is here to silence the compiler's
-		 * messages about unused parameters */
-		self = NULL;
 		return;
-	}
 
 	/* get target cost functions */
 	tmp = SMapGetObjectDef(allCostFunctions, "target costs", NULL, error);
@@ -502,6 +497,8 @@ static void Initialize(SUttProcessor *self, const SVoice *voice, s_erc *error)
 					  "Call to \"create_cost_functions\" failed"))
 			return;
 	}
+
+	S_UNUSED(self);
 }
 
 
@@ -530,9 +527,6 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 		S_CTX_ERR(error, S_FAILURE,
 				  "Run",
 				  "Failed to find 'Segment' relation in utterance");
-		/* this is here to silence the compiler's
-		 * messages about unused parameters */
-		self = NULL;
 		return;
 	}
 
@@ -611,6 +605,8 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 					  "Call to \"process_cost_functions\" failed"))
 			return;
 	}
+
+	S_UNUSED(self);
 }
 
 

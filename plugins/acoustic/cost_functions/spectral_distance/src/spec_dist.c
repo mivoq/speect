@@ -107,8 +107,6 @@ float GetCost(const SCostFunction *self, const SItem *item1, const SItem *item2,
 	S_CLR_ERR(error);
 	if (item1 == NULL)
 	{
-		self = NULL; /* compiler noise about unused parameters */
-
 		S_CTX_ERR(error, S_ARGERROR,
 				  "GetCost",
 				  "Argument \"item1\" is NULL");
@@ -165,6 +163,8 @@ float GetCost(const SCostFunction *self, const SItem *item1, const SItem *item2,
 	spectral_distance = sqrt(spectral_distance/i);
 
 	return (float)spectral_distance;
+
+	S_UNUSED(self);
 }
 
 

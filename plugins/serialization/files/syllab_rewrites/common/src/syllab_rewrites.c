@@ -776,7 +776,7 @@ error_return:
 
 	return NULL;
 
-	word = NULL; /* compiler noise about unused parameters */
+	S_UNUSED(word);
 }
 
 /************************************************************************************/

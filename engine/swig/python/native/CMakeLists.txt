@@ -41,6 +41,7 @@ include(${CMAKE_SOURCE_DIR}/swig/python/cmake/swigPythonFunctions.cmake)
 
 # find Python 
 find_package(PythonLibs REQUIRED) # Note, currently PythonLibs does not look for Python 3
+mark_as_advanced(FORCE PYVERSIONS_EXE)
 
 # add Python to includes
 speect_include_python_directories()

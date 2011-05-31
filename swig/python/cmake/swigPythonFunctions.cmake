@@ -248,6 +248,7 @@ macro(speect_plugin_swig_python_wrapper)
 
   # find Python 
   find_package(PythonLibs REQUIRED) # Note, currently PythonLibs does not look for Python 3
+  mark_as_advanced(FORCE PYVERSIONS_EXE)
 
   # include Python
   speect_include_python_directories()

@@ -97,12 +97,8 @@ set(CMAKE_C_FLAGS "")
 #                                speect.i properties                                 #
 #------------------------------------------------------------------------------------#
 
-if(WANT_PYTHON_3)
-  # extra -py3 and -DSPCT_SWIG_PYTHON_3 flags for Python 3.x
-  list(APPEND SPCT_SWIG_FLAGS -Wall -Werror -py3 -DSPCT_SWIG_PYTHON_3)
-else(WANT_PYTHON_3)
-  list(APPEND SPCT_SWIG_FLAGS -Wall -Werror)
-endif(WANT_PYTHON_3)
+# SWIG flags, macro in swigPythonFunctions.cmake
+speect_plugin_swig_python_flags()
 
 # add flags for Python Speect Engine wrapper generation
 set_source_files_properties(${CMAKE_BINARY_DIR}/engine/swig/python/speect.i 

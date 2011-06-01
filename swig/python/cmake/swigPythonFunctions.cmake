@@ -7,6 +7,7 @@
 ##                                                                                  ##
 ## CMake custom functions for Speect plug-ins SWIG Python interfaces                ##
 ##                                                                                  ##
+##   speect_plugin_swig_python_flags        (Set the SWIG Python compile flags)     ##
 ##   speect_plugin_swig_python_interface    (Generate SWIG interface file)          ##
 ##   speect_plugin_swig_python_loader       (Generate SWIG interface file that      ##
 ##                                           only loads plug-in when imported)      ##
@@ -17,6 +18,27 @@
 ## See the documentation at each function/macro below.                              ##
 ##                                                                                  ##
 ######################################################################################
+
+
+#------------------------------------------------------------------------------------#
+#                     Set the SWIG Python compile flags                              #
+#------------------------------------------------------------------------------------#
+#
+# macro(speect_plugin_swig_python_flags)
+#
+# Set the SWIG Python compile flags. Call this macro and the ``SPCT_SWIG_FLAGS``
+# will be available in your function. This is here so that there is only one place
+# where we need to modify the flags if need be.
+#
+macro(speect_plugin_swig_python_flags)
+  # flags for the SWIG generation
+  if(WANT_PYTHON_3)
+    # extra -py3 and -DSPCT_SWIG_PYTHON_3 flags for Python 3.x
+    list(APPEND SPCT_SWIG_FLAGS -Wall -Werror -py3 -DSPCT_SWIG_PYTHON_3)
+  else(WANT_PYTHON_3)
+    list(APPEND SPCT_SWIG_FLAGS -Wall -Werror -builtin)
+  endif(WANT_PYTHON_3)
+endmacro(speect_plugin_swig_python_flags)
 
 
 #------------------------------------------------------------------------------------#
@@ -151,13 +173,8 @@ macro(speect_plugin_swig_python_interface)
     file(APPEND ${filename} "\n")
   endif(swig_python)
 
-  # flags for the SWIG generation
-  if(WANT_PYTHON_3)
-    # extra -py3 and -DSPCT_SWIG_PYTHON_3 flags for Python 3.x
-    list(APPEND SPCT_SWIG_FLAGS -Wall -Werror -py3 -DSPCT_SWIG_PYTHON_3)
-  else(WANT_PYTHON_3)
-    list(APPEND SPCT_SWIG_FLAGS -Wall -Werror)
-  endif(WANT_PYTHON_3)
+  # SWIG flags
+  speect_plugin_swig_python_flags()
 
   # add the generated interface file dependencies
   set_source_files_properties(${CMAKE_CURRENT_BINARY_DIR}/${plugin_lowercase_name}.i
@@ -167,7 +184,7 @@ macro(speect_plugin_swig_python_interface)
     )
 endmacro(speect_plugin_swig_python_interface)
 
-  
+ 
 #------------------------------------------------------------------------------------#
 #                       Create plug-in SWIG Python loader                            #
 #------------------------------------------------------------------------------------#
@@ -206,13 +223,8 @@ macro(speect_plugin_swig_python_loader)
   file(APPEND ${filename} "\t\t\tSWIG_Error(SWIG_RuntimeError, \"Failed to load '${plugin_lowercase_name}.spi' plug-in\");\n")
   file(APPEND ${filename} "\t}\n%}\n\n")
 
-  # flags for the SWIG generation
-  if(WANT_PYTHON_3)
-    # extra -py3 and -DSPCT_SWIG_PYTHON_3 flags for Python 3.x
-    list(APPEND SPCT_SWIG_FLAGS -Wall -Werror -py3 -DSPCT_SWIG_PYTHON_3)
-  else(WANT_PYTHON_3)
-    list(APPEND SPCT_SWIG_FLAGS -Wall -Werror)
-  endif(WANT_PYTHON_3)
+  # SWIG flags
+  speect_plugin_swig_python_flags()
 
   # add the generated interface file dependencies
   set_source_files_properties(${CMAKE_CURRENT_BINARY_DIR}/${plugin_lowercase_name}.i

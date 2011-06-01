@@ -52,9 +52,11 @@ include(ebml)
 # include Speect SWIG Python native headers
 include_directories(${SPCT_PYTHON_NATIVE_INCLUDE_DIRS})
 
-# find Python 
-find_package(PythonLibs REQUIRED) # Note, currently PythonLibs does not look for Python 3
-mark_as_advanced(FORCE PYVERSIONS_EXE)
+# has speect_find_python macro
+include(${CMAKE_SOURCE_DIR}/swig/python/cmake/swigPythonFunctions.cmake)
+
+# find Python
+speect_find_python()
 
 # has speect_include_python_directories macro
 include(${CMAKE_SOURCE_DIR}/swig/python/cmake/swigPythonFunctions.cmake)

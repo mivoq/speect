@@ -36,12 +36,11 @@ add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/swigpyrun.h
 #                         Add Python libraries and includes                          #
 #------------------------------------------------------------------------------------#
 
-# has speect_include_python_directories macro
+# has speect_include_python_directories and speect_find_python macros
 include(${CMAKE_SOURCE_DIR}/swig/python/cmake/swigPythonFunctions.cmake)
 
 # find Python 
-find_package(PythonLibs REQUIRED) # Note, currently PythonLibs does not look for Python 3
-mark_as_advanced(FORCE PYVERSIONS_EXE)
+speect_find_python()
 
 # add Python to includes
 speect_include_python_directories()

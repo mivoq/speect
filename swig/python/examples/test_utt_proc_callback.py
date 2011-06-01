@@ -20,4 +20,4 @@ utt = v.synth("hello world", "text-to-segments" )
 
 
 
-print utt
+print(utt)

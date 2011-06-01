@@ -33,7 +33,6 @@
 ##                                                                                  ##
 ######################################################################################
 
-from __future__ import print_function
 import speect
 import speect.utt_ebml
 

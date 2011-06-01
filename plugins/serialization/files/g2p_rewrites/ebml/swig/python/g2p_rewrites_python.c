@@ -43,22 +43,22 @@
 
 %pythoncode
 %{
-import g2p
+from . import g2p
 
 def load_g2p_rewrites_ebml(path):
     """
     load_g2p_rewrites_ebml(path)
-    
+
     Load a g2p (grapheme-to-phoneme) rewrites class implementation from
     an EBML file.
-    
+
     :param path: Full path and file name where the EBML format g2p rewrites
                  should be loaded from.
     :type path: string
     :return: g2p (grapheme-to-phoneme) instance.
     :rtype: ``SG2P``
     """
-    
+
     if not isinstance(path, str):
         raise TypeError("Argument \"path\" must be a string")
 

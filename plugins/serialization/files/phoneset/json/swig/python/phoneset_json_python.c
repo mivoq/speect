@@ -43,7 +43,7 @@
 
 %pythoncode
 %{
-import phoneset
+from . import phoneset
 
 def load_phoneset_json(path):
     """

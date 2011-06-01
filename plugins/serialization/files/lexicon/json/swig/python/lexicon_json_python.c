@@ -43,7 +43,7 @@
 
 %pythoncode
 %{
-import lexicon
+from . import lexicon
 
 def load_lexicon_json(path):
     """

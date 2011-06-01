@@ -8,7 +8,7 @@ import sys as __sys_module__
 # add lib directory which contains swig modules
 __sys_module__.path.append(__path__module__.join(__path__module__.dirname(__path__module__.abspath(__file__)), "lib")) 
 
-from speect import *
+from .speect import *
 __doc__ = "Speect is a multilingual TTS system. It offers a full text-to-speech system with\n" + \
     "various API's, as well an environment for research and development of TTS systems\n" + \
     "and voices.\n\n" + \

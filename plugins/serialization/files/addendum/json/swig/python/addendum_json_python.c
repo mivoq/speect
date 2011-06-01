@@ -43,7 +43,7 @@
 
 %pythoncode
 %{
-import addendum
+from . import addendum
 
 def load_addendum_json(path):
     """

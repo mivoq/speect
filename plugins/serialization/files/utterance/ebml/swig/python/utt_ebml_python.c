@@ -43,7 +43,7 @@
 
 %pythoncode
 %{
-import speect
+from . import speect
 
 def load_utt_ebml(path):
     """

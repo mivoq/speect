@@ -43,7 +43,7 @@
 
 %pythoncode
 %{
-import halfphone_db
+from . import halfphone_db
 
 def load_halfphone_db_ebml(path):
     """

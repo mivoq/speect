@@ -69,7 +69,7 @@ class G2P_Rewrites_Semicolon(g2p_rewrites.G2P_Rewrites):
         with open(maplocation, "r", encoding="utf-8") as infh:
             for line in infh:
                 a, b = line.strip().split(";")
-                if a in mapping or b in mapping.values():
+                if a in mapping or b in list(mapping.values()):
                     raise Exception("Mapping is not one-to-one..")
                 else:
                     mapping[a] = b
@@ -156,7 +156,7 @@ class G2P_Rewrites_Semicolon(g2p_rewrites.G2P_Rewrites):
         """ Apply self.graphmap to all graphemes in self.ruleset
         """
 
-        for k, v in self.graphmap.items():
+        for k, v in list(self.graphmap.items()):
             if k == v: continue
             self.ruleset[v] = self.ruleset[k]
             del self.ruleset[k]
@@ -166,7 +166,7 @@ class G2P_Rewrites_Semicolon(g2p_rewrites.G2P_Rewrites):
                     r.leftcontext = re.sub(k, v, r.leftcontext)
                     r.rightcontext = re.sub(k, v, r.rightcontext)
             if self.gnulls:
-                for gk, gv in self.gnulls.items():
+                for gk, gv in list(self.gnulls.items()):
                     if (k in gk) or (k in gv):
                         del self.gnulls[gk]
                         gk = re.sub(k, v, gk)

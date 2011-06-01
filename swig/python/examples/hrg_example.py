@@ -40,7 +40,7 @@ item_t.add_daughter(item_w1)
 item_t.add_daughter(item_w2)
 
 
-print utt
+print(utt)
 
 #save utterance
 import speect.utt_ebml
@@ -52,4 +52,4 @@ del utt
 #load utterance
 lutt = speect.SUtterance.load_ebml("tmp.utt")
 
-print lutt
+print(lutt)

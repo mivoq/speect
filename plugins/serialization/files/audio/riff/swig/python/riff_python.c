@@ -43,7 +43,7 @@
 
 %pythoncode
 %{
-import audio
+from . import audio
 
 def save_riff(self, path):
     """

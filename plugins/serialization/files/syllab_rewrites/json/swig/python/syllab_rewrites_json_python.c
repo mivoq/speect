@@ -43,7 +43,7 @@
 
 %pythoncode
 %{
-import syllabification
+from . import syllabification
 
 def load_syllabification_rewrites_json(path):
     """

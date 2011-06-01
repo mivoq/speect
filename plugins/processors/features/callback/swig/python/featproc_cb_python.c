@@ -224,7 +224,7 @@
 
 %pythoncode
 %{
-import speect
+from . import speect
 
 def callback(callback_function):
     """

@@ -197,39 +197,6 @@ S_LOCAL void _s_py_funcs_initialize(s_erc *error)
 }
 
 
-S_API s_bool s_pyobject_is_primitive(PyObject *val, s_erc *error)
-{
-	S_CLR_ERR(error);
-
-#if PY_VERSION_HEX < 0x03000000 /* Python 2.x */
-	if ((PyObject_IsInstance(val, (PyObject*)&PyLong_Type))
-		|| (PyObject_IsInstance(val, (PyObject*)&PyFloat_Type))
-		|| (PyObject_IsInstance(val, (PyObject*)&PyString_Type))
-		|| (PyObject_IsInstance(val, (PyObject*)&PyUnicode_Type)))
-	{
-		return TRUE;
-	}
-	else
-	{
-		return FALSE;
-	}
-#else /* ! PY_VERSION_HEX < 0x03000000, Python 3.x */
-	if ((PyObject_IsInstance(val, (PyObject*)&PyLong_Type))
-		|| (PyObject_IsInstance(val, (PyObject*)&PyFloat_Type))
-		|| (PyObject_IsInstance(val, (PyObject*)&PyUnicode_Type)))
-	{
-		return TRUE;
-	}
-	else
-	{
-		return FALSE;
-	}
-#endif /* PY_VERSION_HEX < 0x03000000 */
-
-	return FALSE;
-}
-
-
 S_API PyObject *s_sobject_2_pyobject(const SObject *object, s_bool own, s_erc *error)
 {
 	s_sobject_type type;

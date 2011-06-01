@@ -46,7 +46,6 @@
 	void write_object(PyObject *val, uint32 id, s_erc *error)
 	{
 		SObject *object;
-		s_bool is_primitive;
 		s_erc local_err = S_SUCCESS;
 
 
@@ -66,13 +65,16 @@
 		 * Python native library does not wrap the primitives, it
 		 * creates new Speect objects.
 		 */
-		is_primitive = s_pyobject_is_primitive(val, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "write_object",
-					  "Call to \"s_pyobject_is_primitive\" failed"))
-			return;
-
-		if (is_primitive)
+#ifdef SPCT_SWIG_PYTHON_3
+		if ((PyObject_IsInstance(val, (PyObject*)&PyLong_Type))
+			|| (PyObject_IsInstance(val, (PyObject*)&PyFloat_Type))
+			|| (PyObject_IsInstance(val, (PyObject*)&PyUnicode_Type)))
+#else /* ! SPCT_SWIG_PYTHON_3 */
+		if ((PyObject_IsInstance(val, (PyObject*)&PyLong_Type))
+			|| (PyObject_IsInstance(val, (PyObject*)&PyFloat_Type))
+			|| (PyObject_IsInstance(val, (PyObject*)&PyString_Type))
+			|| (PyObject_IsInstance(val, (PyObject*)&PyUnicode_Type)))
+#endif /* SPCT_SWIG_PYTHON_3 */
 		{
 			S_DELETE(object, "write_object", error);
 		}

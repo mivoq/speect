@@ -98,8 +98,8 @@ set(CMAKE_C_FLAGS "")
 #------------------------------------------------------------------------------------#
 
 if(WANT_PYTHON_3)
-  # extra -py3 flag for Python 3.x
-  list(APPEND SPCT_SWIG_FLAGS -Wall -Werror -py3)
+  # extra -py3 and -DSPCT_SWIG_PYTHON_3 flags for Python 3.x
+  list(APPEND SPCT_SWIG_FLAGS -Wall -Werror -py3 -DSPCT_SWIG_PYTHON_3)
 else(WANT_PYTHON_3)
   list(APPEND SPCT_SWIG_FLAGS -Wall -Werror)
 endif(WANT_PYTHON_3)

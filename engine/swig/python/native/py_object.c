@@ -167,7 +167,6 @@ static s_bool Compare(const SObject *first, const SObject *second, s_erc *error)
 	PyObject *o1;
 	PyObject *o2;
 	int rv;
-	int p_result;
 
 
 	S_CLR_ERR(error);
@@ -177,7 +176,7 @@ static s_bool Compare(const SObject *first, const SObject *second, s_erc *error)
 	if ((o1 == NULL) || (o2 == NULL))
 		return FALSE;
 
-	rv = PyObject_Cmp(o1, o2, &p_result);
+	rv = PyObject_RichCompareBool(o1, o2, Py_EQ);
 	if (rv == -1)
 	{
 		char *py_error = s_get_python_error_str();
@@ -186,7 +185,7 @@ static s_bool Compare(const SObject *first, const SObject *second, s_erc *error)
 		{
 			S_CTX_ERR(error, S_FAILURE,
 					  "Compare",
-					  "Call to \"PyObject_Cmp\" failed. Reported error: %s",
+					  "Call to \"PyObject_RichCompareBool\" failed. Reported error: %s",
 					  py_error);
 			S_FREE(py_error);
 		}
@@ -194,13 +193,13 @@ static s_bool Compare(const SObject *first, const SObject *second, s_erc *error)
 		{
 			S_CTX_ERR(error, S_FAILURE,
 					  "Compare",
-					  "Call to \"PyObject_Cmp\" failed");
+					  "Call to \"PyObject_RichCompareBool\" failed");
 		}
 
 		return FALSE;
 	}
 
-	if (p_result == 0)
+	if (rv == 1)
 		return TRUE;
 
 	return FALSE;

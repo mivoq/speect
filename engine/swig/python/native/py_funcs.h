@@ -76,6 +76,18 @@ S_LOCAL void _s_py_funcs_initialize(s_erc *error);
 
 
 /**
+ * Query if the given Python object is a primitive type (int, float or
+ * string).
+ *
+ * @param val The object to do the query for.
+ * @param error Error code.
+ *
+ * @return #TRUE if the object is a primitive type, else #FALSE.
+ */
+S_API s_bool s_pyobject_is_primitive(PyObject *val, s_erc *error);
+
+
+/**
  * Convert a Speect SObject to a Python PyObject type.
  *
  * @param object The object to convert.

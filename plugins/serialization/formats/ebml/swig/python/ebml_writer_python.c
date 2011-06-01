@@ -46,6 +46,7 @@
 	void write_object(PyObject *val, uint32 id, s_erc *error)
 	{
 		SObject *object;
+		s_bool is_primitive;
 		s_erc local_err = S_SUCCESS;
 
 
@@ -65,23 +66,16 @@
 		 * Python native library does not wrap the primitives, it
 		 * creates new Speect objects.
 		 */
-#if PY_VERSION_HEX >= 0x03000000
-		if ((PyObject_IsInstance(val, (PyObject*)&PyLong_Type))
-			|| (PyObject_IsInstance(val, (PyObject*)&PyFloat_Type))
-			|| (PyObject_IsInstance(val, (PyObject*)&PyString_Type))
-			|| (PyObject_IsInstance(val, (PyObject*)&PyUnicode_Type)))
+		is_primitive = s_pyobject_is_primitive(val, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "write_object",
+					  "Call to \"s_pyobject_is_primitive\" failed"))
+			return;
+
+		if (is_primitive)
 		{
 			S_DELETE(object, "write_object", error);
 		}
-#else /* ! PY_VERSION_HEX >= 0x03000000 */
-		if ((PyObject_IsInstance(val, (PyObject*)&PyInt_Type))
-			|| (PyObject_IsInstance(val, (PyObject*)&PyFloat_Type))
-			|| (PyObject_IsInstance(val, (PyObject*)&PyString_Type))
-			|| (PyObject_IsInstance(val, (PyObject*)&PyUnicode_Type)))
-		{
-			S_DELETE(object, "write_object", error);
-		}
-#endif /* PY_VERSION_HEX >= 0x03000000 */
 
 		if ((error != NULL)
 			&& (local_err != S_SUCCESS)

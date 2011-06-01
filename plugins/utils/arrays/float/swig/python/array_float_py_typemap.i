@@ -47,9 +47,7 @@
 		fp = S_MALLOC(float, count);
 		if (fp == NULL)
 		{
-			PyErr_SetString(PyExc_RuntimeError,
-							"Failed to allocate memory for 'float*' object");
-			return NULL;
+			SWIG_exception_fail(SWIG_RuntimeError, "in method '" "$symname" "',	failed to allocate memory for 'float' object");
 		}
 
 		for (i = 0; i < count; i++)
@@ -61,17 +59,14 @@
 			}
 			else
 			{
-				PyErr_SetString(PyExc_TypeError,
-								"not a float");
 				S_FREE(fp);
-				return NULL;
+				SWIG_exception_fail(SWIG_TypeError, "in method '" "$symname" "',  element of list not a float");
 			}
 		}
 	}
 	else
 	{
-		PyErr_SetString(PyExc_TypeError,"not a list");
-		return NULL;
+		SWIG_exception_fail(SWIG_TypeError, "in method '" "$symname" "',  not a list");
 	}
 	$1 = fp;
 	$2 = count;

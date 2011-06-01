@@ -47,9 +47,7 @@
 		ip = S_MALLOC(sint32, count);
 		if (ip == NULL)
 		{
-			PyErr_SetString(PyExc_RuntimeError,
-							"Failed to allocate memory for 'sint32*' object");
-			return NULL;
+			SWIG_exception_fail(SWIG_RuntimeError, "in method '" "$symname" "',	failed to allocate memory for 'sint32' object");
 		}
 
 		for (i = 0; i < count; i++)
@@ -61,17 +59,14 @@
 			}
 			else
 			{
-				PyErr_SetString(PyExc_TypeError,
-								"not an integer");
 				S_FREE(ip);
-				return NULL;
+				SWIG_exception_fail(SWIG_TypeError, "in method '" "$symname" "',  element of list not an integer");
 			}
 		}
 	}
 	else
 	{
-		PyErr_SetString(PyExc_TypeError,"not a list");
-		return NULL;
+		SWIG_exception_fail(SWIG_TypeError, "in method '" "$symname" "',  not a list");
 	}
 	$1 = ip;
 	$2 = count;

@@ -49,9 +49,7 @@
 		fpp = S_MALLOC(float*, row_count);
 		if (fpp == NULL)
 		{
-			PyErr_SetString(PyExc_RuntimeError,
-							"Failed to allocate memory for 'float**' object");
-			return NULL;
+			SWIG_exception_fail(SWIG_RuntimeError, "in method '" "$symname" "',	failed to allocate memory for 'float*' object");
 		}
 
 		for (i = 0; i < row_count; i++)
@@ -63,10 +61,8 @@
 				fpp[i] = S_MALLOC(float, col_count);
 				if (fpp[i] == NULL)
 				{
-					PyErr_SetString(PyExc_RuntimeError,
-									"Failed to allocate memory for 'float*' object");
 					S_FREE(fpp); /* there will be some loss */
-					return NULL;
+					SWIG_exception_fail(SWIG_RuntimeError, "in method '" "$symname" "',	failed to allocate memory for 'float' object");
 				}
 
 				for (j = 0; j < col_count; j++)
@@ -78,25 +74,21 @@
 					}
 					else
 					{
-						PyErr_SetString(PyExc_TypeError,
-										"not a float");
 						S_FREE(fpp); /* there will be some loss */
-						return NULL;
+						SWIG_exception_fail(SWIG_TypeError, "in method '" "$symname" "',  element of list not a float");
 					}
 				}
 			}
 			else
 			{
-				PyErr_SetString(PyExc_TypeError, "not a list of lists");
 				S_FREE(fpp); /* there will be some loss */
-				return NULL;
+				SWIG_exception_fail(SWIG_TypeError, "in method '" "$symname" "',  not a list of lists");
 			}
 		}
 	}
 	else
 	{
-		PyErr_SetString(PyExc_TypeError,"not a list");
-		return NULL;
+		SWIG_exception_fail(SWIG_TypeError, "in method '" "$symname" "',  not a list");
 	}
 
 	$1 = fpp;

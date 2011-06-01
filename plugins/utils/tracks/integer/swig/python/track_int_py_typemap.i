@@ -40,16 +40,13 @@
 	int count;
 	float *fp;
 
-
 	if (PyList_Check($input))
 	{
 		count = PyList_Size($input);
 		fp = S_MALLOC(float, count);
 		if (fp == NULL)
 		{
-			PyErr_SetString(PyExc_RuntimeError,
-							"Failed to allocate memory for 'float*' object");
-			return NULL;
+			SWIG_exception_fail(SWIG_RuntimeError, "in method '" "$symname" "',	failed to allocate memory for 'float*' object");
 		}
 
 		for (i = 0; i < count; i++)
@@ -61,17 +58,14 @@
 			}
 			else
 			{
-				PyErr_SetString(PyExc_TypeError,
-								"not a float");
 				S_FREE(fp);
-				return NULL;
+				SWIG_exception_fail(SWIG_TypeError, "in method '" "$symname" "',  element of list not a float");
 			}
 		}
 	}
 	else
 	{
-		PyErr_SetString(PyExc_TypeError,"not a list");
-		return NULL;
+		SWIG_exception_fail(SWIG_TypeError, "in method '" "$symname" "',  not a list");
 	}
 	$1 = fp;
 	$2 = count;
@@ -93,9 +87,7 @@
 		ipp = S_MALLOC(sint32*, row_count);
 		if (ipp == NULL)
 		{
-			PyErr_SetString(PyExc_RuntimeError,
-							"Failed to allocate memory for 'sint32**' object");
-			return NULL;
+			SWIG_exception_fail(SWIG_RuntimeError, "in method '" "$symname" "',	failed to allocate memory for 'sint32*' object");
 		}
 
 		for (i = 0; i < row_count; i++)
@@ -107,10 +99,8 @@
 				ipp[i] = S_MALLOC(sint32, col_count);
 				if (ipp[i] == NULL)
 				{
-					PyErr_SetString(PyExc_RuntimeError,
-									"Failed to allocate memory for 'sint32*' object");
 					S_FREE(ipp); /* there will be some loss */
-					return NULL;
+					SWIG_exception_fail(SWIG_RuntimeError, "in method '" "$symname" "',	failed to allocate memory for 'sint32' object");
 				}
 
 				for (j = 0; j < col_count; j++)
@@ -122,25 +112,21 @@
 					}
 					else
 					{
-						PyErr_SetString(PyExc_TypeError,
-										"not an integer");
 						S_FREE(ipp); /* there will be some loss */
-						return NULL;
+						SWIG_exception_fail(SWIG_TypeError, "in method '" "$symname" "',  element of list not an integer");
 					}
 				}
 			}
 			else
 			{
-				PyErr_SetString(PyExc_TypeError, "not a list of lists");
 				S_FREE(ipp); /* there will be some loss */
-				return NULL;
+				SWIG_exception_fail(SWIG_TypeError, "in method '" "$symname" "',  not a list of lists");
 			}
 		}
 	}
 	else
 	{
-		PyErr_SetString(PyExc_TypeError,"not a list");
-		return NULL;
+		SWIG_exception_fail(SWIG_TypeError, "in method '" "$symname" "',  not a list");
 	}
 
 	$1 = ipp;

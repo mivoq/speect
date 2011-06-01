@@ -82,4 +82,8 @@ option(WANT_EXAMPLES "Include the example suite in the compilation." off)
 #------------------------------------------------------------------------------------#
 
 # Python (Default ON)
+#--------------------
+
 option(WANT_PYTHON_WRAPPER "Enable generation of the Python wrapper." on)
+
+option(WANT_PYTHON_3 "Generate wrapper code for Python versions >= 3" off)

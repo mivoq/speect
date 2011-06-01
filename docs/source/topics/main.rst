@@ -15,3 +15,8 @@ Topic Guides
 
 
 here be topic guides
+
+
+.. todo::
+
+   Object system, Plug-ins, HRG, voice, cmake stuff (including custom functions)

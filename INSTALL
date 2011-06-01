@@ -214,6 +214,9 @@ sentence, so additional documentation is provided here:
 |WANT_PYTHON_WRAPPER   |ON or OFF         |Include Python bindings |ON            |
 |                      |                  |in build process.       |              |
 +----------------------+------------------+------------------------+--------------+
+|WANT_PYTHON_3         |ON or OFF         |Build Python wrappers   |OFF           |
+|                      |                  |for Python version 3.x  |              |
++----------------------+------------------+------------------------+--------------+
 
 
 Plug-in Options in CMake

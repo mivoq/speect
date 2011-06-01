@@ -106,6 +106,16 @@ CMake interface as described in :doc:`../installation`.
    :default: ON
 
 
+.. cmake:: WANT_PYTHON_3
+
+   Build Python wrappers for Python version 3.x
+
+   :options: ON or OFF
+   :default: OFF
+   :note: Not compatible with Python version 2.x, as
+          code is linked with Python 3.x libraries.
+
+
 .. cmake:: HTS_ENGINE_INCLUDE
 
    Path to HTS Engine include directory.

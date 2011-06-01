@@ -34,7 +34,6 @@
 /*                                                                                  */
 /************************************************************************************/
 
-
 %extend _PMapIterator
 {
 	_PMapIterator *__iter__()
@@ -42,7 +41,11 @@
 		return $self;
 	}
 
+#ifdef SPCT_SWIG_PYTHON_3
+	PyObject *__next__()
+#else /* ! SPCT_SWIG_PYTHON_3 */
 	PyObject *next()
+#endif /* SPCT_SWIG_PYTHON_3 */
 	{
 		const char *key;
 		s_erc error;
@@ -83,7 +86,11 @@
 		return $self;
 	}
 
-	PyObject *next()
+#ifdef SPCT_SWIG_PYTHON_3
+	PyObject *__next__()
+#else /* ! SPCT_SWIG_PYTHON_3 */
+    PyObject *next()
+#endif /* SPCT_SWIG_PYTHON_3 */
 	{
 		const SObject *iObject;
 		s_erc error;

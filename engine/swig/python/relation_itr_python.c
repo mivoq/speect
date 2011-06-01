@@ -36,7 +36,11 @@
 
 %extend _SRelationItr
 {
+#ifdef SPCT_SWIG_PYTHON_3
+	PyObject *__next__()
+#else /* ! SPCT_SWIG_PYTHON_3 */
 	PyObject *next()
+#endif /* SPCT_SWIG_PYTHON_3 */
 	{
 		s_erc error;
 		PyObject *pobject;

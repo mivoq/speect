@@ -1045,6 +1045,11 @@ S_API char *s_sbefore(const char *haystack, const char *needle, s_erc *error)
 {
 	char *p;
 	char *q;
+	int hsl; /* length */
+	int hsb; /* bytes */
+	int psl; /* length */
+	int psb; /* bytes */
+
 
 
 	S_CLR_ERR(error);
@@ -1057,7 +1062,12 @@ S_API char *s_sbefore(const char *haystack, const char *needle, s_erc *error)
 	if (p == NULL)
 		return NULL;
 
-	q = S_MALLOC(char, s_strsize(haystack, error) - s_strsize(p, error) + 1);
+	hsb = s_strsize(haystack, error);
+	psb = s_strsize(p, error);
+	hsl = s_strlen(haystack, error);
+	psl = s_strlen(p, error);
+
+	q = S_MALLOC(char, hsb - psb + 1);
 
 	if (q == NULL)
 	{
@@ -1067,7 +1077,7 @@ S_API char *s_sbefore(const char *haystack, const char *needle, s_erc *error)
 	}
 	else
 	{
-		q = s_strncpy(q, haystack, s_strsize(haystack, error) - s_strsize(p, error), error);
+		q = s_strncpy(q, haystack, hsl - psl, error);
 
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "s_sbefore",

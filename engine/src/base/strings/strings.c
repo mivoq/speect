@@ -1067,7 +1067,7 @@ S_API char *s_sbefore(const char *haystack, const char *needle, s_erc *error)
 	}
 	else
 	{
-		q = s_strncpy(q, haystack, s_strsize(haystack, error) - s_strlen(p, error), error);
+		q = s_strncpy(q, haystack, s_strsize(haystack, error) - s_strsize(p, error), error);
 
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "s_sbefore",

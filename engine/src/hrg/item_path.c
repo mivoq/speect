@@ -123,6 +123,9 @@ static void *s_internal_ff(const SItem *item, const char *path, int type, s_erc 
 static SObject *s_feature_processor_request(const SItem *item, const char *name,
 											s_erc *error);
 
+static SObject *s_internal_ff_clever(const SItem *item, const char *path,
+									 const SFeatProcessor *featProc, s_erc *error);
+
 
 /************************************************************************************/
 /*                                                                                  */
@@ -173,6 +176,92 @@ S_API SObject *s_path_to_featproc(const SItem *item, const char *path, s_erc *er
 			  "Call to \"s_internal_ff\" failed");
 
 	return derivedFeature;
+}
+
+
+S_API SObject *SItemPath(const SItem *item, const char *path, s_erc *error)
+{
+	SObject *pObject;
+	const char *end;
+	const char *fobject;
+	const SVoice *voice;
+	const SFeatProcessor *featProc;
+	int rv;
+
+
+	S_CLR_ERR(error);
+	if (path == NULL)
+		return NULL;
+
+	/* get last part of path, after . */
+	end = s_strrchr(path, '.', error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "SItemPath",
+				  "Call to \"s_strrchr\" failed"))
+		return NULL;
+
+	if (end != NULL)
+		fobject = end + 1;
+	else
+		fobject = path;
+
+
+	/* get item's voice */
+	voice = SItemVoice(item, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "SItemPath",
+				  "Call to \"SItemVoice\" failed"))
+		return NULL;
+
+	if (voice == NULL)
+		return NULL;
+
+	rv = s_strncmp(fobject, "ph_", 3, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "SItemPath",
+				  "Call to \"s_strncmp\" failed"))
+		return NULL;
+
+	if (rv == 0)
+	{
+		/* special case of phoneset feature processor */
+		featProc = SVoiceGetFeatProc(voice, "segment_phoneset_feature", error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "SItemPath",
+					  "Call to \"SVoiceGetFeatProc\" failed"))
+			return NULL;
+	}
+	else
+	{
+		/* get feature processor */
+		featProc = SVoiceGetFeatProc(voice, fobject, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "SItemPath",
+					  "Call to \"SVoiceGetFeatProc\" failed"))
+			return NULL;
+	}
+
+	pObject = s_internal_ff_clever(item, path, featProc, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "SItemPath",
+				  "Call to \"s_internal_ff_clever\" failed"))
+		return NULL;
+
+	if (pObject == NULL)
+		return NULL;
+
+	/* does this object have a dispose method ?*/
+	if (S_OBJECT_METH_VALID(S_OBJECT(pObject), dispose))
+	{
+		/*
+		 * we must increment it's reference so that it can
+		 * safely be deleted with S_DELETE by the caller
+		 */
+		SObjectIncRef(pObject);
+	}
+
+	/* if no dispose method, then we don't need to worry */
+	return pObject;
 }
 
 
@@ -560,48 +649,24 @@ static void *s_internal_ff(const SItem *item, const char *path, int type, s_erc 
 								  "Call to \"s_feature_function_request\" failed"))
 						featureVal = NULL;
 				}
-				/* phoneset feature request or feature name */
+				/* item feature */
 				else if (type == 1)
 				{
-					int rv;
-
-					rv = s_strncmp(token, "ph_", 3, error);
+					/* item feature */
+					feat_present = SItemFeatureIsPresent(pathItem, token, error);
 					if (S_CHK_ERR(error, S_CONTERR,
 								  "s_internal_ff",
-								  "Call to \"s_strncmp\" failed"))
+								  "Call to \"SItemFeatureIsPresent\" failed"))
 					{
 						featureVal = NULL;
 					}
-					else
+					else if (feat_present == TRUE)
 					{
-						if (rv == 0)
-						{
-							/* phoneset feature */
-							featureVal = (const SObject*)s_feature_processor_request(pathItem, token, error);
-							if (S_CHK_ERR(error, S_CONTERR,
-										  "s_internal_ff",
-										  "Call to \"s_feature_function_request\" failed"))
-								featureVal = NULL;
-						}
-						else
-						{
-							/* item feature */
-							feat_present = SItemFeatureIsPresent(pathItem, token, error);
-							if (S_CHK_ERR(error, S_CONTERR,
-										  "s_internal_ff",
-										  "Call to \"SItemFeatureIsPresent\" failed"))
-							{
-								featureVal = NULL;
-							}
-							else if (feat_present == TRUE)
-							{
-								featureVal = (const SObject*)SItemGetObject(pathItem, token, error);
-								if (S_CHK_ERR(error, S_CONTERR,
-											  "s_internal_ff",
-											  "Call to \"SItemGetObject\" failed"))
-									featureVal = NULL;
-							}
-						}
+						featureVal = (const SObject*)SItemGetObject(pathItem, token, error);
+						if (S_CHK_ERR(error, S_CONTERR,
+									  "s_internal_ff",
+									  "Call to \"SItemGetObject\" failed"))
+							featureVal = NULL;
 					}
 				}
 			}
@@ -629,6 +694,327 @@ static void *s_internal_ff(const SItem *item, const char *path, int type, s_erc 
 	if (type == 2)
 		void_v = (void*)pathItem;
 	else if ((type == 0) || (type == 1))
+		void_v = (void*)featureVal;
+	else
+		void_v = NULL;
+
+	return void_v;
+}
+
+
+
+static SObject *s_internal_ff_clever(const SItem *item, const char *path,
+									 const SFeatProcessor *featProc, s_erc *error)
+
+{
+	const char *set_ptr = path;
+	const char *set = ".:";
+	char *token;
+	SItem *pathItem = (SItem*)item;
+	SItem *itr;
+	void *void_v = NULL;
+	s_ipath_tok token_state;
+	SObject *featureVal = NULL;
+	s_bool feat_present;
+	int type = 1; /* 1 is pathItem, 0 is featureVal */
+
+
+	S_CLR_ERR(error);
+
+	while ((path != NULL) && (set_ptr != NULL) && (pathItem != NULL))
+	{
+		set_ptr = s_strpbrk(path, set, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "s_internal_ff_clever",
+					  "Call to \"s_strpbrk\" failed"))
+		{
+			S_FREE(token);
+			return NULL;
+		}
+
+		token_state = s_get_token(&path, set_ptr, &token, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "s_internal_ff_clever",
+					  "Call to \"s_get_token\" failed"))
+		{
+			S_FREE(token);
+			return NULL;
+		}
+
+		switch (token_state)
+		{
+		case S_IPATH_TOK_ERROR:
+		{
+			S_CTX_ERR(error, S_CONTERR,
+					  "s_get_token",
+					  "Tokenize error in features path \"%s\"", path);
+			S_FREE(token);
+			return NULL;
+		}
+		case S_IPATH_TOK_PREVIOUS:
+		{
+			if (pathItem != NULL)
+			{
+				pathItem = SItemPrev(pathItem, error);
+				if (S_CHK_ERR(error, S_CONTERR,
+							  "s_internal_ff_clever",
+							  "Call to \"SItemPrev\" failed"))
+				{
+					S_FREE(token);
+					return NULL;
+				}
+			}
+			else
+				S_WARNING(S_FAILURE, "s_internal_ff_clever",
+						  "Trying to get previous item of NULL item");
+			break;
+		}
+		case S_IPATH_TOK_NEXT:
+		{
+			if (pathItem != NULL)
+			{
+				pathItem = SItemNext(pathItem, error);
+				if (S_CHK_ERR(error, S_CONTERR,
+							  "s_internal_ff_clever",
+							  "Call to \"SItemNext\" failed"))
+				{
+					S_FREE(token);
+					return NULL;
+				}
+			}
+
+			else
+				S_WARNING(S_FAILURE, "s_internal_ff_clever",
+						  "Trying to get next item of NULL item");
+			break;
+		}
+		case S_IPATH_TOK_RELATION:
+		{
+			S_FREE(token);
+
+			if (set_ptr == NULL)
+			{
+				S_CTX_ERR(error, S_CONTERR,
+						  "s_internal_ff_clever",
+						  "Tokeninze error, expected relation"
+						  " name in features path \"%s\"", path);
+				return NULL;
+			}
+
+			set_ptr = s_strpbrk(path, set, error);
+			if (S_CHK_ERR(error, S_CONTERR,
+						  "s_internal_ff_clever",
+						  "Call to \"s_strpbrk\" failed"))
+				return NULL;
+
+			token_state = s_get_token(&path, set_ptr, &token, error);
+			if (S_CHK_ERR(error, S_CONTERR,
+						  "s_internal_ff_clever",
+						  "Call to \"s_get_token\" failed"))
+			{
+				S_FREE(token);
+				return NULL;
+			}
+
+			/* relation names are not known to tokenizer */
+			if (token_state != S_IPATH_TOK_UNKNOWN)
+			{
+				S_CTX_ERR(error, S_CONTERR,
+						  "s_internal_ff_clever",
+						  "Tokeninze error, expected relation"
+						  " name in features path \"%s\"", path);
+				S_FREE(token);
+				return NULL;
+			}
+
+			if (pathItem != NULL)
+			{
+				pathItem = SItemAs(pathItem, token, error);
+				if (S_CHK_ERR(error, S_CONTERR,
+							  "s_internal_ff_clever",
+							  "Call to \"SItemAs\" failed"))
+				{
+					S_FREE(token);
+					return NULL;
+				}
+			}
+			else
+			{
+				S_CTX_ERR(error, S_CONTERR,
+						  "s_internal_ff_clever",
+						  "Trying to get NULL item in relation \"%s\"", token);
+				S_FREE(token);
+			}
+
+			break;
+		}
+		case S_IPATH_TOK_DAUGHTER:
+		{
+			if (pathItem != NULL)
+			{
+				pathItem = SItemDaughter(pathItem, error);
+				if (S_CHK_ERR(error, S_CONTERR,
+							  "s_internal_ff_clever",
+							  "Call to \"SItemDaughter\" failed"))
+				{
+					return NULL;
+				}
+			}
+			else
+			{
+				S_CTX_ERR(error, S_CONTERR,
+						  "s_internal_ff_clever",
+						  "Trying to get daughter of NULL item.", token);
+			}
+
+			break;
+		}
+		case S_IPATH_TOK_DAUGHTERN:
+		{
+			if (pathItem != NULL)
+			{
+				pathItem = SItemDaughter(pathItem, error);
+				if (S_CHK_ERR(error, S_CONTERR,
+							  "s_internal_ff_clever",
+							  "Call to \"SItemDaughter\" failed"))
+				{
+					return NULL;
+				}
+				/* now last one */
+				for (itr = pathItem; itr != NULL; itr = itr->next)
+					pathItem = itr;
+
+			}
+			else
+			{
+				S_CTX_ERR(error, S_CONTERR,
+						  "s_internal_ff_clever",
+						  "Trying to get daughter of NULL item.", token);
+			}
+
+			break;
+		}
+		case S_IPATH_TOK_PARENT:
+		{
+			if (pathItem != NULL)
+			{
+				pathItem = SItemParent(pathItem, error);
+				if (S_CHK_ERR(error, S_CONTERR,
+							  "s_internal_ff_clever",
+							  "Call to \"SItemParent\" failed"))
+				{
+					return NULL;
+				}
+			}
+			else
+			{
+				S_CTX_ERR(error, S_CONTERR,
+						  "s_internal_ff_clever",
+						  "Trying to get parent of NULL item.", token);
+			}
+
+			break;
+		}
+		case S_IPATH_TOK_UNKNOWN:
+		{
+			if (pathItem != NULL)
+			{
+				type = 0;
+
+				/* feature function */
+				if (featProc != NULL)
+				{
+					/* maybe a phoneset feature ? */
+					int rv;
+
+					rv = s_strncmp(token, "ph_", 3, error);
+					if (S_CHK_ERR(error, S_CONTERR,
+								  "s_internal_ff_clever",
+								  "Call to \"s_strncmp\" failed"))
+					{
+						featureVal = NULL;
+					}
+					else
+					{
+						if (rv == 0)
+						{
+							/* phoneset feature */
+							SItemSetString(pathItem, "_phoneset_feature", token, error);
+							if (S_CHK_ERR(error, S_CONTERR,
+										  "s_internal_ff_clever",
+										  "Call to \"SItemSetString\" failed"))
+							{
+								featureVal = NULL;
+							}
+							else
+							{
+								featureVal = SFeatProcessorRun(featProc, pathItem, error);
+								if (S_CHK_ERR(error, S_CONTERR,
+											  "s_internal_ff_clever",
+											  "Call to \"SFeatProcessorRun\" failed"))
+									featureVal = NULL;
+
+								SItemDelFeature(pathItem, "_phoneset_feature", error);
+								S_CHK_ERR(error, S_CONTERR,
+										  "s_internal_ff_clever",
+										  "Call to \"SItemDelFeature\" failed");
+							}
+						}
+						else
+						{
+							/* execute feature processor on item */
+							featureVal = SFeatProcessorRun(featProc, pathItem, error);
+							if (S_CHK_ERR(error, S_CONTERR,
+										  "s_internal_ff_clever",
+										  "Call to \"SFeatProcessorRun\" failed"))
+								featureVal = NULL;
+						}
+					}
+				}
+				/*  item feature */
+				else
+				{
+					feat_present = SItemFeatureIsPresent(pathItem, token, error);
+					if (S_CHK_ERR(error, S_CONTERR,
+								  "s_internal_ff_clever",
+								  "Call to \"SItemFeatureIsPresent\" failed"))
+					{
+						featureVal = NULL;
+					}
+					else if (feat_present == TRUE)
+					{
+						featureVal = (SObject*)SItemGetObject(pathItem, token, error);
+						if (S_CHK_ERR(error, S_CONTERR,
+									  "s_internal_ff_clever",
+									  "Call to \"SItemGetObject\" failed"))
+							featureVal = NULL;
+					}
+				}
+			}
+			else
+			{
+				S_CTX_ERR(error, S_CONTERR,
+						  "s_internal_ff_clever",
+						  "Item in path \"%s\" is NULL", path);
+			}
+			break;
+		}
+		default:
+		{
+			S_CTX_ERR(error, S_CONTERR,
+					  "s_internal_ff_clever",
+					  "Tokeninze error, should not get to this state");
+			S_FREE(token);
+			return NULL;
+		}
+		}
+
+		S_FREE(token);
+	}
+
+	if (type == 1)
+		void_v = (void*)pathItem;
+	else if (type == 0)
 		void_v = (void*)featureVal;
 	else
 		void_v = NULL;

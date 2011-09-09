@@ -207,6 +207,36 @@ S_API SObject *s_path_to_featproc(const SItem *item, const char *path,
 
 
 /**
+ * Follow the given path, relative to the given item, and return the
+ * object at the path. The object may be another item, a feature, or a
+ * feature that has been calculated by a <i> feature processor
+ * </i>. This function can be used as a replacement for
+ * #s_path_to_item, #s_path_to_feature or #s_path_to_featproc.
+ *
+ * @public @memberof SItem
+ *
+ * @param item The given path is relative to this item.
+ * @param path The path to the desired item, feature, or feature
+ * processor, relative to the given item.
+
+ * @param error Error code.
+ *
+ * @return The object at the end of the path, which may be another
+ * item, a item feature, or a feature that has been calculated by a
+ * feature processor.
+ *
+ * @note The returned object must be deleted by the caller with a call
+ * to #S_DELETE. It is safe to do this call, regardless of whether the
+ * returned object was an item or a item feature.
+ *
+ * @note If a feature processor and an item feature has the same name
+ * then this function will not work.
+ *
+ */
+S_API SObject *SItemPath(const SItem *item, const char *path, s_erc *error);
+
+
+/**
  * @}
  */
 

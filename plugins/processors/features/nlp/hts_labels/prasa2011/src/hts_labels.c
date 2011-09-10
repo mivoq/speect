@@ -1046,9 +1046,6 @@ static char *create_C_context(const SItem *item, s_erc *error)
 					  "create_C_context",
 					  "Call to \"get_stress_level\" failed"))
 			return NULL;
-
-		if (c1 > 0)
-			c1 = 1;
 	}
 	else
 	{
@@ -1120,9 +1117,6 @@ static char *create_C_context_pause(const SItem *item, s_erc *error)
 					  "create_C_context_pause",
 					  "Call to \"get_stress_level\" failed"))
 			return NULL;
-
-		if (c1 > 0)
-			c1 = 1;
 	}
 	else
 	{

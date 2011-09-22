@@ -81,6 +81,15 @@ cd ..
 
 ########################################################################
 
+echo "--cleaning segment_phoneset_feature--"
+
+cd ./segment_phoneset_feature/
+./clean_files
+cd ..
+
+
+########################################################################
+
 echo "--cleaning segment_start--"
 
 cd ./segment_start/

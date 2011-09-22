@@ -308,6 +308,25 @@ processor is the last element of the path.
 %feature("autodoc", item_path_to_derived_feature_DOCSTRING) SItem::path_to_derived_feature;
 
 
+%define item_path_DOCSTRING
+"""
+path(path)
+
+Follow the given path, relative to the given item, and return the
+object at the path. The object may be another item, a feature, or a
+feature that has been calculated by a *feature processor*.
+This function can be used as a replacement for SItem::path_to_derived_feature,
+SItem::path_to_item, or SItem::path_to_item.
+
+:param path: The path to the desired item, feature, or feature processor, relative to the given item.
+:type path: string
+:return: The object at the end of the path, which may be another item, a item feature, or a feature that has been calculated by a feature processor.
+"""
+%enddef
+
+%feature("autodoc", item_path_DOCSTRING) SItem::path;
+
+
 %define item_len_DOCSTRING
 """
 __len__()

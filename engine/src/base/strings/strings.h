@@ -198,7 +198,7 @@ S_API char *s_strdup(const char *src, s_erc *error);
  *
  * @param dest The destination string.
  * @param src The source string.
- * @param size The size of the destination string.
+ * @param size The size of the destination string (bytes).
  * @param error Error code.
  *
  * @return The destination string @a dest.
@@ -250,7 +250,7 @@ S_API char *s_strzcpy(char *dest, const char *src,
  * @param dest The destination string.
  * @param src The source string.
  * @param n Number of characters to copy.
- * @param size The size of the destination string.
+ * @param size The size of the destination string (bytes).
  * @param error Error code.
  *
  * @return The destination string @a dest.
@@ -276,7 +276,7 @@ S_API char *s_strzncpy(char *dest, const char *src, size_t n,
  *
  * @param dest The destination string.
  * @param src The source string.
- * @param size The size of the destination string.
+ * @param size The size of the destination string (bytes).
  * @param error Error code.
  *
  * @return The concatenation of @a dest and @a src or @c NULL if size
@@ -329,7 +329,7 @@ S_API char *s_strzcat(char *dest, const char *src, size_t size, s_erc *error);
  * @param dest The destination string.
  * @param src The source string.
  * @param n Number of characters to concatenate.
- * @param size The size of the destination string.
+ * @param size The size of the destination string (bytes).
  * @param error Error code.
  *
  * @return The concatenation of @a dest and @a n characters of @a src

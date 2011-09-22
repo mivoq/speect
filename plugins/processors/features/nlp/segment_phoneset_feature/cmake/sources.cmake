@@ -1,23 +1,27 @@
 ######################################################################################
 ##                                                                                  ##
 ## AUTHOR  : Aby Louw                                                               ##
-## DATE    : 11 June 2010                                                           ##
+## DATE    : September 2011                                                         ##
 ##                                                                                  ##
 ######################################################################################
 ##                                                                                  ##
-## CMakeList for hts labels feature processors plug-ins                             ##
+## Source files for Segment phoneset feature, feature processor plug-in             ##
 ##                                                                                  ##
 ##                                                                                  ##
 ######################################################################################
 
-#------------------------------------------------------------------------------------#
-#                        Plug-in directories                                         #
-#------------------------------------------------------------------------------------#
 
-add_subdirectory(simple1)
-add_subdirectory(simple2)
-add_subdirectory(simple3)
-add_subdirectory(simple4)
-add_subdirectory(simple5)
-add_subdirectory(prasa2011)
-add_subdirectory(simple1_fixed)
+######## source files ##################
+
+speect_plugin_sources(
+  src/plugin.c
+  src/seg_ph_feat.c
+  )
+ 
+
+######## header files ##################
+
+speect_plugin_headers(
+  src/seg_ph_feat.h
+  )
+

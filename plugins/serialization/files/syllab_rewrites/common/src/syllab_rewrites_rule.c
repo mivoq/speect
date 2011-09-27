@@ -45,6 +45,15 @@
 
 /************************************************************************************/
 /*                                                                                  */
+/* Defines                                                                          */
+/*                                                                                  */
+/************************************************************************************/
+
+/* #define DBG_PRINT_RULE 1 */
+
+
+/************************************************************************************/
+/*                                                                                  */
 /* Static variables                                                                 */
 /*                                                                                  */
 /************************************************************************************/
@@ -376,6 +385,29 @@ static s_list *RuleMatches(const SSyllabificationRewritesRule *self,
 
 	if (r && s)
 	{
+#ifdef DBG_PRINT_RULE
+		char *mLC;
+		char *mA;
+		char *mRC;
+		char *mB;
+
+
+		printf("\n\nrule matches\n");
+		mLC = s_str_list_to_string(self->LC, ",", error);
+		mA = s_str_list_to_string(self->A, ",", error);
+		mRC = s_str_list_to_string(self->RC, ",", error);
+		mB = s_str_list_to_string(self->B, ",", error);
+		printf("LC = %s\n", mLC);
+		printf("A = %s\n", mA);
+		printf("RC = %s\n", mRC);
+		printf("B = %s\n\n", mB);
+
+		S_FREE(mLC);
+		S_FREE(mA);
+		S_FREE(mRC);
+		S_FREE(mB);
+#endif
+
 		(*A) = a_match;
 		return newRC;
 	}

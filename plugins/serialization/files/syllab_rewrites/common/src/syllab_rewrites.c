@@ -46,6 +46,15 @@
 
 /************************************************************************************/
 /*                                                                                  */
+/* Defines                                                                          */
+/*                                                                                  */
+/************************************************************************************/
+
+/* #define DBG_PRINT_RULE 1 */
+
+
+/************************************************************************************/
+/*                                                                                  */
 /* Static variables                                                                 */
 /*                                                                                  */
 /************************************************************************************/
@@ -278,7 +287,17 @@ static s_str_list *run_rewrite_rules(const SSyllabificationRewrites *self,
 		for (/* NOP */; itr != NULL; itr = SIteratorNext(itr))
 		{
 			const SSyllabificationRewritesRule *rule;
+#ifdef DBG_PRINT_RULE
+			char *mLC;
+			char *mA;
+			char *mRC;
+			char *mB;
 
+			char *cLC;
+			char *cA;
+			char *cRC;
+			char *cB;
+#endif
 
 			/* get the rule */
 			rule = (SSyllabificationRewritesRule*)SIteratorObject(itr, error);
@@ -286,6 +305,39 @@ static s_str_list *run_rewrite_rules(const SSyllabificationRewrites *self,
 						  "run_rewrite_rules",
 						  "Call to \"SIteratorObject\" failed"))
 				goto error_return;
+
+#ifdef DBG_PRINT_RULE
+			printf("\n\ntrying:\n");
+			cLC = s_str_list_to_string(LC, ",", error);
+			cA = s_str_list_to_string(A, ",", error);
+			cRC = s_str_list_to_string(RC, ",", error);
+			cB = s_str_list_to_string(B, ",", error);
+			printf("cLC = %s\n", cLC);
+			printf("cA = %s\n", cA);
+			printf("cRC = %s\n", cRC);
+			printf("cB = %s\n\n", cB);
+
+			printf("on rule:\n");
+
+			mLC = s_str_list_to_string(rule->LC, ",", error);
+			mA = s_str_list_to_string(rule->A, ",", error);
+			mRC = s_str_list_to_string(rule->RC, ",", error);
+			mB = s_str_list_to_string(rule->B, ",", error);
+			printf("LC = %s\n", mLC);
+			printf("A = %s\n", mA);
+			printf("RC = %s\n", mRC);
+			printf("B = %s\n\n", mB);
+
+			S_FREE(mLC);
+			S_FREE(mA);
+			S_FREE(mRC);
+			S_FREE(mB);
+
+			S_FREE(cLC);
+			S_FREE(cA);
+			S_FREE(cRC);
+			S_FREE(cB);
+#endif
 
 			/* try to match the rule */
 			newRC = SSyllabificationRewritesRuleMatches(rule, LC, RC, &A,

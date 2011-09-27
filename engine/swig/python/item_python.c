@@ -115,6 +115,27 @@
 	}
 
 
+	PyObject *path(const char *path, s_erc *error)
+	{
+		SObject *sfeature;
+		PyObject *pfeature;
+
+
+		sfeature = SItemPath($self, path, error);
+		if (*error != S_SUCCESS)
+			return NULL;
+
+		pfeature = s_sobject_2_pyobject(sfeature, TRUE, error);
+		if (*error != S_SUCCESS)
+		{
+			S_DELETE(sfeature, "SItem::path_to_derived_feature()", error);
+			return NULL;
+		}
+
+		return pfeature;
+	}
+
+
 	PyObject *__getitem__(const char *key, s_erc *error)
 	{
 		const SObject *feature;

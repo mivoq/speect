@@ -84,7 +84,7 @@ class TTSServer():
 
     def loadvoice(self, voicename, voicefilename):
         log.info("Loading voice from file '%s'" % (voicefilename))
-        v = speect.SVoice(voicefilename, True)
+        v = speect.SVoice(voicefilename)
         log.info("Voice '%s' loaded." % (voicename))
         self.voices[voicename] = v
 

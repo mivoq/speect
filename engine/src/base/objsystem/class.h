@@ -250,7 +250,7 @@ S_API void SObjectDelete(SObject *self, s_erc *error);
  * @return Pointer to the newly created object.
  *
  * @note Do not use this function, rather use one of the macros
- * #S_NEW.
+ * #S_NEW, or #S_NEW_FROM_NAME.
  *
  * @todo check that everything is free'd on error.
  */

@@ -13,6 +13,7 @@ Summary
    :nosignatures:
 
    macro S_NEW
+   macro S_NEW_FROM_NAME
    macro S_DELETE
    macro S_FORCE_DELETE
    macro S_CAST_SAFE
@@ -30,6 +31,9 @@ New/Delete
 ==========
 
 .. doxybridge:: S_NEW
+   :type: macro
+
+.. doxybridge:: S_NEW_FROM_NAME
    :type: macro
 
 .. doxybridge:: S_DELETE

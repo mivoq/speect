@@ -112,16 +112,6 @@ typedef struct
 	SShape     obj;
 
 	/**
-	 * @protected x-coordinate of circle top left hand position.
-	 */
-	int x;
-
-	/**
-	 * @protected y-coordinate of circle top left hand position.
-	 */
-	int y;
-
-	/**
 	 * @protected Circle radius.
 	 */
     int radius;

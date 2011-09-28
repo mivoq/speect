@@ -116,8 +116,8 @@ S_API SCircle *SCircleNew(int x, int y, int radius, const char *colour, s_erc *e
 		return NULL;
 	}
 
-	self->x = x;
-	self->y = y;
+	S_SHAPE(self)->x = x;
+	S_SHAPE(self)->y = y;
 	self->radius = radius;
 	self->colour = s_strdup(colour, error);
 	if (S_CHK_ERR(error, S_CONTERR,
@@ -234,8 +234,6 @@ static void InitCircle(void *obj, s_erc *error)
 
 
 	S_CLR_ERR(error);
-	self->x = 0;
-	self->y = 0;
 	self->radius = 0;
 	self->colour = NULL;
 }
@@ -271,11 +269,11 @@ static char *PrintCircle(const SObject *self, s_erc *error)
 
 	if (cir->colour == NULL)
 	{
-		s_asprintf(&buf, error, type, cir->x, cir->y, cir->radius, "None");
+		s_asprintf(&buf, error, type, S_SHAPE(cir)->x, S_SHAPE(cir)->y, cir->radius, "None");
 	}
 	else
 	{
-		s_asprintf(&buf, error, type, cir->x, cir->y, cir->radius, cir->colour);
+		s_asprintf(&buf, error, type, S_SHAPE(cir)->x, S_SHAPE(cir)->y, cir->radius, cir->colour);
 	}
 
 	if (S_CHK_ERR(error, S_CONTERR,
@@ -293,12 +291,17 @@ static char *PrintCircle(const SObject *self, s_erc *error)
 
 static void MoveCircle(SShape *self, int newx, int newy, s_erc *error)
 {
-	SCircle *cir = S_CIRCLE(self);
+	SShapeClass *shapeClass = NULL;
 
 
 	S_CLR_ERR(error);
-	cir->x = newx;
-	cir->y = newy;
+	shapeClass = (SShapeClass*)s_class_find("SShape", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "MoveCircle",
+				  "Call to \"s_class_find\" failed"))
+		return;
+
+	shapeClass->move(self, newx, newy, error);
 }
 
 

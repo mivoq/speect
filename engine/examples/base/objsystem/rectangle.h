@@ -112,16 +112,6 @@ typedef struct
 	SShape     obj;
 
 	/**
-	 * @protected x-coordinate of rectangle top left hand position.
-	 */
-	int x;
-
-	/**
-	 * @protected y-coordinate of rectangle top left hand position.
-	 */
-	int y;
-
-	/**
 	 * @protected Rectangle width.
 	 */
     int width;

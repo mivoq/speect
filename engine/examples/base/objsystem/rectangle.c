@@ -116,8 +116,8 @@ S_API SRectangle *SRectangleNew(int x, int y, int width, int height, s_erc *erro
 		return NULL;
 	}
 
-	self->x = x;
-	self->y = y;
+	S_SHAPE(self)->x = x;
+	S_SHAPE(self)->y = y;
 	self->width = width;
 	self->height = height;
 
@@ -219,8 +219,6 @@ static void InitRectangle(void *obj, s_erc *error)
 
 
 	S_CLR_ERR(error);
-	self->x = 0;
-	self->y = 0;
 	self->width = 0;
 	self->height = 0;
 }
@@ -241,7 +239,7 @@ static char *PrintRectangle(const SObject *self, s_erc *error)
 
 	S_CLR_ERR(error);
 
-	s_asprintf(&buf, error, type, rec->x, rec->y, rec->width, rec->height);
+	s_asprintf(&buf, error, type, S_SHAPE(rec)->x, S_SHAPE(rec)->y, rec->width, rec->height);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "PrintRectangle",
 				  "Call to \"s_asprintf\" failed"))
@@ -257,12 +255,9 @@ static char *PrintRectangle(const SObject *self, s_erc *error)
 
 static void MoveRectangle(SShape *self, int newx, int newy, s_erc *error)
 {
-	SRectangle *rec = S_RECTANGLE(self);
-
-
 	S_CLR_ERR(error);
-	rec->x = newx;
-	rec->y = newy;
+	self->x = newx;
+	self->y = newy;
 }
 
 

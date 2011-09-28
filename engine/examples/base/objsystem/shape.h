@@ -28,8 +28,7 @@
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* Abstract 2d shape class as an example of Speect's object-oriented                */
-/* programming support.                                                             */
+/* 2d shape class as an example of Speect's object-oriented programming support.    */
 /*                                                                                  */
 /*                                                                                  */
 /************************************************************************************/
@@ -40,7 +39,7 @@
 
 /**
  * @file shape.h
- * Abstract 2d shape class as an example of Speect's object-oriented
+ * 2d shape class as an example of Speect's object-oriented
  * programming support.
  */
 
@@ -101,7 +100,7 @@ S_BEGIN_C_DECLS
 
 /**
  * @ingroup SShape
- * An abstract 2d shape class as an example of Speect's
+ * A 2d shape class as an example of Speect's
  * object-oriented programming support.
  * @extends SObject
  */
@@ -111,6 +110,16 @@ typedef struct
 	 * @protected Inherit from #SObject.
 	 */
 	SObject     obj;
+
+	/**
+	 * @protected x-coordinate of rectangle top left hand position.
+	 */
+	int x;
+
+	/**
+	 * @protected y-coordinate of rectangle top left hand position.
+	 */
+	int y;
 } SShape;
 
 

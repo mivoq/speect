@@ -196,10 +196,29 @@ S_LOCAL void _s_shape_class_free(s_erc *error)
 /*                                                                                  */
 /************************************************************************************/
 
+static void InitShape(void *obj, s_erc *error)
+{
+	SShape *self = obj;
+
+
+	S_CLR_ERR(error);
+	self->x = 0;
+	self->y = 0;
+}
+
+
 static void DisposeShape(void *obj, s_erc *error)
 {
 	S_CLR_ERR(error);
 	SObjectDecRef(obj);
+}
+
+
+static void MoveShape(SShape *self, int newx, int newy, s_erc *error)
+{
+	S_CLR_ERR(error);
+	self->x = newx;
+	self->y = newy;
 }
 
 
@@ -216,7 +235,7 @@ static SShapeClass ShapeClass =
 		"SShape",
 		sizeof(SShape),
 		{ 0, 1},
-		NULL,              /* init    */
+		InitShape,         /* init    */
 		NULL,              /* destroy */
 		DisposeShape,      /* dispose */
 		NULL,              /* compare */
@@ -224,7 +243,7 @@ static SShapeClass ShapeClass =
 		NULL,              /* copy    */
 	},
 	/* SShapeClass */
-	NULL,                  /* move    */
+	MoveShape,             /* move    */
 	NULL                   /* area    */
 };
 

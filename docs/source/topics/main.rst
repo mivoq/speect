@@ -12,6 +12,7 @@ Topic Guides
 
    errdbg_topic
    cmake_options_topic
+   object_system_topic
 
 
 here be topic guides

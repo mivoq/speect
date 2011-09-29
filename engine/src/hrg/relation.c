@@ -506,7 +506,7 @@ static SItem *RelationAppend(SRelation *self, const SItem *toShare, s_erc *error
 
 
 	S_CLR_ERR(error);
-	newItem = (SItem*)S_NEW("SItem", error);
+	newItem = S_NEW(SItem, error);
 	if (S_CHK_ERR(error, S_FAILURE,
 		      "RelationAppend",
 		      "Failed to create new item"))
@@ -538,7 +538,7 @@ static SItem *RelationPrepend(SRelation *self, const SItem *toShare, s_erc *erro
 
 
 	S_CLR_ERR(error);
-	newItem = (SItem*)S_NEW("SItem", error);
+	newItem = S_NEW(SItem, error);
 	if (S_CHK_ERR(error, S_FAILURE,
 		      "RelationAppend",
 		      "Failed to create new item"))

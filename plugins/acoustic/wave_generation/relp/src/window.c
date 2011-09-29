@@ -140,7 +140,7 @@ S_LOCAL void window_residuals(SRelp *self, SArrayInt *residual,
 			first_sample = (int)(first_pos * (float)self->sample_rate + 0.5);
 			last_sample  = (2 * centre_sample) - first_sample;
 
-			self->residuals[frame_number] = (SArrayInt*)S_NEW("SArrayInt", error);
+			self->residuals[frame_number] = S_NEW(SArrayInt, error);
 			if (S_CHK_ERR(error, S_CONTERR,
 						  "window_residuals",
 						  "Failed to create new 'SArrayInt' object"))

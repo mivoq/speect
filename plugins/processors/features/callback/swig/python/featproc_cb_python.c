@@ -183,7 +183,7 @@
 		}
 
 		/* create new Python feature processor */
-		featProcPy = (SFeatProcessorCB*)S_NEW("SFeatProcessorCB", error);
+		featProcPy = S_NEW(SFeatProcessorCB, error);
 		if (*error != S_SUCCESS)
 			return NULL;
 

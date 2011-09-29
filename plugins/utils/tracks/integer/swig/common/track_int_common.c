@@ -88,7 +88,7 @@ typedef struct
 			return NULL;
 		}
 
-		tmp = (STrackInt*)S_NEW("STrackInt", error);
+		tmp = S_NEW(STrackInt, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "STrackInt()",
 					  "Failed to create new 'STrackInt' object"))

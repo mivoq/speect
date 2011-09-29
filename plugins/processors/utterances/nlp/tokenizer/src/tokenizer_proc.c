@@ -270,7 +270,7 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 		goto quit_error;
 
 	/* create string tokenizer */
-	ts = (STokenizer*)S_NEW("STokenizerString", error);
+	ts = (STokenizer*)S_NEW(STokenizerString, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Run",
 				  "Failed to create string tokenizer"))

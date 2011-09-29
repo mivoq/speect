@@ -120,7 +120,7 @@ S_API SDatasource *SMMapFilesourceOpenFile(const char *path, s_erc *error)
 
 	S_CLR_ERR(error);
 
-	self = (SMMapFilesource*)S_NEW("SMMapFilesource", error);
+	self = S_NEW(SMMapFilesource, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "SMMapFilesourceOpenFile",
 				  "Failed to create new object"))

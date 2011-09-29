@@ -413,7 +413,7 @@ static SList *MapListValKeys(const SMap *self, s_erc *error)
 	const s_kvp *tmp;
 
 	S_CLR_ERR(error);
-	keys = S_LIST(S_NEW("SListList", error));
+	keys = S_LIST(S_NEW(SListList, error));
 	if (S_CHK_ERR(error, S_CONTERR,
 		      "MapListValKeys",
 		      "Failed to create new SList container for keys"))
@@ -490,7 +490,7 @@ static SMap *MapListCopy(SMap *dst, const SMap *src, s_erc *error)
 	if (dst == NULL)
 	{
 		made_new = TRUE;
-		mapDst = (SMapList*)S_NEW("SMapList", error);
+		mapDst = S_NEW(SMapList, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 			      "MapListCopy",
 			      "Failed to create new list map"))
@@ -545,7 +545,7 @@ static SIterator *MapListIterator(const SContainer *self, s_erc *error)
 
 	S_CLR_ERR(error);
 
-	itr = (SMapListIterator*)S_NEW("SMapListIterator", error);
+	itr = S_NEW(SMapListIterator, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 		      "MapListIterator",
 		      "Failed to create new iterator"))

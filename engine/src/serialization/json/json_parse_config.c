@@ -175,7 +175,7 @@ S_API SMap *s_json_parse_config_file(const char *path, s_erc *error)
 		return NULL;
 	}
 
-	context->containers = (SList*)S_NEW("SListList", error);
+	context->containers = S_LIST(S_NEW(SListList, error));
 	if (S_CHK_ERR(error, S_FAILURE,
 				  "s_json_parse_config_file",
 				  "Failed to create 'SListList' object"))
@@ -185,7 +185,7 @@ S_API SMap *s_json_parse_config_file(const char *path, s_erc *error)
 		return NULL;
 	}
 
-	context->keys = (SList*)S_NEW("SListList", error);
+	context->keys = S_LIST(S_NEW(SListList, error));
 	if (S_CHK_ERR(error, S_FAILURE,
 				  "s_json_parse_config_file",
 				  "Failed to create 'SListList' object"))
@@ -198,7 +198,7 @@ S_API SMap *s_json_parse_config_file(const char *path, s_erc *error)
 
 	context->final = NULL;
 
-	JSON = (SJSONParser*)S_NEW("SJSONParser", error);
+	JSON = S_NEW(SJSONParser, error);
 	if (S_CHK_ERR(error, S_FAILURE,
 				  "s_json_parse_config_file",
 				  "Failed to create json object"))
@@ -593,7 +593,7 @@ static void s_json_callback_start_map(void *ctx, s_erc *error)
 
 
 	S_CLR_ERR(error);
-	lMap = S_MAP(S_NEW("SMapList", error));
+	lMap = S_MAP(S_NEW(SMapList, error));
 	if (S_CHK_ERR(error, S_FAILURE,
 				  "s_json_callback_start_map",
 				  "Failed to create map-list object"))
@@ -640,7 +640,7 @@ static void s_json_callback_start_array(void *ctx, s_erc *error)
 
 
 	S_CLR_ERR(error);
-	newArray = S_LIST(S_NEW("SListList", error));
+	newArray = S_LIST(S_NEW(SListList, error));
 	if (S_CHK_ERR(error, S_FAILURE,
 				  "s_json_callback_start_array",
 				  "Failed to create list-list object"))

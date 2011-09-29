@@ -93,7 +93,7 @@ static void Init(void *obj, s_erc *error)
 
 	S_CLR_ERR(error);
 	self->time = NULL;
-	self->data = (SMatrixFloat*)S_NEW("SMatrixFloat", error);
+	self->data = S_NEW(SMatrixFloat, error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "Init",
 			  "Failed to create new 'SMatrixFloat' object");

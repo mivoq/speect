@@ -158,7 +158,7 @@ static void InitListPy(void *obj, s_erc *error)
 
 	S_CLR_ERR(error);
 	self->tmp = NULL;
-	self->pyObject = (SPyObject*)S_NEW("SPyObject", error);
+	self->pyObject = S_NEW(SPyObject, error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "InitListPy",
 			  "Failed to create new 'SPyObject' object");
@@ -415,7 +415,7 @@ static SList *ListPyCopy(SList *dst, const SList *src, s_erc *error)
 		}
 
 		/* create SListPy wrapper */
-		listDst = (SListPy*)S_NEW("SListPy", error);
+		listDst = S_NEW(SListPy, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "ListPyCopy",
 					  "Failed to create new 'SListPy' object"))
@@ -875,7 +875,7 @@ static SIterator *ListPyIterator(const SContainer *self, s_erc *error)
 	S_CLR_ERR(error);
 	S_CHECK_PY_LIST(pList, "ListPyIterator");
 
-	itr = (SListPyIterator*)S_NEW("SListPyIterator", error);
+	itr = S_NEW(SListPyIterator, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "ListPyIterator",
 				  "Failed to create new iterator"))

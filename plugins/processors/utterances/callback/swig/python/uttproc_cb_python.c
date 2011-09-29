@@ -178,7 +178,7 @@
 		}
 
 		/* create new Python utterance processor */
-		uttProcPy = (SUttProcessorCB*)S_NEW("SUttProcessorCB", error);
+		uttProcPy = S_NEW(SUttProcessorCB, error);
 		if (*error != S_SUCCESS)
 			return NULL;
 

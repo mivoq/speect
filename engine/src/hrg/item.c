@@ -230,7 +230,7 @@ S_API void SItemInit(SItem **self, const SRelation *rel,
 
 	if (toShare == NULL) /* new content    */
 	{
-		(*self)->content = (SItmContent*)S_NEW("SItmContent", error);
+		(*self)->content = S_NEW(SItmContent, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "SItemInit",
 					  "Failed to create new item contents"))
@@ -308,7 +308,7 @@ S_LOCAL void _SItemInit_no_lock(SItem **self, const SRelation *rel,
 
 	if (toShare == NULL) /* new content    */
 	{
-		(*self)->content = (SItmContent*)S_NEW("SItmContent", error);
+		(*self)->content = S_NEW(SItmContent, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "_SItemInit_no_lock",
 					  "Failed to create new item contents"))
@@ -1693,7 +1693,7 @@ static SItem *ItemAppend(SItem *self, const SItem *toShare, s_erc *error)
 		return NULL;
 	}
 
-	rni = (SItem*)S_NEW("SItem", error);
+	rni = S_NEW(SItem, error);
 	if (S_CHK_ERR(error, S_FAILURE,
 				  "ItemAppend",
 				  "Failed to create new item"))
@@ -1735,7 +1735,7 @@ static SItem *ItemPrepend(SItem *self, const SItem *toShare, s_erc *error)
 		return NULL;
 	}
 
-	rni = (SItem*)S_NEW("SItem", error);
+	rni = S_NEW(SItem, error);
 	if (S_CHK_ERR(error, S_FAILURE,
 				  "ItemPrepend",
 				  "Failed to create new item"))
@@ -1879,7 +1879,7 @@ static SItem *ItemAddDaughter(SItem *self, const SItem *toShare, s_erc *error)
 			return NULL;
 		}
 
-		rnd = (SItem*)S_NEW("SItem", error);
+		rnd = S_NEW(SItem, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "ItemAddDaughter",
 					  "Failed to create new daugther item"))

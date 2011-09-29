@@ -124,7 +124,7 @@ S_API SDatasource *SFilesourceOpenHandle(FILE *f, s_erc *error)
 		return NULL;
 	}
 
-	self = (SFilesource*)S_NEW("SFilesource", error);
+	self = S_NEW(SFilesource, error);
 
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "SFilesourceOpenHandle",
@@ -170,7 +170,7 @@ S_API SDatasource *SFilesourceOpenFile(const char *path, const char *mode, s_erc
 		return NULL;
 	}
 
-	self = (SFilesource*)S_NEW("SFilesource", error);
+	self = S_NEW(SFilesource, error);
 
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "SFileSourceOpenFile",

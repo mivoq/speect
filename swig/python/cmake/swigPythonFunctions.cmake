@@ -36,7 +36,7 @@ macro(speect_plugin_swig_python_flags)
     # extra -py3 and -DSPCT_SWIG_PYTHON_3 flags for Python 3.x
     list(APPEND SPCT_SWIG_FLAGS -Wall -Werror -py3 -DSPCT_SWIG_PYTHON_3)
   else(WANT_PYTHON_3)
-    list(APPEND SPCT_SWIG_FLAGS -Wall -Werror -builtin)
+    list(APPEND SPCT_SWIG_FLAGS -Wall -Werror)
   endif(WANT_PYTHON_3)
 endmacro(speect_plugin_swig_python_flags)
 

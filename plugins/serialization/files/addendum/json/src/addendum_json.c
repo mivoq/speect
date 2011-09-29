@@ -574,7 +574,7 @@ static void AddWord(SAddendum *self, const char *word, SMap *features,
 	/* check that we have entries, otherwise create them */
 	if (addendum->entries == NULL)
 	{
-		addendum->entries = (SMap*)S_NEW("SMapHashTable", error);
+		addendum->entries = S_MAP(S_NEW(SMapHashTable, error));
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "AddWord",
 					  "Failed to create new 'SMapHashTable' object"))
@@ -605,7 +605,7 @@ static void AddWord(SAddendum *self, const char *word, SMap *features,
 	if (wordEntries == NULL)
 	{
 		/* create a new list for the entry */
-		entryList = (SList*)S_NEW("SListList", error);
+		entryList = S_LIST(S_NEW(SListList, error));
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "AddWord",
 					  "Failed to create new 'SListList' object"))

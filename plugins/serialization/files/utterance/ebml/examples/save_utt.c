@@ -80,7 +80,7 @@ int main()
 	}
 
 	/* Create a new utterance */
-	utt = (SUtterance*)S_NEW("SUtterance", &error);
+	utt = S_NEW(SUtterance, &error);
 	if (S_CHK_ERR(&error, S_CONTERR,
 				  "main",
 				  "Failed to create new utterance"))

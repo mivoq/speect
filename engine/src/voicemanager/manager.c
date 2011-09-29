@@ -303,7 +303,7 @@ S_LOCAL void _s_vm_init(s_erc *error)
 	initialized = TRUE;
 	s_mutex_init(&vm_mutex);
 
-	dataTypes = S_MAP(S_NEW("SMapList", error));
+	dataTypes = S_MAP(S_NEW(SMapList, error));
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "_s_vm_init",
 				  "Failed to create new map for data cache"))
@@ -313,7 +313,7 @@ S_LOCAL void _s_vm_init(s_erc *error)
 		return;
 	}
 
-	dataIdentity = S_MAP(S_NEW("SMapList", error));
+	dataIdentity = S_MAP(S_NEW(SMapList, error));
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "_s_vm_init",
 				  "Failed to create new map for data identity"))
@@ -369,7 +369,7 @@ static SVoice *load_voice_no_data(const char *path, SMap **dataConfig, s_erc *er
 				  path))
 		return NULL;
 
-	voice = (SVoice*)S_NEW("SVoice", error);
+	voice = S_NEW(SVoice, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "load_voice_no_data",
 				  "Failed to create new \'SVoice\' object"))

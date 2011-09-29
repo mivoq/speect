@@ -60,7 +60,7 @@ S_LOCAL SMap *_s_load_voice_data_config(const SMap *voiceConfig, s_erc *error)
 	S_CLR_ERR(error);
 
 	/* create a map container for the data */
-	data = S_MAP(S_NEW("SMapList", error));
+	data = S_MAP(S_NEW(SMapList, error));
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "_s_load_voice_data",
 				  "Failed to create new map for voice data"))

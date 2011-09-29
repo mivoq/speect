@@ -203,14 +203,14 @@ static void create_new_entry(SAddendum *addendum, s_erc *error)
 	S_CLR_ERR(error);
 
 	/* create a word features map */
-	features = (SMap*)S_NEW("SMapList", error);
+	features = S_MAP(S_NEW(SMapList, error));
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "create_new_entry",
 				  "Failed to create new 'SMapList' object"))
 		goto quit_error;
 
 	/* now create a phones list */
-	phones = (SList*)S_NEW("SListList", error);
+	phones = S_LIST(S_NEW(SListList, error));
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "create_new_entry",
 				  "Failed to create new 'SListList' object"))

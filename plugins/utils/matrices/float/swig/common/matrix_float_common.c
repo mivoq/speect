@@ -78,7 +78,7 @@ typedef struct
 		SMatrixFloat *tmp;
 
 
-		tmp = (SMatrixFloat*)S_NEW("SMatrixFloat", error);
+		tmp = S_NEW(SMatrixFloat, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "SMatrixFloat()",
 					  "Failed to create new 'SMatrixFloat' object"))

@@ -1041,7 +1041,7 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 	}
 
 	/* create an audio object */
-	audio = (SAudio*)S_NEW("SAudio", error);
+	audio = S_NEW(SAudio, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Run",
 				  "Failed to create new 'SAudio' object"))

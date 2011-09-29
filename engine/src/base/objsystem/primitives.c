@@ -215,7 +215,7 @@ S_API SObject *SObjectSetInt(sint32 i, s_erc *error)
 
 	S_CLR_ERR(error);
 
-	self = (SInt*)S_NEW("SInt", error);
+	self = S_NEW(SInt, error);
 	if (S_CHK_ERR(error, S_FAILURE,
 				  "SObjectSetInt",
 				  "Failed to create new SInt object"))
@@ -302,7 +302,7 @@ S_API SObject *SObjectSetFloat(float f, s_erc *error)
 
 	S_CLR_ERR(error);
 
-	self = (SFloat*)S_NEW("SFloat", error);
+	self = S_NEW(SFloat, error);
 	if (S_CHK_ERR(error, S_FAILURE,
 				  "SObjectSetFloat",
 				  "Failed to create new SFloat object"))
@@ -397,7 +397,7 @@ S_API SObject *SObjectSetString(const char *s, s_erc *error)
 		return NULL;
 	}
 
-	self = (SString*)S_NEW("SString", error);
+	self = S_NEW(SString, error);
 	if (S_CHK_ERR(error, S_FAILURE,
 				  "SObjectSetString",
 				  "Failed to create new SString object"))
@@ -525,7 +525,7 @@ S_API SObject *SObjectSetVoid(void *ptr,
 	}
 
 
-	self = (SVoid*)S_NEW("SVoid", error);
+	self = S_NEW(SVoid, error);
 	if (S_CHK_ERR(error, S_FAILURE,
 				  "SObjectSetVoid",
 				  "Failed to create new 'SVoid' object"))

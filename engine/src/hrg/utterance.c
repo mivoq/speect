@@ -736,13 +736,13 @@ static void InitUtterance(void *obj, s_erc *error)
 
 	self->voice = NULL;
 
-	self->features = S_MAP(S_NEW("SMapList", error));
+	self->features = S_MAP(S_NEW(SMapList, error));
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "InitUtterance",
 				  "Failed to create new map-list features"))
 		return;
 
-	self->relations = S_MAP(S_NEW("SMapList", error));
+	self->relations = S_MAP(S_NEW(SMapList, error));
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "InitUtterance",
 				  "Failed to create new map-list relations"))
@@ -895,7 +895,7 @@ static SRelation *UttNewRelation(SUtterance *self, const char *name, s_erc *erro
 
 	S_CLR_ERR(error);
 
-	newRel = (SRelation*)S_NEW("SRelation", error);
+	newRel = S_NEW(SRelation, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "UttNewRelation",
 				  "Failed to create new relation"))

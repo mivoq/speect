@@ -135,7 +135,7 @@ static void Init(void *obj, s_erc *error)
 	self->from = NULL;
 	self->next = NULL;
 
-	self->features = (SMap*)S_NEW("SMapList", error);
+	self->features = S_MAP(S_NEW(SMapList, error));
 	S_CHK_ERR(error, S_CONTERR,
 			  "Init",
 			  "Failed to create new 'SMap' object");

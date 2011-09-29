@@ -85,7 +85,7 @@ S_LOCAL SSyllabificationRewrites *s_read_syllabification_rewrites_json(const cha
 	S_CLR_ERR(error);
 
 	/* create syllab rewrites */
-	syllab = (SSyllabificationRewrites*)S_NEW("SSyllabificationRewrites", error);
+	syllab = S_NEW(SSyllabificationRewrites, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "s_read_syllabification_rewrites_json",
 				  "Failed to create new syllabification rewrite rules object"))
@@ -385,7 +385,7 @@ static void _set_rule(SMap *ruleMap, const SSyllabificationRewritesRule *rule,
 
 	if (ruleList == NULL)
 	{
-		ruleList = (SList*)S_NEW("SListList", error);
+		ruleList = S_LIST(S_NEW(SListList, error));
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "_set_rule",
 					  "Failed to create new 'SListList' object"))
@@ -515,7 +515,7 @@ static SMap *parse_rules(const SList *ruleList, const SMap *sets, s_erc *error)
 	S_CLR_ERR(error);
 
 	/* create ruleMap, default size (128) is fine */
-	ruleMap = (SMap*)S_NEW("SMapHashTable", error);
+	ruleMap = S_MAP(S_NEW(SMapHashTable, error));
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "parse_rules",
 				  "Failed to create new 'SMapHashTable' object"))
@@ -565,7 +565,7 @@ static SMap *parse_rules(const SList *ruleList, const SMap *sets, s_erc *error)
 		}
 
 		/* create a new rule */
-		rule = (SSyllabificationRewritesRule*)S_NEW("SSyllabificationRewritesRule", error);
+		rule = S_NEW(SSyllabificationRewritesRule, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "parse_rules",
 					  "Failed to create a new \"SSyllabificationRewritesRule\" object"))

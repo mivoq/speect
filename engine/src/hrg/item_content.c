@@ -452,13 +452,13 @@ static void InitItmContent(void *obj, s_erc *error)
 
 	S_CLR_ERR(error);
 
-	self->features = S_MAP(S_NEW("SMapList", error));
+	self->features = S_MAP(S_NEW(SMapList, error));
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "InitItmContent",
 				  "Failed to create features map"))
 		return;
 
-	self->relations = S_MAP(S_NEW("SMapList", error));
+	self->relations = S_MAP(S_NEW(SMapList, error));
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "InitItmContent",
 				  "Failed to create relations map"))

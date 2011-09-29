@@ -105,7 +105,7 @@ S_LOCAL SUtterance *s_read_utt_ebml(SDatasource *ds, s_erc *error)
 	S_CLR_ERR(error);
 
 	/* create and initialize ebml reader */
-	ebmlReader = (SEbmlRead*)S_NEW("SEbmlRead", error);
+	ebmlReader = S_NEW(SEbmlRead, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "s_read_utt_ebml",
 				  "Failed to create new SEbmlRead object"))
@@ -134,7 +134,7 @@ S_LOCAL SUtterance *s_read_utt_ebml(SDatasource *ds, s_erc *error)
 	}
 
 	/* create and initialize new utterance */
-	utt = (SUtterance*)S_NEW("SUtterance", error);
+	utt = S_NEW(SUtterance, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "s_read_utt_ebml",
 				  "Failed to create new utterance"))
@@ -583,7 +583,7 @@ static s_hash_table *read_item_contents(SEbmlRead *ebmlReader, s_erc *error)
 			}
 
 			/* create a new item contents */
-			ic->content =  (SItmContent*)S_NEW("SItmContent", error);
+			ic->content =  S_NEW(SItmContent, error);
 			if (S_CHK_ERR(error, S_CONTERR,
 						  "read_item_contents",
 						  "Failed to create new item content"))
@@ -1175,7 +1175,7 @@ static SItem *get_item(s_hash_table *relation_items, uint32 item_node_number, s_
 	if (he == NULL)
 	{
 		/* create new item */
-		item = (SItem*)S_NEW("SItem", error);
+		item = S_NEW(SItem, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "get_item",
 					  "Failed to create new Item"))

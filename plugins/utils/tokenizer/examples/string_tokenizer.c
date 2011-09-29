@@ -81,7 +81,7 @@ int main()
 	}
 
 	/* create string tokenizer */
-	ts = (STokenizer*)S_NEW("STokenizerString", &error);
+	ts = (STokenizer*)S_NEW(STokenizerString, &error);
 	if (S_CHK_ERR(&error, S_CONTERR,
 				  "main",
 				  "Failed to create new string tokenizer"))

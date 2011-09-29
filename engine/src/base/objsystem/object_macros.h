@@ -85,6 +85,28 @@ S_BEGIN_C_DECLS
 
 /**
  * @hideinitializer
+ * Create a new object of the given object type.
+ * Also initializes the object members and inherited members.
+ * For example:
+ @verbatim
+ SMapList *myMapList = S_NEW(SMapList, error);
+ @endverbatim
+ *
+ * @param OBJTYPE Object type to create.
+ * @param ERROR Error code (of type #s_erc*).
+ *
+ * @return Pointer to the newly created object (of type OBJTYPE*).
+ *
+ * @sa S_NEW_FROM_NAME
+ *
+ * @todo add reference that this type must have been registered.
+ */
+#define S_NEW(OBJTYPE, ERROR)					\
+	((OBJTYPE*)SObjectNewFromName((# OBJTYPE), (ERROR)))
+
+
+/**
+ * @hideinitializer
  * Create a new object of the given object type @a name.
  * Also initializes the object members and inherited members.
  * For example:
@@ -95,11 +117,13 @@ S_BEGIN_C_DECLS
  * @param OBJTYPE_NAME String of the type of the object to create.
  * @param ERROR Error code (of type #s_erc*).
  *
- * @return Pointer to the newly created object (#SObject*).
+ * @return Pointer to the newly created object (of type #SObject*).
+ *
+ * @sa S_NEW
  *
  * @todo add reference that this type must have been registered.
  */
-#define S_NEW(OBJTYPE_NAME, ERROR)					\
+#define S_NEW_FROM_NAME(OBJTYPE_NAME, ERROR)		\
 	(SObjectNewFromName((OBJTYPE_NAME), (ERROR)))
 
 

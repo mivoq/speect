@@ -97,7 +97,7 @@ int main()
 	/*
 	 * create ebml reader object
 	 */
-	ebmlReader = (SEbmlRead*)S_NEW("SEbmlRead", &error);
+	ebmlReader = S_NEW(SEbmlRead, &error);
 	if (S_CHK_ERR(&error, S_CONTERR,
 				  "main",
 				  "Failed to create new SEbmlRead object"))

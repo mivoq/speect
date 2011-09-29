@@ -113,7 +113,7 @@ S_LOCAL void concat_units(SRelp *self, const SRelation *unitRel, s_erc *error)
 
 	if (self->symmetric == FALSE)
 	{
-		self->pmIndx = (SArrayInt*)S_NEW("SArrayInt", error);
+		self->pmIndx = S_NEW(SArrayInt, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "concat_units",
 					  "Failed to create new 'SArrayInt' object"))
@@ -133,7 +133,7 @@ S_LOCAL void concat_units(SRelp *self, const SRelation *unitRel, s_erc *error)
 	}
 
 	/* setup new track */
-	self->track = (STrackFloat*)S_NEW("STrackFloat", error);
+	self->track = S_NEW(STrackFloat, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "concat_units",
 				  "Failed to create new 'STrackFloat' object"))

@@ -108,7 +108,7 @@ S_API SCircle *SCircleNew(int x, int y, int radius, const char *colour, s_erc *e
 
 	S_CLR_ERR(error);
 
-	self = (SCircle*)S_NEW("SCircle", error);
+	self = S_NEW(SCircle, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "SCircleNew",
 				  "Failed to create new object"))

@@ -820,7 +820,7 @@ static SObject *read_object(SEbmlRead *self, uint32 *id, s_erc *error)
 	}
 
 	/* create a new object */
-	object = S_NEW(class_name, error);
+	object = S_NEW_FROM_NAME(class_name, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "read_object",
 				  "Failed to create new object of class '%s'",

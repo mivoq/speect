@@ -387,7 +387,7 @@ static void InitUttProcessor(void *obj, s_erc *error)
 
 	S_CLR_ERR(error);
 
-	self->features = S_MAP(S_NEW("SMapList", error));
+	self->features = S_MAP(S_NEW(SMapList, error));
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "InitUttProcessor",
 				  "Failed to create new map-list features"))

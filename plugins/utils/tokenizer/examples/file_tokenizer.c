@@ -80,7 +80,7 @@ int main()
 	}
 
 	/* create file tokenizer */
-	ts = (STokenizer*)S_NEW("STokenizerFile", &error);
+	ts = (STokenizer*)S_NEW(STokenizerFile, &error);
 	if (S_CHK_ERR(&error, S_CONTERR,
 				  "main",
 				  "Failed to create new file tokenizer"))

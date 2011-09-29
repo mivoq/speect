@@ -460,7 +460,7 @@ S_LOCAL void _s_serialize_init(s_erc *error)
 
 	initialized = TRUE;
 
-	objectTable = S_MAP(S_NEW("SMapList", error));
+	objectTable = S_MAP(S_NEW(SMapList, error));
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "_s_serialize_init",
 				  "Failed to create object table map"))
@@ -469,7 +469,7 @@ S_LOCAL void _s_serialize_init(s_erc *error)
 		return;
 	}
 
-	fileTable = S_MAP(S_NEW("SMapList", error));
+	fileTable = S_MAP(S_NEW(SMapList, error));
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "_s_serialize_init",
 				  "Failed to create file table map"))
@@ -533,7 +533,7 @@ static void add_object_class(const SSerializedObjectClass* serializedObjectClass
 		{
 			/* create and initialize a new map */
 
-			objectType = S_MAP(S_NEW("SMapList", error));
+			objectType = S_MAP(S_NEW(SMapList, error));
 			if (S_CHK_ERR(error, S_CONTERR,
 						  "add_object_class",
 						  "Failed to create a new map object"))
@@ -551,7 +551,7 @@ static void add_object_class(const SSerializedObjectClass* serializedObjectClass
 		}
 
 		/* create a new object of the SSerializedObjectClass type */
-		serializedObject = S_NEW(class_name, error);
+		serializedObject = S_NEW_FROM_NAME(class_name, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "add_object_class",
 					  "Failed to create new \"%s\" type object",
@@ -731,7 +731,7 @@ static void add_file_class(const SSerializedFileClass* serializedFileClass,
 		return;
 
 	/* create a new object of the SSerializedFileClass type */
-	serializedFile = S_NEW(class_name, error);
+	serializedFile = S_NEW_FROM_NAME(class_name, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "add_file_class",
 				  "Failed to create new \"%s\" type file",

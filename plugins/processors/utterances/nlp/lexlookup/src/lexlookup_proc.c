@@ -282,7 +282,7 @@ static void Initialize(SUttProcessor *self, const SVoice *voice, s_erc *error)
 		return;
 
 	/* create a syllabification object */
-	syllab = (SSyllabification*)S_NEW(class_name, error);
+	syllab = (SSyllabification*)S_NEW_FROM_NAME(class_name, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Initialize",
 				  "Failed to create new '%s' object", class_name))
@@ -478,7 +478,7 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 			}
 			else
 			{
-				syllablesPhones = (SList*)S_NEW("SListList", error);
+				syllablesPhones = S_LIST(S_NEW(SListList, error));
 				if (S_CHK_ERR(error, S_CONTERR,
 							  "Run",
 							  "Failed to create new 'SList' object"))

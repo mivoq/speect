@@ -1757,7 +1757,7 @@ static void InitVoice(void *obj, s_erc *error)
 		return;
 	}
 
-	self->data->dataObjects = S_MAP(S_NEW("SMapList", error));
+	self->data->dataObjects = S_MAP(S_NEW(SMapList, error));
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "InitVoice",
 				  "Failed to create new data objects map"))
@@ -1898,7 +1898,7 @@ static SUtterance *SynthUtt(const SVoice *self, const char *utt_type,
 		return NULL;
 
 	/* create new utterance */
-	utt = (SUtterance*)S_NEW("SUtterance", error);
+	utt = S_NEW(SUtterance, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "SynthUtt",
 				  "Failed to create new utterance"))

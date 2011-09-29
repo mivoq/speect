@@ -108,7 +108,7 @@ S_API SRectangle *SRectangleNew(int x, int y, int width, int height, s_erc *erro
 
 	S_CLR_ERR(error);
 
-	self = (SRectangle*)S_NEW("SRectangle", error);
+	self = S_NEW(SRectangle, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "SRectangleNew",
 				  "Failed to create new object"))

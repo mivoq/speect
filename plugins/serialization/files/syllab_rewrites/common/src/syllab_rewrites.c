@@ -713,14 +713,14 @@ static SList *Syllabify(const SSyllabification *self, const SItem *word,
 		goto error_return;
 
 	/* create a new syllable */
-	syl = (SList*)S_NEW("SListList", error);
+	syl = S_LIST(S_NEW(SListList, error));
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Syllabify",
 				  "Failed to create new list"))
 		goto error_return;
 
 	/* create a new syllables list */
-	syllables = (SList*)S_NEW("SListList", error);
+	syllables = S_LIST(S_NEW(SListList, error));
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Syllabify",
 				  "Failed to create new list"))
@@ -773,7 +773,7 @@ static SList *Syllabify(const SSyllabification *self, const SItem *word,
 			got_more_syllables = FALSE;
 
 			/* create a new syl */
-			syl = (SList*)S_NEW("SListList", error);
+			syl = S_LIST(S_NEW(SListList, error));
 			if (S_CHK_ERR(error, S_CONTERR,
 						  "Syllabify",
 						  "Failed to create new list"))

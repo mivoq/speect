@@ -273,7 +273,7 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 		goto quit_error;
 
 	/* create a relp object */
-	relpSynth = (SRelp*)S_NEW("SRelp", error);
+	relpSynth = S_NEW(SRelp, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Run",
 				  "Failed to create new 'SRelp' object"))

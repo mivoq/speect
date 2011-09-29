@@ -93,7 +93,7 @@ S_LOCAL void linear_mapping(SRelp *self, s_erc *error)
 
 
 	S_CLR_ERR(error);
-	self->map = (SArrayInt*)S_NEW("SArrayInt", error);
+	self->map = S_NEW(SArrayInt, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "linear_mapping",
 				  "Failed to create new 'SArrayInt' object"))

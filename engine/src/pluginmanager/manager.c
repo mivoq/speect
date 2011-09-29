@@ -282,12 +282,23 @@ S_API char *s_pm_get_plugin_path(const char *path, s_erc *error)
 		return new_path;
 	}
 
-	/* no path separators, concatenate with default path */
-	s_asprintf(&new_path, error, "%s%c%s", plugin_path, S_PATH_SEP, path);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "s_pm_get_plugin_path",
-				  "Call to \"s_asprintf\" failed"))
-		return NULL;
+	/* no path separators, concatenate with default path, if any */
+	if (plugin_path != NULL)
+	{
+		s_asprintf(&new_path, error, "%s%c%s", plugin_path, S_PATH_SEP, path);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "s_pm_get_plugin_path",
+					  "Call to \"s_asprintf\" failed"))
+			return NULL;
+	}
+	else /* we don't have a plugin_path */
+	{
+		new_path = s_strdup(path, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "s_pm_get_plugin_path",
+					  "Call to \"s_strdup\" failed"))
+			return NULL;
+	}
 
 	return new_path;
 }

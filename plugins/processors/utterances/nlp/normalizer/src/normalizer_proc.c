@@ -232,7 +232,7 @@ quit_error:
 				  "Call to \"SUtteranceDelRelation\" failed");
 	}
 
-	self = NULL; /* to suppress noise about unused parameters */
+	S_UNUSED(self);
 }
 
 

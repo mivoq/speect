@@ -191,8 +191,9 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 	return extractedFeat;
 
 
-	self = NULL; /* compiler noise about unused parameters */
 	return NULL;
+
+	S_UNUSED(self);
 }
 
 

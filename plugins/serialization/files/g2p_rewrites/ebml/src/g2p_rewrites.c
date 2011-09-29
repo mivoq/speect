@@ -399,7 +399,7 @@ static SList *Apply(const SG2P *self, const char *word, s_erc *error)
 	}
 
 	/* create a list for the phones */
-	phoneList = (SList*)S_NEW("SListList", error);
+	phoneList = S_LIST(S_NEW(SListList, error));
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Apply",
 				  "Failed to create new 'SList' object"))

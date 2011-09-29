@@ -59,7 +59,7 @@ int main()
 	}
 
 	/* Create a new list */
-	list = (SList*)S_NEW("SListList", &error);
+	list = S_LIST(S_NEW(SListList, &error));
 	if (S_CHK_ERR(&error, S_CONTERR,
 				  "main",
 				  "Failed to create new list"))

@@ -599,7 +599,7 @@ static void Init(void *obj, s_erc *error)
 	self->path_prune_envelope_width = -1.0;
 	self->cand_prune_envelope_width = -1.0;
 
-	self->features = (SMap*)S_NEW("SMapList", error);
+	self->features = S_MAP(S_NEW(SMapList, error));
 	S_CHK_ERR(error, S_CONTERR,
 			  "Init",
 			  "Failed to create new 'SMap' object");
@@ -694,7 +694,7 @@ static void InitViterbi(SViterbi **self, SRelation *rel,
 	t = NULL;
 	while (item != NULL)
 	{
-		n = (SViterbiPoint*)S_NEW("SViterbiPoint", error);
+		n = S_NEW(SViterbiPoint, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "InitViterbi",
 					  "Failed to create new 'SViterbiPoint' object"))
@@ -725,7 +725,7 @@ static void InitViterbi(SViterbi **self, SRelation *rel,
 	}
 
 	/* Extra one at the end for final paths */
-	n = (SViterbiPoint*)S_NEW("SViterbiPoint", error);
+	n = S_NEW(SViterbiPoint, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "InitViterbi",
 				  "Failed to allocate new 'SViterbiPoint' object"))
@@ -743,7 +743,7 @@ static void InitViterbi(SViterbi **self, SRelation *rel,
 	/* Need init path on first point so a search can start */
 	if ((*self)->num_states == 0)   /* general search case */
 	{
-		(*self)->timeLine->paths = (SViterbiPath*)S_NEW("SViterbiPath", error);
+		(*self)->timeLine->paths = S_NEW(SViterbiPath, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "InitViterbi",
 					  "Failed to allocate new 'SViterbiPath' object"))

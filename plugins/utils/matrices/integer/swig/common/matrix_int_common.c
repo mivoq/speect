@@ -78,7 +78,7 @@ typedef struct
 		SMatrixInt *tmp;
 
 
-		tmp = (SMatrixInt*)S_NEW("SMatrixInt", error);
+		tmp = S_NEW(SMatrixInt, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "SMatrixInt()",
 					  "Failed to create new 'SMatrixInt' object"))

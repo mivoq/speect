@@ -267,13 +267,13 @@ static SViterbiPath *extend_path(SViterbiPath *p, SViterbiCandidate *c, SMap *fe
 
 	S_CLR_ERR(error);
 
-	joinCosts = (SList*)SMapGetObject(features, "join costs", error);
+	joinCosts = S_LIST(SMapGetObject(features, "join costs", error));
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "extend_path",
 				  "Call to \"SMapGetObject\" failed"))
 		return NULL;
 
-	newPath = (SViterbiPath*)S_NEW("SViterbiPath", error);
+	newPath = S_NEW(SViterbiPath, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "extend_path",
 				  "Failed to create new 'SViterbiPath' object"))
@@ -479,7 +479,7 @@ static SViterbiCandidate *get_candidates(const SItem *s, SMap *features, s_erc *
 	/* now create the candidate list */
 	while (itr != NULL)
 	{
-		candidate = (SViterbiCandidate*)S_NEW("SViterbiCandidate", error);
+		candidate = S_NEW(SViterbiCandidate, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "get_candidates",
 					  "Failed to create new 'SViterbiCandidate' object"))
@@ -658,7 +658,7 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 		goto quit_error;
 
 	/* create viterbi */
-	viterbi = (SViterbi*)S_NEW("SViterbi", error);
+	viterbi = S_NEW(SViterbi, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Run",
 				  "Failed to create new 'SViterbi' object"))

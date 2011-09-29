@@ -74,7 +74,7 @@ typedef struct
 		SArrayInt *tmp;
 
 
-		tmp = (SArrayInt*)S_NEW("SArrayInt", error);
+		tmp = S_NEW(SArrayInt, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "SArrayInt()",
 					  "Failed to create new 'SArrayInt' object"))

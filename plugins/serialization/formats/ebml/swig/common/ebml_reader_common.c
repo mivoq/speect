@@ -78,7 +78,7 @@ typedef struct
 		/*
 		 * create ebml reader object
 		 */
-		ebmlReader = (SEbmlRead*)S_NEW("SEbmlRead", error);
+		ebmlReader = S_NEW(SEbmlRead, error);
 		if (*error != S_SUCCESS)
 		{
 			S_DELETE(ds, "SEbmlRead()", error);

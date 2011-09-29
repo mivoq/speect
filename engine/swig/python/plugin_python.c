@@ -62,7 +62,7 @@
 			return NULL;
 		}
 
-		pluginDso = (SDso*)S_NEW("SDso", error);
+		pluginDso = S_NEW(SDso, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "_s_get_plugin_info",
 					  "Failed to create new dynamic shared object for plug-in"))

@@ -161,7 +161,7 @@ S_API SPlugin *s_pm_load_plugin(const char *path, s_erc *error)
 	 * object. Cache and then load, this overcomes
 	 * recursion problem.
 	 */
-	loaded = (SPlugin*)S_NEW("SPlugin", error);
+	loaded = S_NEW(SPlugin, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "s_pm_load_plugin",
 				  "Failed to create new plug-in object"))
@@ -374,7 +374,7 @@ S_LOCAL void _s_pm_init(s_erc *error)
 	initialized = TRUE;
 	s_mutex_init(&pm_mutex);
 
-	pluginCache = S_MAP(S_NEW("SMapHashTable", error));
+	pluginCache = S_MAP(S_NEW(SMapHashTable, error));
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "_s_pm_init",
 				  "Failed to create new SMapHashTable for plug-in cache"))
@@ -439,7 +439,7 @@ static void load_plugin(SPlugin *self, const char *path, s_erc *error)
 				  "Call to \"s_strdup\" failed"))
 		return;
 
-	pluginDso = (SDso*)S_NEW("SDso", error);
+	pluginDso = S_NEW(SDso, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "load_plugin",
 				  "Failed to create new dynamic shared object for plug-in"))

@@ -48,7 +48,7 @@ typedef struct
 		SRelation *rel;
 
 
-		rel = (SRelation*)S_NEW("SRelation", error);
+		rel = S_NEW(SRelation, error);
 		if (*error != S_SUCCESS)
 			return NULL;
 

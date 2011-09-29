@@ -1065,14 +1065,14 @@ static SList *Syllabify(const SSyllabification *self, const SItem *word,
 	}
 
 	/* create syllables list */
-	syllables = (SList*)S_NEW("SListList", error);
+	syllables = S_LIST(S_NEW(SListList, error));
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Syllabify",
 				  "Failed to create new 'SList' object"))
 		goto quit_error;
 
 	/* create syllable */
-	syl = (SList*)S_NEW("SListList", error);
+	syl = S_LIST(S_NEW(SListList, error));
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Syllabify",
 				  "Failed to create new 'SList' object"))
@@ -1149,7 +1149,7 @@ static SList *Syllabify(const SSyllabification *self, const SItem *word,
 		{
 			/* previous was a syllable boundary */
 			/* new syllable */
-			syl = (SList*)S_NEW("SListList", error);
+			syl = S_LIST(S_NEW(SListList, error));
 			if (S_CHK_ERR(error, S_CONTERR,
 						  "Syllabify",
 						  "Failed to create new 'SList' object"))
@@ -1267,7 +1267,7 @@ static SList *Syllabify(const SSyllabification *self, const SItem *word,
 			{
 				/* previous was a syllable boundary */
 				/* new syllable */
-				syl = (SList*)S_NEW("SListList", error);
+				syl = S_LIST(S_NEW(SListList, error));
 				if (S_CHK_ERR(error, S_CONTERR,
 							  "Syllabify",
 							  "Failed to create new 'SList' object"))

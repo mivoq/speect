@@ -412,7 +412,7 @@ static SList *ListListCopy(SList *dst, const SList *src, s_erc *error)
 	if (dst == NULL)
 	{
 		made_new = TRUE;
-		listDst = (SListList*)S_NEW("SListList", error);
+		listDst = S_NEW(SListList, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "ListListCopy",
 					  "Failed to create new 'SListList' object"))
@@ -608,7 +608,7 @@ static SIterator *ListListIterator(const SContainer *self, s_erc *error)
 
 	S_CLR_ERR(error);
 
-	itr = (SListListIterator*)S_NEW("SListListIterator", error);
+	itr = S_NEW(SListListIterator, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "ListListIterator",
 				  "Failed to create new iterator"))

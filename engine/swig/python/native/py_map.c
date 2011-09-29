@@ -157,13 +157,13 @@ static void InitMapPy(void *obj, s_erc *error)
 
 
 	S_CLR_ERR(error);
-	self->staticObjects = (SList*)S_NEW("SListList", error);
+	self->staticObjects = S_LIST(S_NEW(SListList, error));
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "InitMapPy",
 				  "Failed to create new 'SListList' object"))
 		return;
 
-	self->pyObject = (SPyObject*)S_NEW("SPyObject", error);
+	self->pyObject = S_NEW(SPyObject, error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "InitMapPy",
 			  "Failed to create new 'SPyObject' object");
@@ -559,7 +559,7 @@ static SList *MapPyValKeys(const SMap *self, s_erc *error)
 		return NULL;
 	}
 
-	pyList = (SListPy*)S_NEW("SListPy", error);
+	pyList = S_NEW(SListPy, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "MapPyValKeys",
 				  "Failed to create new 'SListPy' object"))
@@ -617,7 +617,7 @@ static SIterator *MapPyIterator(const SContainer *self, s_erc *error)
 
 	S_CLR_ERR(error);
 
-	itr = (SMapPyIterator*)S_NEW("SMapPyIterator", error);
+	itr = S_NEW(SMapPyIterator, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "MapPyIterator",
 				  "Failed to create new iterator"))

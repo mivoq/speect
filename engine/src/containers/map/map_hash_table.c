@@ -397,7 +397,7 @@ static SList *MapHashTableValKeys(const SMap *self, s_erc *error)
 	const char *tmp;
 
 	S_CLR_ERR(error);
-	keys = S_LIST(S_NEW("SListList", error));
+	keys = S_LIST(S_NEW(SListList, error));
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "MapHashTableValKeys",
 				  "Failed to create new SList container for keys"))
@@ -487,7 +487,7 @@ static SMap *MapHashTableCopy(SMap *dst, const SMap *src, s_erc *error)
 	if (dst == NULL)
 	{
 		made_new = TRUE;
-		mapDst = (SMapHashTable*)S_NEW("SMapHashTable", error);
+		mapDst = S_NEW(SMapHashTable, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "MapHashTableCopy",
 					  "Failed to create new hash table map"))
@@ -571,7 +571,7 @@ static SIterator *MapHashTableIterator(const SContainer *self, s_erc *error)
 
 	S_CLR_ERR(error);
 
-	itr = (SMapHashTableIterator*)S_NEW("SMapHashTableIterator", error);
+	itr = S_NEW(SMapHashTableIterator, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "MapHashTableIterator",
 				  "Failed to create new iterator"))

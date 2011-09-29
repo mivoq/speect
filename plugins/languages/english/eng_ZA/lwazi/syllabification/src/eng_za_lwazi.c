@@ -608,7 +608,7 @@ static void pop_CV(SList *syllables, SList **syl, s_erc *error)
 	 * pop CV and put it back into the phonelist
 	 * create a new syl and put into syllables.
 	 */
-	nextSyl = (SList*)S_NEW("SListList", error);
+	nextSyl = S_LIST(S_NEW(SListList, error));
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "pop_CV",
 				  "Failed to create new 'SList' object"))
@@ -652,7 +652,7 @@ static void pop_CCV(SList *syllables, SList **syl, s_erc *error)
 	 * pop CCV and put it back into the phonelist
 	 * create a new syl and put into syllables.
 	 */
-	nextSyl = (SList*)S_NEW("SListList", error);
+	nextSyl = S_LIST(S_NEW(SListList, error));
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "pop_CCV",
 				  "Failed to create new 'SList' object"))
@@ -702,7 +702,7 @@ static void pop_CCCV(SList *syllables, SList **syl, s_erc *error)
 	 * pop CCCV and put it back into the phonelist
 	 * create a new syl and put into syllables.
 	 */
-	nextSyl = (SList*)S_NEW("SListList", error);
+	nextSyl = S_LIST(S_NEW(SListList, error));
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "pop_CCV",
 				  "Failed to create new 'SList' object"))
@@ -1448,7 +1448,7 @@ static void process_VV(SList *syllables, SList **syl,
 
 
 	S_CLR_ERR(error);
-	nextSyl = (SList*)S_NEW("SListList", error);
+	nextSyl = S_LIST(S_NEW(SListList, error));
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "process_VV",
 				  "Failed to create new 'SListList' object"))
@@ -1740,14 +1740,14 @@ static SList *Syllabify(const SSyllabification *self, const SItem *word,
 	}
 
 	/* create syllables list */
-	syllables = (SList*)S_NEW("SListList", error);
+	syllables = S_LIST(S_NEW(SListList, error));
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Syllabify",
 				  "Failed to create new 'SList' object"))
 		goto quit_error;
 
 	/* create syllable */
-	syl = (SList*)S_NEW("SListList", error);
+	syl = S_LIST(S_NEW(SListList, error));
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Syllabify",
 				  "Failed to create new 'SList' object"))

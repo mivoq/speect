@@ -232,7 +232,7 @@ static void create_cost_functions(const SList *costFunctions, const SVoice *voic
 			return;
 		}
 
-		costFunc = (SCostFunction*)S_NEW(class_name, error);
+		costFunc = (SCostFunction*)S_NEW_FROM_NAME(class_name, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "create_cost_functions",
 					  "Failed to create new '%s' object", class_name))

@@ -95,7 +95,7 @@ int main()
 		goto quit;
 
 	/* setup a phone list */
-	phones = (SList*)S_NEW("SListList", &error);
+	phones = S_LIST(S_NEW(SListList, &error));
 	if (S_CHK_ERR(&error, S_CONTERR,
 				  "main",
 				  "Failed to create a new 'SList' object"))

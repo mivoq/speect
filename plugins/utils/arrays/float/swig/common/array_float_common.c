@@ -75,7 +75,7 @@ typedef struct
 		SArrayFloat *tmp;
 
 
-		tmp = (SArrayFloat*)S_NEW("SArrayFloat", error);
+		tmp = S_NEW(SArrayFloat, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "SArrayFloat()",
 					  "Failed to create new 'SArrayFloat' object"))

@@ -137,7 +137,7 @@ static void Init(void *obj, s_erc *error)
 	if (num_string_tokenizers++ == 0)
 	{
 		/* create a tokenizer to give us access to the STokenizerClass functions */
-		tokenizer = (STokenizer*)S_NEW("STokenizer", error);
+		tokenizer = S_NEW(STokenizer, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "Init",
 					  "Failed to create tokenizer to give STokenizerClass function access"))

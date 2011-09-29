@@ -51,7 +51,7 @@ typedef struct
 		SUtterance *utt;
 
 
-		utt = (SUtterance*)S_NEW("SUtterance", error);
+		utt = S_NEW(SUtterance, error);
 		if (*error != S_SUCCESS)
 			return NULL;
 

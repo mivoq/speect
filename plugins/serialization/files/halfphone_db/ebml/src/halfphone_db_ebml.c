@@ -109,7 +109,7 @@ static void Init(void *obj, s_erc *error)
 
 	S_CLR_ERR(error);
 	self->units = NULL;
-	self->catalogue = (SMap*)S_NEW("SMapHashTable", error);
+	self->catalogue = S_MAP(S_NEW(SMapHashTable, error));
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Init",
 				  "Failed to create new 'SMapHashTable' object"))
@@ -125,7 +125,7 @@ static void Init(void *obj, s_erc *error)
 	}
 
 	/* create a relation to hold all units */
-	self->units = (SRelation*)S_NEW("SRelation", error);
+	self->units = S_NEW(SRelation, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Init",
 				  "Failed to create new 'SRelation' object"))

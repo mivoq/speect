@@ -75,7 +75,7 @@ S_LOCAL SList *_s_load_voice_plugins(const SMap *voiceConfig, s_erc *error)
 	if (!key_present)
 	{
 		/* no plug-ins, make a new list and return it */
-		pluginLoadedList = S_LIST(S_NEW("SListList", error));
+		pluginLoadedList = S_LIST(S_NEW(SListList, error));
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "_s_load_voice_plugins",
 					  "Failed to create new list for loaded voice plug-ins"))
@@ -96,7 +96,7 @@ S_LOCAL SList *_s_load_voice_plugins(const SMap *voiceConfig, s_erc *error)
 				  "Call to \"S_CAST (SList)\" failed for \'plug-ins\' object"))
 		return NULL;
 
-	pluginLoadedList = S_LIST(S_NEW("SListList", error));
+	pluginLoadedList = S_LIST(S_NEW(SListList, error));
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "_s_load_voice_plugins",
 				  "Failed to create new list for loaded voice plug-ins"))

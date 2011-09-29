@@ -395,7 +395,7 @@ S_API SObject *s_pyobject_2_sobject(PyObject *pobject, s_erc *error)
 #endif /* PY_VERSION_HEX < 0x03000000 */
 	case S_TYPE_LIST:
 	{
-		object = S_NEW("SListPy", error);
+		object = S_OBJECT(S_NEW(SListPy, error));
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "s_pyobject_2_sobject",
 					  "Failed to create new 'SListPy' object"))
@@ -411,7 +411,7 @@ S_API SObject *s_pyobject_2_sobject(PyObject *pobject, s_erc *error)
 	}
 	case S_TYPE_DICT:
 	{
-		object = S_NEW("SMapPy", error);
+		object = S_OBJECT(S_NEW(SMapPy, error));
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "s_pyobject_2_sobject",
 					  "Failed to create new 'SMapPy' object"))
@@ -427,7 +427,7 @@ S_API SObject *s_pyobject_2_sobject(PyObject *pobject, s_erc *error)
 	}
 	case S_TYPE_UNKNOWN:
 	{
-		object = S_NEW("SPyObject", error);
+		object = S_OBJECT(S_NEW(SPyObject, error));
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "s_pyobject_2_sobject",
 					  "Failed to create new 'SPyObject' object"))

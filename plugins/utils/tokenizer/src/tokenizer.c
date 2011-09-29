@@ -834,7 +834,7 @@ static SToken *s_get_token(STokenizer *ts, s_erc *error)
 	if (ts->currentToken != NULL)
 		S_DELETE(ts->currentToken, "s_get_token", error);
 
-	ts->currentToken = (SToken*)S_NEW("SToken", error);
+	ts->currentToken = S_NEW(SToken, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "s_get_token",
 				  "Failed to create new token"))

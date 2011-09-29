@@ -155,7 +155,7 @@ static void InitRelp(SRelp **self, uint32 sample_rate, const char *window_class,
 	S_CLR_ERR(error);
 
 	(*self)->sample_rate = sample_rate;
-	(*self)->window = (SWinFunc*)S_NEW(window_class, error);
+	(*self)->window = (SWinFunc*)S_NEW_FROM_NAME(window_class, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "InitRelp",
 				  "Failed to create new '%s' object",

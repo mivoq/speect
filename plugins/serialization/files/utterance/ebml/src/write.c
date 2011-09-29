@@ -123,7 +123,7 @@ S_LOCAL void s_write_utt_ebml(const SUtterance *utt, SDatasource *ds, s_erc *err
 		goto quit;
 
 	/* create and initialize ebml writer */
-	ebmlWriter = (SEbmlWrite*)S_NEW("SEbmlWrite", error);
+	ebmlWriter = S_NEW(SEbmlWrite, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "s_write_utt_ebml",
 				  "Failed to create new SEbmlWrite object"))

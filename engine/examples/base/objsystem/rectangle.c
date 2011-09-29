@@ -299,7 +299,7 @@ static SRectangleClass RectangleClass =
 	{
 		/* SObjectClass */
 		{
-			"SRectangle",
+			"SShape:SRectangle",
 			sizeof(SRectangle),
 			{ 0, 1},
 			InitRectangle,     /* init    */

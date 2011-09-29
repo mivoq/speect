@@ -312,7 +312,7 @@ S_BEGIN_C_DECLS
  * @hideinitializer
  * @def S_CAST
  * Cast the given object to the given type. This cast reverts to
- * either #S_CAST_SAFE or #S_CAST_SAFE, depending on the build time
+ * either #S_CAST_SAFE or #S_CAST_UNSAFE, depending on the build time
  * definition of SPCT_DO_SAFE_CAST.
  *
  * @param OBJECT Pointer to the object to cast.
@@ -435,6 +435,19 @@ S_BEGIN_C_DECLS
  * @note This casting is not safety checked.
  */
 #define S_OBJECT_CLS(SELF) ((SObjectClass*)S_OBJECT(SELF)->cls)
+
+
+/**
+ * @hideinitializer
+ * Get the given object type class.
+ *
+ * @param OBJTYPE Object type to find the class of.
+ * @param ERROR Error code (of type #s_erc*).
+ *
+ * @return Pointer to the class of object type (of type OBJTYPECLASS*).
+ */
+#define S_FIND_CLASS(OBJTYPE, ERROR)						\
+	((S_CONCAT(OBJTYPE, Class)*)s_class_find((# OBJTYPE), (ERROR)))
 
 
 /**

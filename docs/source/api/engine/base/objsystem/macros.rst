@@ -25,6 +25,7 @@ Summary
    macro S_OBJECT_REF
    macro S_OBJECT_CLS
    macro S_OBJECTCLASS
+   macro S_FIND_CLASS
 
 
 New/Delete
@@ -82,4 +83,7 @@ Class
    :type: macro
 
 .. doxybridge:: S_OBJECTCLASS
+   :type: macro
+
+.. doxybridge:: S_FIND_CLASS
    :type: macro

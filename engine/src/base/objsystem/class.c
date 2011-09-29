@@ -571,6 +571,7 @@ S_API SObject *SObjectNewFromName(const char *name, s_erc *error)
 	}
 
 	obj->cls = class;
+	obj->ref = 0;
 
 	/* execute init functions */
 	for (i = 0; i < class_info->n_hier; i++)

@@ -295,10 +295,10 @@ static void MoveCircle(SShape *self, int newx, int newy, s_erc *error)
 
 
 	S_CLR_ERR(error);
-	shapeClass = (SShapeClass*)s_class_find("SShape", error);
+	shapeClass = S_FIND_CLASS(SShape, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "MoveCircle",
-				  "Call to \"s_class_find\" failed"))
+				  "Call to \"S_FIND_CLASS\" failed"))
 		return;
 
 	shapeClass->move(self, newx, newy, error);
@@ -349,7 +349,7 @@ static SCircleClass CircleClass =
 	{
 		/* SObjectClass */
 		{
-			"SCircle",
+			"SShape:SCircle",
 			sizeof(SCircle),
 			{ 0, 1},
 			InitCircle,     /* init    */

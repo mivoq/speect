@@ -25,8 +25,8 @@
 # grabed signature from cmake_install.cmake
 if(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
   file(INSTALL 
-    DESTINATION "@CMAKE_INSTALL_PREFIX@/lib@LIB_SUFFIX@/speect/plugins/lib"
+    DESTINATION "@CMAKE_INSTALL_PREFIX@/lib@LIB_SUFFIX@/speect/plugins"
     TYPE FILE 
-    FILES "${CMAKE_BINARY_DIR}/plugins/lib/plugin.lib"
+    FILES "${CMAKE_BINARY_DIR}/plugins/lib/plugin.lib")
 endif(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
 

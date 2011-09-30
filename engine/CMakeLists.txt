@@ -31,12 +31,11 @@ include(engineSources)
 # Version information
 include(engineVersion)
 
-# Create Speect initialization file (INI)
-include(engineIniFile)
+# Create Speect plug-in path loader
+include(enginePluginPathLoader)
 
-# Initialization file loader
-include(engineIniLoader)
-
+# Create Speect plug-in path file holder
+include(enginePluginPathFile)
 
 #------------------------------------------------------------------------------------#
 #    Speect Engine library variables  (used in platform abstraction configuration)   #

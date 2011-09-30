@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2008-2011 The Department of Arts and Culture,                      */
+/* Copyright (c) 2011 The Department of Arts and Culture,                           */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -24,22 +24,22 @@
 /************************************************************************************/
 /*                                                                                  */
 /* AUTHOR  : Aby Louw                                                               */
-/* DATE    : 9 November 2009                                                        */
+/* DATE    : September 2011                                                         */
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* Load the Speect Engine initialization file (INI).                                */
+/* Find the Speect Plug-in path.                                                    */
 /*                                                                                  */
 /*                                                                                  */
 /************************************************************************************/
 
-#ifndef _SPCT_MAIN_INI_H__
-#define _SPCT_MAIN_INI_H__
+#ifndef _SPCT_MAIN_PLUGIN_PATH_H__
+#define _SPCT_MAIN_PLUGIN_PATH_H__
 
 
 /**
- * @file ini.h
- * Load the Speect Engine initialization file (INI).
+ * @file plugin_path.h
+ * Find the Speect Plug-in path.
  */
 
 
@@ -68,13 +68,13 @@ S_BEGIN_C_DECLS
 /************************************************************************************/
 
 /**
- * Load the Speect Engine initialization file (INI).
+ * Find the Speect plug-in path.
  *
  * @param error Error code.
  *
- * @return s_ini_parser structure or @c NULL on error.
+ * @return The Speect plug-in path or @c NULL.
  */
-S_LOCAL s_ini_parser *_s_load_speect_ini(s_erc *error);
+S_LOCAL const char *_s_find_plugin_path(s_erc *error);
 
 
 /************************************************************************************/
@@ -85,4 +85,4 @@ S_LOCAL s_ini_parser *_s_load_speect_ini(s_erc *error);
 S_END_C_DECLS
 
 
-#endif /* _SPCT_MAIN_INI_H__ */
+#endif /* _SPCT_MAIN_PLUGIN_PATH_H__ */

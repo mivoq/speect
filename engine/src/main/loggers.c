@@ -28,7 +28,7 @@
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* Initialization and quit of the Speect Engine loggers.                            */
+/* Speect Engine loggers helper functions.                                          */
 /*                                                                                  */
 /*                                                                                  */
 /************************************************************************************/
@@ -48,39 +48,9 @@
 
 /************************************************************************************/
 /*                                                                                  */
-/* Static variables                                                                 */
-/*                                                                                  */
-/************************************************************************************/
-
-static const char *log_def = "spct.log";
-
-
-/************************************************************************************/
-/*                                                                                  */
 /* Function implementations                                                         */
 /*                                                                                  */
 /************************************************************************************/
-
-S_LOCAL void _s_create_logger(s_ini_parser *spct_ini, s_logger **logger, s_erc *error)
-{
-	const char *ini_log;
-
-	S_CLR_ERR(error);
-
-
-	/* get error_log from INI, revert to error_log_def if not found */
-	ini_log = s_iniparser_get_string(spct_ini, "loggers:error_log",
-									 log_def);
-	*logger = s_logger_file_new(ini_log);
-	if (*logger == NULL)
-	{
-		S_NEW_ERR(error, S_FAILURE);
-		S_ERR_PRINT(S_FAILURE, "_s_create_loggers",
-					"Call to \"s_logger_file_new\" failed");
-		return;
-	}
-}
-
 
 S_LOCAL void _s_destroy_loggers(s_logger *logger, s_erc *error)
 {

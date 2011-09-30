@@ -275,7 +275,7 @@ quit_error:
 	if (right_unit_name != NULL)
 		S_FREE(right_unit_name);
 
-	self = NULL; /* to suppress noise about unused parameters */
+	S_UNUSED(self);
 }
 
 

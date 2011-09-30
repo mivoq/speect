@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2008-2009 The Department of Arts and Culture,                      */
+/* Copyright (c) 2011 The Department of Arts and Culture,                           */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -24,12 +24,13 @@
 /************************************************************************************/
 /*                                                                                  */
 /* AUTHOR  : Aby Louw                                                               */
-/* DATE    : 9 November 2009                                                        */
+/* DATE    : September 2011                                                         */
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* Load the Speect Engine initialization file (INI).                                */
-/* ini.c is auto generated from config/ini.c.in, do not edit ini.c                  */
+/* Find the Speect Plug-in path.                                                    */
+/* plugin_path.c is auto generated from config/plugin_path.c.in,                    */
+/* do not edit plugin_path.c                                                        */
 /*                                                                                  */
 /************************************************************************************/
 
@@ -40,8 +41,7 @@
 /*                                                                                  */
 /************************************************************************************/
 
-#include "base/iniparser/iniparser.h"
-#include "main/ini.h"
+#include "main/plugin_path.h"
 
 
 /************************************************************************************/
@@ -50,13 +50,20 @@
 /*                                                                                  */
 /************************************************************************************/
 
-/* The initialization file path for a speect build */
-#define S_BUILD_INI_FILE "@SPCT_BUILD_INI_FILE@"
+#define S_INSTALL_PLUGIN_PATH_FILE "@SPCT_INSTALL_PLUGIN_PATH@/plugin.lib"
 
-/* The initialization file path for a speect installation,
- * takes preferences over the build.
- */
-#define S_INSTALL_INI_FILE "@SPCT_INSTALL_INI_FILE@"
+#define S_BUILD_PLUGIN_PATH_FILE "@SPCT_BUILD_PLUGIN_PATH@/plugin.lib"
+
+
+/************************************************************************************/
+/*                                                                                  */
+/* Static variables (also in speect/cmake/spctSettings.cmake)                       */
+/*                                                                                  */
+/************************************************************************************/
+
+static const char *s_install_plugin_path = "@SPCT_INSTALL_PLUGIN_PATH@";
+
+static const char *s_build_plugin_path = "@SPCT_BUILD_PLUGIN_PATH@";
 
 
 /************************************************************************************/
@@ -65,7 +72,7 @@
 /*                                                                                  */
 /************************************************************************************/
 
-static const char *get_ini_file(s_erc *error);
+static const char *get_plugin_path(s_erc *error);
 
 static s_bool file_exists(const char *path, const char *mode, s_erc *error);
 
@@ -76,32 +83,21 @@ static s_bool file_exists(const char *path, const char *mode, s_erc *error);
 /*                                                                                  */
 /************************************************************************************/
 
-
-S_LOCAL s_ini_parser *_s_load_speect_ini(s_erc *error)
+S_LOCAL const char *_s_find_plugin_path(s_erc *error)
 {
-	s_ini_parser *spct_ini;
-	const char *ini_file;
+	const char *path;
 
 
 	S_CLR_ERR(error);
-	ini_file = get_ini_file(error);
+	path = get_plugin_path(error);
 	if ((error != NULL) & (*error != S_SUCCESS))
 	{
-		S_ERR_PRINT(*error, "_s_load_speect_ini",
-					"Call to \"get_ini_file\" failed");
+		S_ERR_PRINT(*error, "_s_find_plugin_path",
+					"Call to \"get_plugin_path\" failed");
 		return NULL;
 	}
 
-	spct_ini = s_iniparser_new(ini_file);
-	if (spct_ini == NULL)
-	{
-		S_NEW_ERR(error, S_FAILURE);
-		S_ERR_PRINT(S_FAILURE, "_s_load_speect_ini",
-					"Call to \"s_iniparser_new\" failed");
-		return NULL;
-	}
-
-	return spct_ini;
+	return path;
 }
 
 
@@ -111,44 +107,44 @@ S_LOCAL s_ini_parser *_s_load_speect_ini(s_erc *error)
 /*                                                                                  */
 /************************************************************************************/
 
-/* Search for initialization file at the install and build locations,
+/* Search for plug-in path file holder at the install and build locations,
  * with the install location taking preference.
  */
-static const char *get_ini_file(s_erc *error)
+static const char *get_plugin_path(s_erc *error)
 {
 	s_bool file_ok;
 
 
 	S_CLR_ERR(error);
 
-	file_ok = file_exists(S_INSTALL_INI_FILE, "r", error);
+	file_ok = file_exists(S_INSTALL_PLUGIN_PATH_FILE, "r", error);
 	if ((error != NULL) & (*error != S_SUCCESS))
 	{
-		S_ERR_PRINT(*error, "get_ini_file",
+		S_ERR_PRINT(*error, "get_plugin_path_file",
 					"Call to \"file_exists\" failed");
 		return NULL;
 	}
 
 	if (file_ok)
-		return S_INSTALL_INI_FILE;
+		return s_install_plugin_path;
 
-	file_ok = file_exists(S_BUILD_INI_FILE, "r", error);
+	file_ok = file_exists(S_BUILD_PLUGIN_PATH_FILE, "r", error);
 	if ((error != NULL) & (*error != S_SUCCESS))
 	{
-		S_ERR_PRINT(*error, "get_ini_file",
+		S_ERR_PRINT(*error, "get_plugin_path_file",
 					"Call to \"file_exists\" failed");
 		return NULL;
 	}
 
 	if (file_ok)
-		return S_BUILD_INI_FILE;
+		return s_build_plugin_path;
 
 	if (error != NULL)
 		S_NEW_ERR(error, S_FAILURE);
 
-	S_ERR_PRINT(S_FAILURE, "get_ini_file",
-				"Failed to find initialization file at '@SPCT_BUILD_INI_FILE@'"\
-				" or '@SPCT_INSTALL_INI_FILE@'");
+	S_ERR_PRINT(S_FAILURE, "get_plugin_path_file",
+				"Failed to find plug-in path file holder at '@SPCT_INSTALL_PLUGIN_PATH@/plugin.lib'"
+				" or '@SPCT_BUILD_PLUGIN_PATH@/plugin.lib'");
 	return NULL;
 }
 

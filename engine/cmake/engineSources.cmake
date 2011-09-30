@@ -32,9 +32,6 @@ set(SPCT_SRC_FILES
     src/base/errdbg/errdbg_impl.c
     src/base/errdbg/errdbg_utils.c
 
-    # src/base/iniparser
-    src/base/iniparser/iniparser.c
-
     # src/base/log
     src/base/log/event/event.c
     src/base/log/layout/layout.c
@@ -121,11 +118,11 @@ set(SPCT_SRC_FILES
 ######## src/main ###################
 
     # src/main
-    src/main/ini.c
     src/main/loggers.c
     src/main/main.c
     src/main/managers.c
     src/main/modules.c
+    src/main/plugin_path.c
 
 
 ######## src/pluginmanager #########
@@ -197,9 +194,6 @@ set(SPCT_SRC_INCLUDE_FILES
    src/base/errdbg/errdbg_impl.h
    src/base/errdbg/errdbg_macros.h
    src/base/errdbg/errdbg_utils.h
-
-   # src/base/iniparser
-   src/base/iniparser/iniparser.h
 
    # src/base/log
    src/base/log/event/event.h
@@ -308,11 +302,11 @@ set(SPCT_SRC_INCLUDE_FILES
 ######## src/main ##################
  
    # src/main
-   src/main/ini.h
    src/main/loggers.h
    src/main/main.h
    src/main/managers.h
    src/main/modules.h
+   src/main/plugin_path.h
 
 
 ######## src/pluginmanager #########

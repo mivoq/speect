@@ -46,7 +46,7 @@
 /**
  * @ingroup SBaseStrings
  * @defgroup SUtf8StringLists String List
- * Provides s utf-8 aware string list.
+ * Provides UTF-8 aware string list.
  * @{
  */
 

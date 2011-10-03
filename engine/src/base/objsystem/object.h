@@ -200,6 +200,9 @@ S_API void SObjectDispose(SObject *self, s_erc *error);
  *
  * @note The reference count of two objects needn't be equal for
  * objects to be equal.
+ *
+ * @note Will only work if the #SObjectClass @a compare function pointer has been
+ * implemented for the object type, otherwise #FALSE is returned.
  */
 S_API s_bool SObjectCompare(const SObject *oa, const SObject *ob, s_erc *error);
 
@@ -214,6 +217,8 @@ S_API s_bool SObjectCompare(const SObject *oa, const SObject *ob, s_erc *error);
  *
  * @return Pointer to a character buffer containing the contents of
  * the given SObject.
+ * @note Will only work if the #SObjectClass @a print function pointer has been
+ * implemented for the object type, otherwise #FALSE is returned.
  */
 S_API char *SObjectPrint(const SObject *self, s_erc *error);
 
@@ -229,6 +234,8 @@ S_API char *SObjectPrint(const SObject *self, s_erc *error);
  *
  * @note This is a deep copy.
  * @note Caller is responsible for returned object's memory.
+ * @note Will only work if the #SObjectClass @a copy function pointer has been
+ * implemented for the object type, otherwise #FALSE is returned.
  */
 S_API SObject *SObjectCopy(const SObject *self, s_erc *error);
 

@@ -141,7 +141,7 @@ S_API int s_vszprintf(char *buf, size_t count, const char *format,
 
 
 /**
- * Print a formatted UTF-8 string to a buffer (allocates
+ * Print a variable argument list to a UTF-8 string buffer (allocates
  * memory). Allocates memory to buffer as required. Uses #s_vsprintf
  * internally.
  *

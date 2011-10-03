@@ -77,7 +77,7 @@ S_BEGIN_C_DECLS
 /************************************************************************************/
 
 /**
- * Definition of floating point differnce tollerance.
+ * Definition of floating point difference tollerance.
  */
 #define S_FLOAT_TOLERANCE 0.000001
 

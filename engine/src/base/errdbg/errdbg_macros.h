@@ -91,8 +91,8 @@ S_BEGIN_C_DECLS
  * known that an error of @a ERROR_CODE type occurred, but not why it
  * occurred.
  *
- * @param ERROR Pointer to error code variable to set.
- * @param ERROR_CODE The new error code.
+ * @param ERROR Pointer to error code variable to set (type #s_erc*).
+ * @param ERROR_CODE The new error code (type #s_erc).
  */
 #ifdef SPCT_DOXYGEN_ONLY
 #  define S_NEW_ERR(ERROR, ERROR_CODE)
@@ -116,7 +116,7 @@ S_BEGIN_C_DECLS
  * Clear the given error. It is good practice to clear the error code
  * (*@a ERROR = #S_SUCCESS) at the beginning of all functions.
  *
- * @param ERROR Pointer to error code to clear.
+ * @param ERROR Pointer to error code to clear (type #s_erc*).
  */
 /*
  * NOTE: always the same macro, irrespective of SPCT_ERROR_HANDLING.
@@ -141,8 +141,8 @@ S_BEGIN_C_DECLS
  * function name and a variable length argument string of the context
  * wherein this error occurred.
  *
- * @param ERROR Pointer to error code variable to set.
- * @param NEW_ERROR The new error code.
+ * @param ERROR Pointer to error code variable to set (type #s_erc*).
+ * @param NEW_ERROR The new error code (type #s_erc).
  * @param FUNCTION_NAME The name of the function where the error
  *        occurred (optional, can be #NULL).
  * @param MSG A format string specifying the error message and the
@@ -171,8 +171,8 @@ S_BEGIN_C_DECLS
  * that if the build option @b SPCT_ERROR_ABORT_FATAL is set then the
  * program is aborted.
  *
- * @param ERROR Pointer to error code variable to set.
- * @param NEW_ERROR The new error code.
+ * @param ERROR Pointer to error code variable to set (type #s_erc*).
+ * @param NEW_ERROR The new error code (type #s_erc).
  * @param FUNCTION_NAME The name of the function where the error
  *        occurred (optional, can be #NULL).
  * @param MSG A format string specifying the error message and the
@@ -212,8 +212,8 @@ S_BEGIN_C_DECLS
  * statement. If no error occurred then no new context is set and the
  * @c if statement is not executed.
  *
- * @param ERROR Pointer to error code variable to set.
- * @param NEW_ERROR The new error code.
+ * @param ERROR Pointer to error code variable to set (type #s_erc*).
+ * @param NEW_ERROR The new error code (type #s_erc).
  * @param FUNCTION_NAME The name of the function where the error
  *        occurred (optional, can be #NULL).
  * @param MSG A format string specifying the error message and the
@@ -238,7 +238,7 @@ S_BEGIN_C_DECLS
  * Macro that sets a warning message.  Set a warning with the given
  * context. The warning is logged with the given context and message.
  *
- * @param ERROR Pointer to error code variable to set.
+ * @param ERROR Pointer to error code variable to set (type #s_erc*).
  * @param FUNCTION_NAME The name of the function where the error
  *        occurred (optional, can be #NULL).
  * @param MSG A format string specifying the error message and the

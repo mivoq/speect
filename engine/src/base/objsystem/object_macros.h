@@ -47,7 +47,7 @@
  * @ingroup SObjSystem
  * @defgroup SObjMacros Object/Class Macros
  * Macros for various object and class functions.
- * Defines macros for the creation/deletion and casting of object of
+ * Defines macros for the creation/deletion and casting of objects of
  * all types as well as some miscellaneous macros to get the base
  * object, base class and reference count of objects.
  * @{

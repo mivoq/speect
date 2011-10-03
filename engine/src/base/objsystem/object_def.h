@@ -82,7 +82,7 @@
  * SObject provides an interface to a generic data container.
  * It is a simple object which can encapsulate any other objects and
  * allows entities to store @a any type of data. Any data type
- * can inherit form the SObject class, and implement the basic
+ * can inherit from the SObjectClass, and implement the basic
  * methods, or not. An object can also extend these as required.
  * @{
  */
@@ -203,7 +203,7 @@ struct SObjectClass
 	const char *name;
 
 	/**
-	 * @protected The size of the objects of this class, in bytes (sizeoff).
+	 * @protected The size of the objects of this class, in bytes (@c sizeof).
 	 */
 	size_t      size;
 

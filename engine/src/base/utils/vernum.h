@@ -78,7 +78,7 @@
 /**
  * @ingroup SBaseUtils
  * @defgroup SVernum Version Numbers
- * Function relating to version information and data structures for
+ * Functions relating to version information and data structures for
  * the storage of version information.
  * @{
  */

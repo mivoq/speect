@@ -92,7 +92,7 @@ S_API s_bool s_file_exists(const char *path, const char *mode, s_erc *error);
 /**
  * Combine a base path and a file name. If the file name is absolute
  * then just a copy of it is returned. Otherwise, build a
- * path to it by considering it is relative to base_path. URL are
+ * path to it by considering it is relative to @c base_path. URL are
  * supported.
  *
  * @param base_path The base path relative to the given file name.

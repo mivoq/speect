@@ -859,7 +859,7 @@ The call to :c:macro:`S_DELETE` will do two things:
 
 Not all of SObjectClass's methods were implemented in these examples,
 but the full details of each method can also be found at
-:doc:`../api/engine/base/objsystem/SObject_detail`.
+:doc:`../api/engine/base/objsystem/SObjectClass_structure`.
 
 
 .. _reference_counting:

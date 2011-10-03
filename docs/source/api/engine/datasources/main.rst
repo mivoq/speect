@@ -6,71 +6,22 @@
 Data Sources
 ============
 
-Provides a generic interface to different data sources, where a data source can
-be anything that can be read from and/or written to.
+Provides a generic interface to different data sources, where a data
+source can be anything that can be read from and/or written to. Speect
+provides two levels of interfaces to data sources, one for structured
+data and one for unstructured data.
+
+The structured data interface is for data that is in a specific
+format, at a higher abstract level, for example reading data of a
+serialized object, whereas the unstructured data interface is for any
+type of data, for example reading an integer from a file.  The
+structured data interface typically makes use of the unstructured data
+interface on a lower level.
 
 
-Implementation
-==============
-
-.. index::
-   single: Data Sources (C API); SFileSource
-
-SFileSource
------------
-
-.. doxybridge:: SFilesource
-   :type: speect object
-   :members: none
-   :inheritance: SObject.SDatasource.SFilesource
-   
-
-.. doxybridge:: SFilesourceClass
-   :type: speect class
-   :members: none
-   :inheritance: SObjectClass.SDatasource.SFilesourceClass
- 
-
-Functions
-~~~~~~~~~
-
-.. doxybridge:: SFilesourceOpenHandle
-   
-.. doxybridge:: SFilesourceOpenFile
-   
-
-.. index::
-   single: Data Sources (C API); SMMapFileSource
-
-SMMapFilesource
----------------
-
-.. doxybridge:: SMMapFilesource
-   :type: speect object
-   :members: none
-   :inheritance: SObject.SDatasource.SMMapFilesource
-
-.. doxybridge:: SMMapFilesourceClass
-   :type: speect class
-   :members: none
-   :inheritance: SObjectClass.SDatasource.SMMapFilesourceClass
- 
-
-Functions
-~~~~~~~~~
-
-.. doxybridge:: SMMapFilesourceOpenFile
-   
-
-Abstract
-========
-	
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 2	   
 
-   datasource
-   datawriter
-   datareader
- 
-
+   unstructured 
+   structured
 

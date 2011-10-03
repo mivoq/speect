@@ -6,13 +6,7 @@
 Serialization
 =============
 
-Reading/Writing and loading/saving of serialized objects.
-
-.. toctree::
-   :hidden:
-	
-   SSerializedFile_detail
-   SSerializedObject_detail
+Reading/Writing and loading/saving of serialized objects and files.
 
 	
 Summary
@@ -33,31 +27,65 @@ Summary
 Definitions
 ===========
 
+.. index::
+   single: Serialization (C API); SSerializedFile
+
 .. doxybridge:: SSerializedFile
    :type: speect object
    :members: none
    :inheritance: SObject.SSerializedFile
 
+.. toctree::
+   :hidden:
+
+   SSerializedFile_structure
+
+:doc:`SSerializedFile_structure`
+
+.. index::
+   single: Serialization (C API); SSerializedFileClass
+
 .. doxybridge:: SSerializedFileClass
    :type: speect class
    :members: none
    :inheritance: SObjectClass.SSerializedFileClass
+
+.. toctree::
+   :hidden:
+
+   SSerializedFileClass_structure
+
+:doc:`SSerializedFileClass_structure`
  
-
-.. seealso:: :doc:`SSerializedFile_detail`.
-
+.. index::
+   single: Serialization (C API); SSerializedObject
 
 .. doxybridge:: SSerializedObject
    :type: speect object
    :members: none
    :inheritance: SObject.SSerializedObject
 
+.. toctree::
+   :hidden:
+
+   SSerializedObject_structure
+
+:doc:`SSerializedObject_structure`
+
+.. index::
+   single: Serialization (C API); SSerializedObjectClass
+
 .. doxybridge:: SSerializedObjectClass
    :type: speect class
    :members: none
    :inheritance: SObjectClass.SSerializedObjectClass
  
-.. seealso:: :doc:`SSerializedObject_detail`.
+.. toctree::
+   :hidden:
+
+   SSerializedObjectClass_structure
+
+:doc:`SSerializedObjectClass_structure`
 
 
 Functions

@@ -1,15 +1,11 @@
+.. _hrg/relation:
 
-========
-Relation
-========
+=========
+SRelation
+=========
 
-A Relation is a named list of Items. An Utterance can hold an arbitrary number
-of Relations. 
-
-.. toctree::
-   :hidden:
-
-   SRelation_detail
+A Relation is a named list of items. An utterance can hold an arbitrary number
+of relations. 
 
 
 Definitions
@@ -23,6 +19,13 @@ Definitions
    :members: none
    :inheritance: SObject.SRelation
 
+.. toctree::
+   :hidden:
+
+   SRelation_structure
+
+:doc:`SRelation_structure`
+
 .. index:: 
    single: Heterogeneous Relation Graphs (C API); SRelationClass
 
@@ -31,7 +34,19 @@ Definitions
    :members: none
    :inheritance: SObjectClass.SRelationClass
 
-.. seealso:: :doc:`SRelation_detail`.
+.. toctree::
+   :hidden:
+
+   SRelationClass_structure
+
+:doc:`SRelationClass_structure`
+
+
+Macros
+======
+
+.. doxybridge:: S_RELATION
+   :type: macro
 
 
 Functions
@@ -52,8 +67,3 @@ Functions
 .. doxybridge:: SRelationPrepend
 
 
-Macros
-======
-
-.. doxybridge:: S_RELATION
-   :type: macro

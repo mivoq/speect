@@ -6,6 +6,13 @@
 Threads
 =======
 
+A set of macros to access multi-threaded functionality. The
+Speect Engine itself is not multi-threaded, but it does need access
+to mutex locks to be thread safe, and thread id's for logging
+purposes. Different multi-threaded implementations are supported by
+implementing the macros.
+
+
 Summary
 =======
 

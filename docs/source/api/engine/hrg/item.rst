@@ -1,13 +1,16 @@
+.. _hrg/item:
 
-====
-Item
-====
+=====
+SItem
+=====
 
+.. todo:: feature processor link in paths, examples, explain ph phone constant features.
 
-.. toctree::
-   :hidden:
-
-   SItem_detail
+A class for containing linguistic items (arbitrary objects). Items are
+nodes in a relation which is again linked to an utterance. Items
+contain a key-value (string/:c:type:`SObject`) set of features. An item
+can have a list of daughter items as well. Items can also be shared
+between relations.
 
 
 Definitions
@@ -21,6 +24,13 @@ Definitions
    :members: none
    :inheritance: SObject.SItem
 
+.. toctree::
+   :hidden:
+
+   SItem_structure
+
+:doc:`SItem_structure`
+
 .. index:: 
    single: Heterogeneous Relation Graphs (C API); SItemClass
 
@@ -29,7 +39,19 @@ Definitions
    :members: none
    :inheritance: SObjectClass.SItemClass
 
-.. seealso:: :doc:`SItem_detail`.
+.. toctree::
+   :hidden:
+
+   SItemClass_structure
+
+:doc:`SItemClass_structure`
+
+
+Macros
+======
+
+.. doxybridge:: S_ITEM
+   :type: macro
 
 
 Functions
@@ -86,7 +108,6 @@ Feature Functions
 
 .. doxybridge:: SItemDelFeature 
 
-
 .. doxybridge:: SItemFeatKeys
 
 
@@ -115,8 +136,26 @@ Set key-value feature pairs
 .. doxybridge:: SItemSetString
 
 
-Paths
------
+
+Path Features
+-------------
+
+Extract items, item features and item functions by navigating given
+paths on the HRG structure. Paths are strings that are composed from
+tokens describing the path of the requested item/feature, relative to
+a given item. The possible tokens are:
+
+=========   ========
+Token       Meaning
+=========   ========
+p 	    previous item
+n 	    next item
+daughter    first daughter item
+daughtern   last daughter item
+parent 	    parent item
+R:relname   item as it is in the given relation ``relname``
+=========   ========
+
 
 .. doxybridge:: s_path_to_item
 
@@ -124,6 +163,7 @@ Paths
 
 .. doxybridge:: s_path_to_featproc
 
+.. doxybridge:: SItemPath
 
 
 Miscellaneous
@@ -138,8 +178,3 @@ Miscellaneous
 .. doxybridge:: SItemEqual
 
 
-Macros
-======
-
-.. doxybridge:: S_ITEM
-   :type: macro

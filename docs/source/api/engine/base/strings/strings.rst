@@ -7,6 +7,8 @@
 String Functions
 ================
 
+UTF-8 aware string utilities and functions.
+
 
 Summary
 =======

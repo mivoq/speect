@@ -7,6 +7,9 @@
 Doubly Linked List
 ==================
 
+A doubly linked list data structure definition and functions.
+
+
 Summary
 =======
 

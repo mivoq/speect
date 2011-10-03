@@ -31,3 +31,4 @@ Plug-in parameters
 ==================
 
 .. doxybridge:: s_plugin_params
+   :type: typedef struct

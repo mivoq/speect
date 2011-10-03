@@ -6,78 +6,119 @@
 Containers
 ==========
 
+Container data types to store a collection of other objects.
 
-Implementation
-==============
+
+Container Definitions
+=====================
 
 .. index::
-   single: Containers (C API); SMapHashTable
+   single: Containers (C API); SContainer
 
-SMapHashTable
--------------
+SContainer is an abstract container object from which all other container
+objects must inherit. 
 
-.. doxybridge:: SMapHashTable
+.. doxybridge:: SContainer
    :type: speect object
    :members: none
-   :inheritance: SObject.SContainer.SMap.SMapHashTable
-   
+   :inheritance: SObject.SContainer
 
-.. doxybridge:: SMapHashTableClass
+.. toctree::
+   :hidden:
+
+   SContainer_structure
+
+:doc:`SContainer_structure`
+
+.. index:: 
+   single: Containers (C API); SContainerClass
+
+.. doxybridge:: SContainerClass
    :type: speect class
    :members: none
-   :inheritance: SObjectClass.SContainerClass.SMapClass.SMapHashTableClass
- 
+   :inheritance: SObjectClass.SContainerClass
+
+.. toctree::
+   :hidden:
+
+   SContainerClass_structure
+
+:doc:`SContainerClass_structure`
+
+
+Iterator Definitions
+====================
+
+.. index::
+   single: Iterators (C API); SIterator
+
+SIterator provides an interface for iteration over the objects stored in a container.
+Specific container implementations must implement the SIteratorClass functions.
+
+.. doxybridge:: SIterator
+   :type: speect object
+   :members: none
+   :inheritance: SObject.SIterator
+
+.. toctree::
+   :hidden:
+
+   SIterator_structure
+
+:doc:`SIterator_structure`
+
+.. index:: 
+   single: Containers (C API); SIteratorClass
+
+.. doxybridge:: SIteratorClass
+   :type: speect class
+   :members: none
+   :inheritance: SObjectClass.SIteratorClass	
+
+.. toctree::
+   :hidden:
+
+   SIteratorClass_structure
+
+:doc:`SIteratorClass_structure`
+
+
+
+Macros
+======
+
+.. doxybridge:: S_CONTAINER
+  :type: macro
+
+.. doxybridge:: S_CONTAINER_CALL
+  :type: macro
+
+.. doxybridge:: S_ITERATOR
+  :type: macro
+
+.. doxybridge:: S_ITERATOR_GET
+  :type: macro
+
 
 Functions
-~~~~~~~~~
+=========
 
-.. doxybridge:: SMapHashTableResize
-   
- 
-.. index::
-   single: Containers (C API); SMapList
+.. doxybridge:: SContainerGetIterator
 
-SMapList
---------
+.. doxybridge:: SIteratorNext
 
-.. doxybridge:: SMapList
-   :type: speect object
-   :members: none
-   :inheritance: SObject.SContainer.SMap.SMapList
+.. doxybridge:: SIteratorKey
 
-.. doxybridge:: SMapListClass
-   :type: speect class
-   :members: none
-   :inheritance: SObjectClass.SContainerClass.SMapClass.SMapListClass
- 
+.. doxybridge:: SIteratorObject
 
-.. index::
-   single: Containers (C API); SListList
+.. doxybridge:: SIteratorUnlink
 
-SListList
----------
 
-.. doxybridge:: SListList
-   :type: speect object
-   :members: none
-   :inheritance: SObject.SContainer.SList.SListList
+Implementations
+===============
 
-.. doxybridge:: SListListClass
-   :type: speect class
-   :members: none
-   :inheritance: SObjectClass.SContainerClass.SListClass.SListListClass
- 
-
-Abstract
-========
-	
 .. toctree::
    :maxdepth: 2
 
-   container
    map
-   list
-   iterator
- 
-
-
+   list 

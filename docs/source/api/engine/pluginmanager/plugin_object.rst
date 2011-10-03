@@ -6,26 +6,41 @@ Plug-in Object
 ==============
 
 Plug-in objects encapsulate the loading/unloading and resource acquisition
+of *dynamic shared objects* (see also :doc:`dso`).
 
 
-.. toctree::
-   :hidden:
+Definitions
+===========
 
-   SPlugin_detail
+.. index:: 
+   single: Plug-ins (C API); SPlugin
 
-
-Definition
-==========
 
 .. doxybridge:: SPlugin
    :type: speect object
    :members: none
    :inheritance: SObject.SPlugin
 
+.. toctree::
+   :hidden:
+
+   SPlugin_structure
+
+:doc:`SPlugin_structure`
+
+
+.. index:: 
+   single: Plug-ins (C API); SPluginClass
+
+
 .. doxybridge:: SPluginClass
    :type: speect class
    :members: none
    :inheritance: SObjectClass.SPluginClass
  
+.. toctree::
+   :hidden:
 
-.. seealso:: :doc:`SPlugin_detail`.
+   SPluginClass_structure
+
+:doc:`SPluginClass_structure`

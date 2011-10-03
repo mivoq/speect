@@ -1,14 +1,10 @@
+.. _hrg/utterance:
 
-=========
-Utterance
-=========
+==========
+SUtterance
+==========
 
-An Utterance consists of a set of Relations which in turn consists of a set of Items.
-
-.. toctree::
-   :hidden:
-
-   SUtterance_detail
+An Utterance consists of a set of relations which in turn consists of a set of items.
 
 
 Definitions
@@ -22,6 +18,13 @@ Definitions
    :members: none
    :inheritance: SObject.SUtterance
 
+.. toctree::
+   :hidden:
+
+   SUtterance_structure
+
+:doc:`SUtterance_structure`
+
 .. index:: 
    single: Heterogeneous Relation Graphs (C API); SUtteranceClass
 
@@ -30,7 +33,19 @@ Definitions
    :members: none
    :inheritance: SObjectClass.SUtteranceClass
 
-.. seealso:: :doc:`SUtterance_detail`.
+.. toctree::
+   :hidden:
+
+   SUtteranceClass_structure
+
+:doc:`SUtteranceClass_structure`
+
+
+Macros
+======
+
+.. doxybridge:: S_UTTERANCE
+   :type: macro
 
 
 Functions
@@ -77,9 +92,3 @@ Features
 
 .. doxybridge:: SUtteranceFeatKeys
 
-
-Macros
-======
-
-.. doxybridge:: S_UTTERANCE
-   :type: macro

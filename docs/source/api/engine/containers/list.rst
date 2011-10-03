@@ -1,24 +1,44 @@
 
-.. index::
-   single: Containers (C API); SList
-
 =====
 SList
 =====
 
-.. toctree::
-   :hidden:
+.. todo:: add examples
+   
 
-   SList_detail
+SList containers are data types that holds an ordered collection of
+values (:c:type:`SObject`) , where the same value may occur more than
+once. There is currently one :ref:`implementation
+<implementations_list>` of the SList container.
+
+The iterator (:c:type:`SIterator`) implementation returns the elements
+(as :c:type:`SObject`) of the list for the :c:func:`SIteratorObject`,
+and :c:func:`SIteratorUnlink` function calls. The
+:c:func:`SIteratorKey` method is not implemented and will set an error
+and return :c:type:`NULL` if called for SList type iterators.
 
 
-Definition
-==========
+Definitions
+===========
+
+.. index::
+   single: Containers (C API); SList
 
 .. doxybridge:: SList
    :type: speect object
    :members: none
    :inheritance: SObject.SContainer.SList
+
+.. toctree::
+   :hidden:
+
+   SList_structure
+
+:doc:`SList_structure`
+
+
+.. index:: 
+   single: Containers (C API); SListClass
 
 
 .. doxybridge:: SListClass
@@ -26,11 +46,19 @@ Definition
    :members: none
    :inheritance: SObjectClass.SContainerClass.SListClass
 
-.. seealso:: :doc:`SList_detail`.
+.. toctree::
+   :hidden:
 
+   SListClass_structure
+
+:doc:`SListClass_structure`.
+
+
+Functions
+=========
 
 Query
-=====
+~~~~~
 
 .. doxybridge:: SListIsEmpty
 
@@ -40,7 +68,7 @@ Query
 
 
 Insertion
-=========
+~~~~~~~~~
 
 .. doxybridge:: SListAppend
 
@@ -52,7 +80,7 @@ Insertion
 
 
 Merge/Copy
-==========
+~~~~~~~~~~
 
 .. doxybridge:: SListMerge
 
@@ -60,7 +88,7 @@ Merge/Copy
 
 
 Queue
-=====
+~~~~~
 
 .. doxybridge:: SListPush
 
@@ -70,8 +98,26 @@ Queue
 
 
 Accessing
-=========
+~~~~~~~~~
 
 .. doxybridge:: SListNth
 
 
+.. _implementations_list:
+
+Implementations
+===============
+
+.. index::
+   single: Containers (C API); SListList
+
+SListList
+~~~~~~~~~
+
+SListList is an implementation of SList, where the underlying data structure
+is a doubly-linked list.
+
+.. doxybridge:: SListList
+   :type: speect object
+   :members: none
+   :inheritance: SObject.SContainer.SList.SListList

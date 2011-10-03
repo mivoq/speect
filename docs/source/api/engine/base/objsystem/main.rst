@@ -2,16 +2,12 @@
 
 .. _objsystem/main:
 
-.. todo:: build time macros and definitions
-
 =====================
 Generic Object System
 =====================
 
-.. toctree::
-   :hidden:
-
-   SObject_detail
+Provides an object-oriented approach for data types. See the :doc:`../../../../topics/object_system_topic` topic
+guide for more details. 
 
 
 Definitions
@@ -20,9 +16,22 @@ Definitions
 .. index:: 
    single: Generic Object System (C API); SObject
 
+SObject provides an interface to a generic data container.
+It is a simple object which can encapsulate any other objects and
+allows entities to store *any* type of data. Any data type
+can inherit from the SObjectClass, and implement the basic
+methods, or not. An object can also extend these as required.
+
 .. doxybridge:: SObject
    :type: speect object
    :members: none
+
+.. toctree::
+   :hidden:
+
+   SObject_structure
+
+:doc:`SObject_structure`
 
 .. index:: 
    single: Generic Object System (C API); SObjectClass
@@ -31,7 +40,12 @@ Definitions
    :type: speect class
    :members: none
 
-.. seealso:: :doc:`SObject_detail`.
+.. toctree::
+   :hidden:
+
+   SObjectClass_structure
+
+:doc:`SObjectClass_structure`
 
 
 Interface

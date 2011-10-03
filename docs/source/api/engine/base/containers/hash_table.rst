@@ -7,6 +7,9 @@
 Hash Table
 ==========
 
+A Hash Table data structure definition and functions.
+
+
 Summary
 =======
 

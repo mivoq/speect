@@ -17,3 +17,4 @@ Speect Engine C API
    pluginmanager/main
    serialization/main
    voicemanager/main
+   processors/main

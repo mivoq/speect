@@ -11,10 +11,8 @@ Graphs for describing and connecting different linguistic objects.
 .. toctree::
    :maxdepth: 2
 
-   item_content
    item
    relation
    utterance
-   utt_processor
-   feat_processor
+
 

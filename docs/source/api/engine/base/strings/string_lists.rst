@@ -7,6 +7,8 @@
 String Lists
 ============
 
+UTF-8 aware string list
+
 
 Summary
 =======

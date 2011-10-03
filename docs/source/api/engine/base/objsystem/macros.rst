@@ -6,6 +6,11 @@
 Macros
 ======
 
+Macros for the creation/deletion and casting of objects of
+all types as well as some miscellaneous macros to get the base
+object, base class and reference count of objects.
+
+
 Summary
 =======
 

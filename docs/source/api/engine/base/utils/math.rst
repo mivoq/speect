@@ -6,6 +6,9 @@
 Math Functions
 ==============
 
+Basic math functions, macros and constants used in the Speect Engine.
+
+
 Summary
 =======
 

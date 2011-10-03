@@ -6,10 +6,13 @@
 Logger
 ======
 
-.. toctree::
-   :hidden: 
-
-   s_logger_detail
+The logging system provides a very basic mechanism to write
+messages to different types of streams. It is used by all the error
+and debug reporting facilities in :doc:`../errdbg/main`, and therefore aims
+to be as robust as possible. If any error occurs during one of the
+logger functions, an error will be printed to ``stderr``. If a
+logger is unsuccessful at writing the log message to the log stream
+then it will log the message to ``stdout``. 
 
 
 .. todo::
@@ -43,8 +46,12 @@ Definition
    :type: typedef struct
    :members: none
    	    
-   
-.. seealso:: :doc:`s_logger_detail`.
+.. toctree::
+   :hidden: 
+
+   s_logger_structure
+
+:doc:`s_logger_structure`
 
 
 Logger Creators

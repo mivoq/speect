@@ -6,6 +6,8 @@
 SObject Functions
 =================
 
+Provides object type function.
+
 
 Summary
 =======

@@ -6,6 +6,10 @@
 Version Numbers
 ===============
 
+Functions relating to version information and data structures for
+the storage of version information.
+
+
 Summary
 =======
 

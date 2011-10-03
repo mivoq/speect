@@ -7,6 +7,8 @@
 Character Functions
 ===================
 
+UTF-8 aware character functions.
+
 Summary
 =======
 

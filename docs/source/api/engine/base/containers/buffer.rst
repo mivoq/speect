@@ -7,6 +7,10 @@
 Buffer
 ======
 
+A buffer data structure with exponential growth that ensures that it
+is always null padded.
+
+
 Summary
 =======
 

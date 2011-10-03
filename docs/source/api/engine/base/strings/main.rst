@@ -6,6 +6,8 @@
 Strings
 =======
 
+UTF-8 aware character, string and regular expression utilities and functions. 
+
 .. toctree::
    :maxdepth: 2
 

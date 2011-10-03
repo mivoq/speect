@@ -7,6 +7,8 @@
 String Printing Functions
 =========================
 
+UTF8 string printing functions.
+
 
 Summary
 =======
@@ -14,8 +16,8 @@ Summary
 .. doxybridge-autosummary::
    :nosignatures:
 
-   s_vszprintf
    macro s_vsprintf
+   s_vszprintf
    s_vasprintf
    s_sprintf
    s_szprintf
@@ -25,10 +27,10 @@ Summary
 Variable Argument List
 ======================
 
-.. doxybridge:: s_vszprintf
-
 .. doxybridge:: s_vsprintf
    :type: macro
+
+.. doxybridge:: s_vszprintf
 
 .. doxybridge:: s_vasprintf
 

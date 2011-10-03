@@ -16,6 +16,15 @@ CMakeFiles
 
 
 ##########################################################################
+# Ignore build files
+
+build/*
+
+# except the README
+!build/README
+
+
+##########################################################################
 # Ignore Speect Engine generated files
 
 engine/SpeectConf.cmake
@@ -53,8 +62,8 @@ swig/python/speect/*.pyc
 !swig/python/speect/__init__.py
 
 # except the client/server
-!speect/swig/python/client.py
-!speect/swig/python/server.py
+!swig/python/client.py
+!swig/python/server.py
 
 
 ##########################################################################

@@ -163,6 +163,15 @@ S_API sint32 SMapGetInt(const SMap *self, const char *key, s_erc *error)
 		return 0;
 	}
 
+	if (tmp == NULL)
+	{
+		S_CTX_ERR(error, S_ARGERROR,
+				  "SMapGetInt",
+				  "No key, \"%s\", value in map", key);
+		S_UNLOCK_CONTAINER;
+		return 0;
+	}
+
 	i = SObjectGetInt(tmp, error);
 	S_UNLOCK_CONTAINER;
 
@@ -214,6 +223,15 @@ S_API float SMapGetFloat(const SMap *self, const char *key, s_erc *error)
 				  "SMapGetFloat",
 				  "Call to class method \"val_get\" failed"))
 	{
+		S_UNLOCK_CONTAINER;
+		return 0.0;
+	}
+
+	if (tmp == NULL)
+	{
+		S_CTX_ERR(error, S_ARGERROR,
+				  "SMapGetFloat",
+				  "No key, \"%s\", value in map", key);
 		S_UNLOCK_CONTAINER;
 		return 0.0;
 	}
@@ -270,6 +288,15 @@ S_API const char *SMapGetString(const SMap *self, const char *key, s_erc *error)
 		return NULL;
 	}
 
+	if (tmp == NULL)
+	{
+		S_CTX_ERR(error, S_ARGERROR,
+				  "SMapGetString",
+				  "No key, \"%s\", value in map", key);
+		S_UNLOCK_CONTAINER;
+		return NULL;
+	}
+
 	string = SObjectGetString(tmp, error);
 	S_UNLOCK_CONTAINER;
 
@@ -319,6 +346,15 @@ S_API const SObject *SMapGetObject(const SMap *self, const char *key, s_erc *err
 				  "SMapGetObject",
 				  "Call to class method \"val_get\" failed"))
 	{
+		S_UNLOCK_CONTAINER;
+		return NULL;
+	}
+
+	if (tmp == NULL)
+	{
+		S_CTX_ERR(error, S_ARGERROR,
+				  "SMapGetObject",
+				  "No key, \"%s\", value in map", key);
 		S_UNLOCK_CONTAINER;
 		return NULL;
 	}

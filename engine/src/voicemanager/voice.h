@@ -300,6 +300,9 @@ typedef struct
  *
  * @return The synthesized utterance.
  *
+ * @note The caller is responsible for the memory of the returned
+ * utterance.
+ *
  * @note The voice takes hold of the @c input #SObject
  */
 S_API SUtterance *SVoiceSynthUtt(const SVoice *self, const char *utt_type,

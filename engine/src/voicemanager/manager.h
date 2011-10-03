@@ -88,7 +88,9 @@ S_BEGIN_C_DECLS
  *
  * @return Pointer to the loaded voice.
  *
- * @note The returned voice can be normally deleted with #S_DELETE.
+ * @note The caller is responsible for the memory of the returned
+ * voice, which can be normally deleted with #S_DELETE.
+ *
  * @note Thread safe.
  */
 S_API SVoice *s_vm_load_voice(const char *path, s_erc *error);

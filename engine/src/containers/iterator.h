@@ -255,6 +255,8 @@ S_API const char *SIteratorKey(SIterator *self, s_erc *error);
  * @return The object pointed to by the iterator. This object can be
  * anything and depends on the specific container iterator
  * implementation.
+ *
+ * @note The returned object should not be deleted.
  */
 S_API const SObject *SIteratorObject(SIterator *self, s_erc *error);
 

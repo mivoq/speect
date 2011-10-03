@@ -458,6 +458,9 @@ S_API s_bool SListValPresent(const SList *self, const SObject *object, s_erc *er
  * @param self The list container.
  * @param object #SObject to append to end of list.
  * @param error Error code.
+ *
+ * @note The list takes hold of the appended object, and therefore the
+ * object should not be deleted with a call to #S_DELETE.
  */
 S_API void SListAppend(SList *self, const SObject *object, s_erc *error);
 
@@ -469,6 +472,9 @@ S_API void SListAppend(SList *self, const SObject *object, s_erc *error);
  * @param self The list container.
  * @param object #SObject to prepend to beginning of list.
  * @param error Error code.
+ *
+ * @note The list takes hold of the prepended object, and therefore the
+ * object should not be deleted with a call to #S_DELETE.
  */
 S_API void SListPrepend(SList *self, const SObject *object, s_erc *error);
 
@@ -482,6 +488,9 @@ S_API void SListPrepend(SList *self, const SObject *object, s_erc *error);
  * @param itr Iterator to current list object.
  * @param object #SObject to insert.
  * @param error Error code.
+ *
+ * @note The list takes hold of the inserted object, and therefore the
+ * object should not be deleted with a call to #S_DELETE.
  */
 S_API void SListInsertBefore(SList *self, SIterator *itr, const SObject *object,
 							 s_erc *error);
@@ -496,6 +505,9 @@ S_API void SListInsertBefore(SList *self, SIterator *itr, const SObject *object,
  * @param itr Iterator to current list object.
  * @param object #SObject to insert.
  * @param error Error code.
+ *
+ * @note The list takes hold of the inserted object, and therefore the
+ * object should not be deleted with a call to #S_DELETE.
  */
 S_API void SListInsertAfter(SList *self, SIterator *itr, const SObject *object,
 							s_erc *error);
@@ -567,6 +579,9 @@ S_API SList *SListCopy(SList *dst, const SList *src, s_erc *error);
  * @param self The list container.
  * @param object #SObject to push into end of list.
  * @param error Error code.
+ *
+ * @note The list takes hold of the pushed object, and therefore the
+ * object should not be deleted with a call to #S_DELETE.
  */
 S_API void SListPush(SList *self, const SObject *object, s_erc *error);
 

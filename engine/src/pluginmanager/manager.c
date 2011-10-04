@@ -213,49 +213,6 @@ S_API SPlugin *s_pm_load_plugin(const char *path, s_erc *error)
 }
 
 
-S_API s_bool s_pm_plugin_loaded(const char *path, s_erc *error)
-{
-	s_bool cached_plugin;
-	char *new_path;
-
-
-	S_CLR_ERR(error);
-
-	if (path == NULL)
-	{
-		S_CTX_ERR(error, S_ARGERROR,
-				  "s_pm_plugin_loaded",
-				  "Argument \"path\" is NULL");
-		return FALSE;
-	}
-
-	/*
-	 * if path does not contain a path separator we concatenate the
-	 * default path.
-	 */
-	new_path = s_pm_get_plugin_path(path, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "s_pm_plugin_loaded",
-				  "Call to \"s_pm_get_plugin_path\" failed"))
-		return FALSE;
-
-	/* check if the plugin is in the cache */
-	cached_plugin = SMapObjectPresent(pluginCache, new_path,
-									  error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "s_pm_plugin_loaded",
-				  "Call to \"SMapObjectPresent\" failed for plug-in path \'%s\'",
-				  new_path))
-	{
-		S_FREE(new_path);
-		return FALSE;
-	}
-
-	S_FREE(new_path);
-	return cached_plugin;
-}
-
-
 S_API char *s_pm_get_plugin_path(const char *path, s_erc *error)
 {
 	char *new_path;

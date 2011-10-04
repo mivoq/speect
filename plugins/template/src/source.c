@@ -31,7 +31,7 @@
 /*                                                                                  */
 /************************************************************************************/
 
-static SYourClass YourClass; /* TODO: SYour class declaration. */
+static SYourClass YourClass; /* TODO: class declaration. */
 
 
 /************************************************************************************/

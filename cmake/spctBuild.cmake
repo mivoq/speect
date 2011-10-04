@@ -81,7 +81,6 @@ set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -DSPCT_DEBUGMODE=1")
 #                            C Flags: Profiling                                      #
 #------------------------------------------------------------------------------------#
 
-list(APPEND CMAKE_BUILD_TYPES Profile)
 if(SPCT_GCC)
     set(CMAKE_C_FLAGS_PROFILE "-pg"
         CACHE STRING "profiling flags")

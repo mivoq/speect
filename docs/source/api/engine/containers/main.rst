@@ -99,6 +99,8 @@ Macros
 .. doxybridge:: S_ITERATOR_GET
   :type: macro
 
+See also :c:macro:`SPCT_DO_SAFE_CAST`
+
 
 Functions
 =========

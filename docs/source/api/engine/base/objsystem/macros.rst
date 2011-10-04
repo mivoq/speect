@@ -61,6 +61,8 @@ Cast
 .. doxybridge:: S_CAST
    :type: macro
 
+See also :c:macro:`SPCT_DO_SAFE_CAST`
+
 
 Function Methods
 ================

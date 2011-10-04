@@ -13,6 +13,8 @@ Topic Guides
    errdbg_topic
    cmake_options_topic
    object_system_topic
+   reference_counting_topic
+   init_logging
 
 
 here be topic guides

@@ -73,6 +73,8 @@ S_BEGIN_C_DECLS
  * @param error Error code.
  *
  * @return The Speect plug-in path or @c NULL.
+ *
+ * @note Not thread safe.
  */
 S_LOCAL const char *_s_find_plugin_path(s_erc *error);
 

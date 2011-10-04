@@ -342,7 +342,7 @@ typedef struct
  * @param key The string key of the value to get.
  * @param error Error code.
  *
- * @note An @c S_ARGERROR error is set if the named key does is
+ * @note An @c S_ARGERROR error is set if the named key is
  * not in the map.
  *
  * @sa SMapGetIntDef
@@ -360,7 +360,7 @@ S_API sint32 SMapGetInt(const SMap *self, const char *key, s_erc *error);
  * @param key The string key of the value to get.
  * @param error Error code.
  *
- * @note An @c S_ARGERROR error is set if the named key does is
+ * @note An @c S_ARGERROR error is set if the named key is
  * not in the map.
  *
  * @sa SMapGetFloatDef
@@ -378,7 +378,7 @@ S_API float SMapGetFloat(const SMap *self, const char *key, s_erc *error);
  * @param key The string key of the value to get.
  * @param error Error code.
  *
- * @note An @c S_ARGERROR error is set if the named key does is
+ * @note An @c S_ARGERROR error is set if the named key is
  * not in the map.
  *
  * @sa SMapGetStringDef
@@ -396,7 +396,7 @@ S_API const char *SMapGetString(const SMap *self, const char *key, s_erc *error)
  * @param key The string key of the object to get.
  * @param error Error code.
  *
- * @note An @c S_ARGERROR error is set if the named key does is
+ * @note An @c S_ARGERROR error is set if the named key is
  * not in the map.
  *
  * @sa SMapGetObjectDef

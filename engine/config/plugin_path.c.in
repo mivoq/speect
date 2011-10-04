@@ -41,6 +41,7 @@
 /*                                                                                  */
 /************************************************************************************/
 
+#include <stdlib.h>
 #include "main/plugin_path.h"
 
 
@@ -108,14 +109,21 @@ S_LOCAL const char *_s_find_plugin_path(s_erc *error)
 /************************************************************************************/
 
 /* Search for plug-in path file holder at the install and build locations,
- * with the install location taking preference.
+ * with the install location taking preference. If the environment
+ * variable SPCT_PLUGIN_PATH exists then it will take preference over
+ * all.
  */
 static const char *get_plugin_path(s_erc *error)
 {
 	s_bool file_ok;
+	char *tmp;
 
 
 	S_CLR_ERR(error);
+
+	tmp = getenv("SPCT_PLUGIN_PATH");
+	if (tmp != NULL)
+		return tmp;
 
 	file_ok = file_exists(S_INSTALL_PLUGIN_PATH_FILE, "r", error);
 	if ((error != NULL) & (*error != S_SUCCESS))

@@ -277,9 +277,9 @@ S_API const SUtterance *SRelationUtterance(const SRelation *self, s_erc *error)
 }
 
 
-S_API const SItem *SRelationHead(const SRelation *self, s_erc *error)
+S_API SItem *SRelationHead(const SRelation *self, s_erc *error)
 {
-	const SItem *item;
+	SItem *item;
 
 	if (self == NULL)
 	{
@@ -307,9 +307,9 @@ S_API const SItem *SRelationHead(const SRelation *self, s_erc *error)
 }
 
 
-S_API const SItem *SRelationTail(const SRelation *self, s_erc *error)
+S_API SItem *SRelationTail(const SRelation *self, s_erc *error)
 {
-	const SItem *item;
+	SItem *item;
 
 	if (self == NULL)
 	{
@@ -486,14 +486,14 @@ static const SUtterance *RelationUtterance(const SRelation *self, s_erc *error)
 }
 
 
-static const SItem *RelationHead(const SRelation *self, s_erc *error)
+static SItem *RelationHead(const SRelation *self, s_erc *error)
 {
 	S_CLR_ERR(error);
 	return self->head;
 }
 
 
-static const SItem *RelationTail(const SRelation *self, s_erc *error)
+static SItem *RelationTail(const SRelation *self, s_erc *error)
 {
 	S_CLR_ERR(error);
 	return self->tail;

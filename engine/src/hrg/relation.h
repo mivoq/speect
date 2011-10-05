@@ -272,7 +272,7 @@ typedef struct
 	 * @param error Error code.
 	 * @return Pointer to the head item of the given relation.
 	 */
-	const SItem      *(* const head)    (const SRelation *self, s_erc *error);
+	SItem            *(* const head)    (const SRelation *self, s_erc *error);
 
 	/**
 	 * @protected Tail function pointer.
@@ -281,7 +281,7 @@ typedef struct
 	 * @param error Error code.
 	 * @return Pointer to the tail item of the given relation.
 	 */
-	const SItem      *(* const tail)    (const SRelation *self, s_erc *error);
+	SItem            *(* const tail)    (const SRelation *self, s_erc *error);
 
 	/**
 	 * @protected Append function pointer.
@@ -336,6 +336,8 @@ typedef struct
  * self pointer will be set to @c NULL.
  * @note To connect a newly created relation to an utterance call
  * #SUtteranceSetRelation.
+ * @note Mostly for internal use when relations have been
+ * created with #S_NEW, and not #SUtteranceNewRelation.
  */
 S_API void SRelationInit(SRelation **self, const char *name, s_erc *error);
 
@@ -367,7 +369,7 @@ S_API const SUtterance *SRelationUtterance(const SRelation *self, s_erc *error);
  * @param error Error code.
  * @return Pointer to the head item of the given relation.
  */
-S_API const SItem *SRelationHead(const SRelation *self, s_erc *error);
+S_API SItem *SRelationHead(const SRelation *self, s_erc *error);
 
 
 /**
@@ -377,7 +379,7 @@ S_API const SItem *SRelationHead(const SRelation *self, s_erc *error);
  * @param error Error code.
  * @return Pointer to the tail item of given relation.
  */
-S_API const SItem *SRelationTail(const SRelation *self, s_erc *error);
+S_API SItem *SRelationTail(const SRelation *self, s_erc *error);
 
 
 /**

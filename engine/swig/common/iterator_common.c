@@ -41,7 +41,7 @@
 {
 	typedef struct
 	{
-		SIterator *itr;
+		SIterator *_itr;
 	} _PMapIterator;
 
 
@@ -60,13 +60,13 @@
 			return NULL;
 		}
 
-		pitr->itr = itr;
+		pitr->_itr = itr;
 		return pitr;
 	}
 
 	typedef struct
 	{
-		SIterator *itr;
+		SIterator *_itr;
 	} _PListIterator;
 
 
@@ -85,7 +85,7 @@
 			return NULL;
 		}
 
-		pitr->itr = itr;
+		pitr->_itr = itr;
 		return pitr;
 	}
 }

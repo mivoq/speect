@@ -4,7 +4,7 @@
 Speect Initialization/Quit
 ==========================
 
-Also see :doc:`../../../../topics/init_logging`.
+Also see :doc:`../../../../topics/init_logging_topic`.
 
 .. doxybridge:: speect_init
 

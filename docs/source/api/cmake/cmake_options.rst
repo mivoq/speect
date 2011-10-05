@@ -1,15 +1,15 @@
-.. _cmake_options_topic/main:
+.. _cmake_options:
 
 .. index:: 
-   single: Topic Guides (C API); CMake configuration options
+   single: CMake API; Configuration Options
 
 ===========================
-CMake configuration options
+CMake Configuration Options
 ===========================
 
 Several configuration options are available to customize the Speect
 build system.  These options can be configured through an interactive
-CMake interface as described in :doc:`../installation`, or through the
+CMake interface as described in :doc:`../../installation`, or through the
 command line.
 
 

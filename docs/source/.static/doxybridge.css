@@ -28,7 +28,9 @@ dl.function,
 dl.macro,
 dl.speectclass,
 dl.speectobject,
-dl.cmake
+dl.cmake,
+dl.cmake_func,
+dl.cmake_macro
 {
     border-top: 2px solid #888;
 }

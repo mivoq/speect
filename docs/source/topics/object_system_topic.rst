@@ -47,7 +47,10 @@ contain information about the class hierarchy, the size of the objects
 instantiated by the class, and version information.  Objects are
 dynamically allocated by the object's class. The first member of an
 object structure definition is always an object of the object's
-superclass type. Objects keep a reference count.
+superclass type. Objects keep a reference count (see :doc:`reference_counting_topic`).
+
+See :doc:`../api/engine/base/objsystem/main` for a detailed description
+of the API.
 
 
 Base object and class
@@ -776,8 +779,9 @@ the extra ``destroy`` method when compared to the
 Example Usage
 -------------
 
-The following code snippets are extracted from ``speect/engine/examples/base/objsystem/objsystem_example.c``
-and are abbreviated to show the basic usage of the above defined objects.
+The following code snippets were extracted from ``speect/engine/examples/base/objsystem/objsystem_example.c``
+and are abbreviated to show the basic usage of the above defined objects. The example can also be viewed at
+:doc:`examples/objsystem_example`.
 
 We can now declare and instantiate circles and rectangles as follows:
 

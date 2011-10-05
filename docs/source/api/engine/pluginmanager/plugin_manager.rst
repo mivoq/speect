@@ -19,7 +19,6 @@ Summary
    :nosignatures:
    
    s_pm_load_plugin
-   s_pm_plugin_loaded
    s_pm_get_plugin_path
    
 
@@ -27,7 +26,5 @@ Functions
 =========
 
 .. doxybridge:: s_pm_load_plugin
-
-.. doxybridge:: s_pm_plugin_loaded
 
 .. doxybridge:: s_pm_get_plugin_path

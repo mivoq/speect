@@ -1,4 +1,4 @@
-.. _init_logging/main:
+.. _init_logging_topic/main:
 
 .. index:: 
    single: Topic Guides (C API); Initialization, Finalization and Logging

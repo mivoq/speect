@@ -11,10 +11,32 @@ Topic Guides
    :maxdepth: 2
 
    errdbg_topic
-   cmake_options_topic
    object_system_topic
    reference_counting_topic
-   init_logging
+   init_logging_topic
+   hrg_topic
+   voice_topic
+   processors_topic
+   plugins_topic
+
+
+.. index:: ! Examples (C API)
+
+Examples
+========
+
+.. toctree::
+   :maxdepth: 2
+
+   
+   examples/hrg_example
+   examples/errdbg_example
+   examples/objsystem_example 
+   examples/hash_table_example 
+   examples/regex_example
+   examples/mem_example
+   examples/list_iteration_example
+   examples/datasources_example 
 
 
 here be topic guides
@@ -22,4 +44,4 @@ here be topic guides
 
 .. todo::
 
-   Object system, Plug-ins, HRG, voice, cmake stuff (including custom functions)
+   Plug-ins,  voice, cmake stuff (including custom functions)

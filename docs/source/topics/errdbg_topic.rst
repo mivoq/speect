@@ -23,6 +23,9 @@ primitives in most code. However, it demands discipline and commitment
 to check all function calls when writing, and maintaining code.
 
 
+See :doc:`../api/engine/base/errdbg/main` for a detailed description
+of the API.
+
 Example
 =======
 
@@ -85,7 +88,7 @@ The error handling system as described enables one to create a detailed
 makes development and bug tracking a much easier task.
 
 A more detailed example of the error handling mechanism can be found at
-``speect/engine/examples/base/errdbg/errdbg_example_short.c``.
+``speect/engine/examples/base/errdbg/errdbg_example.c``, or :doc:`examples/errdbg_example`.
 
 
 Disable

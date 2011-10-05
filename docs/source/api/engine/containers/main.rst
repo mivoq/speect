@@ -55,6 +55,8 @@ Iterator Definitions
 SIterator provides an interface for iteration over the objects stored in a container.
 Specific container implementations must implement the SIteratorClass functions.
 
+Also see :doc:`../../../topics/examples/list_iteration_example`.
+
 .. doxybridge:: SIterator
    :type: speect object
    :members: none

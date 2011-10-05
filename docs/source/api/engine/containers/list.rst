@@ -17,6 +17,8 @@ and :c:func:`SIteratorUnlink` function calls. The
 :c:func:`SIteratorKey` method is not implemented and will set an error
 and return :c:type:`NULL` if called for SList type iterators.
 
+Also see :doc:`../../../topics/examples/list_iteration_example`.
+
 
 Definitions
 ===========

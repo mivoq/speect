@@ -10,6 +10,9 @@ Macros for use in memory allocation and deallocation. These macros
 wrap the standard ``malloc``, ``calloc``, ``realloc`` and ``free``
 functions and should always be preferred over these functions.
 
+Also see :doc:`../../../../topics/examples/mem_example`.
+
+
 Summary
 =======
 

@@ -33,6 +33,7 @@ Summary
    
    s_logger_file_new
    s_logger_console_new
+   s_logger_null_new
    s_logger_write
    s_logger_vwrite
    s_logger_destroy
@@ -58,12 +59,16 @@ Definition
 Logger Creators
 ===============
 
-Two basic loggers are provided, one logging to file and one to a console. 
+Three loggers are provided, one logging to file, one to a console and
+a null logger. The loggers must be freed by first calling
+:c:func:`s_logger_destroy` to free any private data of the logger, and
+then a call to :c:macro:`S_FREE` to free the logger itself.
 
 .. doxybridge:: s_logger_file_new
 
-
 .. doxybridge:: s_logger_console_new
+
+.. doxybridge:: s_logger_null_new
 
 
 Standard Layout Format

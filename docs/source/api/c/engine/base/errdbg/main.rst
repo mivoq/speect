@@ -10,6 +10,7 @@ Error handling and debugging module, utilities, macros and
 definitions.  See the :doc:`../../../../../topics/errdbg_topic` topic
 guide for more details. 
 
+
 Summary
 =======
 
@@ -67,6 +68,10 @@ Macros that sets and clears errors.
 .. doxybridge:: S_FTL_ERR
    :type: macro
 
+.. seealso::
+
+   :c:macro:`SPCT_ERROR_ABORT_FATAL`
+
 
 Check & Set
 -----------
@@ -90,8 +95,9 @@ Macro that sets warning messages.
 Debugging
 ---------
 
-Macro that sets debug messages.
-
+Macro that sets debug messages. If either :c:macro:`SPCT_DEBUGMODE` or
+:c:macro:`SPCT_ERROR_HANDLING` are **not** defined, then this macro will
+not log debugging messages.
 
 .. doxybridge:: S_DEBUG
    :type: macro
@@ -107,6 +113,10 @@ Functions
 .. doxybridge:: s_set_errdbg_logger
 
 .. doxybridge:: s_errdbg_on
+
+.. seealso::
+
+   :c:macro:`SPCT_ERROR_HANDLING`
 
 .. doxybridge:: s_error_str
 

@@ -267,7 +267,7 @@ path_to_item(path)
 Get the item, from the given path, relative to this item.
 
 :param path: The path to the desired item, relative to this item.
-:type path: string
+:type path: str
 :return: The item from the path, relative to this item.
 :rtype: :class:`SItem`
 """
@@ -283,7 +283,7 @@ path_to_feature(path)
 Get the item feature, from the given path, relative to this item.
 
 :param path: The path to the desired item's feature, relative to this item.
-:type path: string
+:type path: str
 :return: The feature object from the path, relative to this item.
 """
 %enddef
@@ -300,7 +300,7 @@ given path, relative to the given item. The name of the feature
 processor is the last element of the path.
 
 :param path: The path to the desired item, relative to this item, with the last element being the name of the feature processor.
-:type path: string
+:type path: str
 :return: The extracted feature object from the path, relative to this item.
 """
 %enddef
@@ -319,7 +319,7 @@ This function can be used as a replacement for :meth:`SItem.path_to_derived_feat
 :meth:`SItem.path_to_item`, or :meth:`SItem.path_to_item`.
 
 :param path: The path to the desired item, feature, or feature processor, relative to the given item.
-:type path: string
+:type path: str
 :return: The object at the end of the path, which may be another item, a item feature, or a feature that has been calculated by a feature processor.
 """
 %enddef
@@ -348,7 +348,7 @@ __contains__(feat_name)
 Query if named feature is present in this item.
 
 :param feat_name: The feature key which to test for.
-:type feat_name: string
+:type feat_name: str
 :return: ``True`` or ``False``.
 :rtype: bool
 """
@@ -364,7 +364,7 @@ __getitem__(key)
 Get the key-value feature pair.
 
 :param key: The desired feature's key.
-:type key: string
+:type key: str
 :return: The feature's value object, or ``None`` if no such key-value pair.
 :rtype: SObject
 """
@@ -380,7 +380,7 @@ __setitem__(key, value)
 Set the key-value feature pair.
 
 :param key: The feature's key.
-:type key: string
+:type key: str
 :param value: The feature's value object.
 :type value: SObject
 :note: An existing key-value pair in the item's features with the given key will be deleted.
@@ -397,7 +397,7 @@ __delitem__(key)
 Delete the key-value feature pair.
 
 :param key: The feature's key.
-:type key: string
+:type key: str
 """
 %enddef
 
@@ -433,7 +433,7 @@ as a Speect object. So instead we can use this function::
 which will return the feature object as it is in Speect, i.e. an ``SObject``.
 
 :param key: The key of the key-value pair to get.
-:type key: string
+:type key: str
 :return: The feature associated with the given key or ``None`` if no such key-value pair.
 :rtype: :class:`SObject`
 """

@@ -64,7 +64,7 @@ relation, initializes it, and sets it in the utterance.
 
 
 :param name: The name of the new relation to create.
-:type name: string
+:type name: str
 :return: Newly created relation object
 :rtype: :class:`SRelation`
 :raises: RuntimeError if Speect was unable to create the relation.
@@ -83,7 +83,7 @@ Get the named relation from the utterance.
 
 
 :param name: The name of the relation to get.
-:type name: string
+:type name: str
 :return: Named relation, or ``None`` if such a relation does not exist in the utterance.
 :rtype: :class:`SRelation`
 """
@@ -115,7 +115,7 @@ Delete the relation with the given name from the utterance.
 
 
 :param name: The relation to delete from the utterance.
-:type name: string
+:type name: str
 """
 %enddef
 
@@ -130,7 +130,7 @@ Test if the utterance contains the named relation.
 
 
 :param name: The relation name to test for.
-:type name: string
+:type name: str
 :return: ``True`` or ``False``.
 :rtype: bool
 """

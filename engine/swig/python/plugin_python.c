@@ -328,10 +328,14 @@
 %{
 def get_plugin_info(path):
     """
+    get_plugin_info(path)
+
     Get information on the plug-in at the given path.
     If the given path does not include any path separators (just a file name)
     then the path is concatenated with the default plug-in path.
 
+    :param path: Path to plug-in file.
+    :type path: str
     :return: A dictionary with information on the given plug-in.
     :rtype: dict
     """

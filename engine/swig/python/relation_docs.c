@@ -49,7 +49,7 @@ the given utterance.
 :param utt: The utterance that the newly created relation should be placed in.
 :type utt: :class:`SUtterance`
 :param name: The name of the newly created relation.
-:type name: string
+:type name: str
 :return: Newly created relation object.
 :rtype: :class:`SRelation`
 :raises: RuntimeError if Speect was unable to create the utterance.
@@ -134,7 +134,7 @@ name()
 Get the relation's name.
 
 :return: The relation's name.
-:rtype: string
+:rtype: str
 """
 %enddef
 

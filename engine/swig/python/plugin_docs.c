@@ -50,7 +50,7 @@ If the given path does not include any path separators (just a file name)
 then the path is concatenated with the default plug-in path.
 
 :param path: The full path and name of the plug-in to load.
-:type path: string
+:type path: str
 :return: Plug-in object
 :rtype: :class:`SPlugin`
 :raises: RuntimeError if Speect was unable to load the plug-in.

@@ -44,7 +44,7 @@ of the voice's data objects have already been loaded, then they are shared.
 This reduces the need for multiple redundant calls.
 
 :param path: The name of the voice configuration file to load.
-:type path: string
+:type path: str
 :return: Voice object
 :rtype: :class:`SVoice`
 :raises: RuntimeError if Speect was unable to load the voice.
@@ -63,9 +63,9 @@ synth(input[, utt_type='text'])
 Synthesize an utterance of the given utterance type with the voice.
 
 :param input: The text to synthesize.
-:type input: string
+:type input: str
 :param utt_type: The utterance type to synthesis.
-:type utt_type: string
+:type utt_type: str
 :return: The synthesized utterance.
 :rtype: :class:`SUtterance`
 """
@@ -85,7 +85,7 @@ and now it must be synthesized with a different utterance type.
 :param utt: The utterance to re-synthesize.
 :type utt: :class:`SUtterance`
 :param utt_type: The utterance type for re-synthesis.
-:type utt_type: string
+:type utt_type: str
 """
 %enddef
 
@@ -99,7 +99,7 @@ name()
 Get the voice's name.
 
 :return: The name of the voice.
-:rtype: string
+:rtype: str
 """
 %enddef
 
@@ -113,7 +113,7 @@ description()
 Get the voice's description.
 
 :return: The description of the voice.
-:rtype: string
+:rtype: str
 """
 %enddef
 
@@ -127,7 +127,7 @@ gender()
 Get the voice's gender.
 
 :return: The gender of the voice.
-:rtype: string
+:rtype: str
 """
 %enddef
 
@@ -141,7 +141,7 @@ language()
 Get the voice's language.
 
 :return: The language of the voice.
-:rtype: string
+:rtype: str
 """
 %enddef
 
@@ -155,7 +155,7 @@ lang_code()
 Get the voice's ``ISO 639-2`` language code.
 
 :return: The ``ISO 639-2`` language code of the voice.
-:rtype: string
+:rtype: str
 """
 %enddef
 
@@ -183,7 +183,7 @@ data_get(key)
 Return the voice data object reference by the given key.
 
 :param key: The key of the data object as referenced in the voice.
-:type key: string
+:type key: str
 :return: The data object or ``None`` if no such object exists.
 """
 %enddef
@@ -198,7 +198,7 @@ data_set(key, object)
 Set a data object, with the given key, in the voice.
 
 :param key: The key of the data object.
-:type key: string
+:type key: str
 :type object: any object type.
 :note: If the given key references a data object present in the voice, then that data object will be deleted.
 """
@@ -214,7 +214,7 @@ data_del(key)
 Delete the voice data object referenced by the given key.
 
 :param key: The key of the data object.
-:type key: string
+:type key: str
 """
 %enddef
 
@@ -228,7 +228,7 @@ uttType_get(key)
 Return the voice utterance type definition reference by the given key.
 
 :param key: The key of the utterance type definition as referenced in the voice.
-:type key: string
+:type key: str
 :return: The utterance type definition or ``None`` if no such definition exists.
 :rtype: :class:`SList` or list
 """
@@ -244,7 +244,7 @@ uttType_set(key, uttType)
 Set an utterance type definition, with the given key, in the voice.
 
 :param key: The key of the utterance type.
-:type key: string
+:type key: str
 :param uttType: The utterance type definition.
 :type uttType: list
 """
@@ -260,7 +260,7 @@ uttType_del(key)
 Delete the voice utterance type definition referenced by the given key.
 
 :param key: The key of the utterance type definition.
-:type key: string
+:type key: str
 """
 %enddef
 
@@ -274,7 +274,7 @@ uttProcessor_get(key)
 Return the voice utterance processor reference by the given key.
 
 :param key: The key of the utterance processor as referenced in the voice.
-:type key: string
+:type key: str
 :return: The utterance processor or ``None`` if no such definition exists.
 :rtype: :class:`SUttProcessor`
 """
@@ -290,7 +290,7 @@ uttProcessor_set(key, uttProc)
 Set an utterance processor, with the given key, in the voice.
 
 :param key: The key of the utterance processor.
-:type key: string
+:type key: str
 :param uttProc: The utterance processor.
 :type uttProc: :class:`SUttProcessor`
 """
@@ -306,7 +306,7 @@ uttProcessor_del(key)
 Delete the voice utterance processor referenced by the given key.
 
 :param key: The key of the utterance processor.
-:type key: string
+:type key: str
 """
 %enddef
 
@@ -320,7 +320,7 @@ featProcessor_get(key)
 Return the voice feature processor reference by the given key.
 
 :param key: The key of the feature processor as referenced in the voice.
-:type key: string
+:type key: str
 :return: The feature processor or ``None`` if no such definition exists.
 :rtype: :class:`SFeatProcessor`
 """
@@ -336,7 +336,7 @@ featProcessor_set(key, featProc)
 Set a feature processor, with the given key, in the voice.
 
 :param key: The key of the feature processor.
-:type key: string
+:type key: str
 :param featProc: The feature processor.
 :type featProc: :class:`SFeatProcessor`
 """
@@ -352,7 +352,7 @@ featProcessor_del(key)
 Delete the voice feature processor referenced by the given key.
 
 :param key: The key of the feature processor.
-:type key: string
+:type key: str
 """
 %enddef
 

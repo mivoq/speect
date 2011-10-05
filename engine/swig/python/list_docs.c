@@ -55,7 +55,7 @@ is the index of the item in the list. Called to implement evaluation of::
     i = self[key]
 
 :param key: The index of the item in the list.
-:type key: integer
+:type key: int
 :return: The item associated with the given key (index).
 :note: Indexing starts from 0.
 """

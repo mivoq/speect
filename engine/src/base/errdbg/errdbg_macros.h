@@ -274,9 +274,13 @@ S_BEGIN_C_DECLS
 #ifdef SPCT_DOXYGEN_ONLY
 #  define S_DEBUG(LEVEL, MSG, ...)
 #else
-#  ifdef SPCT_DEBUGMODE
-#    define S_DEBUG _s_dbg
-#  else /* !SPCT_DEBUGMODE */
+#  ifdef SPCT_ERROR_HANDLING
+#    ifdef SPCT_DEBUGMODE
+#      define S_DEBUG _s_dbg
+#    else /* !SPCT_DEBUGMODE */
+#      define S_DEBUG _s_debug_dummy
+#    endif /* SPCT_DEBUGMODE */
+#  else /* !SPCT_ERROR_HANDLING and !SPCT_DEBUGMODE */
 #    define S_DEBUG _s_debug_dummy
 #  endif /* SPCT_DEBUGMODE */
 #endif /* SPCT_DOXYGEN_ONLY */

@@ -1,8 +1,5 @@
 #!/bin/sh
 
-cd doxygen
-rm -fr xml html
-doxygen Doxyfile
-cd ..
+make_doxygen
 make clean
 make html

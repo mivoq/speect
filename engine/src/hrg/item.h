@@ -577,6 +577,10 @@ typedef struct
  *
  * @note If this function fails the item will be deleted and the @c
  * self pointer will be set to @c NULL.
+ *
+ * @note Mostly for internal use, see #SItemAppend, #SItemPrepend,
+ * #SItemAddDaughter, #SRelationAppend and #SRelationPrepend for the
+ * creation of items.
  */
 S_API void SItemInit(SItem **self, const SRelation *rel, const SItem *toShare,
 					 s_erc *error);
@@ -758,7 +762,8 @@ S_API SItem *SItemLastDaughter(const SItem *self, s_erc *error);
 /**
  * Create a new item and add it as a daughter of the given item @c
  * self. The new item will share it's content with the given item
- * @c toShare.
+ * @c toShare. The new item will be appended to the last daughter of
+ * the given item.
  * @public @memberof SItem
  *
  * @param self The given item.

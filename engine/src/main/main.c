@@ -82,16 +82,26 @@ S_API s_erc speect_init(s_logger *logger)
 	setlocale(LC_ALL, "");
 
 #ifdef SPCT_ERROR_HANDLING
-	/* create logger to stderr if no logger was given and
-	 * SPCT_ERROR_HANDLING is defined
+	/* create a logger if no logger was given and
+	 * SPCT_ERROR_HANDLING is defined.
 	 */
 	if (logger == NULL)
 	{
-		local_logger = s_logger_console_new(FALSE); /* FALSE == log to stderr */
+		/* if SPCT_DEBUGMODE is defined (defined for CMake Debug
+		 * builds) then log to console (stderr), else a null logger
+		 * will be created (error checking still takes place, not
+		 * logged).
+		 */
+#ifdef SPCT_DEBUGMODE
+		/* FALSE == log to stderr */
+		local_logger = s_logger_console_new(FALSE);
+#else /* !SPCT_DEBUGMODE */
+		local_logger = s_logger_null_new();
+#endif /* SPCT_DEBUGMODE */
 		if (local_logger == NULL)
 		{
 			S_ERR_PRINT(S_FAILURE, "speect_init",
-						"Failed to create a logger to stderr");
+						"Failed to create a null logger");
 			initialized_count--;
 			return S_FAILURE;
 		}

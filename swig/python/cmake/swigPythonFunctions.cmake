@@ -45,7 +45,7 @@ endmacro(speect_plugin_swig_python_flags)
 #                       Create plug-in SWIG Python interface                         #
 #------------------------------------------------------------------------------------#
 #
-# macro(speect_plugin_swig_python_interface)
+# speect_plugin_swig_python_interface()
 #
 # Create a plug-in interface file plugin_lowercase_name.i 
 # The file will be created in the CMAKE_CURRENT_BINARY_DIR
@@ -67,7 +67,7 @@ endmacro(speect_plugin_swig_python_flags)
 # :param swig_python_typemaps: SWIG Python typemap files, containing typemaps for
 #                               the plug-in class functions.
 # :type swig_python_typemaps: CMake list
-# :param swig_common: SWIG common interface files, containing SWIG language independant 
+# :param swig_common: SWIG common interface files, containing SWIG language independent
 #                     interface definitions for the plug-in class functions.
 # :type swig_common: CMake list
 # :param swig_python: SWIG Python interface files, containing SWIG Python specific
@@ -189,7 +189,7 @@ endmacro(speect_plugin_swig_python_interface)
 #                       Create plug-in SWIG Python loader                            #
 #------------------------------------------------------------------------------------#
 #
-# macro(speect_plugin_swig_python_loader)
+# speect_plugin_swig_python_loader()
 #
 # Create a plug-in loader file plugin_lowercase_name.i 
 # This is just a simple wrapper that loads the plug-in in Python when imported.

@@ -50,7 +50,7 @@
 # :type version_patch: int
 #
 # For example: speect_plugin_definition(Viterbi "SViterbi" 0 9 5)
-# will create a plug-in viterbi.spi that points to viterbi.spi.0 which in tern
+# will create a plug-in viterbi.spi that points to viterbi.spi.0 which in turn
 # points to viterbi.spi.0.9.5
 #
 

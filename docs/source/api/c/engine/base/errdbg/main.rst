@@ -7,7 +7,7 @@ Error Handling And Debugging
 ============================
 
 Error handling and debugging module, utilities, macros and
-definitions.  See the :doc:`../../../../topics/errdbg_topic` topic
+definitions.  See the :doc:`../../../../../topics/errdbg_topic` topic
 guide for more details. 
 
 Summary

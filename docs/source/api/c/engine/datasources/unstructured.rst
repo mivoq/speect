@@ -9,7 +9,7 @@ an integer from a file. There are currently two different
 :ref:`implementations <implementations_datasource>` of the SDatasource
 object.
 
-Also see :doc:`../../../topics/examples/datasources_example`.
+Also see :doc:`../../../../examples/c/datasources_example`.
 
 
 Definitions

@@ -8,4 +8,5 @@ API
    :maxdepth: 2
 
    cmake/main
-   engine/main
+   c/engine/main
+   python/engine/main

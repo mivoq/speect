@@ -15,7 +15,7 @@ represent structures such as words, syllables, phonemes or even
 duration targets and the items are the content of these
 structures. 
 
-See :doc:`../api/engine/hrg/main` for a detailed description
+See :doc:`../api/c/engine/hrg/main` for a detailed description
 of the API.
 
 
@@ -39,7 +39,7 @@ items.
 
 The code to recreate the HRG structure in :ref:`Figure 1 <figure_hrg>`
 can be found at ``speect/engine/examples/hrg/create_docs_example.c``,
-or :doc:`examples/hrg_example`. Here we will show some snippets to
+or :doc:`../examples/c/hrg_example`. Here we will show some snippets to
 explain the process of building an utterance.
 
 An utterance is created by a call to :c:macro:`S_NEW`, after which it must

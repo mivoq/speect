@@ -26,7 +26,7 @@ The regular expressions are matched using a purely NFA
 (nondeterministic finite automaton) based approach. No backtracking
 algorithm is provided.
 
-Also see :doc:`../../../../topics/examples/regex_example`.
+Also see :doc:`../../../../../examples/c/regex_example`.
 
 
 Syntax Reference

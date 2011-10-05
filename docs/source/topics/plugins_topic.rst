@@ -13,7 +13,7 @@ acoustic specific code. This extending of Speect is done by defining
 new classes (see :doc:`object_system_topic`) in the plug-ins and
 registering them with the object system, so that objects of these new
 classes can be instantiated and used by other code. See
-:doc:`../api/engine/pluginmanager/main` for a detailed description of
+:doc:`../api/c/engine/pluginmanager/main` for a detailed description of
 the API.
 
 Plugins are deployed as dynamic libraries. Dynamic libraries allow

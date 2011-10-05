@@ -8,6 +8,7 @@ Documentation
    :maxdepth: 2
 
    api/main
+   examples/main
    topics/main
    installation
    todo

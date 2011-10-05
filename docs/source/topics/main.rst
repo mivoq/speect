@@ -20,24 +20,6 @@ Topic Guides
    plugins_topic
 
 
-.. index:: ! Examples (C API)
-
-Examples
-========
-
-.. toctree::
-   :maxdepth: 2
-
-   
-   examples/hrg_example
-   examples/errdbg_example
-   examples/objsystem_example 
-   examples/hash_table_example 
-   examples/regex_example
-   examples/mem_example
-   examples/list_iteration_example
-   examples/datasources_example 
-
 
 here be topic guides
 

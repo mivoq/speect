@@ -12,7 +12,7 @@ Processors
 Processors modify or extract features from utterances (:c:type:`SUtterance`)
 or items (:c:type:`SItem`).
 
-See :doc:`../api/engine/processors/main` for a detailed description
+See :doc:`../api/c/engine/processors/main` for a detailed description
 of the API.
 
 

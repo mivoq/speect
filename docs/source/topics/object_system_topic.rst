@@ -49,7 +49,7 @@ dynamically allocated by the object's class. The first member of an
 object structure definition is always an object of the object's
 superclass type. Objects keep a reference count (see :doc:`reference_counting_topic`).
 
-See :doc:`../api/engine/base/objsystem/main` for a detailed description
+See :doc:`../api/c/engine/base/objsystem/main` for a detailed description
 of the API.
 
 
@@ -781,7 +781,7 @@ Example Usage
 
 The following code snippets were extracted from ``speect/engine/examples/base/objsystem/objsystem_example.c``
 and are abbreviated to show the basic usage of the above defined objects. The example can also be viewed at
-:doc:`examples/objsystem_example`.
+:doc:`../examples/c/objsystem_example`.
 
 We can now declare and instantiate circles and rectangles as follows:
 
@@ -863,5 +863,5 @@ The call to :c:macro:`S_DELETE` will do two things:
 
 Not all of SObjectClass's methods were implemented in these examples,
 but the full details of each method can also be found at
-:doc:`../api/engine/base/objsystem/SObjectClass_structure`.
+:doc:`../api/c/engine/base/objsystem/SObjectClass_structure`.
 

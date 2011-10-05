@@ -7,7 +7,7 @@
 Voices
 ======
 
-Voices and voice-management system for Speect Engine.
+Voices and voice-management system for the Speect Engine.
 
 
 .. toctree::

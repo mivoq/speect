@@ -8,7 +8,7 @@ Hash Table
 ==========
 
 A Hash Table data structure definition and functions. Also see
-:doc:`../../../../topics/examples/hash_table_example`.
+:doc:`../../../../../examples/c/hash_table_example`.
 
 
 Summary

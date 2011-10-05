@@ -50,12 +50,12 @@ Iterator Definitions
 ====================
 
 .. index::
-   single: Iterators (C API); SIterator
+   single: Containers (C API); SIterator
 
 SIterator provides an interface for iteration over the objects stored in a container.
 Specific container implementations must implement the SIteratorClass functions.
 
-Also see :doc:`../../../topics/examples/list_iteration_example`.
+Also see :doc:`../../../../examples/c/list_iteration_example`.
 
 .. doxybridge:: SIterator
    :type: speect object

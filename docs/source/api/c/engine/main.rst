@@ -1,4 +1,4 @@
-.. _engine/main:
+.. _c/engine/main:
 
 ===================
 Speect Engine C API

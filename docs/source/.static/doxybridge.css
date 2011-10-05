@@ -30,7 +30,10 @@ dl.speectclass,
 dl.speectobject,
 dl.cmake,
 dl.cmake_func,
-dl.cmake_macro
+dl.cmake_macro,
+dl.method,
+dl.attribute,
+dl.data
 {
     border-top: 2px solid #888;
 }

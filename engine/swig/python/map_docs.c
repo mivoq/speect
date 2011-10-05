@@ -111,7 +111,7 @@ which will return the value object as it is in Speect, i.e. an ``SObject``.
 :param key: The key of the key-value pair to get.
 :type key: string
 :return: The value associated with the given key or ``None`` if no such key-value pair.
-:rtype: SObject
+:rtype: :class:`SObject`
 """
 %enddef
 

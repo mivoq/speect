@@ -224,10 +224,10 @@ def __str__(self):
     :return: A string representation of the item.
     :rtype: string
     """
-    return self.to_string()
+    return self._to_string()
 
 
-def to_string(self, prefix="", label="Item"):
+def _to_string(self, prefix="", label="Item"):
     # helper function
     label_spacing = ''
     for s in range(0, len(label)):
@@ -260,7 +260,7 @@ def to_string(self, prefix="", label="Item"):
     n = 0
     daughter_prefix = '%s    ' %prefix
     while i:
-        stri += '%s' %i.to_string(prefix=daughter_prefix,
+        stri += '%s' %i._to_string(prefix=daughter_prefix,
                                  label='Daughter')
         n += 1
         i = self.daughter(n)

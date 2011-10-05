@@ -51,7 +51,7 @@ run(utt)
 Execute the UttProcessor on the given utterance.
 
 :param utt: The utterance on which to execute the utterance processor.
-:type utt: SUtterance
+:type utt: :class:`SUtterance`
 """
 %enddef
 
@@ -63,7 +63,7 @@ Execute the UttProcessor on the given utterance.
 Get the features that are defined for the utterance processor.
 
 :return: A map of the utterance processor features.
-:rtype: SMap
+:rtype: :class:`SMap`
 """
 %enddef
 

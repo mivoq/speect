@@ -52,7 +52,7 @@ then the path is concatenated with the default plug-in path.
 :param path: The full path and name of the plug-in to load.
 :type path: string
 :return: Plug-in object
-:rtype: Swig Object of type SPlugin
+:rtype: :class:`SPlugin`
 :raises: RuntimeError if Speect was unable to load the plug-in.
 """
 %enddef

@@ -46,7 +46,7 @@ This reduces the need for multiple redundant calls.
 :param path: The name of the voice configuration file to load.
 :type path: string
 :return: Voice object
-:rtype: SVoice
+:rtype: :class:`SVoice`
 :raises: RuntimeError if Speect was unable to load the voice.
 :note: The ``path`` can be an absolute or relative path to the voice configuration file.
 """
@@ -67,7 +67,7 @@ Synthesize an utterance of the given utterance type with the voice.
 :param utt_type: The utterance type to synthesis.
 :type utt_type: string
 :return: The synthesized utterance.
-:rtype: SUtterance
+:rtype: :class:`SUtterance`
 """
 %enddef
 
@@ -83,7 +83,7 @@ is used when an utterance was synthesized with a certain utterance type,
 and now it must be synthesized with a different utterance type.
 
 :param utt: The utterance to re-synthesize.
-:type utt: SUtterance
+:type utt: :class:`SUtterance`
 :param utt_type: The utterance type for re-synthesis.
 :type utt_type: string
 """
@@ -199,8 +199,7 @@ Set a data object, with the given key, in the voice.
 
 :param key: The key of the data object.
 :type key: string
-:param object: A Swig Object of type SObject (or an object that inherits from ``SObject`` in the Speect Engine).
-:type object: Swig Object of type SObject
+:type object: any object type.
 :note: If the given key references a data object present in the voice, then that data object will be deleted.
 """
 %enddef
@@ -231,7 +230,7 @@ Return the voice utterance type definition reference by the given key.
 :param key: The key of the utterance type definition as referenced in the voice.
 :type key: string
 :return: The utterance type definition or ``None`` if no such definition exists.
-:rtype: list
+:rtype: :class:`SList` or list
 """
 %enddef
 
@@ -277,7 +276,7 @@ Return the voice utterance processor reference by the given key.
 :param key: The key of the utterance processor as referenced in the voice.
 :type key: string
 :return: The utterance processor or ``None`` if no such definition exists.
-:rtype: SUttProcessor
+:rtype: :class:`SUttProcessor`
 """
 %enddef
 
@@ -293,7 +292,7 @@ Set an utterance processor, with the given key, in the voice.
 :param key: The key of the utterance processor.
 :type key: string
 :param uttProc: The utterance processor.
-:type uttProc: SUttProcessor
+:type uttProc: :class:`SUttProcessor`
 """
 %enddef
 
@@ -323,7 +322,7 @@ Return the voice feature processor reference by the given key.
 :param key: The key of the feature processor as referenced in the voice.
 :type key: string
 :return: The feature processor or ``None`` if no such definition exists.
-:rtype: SFeatProcessor
+:rtype: :class:`SFeatProcessor`
 """
 %enddef
 
@@ -339,7 +338,7 @@ Set a feature processor, with the given key, in the voice.
 :param key: The key of the feature processor.
 :type key: string
 :param featProc: The feature processor.
-:type featProc: SFeatProcessor
+:type featProc: :class:`SFeatProcessor`
 """
 %enddef
 
@@ -365,7 +364,7 @@ Delete the voice feature processor referenced by the given key.
 Get a list of keys of the utterance types that are defined for the voice.
 
 :return: A list of keys of the utterance types defined for the voice.
-:rtype: list
+:rtype: :class:`SList`
 """
 %enddef
 
@@ -377,7 +376,7 @@ Get a list of keys of the utterance types that are defined for the voice.
 Get a list of keys of the utterance processors that are defined for the voice.
 
 :return: A list of keys of the utterance processors defined for the voice.
-:rtype: list
+:rtype: :class:`SList`
 """
 %enddef
 
@@ -389,7 +388,7 @@ Get a list of keys of the utterance processors that are defined for the voice.
 Get a list of keys of the data objects that are defined for the voice.
 
 :return: A list of keys of the data objects defined for the voice.
-:rtype: list
+:rtype: :class:`SList`
 """
 %enddef
 
@@ -401,7 +400,7 @@ Get a list of keys of the data objects that are defined for the voice.
 Get a list of keys of the feature processors that are defined for the voice.
 
 :return: A list of keys of the feature processors defined for the voice.
-:rtype: list
+:rtype: :class:`SList`
 """
 %enddef
 
@@ -413,7 +412,7 @@ Get a list of keys of the feature processors that are defined for the voice.
 Get the features that are defined for the voice.
 
 :return: A map of the voice features.
-:rtype: SMap
+:rtype: :class:`SMap`
 """
 %enddef
 

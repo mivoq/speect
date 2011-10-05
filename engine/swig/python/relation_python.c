@@ -59,15 +59,15 @@ def __str__(self):
     :return: A string representation of the relation.
     :rtype: string
     """
-    return self.to_string()
+    return self._to_string()
 
 
-def to_string(self, prefix=""):
+def _to_string(self, prefix=""):
     # helper function
     stri = "%sRelation \'%s\':\n" %(prefix, self.name())
     item_prefix = "%s    " %prefix
     for i in self:
-        stri += i.to_string(prefix=item_prefix)
+        stri += i._to_string(prefix=item_prefix)
 
     return stri
 %}

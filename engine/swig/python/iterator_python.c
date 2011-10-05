@@ -53,20 +53,20 @@
 
 
 		S_CLR_ERR(&error);
-		if ($self->itr == NULL)
+		if ($self->_itr == NULL)
 		{
 			PyErr_SetNone(PyExc_StopIteration);
 			return NULL;
 		}
 
-		key = SIteratorKey($self->itr, &error);
+		key = SIteratorKey($self->_itr, &error);
 		if (error != S_SUCCESS)
 		{
 			PyErr_SetString(PyExc_RuntimeError, "Call to \"SIteratorKey\" failed");
 			return NULL;
 		}
 
-		$self->itr = SIteratorNext($self->itr);
+		$self->_itr = SIteratorNext($self->_itr);
 		pobject = s_set_pyobject_str(key, &error);
 		if (error != S_SUCCESS)
 		{
@@ -98,20 +98,20 @@
 
 
 		S_CLR_ERR(&error);
-		if ($self->itr == NULL)
+		if ($self->_itr == NULL)
 		{
 			PyErr_SetNone(PyExc_StopIteration);
 			return NULL;
 		}
 
-		iObject = SIteratorObject($self->itr, &error);
+		iObject = SIteratorObject($self->_itr, &error);
 		if (error != S_SUCCESS)
 		{
 			PyErr_SetString(PyExc_RuntimeError, "Call to \"SListIteratorValue\" failed");
 			return NULL;
 		}
 
-		$self->itr = SIteratorNext($self->itr);
+		$self->_itr = SIteratorNext($self->_itr);
 		pobject = s_sobject_2_pyobject(iObject, FALSE, &error);
 		if (error != S_SUCCESS)
 			return NULL;

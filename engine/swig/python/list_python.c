@@ -50,7 +50,7 @@
 
 		if ((key >= (int)num_objects) || (key < 0))
 		{
-			PyErr_SetString(PyExc_KeyError, "Given key index out of bounds");
+			PyErr_SetString(PyExc_IndexError, "Given key index out of bounds");
 			return NULL;
 		}
 
@@ -98,9 +98,7 @@
 
 		if ((key >= (int)num_objects) || (key < 0))
 		{
-			S_CTX_ERR(error, S_FAILURE,
-					  "SList::__setitem__()",
-					  "Given key index out of bounds");
+			PyErr_SetString(PyExc_IndexError, "Given key index out of bounds");
 			return;
 		}
 
@@ -173,7 +171,7 @@
 
 		if ((key >= (int)num_objects) || (key < 0))
 		{
-			PyErr_SetString(PyExc_KeyError, "Given key index out of bounds");
+			PyErr_SetString(PyExc_IndexError, "Given key index out of bounds");
 			return;
 		}
 

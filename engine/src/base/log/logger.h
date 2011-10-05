@@ -210,6 +210,15 @@ S_API s_logger *s_logger_console_new(s_bool log_to_stdout);
 
 
 /**
+ * Create a new null logger. A null logger does not log any messages.
+ *
+ * @note The null logger must be destroyed (#s_logger_destroy) and
+ * freed in the same manner as the other loggers.
+ */
+S_API s_logger *s_logger_null_new(void);
+
+
+/**
  * @}
  */
 

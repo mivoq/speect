@@ -80,9 +80,15 @@ static s_erc v_write_console(const s_logger *logger, s_log_event level, const ch
 							 const char *func_name, const char *file_name, int line_num,
 							 const char *user_msg, va_list argp);
 
+static s_erc v_write_null(const s_logger *logger, s_log_event level, const char *error_msg,
+						  const char *func_name, const char *file_name, int line_num,
+						  const char *user_msg, va_list argp);
+
 static s_erc destroy_file(s_logger *self);
 
 static s_erc destroy_console(s_logger *self);
+
+static s_erc destroy_null(s_logger *self);
 
 
 /************************************************************************************/
@@ -93,12 +99,9 @@ static s_erc destroy_console(s_logger *self);
 
 S_API s_logger *s_logger_file_new(const char *path)
 {
-	s_erc this_error;
 	s_logger *logger;
 	s_logger_private_info *private_data;
 
-
-	S_CLR_ERR(&this_error);
 
 	if (path == NULL)
 	{
@@ -160,12 +163,9 @@ S_API s_logger *s_logger_file_new(const char *path)
 
 S_API s_logger *s_logger_console_new(s_bool log_to_stdout)
 {
-	s_erc this_error;
 	s_logger *logger;
 	s_logger_private_info *private_data;
 
-
-	S_CLR_ERR(&this_error);
 
 	private_data = S_MALLOC(s_logger_private_info, 1);
 	if (private_data == NULL)
@@ -212,6 +212,30 @@ S_API s_logger *s_logger_console_new(s_bool log_to_stdout)
 	/* initialize file writer function pointers */
 	logger->v_write = &v_write_console;
 	logger->destroy = &destroy_console;
+
+
+	return logger;
+}
+
+
+S_API s_logger *s_logger_null_new(void)
+{
+	s_logger *logger;
+
+
+	logger = S_MALLOC(s_logger, 1);
+	if (logger == NULL)
+	{
+		S_FTL_ERR_PRINT(S_MEMERROR, "s_logger_null_new",
+						"Failed to allocate memory for logger object");
+		return NULL;
+	}
+
+	logger->data = NULL;
+
+	/* initialize file writer function pointers */
+	logger->v_write = &v_write_null;
+	logger->destroy = &destroy_null;
 
 
 	return logger;
@@ -442,6 +466,24 @@ static s_erc v_write_console(const s_logger *logger, s_log_event level, const ch
 }
 
 
+static s_erc v_write_null(const s_logger *logger, s_log_event level, const char *error_msg,
+						  const char *func_name, const char *file_name, int line_num,
+						  const char *user_msg, va_list argp)
+{
+	/* does nothing */
+	return S_SUCCESS;
+
+	S_UNUSED(logger);
+	S_UNUSED(level);
+	S_UNUSED(error_msg);
+	S_UNUSED(func_name);
+	S_UNUSED(file_name);
+	S_UNUSED(line_num);
+	S_UNUSED(user_msg);
+	S_UNUSED(argp);
+}
+
+
 static s_erc destroy_file(s_logger *self)
 {
 	s_erc this_error;
@@ -497,3 +539,12 @@ static s_erc destroy_console(s_logger *self)
 	return this_error;
 }
 
+
+static s_erc destroy_null(s_logger *self)
+{
+	self->data = NULL;
+	self->v_write = NULL;
+	self->destroy = NULL;
+
+	return S_SUCCESS;
+}

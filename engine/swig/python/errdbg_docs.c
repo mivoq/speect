@@ -38,7 +38,7 @@
 """
 Query whether the *Error and Debugging System* is activated or
 not. The system can be activated/deactivate with the compile time
-definition of ``SPCT_ERROR_HANDLING``. If deactivated then no
+definition of :c:macro:`SPCT_ERROR_HANDLING`. If deactivated then no
 logging or checking of error codes will occur.
 
 :rtype: bool

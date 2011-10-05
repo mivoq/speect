@@ -7,7 +7,6 @@ Speect Engine Python API
 .. module:: speect
    :synopsis: Speect Engine classes and functions 
 
-The main classes provided by the Speect Engine module are:
 
 .. toctree::
    :maxdepth: 1
@@ -19,3 +18,4 @@ The main classes provided by the Speect Engine module are:
    containers/main
    objsystem/main
    plugin
+   errlog/main

@@ -1,9 +1,9 @@
-.. index:: ! Error Handling And Debugging (C API)
+.. index:: ! Error Handling and Debugging (C API)
 
 .. _errdbg/main:
 
 ============================
-Error Handling And Debugging
+Error Handling and Debugging
 ============================
 
 Error handling and debugging module, utilities, macros and
@@ -34,14 +34,14 @@ Definitions
 ===========
 
 .. index:: 
-   single: Error Handling And Debugging (C API); error codes
+   single: Error Handling and Debugging (C API); error codes
 
 .. doxybridge:: s_erc
    :type: typedef enum
 
 
 .. index:: 
-   single: Error Handling And Debugging (C API); debugging levels
+   single: Error Handling and Debugging (C API); debugging levels
 
 .. doxybridge:: s_dbg_lvl
    :type: typedef enum

@@ -17,7 +17,6 @@ Functions
 
 .. autofunction:: version()
 
-.. autofunction:: get_plugin_info()
 
 
 Attributes

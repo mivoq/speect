@@ -24,3 +24,9 @@ SPlugin
       The ``SPlugin`` object inherits from ``SObject`` in the Speect Engine
       and can therefore be used in functions/methods that require parameters
       of type ``SObject``.
+
+
+Related
+=======
+
+.. autofunction:: speect.get_plugin_info()

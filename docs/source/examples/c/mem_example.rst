@@ -1,6 +1,7 @@
 .. _topics/examples/mem_example:
 
-.. index:: Examples (C API) Memory Allocation
+.. index:: 
+   single: Examples (C API); Memory Allocation
 
 =========================
 Memory Allocation Example

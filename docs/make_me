@@ -1,5 +1,5 @@
 #!/bin/sh
 
-make_doxygen
+./make_doxygen
 make clean
 make html

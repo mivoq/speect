@@ -1,6 +1,7 @@
 .. _topics/examples/errdbg_example:
 
-.. index:: Examples (C API) Error handling and Debugging
+.. index:: 
+   single: Examples (C API); Error handling and Debugging
 
 ====================================
 Error handling and Debugging Example

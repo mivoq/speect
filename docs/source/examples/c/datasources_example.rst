@@ -1,6 +1,7 @@
 .. _topics/examples/datasources_example:
 
-.. index:: Examples (C API) SDatasource
+.. index:: 
+   single: Examples (C API); SDatasource
 
 ===================
 SDatasource Example

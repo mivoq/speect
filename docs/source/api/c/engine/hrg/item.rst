@@ -141,9 +141,10 @@ Path Features
 -------------
 
 Extract items, item features and item functions by navigating given
-paths on the HRG structure. Paths are strings that are composed from
-tokens describing the path of the requested item/feature, relative to
-a given item. The possible tokens are:
+paths on the HRG structure (see :ref:`HRG Path topic
+<hrg_paths>`). Paths are strings that are composed of period (".")
+separated tokens describing the path of the requested item/feature,
+relative to a given item. The possible tokens are:
 
 =========   ========
 Token       Meaning
@@ -153,7 +154,7 @@ n 	    next item
 daughter    first daughter item
 daughtern   last daughter item
 parent 	    parent item
-R:relname   item as it is in the given relation ``relname``
+R:relname   item *as* it is in the given relation ``relname``
 =========   ========
 
 

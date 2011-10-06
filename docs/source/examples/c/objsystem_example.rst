@@ -1,6 +1,7 @@
 .. _topics/examples/objsystem_example:
 
-.. index:: Examples (C API) Generic Object System
+.. index:: 
+   single: Examples (C API); Generic Object System
 
 =============================
 Generic Object System Example

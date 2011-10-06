@@ -1,6 +1,7 @@
 .. _topics/examples/regex_example:
 
-.. index:: Examples (C API) Regular Expressions 
+.. index:: 
+   single: Examples (C API); Regular Expressions 
 
 ===========================
 Regular Expressions Example

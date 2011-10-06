@@ -5,10 +5,10 @@ Documentation
 =============
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
+   topics/main
    api/main
    examples/main
-   topics/main
    installation
    todo

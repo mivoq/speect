@@ -1,6 +1,7 @@
 .. _topics/examples/hash_table_example:
 
-.. index:: Examples (C API) Hash Table
+.. index:: 
+   single: Examples (C API); Hash Table
 
 ==================
 Hash Table Example

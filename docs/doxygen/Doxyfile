@@ -613,7 +613,7 @@ WARN_LOGFILE           =
 # with spaces.
 
 INPUT                  = /home/aby/Development/speect/engine/src \
-                         /home/aby/Development/speect_build/engine/src
+                         /home/aby/Development/speect/build/engine/src
 
 # This tag can be used to specify the character encoding of the source files 
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding, which is 

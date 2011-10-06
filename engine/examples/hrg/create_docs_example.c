@@ -56,7 +56,7 @@ typedef struct
  * indicates syllable stress
  */
 static const char * const syllable_0[] = { "t", "w", "eh", "n", "1", "t", "iy", "0", NULL };
-static const char * const syllable_1[] = { "f", "@", "th", "0", NULL };
+static const char * const syllable_1[] = { "f", "@", "th", "1", NULL };
 
 /* word - syllables */
 static const word_syls lexical_info[] = {
@@ -136,7 +136,7 @@ int main()
 				  "Failed to create new relation"))
 		goto quit;
 
-	/* Create a phone relation  */
+	/* Create a segment relation  */
 	segmentRel = SUtteranceNewRelation(utt, "Segment", &error);
 	if (S_CHK_ERR(&error, S_CONTERR,
 				  "main",
@@ -207,7 +207,7 @@ int main()
 
 			if (!isdigit)
 			{
-				/* create a phone item in the phone relation */
+				/* create a segment item in the segment relation */
 				segmentItem = SRelationAppend(segmentRel, NULL, &error);
 				if (S_CHK_ERR(&error, S_CONTERR,
 							  "main",

@@ -45,7 +45,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "base/utils/alloc.h"
-#include "base/utils/time.h"
+#include "base/utils/stime.h"
 #include "base/strings/strings.h"
 #include "base/strings/sprint.h"
 #include "base/errdbg/errdbg_macros.h"

@@ -73,7 +73,7 @@
 #include "base/strings/sprint.h"
 #include "base/utils/alloc.h"
 #include "base/strings/strings.h"
-#include "base/utils/math.h"
+#include "base/utils/smath.h"
 
 
 /************************************************************************************/

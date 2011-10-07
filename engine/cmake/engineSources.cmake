@@ -57,9 +57,9 @@ set(SPCT_SRC_FILES
     # src/base/utils
     src/base/utils/alloc.c
     src/base/utils/byteswap.c
-    src/base/utils/math.c
+    src/base/utils/smath.c
     src/base/utils/path.c
-    src/base/utils/time.c
+    src/base/utils/stime.c
     src/base/utils/utils.c
     src/base/utils/vernum.c
 
@@ -228,9 +228,9 @@ set(SPCT_SRC_INCLUDE_FILES
    # src/base/utils
    src/base/utils/alloc.h
    src/base/utils/byteswap.h
-   src/base/utils/math.h
+   src/base/utils/smath.h
    src/base/utils/path.h
-   src/base/utils/time.h
+   src/base/utils/stime.h
    src/base/utils/types.h
    src/base/utils/utils.h
    src/base/utils/vernum.h

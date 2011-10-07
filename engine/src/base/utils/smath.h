@@ -24,29 +24,29 @@
 /************************************************************************************/
 /*                                                                                  */
 /* AUTHOR  : Aby Louw                                                               */
-/* DATE    : 5 June 2009                                                            */
+/* DATE    : 25 March 2008                                                          */
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* Time related functions and definitions.                                          */
+/* Miscellaneous math funtions used in the Speect Engine.                           */
 /*                                                                                  */
 /*                                                                                  */
 /************************************************************************************/
 
-#ifndef _SPCT_TIME_H__
-#define _SPCT_TIME_H__
+#ifndef _SPCT_BASE_SMATH_H__
+#define _SPCT_BASE_SMATH_H__
 
 
 /**
- * @file time.h
- * Time related functions and definitions.
+ * @file smath.h
+ * Miscellaneous math funtions.
  */
 
 
 /**
  * @ingroup SBaseUtils
- * @defgroup STime Time Functions
- * Time related functions and definitions.
+ * @defgroup SMath Math Functions
+ * Basic math functions, macros and constants used in the Speect Engine
  * @{
  */
 
@@ -57,8 +57,9 @@
 /*                                                                                  */
 /************************************************************************************/
 
+#include <math.h>
 #include "include/common.h"
-#include "base/errdbg/errdbg.h"
+#include "base/utils/types.h"
 
 
 /************************************************************************************/
@@ -71,46 +72,153 @@ S_BEGIN_C_DECLS
 
 /************************************************************************************/
 /*                                                                                  */
+/* Math Constants                                                                   */
+/*                                                                                  */
+/************************************************************************************/
+
+/**
+ * Definition of floating point difference tollerance.
+ */
+#define S_FLOAT_TOLERANCE 0.000001
+
+
+/**
+ * Definition of Pi to 20 decimal places.
+ */
+#define S_PI 3.14159265358979323846
+
+
+/************************************************************************************/
+/*                                                                                  */
+/* Macros                                                                           */
+/*                                                                                  */
+/************************************************************************************/
+
+/**
+ * Get the absolute value of the given number.
+ * @hideinitializer
+ *
+ * @param X Number of which to get absolute value of.
+ *
+ * @return Absolute value of @c X.
+ *
+ * @note Macro is type independent.
+ */
+#define S_ABS(X)    ((X) < 0 ? -(X) : (X))
+
+
+/**
+ * Get the minimum of two given values.
+ * @hideinitializer
+ *
+ * @param X Number x.
+ * @param Y Number y.
+ *
+ * @return The minimum of @c X and @c Y.
+ *
+ * @note Macro is type independent.
+ */
+#define S_MIN(X, Y) (((X) < (Y)) ? (X) : (Y))
+
+
+/**
+ * Get the maximum of two given values.
+ * @hideinitializer
+ *
+ * @param X Number x.
+ * @param Y Number y.
+ *
+ * @return The maximum of @c X and @c Y.
+ *
+ * @note Macro is type independent.
+ */
+#define S_MAX(X, Y) (((X) > (Y)) ? (X) : (Y))
+
+
+/**
+ * Test if number is larger or equal to another number, A >= X.
+ * @hideinitializer
+ *
+ * @param A Number to test.
+ * @param X Number to test against.
+ *
+ * @return 1 if @c A is larger or equal to @c X, else 0.
+ *
+ * @note Macro is type independent.
+ */
+#define S_NUM_LE(A, X) (((A) < (X)) ? 0 : 1)
+
+
+/**
+ * Test if number is smaller or equal to another number, A <= X.
+ * @hideinitializer
+ *
+ * @param A Number to test.
+ * @param X Number to test against.
+ *
+ * @return 1 if @c A is smaller or equal to @c X, else 0.
+ *
+ * @note Macro is type independent.
+ */
+#define S_NUM_SE(A, X) (((A) > (X)) ? 0 : 1)
+
+
+/**
+ * Test if a number is in a range, X <= A <= Y. Tests whether the given
+ * number lies in the given range (inclusive).
+ * @hideinitializer
+ *
+ * @param A The number to test.
+ * @param X The left range boundary.
+ * @param Y The right range boundary.
+ *
+ * @return 0 if not in range, else 1.
+ *
+ * @note Macro is type independent.
+ */
+#define S_NUM_IN_RANGE(A, X, Y) (S_NUM_LE(A, X) && S_NUM_SE(A, Y))
+
+
+/************************************************************************************/
+/*                                                                                  */
 /* Function prototypes                                                              */
 /*                                                                                  */
 /************************************************************************************/
 
 /**
- * Initialize the time module. This initialization is required because
- * the standard time functions return values that are statically
- * allocated, and are therefore neither re-entrant or thread safe.
- * @private
+ * Get the relative difference between two floating point
+ * values. Relative distance is defined as the ratio of the difference
+ * to the larger of the two values.
  *
- * @param error Error code.
+ * @param a floating point value.
+ * @param b floating point value.
  *
- * @note Dependent on the @ref SErrDbg module being initialized.
+ * @return Relative difference between @c a and @c b.
  */
-S_LOCAL void _s_time_init(s_erc *error);
+S_API double s_rel_diff(double a, double b);
 
 
 /**
- * Quit the time module. Releases the mutex resources for this module.
- * @private
+ * Test if two floating point numbers are equal within a certain
+ * tolerance. If the relative difference (#s_rel_diff) between the two
+ * values are less or equal to #S_FLOAT_TOLERANCE then they are equal.
  *
- * @param error Error code.
+ * @param a floating point value.
+ * @param b floating point value.
+ *
+ * @return #TRUE or #FALSE.
  */
-S_LOCAL void _s_time_quit(s_erc *error);
+S_API s_bool s_float_equal(double a, double b);
 
 
 /**
- * Get the current time as a string.
+ * Return the logarithm (base 2) of the given number.
  *
- * @param error Error code.
+ * @param a floating point value of which to calculate log2.
  *
- * @return Pointer to a string buffer of the current time. Returns a full
- * representation of the data and time, for example:
- @verbatim
- Tue 03 Nov 2009 13:12:54 SAST
- @endverbatim
- *
- * @note Caller is responsible for memory of returned string buffer.
+ * @return logarithm (base 2) or @c -HUGE_VAL if @c a is #s_float_equal to 0.
  */
-S_API char *s_strtime(s_erc *error);
+S_API double s_log2(double a);
 
 
 /************************************************************************************/
@@ -126,5 +234,4 @@ S_END_C_DECLS
  * end documentation
  */
 
-#endif /* _SPCT_TIME_H__ */
-
+#endif /* _SPCT_BASE_SMATH_H__ */

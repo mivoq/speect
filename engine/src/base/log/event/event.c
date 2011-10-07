@@ -42,7 +42,7 @@
 
 #include <string.h>
 #include <stdio.h>
-#include "base/utils/math.h"
+#include "base/utils/smath.h"
 #include "base/utils/alloc.h"
 #include "base/strings/strings.h"
 #include "base/errdbg/errdbg_defs.h"

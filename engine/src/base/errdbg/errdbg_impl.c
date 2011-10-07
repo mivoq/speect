@@ -44,7 +44,7 @@
 #include <stdlib.h>
 #include "include/common.h"
 #include "base/utils/alloc.h"
-#include "base/utils/math.h"
+#include "base/utils/smath.h"
 #include "base/utils/time.h"
 #include "base/log/event/event.h"
 #include "base/errdbg/errdbg_impl.h"

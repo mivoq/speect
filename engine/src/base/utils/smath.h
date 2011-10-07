@@ -33,12 +33,12 @@
 /*                                                                                  */
 /************************************************************************************/
 
-#ifndef _SPCT_BASE_MATH_H__
-#define _SPCT_BASE_MATH_H__
+#ifndef _SPCT_BASE_SMATH_H__
+#define _SPCT_BASE_SMATH_H__
 
 
 /**
- * @file math.h
+ * @file smath.h
  * Miscellaneous math funtions.
  */
 
@@ -234,4 +234,4 @@ S_END_C_DECLS
  * end documentation
  */
 
-#endif /* _SPCT_BASE_MATH_H__ */
+#endif /* _SPCT_BASE_SMATH_H__ */

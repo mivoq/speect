@@ -90,7 +90,7 @@
 #include "base/containers/hashtable/hash_table.h"
 #include "base/utils/types.h"
 #include "base/utils/alloc.h"
-#include "base/utils/math.h"
+#include "base/utils/smath.h"
 #include "base/strings/strings.h"
 #include "base/objsystem/object_def.h"
 #include "base/objsystem/object_macros.h"

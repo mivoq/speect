@@ -42,7 +42,7 @@
 
 #include <math.h>
 #include <stdio.h>
-#include "base/utils/math.h"
+#include "base/utils/smath.h"
 
 
 /************************************************************************************/

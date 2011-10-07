@@ -50,8 +50,8 @@ achieved in two stages as depicted in :ref:`figure 1
 .. _figure_tts_con:
 
 .. figure:: ../../figures/tts_con.png
-   :scale: 75%
-   :alt: 
+   :width: 60%
+   :alt: Functional blocks of a text-to-speech synthesizer.
    :align: center
 
    Figure 1: Functional blocks of a text-to-speech synthesizer.
@@ -178,8 +178,8 @@ a representation of this voice definition.
 .. _figure_voice:
 
 .. figure:: ../../figures/voice.png
-   :scale: 75%
-   :alt: 
+   :width: 65%
+   :alt: Speect voice definition.
    :align: center
 
    Figure 2: Speect voice definition.

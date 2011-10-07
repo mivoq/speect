@@ -18,8 +18,8 @@ parts, namely the *engine* and *plug-ins*.
 .. _figure_arch:
 
 .. figure:: ../../figures/architecture.png
-   :scale: 75%
-   :alt: 
+   :width: 55%
+   :alt: Speect Engine architecture.
    :align: center
 
    Figure 3: Speect Engine architecture.

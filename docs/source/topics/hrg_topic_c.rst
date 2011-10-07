@@ -95,8 +95,8 @@ the parent item (gotten with :c:func:`SItemParent` of both ``itemTwenty`` and ``
 .. _figure_hrg_shared:
 
 .. figure:: ../../figures/hrg.shared.png
-   :scale: 85%
-   :alt: 
+   :width: 55%
+   :alt: An example of the HRG representation of parent/daughter items. 
    :align: center
 
    Figure 5: An example of the HRG representation of parent/daughter items. 

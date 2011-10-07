@@ -39,8 +39,8 @@ in a specific item.
 .. _figure_hrg:
 
 .. figure:: ../../figures/hrg_complex.png
-   :scale: 75%
-   :alt: 
+   :width: 60%
+   :alt: An example representation of an utterance structure using a heterogeneous relation graph.
    :align: center
 
    Figure 4: An example representation of an utterance structure using a heterogeneous relation graph.
@@ -198,9 +198,9 @@ relation item in :ref:`figure 4 <figure_hrg>`.
 Examples
 ========
 
-.. toctree::
-   :maxdepth: 1
+Examples of the API usage of the HRG modules:
 
-   hrg_topic_c
-   hrg_topic_python
-   
+	 * :doc:`hrg_topic_c`
+	 * :doc:`hrg_topic_python`
+
+  

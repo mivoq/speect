@@ -104,21 +104,33 @@ Constant           S\_     S_PI
 
 .. rubric:: Functions
 
-=====================   ======================================================================   ======  =========================
-Function                Format                                                                   Prefix  Example
-=====================   ======================================================================   ======  =========================
-Speect private/static   Underscore "_" between each word                                         \_s\_   _s_load_voice_data_config
-Private/static          Underscore "_" between each word                                         \_      _find_name
-Speect global/extern    Underscore "_" between each word                                         s\_     s_list_index
-Global/extern           Underscore "_" between each word                                                 name_finder
-Speect class methods    Start with object/class name, capitialize first character of each word   S       SItemLastDaughter
-=====================   ======================================================================   ======  =========================
+=====================   =====================================================================   ======  =========================
+Function                Format                                                                  Prefix  Example
+=====================   =====================================================================   ======  =========================
+Speect private/static   Underscore "_" between each word                                        \_s\_   _s_load_voice_data_config
+Private/static          Underscore "_" between each word                                        \_      _find_name
+Speect global/extern    Underscore "_" between each word                                        s\_     s_list_index
+Global/extern           Underscore "_" between each word                                                name_finder
+Speect class methods    Start with object/class name, capitalize first character of each word   S       SItemLastDaughter
+=====================   =====================================================================   ======  =========================
 
 Class method names shall begin with the class's object name, for
 example ``SItem``, and the method shall begin with an upper case
 letter and words shall begin with an upper case letter ("CamelCase"),
 for example the "last daughter" method of ``SItem`` is named
 ``SItemLastDaughter``.
+
+
+.. rubric:: Variables
+
+Only Speect class and object variables have a naming convention:
+
+=============  ======================================= ======= ================
+Variable       Format                                  Postfix Example
+=============  ======================================= ======= ================
+Speect object  CamelCase with first letter small caps          ebmlPlugin
+Speect class   CamelCase with first letter capitalized Class   G2PRewritesClass
+=============  ======================================= ======= ================
 
 
 .. index:: 

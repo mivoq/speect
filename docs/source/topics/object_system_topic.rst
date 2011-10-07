@@ -119,6 +119,9 @@ and *SObjectClass*:
 	Version information of the implementation of the class, as 
 	an :c:type:`s_version` type.
 
+
+.. _sobjectclass_init:
+
 **init**
 	The initialization function should initialize all the object's
 	members and allocate any dynamic memory resources required by
@@ -126,6 +129,8 @@ and *SObjectClass*:
 	inherited members have already been initialized and dynamic
 	memory allocated as required. The *obj* argument can be casted
 	to the class object type.
+
+.. _sobjectclass_destroy:
 
 **destroy**
 	The destroy function must free up any dynamic memory resources
@@ -161,6 +166,8 @@ and *SObjectClass*:
 	turn be copied with a call to :c:func:`SObjectCopy`. The new
 	object's reference count must be 0.
 
+
+.. _objsystem_example:
 
 Defining new objects and classes
 ================================
@@ -325,6 +332,8 @@ defined in the ``SShapeClass`` for the ``move`` function pointer. The
 
 	return area;
    }
+
+.. _reg_free_classes:
 
 Two functions are defined to register and free the shape class with the Speect
 object system:

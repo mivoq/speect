@@ -158,6 +158,8 @@ different implementation).
 .. index:: 
    single: Topic Guides; Voice
 
+.. _intro_voice:
+
 Putting everything together: a Voice
 ====================================
 

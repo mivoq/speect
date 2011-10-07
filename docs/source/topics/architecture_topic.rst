@@ -30,6 +30,8 @@ parts, namely the *engine* and *plug-ins*.
 .. index::
    single: System Architecture; Engine
 
+.. _system_arch_engine:
+
 .. rubric:: Engine
 
 The engine is completely independent of any language or waveform

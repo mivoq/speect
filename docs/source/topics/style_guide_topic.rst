@@ -18,10 +18,6 @@ others. Main reason is that these guides are far too general in their
 scope and that more specific rules (especially naming rules) need to
 be established.
 
-
-General Recommendations
-=======================
-
 The rules in this guide are not set in stone and variations that
 enhances readability allowed. The main goal of the recommendation is
 to improve readability and thereby the understanding and the
@@ -29,6 +25,142 @@ maintainability and general quality of the code. It is impossible to
 cover all the specific cases in a general guide and the programmer
 should be flexible.
 
+
+.. index:: 
+   single: Style Guide; Naming Conventions
+
+
+Naming Conventions
+==================
+
+The reasons for using a naming convention include the following are to
+reduce the effort needed to understand the source code and to enhance
+source code appearance.
+
+General naming rules
+--------------------
+
+	* **Use sensible, descriptive names.**
+	  Do not use short cryptic names or names based on internal
+	  jokes. It shall be easy to type a name without looking up
+	  how it is spelt.  Exception: Loop variables and variables
+	  with a small scope (less than 20 lines) may have short names
+	  to save space if the purpose of that variable is obvious.
+
+	* **Only use english names.**
+	  It is confusing when mixing languages for names. English is
+	  the preferred language because of its spread in the software
+	  market and because most libraries used already use English.
+
+	* **Variables with a large scope shall have long names, variables with a small scope can have short names.** 
+	  Scratch variables used for temporary storage or indices are
+	  best kept short. A programmer reading such variables shall
+	  be able to assume that its value is not used outside a few
+	  lines of code. Common scratch variables for integers are ``i``,
+	  ``j``, ``k``, ``m``, ``n`` and for characters ``c`` and ``d``.
+
+	* **Use name prefixes for identifiers declared in different modules.** 
+	  This avoids name clashes. 
+
+	* **No names with leading and trailing underscores.**
+	  Names with leading and trailing underscores are reserved for
+          system purposes and should not be used for any user-created
+          names.
+
+
+Speect naming rules
+-------------------
+
+The Speect library naming rules can be broken up into the following sections:
+
+    
+.. rubric:: Data types
+
+================  ======    =======    ==================
+Data type         Prefix    Postfix    Example
+================  ======    =======    ==================
+typedef           s\_                  s_hash_element
+struct            s\_                  s_hash_element
+union             s\_                  s_hash_element
+enum              s\_                  s_hash_element
+function pointer  s\_       \_fp       s_list_free_fp
+object            S                    SMapHashTable
+class             S         Class      SMapHashTableClass
+================  ======    =======    ==================
+
+Class and object names shall begin with an upper case letter and words
+shall begin with an upper case letter ("CamelCase").
+
+
+.. rubric:: Defines
+
+=================  ======  ==============
+Define             Prefix  Example
+=================  ======  ==============
+Macro              S\_     S_MALLOC
+Constant           S\_     S_PI
+=================  ======  ==============
+
+
+.. rubric:: Functions
+
+=====================   ======================================================================   ======  =========================
+Function                Format                                                                   Prefix  Example
+=====================   ======================================================================   ======  =========================
+Speect private/static   Underscore "_" between each word                                         \_s\_   _s_load_voice_data_config
+Private/static          Underscore "_" between each word                                         \_      _find_name
+Speect global/extern    Underscore "_" between each word                                         s\_     s_list_index
+Global/extern           Underscore "_" between each word                                                 name_finder
+Speect class methods    Start with object/class name, capitialize first character of each word   S       SItemLastDaughter
+=====================   ======================================================================   ======  =========================
+
+Class method names shall begin with the class's object name, for
+example ``SItem``, and the method shall begin with an upper case
+letter and words shall begin with an upper case letter ("CamelCase"),
+for example the "last daughter" method of ``SItem`` is named
+``SItemLastDaughter``.
+
+
+.. index:: 
+   single: Style Guide; Indent Style
+
+Indent Style
+============
+
+The indent style is the indentation style used on compound
+statements. A compound statement is a list of statements enclosed by
+braces. There are many common ways of formatting braces. The one used
+in the Speect library is known as the Allman_ style as defined by
+Wikipedia Indent Style. The style can be activated in *Emacs cc-mode*
+with::
+
+	(c-mode . "bsd")
+
+and has a tabstop of 4 spaces. For example:
+
+.. code-block:: c
+
+   if (x == NULL)
+   {
+       tmp--;
+       if (tmp == 0)
+       {
+           cnt--;
+	   if (cnt == 0)
+	   {
+	       break;
+	   }
+	   else
+	   {
+	       cnt--;
+	   }
+       }
+   }
+
+
+
+.. index:: 
+   single: Style Guide; File Organization
 
 File Organization
 =================
@@ -48,10 +180,11 @@ Avoid header filenames that are the same as C library filenames. The
 statement ``#include "math.h"`` should include the standard C library
 math header file and not a Speect header file.
 
-.. todo:: math.h ? :-)
 
+.. rubric:: Directory naming
 
-.. todo:: directory naming
+Directory names should be short, concise and all small caps. The
+:doc:`directory_layout_topic` is a good example to follow.
 
 
 Program files
@@ -88,13 +221,19 @@ the definition of a value, for example:
 where ``object.h`` is the header file's name.
 
 
-Layout
-------
+.. index:: 
+   single: Style Guide; File Layout
+
+File Layout
+===========
 
 The layout of the source and header files should follow the sequence
 of sections given below. Every section should be preceded with the
 appropiate comment block for that section as shown, of course not all
-files will require every section as given.
+files will require every section as given. All source and header files
+in Speect follow this layout, which makes the navigation of the library
+much easier as everything is consistent.
+
 
       **File header**
 
@@ -422,130 +561,4 @@ Simple Statements
 	     if (f)
 
 
-Indent Style
-------------
-
-The indent style is the indentation style used on compound
-statements. A compound statement is a list of statements enclosed by
-braces. There are many common ways of formatting braces. The one used
-in the Speect library is known as the *Allman* style as defined by
-Wikipedia Indent Style_. The style can be activated in *Emacs cc-mode*
-with::
-
-	(c-mode . "bsd")
-
-and has a tabstop of 4 spaces. For example:
-
-.. code-block:: c
-
-   if (x == NULL)
-   {
-       tmp--;
-       if (tmp == 0)
-       {
-           cnt--;
-	   if (cnt == 0)
-	   {
-	       break;
-	   }
-	   else
-	   {
-	       cnt--;
-	   }
-       }
-   }
-
-
-Naming Conventions
-==================
-
-The reasons for using a naming convention include the following are to
-reduce the effort needed to understand the source code and to enhance
-source code appearance.
-
-General naming rules
---------------------
-
-	* **Use sensible, descriptive names.**
-	  Do not use short cryptic names or names based on internal
-	  jokes. It shall be easy to type a name without looking up
-	  how it is spelt.  Exception: Loop variables and variables
-	  with a small scope (less than 20 lines) may have short names
-	  to save space if the purpose of that variable is obvious.
-
-	* **Only use english names.**
-	  It is confusing when mixing languages for names. English is
-	  the preferred language because of its spread in the software
-	  market and because most libraries used already use English.
-
-	* **Variables with a large scope shall have long names, variables with a small scope can have short names.** 
-	  Scratch variables used for temporary storage or indices are
-	  best kept short. A programmer reading such variables shall
-	  be able to assume that its value is not used outside a few
-	  lines of code. Common scratch variables for integers are ``i``,
-	  ``j``, ``k``, ``m``, ``n`` and for characters ``c`` and ``d``.
-
-	* **Use name prefixes for identifiers declared in different modules.** 
-	  This avoids name clashes. 
-
-	* **No names with leading and trailing underscores.**
-	  Names with leading and trailing underscores are reserved for
-          system purposes and should not be used for any user-created
-          names.
-
-
-Speect naming rules
--------------------
-
-The Speect library naming rules can be broken up into the following sections:
-
-    
-.. rubric:: Data types
-
-================  ======    =======    ==================
-Data type         Prefix    Postfix    Example
-================  ======    =======    ==================
-typedef           s\_                  s_hash_element
-struct            s\_                  s_hash_element
-union             s\_                  s_hash_element
-enum              s\_                  s_hash_element
-function pointer  s\_       \_fp       s_list_free_fp
-object            S                    SMapHashTable
-class             S         Class      SMapHashTableClass
-================  ======    =======    ==================
-
-Class and object names shall begin with an upper case letter and words
-shall begin with an upper case letter ("CamelCase").
-
-
-.. rubric:: Defines
-
-=================  ======  ==============
-Define             Prefix  Example
-=================  ======  ==============
-Macro              S\_     S_MALLOC
-Constant           S\_     S_PI
-=================  ======  ==============
-
-
-.. rubric:: Functions
-
-=====================   ======================================================================   ======  =========================
-Function                Format                                                                   Prefix  Example
-=====================   ======================================================================   ======  =========================
-Speect private/static   Underscore "_" between each word                                         \_s\_   _s_load_voice_data_config
-Private/static          Underscore "_" between each word                                         \_      _find_name
-Speect global/extern    Underscore "_" between each word                                         s\_     s_list_index
-Global/extern           Underscore "_" between each word                                                 name_finder
-Speect class methods    Start with object/class name, capitialize first character of each word   S       SItemLastDaughter
-=====================   ======================================================================   ======  =========================
-
-Class method names shall begin with the class's object name, for
-example ``SItem``, and the method shall begin with an upper case
-letter and words shall begin with an upper case letter ("CamelCase"),
-for example the "last daughter" method of ``SItem`` is named
-``SItemLastDaughter``.
-
-
-
-.. _Style: http://en.wikipedia.org/wiki/Indent_style#Allman_style
+.. _Allman: http://en.wikipedia.org/wiki/Indent_style#Allman_style

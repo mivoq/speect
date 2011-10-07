@@ -14,6 +14,7 @@ Topic Guides
    introduction_topic
    architecture_topic
    hrg_topic
+   voice_topic
 
 
 .. index:: Topic Guides; C Specific
@@ -63,6 +64,7 @@ Topic Guides
    :maxdepth: 1
 
    style_guide_topic
+   directory_layout_topic
    plugins_topic
 
 

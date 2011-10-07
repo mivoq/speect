@@ -1,4 +1,4 @@
-.. examples/c/hrg_example:
+.. _examples/c/hrg_example:
 
 .. index:: 
    single: Examples (C API); Heterogeneous Relation Graphs

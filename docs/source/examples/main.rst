@@ -33,3 +33,15 @@ Python
    :maxdepth: 2
 
    python/hrg_example
+
+
+
+.. index:: ! Examples (Miscellaneous)
+
+Miscellaneous
+=============
+
+.. toctree::
+   :maxdepth: 2
+
+   misc/voice_def

@@ -81,3 +81,9 @@
   margin-bottom: 1%;
   width: 60%;
  }
+
+
+div.highlight-py,
+div.highlight-c { 
+  overflow: auto;
+}

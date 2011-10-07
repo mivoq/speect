@@ -33,23 +33,6 @@
 /*                                                                                  */
 /************************************************************************************/
 
-#ifndef _SPCT_TIME_H__
-#define _SPCT_TIME_H__
-
-
-/**
- * @file time.h
- * Time related functions and definitions.
- */
-
-
-/**
- * @ingroup SBaseUtils
- * @defgroup STime Time Functions
- * Time related functions and definitions.
- * @{
- */
-
 
 /************************************************************************************/
 /*                                                                                  */
@@ -57,74 +40,108 @@
 /*                                                                                  */
 /************************************************************************************/
 
-#include "include/common.h"
-#include "base/errdbg/errdbg.h"
+#include <time.h>
+#include "base/strings/strings.h"
+#include "base/utils/alloc.h"
+#include "base/utils/stime.h"
 
 
 /************************************************************************************/
 /*                                                                                  */
-/* Begin external c declaration                                                     */
-/*                                                                                  */
-/************************************************************************************/
-S_BEGIN_C_DECLS
-
-
-/************************************************************************************/
-/*                                                                                  */
-/* Function prototypes                                                              */
+/* Static variables                                                                 */
 /*                                                                                  */
 /************************************************************************************/
 
-/**
- * Initialize the time module. This initialization is required because
- * the standard time functions return values that are statically
- * allocated, and are therefore neither re-entrant or thread safe.
- * @private
- *
- * @param error Error code.
- *
- * @note Dependent on the @ref SErrDbg module being initialized.
- */
-S_LOCAL void _s_time_init(s_erc *error);
+static uint initialized_count = 0;
 
-
-/**
- * Quit the time module. Releases the mutex resources for this module.
- * @private
- *
- * @param error Error code.
- */
-S_LOCAL void _s_time_quit(s_erc *error);
-
-
-/**
- * Get the current time as a string.
- *
- * @param error Error code.
- *
- * @return Pointer to a string buffer of the current time. Returns a full
- * representation of the data and time, for example:
- @verbatim
- Tue 03 Nov 2009 13:12:54 SAST
- @endverbatim
- *
- * @note Caller is responsible for memory of returned string buffer.
- */
-S_API char *s_strtime(s_erc *error);
+S_DECLARE_MUTEX_STATIC(time_mutex);
 
 
 /************************************************************************************/
 /*                                                                                  */
-/* End external c declaration                                                       */
+/* Function implementations                                                         */
 /*                                                                                  */
 /************************************************************************************/
-S_END_C_DECLS
+
+S_LOCAL void _s_time_init(s_erc *error)
+{
+	S_CLR_ERR(error);
+
+	if (initialized_count++ > 0)
+		return;
+
+	/* init mutex */
+	s_mutex_init(&time_mutex);
+}
 
 
-/**
- * @}
- * end documentation
- */
+S_LOCAL void _s_time_quit(s_erc *error)
+{
+	S_CLR_ERR(error);
 
-#endif /* _SPCT_TIME_H__ */
+	if ((initialized_count == 0)
+		|| (--initialized_count > 0))
+		return;
 
+	/* destroy mutex (for s_strtime) */
+	s_mutex_destroy(&time_mutex);
+}
+
+
+S_API char *s_strtime(s_erc *error)
+{
+	time_t ltm;
+	const struct tm *ltm_t;
+	char datestring[256];
+	char *rv;
+
+
+	S_CLR_ERR(error);
+
+	if (initialized_count == 0)
+		S_ERR_PRINT(S_FAILURE, "s_strtime",
+					"Time module has not been initialized.\n"
+					"This will lead to undefined behaviour. Call s_time_init(...)\n");
+
+	ltm = time(NULL); /* mt-safe */
+
+	if (ltm == -1)
+	{
+		/* this is some or other system error */
+		S_NEW_ERR(error, S_FAILURE);
+		S_ERR_PRINT(S_FAILURE, "s_strtime",
+					"Call to c-library function \"time\" failed");
+		return NULL;
+	}
+
+	/* lock mutex */
+	s_mutex_lock(&time_mutex);
+	ltm_t = localtime(&ltm);
+
+	if (ltm_t == NULL)
+	{
+		/* this is some or other system error */
+		S_NEW_ERR(error, S_FAILURE);
+		S_ERR_PRINT(S_FAILURE, "s_strtime",
+					"Call to c-library function \"localtime\" failed");
+		/* unlock mutex */
+		s_mutex_unlock(&time_mutex);
+		return NULL;
+	}
+
+	strftime(datestring, sizeof(datestring), "%c", ltm_t);
+
+	rv = s_strdup_clib(datestring);
+	if (rv == NULL)
+	{
+		S_NEW_ERR(error, S_FAILURE);
+		S_ERR_PRINT(S_FAILURE, "s_strtime",
+					"Call to \"s_strdup_clib\" failed");
+		s_mutex_unlock(&time_mutex);
+		return NULL;
+	}
+
+	/* unlock mutex */
+	s_mutex_unlock(&time_mutex);
+	return rv;
+}

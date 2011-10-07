@@ -63,7 +63,7 @@
 #include "base/utils/vernum.h"      /* Definiton of version data types.    */
 #include "base/utils/smath.h"       /* Basic math functions and constants. */
 #include "base/utils/byteswap.h"    /* Endian byteswapping functions.      */
-#include "base/utils/time.h"        /* Time functions and definitions.     */
+#include "base/utils/stime.h"       /* Time functions and definitions.     */
 #include "base/utils/path.h"        /* File system path functions.         */
 
 

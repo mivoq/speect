@@ -136,7 +136,7 @@ static void Resize(SYour *self, uint32 new_size, s_erc *error)
 /*                                                                                  */
 /************************************************************************************/
 
-static SYourClass AudioClass =
+static SYourClass YourClass =
 {
 	/* SObjectClass */
 	{

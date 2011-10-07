@@ -191,7 +191,7 @@ typedef struct
 	/**
 	 * @protected Initialize function pointer.
 	 * Initialize the utterance processor. Used for initialization of
-	 * the utterance processor feature classes on loading of the
+	 * the utterance processor, if required, on loading of the
 	 * voices.
 	 *
 	 * @param self The UttProcessor to initialize.

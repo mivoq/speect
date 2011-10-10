@@ -80,7 +80,7 @@ S_BEGIN_C_DECLS
  */
 typedef enum
 {
-	/*!< Reserved. */
+	/*!< Reserved. Not to be used. */
 	S_RESERVED_EVENT = 0,
 
 	/*!< Severe errors that cause premature termination. [FATAL] in layout. */

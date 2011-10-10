@@ -73,7 +73,9 @@ S_BEGIN_C_DECLS
  * @ingroup Speect
  *
  * @param logger Logger where messages should be written to. If #NULL,
- * then messages of error type will be written to @c stderr.
+ * then messages of error type will be written to @c stderr if the
+ * build type (@c CMAKE_BUILD_TYPE) is @c Debug, otherwise no messages
+ * will be logged.
  *
  * @return Error code.
  *

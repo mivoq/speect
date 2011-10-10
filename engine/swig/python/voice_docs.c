@@ -64,7 +64,7 @@ Synthesize an utterance of the given utterance type with the voice.
 
 :param input: The text to synthesize.
 :type input: str
-:param utt_type: The utterance type to synthesis.
+:param utt_type: The utterance type to synthesize.
 :type utt_type: str
 :return: The synthesized utterance.
 :rtype: :class:`SUtterance`

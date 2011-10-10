@@ -1,7 +1,7 @@
-.. _introduction_topic:
-
 .. index:: 
    single: Topic Guides; Introduction
+
+.. _introduction_topic:
 
 ============
 Introduction
@@ -87,6 +87,8 @@ The NLP stage is language dependent, whereas the DSP stage is
 dependent on the synthesizer technology of the implemented synthetic
 voice.
 
+
+.. _how_is_it_implemented:
 
 How is it implemented?
 ======================

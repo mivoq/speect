@@ -1,7 +1,7 @@
-.. _object_system_topic/main:
-
 .. index:: 
    single: Topic Guides (C API); Generic Object System
+
+.. _object_system_topic:
 
 =====================
 Generic Object System
@@ -86,16 +86,16 @@ and *SObjectClass*:
 
    typedef struct 
    {
-	const char *name;
-	size_t      size;
-	s_version   ver;
+       const char *name;
+       size_t      size;
+       s_version   ver;
 
-	void     (* const init)    (void *obj, s_erc *error);
-	void     (* const destroy) (void *obj, s_erc *error);
-	void     (* const dispose) (void *obj, s_erc *error);
-	s_bool   (* const compare) (const SObject *first, const SObject *second, s_erc *error);
-	char    *(* const print)   (const SObject *self, s_erc *error);
-	SObject *(* const copy)    (const SObject *self, s_erc *error);
+       void     (* const init)    (void *obj, s_erc *error);
+       void     (* const destroy) (void *obj, s_erc *error);
+       void     (* const dispose) (void *obj, s_erc *error);
+       s_bool   (* const compare) (const SObject *first, const SObject *second, s_erc *error);
+       char    *(* const print)   (const SObject *self, s_erc *error);
+       SObject *(* const copy)    (const SObject *self, s_erc *error);
    } SObjectClass;
 
 
@@ -189,10 +189,10 @@ First the definition of the *shape* object:
 
    typedef struct
    {  
-	SObject  obj;
+       SObject  obj;
 
-	int      x;
-	int      y;
+       int      x;
+       int      y;
    } SShape;
 
 
@@ -206,10 +206,10 @@ The *shape* class can be defined as follows:
 
    typedef struct
    {
-	SObjectClass  _inherit;
+       SObjectClass  _inherit;
 
-	void  (* const move)   (SShape *self, int newx, int newy, s_erc *error);
-	float (* const area)   (const SShape *self, s_erc *error);
+       void  (* const move)   (SShape *self, int newx, int newy, s_erc *error);
+       float (* const area)   (const SShape *self, s_erc *error);
    } SShapeClass;
 
 The *shape* class inherits from :c:type:`SObjectClass`, and *must always* have the 
@@ -265,29 +265,29 @@ method has been implemented. ``SShapeMove`` can be implemented as:
    
    void SShapeMove(SShape *self, int newx, int newy, s_erc *error)
    {
-	S_CLR_ERR(error);
+       S_CLR_ERR(error);
 
-	if (self == NULL)
-	{
-		S_CTX_ERR(error, S_ARGERROR,
-			  "SShapeMove",
-			  "Argument \"self\" is NULL");
-		return;
-	}
+       if (self == NULL)
+       {
+           S_CTX_ERR(error, S_ARGERROR,
+	   	     "SShapeMove",
+		     "Argument \"self\" is NULL");
+           return;
+       }
 
-	if (!S_SHAPE_METH_VALID(self, move))
-	{
-		S_CTX_ERR(error, S_METHINVLD,
-			  "SShapeMove",
-			  "Shape method \"move\" not implemented");
-		return;
-	}
+       if (!S_SHAPE_METH_VALID(self, move))
+       {
+           S_CTX_ERR(error, S_METHINVLD,
+	             "SShapeMove",
+		     "Shape method \"move\" not implemented");
+           return;
+       }
 
 
-	S_SHAPE_CALL(self, move)(self, newx, newy, error);
-	S_CHK_ERR(error, S_CONTERR,
-		  "SShapeMove",
-		  "Call to class method \"move\" failed");
+       S_SHAPE_CALL(self, move)(self, newx, newy, error);
+       S_CHK_ERR(error, S_CONTERR,
+       		 "SShapeMove",
+		 "Call to class method \"move\" failed");
    }
 
 Notice that there is a lot of error checking being done, which is
@@ -303,34 +303,34 @@ defined in the ``SShapeClass`` for the ``move`` function pointer. The
 
    float SShapeArea(const SShape *self, s_erc *error)
    {
-	float area;
+       float area;
 
 
-	S_CLR_ERR(error);
+       S_CLR_ERR(error);
 
-	if (self == NULL)
-	{
-		S_CTX_ERR(error, S_ARGERROR,
-			  "SShapeArea",
-			  "Argument \"self\" is NULL");
-		return 0.0;
-	}
+       if (self == NULL)
+       {
+           S_CTX_ERR(error, S_ARGERROR,
+	   	     "SShapeArea",
+		     "Argument \"self\" is NULL");
+	   return 0.0;
+       }
 
-	if (!S_SHAPE_METH_VALID(self, area))
-	{
-		S_CTX_ERR(error, S_METHINVLD,
-			  "SShapeArea",
-			  "Shape method \"area\" not implemented");
-		return 0.0;
-	}
+       if (!S_SHAPE_METH_VALID(self, area))
+       {
+           S_CTX_ERR(error, S_METHINVLD,
+	    	     "SShapeArea",
+		     "Shape method \"area\" not implemented");
+	   return 0.0;
+       }
 
-	area = S_SHAPE_CALL(self, area)(self, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-			  "SShapeArea",
-			  "Call to class method \"area\" failed"))
-		return 0.0;
+       area = S_SHAPE_CALL(self, area)(self, error);
+       if (S_CHK_ERR(error, S_CONTERR,
+		     "SShapeArea",
+		     "Call to class method \"area\" failed"))
+           return 0.0;
 
-	return area;
+       return area;
    }
 
 .. _reg_free_classes:
@@ -343,21 +343,21 @@ object system:
 
    void _s_shape_class_reg(s_erc *error)
    {
-   	S_CLR_ERR(error);
-	s_class_reg(S_OBJECTCLASS(&ShapeClass), error);
-	S_CHK_ERR(error, S_CONTERR,
-		  "_s_shape_class_reg",
-		  "Failed to register SShapeClass");
+       S_CLR_ERR(error);
+       s_class_reg(S_OBJECTCLASS(&ShapeClass), error);
+       S_CHK_ERR(error, S_CONTERR,
+       		 "_s_shape_class_reg",
+		 "Failed to register SShapeClass");
    }
 
 
    void _s_shape_class_free(s_erc *error)
    {
-	S_CLR_ERR(error);
-	s_class_free(S_OBJECTCLASS(&ShapeClass), error);
-	S_CHK_ERR(error, S_CONTERR,
-		  "_s_shape_class_free",
-		  "Failed to free SShapeClass");
+       S_CLR_ERR(error);
+       s_class_free(S_OBJECTCLASS(&ShapeClass), error);
+       S_CHK_ERR(error, S_CONTERR,
+       		 "_s_shape_class_free",
+		 "Failed to free SShapeClass");
    }
 
 with the actual registering and freeing calls on lines 4 and 14. These functions are required
@@ -368,19 +368,19 @@ The class methods can now be defined as:
 
    static void InitShape(void *obj, s_erc *error)
    {
-	SShape *self = obj;
+       SShape *self = obj;
 
 
-	S_CLR_ERR(error);
-	self->x = 0;
-	self->y = 0;
+       S_CLR_ERR(error);
+       self->x = 0;
+       self->y = 0;
    }
 
 
    static void DisposeShape(void *obj, s_erc *error)
    {
-	S_CLR_ERR(error);
-	SObjectDecRef(obj);
+       S_CLR_ERR(error);
+       SObjectDecRef(obj);
    }
 
 
@@ -390,9 +390,9 @@ The class methods can now be defined as:
 
    static void MoveShape(SShape *self, int newx, int newy, s_erc *error)
    {
-	S_CLR_ERR(error);
-	self->x = newx;
-	self->y = newy;
+       S_CLR_ERR(error);
+       self->x = newx;
+       self->y = newy;
    }
 
 Note that the class methods must always be declared as static. Finally we can initialize the
@@ -403,21 +403,21 @@ Note that the class methods must always be declared as static. Finally we can in
 
    static SShapeClass ShapeClass =
    {
-	/* SObjectClass */
-	{
-		"SShape",
-		sizeof(SShape),
-		{ 0, 1},
-		InitShape,         /* init    */
-		NULL,              /* destroy */
-		DisposeShape,      /* dispose */
-		NULL,              /* compare */
-		NULL,              /* print   */
-		NULL,              /* copy    */
-	},
-	/* SShapeClass */
-	MoveShape,             /* move    */
-	NULL                   /* area    */
+       /* SObjectClass */
+       {
+           "SShape",
+	   sizeof(SShape),
+	   { 0, 1},
+	   InitShape,         /* init    */
+	   NULL,              /* destroy */
+	   DisposeShape,      /* dispose */
+	   NULL,              /* compare */
+	   NULL,              /* print   */
+	   NULL,              /* copy    */
+       },
+       /* SShapeClass */
+       MoveShape,             /* move    */
+       NULL                   /* area    */
    };
 
 Notice that the first part initializes the :ref:`SObjectClass definition <sobjectclass>`
@@ -433,10 +433,10 @@ The rectangle object is defined as:
 
    typedef struct
    {
-	SShape  obj;
+       SShape  obj;
 
-	int     width;
-	int     height;
+       int     width;
+       int     height;
    } SRectangle;
 
 
@@ -449,10 +449,10 @@ The definition of the rectangle class is:
 
    typedef struct
    {
-	SShapeClass  _inherit;
+       SShapeClass  _inherit;
 
-	void  (* const set_width)   (SRectangle *self, int new_width, s_erc *error);
-	void  (* const set_height)  (SRectangle *self, int new_height, s_erc *error);
+       void  (* const set_width)   (SRectangle *self, int new_width, s_erc *error);
+       void  (* const set_height)  (SRectangle *self, int new_height, s_erc *error);
    } SRectangleClass;
 
 The rectangle class inherits from the *shape* class, and therefore
@@ -481,41 +481,41 @@ the implementations of the *rectangle* class methods:
  
    static void InitRectangle(void *obj, s_erc *error)
    {
-	SRectangle *self = obj;
+       SRectangle *self = obj;
 
 
-	S_CLR_ERR(error);
-	self->width = 0;
-	self->height = 0;
+       S_CLR_ERR(error);
+       self->width = 0;
+       self->height = 0;
    }
 
 
    static void DisposeRectangle(void *obj, s_erc *error)
    {
-	S_CLR_ERR(error);
-	SObjectDecRef(obj);
+       S_CLR_ERR(error);
+       SObjectDecRef(obj);
    }
 
 
    static char *PrintRectangle(const SObject *self, s_erc *error)
    {
-	SRectangle *rec = S_RECTANGLE(self);
-	const char *type = "[SRectangle] at (%d,%d), width %d, height %d";
-	char *buf;
+       SRectangle *rec = S_RECTANGLE(self);
+       const char *type = "[SRectangle] at (%d,%d), width %d, height %d";
+       char *buf;
 
-	S_CLR_ERR(error);
+       S_CLR_ERR(error);
 
-	s_asprintf(&buf, error, type, S_SHAPE(rec)->x, S_SHAPE(rec)->y, rec->width, rec->height);
-	if (S_CHK_ERR(error, S_CONTERR,
-		      "PrintRectangle",
-		      "Call to \"s_asprintf\" failed"))
-	{
-		if (buf != NULL)
-			S_FREE(buf);
-		return NULL;
-	}
+       s_asprintf(&buf, error, type, S_SHAPE(rec)->x, S_SHAPE(rec)->y, rec->width, rec->height);
+       if (S_CHK_ERR(error, S_CONTERR,
+       	  	     "PrintRectangle",
+		     "Call to \"s_asprintf\" failed"))
+       {
+           if (buf != NULL)
+	       S_FREE(buf);
+	   return NULL;
+       }
 
-	return buf;
+       return buf;
    }
 
 
@@ -526,36 +526,36 @@ the implementations of the *rectangle* class methods:
 
    static void MoveRectangle(SShape *self, int newx, int newy, s_erc *error)
    {
-	S_CLR_ERR(error);
-	self->x = newx;
-	self->y = newy;
+       S_CLR_ERR(error);
+       self->x = newx;
+       self->y = newy;
    }
 
 
    static float AreaRectangle(const SShape *self, s_erc *error)
    {
-	SRectangle *rec = S_RECTANGLE(self);
-	float area;
+       SRectangle *rec = S_RECTANGLE(self);
+       float area;
 
 
-	S_CLR_ERR(error);
-	area = rec->width * rec->height;
+       S_CLR_ERR(error);
+       area = rec->width * rec->height;
 
-	return area;
+       return area;
    }
 
 
    static void SetWidthRectangle(SRectangle *self, int new_width, s_erc *error)
    {
-	S_CLR_ERR(error);
-	self->width = new_width;
+       S_CLR_ERR(error);
+       self->width = new_width;
    }
 
 
    static void SetHeightRectangle(SRectangle *self, int new_heigth, s_erc *error)
    {
-	S_CLR_ERR(error);
-	self->height = new_heigth;
+       S_CLR_ERR(error);
+       self->height = new_heigth;
    }
 
 
@@ -568,26 +568,26 @@ and the ``Rectangle`` class initialization declaration:
 
    static SRectangleClass RectangleClass =
    {
-	{
-		/* SObjectClass */
-		{
-			"SShape:SRectangle",
-			sizeof(SRectangle),
-			{ 0, 1},
-			InitRectangle,     /* init    */
-			NULL,              /* destroy */
-			DisposeRectangle,  /* dispose */
-			NULL,              /* compare */
-			PrintRectangle,    /* print   */
-			NULL,              /* copy    */
-		},
-		/* SShapeClass */
-		MoveRectangle,         /* move    */
-		AreaRectangle,         /* area    */
-	},
-	/* SRectangleClass */
-	SetWidthRectangle,         /* set_width  */
-	SetHeightRectangle         /* set_height */
+       {
+           /* SObjectClass */
+	   {
+	       "SShape:SRectangle",
+	       sizeof(SRectangle),
+	       { 0, 1},
+	       InitRectangle,     /* init    */
+	       NULL,              /* destroy */
+	       DisposeRectangle,  /* dispose */
+	       NULL,              /* compare */
+	       PrintRectangle,    /* print   */
+	       NULL,              /* copy    */
+	   },
+	   /* SShapeClass */
+	   MoveRectangle,         /* move    */
+	   AreaRectangle,         /* area    */
+       },
+       /* SRectangleClass */
+       SetWidthRectangle,         /* set_width  */
+       SetHeightRectangle         /* set_height */
    };
 
 The first part initializes the :ref:`SObjectClass definition
@@ -604,25 +604,25 @@ of ``SRectangle`` objects:
 
    SRectangle *SRectangleNew(int x, int y, int width, int height, s_erc *error)
    {
-	SRectangle *self;
+       SRectangle *self;
 
 
-	S_CLR_ERR(error);
+       S_CLR_ERR(error);
+       
+       self = S_NEW(SRectangle, error);
+       if (S_CHK_ERR(error, S_CONTERR,
+       	  	     "SRectangleNew",
+		     "Failed to create new object"))
+       {
+           return NULL;
+       }
 
-	self = S_NEW(SRectangle, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-		      "SRectangleNew",
-		      "Failed to create new object"))
-	{
-	    return NULL;
-	}
+       S_SHAPE(self)->x = x;
+       S_SHAPE(self)->y = y;
+       self->width = width;
+       self->height = height;
 
-	S_SHAPE(self)->x = x;
-	S_SHAPE(self)->y = y;
-	self->width = width;
-	self->height = height;
-
-	return self;
+       return self;
    }
 
 The call to :c:macro:`S_NEW` on line 8 will do two things:
@@ -647,10 +647,10 @@ The cirlce object is defined as:
 
    typedef struct
    {
-	SShape     obj;
+       SShape     obj;
 
-	int radius;
-	char *colour;
+       int radius;
+       char *colour;
    } SCircle;
 
 and the definition of the circle class is:
@@ -659,10 +659,10 @@ and the definition of the circle class is:
 
    typedef struct
    {
-   	SShapeClass  _inherit;
+       SShapeClass  _inherit;
 
-	void  (* const set_radius)   (SCircle *self, int new_radius, s_erc *error);
-	void  (* const set_colour)   (SCircle *self, const char *new_colour, s_erc *error);
+       void  (* const set_radius)   (SCircle *self, int new_radius, s_erc *error);
+       void  (* const set_colour)   (SCircle *self, const char *new_colour, s_erc *error);
    } SCircleClass;
 
 
@@ -682,28 +682,28 @@ For brevity we will only give the implementations of the circle class's ``init``
 
 .. code-block:: c
 
-  static void InitCircle(void *obj, s_erc *error)
-  {
-	SCircle *self = obj;
+   static void InitCircle(void *obj, s_erc *error)
+   {
+       SCircle *self = obj;
 
 
-	S_CLR_ERR(error);
-	self->radius = 0;
-	self->colour = NULL;
-  }
+       S_CLR_ERR(error);
+       self->radius = 0;
+       self->colour = NULL;
+   }
 
 
-  static void DestroyCircle(void *obj, s_erc *error)
-  {
-	SCircle *self = obj;
+   static void DestroyCircle(void *obj, s_erc *error)
+   {
+       SCircle *self = obj;
 
 
-	S_CLR_ERR(error);
-	if (self->colour != NULL)
-	{
-		S_FREE(self->colour);
-	}
-  }
+       S_CLR_ERR(error);
+       if (self->colour != NULL)
+       {
+           S_FREE(self->colour);
+       }
+   }
 
 
 The circle class's ``init`` function initializes the *colour* member to :c:type:`NULL`. Note that the 
@@ -715,30 +715,30 @@ method is used to free dynamically allocated resources, such as the *colour* mem
 
    static void MoveCircle(SShape *self, int newx, int newy, s_erc *error)
    {
-	SShapeClass *shapeClass = NULL;
+       SShapeClass *shapeClass = NULL;
 
 
-	S_CLR_ERR(error);
-	shapeClass = S_FIND_CLASS(SShape, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-		      "MoveCircle",
-		      "Call to \"S_FIND_CLASS\" failed"))
-		return;
+       S_CLR_ERR(error);
+       shapeClass = S_FIND_CLASS(SShape, error);
+       if (S_CHK_ERR(error, S_CONTERR,
+       	  	     "MoveCircle",
+		     "Call to \"S_FIND_CLASS\" failed"))
+           return;
 
-	shapeClass->move(self, newx, newy, error);
+       shapeClass->move(self, newx, newy, error);
    }
 
 
    static float AreaCircle(const SShape *self, s_erc *error)
    {
-	SCircle *cir = S_CIRCLE(self);
-	float area;
+       SCircle *cir = S_CIRCLE(self);
+       float area;
 
 
-	S_CLR_ERR(error);
-	area = S_PI * cir->radius * cir->radius;
+       S_CLR_ERR(error);
+       area = S_PI * cir->radius * cir->radius;
 
-	return area;
+       return area;
    }
 
 The rectangle class's :ref:`move method <rectangle_move_method>` was
@@ -762,26 +762,26 @@ the extra ``destroy`` method when compared to the
 
    static SCircleClass CircleClass =
    {
-	{
-		/* SObjectClass */
-		{
-			"SShape:SCircle",
-			sizeof(SCircle),
-			{ 0, 1},
-			InitCircle,     /* init    */
-			DestroyCircle,  /* destroy */
-			DisposeCircle,  /* dispose */
-			NULL,           /* compare */
-			PrintCircle,    /* print   */
-			NULL,           /* copy    */
-		},
-		/* SShapeClass */
-		MoveCircle,         /* move    */
-		AreaCircle,         /* area    */
-	},
-	/* SCircleClass */
-	SetRadiusCircle,        /* set_radius */
-	SetColourCircle         /* set_colour */
+       {
+           /* SObjectClass */
+	   {
+	       	"SShape:SCircle",
+		sizeof(SCircle),
+		{ 0, 1},
+		InitCircle,     /* init    */
+		DestroyCircle,  /* destroy */
+		DisposeCircle,  /* dispose */
+		NULL,           /* compare */
+		PrintCircle,    /* print   */
+		NULL,           /* copy    */
+	    },
+	    /* SShapeClass */
+	    MoveCircle,         /* move    */
+	    AreaCircle,         /* area    */
+       },
+       /* SCircleClass */
+       SetRadiusCircle,        /* set_radius */
+       SetColourCircle         /* set_colour */
    };
 
 

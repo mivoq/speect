@@ -7,7 +7,7 @@ Error Handling and Debugging
 ============================
 
 Error handling and debugging module, utilities, macros and
-definitions.  See the :doc:`../../../../../topics/errdbg_topic` topic
+definitions.  See the :ref:`errdbg_topic_c` topic
 guide for more details. 
 
 
@@ -47,6 +47,8 @@ Definitions
 .. doxybridge:: s_dbg_lvl
    :type: typedef enum
 
+
+.. _errdbg_c_context_macros:
 
 Macros
 ======

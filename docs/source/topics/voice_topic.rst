@@ -1,9 +1,9 @@
-.. _voice_topic:
-
 .. index:: ! Voice Definition
 
 .. index:: 
    single: Topic Guides; Voice Definition
+
+.. _voice_topic:
 
 ======
 Voices
@@ -50,10 +50,11 @@ required in all voice files. Below is an example:
 Plug-ins
 ========
 
-The next section defines plug-ins which Speect must load. These are plug-ins
-that are not critical to the working of the voice, but may be necessary for other
-types of operations. In the example below the ``utt_ebml.spi`` plug-in will be loaded,
-which provides methods for saving an utterance to an EBML_ formatted file.
+The next section defines plug-ins which Speect must load. These are
+plug-ins that are not critical to the working of the voice, but may be
+necessary for other types of operations. In the example below the
+``utt_ebml.spi`` :ref:`plug-in <plugins_topic>` will be loaded, which
+provides methods for saving an utterance to an EBML_ formatted file.
 
 .. code-block:: javascript
 
@@ -178,6 +179,8 @@ The voice manager will load the plug-in and instantiate an object of the type na
 it's associated name. 
 
 
+.. _voice_utt_proc:
+
 Utterance Processors
 ====================
 
@@ -225,6 +228,8 @@ load files defined in it's features) if required. This object is then
 saved in the voice's utterance processors dictionary with it's
 associated name.
 
+.. _voice_utt_types:
+
 Utterance Types
 ===============
 
@@ -268,7 +273,7 @@ and executed on the utterance.
 Example
 =======
 
-A complete example of a voice file can be found at :doc:`../examples/misc/voice_def`.
+A complete example of a voice file can be found at :ref:`examples/misc/voice_def`.
 
 
 

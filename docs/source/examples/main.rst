@@ -33,6 +33,7 @@ Python
    :maxdepth: 2
 
    python/hrg_example
+   python/python_logging
 
 
 
@@ -45,3 +46,4 @@ Miscellaneous
    :maxdepth: 2
 
    misc/voice_def
+   misc/cmakelists_template

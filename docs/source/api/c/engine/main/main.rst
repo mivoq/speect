@@ -1,10 +1,10 @@
 .. _main/main:
 
-==========================
-Speect Initialization/Quit
-==========================
+=====================
+Speect Initialization
+=====================
 
-Also see :doc:`../../../../topics/init_logging_topic`.
+Also see :ref:`init_logging_topic_c`.
 
 .. doxybridge:: speect_init
 

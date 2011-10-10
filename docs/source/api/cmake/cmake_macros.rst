@@ -76,6 +76,7 @@ API
    The class name is used in the documentation strings (for example
    "SArrayFloat plug-in initialization").  The plug-in's "cmake"
    directory will be added to ``CMAKE_MODULE_PATH``.
+
    Defined in ``speect/plugins/cmake/pluginFunctions.cmake``.
 
 
@@ -91,9 +92,12 @@ API
    :param version_patch: The patch number of the plug-in.
    :type version_patch: int
    
-   For example: speect_plugin_definition(Viterbi "SViterbi" 0 9 5)
-   will create a plug-in viterbi.spi that points to viterbi.spi.0 which in turn
-   points to viterbi.spi.0.9.5
+   For example::
+   
+	 speect_plugin_definition(Viterbi "SViterbi" 0 9 5)
+
+   will create a plug-in DSO named "viterbi.spi" that points "to viterbi.spi.0" which in turn
+   points to "viterbi.spi.0.9.5"
 
 
 .. cmake_macro:: speect_plugin_sources
@@ -121,7 +125,7 @@ API
 .. cmake_macro:: speect_plugin_include_dirs
 
    Appends the given list of directories to the plug-in include directories variable, 
-   lowercase_name_INCLUDE_DIRS.
+   lowercase_name_INCLUDE_DIRS. Used to add extra external includes that are required by a plug-in.
    Defined in ``speect/plugins/cmake/pluginFunctions.cmake``.
 
 

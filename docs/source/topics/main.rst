@@ -15,6 +15,7 @@ Topic Guides
    architecture_topic
    hrg_topic
    voice_topic
+   processors_topic
 
 
 .. index:: Topic Guides; C Specific
@@ -26,16 +27,19 @@ Topic Guides
 .. toctree::
    :maxdepth: 1
 
-   errdbg_topic
+   errdbg_topic_c
    object_system_topic
    reference_counting_topic
-   init_logging_topic
+   init_logging_topic_c
+   processors_topic_c
+
 
 .. toctree::
    :hidden: 
 
    hrg_topic_c
    
+
 
 .. index:: Topic Guides; Python Specific
 
@@ -44,15 +48,18 @@ Topic Guides
 .. rubric:: Python Specific
 
 .. toctree::
+   :maxdepth: 1
+
+   errdbg_topic_python
+   init_logging_topic_python
+   processors_topic_python
+
+.. toctree::
    :hidden: 
 
    hrg_topic_python
 
-.. toctree::
-   :maxdepth: 1
 
-   processors_topic
-   
 
 .. index:: Topic Guides; Miscellaneous
 

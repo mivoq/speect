@@ -25,6 +25,8 @@ or class attributes (for example :attr:`SVoice.dataObjects`).
       of type ``SObject``.
 
 
+.. _slist_python_operations:
+
 Operations
 ==========
 
@@ -34,6 +36,8 @@ SList supports the following Python ``list`` operations:
 
 	Return the number of items in the list l.
 
+
+.. _slist_python_get_item:
 
 **l[index]**
 

@@ -1,9 +1,9 @@
-.. _hrg_topic:
-
 .. index:: 
    single: Topic Guides; Heterogeneous Relation Graphs
 
 .. index:: ! Heterogeneous Relation Graphs
+
+.. _hrg_topic:
 
 =============================
 Heterogeneous Relation Graphs

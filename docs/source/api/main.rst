@@ -10,3 +10,4 @@ API
    cmake/main
    c/engine/main
    python/engine/main
+   python/plugins/main

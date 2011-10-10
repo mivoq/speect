@@ -1,6 +1,6 @@
-.. _processors/main:
-
 .. index:: ! Processors (Python API)
+
+.. _processors_python_api:
 
 ==========
 Processors

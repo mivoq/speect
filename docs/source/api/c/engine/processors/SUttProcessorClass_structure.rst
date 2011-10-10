@@ -1,4 +1,5 @@
 
+.. _SUttProcessorClass_Structure:
 
 ============================
 SUttProcessorClass Structure

@@ -1,7 +1,8 @@
-.. _examples/misc/voice_def:
 
 .. index:: 
    single: Examples (Miscellaneous); Voice Definiton
+
+.. _examples/misc/voice_def:
 
 ========================
 Voice Definition Example

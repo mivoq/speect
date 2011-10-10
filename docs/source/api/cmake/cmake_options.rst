@@ -63,6 +63,8 @@ Option Descriptions
 
    :options: None, Debug, Release, RelWithDebInfo, MinSizeRel, Profile
    :default: Debug
+   :note: ``Debug`` will define the :c:type:`SPCT_DEBUGMODE` pre-processor symbol.
+   
    
 
 .. cmake:: CMAKE_INSTALL_PREFIX

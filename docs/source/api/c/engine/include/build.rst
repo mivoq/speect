@@ -162,7 +162,12 @@ Debugging
 
 .. c:macro:: SPCT_DEBUGMODE
 
-   Defined if the CMake build option :cmake:`CMAKE_BUILD_TYPE` is ``Debug``
+   Defined if the CMake build option :cmake:`CMAKE_BUILD_TYPE` is ``Debug``. Influences the
+   logging behaviour of :c:func:`speect_init`.
+
+   .. seealso::
+      
+      :ref:`init_logging_topic/main`.
 
 
 Casting

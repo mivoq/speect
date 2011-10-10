@@ -1,6 +1,7 @@
-.. _processors/main:
 
 .. index:: ! Processors (C API)
+
+.. _processors_c_api:
 
 ==========
 Processors
@@ -8,7 +9,7 @@ Processors
 
 Processors modify or extract features from utterances
 (:c:type:`SUtterance`) or items (:c:type:`SItem`). Also see the
-:doc:`../../../../topics/processors_topic` topic guide.
+:ref:`processors_topic_c` topic guide.
 
 .. toctree::
    :maxdepth: 2

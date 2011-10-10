@@ -1,7 +1,7 @@
-.. _errdbg_topic/main:
-
 .. index:: 
-   single: Topic Guides (C API); Error handling and Debugging
+   single: Topic Guides; Error handling and Debugging (C API)
+
+.. _errdbg_topic_c:
 
 ============================
 Error handling and Debugging
@@ -33,6 +33,7 @@ Lets look at basic example showing the workings of the error handling system:
 
 .. literalinclude:: ../../../engine/examples/base/errdbg/errdbg_example_short.c
    :language: c
+   :tab-width: 4
    :linenos:
    :lines: 36-	
 
@@ -59,16 +60,16 @@ inside functions. We can for example define ``s_strlen`` as follows:
    
    size_t s_strlen(const char *s, s_erc *error)
    {
-	S_CLR_ERR(error);
+       S_CLR_ERR(error);
 
-	if (s == NULL)
-	{
-		S_CTX_ERR(error, S_ARGERROR,
-		          "s_strlen", "Argument \"s\" is NULL");
-		return 0;
- 	}
+       if (s == NULL)
+       {
+           S_CTX_ERR(error, S_ARGERROR,
+	             "s_strlen", "Argument \"s\" is NULL");
+	   return 0;
+       }
 
-	...
+       ...
 
 Which checks if the input argument ``s`` is valid, and if not sets a
 context error (``S_ARGERROR``) with the same arguments as described
@@ -91,12 +92,14 @@ A more detailed example of the error handling mechanism can be found at
 ``speect/engine/examples/base/errdbg/errdbg_example.c``, or :doc:`../examples/c/errdbg_example`.
 
 
+.. _errdbg_topic_disable:
+
 Disable
 =======
 
 The *Error Handling And Debugging* module can be disabled with the
 :cmake:`ERROR_HANDLING` CMake build time switch. This will bypass the
-system, and no errors will be checked for or logged.
+system, and no errors will be checked for or :ref:`logged <logging>`.
 
 
 

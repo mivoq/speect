@@ -1,9 +1,8 @@
-.. _reference_counting_topic/main:
 
 .. index:: 
-   single: Topic Guides (C API); Reference Counting
+   single: Topic Guides; Reference Counting
 
-.. todo:: reference to examples
+.. _reference_counting_topic/main:
 
 ==================
 Reference Counting
@@ -22,16 +21,16 @@ few exceptions to this rule:
 
 	 .. code-block:: c
 	 
-	 	 SList *list = NULL;
-	 	 SObject *a = NULL;
+	    SList *list = NULL;
+	    SObject *a = NULL;
 
-		 /* Create a new list */
-		 list = S_LIST(S_NEW(SListList, error));
+	    /* Create a new list */
+	    list = S_LIST(S_NEW(SListList, error));
 	 
-	 	 /* Create some object and put the into the list */
-	 	 a = SObjectSetInt(10, error);
+	    /* Create some object and put the into the list */
+	    a = SObjectSetInt(10, error);
 
-		 SListPush(list, a, error);
+	    SListPush(list, a, error);
 
 	The call to :c:func:`SListPush` adds the created object to the
 	list, and the list is now responsible for the memory of the
@@ -47,33 +46,33 @@ few exceptions to this rule:
 	 .. code-block:: c
 	    :linenos:
 	 
-		SIterator *itr = NULL;
-		int counter = 0;
-		int loop_fin = 1;
+	    SIterator *itr = NULL;
+	    int counter = 0;
+	    int loop_fin = 1;
 
-		itr = S_ITERATOR_GET(list, error);
+	    itr = S_ITERATOR_GET(list, error);
+	    
+	    /* iterate through list objects and print them to stdout */
+	    for (/* NOP */; itr != NULL; itr = SIteratorNext(itr))
+	    {
+	        char *buf;
+		const SObject *tmp;
 
-		/* iterate through list objects and print them to stdout */
-		for (/* NOP */; itr != NULL; itr = SIteratorNext(itr))
+		tmp = SIteratorObject(itr, error);
+		buf = SObjectPrint(tmp, error);
+		printf("list object = %s\n", buf);
+		S_FREE(buf);
+
+		counter++;
+		if (counter == 2)
 		{
-			char *buf;
-			const SObject *tmp;
-
-			tmp = SIteratorObject(itr, error);
-			buf = SObjectPrint(tmp, error);
-			printf("list object = %s\n", buf);
-			S_FREE(buf);
-
-			counter++;
-			if (counter == 2)
-			{
-				loop_fin = 0;
-				break;
-			}
+		    loop_fin = 0;
+		    break;
 		}
+	    }
 
-		if (!loop_fin)
-		   S_DELETE(itr, "main", error);
+	    if (!loop_fin)
+	        S_DELETE(itr, "main", error);
 
 	 In this example the iteration over the container is stopped if the container has more than
 	 2 objects. Therefore the ``itr`` object still has memory associated with it and must be deleted.

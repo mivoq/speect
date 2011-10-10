@@ -13,8 +13,6 @@ A collection of miscellaneous functions and attributes.
 Functions
 =========
 
-.. autofunction:: quit()
-
 .. autofunction:: version()
 
 

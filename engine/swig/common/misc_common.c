@@ -36,12 +36,6 @@
 
 %inline
 %{
-	void quit(s_erc *error)
-	{
-		*error = speect_quit();
-	}
-
-
 	s_lib_version version(void)
 	{
 		return s_speect_version();
@@ -59,7 +53,7 @@
 		s_erc rv = S_SUCCESS;
 
 
-		rv = speect_init(NULL); /* start-up with stderr console logger */
+		rv = speect_init(NULL); /* start-up with stderr console or null logger */
 		if (rv != S_SUCCESS)
 			SWIG_Error(SWIG_RuntimeError, "Failed to initialize Speect Engine");
 	}

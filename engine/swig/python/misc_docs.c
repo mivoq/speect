@@ -33,9 +33,6 @@
 /*                                                                                  */
 /************************************************************************************/
 
-
-%feature("autodoc", "Request a graceful shutdown of the Speect Engine.") quit;
-
 %define version_DOCSTRING
 """
 Return the Speect Engine library version in a tuple, (major version number, minor

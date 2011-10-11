@@ -12,6 +12,15 @@
 
 
 #------------------------------------------------------------------------------------#
+#                           Build directory check                                    #
+#------------------------------------------------------------------------------------#
+
+if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
+  message(FATAL_ERROR "Speect cannot be build in the source directory. See the INSTALL file for more information.")
+endif(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
+
+
+#------------------------------------------------------------------------------------#
 #                                Build type                                          #
 #------------------------------------------------------------------------------------#
 

@@ -82,7 +82,7 @@
 		PyObject *pfeature;
 
 
-		sfeature = s_path_to_feature($self, path, error);
+		sfeature = SItemPathToFeature($self, path, error);
 		if (*error != S_SUCCESS)
 			return NULL;
 
@@ -100,7 +100,7 @@
 		PyObject *pfeature;
 
 
-		sfeature = s_path_to_featproc($self, path, error);
+		sfeature = SItemPathToFeatProc($self, path, error);
 		if (*error != S_SUCCESS)
 			return NULL;
 

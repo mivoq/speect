@@ -209,11 +209,11 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 	/* not a pause */
 
 	/* get item's token */
-	tokenItem = s_path_to_item(item, "R:SylStructure.parent.parent.R:Token.parent",
-							   error);
+	tokenItem = SItemPathToItem(item, "R:SylStructure.parent.parent.R:Token.parent",
+								error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Run",
-				  "Call to \"s_path_to_item\" failed"))
+				  "Call to \"SItemPathToItem\" failed"))
 		return NULL;
 
 	if (tokenItem == NULL)

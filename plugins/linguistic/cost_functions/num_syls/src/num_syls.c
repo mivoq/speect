@@ -106,12 +106,12 @@ static void SetFeature(const SCostFunction *self, SItem *item, s_erc *error)
 		goto quit_error;
 	}
 
-	extractedFeature = s_path_to_featproc(item,
-										  "R:SylStructure.parent.parent.word_num_syls",
-										  error);
+	extractedFeature = SItemPathToFeatProc(item,
+										   "R:SylStructure.parent.parent.word_num_syls",
+										   error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "SetFeature",
-				  "Call to \"s_path_to_featproc\" failed"))
+				  "Call to \"SItemPathToFeatProc\" failed"))
 		goto quit_error;
 
 	if (extractedFeature == NULL)

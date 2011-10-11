@@ -248,10 +248,10 @@ static char *create_phone_context(const SItem *item, s_erc *error)
 	S_CLR_ERR(error);
 
 	/* p1 = p.p.name */
-	featPath = s_path_to_feature(item, "p.p.name", error);
+	featPath = SItemPathToFeature(item, "p.p.name", error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "create_phone_context",
-				  "Call to \"s_path_to_feature\" failed"))
+				  "Call to \"SItemPathToFeature\" failed"))
 		return NULL;
 
 	if (featPath != NULL)
@@ -272,10 +272,10 @@ static char *create_phone_context(const SItem *item, s_erc *error)
 	}
 
 	/* p2 = p.name */
-	featPath = s_path_to_feature(item, "p.name", error);
+	featPath = SItemPathToFeature(item, "p.name", error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "create_phone_context",
-				  "Call to \"s_path_to_feature\" failed"))
+				  "Call to \"SItemPathToFeature\" failed"))
 		return NULL;
 
 	if (featPath != NULL)
@@ -320,10 +320,10 @@ static char *create_phone_context(const SItem *item, s_erc *error)
 	}
 
 	/* p4 = n.name */
-	featPath = s_path_to_feature(item, "n.name", error);
+	featPath = SItemPathToFeature(item, "n.name", error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "create_phone_context",
-				  "Call to \"s_path_to_feature\" failed"))
+				  "Call to \"SItemPathToFeature\" failed"))
 		return NULL;
 
 	if (featPath != NULL)
@@ -344,10 +344,10 @@ static char *create_phone_context(const SItem *item, s_erc *error)
 	}
 
 	/* p5 = n.n.name */
-	featPath = s_path_to_feature(item, "n.n.name", error);
+	featPath = SItemPathToFeature(item, "n.n.name", error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "create_phone_context",
-				  "Call to \"s_path_to_feature\" failed"))
+				  "Call to \"SItemPathToFeature\" failed"))
 		return NULL;
 
 	if (featPath != NULL)
@@ -393,10 +393,10 @@ static char *create_syl_context(const SItem *item, s_erc *error)
 	S_CLR_ERR(error);
 
 	/* p6 */
-	dFeat = s_path_to_featproc(item, "segment_pos_syl", error);
+	dFeat = SItemPathToFeatProc(item, "segment_pos_syl", error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "create_syl_context",
-				  "Call to \"s_path_to_featproc\" failed"))
+				  "Call to \"SItemPathToFeatProc\" failed"))
 		return NULL;
 
 	if (dFeat != NULL)
@@ -415,10 +415,10 @@ static char *create_syl_context(const SItem *item, s_erc *error)
 	}
 
 	/* p7 */
-	dFeat = s_path_to_featproc(item, "segment_pos_syl_rev", error);
+	dFeat = SItemPathToFeatProc(item, "segment_pos_syl_rev", error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "create_syl_context",
-				  "Call to \"s_path_to_featproc\" failed"))
+				  "Call to \"SItemPathToFeatProc\" failed"))
 		return NULL;
 
 	if (dFeat != NULL)
@@ -490,11 +490,11 @@ static char *create_A_context(const SItem *item, s_erc *error)
 	a2 = 0;
 
 	/* a3 */
-	dFeat = s_path_to_featproc(item, "R:SylStructure.parent.R:Syllable.p.syllable_num_phones",
+	dFeat = SItemPathToFeatProc(item, "R:SylStructure.parent.R:Syllable.p.syllable_num_phones",
 							   error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "create_A_context",
-				  "Call to \"s_path_to_featproc\" failed"))
+				  "Call to \"SItemPathToFeatProc\" failed"))
 		return NULL;
 
 	if (dFeat != NULL)
@@ -540,11 +540,11 @@ static char *create_A_context_pause(const SItem *item, s_erc *error)
 	a2 = 0;
 
 	/* a3 */
-	dFeat = s_path_to_featproc(item, "p.R:SylStructure.parent.R:Syllable.syllable_num_phones",
+	dFeat = SItemPathToFeatProc(item, "p.R:SylStructure.parent.R:Syllable.syllable_num_phones",
 							   error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "create_A_context_pause",
-				  "Call to \"s_path_to_featproc\" failed"))
+				  "Call to \"SItemPathToFeatProc\" failed"))
 		return NULL;
 
 	if (dFeat != NULL)
@@ -621,11 +621,11 @@ static char *create_B_context(const SItem *item, s_erc *error)
 	b2 = 0;
 
 	/* b3 */
-	dFeat = s_path_to_featproc(item, "R:SylStructure.parent.R:Syllable.syllable_num_phones",
+	dFeat = SItemPathToFeatProc(item, "R:SylStructure.parent.R:Syllable.syllable_num_phones",
 							   error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "create_B_context",
-				  "Call to \"s_path_to_featproc\" failed"))
+				  "Call to \"SItemPathToFeatProc\" failed"))
 		return NULL;
 
 	if (dFeat != NULL)
@@ -644,11 +644,11 @@ static char *create_B_context(const SItem *item, s_erc *error)
 	}
 
 	/* b4 */
-	dFeat = s_path_to_featproc(item, "R:SylStructure.parent.R:Syllable.syllable_pos_word",
+	dFeat = SItemPathToFeatProc(item, "R:SylStructure.parent.R:Syllable.syllable_pos_word",
 							   error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "create_B_context",
-				  "Call to \"s_path_to_featproc\" failed"))
+				  "Call to \"SItemPathToFeatProc\" failed"))
 		return NULL;
 
 	if (dFeat != NULL)
@@ -668,11 +668,11 @@ static char *create_B_context(const SItem *item, s_erc *error)
 
 
 	/* b5 */
-	dFeat = s_path_to_featproc(item, "R:SylStructure.parent.R:Syllable.syllable_pos_word_rev",
+	dFeat = SItemPathToFeatProc(item, "R:SylStructure.parent.R:Syllable.syllable_pos_word_rev",
 							   error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "create_B_context",
-				  "Call to \"s_path_to_featproc\" failed"))
+				  "Call to \"SItemPathToFeatProc\" failed"))
 		return NULL;
 
 	if (dFeat != NULL)
@@ -692,11 +692,11 @@ static char *create_B_context(const SItem *item, s_erc *error)
 
 
 	/* b6 */
-	dFeat = s_path_to_featproc(item, "R:SylStructure.parent.R:Syllable.syllable_pos_phrase",
+	dFeat = SItemPathToFeatProc(item, "R:SylStructure.parent.R:Syllable.syllable_pos_phrase",
 							   error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "create_B_context",
-				  "Call to \"s_path_to_featproc\" failed"))
+				  "Call to \"SItemPathToFeatProc\" failed"))
 		return NULL;
 
 	if (dFeat != NULL)
@@ -716,11 +716,11 @@ static char *create_B_context(const SItem *item, s_erc *error)
 
 
 	/* b7 */
-	dFeat = s_path_to_featproc(item, "R:SylStructure.parent.R:Syllable.syllable_pos_phrase_rev",
+	dFeat = SItemPathToFeatProc(item, "R:SylStructure.parent.R:Syllable.syllable_pos_phrase_rev",
 							   error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "create_B_context",
-				  "Call to \"s_path_to_featproc\" failed"))
+				  "Call to \"SItemPathToFeatProc\" failed"))
 		return NULL;
 
 	if (dFeat != NULL)
@@ -749,11 +749,11 @@ static char *create_B_context(const SItem *item, s_erc *error)
 	b15 = 0;
 
 	/* b16 */
-	dFeat = s_path_to_featproc(item, "R:SylStructure.parent.R:Syllable.syllable_vowel",
+	dFeat = SItemPathToFeatProc(item, "R:SylStructure.parent.R:Syllable.syllable_vowel",
 							   error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "create_B_context",
-				  "Call to \"s_path_to_featproc\" failed"))
+				  "Call to \"SItemPathToFeatProc\" failed"))
 		return NULL;
 
 	if (dFeat != NULL)
@@ -830,11 +830,11 @@ static char *create_C_context(const SItem *item, s_erc *error)
 	c2 = 0;
 
 	/* c3 */
-	dFeat = s_path_to_featproc(item, "R:SylStructure.parent.R:Syllable.n.syllable_num_phones",
+	dFeat = SItemPathToFeatProc(item, "R:SylStructure.parent.R:Syllable.n.syllable_num_phones",
 							   error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "create_C_context",
-				  "Call to \"s_path_to_featproc\" failed"))
+				  "Call to \"SItemPathToFeatProc\" failed"))
 		return NULL;
 
 	if (dFeat != NULL)
@@ -880,11 +880,11 @@ static char *create_C_context_pause(const SItem *item, s_erc *error)
 	c2 = 0;
 
 	/* c3 */
-	dFeat = s_path_to_featproc(item, "n.R:SylStructure.parent.R:Syllable.syllable_num_phones",
+	dFeat = SItemPathToFeatProc(item, "n.R:SylStructure.parent.R:Syllable.syllable_num_phones",
 							   error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "create_C_context_pause",
-				  "Call to \"s_path_to_featproc\" failed"))
+				  "Call to \"SItemPathToFeatProc\" failed"))
 		return NULL;
 
 	if (dFeat != NULL)

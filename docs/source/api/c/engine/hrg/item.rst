@@ -156,11 +156,11 @@ R:relname   item *as* it is in the given relation ``relname``
 =========   ========
 
 
-.. doxybridge:: s_path_to_item
+.. doxybridge:: SItemPathToItem
 
-.. doxybridge:: s_path_to_feature
+.. doxybridge:: SItemPathToFeature
 
-.. doxybridge:: s_path_to_featproc
+.. doxybridge:: SItemPathToFeatProc
 
 .. doxybridge:: SItemPath
 

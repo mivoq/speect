@@ -233,7 +233,7 @@ typedef struct
 		const SItem *item;
 
 
-		item = s_path_to_item($self, path, error);
+		item = SItemPathToItem($self, path, error);
 		if (*error != S_SUCCESS)
 			return NULL;
 

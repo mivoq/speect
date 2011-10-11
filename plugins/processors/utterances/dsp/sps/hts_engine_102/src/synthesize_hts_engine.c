@@ -964,10 +964,10 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 		const char *tmp;
 
 
-		dFeat = s_path_to_featproc(itemItr, "hts_labels", error);
+		dFeat = SItemPathToFeatProc(itemItr, "hts_labels", error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "Run",
-					  "Call to \"s_path_to_featproc\" failed"))
+					  "Call to \"SItemPathToFeatProc\" failed"))
 			goto quit_error;
 
 		if (dFeat == NULL)

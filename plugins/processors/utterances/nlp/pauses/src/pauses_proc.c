@@ -248,12 +248,12 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 
 		while (wordItem != NULL)
 		{
-			segmentItem = (SItem*)s_path_to_item(wordItem,
-												 "R:SylStructure.daughtern.daughtern.R:Segment",
-												 error);
+			segmentItem = (SItem*)SItemPathToItem(wordItem,
+												  "R:SylStructure.daughtern.daughtern.R:Segment",
+												  error);
 			if (S_CHK_ERR(error, S_CONTERR,
 						  "Run",
-						  "Call to \"s_path_to_item\" failed"))
+						  "Call to \"SItemPathToItem\" failed"))
 				return;
 
 			if (segmentItem != NULL)

@@ -104,7 +104,7 @@ we define the following objects and processes:
 The *utterance* is the input and output of all the functional blocks
 shown in :ref:`figure 1 <figure_tts_con>`, even for the DSP processors
 which generate the speech signal. Speect models the utterance
-internally as a :doc:`heterogeneous relation graph <hrg_topic>` [#]_,
+internally as a :ref:`heterogeneous relation graph <hrg_topic>` [#]_,
 and all the modules of figure 1 just add information to the utterance.
 
 

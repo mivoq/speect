@@ -1,13 +1,13 @@
-.. _hrg/main:
-
 .. index:: ! Heterogeneous Relation Graphs (C API)
+
+.. _hrg_main_c:
 
 =============================
 Heterogeneous Relation Graphs
 =============================
 
 Graphs for describing and connecting different linguistic objects.
-Also see the :doc:`../../../../topics/hrg_topic` topic guide.
+Also see the :ref:`hrg_topic` topic guide.
 
 .. toctree::
    :maxdepth: 2

@@ -5,13 +5,15 @@
 License
 =======
 
-.. rubric:: License
-   :class: strong
- 
-Speect is free and open source software. As a collection it is distributed under
-an MIT license, as approved by the `Open Source Initiative <http://www.opensource.org/licenses/mit-license.php>`_
-and the `Free Software Foundation <http://www.gnu.org/philosophy/license-list.html>`_. 
-The complete text of the license is as follows::
+License
+=======
+
+Speect is free and open source software. As a collection it is
+distributed under an MIT license, as approved by the `Open Source
+Initiative <http://www.opensource.org/licenses/mit-license.php>`_ and
+the `Free Software Foundation
+<http://www.gnu.org/philosophy/license-list.html>`_.  The complete
+text of the license is as follows::
 
     Copyright (c) 2008-2011 The Department of Arts and Culture,
     The Government of the Republic of South Africa.

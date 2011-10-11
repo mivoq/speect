@@ -1,6 +1,6 @@
-.. _pluginmanager/main:
-
 .. index:: ! Plug-ins (C API)
+
+.. _pluginmanager_main_c:
 
 ========
 Plug-ins
@@ -12,12 +12,12 @@ The plug-in based system can be divided into three parts:
     * a plug-in manager, and
     * the plug-ins.
 
-The :doc:`domain-specific system <dso>` loads the :doc:`plug-ins
-<plugin_def>` and creates :doc:`plug-in objects <plugin_object>` via
-the :doc:`plug-in manager <plugin_manager>`. 
+The :ref:`domain-specific system <dso_c>` loads the :ref:`plug-ins
+<plugin_def_c>` and creates :ref:`plug-in objects <plugin_object_c>` via
+the :ref:`plug-in manager <plugin_manager_c>`. 
 
 
-Also see the :doc:`../../../../topics/plugins_topic` topic guide.
+Also see the :ref:`plugins_topic` topic guide.
 
 	
 .. toctree::

@@ -16,6 +16,8 @@ Topic Guides
    hrg_topic
    voice_topic
    processors_topic
+   plugins_topic
+   voicetools_topic
 
 
 .. index:: Topic Guides; C Specific
@@ -53,6 +55,7 @@ Topic Guides
    errdbg_topic_python
    init_logging_topic_python
    processors_topic_python
+   voice_topic_python
 
 .. toctree::
    :hidden: 
@@ -72,12 +75,3 @@ Topic Guides
 
    style_guide_topic
    directory_layout_topic
-   plugins_topic
-
-
-here be topic guides
-
-
-.. todo::
-
-   Plug-ins,  voice, cmake stuff (including custom functions), styleguide, dir layout

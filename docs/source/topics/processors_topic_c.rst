@@ -90,7 +90,7 @@ checking. Note the :c:macro:`S_UNUSED` macro on line 23, used to tell
 the compiler that we know that the ``self`` argument is not used in
 this function. We also need to implement a *dispose* function so that
 the processor can be normally deleted when the voice is deleted (see
-:doc:`object_system_topic`).
+:ref:`object_system_topic`).
 
 .. code-block:: c
    
@@ -189,7 +189,7 @@ follows:
 This implementation does not include all error checking for the sake
 of brevity.  We also need to implement a *dispose* function so that
 the processor can be normally deleted when the voice is deleted (see
-:doc:`object_system_topic`).
+:ref:`object_system_topic`).
 
 .. code-block:: c
    

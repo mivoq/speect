@@ -1,11 +1,11 @@
 .. index:: 
    single: Plug-ins (C API); Plug-in Manager
 
+.. _plugin_manager_c:
+
 ===============
 Plug-in Manager
 ===============
-
-.. todo:: where is default plug-in path.
 
 The *Plug-in Manager* provides methods for loading plug-ins that are
 then available to the Speect Engine and all other loaded plug-ins.
@@ -27,4 +27,12 @@ Functions
 
 .. doxybridge:: s_pm_load_plugin
 
+.. seealso::
+    
+   :ref:`Default plug-in path <default_plugin_path>`.
+
 .. doxybridge:: s_pm_get_plugin_path
+
+.. seealso::
+    
+   :ref:`Default plug-in path <default_plugin_path>`.

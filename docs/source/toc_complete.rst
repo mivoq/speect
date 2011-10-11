@@ -1,4 +1,6 @@
 
+:orphan: 
+
 =============================
 Speect Documentation Contents
 =============================
@@ -9,4 +11,4 @@ Speect Documentation Contents
    api/main
    examples/main
    installation
-   todo
+

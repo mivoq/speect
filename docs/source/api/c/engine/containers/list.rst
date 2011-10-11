@@ -1,10 +1,10 @@
 
+
+.. _slist_c:
+
 =====
 SList
 =====
-
-.. todo:: add examples
-   
 
 SList containers are data types that holds an ordered collection of
 values (:c:type:`SObject`) , where the same value may occur more than
@@ -17,7 +17,7 @@ and :c:func:`SIteratorUnlink` function calls. The
 :c:func:`SIteratorKey` method is not implemented and will set an error
 and return :c:type:`NULL` if called for SList type iterators.
 
-Also see :doc:`../../../../examples/c/list_iteration_example`.
+Also see :ref:`examples/c/list_iteration_example`.
 
 
 Definitions

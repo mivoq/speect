@@ -10,7 +10,7 @@ Processors
 
 Processors modify or extract features from utterances
 (:py:class:`SUtterance`) or items (:py:class:`SItem`). Also see the
-:doc:`../../../../topics/processors_topic` topic guide.
+:ref:`processors_topic` topic guide.
 
 .. toctree::
    :maxdepth: 2

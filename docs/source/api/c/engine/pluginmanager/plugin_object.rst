@@ -1,12 +1,14 @@
 .. index:: 
    single: Plug-ins (C API); Plug-in Object
 
+.. _plugin_object_c:
+
 ==============
 Plug-in Object
 ==============
 
 Plug-in objects encapsulate the loading/unloading and resource acquisition
-of *dynamic shared objects* (see also :doc:`dso`).
+of *dynamic shared objects* (see also :ref:`dso_c`).
 
 
 Definitions

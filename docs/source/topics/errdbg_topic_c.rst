@@ -23,7 +23,7 @@ primitives in most code. However, it demands discipline and commitment
 to check all function calls when writing, and maintaining code.
 
 
-See :doc:`../api/c/engine/base/errdbg/main` for a detailed description
+See :ref:`Error handling and debugging C API <errdbg_main_c>` for a detailed description
 of the API.
 
 Example
@@ -88,8 +88,10 @@ The error handling system as described enables one to create a detailed
 "backtrace" that has been logged to some or other place, and therefore
 makes development and bug tracking a much easier task.
 
-A more detailed example of the error handling mechanism can be found at
-``speect/engine/examples/base/errdbg/errdbg_example.c``, or :doc:`../examples/c/errdbg_example`.
+A more detailed example of the error handling mechanism can be found
+at ``speect/engine/examples/base/errdbg/errdbg_example.c``, or
+:ref:`error handling and debugging example
+<examples/c/errdbg_example>`.
 
 
 .. _errdbg_topic_disable:

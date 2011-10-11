@@ -1,6 +1,7 @@
-.. _datasources/main:
-
 .. index:: ! Data Sources (C API)
+
+
+.. _datasources/main:
 
 ============
 Data Sources

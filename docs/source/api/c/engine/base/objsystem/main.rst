@@ -1,12 +1,12 @@
 .. index:: ! Generic Object System (C API)
 
-.. _objsystem/main:
+.. _objsystem_main_c:
 
 =====================
 Generic Object System
 =====================
 
-Provides an object-oriented approach for data types. See the :doc:`../../../../../topics/object_system_topic` topic
+Provides an object-oriented approach for data types. See the :ref:`object_system_topic` topic
 guide for more details. 
 
 

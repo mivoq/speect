@@ -1,9 +1,9 @@
-.. _style_guide_topic:
-
 .. index:: 
    single: Topic Guides; Style Guide
 
 .. index:: ! Style Guide
+
+.. _style_guide_topic:
 
 ===========
 Style Guide
@@ -196,7 +196,7 @@ math header file and not a Speect header file.
 .. rubric:: Directory naming
 
 Directory names should be short, concise and all small caps. The
-:doc:`directory_layout_topic` is a good example to follow.
+:ref:`directory_layout_topic` is a good example to follow.
 
 
 Program files

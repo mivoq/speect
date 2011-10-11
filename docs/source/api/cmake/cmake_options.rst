@@ -1,7 +1,8 @@
-.. _cmake_options:
 
 .. index:: 
    single: CMake API; Configuration Options
+
+.. _cmake_options:
 
 ===========================
 CMake Configuration Options
@@ -9,7 +10,7 @@ CMake Configuration Options
 
 Several configuration options are available to customize the Speect
 build system.  These options can be configured through an interactive
-CMake interface as described in :doc:`../../installation`, or through the
+CMake interface as described in :ref:`installation`, or through the
 command line.
 
 
@@ -176,12 +177,18 @@ Option Descriptions
 Extra Options
 =============
 
+Some plug-ins only get compiled if the required external files and
+libraries are available. The options include:
+
+
 HTS Engine
 ----------
 
-The `HTS Engine <http://hts-engine.sourceforge.net/>`_ compile time options for HTS Engine plug-ins are
-in the form ``HTS_ENGINE_INCLUDE_*`` and ``HTS_ENGINE_LIB_*``, where ``*`` denotes the HTS Engine version. These
-options are added as plug-ins for new HTS Engine versions are added, and versions 1.03, 1.04 and 1.05 are
+The `HTS Engine <http://hts-engine.sourceforge.net/>`_ compile time
+options for HTS Engine plug-ins are in the form
+``HTS_ENGINE_INCLUDE_*`` and ``HTS_ENGINE_LIB_*``, where ``*`` denotes
+the HTS Engine version. These options are added as plug-ins for new
+HTS Engine versions are added, and versions 1.03, 1.04 and 1.05 are
 currently supported. For example:
 
 .. cmake:: HTS_ENGINE_INCLUDE_103

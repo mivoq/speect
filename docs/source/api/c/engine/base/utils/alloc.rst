@@ -1,6 +1,6 @@
 .. index:: ! Memory Allocation (C API)
 
-.. _utils/alloc:
+.. _utils_alloc_c:
 
 =================
 Memory Allocation
@@ -10,7 +10,7 @@ Macros for use in memory allocation and deallocation. These macros
 wrap the standard ``malloc``, ``calloc``, ``realloc`` and ``free``
 functions and should always be preferred over these functions.
 
-Also see :doc:`../../../../../examples/c/mem_example`.
+Also see :ref:`examples/c/mem_example`.
 
 
 Summary

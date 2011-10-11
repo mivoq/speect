@@ -1,6 +1,6 @@
 
 .. index:: 
-   single: Topic Guides; Initialization, Finalization and Logging (Python API)
+   single: Topic Guides; Initialization, Finalization and Logging (C API)
 
 .. _init_logging_topic_c:
 
@@ -25,6 +25,8 @@ The *default* plug-in path is also set.
 .. index:: Default Plug-in Path
 
 .. _default_plugin_path:
+
+.. rubric:: *Default* plug-in path
 
 The default plug-in path is calculated based on a guess of the
 location of the Speect installation, or where Speect was built. When

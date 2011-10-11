@@ -15,8 +15,7 @@ Welcome! This is the documentation for Speect |version|, last updated |today|.
    api/main
    examples/main
    installation
-   todo
-   toc_complete
+
 
 
 | 
@@ -32,7 +31,7 @@ Welcome! This is the documentation for Speect |version|, last updated |today|.
    	 * - :ref:`topics_main`
      	   - :ref:`api_main`
 	 * - start here
-	   - Python, C and CMake reference
+	   - C, Python and CMake reference
    	 * - :ref:`examples_main`
 	   - :ref:`installation`
 	 * - Python and C example snippets

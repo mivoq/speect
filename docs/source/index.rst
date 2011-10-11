@@ -27,14 +27,7 @@ Speect is a multilingual text-to-speech (TTS) system. It offers a full
 TTS system (text analysis which decodes the text, and speech
 synthesis, which encodes the speech) with various API's, as well as an
 environment for research and development of TTS systems and
-voices. The following speech synthesis technologies are currently
-supported:
-
-  * Unit Selection -- Concatenative halfphone sized unit selection,
-    and
-  * HMM-based synthesis -- HMM-based synthesis plug-ins for the `HTS
-    Engine <http://hts-engine.sourceforge.net/>`_.
-
+voices. 
 
 Speect is written in the C language, with a strict conformance to the
 ISO/IEC 9899:1990 standard, thereby allowing for maximum portability
@@ -72,3 +65,7 @@ send an email to `speect-users@lists.sourceforge.net
        .. container:: link_license
       	 
 	 * :doc:`copyright`
+
+
+
+

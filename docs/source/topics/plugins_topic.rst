@@ -4,8 +4,6 @@
 
 .. index:: ! Plug-ins
 
-.. todo:: where do plug-ins go?
-
 .. _plugins_topic:
 
 ========
@@ -15,11 +13,10 @@ Plug-ins
 Plug-ins are used to extend the functionality of Speect, and as a
 mechanism to keep the Speect Engine independent of any linguistic or
 acoustic specific code. This extending of Speect is done by defining
-new classes (see :doc:`object_system_topic`) in the plug-ins and
+new classes (see :ref:`object_system_topic`) in the plug-ins and
 registering them with the object system, so that objects of these new
-classes can be instantiated and used by other code. See
-:doc:`../api/c/engine/pluginmanager/main` for a detailed description of
-the API.
+classes can be instantiated and used by other code. See :ref:`plug-ins
+C API <pluginmanager_main_c>` for a detailed description of the API.
 
 In Speect each plug-in is in it's own directory. A template of this
 plug-in directory format is provided in ``speect/plugins/template``::
@@ -47,12 +44,12 @@ new implementation without shutting the system), safe extension by
 third-party developers (additional functionality without modifying the
 core system), and shorter link times.
 
-Speect provides support for the use of :doc:`dynamic shared objects
-<../api/c/engine/pluginmanager/dso>` (DSO) as plug-ins. When a DSO, or
-plug-in, is loaded the *plug-in manager* looks for the
-``s_plugin_init`` symbol in the plug-in. This is the *only* symbol
-that is loaded by the plug-in manager and therefore must be defined by
-all plug-ins that want to work with the plug-in manager.
+Speect provides support for the use of :ref:`dynamic shared objects
+<dso_c>` (DSO) as plug-ins. When a DSO, or plug-in, is loaded the
+*plug-in manager* looks for the ``s_plugin_init`` symbol in the
+plug-in. This is the *only* symbol that is loaded by the plug-in
+manager and therefore must be defined by all plug-ins that want to
+work with the plug-in manager.
 
 
 plugin.c
@@ -272,7 +269,13 @@ viterbi.spi.0" which in turn points to "viterbi.spi.0.9.5".
 
 .. note::
 
-   All plug-in DSO's are place in the ...
+   All plug-in DSO's are place in the build directory ``plugins/lib``
+   (see :ref:`configuration_build`), which is usually
+   ``speect/build/plugins``, and is the :ref:`default plug-in path
+   <default_plugin_path>`. The *plug-in manager* takes care of the
+   paths and the plug-ins can be referenced by just their names and
+   extensions (*always* ".spi"), for example see the voice feature
+   processors :ref:`definition <voice_feat_proc>` in the voice topic.
 
 .. _plugin_info_h:
 

@@ -1,6 +1,6 @@
-.. _containers/main:
-
 .. index:: ! Containers (C API)
+
+.. _containers_main_c:
 
 ==========
 Containers
@@ -46,6 +46,8 @@ objects must inherit.
 :doc:`SContainerClass_structure`
 
 
+.. _containers_iterators_c:
+
 Iterator Definitions
 ====================
 
@@ -55,7 +57,7 @@ Iterator Definitions
 SIterator provides an interface for iteration over the objects stored in a container.
 Specific container implementations must implement the SIteratorClass functions.
 
-Also see :doc:`../../../../examples/c/list_iteration_example`.
+Also see :ref:`examples/c/list_iteration_example`.
 
 .. doxybridge:: SIterator
    :type: speect object

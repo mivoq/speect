@@ -4,8 +4,6 @@
 SItem
 =====
 
-.. todo:: feature processor link in paths, examples, explain ph phone constant features.
-
 A class for containing linguistic items (arbitrary objects). Items are
 nodes in a relation which is again linked to an utterance. Items
 contain a key-value (string/:c:type:`SObject`) set of features. An item

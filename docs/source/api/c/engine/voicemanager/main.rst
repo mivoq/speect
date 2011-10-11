@@ -1,7 +1,6 @@
-.. _voicemanager/main:
-
 .. index:: ! Voices (C API)
 
+.. _voicemanager/main:
 
 ======
 Voices

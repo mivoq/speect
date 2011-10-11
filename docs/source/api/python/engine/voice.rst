@@ -3,10 +3,8 @@
 .. index:: ! Voices (Python API)
 
 .. index::
-   single: Voices (C API); SVoice
+   single: Voices (Python API); SVoice
 
-
-.. todo:: voice loading from python files.
 
 ======
 SVoice
@@ -21,6 +19,10 @@ SVoice
       The ``SVoice`` object inherits from ``SObject`` in the Speect Engine
       and can therefore be used in functions/methods that require parameters
       of type ``SObject``.
+
+   .. seealso::
+
+      :ref:`voice_topic_python`
 
 
 Summary

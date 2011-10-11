@@ -1,3 +1,6 @@
+
+.. _SObjectClass_Structure:
+
 ======================
 SObjectClass Structure
 ======================

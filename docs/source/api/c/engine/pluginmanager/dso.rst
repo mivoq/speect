@@ -1,6 +1,9 @@
 .. index:: 
    single: Plug-ins (C API); Dynamic Shared Objects
 
+
+.. _dso_c:
+
 ======================
 Dynamic Shared Objects
 ======================

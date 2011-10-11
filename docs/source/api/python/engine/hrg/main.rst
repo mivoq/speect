@@ -1,15 +1,14 @@
-.. _hrg/main:
 
 .. index:: ! Heterogeneous Relation Graphs (Python API)
 
-.. todo:: mention how to create item, relation ...
+.. _hrg_main_python:
 
 =============================
 Heterogeneous Relation Graphs
 =============================
 
 Graphs for describing and connecting different linguistic objects.
-Also see the :doc:`../../../../topics/hrg_topic` topic guide.
+Also see the :ref:`hrg_topic` topic guide.
 
 .. toctree::
    :maxdepth: 2

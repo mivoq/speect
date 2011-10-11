@@ -3,7 +3,7 @@
 .. index:: ! Plug-ins (Python API)
 
 .. index::
-   single: Plug-ins (C API); SPlugin
+   single: Plug-ins (Python API); SPlugin
 
 =======
 SPlugin

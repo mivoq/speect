@@ -1,14 +1,14 @@
 .. index:: 
    single: Simple Containers (C API); Hash Table
 
-.. _base_hash_table:
+.. _base_hash_table_c:
 
 ==========
 Hash Table
 ==========
 
 A Hash Table data structure definition and functions. Also see
-:doc:`../../../../../examples/c/hash_table_example`.
+:ref:`examples/c/hash_table_example`.
 
 
 Summary

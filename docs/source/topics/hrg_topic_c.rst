@@ -9,8 +9,8 @@ HRG with the C API
 
 The code to recreate the HRG structure in :ref:`figure 4 <figure_hrg>`
 can be found at ``speect/engine/examples/hrg/create_docs_example.c``,
-or :doc:`HRG example <../examples/c/hrg_example>`. See
-:doc:`HRG API <../api/c/engine/hrg/main>` for a detailed description
+or :ref:`HRG example <examples/c/hrg_example>`. See
+:ref:`HRG API <hrg_main_c>` for a detailed description
 of the API. Here we show some snippets to explain the process of
 building an utterance.
 

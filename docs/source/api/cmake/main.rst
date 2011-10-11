@@ -1,6 +1,7 @@
-.. _cmake/main:
 
 .. index:: ! CMake API
+
+.. _cmake/main:
 
 ================
 Speect CMake API

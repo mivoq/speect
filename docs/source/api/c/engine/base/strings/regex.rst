@@ -1,7 +1,7 @@
 .. index:: 
    single: Strings (C API); Regular Expressions
 
-.. _regex:
+.. _regex_c:
 
 ===================
 Regular Expressions
@@ -26,7 +26,7 @@ The regular expressions are matched using a purely NFA
 (nondeterministic finite automaton) based approach. No backtracking
 algorithm is provided.
 
-Also see :doc:`../../../../../examples/c/regex_example`.
+Also see :ref:`examples/c/regex_example`.
 
 
 Syntax Reference

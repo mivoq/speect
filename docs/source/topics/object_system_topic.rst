@@ -1,5 +1,5 @@
 .. index:: 
-   single: Topic Guides (C API); Generic Object System
+   single: Topic Guides; Generic Object System
 
 .. _object_system_topic:
 
@@ -47,9 +47,9 @@ contain information about the class hierarchy, the size of the objects
 instantiated by the class, and version information.  Objects are
 dynamically allocated by the object's class. The first member of an
 object structure definition is always an object of the object's
-superclass type. Objects keep a reference count (see :doc:`reference_counting_topic`).
+superclass type. Objects keep a reference count (see :ref:`reference_counting_topic`).
 
-See :doc:`../api/c/engine/base/objsystem/main` for a detailed description
+See :ref:`Generic Object System C API <objsystem_main_c>` for a detailed description
 of the API.
 
 
@@ -790,7 +790,7 @@ Example Usage
 
 The following code snippets were extracted from ``speect/engine/examples/base/objsystem/objsystem_example.c``
 and are abbreviated to show the basic usage of the above defined objects. The example can also be viewed at
-:doc:`../examples/c/objsystem_example`.
+:ref:`examples/c/objsystem_example`.
 
 We can now declare and instantiate circles and rectangles as follows:
 
@@ -872,5 +872,5 @@ The call to :c:macro:`S_DELETE` will do two things:
 
 Not all of SObjectClass's methods were implemented in these examples,
 but the full details of each method can also be found at
-:doc:`../api/c/engine/base/objsystem/SObjectClass_structure`.
+:ref:`SObjectClass_Structure`.
 

@@ -1,4 +1,4 @@
-.. _python_plugins:
+.. _python/plugins/main:
 
 ==========================
 Speect Plug-ins Python API

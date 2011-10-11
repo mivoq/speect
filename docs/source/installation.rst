@@ -13,7 +13,6 @@ source in a new location and customize that installation.
     #. `Optional`_
     #. `Configuration and Compilation`_
     #. `Configuration Options in CMake`_
-    #. `Plug-in Options in CMake`_
     #. `Installation`_
 
 
@@ -37,64 +36,28 @@ To include the HMM-based synthesis plug-ins for the HTS Engine:
       on the voices being used.
 
 
+.. _configuration_build:
+
 Configuration and Compilation
 =============================
 
 CMake must be run to generate a build system for Speect. CMake
 provides both a command-line tool and interactive interfaces. Advanced
 users may wish to use the command-line tool but here we document the
-CMake interactive interface for each platform.
+CMake interactive interface.
 
-The build system may be placed either in the Speect source tree (an
-*in-source* build) or in a separate tree (an *out-of-source*
-build). It is preferable to do an out-of-source build so that your
-source tree remains unchanged. An in-source build puts generated files
-in your source tree, and can sometimes lead to unwanted behaviour if
-you forget to clean the source tree after you have made changes to the
-code.  With an out-of-source build you can just delete the whole
-tree. Also an out-of-source build makes it easy to have multiple
-builds with different configurations sharing the same source
-tree. Once a single in-source build has been created it is the only
-build tree that can be associated with that source tree.
-
-
-Windows
--------
-
-Run the CMakeSetup dialog to get started. It must be executed from an
-environment configured to run the compiler to be used. In the case of
-the Visual Studio IDE no special environment is needed and CMakeSetup
-can be started from its icon. In the case of a Visual Studio NMake,
-Borland C++, or MinGW build the CMakeSetup dialog should be executed
-from a command prompt with the appropriate environment set.
-
-The dialog prompts for the location of the source and binary
-trees. There may also be prompt for the build system generator to be
-used ("Build For:"). Once these are set then CMake is ready for a
-first pass at configuring the Speect build system. Use the "Configure"
-button to initiate this process. If there was no earlier prompt for
-the build system generator a separate dialog will appear during the
-first configuration step to prompt for generator selection. After a
-while the dialog will present a set of configuration options.  See
-below (`Configuration Options in CMake`_) for details on the meaning
-of each of these options.  After setting the options as desired press
-"Configure" again to make another pass at configuring Speect. New
-options may appear when earlier options are adjusted. Keep adjusting
-options and pressing "Configure" until the desired configuration is
-reached. Finally press the "Generate" button to actually generate the
-build system.
-
-Now that the build system has been generated the corresponding native
-tools can be used to build Speect. In the case of the Visual Studio
-IDE simply run it and load the Speect workspace or solution file from
-the binary tree specified in the CMakeSetup dialog. Select and build
-the ALL_BUILD target. In the case of a Visual Studio NMake, Borland
-C++, or MinGW build use the corresponding make tool (nmake, make, and
-make, respectively) from the command line.
-
-
-UN*X / Cygwin / Mac OS X
-------------------------
+With Speect the build system is placed in a separate tree (known as an
+*out-of-source* build) to the source tree. It is preferable to do an
+out-of-source build so that your source tree remains unchanged. An
+in-source build puts generated files in your source tree, and can
+sometimes lead to unwanted behaviour if you forget to clean the source
+tree after you have made changes to the code.  With an out-of-source
+build you can just delete the whole tree. Also an out-of-source build
+makes it easy to have multiple builds with different configurations
+sharing the same source tree. Once a single in-source build has been
+created it is the only build tree that can be associated with that
+source tree. The default directory to place different builds is
+``speect/build``.
 
 CMake can be run from the command line on these platforms, or you can
 use the CMake graphical interface (``cmake-gui``) if you have it
@@ -104,58 +67,49 @@ generated. CMake will usually choose the system C compiler
 automatically but it can be told to use specific compilers through the
 ``CC`` environment variable.
 
-A typical in-source build for Speect might look like this::
+A typical build for Speect looks like this::
 
     $ ls -d speect
     speect/
-    $ cd speect
-    $ ccmake .
+    $ cd speect/build
+    $ ccmake ../
     $ make
 
-A typical out-of-source build for Speect might look like this::
-
-    $ ls -d speect
-    speect/
-    $ mkdir speect_build
-    $ cd speect_build
-    $ ccmake ../speect
-    $ make
-
-
-The ccmake tool is a curses-based dialog that may be used to
-interactively configure Speect.  When it appears press 'c' on the
+The ``ccmake`` tool is a curses-based dialog that may be used to
+interactively configure Speect.  When it appears press ``c`` on the
 keyboard to run the initial configuration of the Speect build system.
 Eventually a set of configuration options will appear. These may be
-edited using the arrow-keys and the ENTER key for navigation. See
+edited using the arrow-keys and the ``ENTER`` key for navigation. See
 below (`Configuration Options in CMake`_) for details on the meaning
 of each of these options.
 
-Once the options have been set as desired press 'c' again to
+Once the options have been set as desired press ``c`` again to
 reconfigure. New options may appear when earlier options are
-adjusted. Keep adjusting options and pressing 'c' until the desired
-configuration is reached. Finally press 'g' to actually generate the
+adjusted. Keep adjusting options and pressing ``c`` until the desired
+configuration is reached. Finally press ``g`` to actually generate the
 build system. Now that the build system has been generated just run
-make or gmake to build Speect.
+``make`` or ``gmake`` to build Speect.
 
 Alternatively one can pass CMake all the desired options through the
 command line, for example::
 
     $ ls -d speect
     speect/
-    $ mkdir speect_build
-    $ cd speect_build
-    $ cmake ../speect -DERROR_HANDLING=off -DHTS_ENGINE_INCLUDE=/path/to/hts/include \
+    $ cd speect/build
+    $ cmake ../ -DERROR_HANDLING=off -DHTS_ENGINE_INCLUDE=/path/to/hts/include \
      -DHTS_ENGINE_LIB=/path/to/hts/lib/libHTSEngine.a
     $ make	      
 
 
-NOTE: The ccmake curses dialog is the most commonly used interactive
-interface for CMake on UNIX-like platforms, so these instructions
-assume it is available. Some system administrators may not have
-installed curses in which case ccmake will not be available. On these
-platforms one may use the command ``cmake -i`` in place of ccmake and
-follow the on-screen instructions to configure Speect. See CMake
-documentation for further details.
+.. note::
+
+   The ``ccmake`` curses dialog is the most commonly used interactive
+   interface for CMake on UNIX-like platforms, so these instructions
+   assume it is available. Some system administrators may not have
+   installed curses in which case ``ccmake`` will not be available. On
+   these platforms one may use the command ``cmake -i`` in place of
+   ccmake and follow the on-screen instructions to configure
+   Speect. See the CMake documentation for further details.
 
 
 Configuration Options in CMake
@@ -169,90 +123,27 @@ other options are set to a particular value.
 
 The interactive CMake interface provides brief documentation for every
 option. Some options have more meaning than can be described in one
-sentence, so additional documentation is provided here:
-
-
-+----------------------+------------------+------------------------+--------------+
-|Variable              |Options           |Docstring               |Default       |
-+======================+==================+========================+==============+
-|CMAKE_BUILD_TYPE      |Debug, Release,   |The build type          |Debug         |
-|                      |RelWithDebInfo,   |influences the C        |              |
-|                      |Minsize, Profile  |optimization and debug  |              |
-|                      |                  |compilation flags.      |              |
-+----------------------+------------------+------------------------+--------------+
-|CMAKE_INSTALL_PREFIX  |                  |The installation path   |``/usr/local``|
-|                      |                  |for the ``make install``|              |
-|                      |                  |command.                |              |
-+----------------------+------------------+------------------------+--------------+
-|ERROR_ABORT_FATAL     |ON or OFF         |Call libc abort() or    |OFF           |
-|                      |                  |gracefully exit with    |              |
-|                      |                  |error log.              |              |
-+----------------------+------------------+------------------------+--------------+
-|ERROR_HANDLING        |ON or OFF         |Use Speect error        |ON            |
-|                      |                  |handling mechanism.     |              |
-+----------------------+------------------+------------------------+--------------+
-|LIB_SUFFIX            |                  |Suffix for library      |              |
-|                      |                  |directories, e.g. "64"  |              |
-+----------------------+------------------+------------------------+--------------+
-|SAFE_CAST             |ON or OFF         |If ON then all Speect   |ON            |
-|                      |                  |object casting will be  |              |
-|                      |                  |checked.                |              |
-+----------------------+------------------+------------------------+--------------+
-|STRICT_WARN           |ON or OFF         |Enable stricter compile |OFF           |
-|                      |                  |flags.                  |              |
-+----------------------+------------------+------------------------+--------------+
-|WANT_EXAMPLES         |ON or OFF         |Include examples in     |OFF           |
-|                      |                  |build process.          |              |
-+----------------------+------------------+------------------------+--------------+
-|WANT_TESTS            |ON or OFF         |Inlcuded tests in build |OFF           |
-|                      |                  |process.                |              |
-+----------------------+------------------+------------------------+--------------+
-|WANT_THREADS          |ON or OFF         |Enable multi threaded   |OFF           |
-|                      |                  |support.                |              |
-+----------------------+------------------+------------------------+--------------+
-|WARN_DECL_AFTER_STMT  |ON or OFF         |Warn about declarations |OFF           |
-|                      |                  |after statements (GCC)  |              |
-+----------------------+------------------+------------------------+--------------+
-|WANT_PYTHON_WRAPPER   |ON or OFF         |Include Python bindings |ON            |
-|                      |                  |in build process.       |              |
-+----------------------+------------------+------------------------+--------------+
-|WANT_PYTHON_3         |ON or OFF         |Build Python wrappers   |OFF           |
-|                      |                  |for Python version 3.x  |              |
-+----------------------+------------------+------------------------+--------------+
-
-
-Plug-in Options in CMake
-========================
-
-Some plug-ins only get compiled if the required external files and
-libraries are available. The options include:
-
-* HMM-based synthesis plug-ins for the HTS Engine 
-
-  +----------------------+------------------------------------------+
-  |Variable              |Docstring                                 |
-  +======================+==========================================+
-  |HTS_ENGINE_INCLUDE    |Path to HTS Engine include directory.     |
-  |                      |                                          |
-  +----------------------+------------------------------------------+
-  |HTS_ENGINE_LIB        |Full path and name of HTS Engine library. |
-  |                      |                                          |
-  +----------------------+------------------------------------------+
+sentence, so additional documentation is provided :ref:`here <cmake_options>`.
 
 
 Installation
 ============
 
 Speect can be used from the build tree or it can be installed.
-
 Installing Speect from a source distribution requires first that it be
 compiled in a build tree. See the `Configuration and Compilation`_
 section above for details. Once Speect has been compiled in a build
 tree one may build the install target to actually put Speect in an
 installation tree. If Speect was built using a CMake Makefile
 generator then this is done by running ``make install`` from the top
-of the build tree. If Speect was built using a CMake project file
-generator (such as Visual Studio), then building the INSTALL project
-from inside the IDE will install Speect. The installation process will
-install all files in a directory structure rooted at the directory
-specified by ``CMAKE_INSTALL_PREFIX``.
+of the build tree. The installation process will install all files in
+a directory structure rooted at the directory specified by
+:cmake:`CMAKE_INSTALL_PREFIX`.
+
+.. warning::
+   
+   The ``make install`` command has an option to specify a destination
+   directory (``DESTDIR`` = "...") on the command line or through an
+   environment variable. Do **not** use this option as the Speect
+   library will not be able to find the plug-in library paths at runtime.
+

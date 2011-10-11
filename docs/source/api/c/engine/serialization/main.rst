@@ -1,6 +1,6 @@
-.. _serialization/main:
-
 .. index:: ! Serialization (C API)
+
+.. _serialization/main:
 
 =============
 Serialization

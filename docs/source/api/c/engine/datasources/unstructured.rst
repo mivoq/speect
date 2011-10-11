@@ -1,4 +1,4 @@
-.. _datasources/unstructered:
+.. _datasources_unstructered_c:
 
 ===========================
 Unstructured Data Interface
@@ -9,7 +9,7 @@ an integer from a file. There are currently two different
 :ref:`implementations <implementations_datasource>` of the SDatasource
 object.
 
-Also see :doc:`../../../../examples/c/datasources_example`.
+Also see :ref:`examples/c/datasources_example`.
 
 
 Definitions

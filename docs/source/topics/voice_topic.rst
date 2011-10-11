@@ -142,6 +142,8 @@ Below is an example of a voice features definition:
     }  
 
 
+.. _voice_feat_proc:
+
 Feature Processors
 ==================
 

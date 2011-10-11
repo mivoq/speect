@@ -11,7 +11,7 @@ C Language
 ==========
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    
    c/hrg_example
@@ -30,10 +30,15 @@ Python
 ======
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    python/hrg_example
    python/python_logging
+   python/voice_function
+
+
+| More examples can be found at :file:`speect/swig/python/examples`.
+| A Python client-server implementation can be found at :file:`speect/swig/python/client.py` and :file:`speect/swig/python/server.py`.
 
 
 
@@ -43,7 +48,7 @@ Miscellaneous
 =============
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    misc/voice_def
    misc/cmakelists_template

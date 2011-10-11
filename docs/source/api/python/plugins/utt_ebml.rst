@@ -9,7 +9,7 @@
 
 
 :mod:`speect.utt_ebml` adds methods to :class:`speect.SUtterance`, to save/load 
-utterances to/from files in the EBML format (see :doc:`ebml`).
+utterances to/from files in the EBML format (see :ref:`python_plugins_ebml`).
 
 .. automethod:: speect.SUtterance.save_ebml()
 

@@ -30,32 +30,25 @@
   float: left;
   text-align: center;
   padding-top: 5em;
-  min-width: 65px;
+  min-width: 49px;
   background-position: center top;
   background-repeat: no-repeat;
 }
 
 .quicklinks {
-  width: 40%;
-  margin: 0 auto;
+/*   width: 100%; */
+  margin-top: 0;
+  margin-bottom: 0;
+  margin-left: 35%;
+          
 }
 
 
 /* -- images for quicklinks ------------------------------------------------- */
 
-.link-about a { 
-  background-image: url(index_about.png)
-
- }
 
 .link-documentation a { 
   background-image: url(index_documentation.png)
-
- }
-
-.link-help a { 
-  background-image: url(index_help.png)
-
  }
 
 .link-download a { 
@@ -66,10 +59,6 @@
 .link-license a { 
   background-image: url(index_license.png)
 
- }
-
-.link-back a { 
-  background-image: url(go-previous.png)
  }
 
 

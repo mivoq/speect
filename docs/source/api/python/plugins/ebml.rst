@@ -1,4 +1,3 @@
-.. _python_plugins_ebml:
 
 .. index:: EBML, Extensible Binary Meta Language
 
@@ -7,6 +6,7 @@ is a generalized file format for any kind of data, aiming to be a binary
 equivalent to XML. It provides a basic framework for storing data in XML-like
 tags.
 
+.. _python_plugins_ebml:
 
 :mod:`speect.ebml` -- Extensible Binary Markup Language
 =======================================================

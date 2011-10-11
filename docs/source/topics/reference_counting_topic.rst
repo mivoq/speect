@@ -2,20 +2,20 @@
 .. index:: 
    single: Topic Guides; Reference Counting
 
-.. _reference_counting_topic/main:
+.. _reference_counting_topic:
 
 ==================
 Reference Counting
 ==================
 
-The :doc:`object_system_topic` makes use of reference counting to know
+The :ref:`object_system_topic` makes use of reference counting to know
 when to delete an object.  The rule is that any object that is created
 with the :c:macro:`S_NEW` and :c:macro:`S_NEW_FROM_NAME` related
 macros must be deleted with a call to :c:macro:`S_DELETE`. There are a
 few exceptions to this rule:
 
        * Containers - when a created object is added to a
-       	 :doc:`container <../api/c/engine/containers/main>`, the container takes
+       	 :ref:`container <containers_main_c>`, the container takes
        	 hold of the object, and the object should not be deleted. For
        	 example:
 
@@ -37,7 +37,7 @@ few exceptions to this rule:
 	object. When the list is deleted with :c:macro:`S_DELETE`,
 	then it will delete the object.
 
-       * Iterators - :doc:`Container <../api/c/engine/containers/main>` iterators are created
+       * Iterators - Container :ref:`iterators <containers_iterators_c>` are created
          with calls to either :c:func:`SContainerGetIterator` or :c:func:`S_ITERATOR_GET`.
 	 Iterators need not be deleted with :c:macro:`S_DELETE`, except if the iteration over
 	 the container (:c:func:`SIteratorNext`) did not reach the end of the container. For
@@ -80,7 +80,7 @@ few exceptions to this rule:
        * Heterogeneous Relation Graphs - Items are created by either adding them as daughters
          of already existing items, or appending them to already existing relations. Relations
 	 are created by adding them to already existing utterances. The items and relations make
-	 up the :doc:`HRG <../api/c/engine/hrg/main>` structure, and a call to the :c:macro:`S_DELETE`
+	 up the :ref:`HRG <hrg_main_c>` structure, and a call to the :c:macro:`S_DELETE`
 	 macro on these objects will *not* delete them. A relation can be deleted with a call to
 	 :c:func:`SUtteranceDelRelation`, which will delete all of the relation's items.
 

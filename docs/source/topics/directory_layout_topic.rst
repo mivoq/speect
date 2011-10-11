@@ -1,9 +1,9 @@
-.. _style_guide_topic:
-
 .. index:: 
    single: Topic Guides; Directory Layout
 
 .. index:: ! Directory Layout
+
+.. _directory_layout_topic:
 
 ================
 Directory Layout

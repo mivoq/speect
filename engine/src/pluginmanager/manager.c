@@ -428,7 +428,7 @@ static void load_plugin(SPlugin *self, const char *path, s_erc *error)
 	 * get the plugin initialization function
 	 * done as described in dlsym man page.
 	 */
-	*(void**)(&plugin_initialize) = SDsoGetSymbol(pluginDso, "s_plugin_init", error);
+	plugin_initialize = (s_plugin_init_fp)SDsoGetSymbol(pluginDso, "s_plugin_init", error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "load_plugin",
 				  "Failed to get \'s_plugin_init\' symbol from plug-in at \"%s\"",

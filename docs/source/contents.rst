@@ -28,12 +28,12 @@ Welcome! This is the documentation for Speect |version|, last updated |today|.
    	 :class: contentsdocs
 
 
-   	 * - :ref:`topics_main`
-     	   - :ref:`api_main`
+   	 * - :doc:`topics/main`
+     	   - :doc:`api/main`
 	 * - start here
 	   - C, Python and CMake reference
-   	 * - :ref:`examples_main`
-	   - :ref:`installation`
+   	 * - :doc:`examples/main`
+	   - :doc:`installation`
 	 * - Python and C example snippets
 	   - build and install Speect from source
 

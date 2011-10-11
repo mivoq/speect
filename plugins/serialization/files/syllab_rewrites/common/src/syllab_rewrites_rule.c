@@ -295,7 +295,7 @@ static s_list *RuleMatches(const SSyllabificationRewritesRule *self,
 {
 	uint32 size_RC;
 	uint32 size_self_A;
-	uint32 counter;
+	uint32 counter = 0;
 	s_str_list *reversedLC = NULL;
 	s_str_list *newRC = NULL;
 	s_str_list *a_match = NULL;

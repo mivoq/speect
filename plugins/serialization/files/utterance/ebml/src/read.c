@@ -835,7 +835,7 @@ static void read_relation_items(SEbmlRead *ebmlReader, SRelation *rel,
 								s_hash_table *items_content_table, s_erc *error)
 {
 	uint32 id;
-	SItem *item;
+	SItem *item = NULL;
 	s_hash_table *relation_items = NULL;
 	s_bool container_exhausted;
 

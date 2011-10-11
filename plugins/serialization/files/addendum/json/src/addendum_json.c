@@ -247,7 +247,7 @@ static const SList *get_word_info(const SObject *wordEntries, const SMap *featur
 	s_bool matches;
 	const SList *wordInfo;
 	const SObject *singleEntryObject;
-	const SMap *singleEntryMap;
+	const SMap *singleEntryMap = NULL;
 
 
 	S_CLR_ERR(error);

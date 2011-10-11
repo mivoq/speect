@@ -187,8 +187,8 @@ S_LOCAL void concat_units(SRelp *self, const SRelation *unitRel, s_erc *error)
 static uint32 get_num_frames(SRelp *self, const SRelation *unitRel, s_erc *error)
 {
 	const SItem *unit;
-	SItem *sourceUnit;
-	STrackFloat *sourceTrack;
+	SItem *sourceUnit = NULL;
+	STrackFloat *sourceTrack = NULL;
 	uint32 num_frames = 0;
 
 

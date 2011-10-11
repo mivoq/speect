@@ -917,11 +917,11 @@ static void Search(SViterbi *self, s_erc *error)
 	int i;
 	double best_score = 0.0;
 	double score_cutoff = 0.0;
-	double best_candidate_score;
+	double best_candidate_score = 0.0;
 	double candidate_cutoff = 0.0;
 	int dcount;
 	int pcount;
-	int cand_count;
+	int cand_count = 0;
 	int cands_considered;
 
 

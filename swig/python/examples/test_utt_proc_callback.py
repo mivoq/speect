@@ -1,5 +1,5 @@
 import speect
-import speect.uttproc_callback
+import speect.uttproc_cb
 
 
 def do_it(utt):
@@ -20,4 +20,5 @@ utt = v.synth("hello world", "text-to-segments" )
 
 
 
-print utt
+print(utt)
+

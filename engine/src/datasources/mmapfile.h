@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2008-2009 The Department of Arts and Culture,                      */
+/* Copyright (c) 2008-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -100,7 +100,9 @@ S_BEGIN_C_DECLS
  * @def s_mmapfile_open
  * @hideinitializer
  * Open a <i>memory mapped file</i>.
- * @code s_mmap_file_handle *s_mmapfile_open(const char *FILENAME, size_t *MAP_SIZE, uint8 **MEM, s_erc *ERROR) @endcode </td>
+@verbatim
+mmap_file_handle *s_mmapfile_open(const char *FILENAME, size_t *MAP_SIZE, uint8 **MEM, s_erc *ERROR)
+@endverbatim
  * @param FILENAME The full path and filename of the file to be memory
  * mapped.
  * @param MAP_SIZE Pointer to a holder for the map size.
@@ -116,7 +118,9 @@ S_BEGIN_C_DECLS
  * @def s_mmapfile_close
  * @hideinitializer
  * Close the given <i>memory mapped file</i>.
- * @code  @code void _S_MMAP_CLOSE(s_mmap_file_handle *HANDLE, uint8 *MEM, s_erc *ERROR) @endcode
+@verbatim
+void _S_MMAP_CLOSE(s_mmap_file_handle *HANDLE, uint8 *MEM, s_erc *ERROR)
+@endverbatim
  * @param HANDLE Handle to the memory mapped file to close.
  * @param MEM Pointer to the memory of the memory mapped file.
  * @param ERROR Error code.

@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2010 The Department of Arts and Culture,                           */
+/* Copyright (c) 2010-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -160,7 +160,7 @@ S_LOCAL void _s_serialized_ebml_pyobject_reg(s_erc *error)
 		return;
 	}
 
-	s_class_reg(&EbmlPyObjectClass, error);
+	s_class_reg(S_OBJECTCLASS(&EbmlPyObjectClass), error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "_s_serialized_ebml_python_object_reg",
 				  "Failed to register SEbmlPyObjectClass"))
@@ -176,7 +176,7 @@ S_LOCAL void _s_serialized_ebml_pyobject_reg(s_erc *error)
 				  "_s_serialized_ebml_python_object_reg",
 				  "Failed to add serialized object class SEbmlPyObjectClass"))
 	{
-		s_class_free(&EbmlPyObjectClass, NULL);
+		s_class_free(S_OBJECTCLASS(&EbmlPyObjectClass), NULL);
 		Py_XDECREF(cPickle_loads);
 		Py_XDECREF(cPickle_dumps);
 		Py_XDECREF(cPickleModule);
@@ -201,7 +201,7 @@ S_LOCAL void _s_serialized_ebml_pyobject_free(s_erc *error)
 			  "_s_serialized_ebml_python_object_free",
 			  "Failed to remove serialized object class SEbmlPyObjectClass");
 
-	s_class_free(&EbmlPyObjectClass, error);
+	s_class_free(S_OBJECTCLASS(&EbmlPyObjectClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_serialized_ebml_python_object_free",
 			  "Failed to free SEbmlPyObjectClass");

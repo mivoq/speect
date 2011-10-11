@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2008-2009 The Department of Arts and Culture,                      */
+/* Copyright (c) 2008-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -49,7 +49,7 @@
  * Basic logging facilities.
  * The logging system provides a very basic mechanism to write
  * messages to different types of streams. It is used by all the error
- * and debug reporting facilites in @ref SErrDbg, and therefore aims
+ * and debug reporting facilities in @ref SErrDbg, and therefore aims
  * to be as robust as possible. If any error occurs during one of the
  * logger functions, an error will be printed to @c stderr. If a
  * logger is unsuccessful at writing the log message to the log stream
@@ -135,14 +135,15 @@ struct s_logger
 	 *
 	 * @return Error code.
 	 */
-	s_erc (*v_write)(const s_logger *self, s_log_event level, const char *error_msg,
-					 const char *func_name, const char *file_name, int line_num,
+	s_erc (*v_write)(const s_logger *self, s_log_event level,
+					 const char *error_msg, const char *func_name,
+					 const char *file_name, int line_num,
 					 const char *user_msg, va_list argp);
 
 
 	/**
 	 * Destroy the logger object's associated resources. The logger's
-	 * memory itself must @b not be free'd. Must be implemented by
+	 * memory itself must @b not be freed. Must be implemented by
 	 * each logger as it is called by #s_logger_destroy.
 	 *
 	 * @param logger This logger object.
@@ -168,17 +169,19 @@ struct s_logger
 
 
 /**
- * Create a new file stream logger, see @ref SFileStream. The logging
- * message will be in the @ref SLayoutStd layout format.
+ * Create a new file stream logger. The logging
+ * message will be in the standard layout format.
  *
- * @param path The full path and filename of the file which to
+ * @param path The full path and file name of the file which to
  * log to. If the file already exists, then it will be overwritten.
  *
- * @return Pointer to newly created file stream logger, or @c NULL on error.
+ * @return Pointer to newly created file stream logger, or #NULL on error.
  *
  * @note Only thread safe if compiled with threading library, and
- * whether the standard vfprintf() function is thread-safe,
+ * whether the standard ISO C vfprintf() function is thread-safe,
  * see @ref SThreads.
+ *
+ * @sa @ref SFileStream, @ref SLayoutStd
  *
  * @todo check MT safety
  */
@@ -186,22 +189,35 @@ S_API s_logger *s_logger_file_new(const char *path);
 
 
 /**
- * Create a new console stream logger, see @ref SConsoleStream. The
- * logging message will be in the @ref SLayoutStd layout format.
+ * Create a new console stream logger. The logging message will be in
+ * the standard layout format.
  *
  * @param log_to_stdout If #TRUE then logging will be to @c stdout,
  * otherwise streaming will be to @c stderr.
  *
- * @return Pointer to newly created console stream logger, or @c NULL
+ * @return Pointer to newly created console stream logger, or #NULL
  * on error.
  *
  * @note Only thread safe if compiled with threading library, and
- * whether the standard vfprintf() function is thread-safe,
+ * whether the standard ISO C vfprintf() function is thread-safe,
  * see @ref SThreads.
-
+ *
+ * @sa @ref SConsoleStream, @ref SLayoutStd
+ *
  * @todo check MT safety
  */
 S_API s_logger *s_logger_console_new(s_bool log_to_stdout);
+
+
+/**
+ * Create a new null logger. A null logger does not log any messages.
+ *
+ * @return Pointer to newly created null logger, or #NULL on error.
+ *
+ * @note The null logger must be destroyed (#s_logger_destroy) and
+ * freed in the same manner as the other loggers.
+ */
+S_API s_logger *s_logger_null_new(void);
 
 
 /**
@@ -238,9 +254,9 @@ S_API s_erc s_logger_write(const s_logger *logger, s_log_event level, const char
 
 /**
  * Format and write the given logging event information to the
- * logger. Equivalent to the #s_logger_write except that it is called
- * with a va_list instead of a variable number of arguments,
- * same as the standard function @c vprintf().
+ * logger (called with @a va_list). Equivalent to the #s_logger_write
+ * except that it is called with a va_list instead of a variable
+ * number of arguments, same as the standard function @c vprintf().
  *
  * @param logger The logger to write to.
  * @param level The event level.
@@ -250,9 +266,9 @@ S_API s_erc s_logger_write(const s_logger *logger, s_log_event level, const char
  * @param line_num Calling line number in function.
  * @param user_msg A format string specifying the string to write
  * and the format of the arguments in the va_list.
- * @param argp The va_list, see the standard function @c
- * vprintf(). The value of argp is undefined after the call to
- * this function.
+ * @param argp The va_list, see the standard function
+ * ISO C @c vprintf(). The value of @c argp is undefined after the call
+ * to this function.
  *
  * @return Error code.
  */
@@ -280,7 +296,7 @@ S_API s_erc s_logger_vwrite(const s_logger *logger, s_log_event level, const cha
  *
  * @return error Error code.
  *
- * @note Thread-safety is dependant on the underlying implementation.
+ * @note Thread-safety is dependent on the underlying implementation.
  */
 S_API s_erc s_logger_destroy(s_logger *logger);
 

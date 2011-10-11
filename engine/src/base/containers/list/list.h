@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2008-2009 The Department of Arts and Culture,                      */
+/* Copyright (c) 2008-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -82,7 +82,6 @@ S_BEGIN_C_DECLS
  * A pointer to a function that compares 2 elements
  * of a list.
  *
- * @param s_list_compare_fp A pointer to the comparison function.
  * @param le1 List element 1.
  * @param le2 List element 2.
  * @param error Error code.
@@ -97,7 +96,6 @@ typedef s_bool (*s_list_compare_fp)(const void *le1, const void *le2, s_erc *err
  * A pointer to a function that frees the dynamically allocated
  * memory of a list element.
  *
- * @param s_list_free_fp A pointer to the function that frees the memory.
  * @param le List element to free.
  * @param error Error code.
  */
@@ -140,8 +138,8 @@ typedef struct s_list s_list;
  * Creates a new list and sets the comparison and free functions. The
  * comparison function must be of the type #s_list_compare_fp while
  * the free function must be of the type #s_list_free_fp. If the
- * comparison function is @c NULL then #s_list_find will do nothing.
- * If the free function is @c NULL then the #s_list_element_delete and
+ * comparison function is #NULL then #s_list_find will do nothing.
+ * If the free function is #NULL then the #s_list_element_delete and
  * #s_list_delete functions will do nothing.
  *
  * @param compare_func A comparison function. Used to find an element in the list.
@@ -171,6 +169,12 @@ S_API void s_list_delete(s_list *self, s_erc *error);
 
 
 /**
+ * @name Accessing
+ * @{
+ */
+
+
+/**
  * @private
  * Find the element in the list which matches the comparison with the
  * comparison function #s_list_compare_fp. If the comparison function
@@ -178,26 +182,20 @@ S_API void s_list_delete(s_list *self, s_erc *error);
  *
  * @param self The list.
  * @param f Start searching from this element (including) onwards. If
- * @c NULL then start from first element.
+ * #NULL then start from first element.
  * @param data The data to match.
  * @param index A variable to hold the index of the element found
- * which matches the data. -1 if not found. Set to @c NULL if not required.
+ * which matches the data. -1 if not found. Set to #NULL if not required.
  * @param error Error code.
  *
  * @return Pointer to the list element which matches the data,
- * else @c NULL.
+ * else #NULL.
  *
  * @note Lists are indexed starting from 0.
- * @note The index variable will be relative if f is @b not @c NULL.
+ * @note The index variable will be relative if f is @b not #NULL.
  */
 S_API s_list_element *s_list_find_index(const s_list *self, const s_list_element *f,
 										const void *data, int *index, s_erc *error);
-
-
-/**
- * @name Accessing
- * @{
- */
 
 
 /**
@@ -225,7 +223,7 @@ S_API const s_list_element *s_list_last(const s_list *self, s_erc *error);
 /**
  * @hideinitializer
  * Find the index into the list of the given list element. If the list
- * comparison function #s_list_compare_fp is @c NULL then nothing is
+ * comparison function #s_list_compare_fp is #NULL then nothing is
  * done.
  *
  * @param self The list.
@@ -235,7 +233,7 @@ S_API const s_list_element *s_list_last(const s_list *self, s_erc *error);
  * @param error Error code.
  *
  * @return Pointer to the list element which matches the data,
- * else @c NULL.
+ * else #NULL.
  *
  * @note Lists are indexed starting from 0.
  */
@@ -250,7 +248,7 @@ S_API const s_list_element *s_list_last(const s_list *self, s_erc *error);
  * @param n Index of element to find.
  * @param error Error code.
  *
- * @return Pointer to the nth list element or @c NULL if index
+ * @return Pointer to the nth list element or #NULL if index
  * is out of bounds.
  *
  * @note The list elements are indexed from 0.
@@ -316,10 +314,10 @@ S_API void *s_list_element_unlink(s_list_element *self, s_erc *error);
  * @param self The list element to be deleted.
  * @param error Error code.
  *
- * @return Pointer to the previous list element or @c NULL if none.
+ * @return Pointer to the previous list element or #NULL if none.
  *
  * @note If #s_list_free_fp is not defined then nothing is done
- * and @c NULL returned.
+ * and #NULL returned.
  */
 S_API s_list_element *s_list_element_delete(s_list_element *self,
 											s_erc *error);
@@ -353,7 +351,7 @@ S_API const s_list_element *s_list_element_prev(const s_list_element *self,
  * @hideinitializer
  * Find the list element which matches the given data with the
  * comparison function #s_list_compare_fp. If the comparison function
- * is @c NULL then nothing is done.
+ * is #NULL then nothing is done.
  *
  * @param self The list.
  * @param data The data to match.

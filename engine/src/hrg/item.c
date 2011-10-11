@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2008-2009 The Department of Arts and Culture,                      */
+/* Copyright (c) 2008-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -148,6 +148,36 @@
 	s_mutex_unlock(&((SELF)->relation->rel_mutex))
 
 
+/**
+ * @hideinitializer
+ * Call the given function method of the given #SItem.
+ * @param SELF The given #SItem*.
+ * @param FUNC The function method of the given object to call.
+ * @note This casting is not safety checked.
+ * @note Example usage:
+ @verbatim
+ S_ITEM_CALL(self, func)(param1, param2, ..., paramN);
+ @endverbatim
+ * where @c param1, @c param2, ..., @c paramN are the parameters passed to the object function
+ * @c func.
+ */
+#define S_ITEM_CALL(SELF, FUNC)					\
+	((SItemClass *)S_OBJECT_CLS(SELF))->FUNC
+
+
+/**
+ * @hideinitializer
+ * Test if the given function method of the given #SItem
+ * can be called.
+ * @param SELF The given #SItem*.
+ * @param FUNC The function method of the given object to check.
+ * @return #TRUE if function can be called, otherwise #FALSE.
+ * @note This casting is not safety checked.
+ */
+#define S_ITEM_METH_VALID(SELF, FUNC)			\
+	S_ITEM_CALL(SELF, FUNC) ? TRUE : FALSE
+
+
 /************************************************************************************/
 /*                                                                                  */
 /* Static variables                                                                 */
@@ -200,7 +230,7 @@ S_API void SItemInit(SItem **self, const SRelation *rel,
 
 	if (toShare == NULL) /* new content    */
 	{
-		(*self)->content = (SItmContent*)S_NEW("SItmContent", error);
+		(*self)->content = S_NEW(SItmContent, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "SItemInit",
 					  "Failed to create new item contents"))
@@ -278,7 +308,7 @@ S_LOCAL void _SItemInit_no_lock(SItem **self, const SRelation *rel,
 
 	if (toShare == NULL) /* new content    */
 	{
-		(*self)->content = (SItmContent*)S_NEW("SItmContent", error);
+		(*self)->content = S_NEW(SItmContent, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "_SItemInit_no_lock",
 					  "Failed to create new item contents"))
@@ -1414,7 +1444,7 @@ S_API s_bool SItemEqual(const SItem *a, const SItem *b, s_erc *error)
 S_LOCAL void _s_item_class_add(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_add(&ItemClass, error);
+	s_class_add(S_OBJECTCLASS(&ItemClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_item_class_add",
 			  "Failed to add SItemClass");
@@ -1663,7 +1693,7 @@ static SItem *ItemAppend(SItem *self, const SItem *toShare, s_erc *error)
 		return NULL;
 	}
 
-	rni = (SItem*)S_NEW("SItem", error);
+	rni = S_NEW(SItem, error);
 	if (S_CHK_ERR(error, S_FAILURE,
 				  "ItemAppend",
 				  "Failed to create new item"))
@@ -1705,7 +1735,7 @@ static SItem *ItemPrepend(SItem *self, const SItem *toShare, s_erc *error)
 		return NULL;
 	}
 
-	rni = (SItem*)S_NEW("SItem", error);
+	rni = S_NEW(SItem, error);
 	if (S_CHK_ERR(error, S_FAILURE,
 				  "ItemPrepend",
 				  "Failed to create new item"))
@@ -1849,7 +1879,7 @@ static SItem *ItemAddDaughter(SItem *self, const SItem *toShare, s_erc *error)
 			return NULL;
 		}
 
-		rnd = (SItem*)S_NEW("SItem", error);
+		rnd = S_NEW(SItem, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "ItemAddDaughter",
 					  "Failed to create new daugther item"))

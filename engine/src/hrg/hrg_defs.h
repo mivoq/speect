@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2008-2009 The Department of Arts and Culture,                      */
+/* Copyright (c) 2008-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -61,33 +61,23 @@ S_BEGIN_C_DECLS
  * forward declare as everything from here needs these.
  */
 
-/**
- * A class for containing the shared contents of items.
- */
+/* A class for containing the shared contents of items. */
 typedef struct SItmContent SItmContent;
 
 
-/**
- * A class for containing the items (arbitrary objects).
- */
+/* A class for containing the items (arbitrary objects). */
 typedef struct SItem SItem;
 
 
-/**
- * A Relation is a named list of an arbitrary number of #SItem.
- */
+/* A Relation is a named list of an arbitrary number of #SItem. */
 typedef struct SRelation SRelation;
 
 
-/**
- * The Utterance class implementation.
- */
+/* The Utterance class implementation. */
 typedef struct SUtterance SUtterance;
 
 
-/**
- * Typedef of struct SVoice.
- */
+/* Typedef of struct SVoice. */
 typedef struct SVoice SVoice;
 
 

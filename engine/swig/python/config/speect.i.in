@@ -39,7 +39,7 @@
 various API's, as well an environment for research and development of TTS systems
 and voices.
 
-It is written in ANSI C and uses a plug-in mechanism for extensions. Speect also
+It is written in ISO C and uses a plug-in mechanism for extensions. Speect also
 includes an extensive set of Python bindings for quick implementation of new ideas,
 these bindings are derived from SWIG (www.swig.org) interface files and can easily
 be extended for other languages supported by SWIG."
@@ -89,6 +89,7 @@ be extended for other languages supported by SWIG."
 /*                                                                                  */
 /************************************************************************************/
 
+%include "${CMAKE_SOURCE_DIR}/engine/swig/python/errdbg_docs.c"
 %include "${CMAKE_SOURCE_DIR}/engine/swig/python/misc_docs.c"
 %include "${CMAKE_SOURCE_DIR}/engine/swig/python/utterance_docs.c"
 %include "${CMAKE_SOURCE_DIR}/engine/swig/python/relation_docs.c"

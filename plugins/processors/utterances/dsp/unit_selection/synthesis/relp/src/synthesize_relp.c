@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2009 The Department of Arts and Culture,                           */
+/* Copyright (c) 2009-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -64,7 +64,7 @@ static SRELPSynthUnitsUttProcClass RELPSynthUnitsUttProcClass;
 S_LOCAL void _s_relp_synth_units_utt_proc_class_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(&RELPSynthUnitsUttProcClass, error);
+	s_class_reg(S_OBJECTCLASS(&RELPSynthUnitsUttProcClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_relp_synth_units_utt_proc_class_reg",
 			  "Failed to register SRELPSynthUnitsUttProcClass");
@@ -74,7 +74,7 @@ S_LOCAL void _s_relp_synth_units_utt_proc_class_reg(s_erc *error)
 S_LOCAL void _s_relp_synth_units_utt_proc_class_free(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_free(&RELPSynthUnitsUttProcClass, error);
+	s_class_free(S_OBJECTCLASS(&RELPSynthUnitsUttProcClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_relp_synth_units_utt_proc_class_free",
 			  "Failed to free SRELPSynthUnitsUttProcClass");
@@ -142,9 +142,6 @@ static void Initialize(SUttProcessor *self, const SVoice *voice, s_erc *error)
 				  "Initialize",
 				  "Call to \"SMapGetObjectDef\" failed"))
 	{
-		/* this is here to silence the compiler's
-		 * messages about unused parameters */
-		voice = NULL;
 		return;
 	}
 
@@ -193,6 +190,8 @@ static void Initialize(SUttProcessor *self, const SVoice *voice, s_erc *error)
 		S_DELETE(winPlugin, "Initialize", error);
 		return;
 	}
+
+	S_UNUSED(voice);
 }
 
 
@@ -274,7 +273,7 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 		goto quit_error;
 
 	/* create a relp object */
-	relpSynth = (SRelp*)S_NEW("SRelp", error);
+	relpSynth = S_NEW(SRelp, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Run",
 				  "Failed to create new 'SRelp' object"))

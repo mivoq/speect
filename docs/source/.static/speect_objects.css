@@ -1,0 +1,8 @@
+/* -- speect objects specific styles ----------------------------------------------- */
+
+dl.object, 
+dl.class
+{
+    border-top: 2px solid #888;
+}
+

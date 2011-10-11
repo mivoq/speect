@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2008-2009 The Department of Arts and Culture,                      */
+/* Copyright (c) 2008-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -59,7 +59,6 @@
 #include "include/common.h"
 #include "base/containers/containers.h" /* Containers.                      */
 #include "base/errdbg/errdbg.h"         /* Error handling and Debug module. */
-#include "base/iniparser/iniparser.h"   /* INI file parser.                 */
 #include "base/log/log.h"               /* Logging.                         */
 #include "base/objsystem/objsystem.h"   /* Object system.                   */
 #include "base/strings/utf8.h"          /* Utf8 String functions.           */

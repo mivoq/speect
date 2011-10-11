@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2008-2009 The Department of Arts and Culture,                      */
+/* Copyright (c) 2008-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -99,39 +99,6 @@ S_BEGIN_C_DECLS
 
 
 /**
- * @hideinitializer
- * Call the given function method of the given #SIterator,
- * see full description #S_ITERATOR_CALL for usage.
- *
- * @param SELF The given #SIterator*.
- * @param FUNC The function method of the given object to call.
- *
- * @note This casting is not safety checked.
- * @note Example usage: @code S_ITERATOR_CALL(self, func)(param1, param2, ..., paramN); @endcode
- * where @c param1, @c param2, ..., @c paramN are the parameters
- * passed to the object function @c func.
- */
-#define S_ITERATOR_CALL(SELF, FUNC)			\
-	((SIteratorClass *)S_OBJECT_CLS(SELF))->FUNC
-
-
-/**
- * @hideinitializer
- * Test if the given function method of the given #SIterator
- * can be called.
- *
- * @param SELF The given #SIterator*.
- * @param FUNC The function method of the given object to check.
- *
- * @return #TRUE if function can be called, otherwise #FALSE.
- *
- * @note This casting is not safety checked.
- */
-#define S_ITERATOR_METH_VALID(SELF, FUNC)			\
-	S_ITERATOR_CALL(SELF, FUNC) ? TRUE : FALSE
-
-
-/**
  * @}
  */
 
@@ -144,8 +111,8 @@ S_BEGIN_C_DECLS
 
 /**
  * @ingroup SIterator
- * The SIterator structure.
- * An abstract iterator for container data types.
+ * An abstract iterator for container data types. All container
+ * iterators inherit from this object.
  * @extends SObject
  */
 typedef struct
@@ -164,7 +131,8 @@ typedef struct
 /************************************************************************************/
 
 /**
- * The SIteratorClass structure.
+ * The iterator class structure.
+ * All container iterators classes inherit from this class.
  * @extends SObjectClass
  */
 typedef struct
@@ -185,14 +153,14 @@ typedef struct
 	 * @param error Error code.
 	 *
 	 * @return Iterator to the next object of the container. If there
-	 * are no more objects in the container, then @c NULL must be
+	 * are no more objects in the container, then #NULL must be
 	 * returned so that #SIteratorNext can delete the iterator.
 	 *
 	 * @note If an error occurs then @c error must be set so that
 	 * #SIteratorNext can catch the error and delete the
 	 * iterator.
 	 */
-	SIterator     *(*next)   (SIterator *self, s_erc *error);
+	SIterator     *(* const next)   (SIterator *self, s_erc *error);
 
 	/**
 	 * @protected Key iterator function pointer.
@@ -205,7 +173,7 @@ typedef struct
 	 *
 	 * @return The key pointed to by the iterator.
 	 */
-	const char    *(*key)    (SIterator *self, s_erc *error);
+	const char    *(* const key)    (SIterator *self, s_erc *error);
 
 	/**
 	 * @protected Object iterator function pointer.
@@ -218,7 +186,7 @@ typedef struct
 	 * be anything and depends on the specific container iterator
 	 * implementation.
 	 */
-	const SObject *(*object) (SIterator *self, s_erc *error);
+	const SObject *(* const  object) (SIterator *self, s_erc *error);
 
 	/**
 	 * @protected Unlink function pointer.
@@ -236,7 +204,7 @@ typedef struct
 	 * @note The caller is responsible for the memory of the returned
 	 * object.
 	 */
-	SObject       *(*unlink) (SIterator *iterator, s_erc *error);
+	SObject       *(* const unlink) (SIterator *iterator, s_erc *error);
 } SIteratorClass;
 
 
@@ -259,7 +227,7 @@ typedef struct
  * @c NULL will be returned.
  *
  * @note If an error occurred, then the iterator @c self will be
- * deleted, the error will be logged and @c NULL will be returned.
+ * deleted, the error will be logged and #NULL will be returned.
  */
 S_API SIterator *SIteratorNext(SIterator *self);
 
@@ -267,7 +235,7 @@ S_API SIterator *SIteratorNext(SIterator *self);
 /**
  * Return the key that is pointed to by the iterator.
  * This is only useful for mapping type containers (e.g. @ref SMap)
- * and will return @c NULL for any other type of container.
+ * and will return #NULL for any other type of container.
  *
  * @param self The given iterator.
  * @param error Error code.
@@ -287,6 +255,8 @@ S_API const char *SIteratorKey(SIterator *self, s_erc *error);
  * @return The object pointed to by the iterator. This object can be
  * anything and depends on the specific container iterator
  * implementation.
+ *
+ * @note The returned object should not be deleted.
  */
 S_API const SObject *SIteratorObject(SIterator *self, s_erc *error);
 

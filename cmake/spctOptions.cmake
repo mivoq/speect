@@ -60,9 +60,7 @@ option(ERROR_ABORT_FATAL "Abort on fatal errors." off)
 option(SAFE_CAST "Do safe cast of objects, slower than non-safe cast." on)
 
 # Use Speect's error handling facilities (Default ON)
-
-# FIXME, this is not a option to be turned of now.
-#option(ERROR_HANDLING "Speect error handling facilities." on)
+option(ERROR_HANDLING "Speect error handling facilities." on)
 
 
 #------------------------------------------------------------------------------------#
@@ -84,4 +82,8 @@ option(WANT_EXAMPLES "Include the example suite in the compilation." off)
 #------------------------------------------------------------------------------------#
 
 # Python (Default ON)
+#--------------------
+
 option(WANT_PYTHON_WRAPPER "Enable generation of the Python wrapper." on)
+
+option(WANT_PYTHON_3 "Generate wrapper code for Python versions >= 3" off)

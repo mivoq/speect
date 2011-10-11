@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2008-2009 The Department of Arts and Culture,                      */
+/* Copyright (c) 2008-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -44,6 +44,7 @@
 #include "base/utils/alloc.h"
 #include "base/errdbg/errdbg_utils.h"
 #include "base/errdbg/errdbg_macros.h"
+#include "base/errdbg/errdbg_impl.h"
 #include "base/log/streams/stream.h"
 
 

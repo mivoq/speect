@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2008-2009 The Department of Arts and Culture,                      */
+/* Copyright (c) 2008-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -131,9 +131,8 @@ S_BEGIN_C_DECLS
 /************************************************************************************/
 
 /**
- * Create a new @a standard layout formatter. The layout implementes
- * the function pointers of #s_layout (#s_layout::format and
- * #s_layout::destroy).
+ * Create a new @a standard layout formatter. The layout implements
+ * the function pointers of #s_layout (format and destroy).
  *
  * @return Pointer to newly created standard layout formatter that can
  * be used with the functions defined in @ref SLayout, or @c NULL on

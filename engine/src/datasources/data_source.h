@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2008-2009 The Department of Arts and Culture,                      */
+/* Copyright (c) 2008-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -128,34 +128,6 @@ S_BEGIN_C_DECLS
 
 
 /**
- * @hideinitializer
- * Call the given function method of the given #SDatasource,
- * see full description #S_DATASOURCE_CALL for usage.
- * @param SELF The given #SDatasource*.
- * @param FUNC The function method of the given object to call.
- * @note This casting is not safety checked.
- * @note Example usage: @code S_DATASOURCE_CALL(self, func)(param1, param2, ..., paramN); @endcode
- * where @c param1, @c param2, ..., @c paramN are the parameters passed to the object function
- * @c func.
- */
-#define S_DATASOURCE_CALL(SELF, FUNC)				\
-	((SDatasourceClass *)S_OBJECT_CLS(SELF))->FUNC
-
-
-/**
- * @hideinitializer
- * Test if the given function method of the given #SDatasource
- * can be called.
- * @param SELF The given #SDatasource*.
- * @param FUNC The function method of the given object to check.
- * @return #TRUE if function can be called, otherwise #FALSE.
- * @note This casting is not safety checked.
- */
-#define S_DATASOURCE_METH_VALID(SELF, FUNC)			\
-	S_DATASOURCE_CALL(SELF, FUNC) ? TRUE : FALSE
-
-
-/**
  * @}
  */
 
@@ -269,8 +241,8 @@ typedef struct SDatasourceClass_s
 	 * @param error Error code.
 	 * @return The number of bytes read.
 	 */
-	size_t (*read)     (SDatasource *self, void *ptr, size_t size,
-						size_t nmemb, s_erc *error);
+	size_t (* const read)     (SDatasource *self, void *ptr, size_t size,
+							   size_t nmemb, s_erc *error);
 
 	/**
 	 * @protected ReadAt function pointer.
@@ -285,8 +257,8 @@ typedef struct SDatasourceClass_s
 	 * @param error Error code.
 	 * @return The number of bytes read.
 	 */
-	size_t (*read_at)  (SDatasource *self, void *ptr, size_t size,
-						size_t nmemb, long pos, s_erc *error);
+	size_t (* const read_at)  (SDatasource *self, void *ptr, size_t size,
+							   size_t nmemb, long pos, s_erc *error);
 
 	/**
 	 * @protected Write function pointer.
@@ -299,8 +271,8 @@ typedef struct SDatasourceClass_s
 	 * @param error Error code.
 	 * @return The number of bytes written.
 	 */
-	size_t (*write)    (SDatasource *self, const void *ptr, size_t size,
-						size_t nmemb, s_erc *error);
+	size_t (* const write)    (SDatasource *self, const void *ptr, size_t size,
+							   size_t nmemb, s_erc *error);
 
 	/**
 	 * @protected WriteAt function pointer.
@@ -315,8 +287,8 @@ typedef struct SDatasourceClass_s
 	 * @return The number of bytes written.
 	 */
 
-	size_t (*write_at) (SDatasource *self, const void *ptr, size_t size,
-						size_t nmemb, long pos, s_erc *error);
+	size_t (* const write_at) (SDatasource *self, const void *ptr, size_t size,
+							   size_t nmemb, long pos, s_erc *error);
 
 	/**
 	 * @protected Tell function pointer.
@@ -326,7 +298,7 @@ typedef struct SDatasourceClass_s
 	 * @param error Error code.
 	 * @return The offset position.
 	 */
-	long  (*tell)      (SDatasource *self, s_erc *error);
+	long  (* const tell)      (SDatasource *self, s_erc *error);
 
 	/**
 	 * @protected Seek function pointer.
@@ -337,7 +309,8 @@ typedef struct SDatasourceClass_s
 	 * @param mode The position relative to #s_seek_mode.
 	 * @param error Error code.
 	 */
-	void  (*seek)      (SDatasource *self, long pos, s_seek_mode mode, s_erc *error);
+	void  (* const seek)      (SDatasource *self, long pos,
+							   s_seek_mode mode, s_erc *error);
 } SDatasourceClass;
 
 

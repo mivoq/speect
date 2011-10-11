@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2008-2009 The Department of Arts and Culture,                      */
+/* Copyright (c) 2008-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -60,7 +60,7 @@ S_LOCAL SMap *_s_get_voice_features(const SMap *voiceConfig, s_erc *error)
 	S_CLR_ERR(error);
 
 	/* create a map container for features */
-	features = S_MAP(S_NEW("SMapList", error));
+	features = S_MAP(S_NEW(SMapList, error));
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "_s_get_voice_features",
 				  "Failed to create new map for voice features"))

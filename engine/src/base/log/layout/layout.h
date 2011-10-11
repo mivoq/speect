@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2008-2009 The Department of Arts and Culture,                      */
+/* Copyright (c) 2008-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -114,11 +114,11 @@ struct s_layout
 
 	/**
 	 * Format the given logging event information to a character
-	 * string buffer, which can be ouput by different logging streams
+	 * string buffer, which can be output by different logging streams
 	 * (@ref SLogger). Must be implemented by each layout as it is
 	 * called by #s_layout_format. If the message cannot be formatted
 	 * successfully, this function @b must return @c NULL, then the
-	 * #s_layout_format will attemp to write the message to @c stdout
+	 * #s_layout_format will attempt to write the message to @c stdout
 	 * in a predefined format.
 	 *
 	 * @param level The event level.
@@ -132,7 +132,7 @@ struct s_layout
 	 * vprintf(). The value of argp is undefined after the call to
 	 * this function.
 	 *
-	 * @return Pointer to formated string, or @c NULL on error.
+	 * @return Pointer to formatted string, or @c NULL on error.
 	 */
 	char *(*format)(s_log_event level, const char *error_msg,
 					const char *func, const char *file, int line,
@@ -140,7 +140,7 @@ struct s_layout
 
 	/**
 	 * Destroy the layout object's associated resources. The layout's
-	 * memory itself must @b not be free'd. Must be implemented by
+	 * memory itself must @b not be freed. Must be implemented by
 	 * each layout as it is called by #s_layout_destroy.
 	 *
 	 * @param layout This layout object.
@@ -170,12 +170,12 @@ struct s_layout
  * @param file Calling function file name.
  * @param line Calling line in function.
  * @param user_msg A format string specifying the string to write and
- * the format of the variable length argument list. Same as the the
+ * the format of the variable length argument list. Same as the
  * standard @c printf() function.
  *
- * @return Pointer to formated string, or @c NULL on error.
+ * @return Pointer to formatted string, or @c NULL on error.
  *
- * @note Thread-safety is dependant on the underlying implementation.
+ * @note Thread-safety is dependent on the underlying implementation.
  */
 S_API char *s_layout_format(const s_layout *layout, s_log_event level,
 							const char *error_msg, const char *func,
@@ -203,7 +203,7 @@ S_API char *s_layout_format(const s_layout *layout, s_log_event level,
  *
  * @return Pointer to formated string, or @c NULL on error.
  *
- * @note Thread-safety is dependant on the underlying implementation.
+ * @note Thread-safety is dependent on the underlying implementation.
  */
 S_API char *s_layout_vformat(const s_layout *layout, s_log_event level,
 							 const char *error_msg, const char *func, const char *file,
@@ -218,7 +218,7 @@ S_API char *s_layout_vformat(const s_layout *layout, s_log_event level,
  *
  * @return error Error code.
  *
- * @note Thread-safety is dependant on the underlying implementation.
+ * @note Thread-safety is dependent on the underlying implementation.
  */
 S_API s_erc s_layout_destroy(s_layout *layout);
 

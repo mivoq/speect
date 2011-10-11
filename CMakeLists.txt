@@ -12,6 +12,15 @@
 
 
 #------------------------------------------------------------------------------------#
+#                           Build directory check                                    #
+#------------------------------------------------------------------------------------#
+
+if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
+  message(FATAL_ERROR "Speect cannot be build in the source directory. See the INSTALL file for more information.")
+endif(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
+
+
+#------------------------------------------------------------------------------------#
 #                                Build type                                          #
 #------------------------------------------------------------------------------------#
 
@@ -27,10 +36,18 @@ set(CMAKE_CONFIGURATION_TYPES "${CMAKE_BUILD_TYPE}" CACHE INTERNAL "internal")
 
 
 #------------------------------------------------------------------------------------#
+#                                Project name                                        #
+#------------------------------------------------------------------------------------#
+
+message(STATUS "cmake for project \"Speect\"")
+project(speect C)
+
+
+#------------------------------------------------------------------------------------#
 #                          CMake minimum version                                     #
 #------------------------------------------------------------------------------------#
 
-cmake_minimum_required(VERSION 2.6 FATAL_ERROR)
+cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 
 
 #------------------------------------------------------------------------------------#

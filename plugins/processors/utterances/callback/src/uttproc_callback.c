@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2009 The Department of Arts and Culture,                           */
+/* Copyright (c) 2009-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -63,7 +63,7 @@ static SUttProcessorCBClass UttProcessorCBClass; /* SUttProcessorCB class declar
 S_LOCAL void _s_uttprocessor_cb_class_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(&UttProcessorCBClass, error);
+	s_class_reg(S_OBJECTCLASS(&UttProcessorCBClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_uttprocessor_cb_class_reg",
 			  "Failed to register SUttProcessorCBClass");
@@ -73,7 +73,7 @@ S_LOCAL void _s_uttprocessor_cb_class_reg(s_erc *error)
 S_LOCAL void _s_uttprocessor_cb_class_free(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_free(&UttProcessorCBClass, error);
+	s_class_free(S_OBJECTCLASS(&UttProcessorCBClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_uttprocessor_cb_class_free",
 			  "Failed to free SUttProcessorCBClass");

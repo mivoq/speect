@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2008-2009 The Department of Arts and Culture,                      */
+/* Copyright (c) 2008-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -77,9 +77,8 @@ S_BEGIN_C_DECLS
 /************************************************************************************/
 
 /**
- * Create a new console stream. The console stream implementes the
- * function pointers of #s_stream (#s_stream::v_write and
- * #s_stream::destroy).
+ * Create a new console stream. The console stream implements the
+ * function pointers of #s_stream (v_write and destroy).
  *
  * @param log_to_stdout If #TRUE then logging will be to @c stdout,
  * otherwise streaming will be to @c stderr.

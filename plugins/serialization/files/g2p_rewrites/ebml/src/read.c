@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2009 The Department of Arts and Culture,                           */
+/* Copyright (c) 2009-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -75,7 +75,7 @@ S_LOCAL SG2PRewrites *s_read_g2p_rewrites(SDatasource *ds, s_erc *error)
 	S_CLR_ERR(error);
 
 	/* create and initialize ebml reader */
-	ebmlReader = (SEbmlRead*)S_NEW("SEbmlRead", error);
+	ebmlReader = S_NEW(SEbmlRead, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "s_read_g2p_rewrites",
 				  "Failed to create new SEbmlRead object"))
@@ -104,7 +104,7 @@ S_LOCAL SG2PRewrites *s_read_g2p_rewrites(SDatasource *ds, s_erc *error)
 	}
 
 	/* create and initialize new g2p rewrites object */
-	g2p = (SG2PRewrites*)S_NEW("SG2PRewrites", error);
+	g2p = S_NEW(SG2PRewrites, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "s_read_g2p_rewrites",
 				  "Failed to create new 'SG2PRewrites' object"))
@@ -407,7 +407,7 @@ static void read_g2p_rewrites_rules(SG2PRewrites *g2p, SEbmlRead *ebmlReader, s_
 		return;
 
 	/* create rules SMap */
-	g2p->rules = (SMap*)S_NEW("SMapHashTable", error);
+	g2p->rules = S_MAP(S_NEW(SMapHashTable, error));
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "read_g2p_rewrites_rules",
 				  "Failed to create new 'SMap' object"))
@@ -455,7 +455,7 @@ static void read_g2p_rewrites_rules(SG2PRewrites *g2p, SEbmlRead *ebmlReader, s_
 				return;
 
 			/* create rule list for this grapheme */
-			graphemeRuleList = (SList*)S_NEW("SListList", error);
+			graphemeRuleList = S_LIST(S_NEW(SListList, error));
 			if (S_CHK_ERR(error, S_CONTERR,
 						  "read_g2p_rewrites_rules",
 						  "Failed to create new 'SList' object"))
@@ -507,7 +507,7 @@ static void read_g2p_rewrites_rules(SG2PRewrites *g2p, SEbmlRead *ebmlReader, s_
 				case S_G2PREWRITES_EBML_SINGLE_RULE_LEFT_CONTEXT:
 				{
 					/* elements are ordered so we create a rule here */
-					rule = (SG2PRewritesRule*)S_NEW("SG2PRewritesRule", error);
+					rule = S_NEW(SG2PRewritesRule, error);
 					if (S_CHK_ERR(error, S_CONTERR,
 								  "read_g2p_rewrites_rules",
 								  "Failed to create new 'SG2PRewritesRule' object"))
@@ -611,7 +611,7 @@ static void read_g2p_rewrites_zeros(SG2PRewrites *g2p, SEbmlRead *ebmlReader, s_
 		return;
 
 	/* create a temporary SList storage */
-	tmpZeros = (SList*)S_NEW("SListList", error);
+	tmpZeros = S_LIST(S_NEW(SListList, error));
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "read_g2p_rewrites_zeros",
 				  "Failed to create new 'SList' object"))

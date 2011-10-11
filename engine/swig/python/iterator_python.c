@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2009 The Department of Arts and Culture,                           */
+/* Copyright (c) 2009-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -34,7 +34,6 @@
 /*                                                                                  */
 /************************************************************************************/
 
-
 %extend _PMapIterator
 {
 	_PMapIterator *__iter__()
@@ -42,7 +41,11 @@
 		return $self;
 	}
 
+#ifdef SPCT_SWIG_PYTHON_3
+	PyObject *__next__()
+#else /* ! SPCT_SWIG_PYTHON_3 */
 	PyObject *next()
+#endif /* SPCT_SWIG_PYTHON_3 */
 	{
 		const char *key;
 		s_erc error;
@@ -50,20 +53,20 @@
 
 
 		S_CLR_ERR(&error);
-		if ($self->itr == NULL)
+		if ($self->_itr == NULL)
 		{
 			PyErr_SetNone(PyExc_StopIteration);
 			return NULL;
 		}
 
-		key = SIteratorKey($self->itr, &error);
+		key = SIteratorKey($self->_itr, &error);
 		if (error != S_SUCCESS)
 		{
 			PyErr_SetString(PyExc_RuntimeError, "Call to \"SIteratorKey\" failed");
 			return NULL;
 		}
 
-		$self->itr = SIteratorNext($self->itr);
+		$self->_itr = SIteratorNext($self->_itr);
 		pobject = s_set_pyobject_str(key, &error);
 		if (error != S_SUCCESS)
 		{
@@ -83,7 +86,11 @@
 		return $self;
 	}
 
-	PyObject *next()
+#ifdef SPCT_SWIG_PYTHON_3
+	PyObject *__next__()
+#else /* ! SPCT_SWIG_PYTHON_3 */
+    PyObject *next()
+#endif /* SPCT_SWIG_PYTHON_3 */
 	{
 		const SObject *iObject;
 		s_erc error;
@@ -91,20 +98,20 @@
 
 
 		S_CLR_ERR(&error);
-		if ($self->itr == NULL)
+		if ($self->_itr == NULL)
 		{
 			PyErr_SetNone(PyExc_StopIteration);
 			return NULL;
 		}
 
-		iObject = SIteratorObject($self->itr, &error);
+		iObject = SIteratorObject($self->_itr, &error);
 		if (error != S_SUCCESS)
 		{
 			PyErr_SetString(PyExc_RuntimeError, "Call to \"SListIteratorValue\" failed");
 			return NULL;
 		}
 
-		$self->itr = SIteratorNext($self->itr);
+		$self->_itr = SIteratorNext($self->_itr);
 		pobject = s_sobject_2_pyobject(iObject, FALSE, &error);
 		if (error != S_SUCCESS)
 			return NULL;

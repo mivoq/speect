@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2008-2009 The Department of Arts and Culture,                      */
+/* Copyright (c) 2008-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -178,34 +178,6 @@ S_BEGIN_C_DECLS
 
 
 /**
- * @hideinitializer
- * Call the given function method of the given #SRelation,
- * see full description #S_RELATION_CALL for usage.
- * @param SELF The given #SRelation*.
- * @param FUNC The function method of the given object to call.
- * @note This casting is not safety checked.
- * @note Example usage: @code S_RELATION_CALL(self, func)(param1, param2, ..., paramN); @endcode
- * where @c param1, @c param2, ..., @c paramN are the parameters passed to the object function
- * @c func.
- */
-#define S_RELATION_CALL(SELF, FUNC)					\
-	((SRelationClass *)S_OBJECT_CLS(SELF))->FUNC
-
-
-/**
- * @hideinitializer
- * Test if the given function method of the given #SRelation
- * can be called.
- * @param SELF The given #SRelation*.
- * @param FUNC The function method of the given object to check.
- * @return #TRUE if function can be called, otherwise #FALSE.
- * @note This casting is not safety checked.
- */
-#define S_RELATION_METH_VALID(SELF, FUNC)		\
-	S_RELATION_CALL(SELF, FUNC) ? TRUE : FALSE
-
-
-/**
  * @}
  */
 
@@ -282,7 +254,7 @@ typedef struct
 	 * @param error Error code.
 	 * @return Pointer to the name of the given relation.
 	 */
-	const char       *(*name)    (const SRelation *self, s_erc *error);
+	const char       *(* const name)    (const SRelation *self, s_erc *error);
 
 	/**
 	 * @protected Utt function pointer.
@@ -291,7 +263,7 @@ typedef struct
 	 * @param error Error code.
 	 * @return Pointer to the utterance of the given relation.
 	 */
-	const SUtterance *(*utt)     (const SRelation *self, s_erc *error);
+	const SUtterance *(* const utt)     (const SRelation *self, s_erc *error);
 
 	/**
 	 * @protected Head function pointer.
@@ -300,7 +272,7 @@ typedef struct
 	 * @param error Error code.
 	 * @return Pointer to the head item of the given relation.
 	 */
-	const SItem      *(*head)    (const SRelation *self, s_erc *error);
+	SItem            *(* const head)    (const SRelation *self, s_erc *error);
 
 	/**
 	 * @protected Tail function pointer.
@@ -309,7 +281,7 @@ typedef struct
 	 * @param error Error code.
 	 * @return Pointer to the tail item of the given relation.
 	 */
-	const SItem      *(*tail)    (const SRelation *self, s_erc *error);
+	SItem            *(* const tail)    (const SRelation *self, s_erc *error);
 
 	/**
 	 * @protected Append function pointer.
@@ -324,7 +296,8 @@ typedef struct
 	 *
 	 * @return Pointer to the appended item as it is in the given relation.
 	 */
-	SItem            *(*append)  (SRelation *self, const SItem *toShare, s_erc *error);
+	SItem            *(* const append)  (SRelation *self, const SItem *toShare,
+										 s_erc *error);
 
 	/**
 	 * @protected Prepend function pointer.
@@ -339,7 +312,8 @@ typedef struct
 	 *
 	 * @return Pointer to the prepended item as it is in the given relation.
 	 */
-	SItem            *(*prepend) (SRelation *self, const SItem *toShare, s_erc *error);
+	SItem            *(* const prepend) (SRelation *self, const SItem *toShare,
+										 s_erc *error);
 } SRelationClass;
 
 
@@ -362,6 +336,8 @@ typedef struct
  * self pointer will be set to @c NULL.
  * @note To connect a newly created relation to an utterance call
  * #SUtteranceSetRelation.
+ * @note Mostly for internal use when relations have been
+ * created with #S_NEW, and not #SUtteranceNewRelation.
  */
 S_API void SRelationInit(SRelation **self, const char *name, s_erc *error);
 
@@ -393,7 +369,7 @@ S_API const SUtterance *SRelationUtterance(const SRelation *self, s_erc *error);
  * @param error Error code.
  * @return Pointer to the head item of the given relation.
  */
-S_API const SItem *SRelationHead(const SRelation *self, s_erc *error);
+S_API SItem *SRelationHead(const SRelation *self, s_erc *error);
 
 
 /**
@@ -403,7 +379,7 @@ S_API const SItem *SRelationHead(const SRelation *self, s_erc *error);
  * @param error Error code.
  * @return Pointer to the tail item of given relation.
  */
-S_API const SItem *SRelationTail(const SRelation *self, s_erc *error);
+S_API SItem *SRelationTail(const SRelation *self, s_erc *error);
 
 
 /**

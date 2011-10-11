@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2009 The Department of Arts and Culture,                           */
+/* Copyright (c) 2009-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -63,7 +63,7 @@ static SNormalizationUttProcClass NormalizationUttProcClass;
 S_LOCAL void _s_normalization_utt_proc_class_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(&NormalizationUttProcClass, error);
+	s_class_reg(S_OBJECTCLASS(&NormalizationUttProcClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_normalization_utt_proc_class_reg",
 			  "Failed to register SNormalizationUttProcClass");
@@ -73,7 +73,7 @@ S_LOCAL void _s_normalization_utt_proc_class_reg(s_erc *error)
 S_LOCAL void _s_normalization_utt_proc_class_free(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_free(&NormalizationUttProcClass, error);
+	s_class_free(S_OBJECTCLASS(&NormalizationUttProcClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_normalization_utt_proc_class_free",
 			  "Failed to free SNormalizationUttProcClass");
@@ -232,7 +232,7 @@ quit_error:
 				  "Call to \"SUtteranceDelRelation\" failed");
 	}
 
-	self = NULL; /* to suppress noise about unused parameters */
+	S_UNUSED(self);
 }
 
 

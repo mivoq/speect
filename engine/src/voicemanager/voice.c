@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2008-2009 The Department of Arts and Culture,                      */
+/* Copyright (c) 2008-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -46,6 +46,47 @@
 #include "voicemanager/loaders/data_config.h"
 #include "voicemanager/manager.h"
 #include "voicemanager/voice.h"
+
+
+/************************************************************************************/
+/*                                                                                  */
+/* Macros                                                                           */
+/*                                                                                  */
+/************************************************************************************/
+
+/**
+ * @hideinitializer
+ * Call the given function method of the given #SVoice.
+ *
+ * @param SELF The given #SVoice*.
+ * @param FUNC The function method of the given object to call.
+ *
+ * @note This casting is not safety checked.
+ * @note Example usage:
+ @verbatim
+ S_VOICE_CALL(self, func)(param1, param2, ..., paramN);
+ @endverbatim
+ * where @c param1, @c param2, ..., @c paramN are the parameters passed to the object function
+ * @c func.
+ */
+#define S_VOICE_CALL(SELF, FUNC)				\
+	((SVoiceClass *)S_OBJECT_CLS(SELF))->FUNC
+
+
+/**
+ * @hideinitializer
+ * Test if the given function method of the given #SVoice
+ * can be called.
+ *
+ * @param SELF The given #SVoice*.
+ * @param FUNC The function method of the given object to check.
+ *
+ * @return #TRUE if function can be called, otherwise #FALSE.
+ *
+ * @note This casting is not safety checked.
+ */
+#define S_VOICE_METH_VALID(SELF, FUNC)			\
+	S_VOICE_CALL(SELF, FUNC) ? TRUE : FALSE
 
 
 /************************************************************************************/
@@ -1489,7 +1530,7 @@ S_LOCAL void _s_voice_load_data(SVoice *self, const SMap *dataConfig, s_erc *err
 S_LOCAL void _s_voice_class_add(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_add(&VoiceClass, error);
+	s_class_add(S_OBJECTCLASS(&VoiceClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_voice_class_add",
 			  "Failed to add SVoiceClass");
@@ -1716,7 +1757,7 @@ static void InitVoice(void *obj, s_erc *error)
 		return;
 	}
 
-	self->data->dataObjects = S_MAP(S_NEW("SMapList", error));
+	self->data->dataObjects = S_MAP(S_NEW(SMapList, error));
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "InitVoice",
 				  "Failed to create new data objects map"))
@@ -1857,7 +1898,7 @@ static SUtterance *SynthUtt(const SVoice *self, const char *utt_type,
 		return NULL;
 
 	/* create new utterance */
-	utt = (SUtterance*)S_NEW("SUtterance", error);
+	utt = S_NEW(SUtterance, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "SynthUtt",
 				  "Failed to create new utterance"))

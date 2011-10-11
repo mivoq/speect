@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2009 The Department of Arts and Culture,                           */
+/* Copyright (c) 2009-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -100,10 +100,10 @@ S_LOCAL void s_write_audio_riff_16(const SAudio *audio, const char *path, s_erc 
 
 	/* num bytes in whole file */
 	dword = (audio->num_samples * S_AUDIO_NUM_CHANNELS * sizeof(sint16)) + 8 + 16 + 12;
-	s_write_uint32(ds, dword, error);
+	s_uint32_write(ds, dword, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "s_write_audio_riff_16",
-				  "Call to \"s_write_uint32\" failed"))
+				  "Call to \"s_uint32_write\" failed"))
 		goto quit_error;
 
 	info = "WAVE";
@@ -122,58 +122,58 @@ S_LOCAL void s_write_audio_riff_16(const SAudio *audio, const char *path, s_erc 
 
 	/* size of header */
 	dword = 16;
-	s_write_uint32(ds, dword, error);
+	s_uint32_write(ds, dword, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "s_write_audio_riff_16",
-				  "Call to \"s_write_uint32\" failed"))
+				  "Call to \"s_uint32_write\" failed"))
 		goto quit_error;
 
 	/* format type */
 	word = RIFF_FORMAT_PCM;
-	s_write_uint16(ds, word, error);
+	s_uint16_write(ds, word, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "s_write_audio_riff_16",
-				  "Call to \"s_write_uint16\" failed"))
+				  "Call to \"s_uint16_write\" failed"))
 		goto quit_error;
 
 	/* number of channels */
 	word = S_AUDIO_NUM_CHANNELS;
-	s_write_uint16(ds, word, error);
+	s_uint16_write(ds, word, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "s_write_audio_riff_16",
-				  "Call to \"s_write_uint16\" failed"))
+				  "Call to \"s_uint16_write\" failed"))
 		goto quit_error;
 
 	/* sample rate */
 	dword = audio->sample_rate;
-	s_write_uint32(ds, dword, error);
+	s_uint32_write(ds, dword, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "s_write_audio_riff_16",
-				  "Call to \"s_write_uint32\" failed"))
+				  "Call to \"s_uint32_write\" failed"))
 		goto quit_error;
 
 	/* average bytes per second */
 	dword = (audio->sample_rate * S_AUDIO_NUM_CHANNELS * sizeof(sint16));
-	s_write_uint32(ds, dword, error);
+	s_uint32_write(ds, dword, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "s_write_audio_riff_16",
-				  "Call to \"s_write_uint32\" failed"))
+				  "Call to \"s_uint32_write\" failed"))
 		goto quit_error;
 
 	/* block align */
 	word = S_AUDIO_NUM_CHANNELS * sizeof(sint16);
-	s_write_uint16(ds, word, error);
+	s_uint16_write(ds, word, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "s_write_audio_riff_16",
-				  "Call to \"s_write_uint16\" failed"))
+				  "Call to \"s_uint16_write\" failed"))
 		goto quit_error;
 
 	/* bits per sample */
 	word = sizeof(sint16) * 8;
-	s_write_uint16(ds, word, error);
+	s_uint16_write(ds, word, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "s_write_audio_riff_16",
-				  "Call to \"s_write_uint16\" failed"))
+				  "Call to \"s_uint16_write\" failed"))
 		goto quit_error;
 
 	info = "data";
@@ -185,10 +185,10 @@ S_LOCAL void s_write_audio_riff_16(const SAudio *audio, const char *path, s_erc 
 
 	/* number of bytes in data */
 	dword = (audio->num_samples * S_AUDIO_NUM_CHANNELS * sizeof(sint16));
-	s_write_uint32(ds, dword, error);
+	s_uint32_write(ds, dword, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "s_write_audio_riff_16",
-				  "Call to \"s_write_uint32\" failed"))
+				  "Call to \"s_uint32_write\" failed"))
 		goto quit_error;
 
 	/* get the audio samples in 16 bit integer format */

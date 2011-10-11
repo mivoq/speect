@@ -1,7 +1,7 @@
 import speect
 import speect.featproc_cb
 import speect.pyobject_ebml
-import cPickle as pickle
+import pickle as pickle
 
 
 # Note that a voice that wants to use this feature processor with the 

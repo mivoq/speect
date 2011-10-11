@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2008-2009 The Department of Arts and Culture,                      */
+/* Copyright (c) 2008-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -62,7 +62,7 @@ static SEbmlWriteClass EbmlWriteClass; /* SEbmlWrite class declaration. */
 S_LOCAL void _s_ebml_write_class_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(&EbmlWriteClass, error);
+	s_class_reg(S_OBJECTCLASS(&EbmlWriteClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_ebml_write_class_reg",
 			  "Failed to register SEbmlWriteClass");
@@ -72,7 +72,7 @@ S_LOCAL void _s_ebml_write_class_reg(s_erc *error)
 S_LOCAL void _s_ebml_write_class_free(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_free(&EbmlWriteClass, error);
+	s_class_free(S_OBJECTCLASS(&EbmlWriteClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_ebml_write_class_free",
 			  "Failed to free SEbmlWriteClass");

@@ -1,5 +1,5 @@
 ######################################################################################
-## Copyright (c) 2009 The Department of Arts and Culture,                           ##
+## Copyright (c) 2009-2011 The Department of Arts and Culture,                      ##
 ## The Government of the Republic of South Africa.                                  ##
 ##                                                                                  ##
 ## Contributors:  Meraka Institute, CSIR, South Africa.                             ##
@@ -33,7 +33,6 @@
 ##                                                                                  ##
 ######################################################################################
 
-from __future__ import print_function
 import speect
 import speect.utt_ebml
 

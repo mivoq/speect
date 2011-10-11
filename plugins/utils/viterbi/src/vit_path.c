@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2008-2009 The Department of Arts and Culture,                      */
+/* Copyright (c) 2008-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -100,7 +100,7 @@ static SViterbiPathClass ViterbiPathClass;
 S_LOCAL void _s_vit_path_class_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(&ViterbiPathClass, error);
+	s_class_reg(S_OBJECTCLASS(&ViterbiPathClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_vit_path_class_reg",
 			  "Failed to register SViterbiPathClass");
@@ -110,7 +110,7 @@ S_LOCAL void _s_vit_path_class_reg(s_erc *error)
 S_LOCAL void _s_vit_path_class_free(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_free(&ViterbiPathClass, error);
+	s_class_free(S_OBJECTCLASS(&ViterbiPathClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_vit_path_class_free",
 			  "Failed to free SViterbiPathClass");
@@ -135,7 +135,7 @@ static void Init(void *obj, s_erc *error)
 	self->from = NULL;
 	self->next = NULL;
 
-	self->features = (SMap*)S_NEW("SMapList", error);
+	self->features = S_MAP(S_NEW(SMapList, error));
 	S_CHK_ERR(error, S_CONTERR,
 			  "Init",
 			  "Failed to create new 'SMap' object");

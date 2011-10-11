@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2008-2009 The Department of Arts and Culture,                      */
+/* Copyright (c) 2008-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -129,7 +129,7 @@ S_API const SSerializedObject *SSerializedObjectGet(const SObject* object,
  * @param format Format in which the object is wished to be read.
  * @param error Error code.
  *
- * @return @c TRUE or @c FALSE.
+ * @return #TRUE or #FALSE.
  */
 S_API s_bool SObjectTypeIsReadable(const char *object_type,
 								   const char *format,
@@ -138,15 +138,15 @@ S_API s_bool SObjectTypeIsReadable(const char *object_type,
 
 /**
  * Query if the given object is writable in the given format.
- * Checks there are #SSerializedObjectClass classes registered to write
- * the object in the given format.
+ * Checks that there are #SSerializedObjectClass classes registered to write
+ * the given object in the given format.
  * @public @memberof SObject
  *
  * @param object The object for which the query is done.
  * @param format Format in which the object is wished to be written.
  * @param error Error code.
  *
- * @return @c TRUE or @c FALSE.
+ * @return #TRUE or #FALSE.
  */
 S_API s_bool SObjectIsWritable(const SObject *object, const char *format,
 							   s_erc *error);
@@ -176,7 +176,7 @@ S_API void SSerializedFileFree(const SSerializedFileClass *serializedFileClass,
 
 
 /**
- * Save the given object in the given format to the given file name.
+ * Save the given object in the given format to the given path.
  * @public @memberof SObject
  *
  * @param object The object to save.
@@ -189,7 +189,7 @@ S_API void SObjectSave(const SObject *object, const char *path, const char *form
 
 
 /**
- * Load data of an object in the given format from the given file name.
+ * Load data of an object in the given format from the given path.
  * @public @memberof SObject
  *
  * @param path The full path and file name of the object file.

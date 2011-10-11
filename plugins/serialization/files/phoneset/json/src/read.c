@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2009 The Department of Arts and Culture,                           */
+/* Copyright (c) 2009-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -72,7 +72,7 @@ S_LOCAL SPhonesetJSON *s_read_phoneset_json(const char *path, s_erc *error)
 	S_CLR_ERR(error);
 
 	/* create phoneset */
-	phoneset = (SPhonesetJSON*)S_NEW("SPhonesetJSON", error);
+	phoneset = S_NEW(SPhonesetJSON, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "s_read_phoneset_json",
 				  "Failed to create new phoneset object"))
@@ -178,7 +178,7 @@ S_LOCAL SPhonesetJSON *s_read_phoneset_json(const char *path, s_erc *error)
 	/* the entries map is a SMapList (default for JSON reader), we
 	 * want a SMapHashTable. Create a new one with the given size.
 	 */
-	phoneset->phones = (SMap*)S_NEW("SMapHashTable", error);
+	phoneset->phones = S_MAP(S_NEW(SMapHashTable, error));
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "s_read_phoneset_json",
 				  "Failed to create new 'SMapHashTable' object"))

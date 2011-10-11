@@ -1,1 +1,2 @@
 speect_example(errdbg_example)
+speect_example(errdbg_example_short)

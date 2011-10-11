@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2008-2009 The Department of Arts and Culture,                      */
+/* Copyright (c) 2008-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -147,30 +147,19 @@ S_BEGIN_C_DECLS
 
 /**
  * @hideinitializer
- * Call the given function method of the given #SMap,
- * see full description #S_MAP_CALL for usage.
+ * Call the given function method of the given #SMap.
  * @param SELF The given #SMap*.
  * @param FUNC The function method of the given object to call.
  * @note This casting is not safety checked.
- * @note Example usage: @code S_MAP_CALL(self, func)(param1, param2, ..., paramN); @endcode
+ * @note Example usage:
+ @verbatim
+ S_MAP_CALL(self, func)(param1, param2, ..., paramN);
+ @endverbatim
  * where @c param1, @c param2, ..., @c paramN are the parameters passed to the object function
  * @c func.
  */
 #define S_MAP_CALL(SELF, FUNC)					\
 	((SMapClass *)S_OBJECT_CLS(SELF))->FUNC
-
-
-/**
- * @hideinitializer
- * Test if the given function method of the given #SMap
- * can be called.
- * @param SELF The given #SMap*.
- * @param FUNC The function method of the given object to check.
- * @return #TRUE if function can be called, otherwise #FALSE.
- * @note This casting is not safety checked.
- */
-#define S_MAP_METH_VALID(SELF, FUNC)			\
-	S_MAP_CALL(SELF, FUNC) ? TRUE : FALSE
 
 
 /**
@@ -185,7 +174,9 @@ S_BEGIN_C_DECLS
 /************************************************************************************/
 
 /**
- * The SMap structure.
+ * A map object. An abstract data type composed of a collection of
+ * unique string keys and a collection of values (of type #SObject),
+ * where each key is associated with one value.
  * @extends SContainer
  */
 typedef struct
@@ -207,7 +198,6 @@ typedef struct
  * The map class structure. It inherits from #SContainer so that it supports
  * different map implementations.
  * @extends SContainerClass
- * @todo freed or free'd ?
  */
 typedef struct
 {
@@ -226,9 +216,11 @@ typedef struct
 	 * @param key The string key of the object to get.
 	 * @param error Error code.
 	 *
-	 * @return Pointer to the #SObject of the named key.
+	 * @return Pointer to the #SObject of the named key, or #NULL if
+	 * none.
 	 */
-	const SObject *(*val_get)    (const SMap *self, const char *key, s_erc *error);
+	const SObject *(* const val_get)    (const SMap *self, const char *key,
+										 s_erc *error);
 
 	/**
 	 * @protected ValSet function pointer.
@@ -241,8 +233,8 @@ typedef struct
 	 * @param object Pointer to the #SObject of the named key.
 	 * @param error Error code.
 	 */
-	void           (*val_set)    (SMap *self, const char *key,
-								  const SObject *val, s_erc *error);
+	void           (* const val_set)    (SMap *self, const char *key,
+										 const SObject *val, s_erc *error);
 
 	/**
 	 * @protected ValDelete function pointer.
@@ -254,7 +246,8 @@ typedef struct
 	 * @param key The string key of the object to delete.
 	 * @param error Error code.
 	 */
-	void           (*val_delete) (SMap *self, const char *key, s_erc *error);
+	void           (* const val_delete) (SMap *self, const char *key,
+										 s_erc *error);
 
 	/**
 	 * @protected ValUnlink function pointer.
@@ -267,7 +260,8 @@ typedef struct
 	 *
 	 * @return #SObject of named key.
 	 */
-	SObject       *(*val_unlink) (SMap *self, const char *key, s_erc *error);
+	SObject       *(* const val_unlink) (SMap *self, const char *key,
+										 s_erc *error);
 
 	/**
 	 * @protected ValPresent function pointer.
@@ -279,7 +273,8 @@ typedef struct
 	 *
 	 * @return #TRUE or #FALSE.
 	 */
-	s_bool         (*val_present)(const SMap *self, const char *key, s_erc *error);
+	s_bool         (* const val_present)(const SMap *self, const char *key,
+										 s_erc *error);
 
 	/**
 	 * @protected ValKeys function pointer.
@@ -295,7 +290,7 @@ typedef struct
 	 * @note The caller is responsible for the memory of the returned
 	 * #SList object.
 	 */
-	SList         *(*val_keys)   (const SMap *self, s_erc *error);
+	SList         *(* const val_keys)   (const SMap *self, s_erc *error);
 
 	/**
 	 * @protected Size function pointer.
@@ -306,7 +301,7 @@ typedef struct
 	 *
 	 * @return The number of key-value pairs in the map.
 	 */
-	size_t         (*size)       (const SMap *self, s_erc *error);
+	size_t         (* const size)       (const SMap *self, s_erc *error);
 
 	/**
 	 * @protected Copy (shallow) function pointer.
@@ -322,7 +317,8 @@ typedef struct
 	 * @note Values in @a dst with the same named keys as in @a src
 	 * will be overwritten with the values in @a src.
 	 */
-	SMap          *(*copy)       (SMap *dst, const SMap *src, s_erc *error);
+	SMap          *(* const copy)       (SMap *dst, const SMap *src,
+										 s_erc *error);
 } SMapClass;
 
 
@@ -346,6 +342,11 @@ typedef struct
  * @param key The string key of the value to get.
  * @param error Error code.
  *
+ * @note An @c S_ARGERROR error is set if the named key is
+ * not in the map.
+ *
+ * @sa SMapGetIntDef
+ *
  * @return The signed integer value of the named key.
  */
 S_API sint32 SMapGetInt(const SMap *self, const char *key, s_erc *error);
@@ -358,6 +359,11 @@ S_API sint32 SMapGetInt(const SMap *self, const char *key, s_erc *error);
  * @param self The key-value map.
  * @param key The string key of the value to get.
  * @param error Error code.
+ *
+ * @note An @c S_ARGERROR error is set if the named key is
+ * not in the map.
+ *
+ * @sa SMapGetFloatDef
  *
  * @return The float value of the named key.
  */
@@ -372,6 +378,11 @@ S_API float SMapGetFloat(const SMap *self, const char *key, s_erc *error);
  * @param key The string key of the value to get.
  * @param error Error code.
  *
+ * @note An @c S_ARGERROR error is set if the named key is
+ * not in the map.
+ *
+ * @sa SMapGetStringDef
+ *
  * @return Pointer to the string of the named key.
  */
 S_API const char *SMapGetString(const SMap *self, const char *key, s_erc *error);
@@ -384,6 +395,11 @@ S_API const char *SMapGetString(const SMap *self, const char *key, s_erc *error)
  * @param self The key-value map.
  * @param key The string key of the object to get.
  * @param error Error code.
+ *
+ * @note An @c S_ARGERROR error is set if the named key is
+ * not in the map.
+ *
+ * @sa SMapGetObjectDef
  *
  * @return Pointer to the object of the named key.
  */
@@ -428,6 +444,8 @@ S_API SList *SMapGetKeys(const SMap *self, s_erc *error);
  * @param def Default value to return if named key is not found.
  * @param error Error code.
  *
+ * @sa SMapGetInt
+ *
  * @return The signed integer value of the named key, or given default
  * value.
  */
@@ -445,6 +463,8 @@ S_API sint32 SMapGetIntDef(const SMap *self, const char *key,
  * @param def Default value to return if named key is not found.
  * @param error Error code.
  *
+ * @sa SMapGetFloat
+ *
  * @return The float value of the named key, or given default value.
  */
 S_API float SMapGetFloatDef(const SMap *self, const char *key,
@@ -460,6 +480,8 @@ S_API float SMapGetFloatDef(const SMap *self, const char *key,
  * @param key The string key of the value to get.
  * @param def Default value to return if named key is not found.
  * @param error Error code.
+ *
+ * @sa SMapGetString
  *
  * @return Pointer to the string of the named key, or given default
  * value.
@@ -477,6 +499,8 @@ S_API const char *SMapGetStringDef(const SMap *self, const char *key,
  * @param key The string key of the object to get.
  * @param def Default value to return if named key is not found.
  * @param error Error code.
+ *
+ * @sa SMapGetObject
  *
  * @return Pointer to the #SObject of the named key, or given default
  * value.
@@ -545,6 +569,11 @@ S_API void SMapSetString(SMap *self, const char *key, const char *s, s_erc *erro
  * @param key The string key of the object to set.
  * @param object Pointer to the #SObject of the named key.
  * @param error Error code.
+ *
+ * @note The map takes hold of the object, and therefore the
+ * object should not be deleted with a call to #S_DELETE,
+ * see #SMapObjectDelete and #SMapObjectUnlink.
+ *
  */
 S_API void SMapSetObject(SMap *self, const char *key, const SObject *object, s_erc *error);
 
@@ -573,7 +602,7 @@ S_API void SMapObjectDelete(SMap *self, const char *key, s_erc *error);
 
 
 /**
- * Remove named key-value pair from the map. Key is removed (free'd)
+ * Remove named key-value pair from the map. Key is removed (freed)
  * from list and value object is returned.
  * @public @memberof SMap
  *

@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2008-2009 The Department of Arts and Culture,                      */
+/* Copyright (c) 2008-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -46,7 +46,7 @@
 /**
  * @ingroup SVoices
  * @defgroup SVoiceManager VoiceManager
- * The @c VoiceManager provides methods for loading voices that
+ * The @a VoiceManager provides methods for loading voices that
  * are then available to the Speect Engine.
  * The loaded voice's data is chached for reuse.
  * @{
@@ -88,7 +88,9 @@ S_BEGIN_C_DECLS
  *
  * @return Pointer to the loaded voice.
  *
- * @note The returned voice can be normally deleted with #S_DELETE.
+ * @note The caller is responsible for the memory of the returned
+ * voice, which can be normally deleted with #S_DELETE.
+ *
  * @note Thread safe.
  */
 S_API SVoice *s_vm_load_voice(const char *path, s_erc *error);

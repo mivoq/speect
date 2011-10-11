@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2008-2009 The Department of Arts and Culture,                      */
+/* Copyright (c) 2008-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -72,7 +72,7 @@ S_LOCAL void _s_load_voice_utterance_processors(const SMap *voiceConfig, SVoice 
 	S_CLR_ERR(error);
 
 	/* create a map container for utterance-processors */
-	uttProcessors = S_MAP(S_NEW("SMapList", error));
+	uttProcessors = S_MAP(S_NEW(SMapList, error));
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "_s_load_voice_utterance_processors",
 				  "Failed to create new map for voice utterance-processors"))
@@ -131,7 +131,7 @@ S_LOCAL void _s_load_voice_utterance_processors(const SMap *voiceConfig, SVoice 
 	if (itr)
 	{
 		/* create a plug-in list */
-		uttProcPlugins = S_LIST(S_NEW("SListList", error));
+		uttProcPlugins = S_LIST(S_NEW(SListList, error));
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "_s_load_voice_utterance_processors",
 					  "Failed to create new list for voice utterance-processor plug-ins"))
@@ -238,7 +238,7 @@ S_LOCAL void _s_load_voice_utterance_processors(const SMap *voiceConfig, SVoice 
 			return;
 		}
 
-		uProcessor = S_UTTPROCESSOR(S_NEW(uttproc_class, error));
+		uProcessor = S_UTTPROCESSOR(S_NEW_FROM_NAME(uttproc_class, error));
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "_s_load_voice_utterance_processors",
 					  "Failed to create new utterance-processor of class \'%s\'",

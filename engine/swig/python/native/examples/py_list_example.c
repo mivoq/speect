@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2010 The Department of Arts and Culture,                           */
+/* Copyright (c) 2010-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -219,7 +219,7 @@ static SList *create_and_populate_py_list(s_erc *error)
 	}
 
 	/* create SListPy wrapper */
-	pyList = (SListPy*)S_NEW("SListPy", error);
+	pyList = S_NEW(SListPy, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "create_and_populate_py_list",
 				  "Failed to create new 'SListPy' object"))

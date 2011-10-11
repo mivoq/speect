@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2009 The Department of Arts and Culture,                           */
+/* Copyright (c) 2009-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -74,7 +74,7 @@ static SEBMLG2PRewritesFileClass EBMLG2PRewritesFileClass; /* SEBMLG2PRewritesFi
 S_LOCAL void _s_serialized_ebml_g2p_rewrites_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(&EBMLG2PRewritesFileClass, error);
+	s_class_reg(S_OBJECTCLASS(&EBMLG2PRewritesFileClass), error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "_s_serialized_ebml_g2p_rewrites_reg",
 				  "Failed to register SEBMLG2PRewritesFileClass"))
@@ -88,7 +88,7 @@ S_LOCAL void _s_serialized_ebml_g2p_rewrites_reg(s_erc *error)
 		s_erc local_err = S_SUCCESS;
 
 
-		s_class_free(&EBMLG2PRewritesFileClass, &local_err);
+		s_class_free(S_OBJECTCLASS(&EBMLG2PRewritesFileClass), &local_err);
 		return;
 	}
 }
@@ -107,7 +107,7 @@ S_LOCAL void _s_serialized_ebml_g2p_rewrites_free(s_erc *error)
 			  "_s_serialized_ebml_g2p_rewrites_free",
 			  "Failed to remove serialized file class ");
 
-	s_class_free(&EBMLG2PRewritesFileClass, error);
+	s_class_free(S_OBJECTCLASS(&EBMLG2PRewritesFileClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_serialized_ebml_g2p_rewrites_free",
 			  "Failed to free ");

@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2008-2009 The Department of Arts and Culture,                      */
+/* Copyright (c) 2008-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -116,8 +116,8 @@ S_BEGIN_C_DECLS
 
 /**
  * Opaque definition of the buffer.
- * s_buffer is a buffer with exponential growth.  The buffer ensures that
- * it is always null padded.
+ * It is a buffer with exponential growth, that ensures that it is
+ * always null padded.
  */
 typedef struct s_buffer s_buffer;
 
@@ -177,7 +177,7 @@ S_API void s_buffer_clear(s_buffer *buf, s_erc *error);
  *
  * @return Pointer to the data in the buffer.
  */
-S_API const uchar *s_buffer_data(s_buffer *buf, s_erc *error);
+S_API const uchar *s_buffer_data(const s_buffer *buf, s_erc *error);
 
 
 /**
@@ -188,7 +188,7 @@ S_API const uchar *s_buffer_data(s_buffer *buf, s_erc *error);
  *
  * @return Size of data in buffer (bytes).
  */
-S_API size_t s_buffer_size(s_buffer *buf, s_erc *error);
+S_API size_t s_buffer_size(const s_buffer *buf, s_erc *error);
 
 
 /**

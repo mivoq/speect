@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2009 The Department of Arts and Culture,                           */
+/* Copyright (c) 2009-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -162,7 +162,7 @@ S_LOCAL SAudio *synthesis(SRelp *self, s_erc *error)
 				  "Call to \"map_coefs\" failed"))
 		return NULL;
 
-	waveform = (SAudio*)S_NEW("SAudio", error);
+	waveform = S_NEW(SAudio, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "synthesis",
 				  "Failed to create new 'SAudio' object"))
@@ -207,7 +207,7 @@ static void copy_source_track(SRelp *self, s_erc *error)
 	S_CLR_ERR(error);
 
 	/* copy the track to the target */
-	self->target = (STrackFloat*)S_NEW("STrackFloat", error);
+	self->target = S_NEW(STrackFloat, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "copy_source_track",
 				  "Failed to create new 'STrackFloat' object"))
@@ -271,7 +271,7 @@ static void td_synthesis(SRelp *self, s_erc *error)
 	if ((self->num_frames > 0) && (self->map->count > 0))
 	{
 		sr = (float)self->sample_rate;
-		self->wave_res = (SAudio*)S_NEW("SAudio", error);
+		self->wave_res = S_NEW(SAudio, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "td_synthesis",
 					  "Failed to create new 'SAudio' object"))

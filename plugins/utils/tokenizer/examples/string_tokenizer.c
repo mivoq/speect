@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2008-2009 The Department of Arts and Culture,                      */
+/* Copyright (c) 2008-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -81,7 +81,7 @@ int main()
 	}
 
 	/* create string tokenizer */
-	ts = (STokenizer*)S_NEW("STokenizerString", &error);
+	ts = (STokenizer*)S_NEW(STokenizerString, &error);
 	if (S_CHK_ERR(&error, S_CONTERR,
 				  "main",
 				  "Failed to create new string tokenizer"))

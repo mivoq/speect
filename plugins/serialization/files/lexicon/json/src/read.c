@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2009 The Department of Arts and Culture,                           */
+/* Copyright (c) 2009-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -71,7 +71,7 @@ S_LOCAL SLexiconJSON *s_read_lexicon_json(const char *path, s_erc *error)
 	S_CLR_ERR(error);
 
 	/* create lexicon */
-	lex = (SLexiconJSON*)S_NEW("SLexiconJSON", error);
+	lex = S_NEW(SLexiconJSON, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "s_read_lexicon_json",
 				  "Failed to create new lexicon object"))
@@ -177,7 +177,7 @@ S_LOCAL SLexiconJSON *s_read_lexicon_json(const char *path, s_erc *error)
 	/* the entries map is a SMapList (default for JSON reader), we
 	 * want a SMapHashTable. Create a new one with the given size.
 	 */
-	lex->entries = (SMap*)S_NEW("SMapHashTable", error);
+	lex->entries = S_MAP(S_NEW(SMapHashTable, error));
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "s_read_lexicon_json",
 				  "Failed to create new 'SMapHashTable' object"))

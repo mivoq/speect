@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2010 The Department of Arts and Culture,                           */
+/* Copyright (c) 2010-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -81,7 +81,7 @@ static sint32 word_num_syls(const SItem *item, s_erc *error);
 S_LOCAL void _s_syl_pos_phrase_class_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(&SylPosPhraseFeatProcClass, error);
+	s_class_reg(S_OBJECTCLASS(&SylPosPhraseFeatProcClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_syl_pos_phrase_class_reg",
 			  "Failed to register SSylPosPhraseFeatProcClass");
@@ -91,7 +91,7 @@ S_LOCAL void _s_syl_pos_phrase_class_reg(s_erc *error)
 S_LOCAL void _s_syl_pos_phrase_class_free(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_free(&SylPosPhraseFeatProcClass, error);
+	s_class_free(S_OBJECTCLASS(&SylPosPhraseFeatProcClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_syl_pos_phrase_class_free",
 			  "Failed to free SSylPosPhraseFeatProcClass");
@@ -336,7 +336,6 @@ quit_error:
 	if (extractedFeat != NULL)
 		S_DELETE(extractedFeat, "Run", error);
 
-	self = NULL; /* compiler noise about unused parameters */
 	return NULL;
 
 	/* return 0 */
@@ -348,6 +347,8 @@ quit_null:
 		goto quit_error;
 
 	return extractedFeat;
+
+	S_UNUSED(self);
 }
 
 

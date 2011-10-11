@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2010 The Department of Arts and Culture,                           */
+/* Copyright (c) 2010-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -52,7 +52,7 @@ __getitem__(key)
 Get the value in the map that is associated with the given key.
 
 :param key: The key of the desired value.
-:type key: string
+:type key: str
 :return: The value associated with the given key.
 :note: Raises ``KeyError`` if key not in map.
 """
@@ -68,7 +68,7 @@ __setitem__(key, value)
 Set the given key-value pair in the map.
 
 :param key: The key of the value.
-:type key: string
+:type key: str
 :param value: The value of the associated key.
 :note: If a key-value pair with the given key already exists, it will be deleted.
 """
@@ -84,7 +84,7 @@ __delitem__(key)
 Delete the key-value pair of the given in the map.
 
 :param key: The key of the key-value pair to delete.
-:type key: string
+:type key: str
 """
 %enddef
 
@@ -109,9 +109,9 @@ as a Speect object. So instead we can use this function::
 which will return the value object as it is in Speect, i.e. an ``SObject``.
 
 :param key: The key of the key-value pair to get.
-:type key: string
+:type key: str
 :return: The value associated with the given key or ``None`` if no such key-value pair.
-:rtype: SObject
+:rtype: :class:`SObject`
 """
 %enddef
 
@@ -150,7 +150,7 @@ __contains__(key)
 Query if named feature is present in this map.
 
 :param key: The feature key which to test for.
-:type key: string
+:type key: str
 :return: ``True`` or ``False``.
 :rtype: bool
 """

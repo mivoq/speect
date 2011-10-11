@@ -18,6 +18,7 @@
 #------------------------------------------------------------------------------------#
 
 set(SPCT_SWIG_PYTHON_SRC_FILES
+  "${CMAKE_SOURCE_DIR}/engine/swig/python/errdbg_docs.c"
   "${CMAKE_SOURCE_DIR}/engine/swig/python/feat_processor_docs.c"
   "${CMAKE_SOURCE_DIR}/engine/swig/python/feat_processor_python.c"
   "${CMAKE_SOURCE_DIR}/engine/swig/python/item_docs.c"

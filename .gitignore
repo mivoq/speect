@@ -6,13 +6,12 @@
 
 
 ##########################################################################
-# Ignore Makefile and cmake files
+# Ignore build files
 
-Makefile
-CMakeCache.txt
-*_install.cmake
-*_uninstall.cmake
-CMakeFiles
+build/*
+
+# except the README
+!build/README
 
 
 ##########################################################################
@@ -29,8 +28,6 @@ engine/src/include/spctconfig.h
 engine/src/include/version.h
 engine/src/main/ini.c
 engine/src/pluginmanager/platform/dynamic_loading_impl.h
-engine/spct_debug.log
-engine/spct_error.log
 
 
 ##########################################################################
@@ -55,15 +52,17 @@ swig/python/speect/*.pyc
 !swig/python/speect/__init__.py
 
 # except the client/server
-!speect/swig/python/client.py
-!speect/swig/python/server.py
+!swig/python/client.py
+!swig/python/server.py
 
 
 ##########################################################################
 # Ignore generated documentation 
 
-docs/_build/*
+docs/build/*
 docs/sphinxext/*.pyc
+docs/doxygen/*
+docs/Makefile
 
 
 ##########################################################################
@@ -76,3 +75,9 @@ docs/sphinxext/*.pyc
 # Ignore cscope files
 
 cscope*
+
+
+##########################################################################
+# Ignore VERSION file
+
+VERSION

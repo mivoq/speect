@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2008-2009 The Department of Arts and Culture,                      */
+/* Copyright (c) 2008-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -91,22 +91,21 @@ typedef enum
 
 	/* class/object method errors */
 	S_METHINVLD =     -4,     /*!< Class/Object method does not exist.       */
-	S_METHFAIL =      -5,     /*!< Method/function call failed.              */
 
 	/* end of file/stream */
-	S_IOEOF =         -6,     /*!< End of file/stream.                       */
+	S_IOEOF =         -5,     /*!< End of file/stream.                       */
 
 	/* warnings */
-	S_WARNERR =       -7,     /*!< Warning, possible error.                  */
+	S_WARNERR =       -6,     /*!< Warning, possible error.                  */
 
 	/* continue error context (must be last one in list) */
-	S_CONTERR =       -8      /*!< Error context continued.                  */
+	S_CONTERR =       -7      /*!< Error context continued.                  */
 } s_erc;
 
 
 
 /**
- * Debug level definitions. If the debug level is set to #S_DBG_TRACE then
+ * Debug level definitions. If the debug level is set to @c S_DBG_TRACE then
  * all debug messages with a debug level equal and lower will be output
  * to the @ref SLogging system.
  * @sa s_log_event.

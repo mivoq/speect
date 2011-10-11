@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2009 The Department of Arts and Culture,                           */
+/* Copyright (c) 2009-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -80,7 +80,7 @@ static s_bool check_if_match(const SMap *singleEntry, const SMap *features,
 S_LOCAL void _s_addendum_json_class_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(&AddendumJSONClass, error);
+	s_class_reg(S_OBJECTCLASS(&AddendumJSONClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_addendum_json_class_reg",
 			  "Failed to register SAddendumJSONClass");
@@ -90,7 +90,7 @@ S_LOCAL void _s_addendum_json_class_reg(s_erc *error)
 S_LOCAL void _s_addendum_json_class_free(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_free(&AddendumJSONClass, error);
+	s_class_free(S_OBJECTCLASS(&AddendumJSONClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_addendum_json_class_free",
 			  "Failed to free SAddendumJSONClass");
@@ -574,7 +574,7 @@ static void AddWord(SAddendum *self, const char *word, SMap *features,
 	/* check that we have entries, otherwise create them */
 	if (addendum->entries == NULL)
 	{
-		addendum->entries = (SMap*)S_NEW("SMapHashTable", error);
+		addendum->entries = S_MAP(S_NEW(SMapHashTable, error));
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "AddWord",
 					  "Failed to create new 'SMapHashTable' object"))
@@ -605,7 +605,7 @@ static void AddWord(SAddendum *self, const char *word, SMap *features,
 	if (wordEntries == NULL)
 	{
 		/* create a new list for the entry */
-		entryList = (SList*)S_NEW("SListList", error);
+		entryList = S_LIST(S_NEW(SListList, error));
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "AddWord",
 					  "Failed to create new 'SListList' object"))

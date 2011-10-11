@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2009 The Department of Arts and Culture,                           */
+/* Copyright (c) 2009-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -63,7 +63,7 @@ static SPausesUttProcClass PausesUttProcClass;
 S_LOCAL void _s_pauses_utt_proc_class_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(&PausesUttProcClass, error);
+	s_class_reg(S_OBJECTCLASS(&PausesUttProcClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_pauses_utt_proc_class_reg",
 			  "Failed to register SPausesUttProcClass");
@@ -73,7 +73,7 @@ S_LOCAL void _s_pauses_utt_proc_class_reg(s_erc *error)
 S_LOCAL void _s_pauses_utt_proc_class_free(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_free(&PausesUttProcClass, error);
+	s_class_free(S_OBJECTCLASS(&PausesUttProcClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_pauses_utt_proc_class_free",
 			  "Failed to free SPausesUttProcClass");
@@ -110,11 +110,6 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 
 
 	S_CLR_ERR(error);
-
-	/* we don't use this, set to NULL so that compiler doesn't
-	 * complain.
-	 */
-	self = NULL;
 
 	/* we require the word, segment and phrase relation */
 	wordRel = SUtteranceGetRelation(utt, "Word", error);
@@ -253,12 +248,12 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 
 		while (wordItem != NULL)
 		{
-			segmentItem = (SItem*)s_path_to_item(wordItem,
-												 "R:SylStructure.daughtern.daughtern.R:Segment",
-												 error);
+			segmentItem = (SItem*)SItemPathToItem(wordItem,
+												  "R:SylStructure.daughtern.daughtern.R:Segment",
+												  error);
 			if (S_CHK_ERR(error, S_CONTERR,
 						  "Run",
-						  "Call to \"s_path_to_item\" failed"))
+						  "Call to \"SItemPathToItem\" failed"))
 				return;
 
 			if (segmentItem != NULL)
@@ -295,6 +290,8 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 
 	/* here all is OK */
 	return;
+
+	S_UNUSED(self);
 }
 
 

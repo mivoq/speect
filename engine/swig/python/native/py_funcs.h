@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2010 The Department of Arts and Culture,                           */
+/* Copyright (c) 2010-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -130,8 +130,7 @@ S_API char *s_get_pyobject_str(PyObject *pobject, s_erc *error);
  * @param cstr A null terminated @e C string (utf8 encoding).
  * @param error Error code.
  *
- * @return New reference Python unicode object (dependent on
- * Python version).
+ * @return New reference Python unicode object.
  * @note This function always returns a unicode object.
   */
 S_API PyObject *s_set_pyobject_str(const char *cstr, s_erc *error);

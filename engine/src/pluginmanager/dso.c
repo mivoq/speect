@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2008-2009 The Department of Arts and Culture,                      */
+/* Copyright (c) 2008-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -43,6 +43,42 @@
 #include "base/utils/alloc.h"
 #include "pluginmanager/dso.h"
 #include "pluginmanager/dynamic_loading.h"
+
+
+/************************************************************************************/
+/*                                                                                  */
+/* Macros                                                                           */
+/*                                                                                  */
+/************************************************************************************/
+
+/**
+ * @hideinitializer
+ * Call the given function method of the given #SDso.
+ * @param SELF The given #SDso*.
+ * @param FUNC The function method of the given object to call.
+ * @note This casting is not safety checked.
+ * @note Example usage:
+ @verbatim
+ S_DSO_CALL(self, func)(param1, param2, ..., paramN);
+ @endverbatim
+ * where @c param1, @c param2, ..., @c paramN are the parameters passed to the object function
+ * @c func.
+ */
+#define S_DSO_CALL(SELF, FUNC)					\
+	((SDsoClass *)S_OBJECT_CLS(SELF))->FUNC
+
+
+/**
+ * @hideinitializer
+ * Test if the given function method of the given #SDso
+ * can be called.
+ * @param SELF The given #SDso*.
+ * @param FUNC The function method of the given object to check.
+ * @return #TRUE if function can be called, otherwise #FALSE.
+ * @note This casting is not safety checked.
+ */
+#define S_DSO_METH_VALID(SELF, FUNC)			\
+	S_DSO_CALL(SELF, FUNC) ? TRUE : FALSE
 
 
 /************************************************************************************/
@@ -160,7 +196,7 @@ S_API void *SDsoGetSymbol(const SDso *self, const char *name, s_erc *error)
 S_LOCAL void _s_dso_class_add(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_add(&DsoClass, error);
+	s_class_add(S_OBJECTCLASS(&DsoClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_dso_class_add",
 			  "Failed to add SDsoClass");

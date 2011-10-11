@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2009 The Department of Arts and Culture,                           */
+/* Copyright (c) 2009-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -33,13 +33,10 @@
 /*                                                                                  */
 /************************************************************************************/
 
-
-%feature("autodoc", "Request a graceful shutdown of the Speect Engine.") quit;
-
 %define version_DOCSTRING
 """
 Return the Speect Engine library version in a tuple, (major version number, minor
-version number, patch number, release name).
+version number, patch name, release name).
 
 :rtype: tuple
 """

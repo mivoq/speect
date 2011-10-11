@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2010 The Department of Arts and Culture,                           */
+/* Copyright (c) 2010-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -105,7 +105,7 @@ static s_bool stress_test3(const SPhoneset *phoneset,
 S_LOCAL void _s_syllab_swa_freedomfone_class_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(&SyllabSwaFreedomfoneClass, error);
+	s_class_reg(S_OBJECTCLASS(&SyllabSwaFreedomfoneClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_syllab_swa_freedomfone_class_reg",
 			  "Failed to register SSyllabSwaFreedomfoneClass");
@@ -115,7 +115,7 @@ S_LOCAL void _s_syllab_swa_freedomfone_class_reg(s_erc *error)
 S_LOCAL void _s_syllab_swa_freedomfone_class_free(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_free(&SyllabSwaFreedomfoneClass, error);
+	s_class_free(S_OBJECTCLASS(&SyllabSwaFreedomfoneClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_syllab_swa_freedomfone_class_free",
 			  "Failed to free SSyllabSwaFreedomfoneClass");
@@ -1065,14 +1065,14 @@ static SList *Syllabify(const SSyllabification *self, const SItem *word,
 	}
 
 	/* create syllables list */
-	syllables = (SList*)S_NEW("SListList", error);
+	syllables = S_LIST(S_NEW(SListList, error));
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Syllabify",
 				  "Failed to create new 'SList' object"))
 		goto quit_error;
 
 	/* create syllable */
-	syl = (SList*)S_NEW("SListList", error);
+	syl = S_LIST(S_NEW(SListList, error));
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Syllabify",
 				  "Failed to create new 'SList' object"))
@@ -1149,7 +1149,7 @@ static SList *Syllabify(const SSyllabification *self, const SItem *word,
 		{
 			/* previous was a syllable boundary */
 			/* new syllable */
-			syl = (SList*)S_NEW("SListList", error);
+			syl = S_LIST(S_NEW(SListList, error));
 			if (S_CHK_ERR(error, S_CONTERR,
 						  "Syllabify",
 						  "Failed to create new 'SList' object"))
@@ -1267,7 +1267,7 @@ static SList *Syllabify(const SSyllabification *self, const SItem *word,
 			{
 				/* previous was a syllable boundary */
 				/* new syllable */
-				syl = (SList*)S_NEW("SListList", error);
+				syl = S_LIST(S_NEW(SListList, error));
 				if (S_CHK_ERR(error, S_CONTERR,
 							  "Syllabify",
 							  "Failed to create new 'SList' object"))
@@ -1358,8 +1358,7 @@ quit_error:
 
 	return NULL;
 
-	/* for unused compiler warning */
-	self = NULL;
+	S_UNUSED(self);
 }
 
 

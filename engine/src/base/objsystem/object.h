@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2008-2009 The Department of Arts and Culture,                      */
+/* Copyright (c) 2008-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -120,7 +120,7 @@ S_BEGIN_C_DECLS
  *
  * @return Pointer to the newly created object.
  *
- * @todo check that everything is free'd on error.
+ * @todo check that everything is freed on error.
  */
 S_API SObject *SObjectNew(SObjectClass *cls, s_erc *error);
 
@@ -138,11 +138,11 @@ S_API size_t SObjectSize(const SObject *self, s_erc *error);
 
 
 /**
- * Test if an object is derived from the given class.
+ * Test if an object is derived from the given object type.
  * @public @memberof SObject
  *
  * @param self The object to test.
- * @param type The class to test against.
+ * @param type The object type to test against.
  * @param error Error code.
  *
  * @return #TRUE or #FALSE.
@@ -151,25 +151,25 @@ S_API s_bool SObjectIsType(const SObject *self, const char *type, s_erc *error);
 
 
 /**
- * Get the given object's class type name.
+ * Get the given object's type name.
  * @public @memberof SObject
  *
  * @param self The given object.
  * @param error Error code.
  *
- * @return Pointer to the given object's class type name.
+ * @return Pointer to the given object's type name.
  */
 S_API const char *SObjectType(const SObject *self, s_erc *error);
 
 
 /**
- * Get the given object's class inheritance.
+ * Get the given object's inheritance.
  * @public @memberof SObject
  *
  * @param self The given object.
  * @param error Error Code.
  *
- * @return A ":" separated string of the given classes inheritance
+ * @return A colon (":") separated string of the given object's inheritance
  * hierarchy, excluding #SObject.
  */
 S_API const char *SObjectInheritance(const SObject *self, s_erc *error);
@@ -200,6 +200,9 @@ S_API void SObjectDispose(SObject *self, s_erc *error);
  *
  * @note The reference count of two objects needn't be equal for
  * objects to be equal.
+ *
+ * @note Will only work if the #SObjectClass @a compare function pointer has been
+ * implemented for the object type, otherwise #FALSE is returned.
  */
 S_API s_bool SObjectCompare(const SObject *oa, const SObject *ob, s_erc *error);
 
@@ -214,6 +217,8 @@ S_API s_bool SObjectCompare(const SObject *oa, const SObject *ob, s_erc *error);
  *
  * @return Pointer to a character buffer containing the contents of
  * the given SObject.
+ * @note Will only work if the #SObjectClass @a print function pointer has been
+ * implemented for the object type, otherwise #FALSE is returned.
  */
 S_API char *SObjectPrint(const SObject *self, s_erc *error);
 
@@ -229,6 +234,8 @@ S_API char *SObjectPrint(const SObject *self, s_erc *error);
  *
  * @note This is a deep copy.
  * @note Caller is responsible for returned object's memory.
+ * @note Will only work if the #SObjectClass @a copy function pointer has been
+ * implemented for the object type, otherwise #FALSE is returned.
  */
 S_API SObject *SObjectCopy(const SObject *self, s_erc *error);
 
@@ -292,7 +299,7 @@ S_API void SObjectDecRef(SObject *self);
  * @param error Error code.
  *
  * @return A void pointer to the given object if it can be cast to the
- * given object type, otherwise @a NULL.
+ * given object type, otherwise #NULL.
  *
  * @note Use macros #S_CAST, #S_CAST_SAFE and #S_CAST_UNSAFE.
  */

@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2009 The Department of Arts and Culture,                           */
+/* Copyright (c) 2009-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -101,7 +101,7 @@ static STokenClass TokenClass; /* SToken class declaration. */
 S_LOCAL void _s_token_class_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(&TokenClass, error);
+	s_class_reg(S_OBJECTCLASS(&TokenClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_token_class_reg",
 			  "Failed to register STokenClass");
@@ -111,7 +111,7 @@ S_LOCAL void _s_token_class_reg(s_erc *error)
 S_LOCAL void _s_token_class_free(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_free(&TokenClass, error);
+	s_class_free(S_OBJECTCLASS(&TokenClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_token_class_free",
 			  "Failed to free STokenClass");

@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2010 The Department of Arts and Culture,                           */
+/* Copyright (c) 2010-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -88,7 +88,7 @@ typedef struct
 			return NULL;
 		}
 
-		tmp = (STrackInt*)S_NEW("STrackInt", error);
+		tmp = S_NEW(STrackInt, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "STrackInt()",
 					  "Failed to create new 'STrackInt' object"))

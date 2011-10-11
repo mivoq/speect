@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2008-2009 The Department of Arts and Culture,                      */
+/* Copyright (c) 2008-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -90,7 +90,7 @@
 #include "base/containers/hashtable/hash_table.h"
 #include "base/utils/types.h"
 #include "base/utils/alloc.h"
-#include "base/utils/math.h"
+#include "base/utils/smath.h"
 #include "base/strings/strings.h"
 #include "base/objsystem/object_def.h"
 #include "base/objsystem/object_macros.h"
@@ -138,10 +138,10 @@ typedef void (*s_destroy_fp)(void *obj, s_erc *error);
 /* Class hierarchy initialization and destroy functions. */
 typedef struct s_class_info_s
 {
-	const void    *cls;                /*!< Class pointer.                     */
-	uint           n_hier;             /*!< Number of classes in hierarchy.    */
-	s_init_fp     *init_hier;          /*!< Initialization function hierarchy. */
-	s_destroy_fp  *destroy_hier;       /*!< Destroy function hierarchy.        */
+	const SObjectClass *cls;                /*!< Class pointer.                     */
+	uint                n_hier;             /*!< Number of classes in hierarchy.    */
+	s_init_fp          *init_hier;          /*!< Initialization function hierarchy. */
+	s_destroy_fp       *destroy_hier;       /*!< Destroy function hierarchy.        */
 } s_class_info;
 
 
@@ -167,9 +167,8 @@ static const SObjectClass *s_class_find_no_lock(const char *name, s_erc *error);
 /*                                                                                  */
 /************************************************************************************/
 
-S_API void s_class_add(const void *cls, s_erc *error)
+S_API void s_class_add(const SObjectClass *cls, s_erc *error)
 {
-	const SObjectClass   *baseClass;
 	const char           *class_name;
 	s_class_info         *class_info;
 	const s_hash_element *he;
@@ -177,9 +176,17 @@ S_API void s_class_add(const void *cls, s_erc *error)
 
 	S_CLR_ERR(error);
 	s_mutex_lock(&class_mutex);
-	baseClass = (const SObjectClass*)cls;
 
-	class_name = s_class_name(baseClass, error);
+	if (cls == NULL)
+	{
+		S_CTX_ERR(error, S_ARGERROR,
+				  "s_class_add",
+				  "Argument \"cls\" is NULL");
+		s_mutex_lock(&class_mutex);
+		return;
+	}
+
+	class_name = s_class_name(cls, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "s_class_add",
 				  "Failed to get class name"))
@@ -247,9 +254,8 @@ S_API void s_class_add(const void *cls, s_erc *error)
 }
 
 
-S_API void s_class_init(const void *cls, s_erc *error)
+S_API void s_class_init(const SObjectClass *cls, s_erc *error)
 {
-	const SObjectClass  *baseClass;
 	SObjectClass       **hier = NULL;
 	s_class_info        *class_info;
 	const char          *class_name;
@@ -261,9 +267,17 @@ S_API void s_class_init(const void *cls, s_erc *error)
 
 	S_CLR_ERR(error);
 	s_mutex_lock(&class_mutex);
-	baseClass = (const SObjectClass*)cls;
 
-	class_name = s_class_name(baseClass, error);
+	if (cls == NULL)
+	{
+		S_CTX_ERR(error, S_ARGERROR,
+				  "s_class_init",
+				  "Argument \"cls\" is NULL");
+		s_mutex_lock(&class_mutex);
+		return;
+	}
+
+	class_name = s_class_name(cls, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "s_class_init",
 				  "Failed to get class name"))
@@ -273,7 +287,7 @@ S_API void s_class_init(const void *cls, s_erc *error)
 	}
 
 	/* get inheritance hierarchy */
-	s_class_get_hierarchy(baseClass, &hier, &n_hier, error);
+	s_class_get_hierarchy(cls, &hier, &n_hier, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "s_class_init",
 				  "Failed to get class hierarchy"))
@@ -332,9 +346,18 @@ S_API void s_class_init(const void *cls, s_erc *error)
 }
 
 
-S_API void s_class_reg(const void *cls, s_erc *error)
+S_API void s_class_reg(const SObjectClass *cls, s_erc *error)
 {
 	S_CLR_ERR(error);
+
+	if (cls == NULL)
+	{
+		S_CTX_ERR(error, S_ARGERROR,
+				  "s_class_reg",
+				  "Argument \"cls\" is NULL");
+		return;
+	}
+
 	s_class_add(cls, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "s_class_reg",
@@ -348,18 +371,25 @@ S_API void s_class_reg(const void *cls, s_erc *error)
 }
 
 
-S_API void s_class_free(const void *cls, s_erc *error)
+S_API void s_class_free(const SObjectClass *cls, s_erc *error)
 {
-	const SObjectClass *baseClass;
 	const char         *class_name;
 	s_hash_element     *hte;
 
 
 	S_CLR_ERR(error);
 	s_mutex_lock(&class_mutex);
-	baseClass = (const SObjectClass*)cls;
 
-	class_name = s_class_name(baseClass, error);
+	if (cls == NULL)
+	{
+		S_CTX_ERR(error, S_ARGERROR,
+				  "s_class_free",
+				  "Argument \"cls\" is NULL");
+		s_mutex_unlock(&class_mutex);
+		return;
+	}
+
+	class_name = s_class_name(cls, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "s_class_free",
 				  "Failed to get class name"))
@@ -541,6 +571,7 @@ S_API SObject *SObjectNewFromName(const char *name, s_erc *error)
 	}
 
 	obj->cls = class;
+	obj->ref = 0;
 
 	/* execute init functions */
 	for (i = 0; i < class_info->n_hier; i++)

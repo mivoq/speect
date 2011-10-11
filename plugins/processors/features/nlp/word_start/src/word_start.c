@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2009 The Department of Arts and Culture,                           */
+/* Copyright (c) 2009-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -63,7 +63,7 @@ static SWordStartFeatProcClass WordStartFeatProcClass; /* SWordStartFeatProc cla
 S_LOCAL void _s_word_start_class_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(&WordStartFeatProcClass, error);
+	s_class_reg(S_OBJECTCLASS(&WordStartFeatProcClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_word_start_class_reg",
 			  "Failed to register SWordStartFeatProcClass");
@@ -73,7 +73,7 @@ S_LOCAL void _s_word_start_class_reg(s_erc *error)
 S_LOCAL void _s_word_start_class_free(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_free(&WordStartFeatProcClass, error);
+	s_class_free(S_OBJECTCLASS(&WordStartFeatProcClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_word_start_class_free",
 			  "Failed to free SWordStartFeatProcClass");
@@ -174,8 +174,9 @@ quit_error:
 	if (extractedFeat != NULL)
 		S_DELETE(extractedFeat, "Run", error);
 
-	self = NULL; /* compiler noise about unused parameters */
 	return NULL;
+
+	S_UNUSED(self);
 }
 
 

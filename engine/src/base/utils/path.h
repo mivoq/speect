@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2010 The Department of Arts and Culture,                           */
+/* Copyright (c) 2010-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -80,11 +80,11 @@ S_BEGIN_C_DECLS
  * certain mode (i.e. reading, writing, ...)
  *
  * @param path The path and name of the file to query.
- * @param mode The mode string as used by the standard function fopen().
+ * @param mode The mode string as used by the standard function @c fopen().
  * @param error Error code.
  *
- * @return TRUE if the file exists and can be manipulated with @c
- * mode, or FALSE.
+ * @return #TRUE if the file exists and can be manipulated with @c
+ * mode, or #FALSE.
  */
 S_API s_bool s_file_exists(const char *path, const char *mode, s_erc *error);
 
@@ -92,7 +92,7 @@ S_API s_bool s_file_exists(const char *path, const char *mode, s_erc *error);
 /**
  * Combine a base path and a file name. If the file name is absolute
  * then just a copy of it is returned. Otherwise, build a
- * path to it by considering it is relative to base_path. URL are
+ * path to it by considering it is relative to @c base_path. URL are
  * supported.
  *
  * @param base_path The base path relative to the given file name.

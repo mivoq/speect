@@ -57,15 +57,15 @@ utt.save_ebml("tmp.utt")
 
 utt2 = speect.SUtterance.load_ebml("tmp.utt")
 
-print utt2
+print(utt2)
 
 # get the float track
 tf2 = utt2.features["tf"]
 
-print tf2
+print(tf2)
 
 # get the python data
 track = tf2.get()
 
-print track
+print(track)
 

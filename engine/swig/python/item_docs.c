@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2010 The Department of Arts and Culture,                           */
+/* Copyright (c) 2010-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -68,7 +68,7 @@ content as this item.
 
 :param relname: The relation name.
 :return: This item as it is in the named relation, or ``None`` if this item does not share it's contents with any item in the named relation.
-:rtype: SItem
+:rtype: :class:`SItem`
 """
 %enddef
 
@@ -114,7 +114,7 @@ next()
 Get the item next to this one in the current relation.
 
 :return: The next item, or ``None`` if this is the last item in the relation.
-:rtype: SItem
+:rtype: :class:`SItem`
 """
 %enddef
 
@@ -128,7 +128,7 @@ prev()
 Get the item previous to this one in the current relation.
 
 :return: The previous item, or ``None`` if this is the first item in the relation.
-:rtype: SItem
+:rtype: :class:`SItem`
 """
 %enddef
 
@@ -144,7 +144,7 @@ Create a new item and append it after this one.
 :param toShare: The item with which the newly created item will share it's content. If ``None`` then a new content will be created for the appended item.
 :type toShare: SItem
 :return: Newly created and appended item object.
-:rtype: SItem
+:rtype: :class:`SItem`
 :raises: RuntimeError if Speect was unable to create the item.
 """
 %enddef
@@ -161,7 +161,7 @@ Create a new item and prepend it after this one.
 :param toShare: The item with which the newly created item will share it's content. If ``None`` then a new content will be created for the prepended item.
 :type toShare: SItem
 :return: Newly created and prepended item object.
-:rtype: SItem
+:rtype: :class:`SItem`
 :raises: RuntimeError if Speect was unable to create the item.
 """
 %enddef
@@ -176,7 +176,7 @@ parent()
 Get this item's parent item.
 
 :return: The parent item of this item, or ``None`` if no parent item.
-:rtype: SItem
+:rtype: :class:`SItem`
 """
 %enddef
 
@@ -193,7 +193,7 @@ Get this item's daughter item.
 :param nth: 0 for first daughter, -1 for last daughter and *nth* > 0 for *nth* daughter.
 :type nth: int
 :return: The *nth* daughter item of this item, or ``None`` if no daughter item.
-:rtype: SItem
+:rtype: :class:`SItem`
 :raises: TypeError if *nth* < -1
 """
 %enddef
@@ -210,7 +210,7 @@ Create a new item and add it as a daughter of this item.
 :param toShare: The item with which the newly created item will share it's content. If ``None`` then a new content will be created for the daughter item.
 :type toShare: SItem
 :return: Newly created daughter item object.
-:rtype: SItem
+:rtype: :class:`SItem`
 :raises: RuntimeError if Speect was unable to create the item.
 """
 %enddef
@@ -225,7 +225,7 @@ relation()
 Get this item's relation.
 
 :return: This item's relation.
-:rtype: SRelation
+:rtype: :class:`SRelation`
 """
 %enddef
 
@@ -239,7 +239,7 @@ utterance()
 Get this item's utterance.
 
 :return: This item's utterance, or ``None`` if no utterance has been set.
-:rtype: SUtterance
+:rtype: :class:`SUtterance`
 """
 %enddef
 
@@ -253,7 +253,7 @@ voice()
 Get this item's voice.
 
 :return: This item's voice, or ``None`` if no voice has been set.
-:rtype: SVoice
+:rtype: :class:`SVoice`
 """
 %enddef
 
@@ -267,9 +267,9 @@ path_to_item(path)
 Get the item, from the given path, relative to this item.
 
 :param path: The path to the desired item, relative to this item.
-:type path: string
+:type path: str
 :return: The item from the path, relative to this item.
-:rtype: SItem
+:rtype: :class:`SItem`
 """
 %enddef
 
@@ -283,7 +283,7 @@ path_to_feature(path)
 Get the item feature, from the given path, relative to this item.
 
 :param path: The path to the desired item's feature, relative to this item.
-:type path: string
+:type path: str
 :return: The feature object from the path, relative to this item.
 """
 %enddef
@@ -300,7 +300,7 @@ given path, relative to the given item. The name of the feature
 processor is the last element of the path.
 
 :param path: The path to the desired item, relative to this item, with the last element being the name of the feature processor.
-:type path: string
+:type path: str
 :return: The extracted feature object from the path, relative to this item.
 """
 %enddef
@@ -315,11 +315,11 @@ path(path)
 Follow the given path, relative to the given item, and return the
 object at the path. The object may be another item, a feature, or a
 feature that has been calculated by a *feature processor*.
-This function can be used as a replacement for SItem::path_to_derived_feature,
-SItem::path_to_item, or SItem::path_to_item.
+This function can be used as a replacement for :meth:`SItem.path_to_derived_feature`,
+:meth:`SItem.path_to_item`, or :meth:`SItem.path_to_item`.
 
 :param path: The path to the desired item, feature, or feature processor, relative to the given item.
-:type path: string
+:type path: str
 :return: The object at the end of the path, which may be another item, a item feature, or a feature that has been calculated by a feature processor.
 """
 %enddef
@@ -348,7 +348,7 @@ __contains__(feat_name)
 Query if named feature is present in this item.
 
 :param feat_name: The feature key which to test for.
-:type feat_name: string
+:type feat_name: str
 :return: ``True`` or ``False``.
 :rtype: bool
 """
@@ -364,7 +364,7 @@ __getitem__(key)
 Get the key-value feature pair.
 
 :param key: The desired feature's key.
-:type key: string
+:type key: str
 :return: The feature's value object, or ``None`` if no such key-value pair.
 :rtype: SObject
 """
@@ -380,7 +380,7 @@ __setitem__(key, value)
 Set the key-value feature pair.
 
 :param key: The feature's key.
-:type key: string
+:type key: str
 :param value: The feature's value object.
 :type value: SObject
 :note: An existing key-value pair in the item's features with the given key will be deleted.
@@ -397,7 +397,7 @@ __delitem__(key)
 Delete the key-value feature pair.
 
 :param key: The feature's key.
-:type key: string
+:type key: str
 """
 %enddef
 
@@ -433,9 +433,9 @@ as a Speect object. So instead we can use this function::
 which will return the feature object as it is in Speect, i.e. an ``SObject``.
 
 :param key: The key of the key-value pair to get.
-:type key: string
+:type key: str
 :return: The feature associated with the given key or ``None`` if no such key-value pair.
-:rtype: SObject
+:rtype: :class:`SObject`
 """
 %enddef
 

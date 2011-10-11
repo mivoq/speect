@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2008-2009 The Department of Arts and Culture,                      */
+/* Copyright (c) 2008-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -140,34 +140,6 @@ S_BEGIN_C_DECLS
 
 
 /**
- * @hideinitializer
- * Call the given function method of the given #SUttProcessor,
- * see full description #S_UTTPROCESSOR_CALL for usage.
- * @param SELF The given #SUttProcessor*.
- * @param FUNC The function method of the given object to call.
- * @note This casting is not safety checked.
- * @note Example usage: @code S_UTTPROCESSOR_CALL(self, func)(param1, param2, ..., paramN); @endcode
- * where @c param1, @c param2, ..., @c paramN are the parameters passed to the object function
- * @c func.
- */
-#define S_UTTPROCESSOR_CALL(SELF, FUNC)					\
-	((SUttProcessorClass *)S_OBJECT_CLS(SELF))->FUNC
-
-
-/**
- * @hideinitializer
- * Test if the given function method of the given #SUttProcessor
- * can be called.
- * @param SELF The given #SUttProcessor*.
- * @param FUNC The function method of the given object to check.
- * @return #TRUE if function can be called, otherwise #FALSE.
- * @note This casting is not safety checked.
- */
-#define S_UTTPROCESSOR_METH_VALID(SELF, FUNC)			\
-	S_UTTPROCESSOR_CALL(SELF, FUNC) ? TRUE : FALSE
-
-
-/**
  * @}
  */
 
@@ -219,9 +191,8 @@ typedef struct
 	/**
 	 * @protected Initialize function pointer.
 	 * Initialize the utterance processor. Used for initialization of
-	 * the utterance processor feature classes on loading of the
-	 * voices. May not be implemented, use #S_UTTPROCESSOR_METH_VALID
-	 * to check.
+	 * the utterance processor, if required, on loading of the
+	 * voices.
 	 *
 	 * @param self The UttProcessor to initialize.
 	 * @param voice The voice that the utterance processor belongs to.
@@ -229,8 +200,10 @@ typedef struct
 	 *
 	 * @note If an error occurs the @c error variable must be set so
 	 * that #SUttProcessorInit can delete the utterance processor.
+	 * @note Not necessarily implemented.
 	 */
-	void (*initialize)(SUttProcessor *self, const SVoice *voice, s_erc *error);
+	void (* const initialize)(SUttProcessor *self, const SVoice *voice,
+							  s_erc *error);
 
  	/**
 	 * @protected Run function pointer.
@@ -240,7 +213,7 @@ typedef struct
 	 * @param utt The utterance on which to execute the UttProcessor.
 	 * @param error Error code.
 	 */
-	void (*run) (const SUttProcessor *self, SUtterance *utt, s_erc *error);
+	void (* const run) (const SUttProcessor *self, SUtterance *utt, s_erc *error);
 } SUttProcessorClass;
 
 

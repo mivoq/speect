@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2008-2009 The Department of Arts and Culture,                      */
+/* Copyright (c) 2008-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -64,12 +64,12 @@
 /*                                                                                  */
 /************************************************************************************/
 
-/* definitions in src/include/version.h */
+/* definitions in engine/src/include/version.h, generated file */
 static const s_lib_version speect_version =
 {
 	S_MAJOR_VERSION,   /*!< Major version number. */
 	S_MINOR_VERSION,   /*!< Minor version number. */
-	S_PATCHLEVEL,      /*!< Patch number.         */
+	S_PATCHLEVEL,      /*!< Patch name.           */
 	S_RELEASE          /*!< Release name.         */
 };
 

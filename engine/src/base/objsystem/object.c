@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2008-2009 The Department of Arts and Culture,                      */
+/* Copyright (c) 2008-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -622,7 +622,7 @@ S_API void *s_safe_cast(SObject *self, const char *cast_to, s_erc *error)
 S_LOCAL void _s_object_class_add(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_add(&BaseObjectClass, error);
+	s_class_add(S_OBJECTCLASS(&BaseObjectClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_object_class_add",
 			  "Failed to add SObjectClass");

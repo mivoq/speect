@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2009 The Department of Arts and Culture,                           */
+/* Copyright (c) 2009-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -84,7 +84,7 @@ def __str__(self):
         stri += '    Feature: %20.20s => %s\n' %(f, repr(self.features[f]))
 
     for r in self:
-        stri += self.relation_get(r).to_string(prefix="        ")
+        stri += self.relation_get(r)._to_string(prefix="        ")
 
     return stri
 %}

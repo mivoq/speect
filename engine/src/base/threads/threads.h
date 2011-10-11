@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2008-2009 The Department of Arts and Culture,                      */
+/* Copyright (c) 2008-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -127,15 +127,6 @@ typedef s_mutex_t s_mutex;
 #ifdef SPCT_USE_THREADS
 
 /**
- * Declare a @a static #s_mutex. Declare a @a static #s_mutex with the
- * given name, based on the threads implementation.
- * @hideinitializer
- *
- * @param NAME The name of the static #s_mutex.
- */
-#  define S_DECLARE_MUTEX_STATIC(NAME) static s_mutex NAME
-
-/**
  * Declare a #s_mutex. Declare a #s_mutex with the given name,
  * based on the threads implementation.
  * @hideinitializer
@@ -143,6 +134,16 @@ typedef s_mutex_t s_mutex;
  * @param NAME The name of the static #s_mutex.
  */
 #  define S_DECLARE_MUTEX(NAME) s_mutex NAME
+
+/**
+ * Declare a static #s_mutex. Declare a static #s_mutex with the
+ * given name, based on the threads implementation.
+ * @hideinitializer
+ *
+ * @param NAME The name of the static #s_mutex.
+ */
+#  define S_DECLARE_MUTEX_STATIC(NAME) static s_mutex NAME
+
 
 #else /* !SPCT_USE_THREADS */
 
@@ -192,7 +193,7 @@ typedef s_mutex_t s_mutex;
 
 /**
  * Unlock a mutex. Unlocks the given #s_mutex mutex that has
- * previously been locked by #s_mutex_lock, so that it is accessiable
+ * previously been locked by #s_mutex_lock, so that it is accessible
  * to all threads.
  * @hideinitializer
  *

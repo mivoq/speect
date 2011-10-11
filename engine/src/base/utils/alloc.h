@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2008-2009 The Department of Arts and Culture,                      */
+/* Copyright (c) 2008-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -84,110 +84,113 @@ S_BEGIN_C_DECLS
 /************************************************************************************/
 
 /**
- * Allocate memory to a pointer.
- * Allocates @a NMEMB number of @a TYPE data type and returns a
+ * Allocate memory to a pointer, given a defined type.
+ * Allocate @c NMEMB number of @c TYPE data type and return a
  * pointer to the allocated memory.
  * @hideinitializer
  *
  * @param TYPE The data type to allocate.
- * @param NMEMB The number of @a TYPE data type to allocate.
+ * @param NMEMB The number of @c TYPE data type to allocate.
  *
- * @return Pointer to the allocated memory or @c NULL if failed.
+ * @return Pointer to the allocated memory or #NULL if failed.
  *
- * @note If (sizeof(TYPE) * NMEMB) = 0 then returns @c NULL.
+ * @note If (sizeof(@c TYPE) * @c NMEMB) = 0 then #NULL is returned.
  */
 #define S_MALLOC(TYPE, NMEMB) (_s_malloc(sizeof(TYPE)*(NMEMB)))
 
 
 /**
- * Allocate memory to a pointer.
- * Allocates @a SIZE bytes and returns a pointer to the allocated memory.
- * @hideinitializer
+ * Allocate memory to a pointer, given a size in bytes.
+ * Allocate @c SIZE bytes and return a pointer to the allocated
+ * memory.
+ *@hideinitializer
  *
  * @param SIZE The number bytes to allocate.
  *
- * @return Pointer to the allocated memory or @c NULL if failed.
+ * @return Pointer to the allocated memory or #NULL if failed.
  *
- * @note If SIZE = 0 then returns @c NULL.
+ * @note If @c SIZE = 0 then #NULL is returned.
  */
 #define S_MALLOC_SIZE(SIZE) (_s_malloc(SIZE))
 
 
 /**
- * Allocate memory to a pointer and set it to zero.
- * Allocates @a NMEMB number of @a TYPE data type and returns a
+ * Allocate memory to a pointer and set it to zero, given a defined
+ * type. Allocate @c NMEMB number of @c TYPE data type and returns a
  * pointer to the allocated memory.
  * @hideinitializer
  *
  * @param TYPE The data type to allocate.
- * @param NMEMB The number of @a TYPE data type to allocate.
+ * @param NMEMB The number of @c TYPE data type to allocate.
  *
- * @return Pointer to the allocated memory (set to zero) or @c NULL if
+ * @return Pointer to the allocated memory (set to zero) or #NULL if
  * failed.
  *
- * @note If (sizeof(TYPE) * NMEMB) = 0 then returns @c NULL.
+ * @note If (sizeof(@c TYPE) * @c NMEMB) = 0 then #NULL is returned.
  */
 #define S_CALLOC(TYPE,NMEMB) (_s_calloc(sizeof(TYPE)*(NMEMB)))
 
 
 /**
- * Allocate memory to a pointer and set it to zero.
- * Allocates @a SIZE bytes and returns a pointer to the allocated
- * memory.
+ * Allocate memory to a pointer and set it to zero, given a size in
+ * bytes. Allocate @c SIZE bytes and returns a pointer to the
+ * allocated memory.
  * @hideinitializer
  *
  * @param SIZE The number bytes to allocate.
  *
- * @return Pointer to the allocated memory (set to zero) or @c NULL if
+ * @return Pointer to the allocated memory (set to zero) or #NULL if
  * failed.
  *
- * @note If SIZE = 0 then returns @c NULL.
+ * @note If @c SIZE = 0 then #NULL is returned.
  */
 #define S_CALLOC_SIZE(SIZE) (_s_calloc(SIZE))
 
 
 /**
- * Change the size of the memory block.
- * Changes the size of the memory block pointed to by @a P to @a NMEMB
- * number of @a TYPE data type.
+ * Change the size of the memory block, given a defined type.
+ * Change the size of the memory block pointed to by @c P to @c NMEMB
+ * number of @c TYPE data type.
  * @hideinitializer
  *
  * @param P The pointer to the memory of which to change the size.
  * @param TYPE The data type to allocate.
- * @param NMEMB The number of @a TYPE data type to allocate.
+ * @param NMEMB The number of @c TYPE data type to allocate.
  *
- * @return Pointer to the allocated memory or @c NULL if failed.
+ * @return Pointer to the allocated memory or #NULL if failed.
  *
- * @note If (sizeof(TYPE) * NMEMB) = 0 then frees @a P and returns @c NULL.
- * @note If memory allocation failed then @a P is freed.
+ * @note If (sizeof(@c TYPE) * @c NMEMB) = 0 then @c P is freed and
+ * #NULL returned.
+ * @note If memory allocation failed then @c P is freed.
  */
 #define S_REALLOC(P,TYPE,NMEMB) (_s_realloc((void *)(P),sizeof(TYPE)*(NMEMB)))
 
 
 /**
- * Change the size of the memory block.
- * Changes the size of the memory block pointed to by @a P to @a SIZE
+ * Change the size of the memory block, given a size in bytes.
+ * Changes the size of the memory block pointed to by @c P to @c SIZE
  * bytes.
  * @hideinitializer
  *
  * @param P The pointer to the memory of which to change the size.
  * @param SIZE The number of bytes to allocate.
  *
- * @return Pointer to the allocated memory or @c NULL if failed.
+ * @return Pointer to the allocated memory or #NULL if failed.
  *
- * @note If SIZE = 0 then frees @a P and returns @c NULL.
- * @note If memory allocation failed then @a P is freed.
+ * @note If @c SIZE = 0 then @c P is freed and #NULL returned.
+ * @note If memory allocation failed then @c P is freed.
  */
 #define S_REALLOC_SIZE(P,SIZE) (_s_realloc((void *)(P),SIZE))
 
 
 /**
- * Frees the memory space pointed to by @a P.
+ * Free previously allocated memory.
+ * Free the memory space pointed to by @c P.
  * @hideinitializer
  *
  * @param P The memory space to free.
  *
- * @note Sets @a P to @c NULL.
+ * @note Sets @c P to #NULL.
  */
 #define S_FREE(P)								\
 	do {										\

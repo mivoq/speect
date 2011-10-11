@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2009 The Department of Arts and Culture,                           */
+/* Copyright (c) 2009-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -233,7 +233,7 @@ typedef struct
 		const SItem *item;
 
 
-		item = s_path_to_item($self, path, error);
+		item = SItemPathToItem($self, path, error);
 		if (*error != S_SUCCESS)
 			return NULL;
 

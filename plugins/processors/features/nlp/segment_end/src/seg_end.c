@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2009 The Department of Arts and Culture,                           */
+/* Copyright (c) 2009-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -63,7 +63,7 @@ static SSegEndFeatProcClass SegEndFeatProcClass; /* SSegEndFeatProc class declar
 S_LOCAL void _s_seg_end_class_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(&SegEndFeatProcClass, error);
+	s_class_reg(S_OBJECTCLASS(&SegEndFeatProcClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_seg_end_class_reg",
 			  "Failed to register SSegEndFeatProcClass");
@@ -73,7 +73,7 @@ S_LOCAL void _s_seg_end_class_reg(s_erc *error)
 S_LOCAL void _s_seg_end_class_free(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_free(&SegEndFeatProcClass, error);
+	s_class_free(S_OBJECTCLASS(&SegEndFeatProcClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_seg_end_class_free",
 			  "Failed to free SSegEndFeatProcClass");
@@ -125,8 +125,9 @@ quit_error:
 	if (extractedFeat != NULL)
 		S_DELETE(extractedFeat, "Run", error);
 
-	self = NULL; /* compiler noise about unused parameters */
 	return NULL;
+
+	S_UNUSED(self);
 }
 
 

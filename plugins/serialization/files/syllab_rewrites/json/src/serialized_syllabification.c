@@ -76,7 +76,7 @@ static SJSONSyllabificationRewritesFileClass  JSONSyllabificationRewritesFileCla
 S_LOCAL void _s_serialized_json_syllabification_rewrites_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(&JSONSyllabificationRewritesFileClass, error);
+	s_class_reg(S_OBJECTCLASS(&JSONSyllabificationRewritesFileClass), error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "_s_serialized_json_syllabification_rewrites_reg",
 				  "Failed to register SJSONSyllabificationRewritesFile"))
@@ -90,7 +90,7 @@ S_LOCAL void _s_serialized_json_syllabification_rewrites_reg(s_erc *error)
 		s_erc local_err = S_SUCCESS;
 
 
-		s_class_free(&JSONSyllabificationRewritesFileClass, &local_err);
+		s_class_free(S_OBJECTCLASS(&JSONSyllabificationRewritesFileClass), &local_err);
 		return;
 	}
 }
@@ -109,7 +109,7 @@ S_LOCAL void _s_serialized_json_syllabification_rewrites_free(s_erc *error)
 			  "_s_serialized_json_syllabification_rewrites_free",
 			  "Failed to remove serialized file class SJSONSyllabificationRewritesFile");
 
-	s_class_free(&JSONSyllabificationRewritesFileClass, error);
+	s_class_free(S_OBJECTCLASS(&JSONSyllabificationRewritesFileClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_serialized_json_syllabification_rewrites_free",
 			  "Failed to free SJSONSyllabificationRewritesFile");

@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2009 The Department of Arts and Culture,                           */
+/* Copyright (c) 2009-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -65,11 +65,16 @@
 		 * Python native library does not wrap the primitives, it
 		 * creates new Speect objects.
 		 */
-
-		if ((PyObject_IsInstance(val, (PyObject*)&PyInt_Type))
+#ifdef SPCT_SWIG_PYTHON_3
+		if ((PyObject_IsInstance(val, (PyObject*)&PyLong_Type))
+			|| (PyObject_IsInstance(val, (PyObject*)&PyFloat_Type))
+			|| (PyObject_IsInstance(val, (PyObject*)&PyUnicode_Type)))
+#else /* ! SPCT_SWIG_PYTHON_3 */
+		if ((PyObject_IsInstance(val, (PyObject*)&PyLong_Type))
 			|| (PyObject_IsInstance(val, (PyObject*)&PyFloat_Type))
 			|| (PyObject_IsInstance(val, (PyObject*)&PyString_Type))
 			|| (PyObject_IsInstance(val, (PyObject*)&PyUnicode_Type)))
+#endif /* SPCT_SWIG_PYTHON_3 */
 		{
 			S_DELETE(object, "write_object", error);
 		}

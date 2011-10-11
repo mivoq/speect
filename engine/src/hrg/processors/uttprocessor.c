@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2008-2009 The Department of Arts and Culture,                      */
+/* Copyright (c) 2008-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -87,6 +87,42 @@
 
 #include "base/utils/alloc.h"
 #include "hrg/processors/uttprocessor.h"
+
+
+/************************************************************************************/
+/*                                                                                  */
+/* Macros                                                                           */
+/*                                                                                  */
+/************************************************************************************/
+
+/**
+ * @hideinitializer
+ * Call the given function method of the given #SUttProcessor.
+ * @param SELF The given #SUttProcessor*.
+ * @param FUNC The function method of the given object to call.
+ * @note This casting is not safety checked.
+ * @note Example usage:
+ @verbatim
+ S_UTTPROCESSOR_CALL(self, func)(param1, param2, ..., paramN);
+ @endverbatim
+ * where @c param1, @c param2, ..., @c paramN are the parameters passed to the object function
+ * @c func.
+ */
+#define S_UTTPROCESSOR_CALL(SELF, FUNC)					\
+	((SUttProcessorClass *)S_OBJECT_CLS(SELF))->FUNC
+
+
+/**
+ * @hideinitializer
+ * Test if the given function method of the given #SUttProcessor
+ * can be called.
+ * @param SELF The given #SUttProcessor*.
+ * @param FUNC The function method of the given object to check.
+ * @return #TRUE if function can be called, otherwise #FALSE.
+ * @note This casting is not safety checked.
+ */
+#define S_UTTPROCESSOR_METH_VALID(SELF, FUNC)		\
+	S_UTTPROCESSOR_CALL(SELF, FUNC) ? TRUE : FALSE
 
 
 /************************************************************************************/
@@ -331,7 +367,7 @@ S_API void SUttProcessorDelFeature(SUttProcessor *self, const char *name,
 S_LOCAL void _s_uttprocessor_class_add(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_add(&UttProcessorClass, error);
+	s_class_add(S_OBJECTCLASS(&UttProcessorClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_uttprocessor_class_add",
 			  "Failed to add SUttProcessorClass");
@@ -351,7 +387,7 @@ static void InitUttProcessor(void *obj, s_erc *error)
 
 	S_CLR_ERR(error);
 
-	self->features = S_MAP(S_NEW("SMapList", error));
+	self->features = S_MAP(S_NEW(SMapList, error));
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "InitUttProcessor",
 				  "Failed to create new map-list features"))

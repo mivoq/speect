@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2009 The Department of Arts and Culture,                           */
+/* Copyright (c) 2009-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -51,7 +51,7 @@ typedef struct
 		SUtterance *utt;
 
 
-		utt = (SUtterance*)S_NEW("SUtterance", error);
+		utt = S_NEW(SUtterance, error);
 		if (*error != S_SUCCESS)
 			return NULL;
 

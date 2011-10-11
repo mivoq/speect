@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2009 The Department of Arts and Culture,                           */
+/* Copyright (c) 2009-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -72,7 +72,7 @@ S_LOCAL SAddendumJSON *s_read_addendum_json(const char *path, s_erc *error)
 	S_CLR_ERR(error);
 
 	/* create addendum */
-	addendum = (SAddendumJSON*)S_NEW("SAddendumJSON", error);
+	addendum = S_NEW(SAddendumJSON, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "s_read_addendum_json",
 				  "Failed to create new addendum object"))
@@ -178,7 +178,7 @@ S_LOCAL SAddendumJSON *s_read_addendum_json(const char *path, s_erc *error)
 	/* the entries map is a SMapList (default for JSON reader), we
 	 * want a SMapHashTable. Create a new one with the given size.
 	 */
-	addendum->entries = (SMap*)S_NEW("SMapHashTable", error);
+	addendum->entries = S_MAP(S_NEW(SMapHashTable, error));
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "s_read_addendum_json",
 				  "Failed to create new 'SMapHashTable' object"))

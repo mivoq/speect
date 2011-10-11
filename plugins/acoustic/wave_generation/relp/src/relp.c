@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2009 The Department of Arts and Culture,                           */
+/* Copyright (c) 2009-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -62,7 +62,7 @@ static SRelpClass RelpClass; /* SRelp class declaration. */
 S_LOCAL void _s_relp_class_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(&RelpClass, error);
+	s_class_reg(S_OBJECTCLASS(&RelpClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_relp_class_reg",
 			  "Failed to register SRelpClass");
@@ -72,7 +72,7 @@ S_LOCAL void _s_relp_class_reg(s_erc *error)
 S_LOCAL void _s_relp_class_free(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_free(&RelpClass, error);
+	s_class_free(S_OBJECTCLASS(&RelpClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_relp_class_free",
 			  "Failed to free SRelpClass");
@@ -155,7 +155,7 @@ static void InitRelp(SRelp **self, uint32 sample_rate, const char *window_class,
 	S_CLR_ERR(error);
 
 	(*self)->sample_rate = sample_rate;
-	(*self)->window = (SWinFunc*)S_NEW(window_class, error);
+	(*self)->window = (SWinFunc*)S_NEW_FROM_NAME(window_class, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "InitRelp",
 				  "Failed to create new '%s' object",

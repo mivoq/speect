@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2009 The Department of Arts and Culture,                           */
+/* Copyright (c) 2009-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -87,7 +87,7 @@ static SViterbiCandidate *get_candidates(const SItem *s, SMap *features, s_erc *
 S_LOCAL void _s_select_units_utt_proc_class_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(&SelectUnitsUttProcClass, error);
+	s_class_reg(S_OBJECTCLASS(&SelectUnitsUttProcClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_select_units_utt_proc_class_reg",
 			  "Failed to register SSelectUnitsUttProcClass");
@@ -97,7 +97,7 @@ S_LOCAL void _s_select_units_utt_proc_class_reg(s_erc *error)
 S_LOCAL void _s_select_units_utt_proc_class_free(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_free(&SelectUnitsUttProcClass, error);
+	s_class_free(S_OBJECTCLASS(&SelectUnitsUttProcClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_select_units_utt_proc_class_free",
 			  "Failed to free SSelectUnitsUttProcClass");
@@ -267,13 +267,13 @@ static SViterbiPath *extend_path(SViterbiPath *p, SViterbiCandidate *c, SMap *fe
 
 	S_CLR_ERR(error);
 
-	joinCosts = (SList*)SMapGetObject(features, "join costs", error);
+	joinCosts = S_LIST(SMapGetObject(features, "join costs", error));
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "extend_path",
 				  "Call to \"SMapGetObject\" failed"))
 		return NULL;
 
-	newPath = (SViterbiPath*)S_NEW("SViterbiPath", error);
+	newPath = S_NEW(SViterbiPath, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "extend_path",
 				  "Failed to create new 'SViterbiPath' object"))
@@ -479,7 +479,7 @@ static SViterbiCandidate *get_candidates(const SItem *s, SMap *features, s_erc *
 	/* now create the candidate list */
 	while (itr != NULL)
 	{
-		candidate = (SViterbiCandidate*)S_NEW("SViterbiCandidate", error);
+		candidate = S_NEW(SViterbiCandidate, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "get_candidates",
 					  "Failed to create new 'SViterbiCandidate' object"))
@@ -658,7 +658,7 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 		goto quit_error;
 
 	/* create viterbi */
-	viterbi = (SViterbi*)S_NEW("SViterbi", error);
+	viterbi = S_NEW(SViterbi, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Run",
 				  "Failed to create new 'SViterbi' object"))

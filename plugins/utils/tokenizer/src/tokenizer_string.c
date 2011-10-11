@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2009 The Department of Arts and Culture,                           */
+/* Copyright (c) 2009-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -105,7 +105,7 @@ static uint num_string_tokenizers = 0;
 S_LOCAL void _s_tokenizer_string_class_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(&TokenizerStringClass, error);
+	s_class_reg(S_OBJECTCLASS(&TokenizerStringClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_tokenizer_string_class_reg",
 			  "Failed to register STokenizerStringClass");
@@ -115,7 +115,7 @@ S_LOCAL void _s_tokenizer_string_class_reg(s_erc *error)
 S_LOCAL void _s_tokenizer_string_class_free(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_free(&TokenizerStringClass, error);
+	s_class_free(S_OBJECTCLASS(&TokenizerStringClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_tokenizer_string_class_free",
 			  "Failed to free STokenizerStringClass");
@@ -137,7 +137,7 @@ static void Init(void *obj, s_erc *error)
 	if (num_string_tokenizers++ == 0)
 	{
 		/* create a tokenizer to give us access to the STokenizerClass functions */
-		tokenizer = (STokenizer*)S_NEW("STokenizer", error);
+		tokenizer = S_NEW(STokenizer, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "Init",
 					  "Failed to create tokenizer to give STokenizerClass function access"))

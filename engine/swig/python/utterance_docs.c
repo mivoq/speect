@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2010 The Department of Arts and Culture,                           */
+/* Copyright (c) 2010-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -45,9 +45,9 @@ which in turn consists of a set of items.
 Initialize a newly created utterance for the given voice.
 
 :param voice: The voice associated with this utterance.
-:type voice: SVoice
+:type voice: :class:`SVoice`
 :return: Newly created utterance object
-:rtype: SUtterance
+:rtype: :class:`SUtterance`
 :raises: RuntimeError if Speect was unable to create the utterance.
 """
 %enddef
@@ -64,9 +64,9 @@ relation, initializes it, and sets it in the utterance.
 
 
 :param name: The name of the new relation to create.
-:type name: string
+:type name: str
 :return: Newly created relation object
-:rtype: SRelation
+:rtype: :class:`SRelation`
 :raises: RuntimeError if Speect was unable to create the relation.
 :note: If a relation with the given name already exists in the utterance, then it will be deleted.
 """
@@ -83,9 +83,9 @@ Get the named relation from the utterance.
 
 
 :param name: The name of the relation to get.
-:type name: string
+:type name: str
 :return: Named relation, or ``None`` if such a relation does not exist in the utterance.
-:rtype: SRelation
+:rtype: :class:`SRelation`
 """
 %enddef
 
@@ -100,7 +100,7 @@ Set the given relation in the utterance.
 
 
 :param rel: The relation to set in the utterance.
-:type name: SRelation
+:type rel: :class:`SRelation`
 """
 %enddef
 
@@ -115,7 +115,7 @@ Delete the relation with the given name from the utterance.
 
 
 :param name: The relation to delete from the utterance.
-:type name: string
+:type name: str
 """
 %enddef
 
@@ -130,7 +130,7 @@ Test if the utterance contains the named relation.
 
 
 :param name: The relation name to test for.
-:type name: string
+:type name: str
 :return: ``True`` or ``False``.
 :rtype: bool
 """
@@ -152,10 +152,9 @@ The Python iterator protocol for iteration over relation names in an utterance.
 
 %define utterance_voice_DOCSTRING
 """
-Get the voice that is associated with the utterance.
+Get or set an utterance's voice attribute (the voice that is associated with the utterance).
 
-:return: The voice that is associated with the utterance, or ``None`` if the utterance does not have a defined voice.
-:rtype: SVoice
+:type: :class:`SVoice`
 """
 %enddef
 
@@ -167,7 +166,7 @@ Get the voice that is associated with the utterance.
 Get the features that are defined for the utterance.
 
 :return: A map of the utterance features.
-:rtype: SMap
+:rtype: :class:`SMap`
 """
 %enddef
 

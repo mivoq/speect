@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2010 The Department of Arts and Culture,                           */
+/* Copyright (c) 2010-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -72,7 +72,7 @@ static s_bool syl_is_stressed(const SItem *syl, s_erc *error);
 S_LOCAL void _s_syl_stress_in_class_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(&SylStressInFeatProcClass, error);
+	s_class_reg(S_OBJECTCLASS(&SylStressInFeatProcClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_syl_stress_in_class_reg",
 			  "Failed to register SSylStressInFeatProcClass");
@@ -82,7 +82,7 @@ S_LOCAL void _s_syl_stress_in_class_reg(s_erc *error)
 S_LOCAL void _s_syl_stress_in_class_free(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_free(&SylStressInFeatProcClass, error);
+	s_class_free(S_OBJECTCLASS(&SylStressInFeatProcClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_syl_stress_in_class_free",
 			  "Failed to free SSylStressInFeatProcClass");
@@ -177,11 +177,11 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 		return NULL;
 
 	/* get current phrase */
-	phraseItem = s_path_to_item(item, "R:SylStructure.parent.R:Phrase.parent",
-								error);
+	phraseItem = SItemPathToItem(item, "R:SylStructure.parent.R:Phrase.parent",
+								 error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Run",
-				  "Call to \"s_path_to_item\" failed"))
+				  "Call to \"SItemPathToItem\" failed"))
 		goto quit_error;
 
 	if (phraseItem == NULL)
@@ -267,8 +267,9 @@ quit_error:
 	if (extractedFeat != NULL)
 		S_DELETE(extractedFeat, "Run", error);
 
-	self = NULL; /* compiler noise about unused parameters */
 	return NULL;
+
+	S_UNUSED(self);
 }
 
 

@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2008-2009 The Department of Arts and Culture,                      */
+/* Copyright (c) 2008-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -73,6 +73,42 @@
 /************************************************************************************/
 
 #include "datasources/data_source.h"
+
+
+/************************************************************************************/
+/*                                                                                  */
+/* Macros                                                                           */
+/*                                                                                  */
+/************************************************************************************/
+
+/**
+ * @hideinitializer
+ * Call the given function method of the given #SDatasource.
+ * @param SELF The given #SDatasource*.
+ * @param FUNC The function method of the given object to call.
+ * @note This casting is not safety checked.
+ * @note Example usage:
+ @verbatim
+ S_DATASOURCE_CALL(self, func)(param1, param2, ..., paramN);
+ @endverbatim
+ * where @c param1, @c param2, ..., @c paramN are the parameters passed to the object function
+ * @c func.
+ */
+#define S_DATASOURCE_CALL(SELF, FUNC)				\
+	((SDatasourceClass *)S_OBJECT_CLS(SELF))->FUNC
+
+
+/**
+ * @hideinitializer
+ * Test if the given function method of the given #SDatasource
+ * can be called.
+ * @param SELF The given #SDatasource*.
+ * @param FUNC The function method of the given object to check.
+ * @return #TRUE if function can be called, otherwise #FALSE.
+ * @note This casting is not safety checked.
+ */
+#define S_DATASOURCE_METH_VALID(SELF, FUNC)			\
+	S_DATASOURCE_CALL(SELF, FUNC) ? TRUE : FALSE
 
 
 /************************************************************************************/
@@ -391,7 +427,7 @@ S_API void SDatasourceSeek(SDatasource *self, long pos, s_seek_mode mode, s_erc 
 S_LOCAL void _s_data_source_class_add(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_add(&DatasourceClass, error);
+	s_class_add(S_OBJECTCLASS(&DatasourceClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 		  "_s_data_source_class_add",
 		  "Failed to add SDatasourceClass");

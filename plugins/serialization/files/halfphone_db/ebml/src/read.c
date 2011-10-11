@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2009 The Department of Arts and Culture,                           */
+/* Copyright (c) 2009-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -86,7 +86,7 @@ S_LOCAL SHalfphoneDBEbml *s_read_halfphone_db_ebml(SDatasource *ds, s_erc *error
 	S_CLR_ERR(error);
 
 	/* create and initialize ebml reader */
-	ebmlReader = (SEbmlRead*)S_NEW("SEbmlRead", error);
+	ebmlReader = S_NEW(SEbmlRead, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "s_read_halfphone_db_ebml",
 				  "Failed to create new 'SEbmlRead' object"))
@@ -115,7 +115,7 @@ S_LOCAL SHalfphoneDBEbml *s_read_halfphone_db_ebml(SDatasource *ds, s_erc *error
 	}
 
 	/* create halfphone database */
-	db = (SHalfphoneDBEbml*)S_NEW("SHalfphoneDBEbml", error);
+	db = S_NEW(SHalfphoneDBEbml, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "s_read_halfphone_db_ebml",
 				  "Failed to create new 'SHalfphoneDBEbml' object"))
@@ -471,7 +471,7 @@ static void read_halfphone_db_features(SHalfphoneDBEbml *db, SEbmlRead *ebmlRead
 	/* create features object for db, if not one already */
 	if (baseDB->features == NULL)
 	{
-		baseDB->features = (SMap*)S_NEW("SMapList", error);
+		baseDB->features = S_MAP(S_NEW(SMapList, error));
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "read_halfphone_db_features",
 					  "Failed to create new 'SMapList' object"))
@@ -773,7 +773,7 @@ static void set_unit(SHalfphoneDBEbml *db, SItem *unit, s_erc *error)
 	if (unitContainer == NULL)
 	{
 		/* create a new one */
-		unitContainer = (SMap*)S_NEW("SMapHashTable", error);
+		unitContainer = S_MAP(S_NEW(SMapHashTable, error));
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "set_unit",
 					  "Failed to create new 'SMapHashTable' object"))
@@ -868,7 +868,7 @@ static void set_unit(SHalfphoneDBEbml *db, SItem *unit, s_erc *error)
 		if (leftRightContext == NULL)
 		{
 			/* this context has not been seen, create and add it */
-			leftRightContext = (SList*)S_NEW("SListList", error);
+			leftRightContext = S_LIST(S_NEW(SListList, error));
 			if (S_CHK_ERR(error, S_CONTERR,
 						  "set_unit",
 						  "Failed to create new 'SListList' object"))
@@ -914,7 +914,7 @@ static void set_unit(SHalfphoneDBEbml *db, SItem *unit, s_erc *error)
 		if (leftContext == NULL)
 		{
 			/* this context has not been seen, create and add it */
-			leftContext = (SList*)S_NEW("SListList", error);
+			leftContext = S_LIST(S_NEW(SListList, error));
 			if (S_CHK_ERR(error, S_CONTERR,
 						  "set_unit",
 						  "Failed to create new 'SListList' object"))
@@ -948,7 +948,7 @@ static void set_unit(SHalfphoneDBEbml *db, SItem *unit, s_erc *error)
 	if (allUnits == NULL)
 	{
 		/* this context has not been seen, create and add it */
-		allUnits = (SList*)S_NEW("SListList", error);
+		allUnits = S_LIST(S_NEW(SListList, error));
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "set_unit",
 					  "Failed to create new 'SListList' object"))

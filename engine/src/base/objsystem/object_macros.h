@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2008-2009 The Department of Arts and Culture,                      */
+/* Copyright (c) 2008-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -47,8 +47,8 @@
  * @ingroup SObjSystem
  * @defgroup SObjMacros Object/Class Macros
  * Macros for various object and class functions.
- * Defines macros for the creation/deletion and casting of object of
- * all types as well as some miscelanuous macros to get the base
+ * Defines macros for the creation/deletion and casting of objects of
+ * all types as well as some miscellaneous macros to get the base
  * object, base class and reference count of objects.
  * @{
  */
@@ -85,21 +85,45 @@ S_BEGIN_C_DECLS
 
 /**
  * @hideinitializer
+ * Create a new object of the given object type.
+ * Also initializes the object members and inherited members.
+ * For example:
+ @verbatim
+ SMapList *myMapList = S_NEW(SMapList, error);
+ @endverbatim
+ *
+ * @param OBJTYPE Object type to create.
+ * @param ERROR Error code (of type #s_erc*).
+ *
+ * @return Pointer to the newly created object (of type OBJTYPE*).
+ *
+ * @sa S_NEW_FROM_NAME
+ *
+ * @todo add reference that this type must have been registered.
+ */
+#define S_NEW(OBJTYPE, ERROR)					\
+	((OBJTYPE*)SObjectNewFromName((# OBJTYPE), (ERROR)))
+
+
+/**
+ * @hideinitializer
  * Create a new object of the given object type @a name.
  * Also initializes the object members and inherited members.
  * For example:
- * @code
+ @verbatim
  SMapList *myMapList = (SMapList*)S_NEW("SMapList", error);
- @endcode
+ @endverbatim
  *
  * @param OBJTYPE_NAME String of the type of the object to create.
  * @param ERROR Error code (of type #s_erc*).
  *
- * @return Pointer to the newly created object (#SObject*).
+ * @return Pointer to the newly created object (of type #SObject*).
+ *
+ * @sa S_NEW
  *
  * @todo add reference that this type must have been registered.
  */
-#define S_NEW(OBJTYPE_NAME, ERROR)					\
+#define S_NEW_FROM_NAME(OBJTYPE_NAME, ERROR)		\
 	(SObjectNewFromName((OBJTYPE_NAME), (ERROR)))
 
 
@@ -118,36 +142,37 @@ S_BEGIN_C_DECLS
  * @hideinitializer
  * Delete an object.
  * The delete macro works in two stages, first a call is made to
- * #SObjectClass::dispose, then if the object is no longer referenced,
- * a call is made to #SObjectClass::destroy. The given object pointer,
- * @a SELF, is set to @c NULL, regardless of whether the object was
- * deleted or not.
+ * the @c dispose method of #SObjectClass, then if the object is no
+ * longer referenced, a call is made to the @c destroy method of
+ * #SObjectClass. The given object pointer, @a SELF, is set to
+ * #NULL, regardless of whether the object was deleted or not.
  *
  *
  * This allows full control over the reference counting of an object.
- * For most normal objects the #SObjectClass::dispose function would
- * look like the @a SString dispose function in
- * <tt>src/base/objsystem/primitives.c</tt>:
- * @code
+ * For most normal objects the @c dispose method of #SObjectClass
+ * would look like the @a SString dispose function in
+ * <tt>engine/src/base/objsystem/primitives.c</tt>:
+ * @verbatim
  static void DisposeString(void *obj, s_erc *error)
  {
- S_CLR_ERR(error);
- SObjectDecRef(S_OBJECT(obj));
+     S_CLR_ERR(error);
+     SObjectDecRef(S_OBJECT(obj));
  }
- @endcode
- * But, if the situation arrises that an object should not be deleted,
+ @endverbatim
+ * But, if the situation arises that an object should not be deleted,
  * by users or other objects (for example read data), then one sets
- * the #SObjectClass::dispose function of that object's class
- * to @c NULL in the object class initialization and also a
- * #SObjectIncRef statement to the #SObjectClass::init of that
- * object. Therefore, when the object is initialized it's reference
- * counter is increased, and when S_DELETE is called it does not get
- * decreased by #SObjectClass::dispose, and not deleted. The object
- * would then have to be deleted by a call to #S_FORCE_DELETE.
+ * the @c dispose method of #SObjectClass of that object's class
+ * to #NULL in the object class initialization and also an
+ * #SObjectIncRef statement to the @c init method of #SObjectClass of
+ * that object. Therefore, when the object is initialized it's
+ * reference counter is increased, and when S_DELETE is called it does
+ * not get decreased by the @c dispose method of #SObjectClass, and
+ * not deleted. The object would then have to be deleted by a call to
+ * #S_FORCE_DELETE.
  *
  * @param SELF Pointer to the object to delete.
  * @param FUNC_NAME The current function name (optional, can
- * be @c NULL, used for logging if an error occured).
+ * be #NULL, used for logging if an error occurred).
  * @param ERROR Error code (of type #s_erc*).
  */
 #define S_DELETE(SELF, FUNC_NAME, ERROR)					\
@@ -202,13 +227,13 @@ S_BEGIN_C_DECLS
 /**
  * @hideinitializer
  * Force deletion of an object. The object is deleted, with a call
- * to #SObjectClass::destroy to free up the object resources,
- * regardless of whether it is referenced or not. The pointer to the
- * object will point to @c NULL after this operation.
+ * to the @c destroy method of #SObjectClass to free up the object
+ * resources, regardless of whether it is referenced or not. The
+ * pointer to the object will point to #NULL after this operation.
  *
  * @param SELF Pointer to the object to delete.
  * @param FUNC_NAME The current function name (optional, can
- * be @c NULL, used for logging if an error occured).
+ * be #NULL, used for logging if an error occurred).
  * @param ERROR Error code (of type #s_erc*).
  *
  * @sa S_DELETE
@@ -263,7 +288,7 @@ S_BEGIN_C_DECLS
  * @param OBJTYPE The type of the object to cast the given object to.
  * @param ERROR Error code (of type #s_erc*).
  *
- * @return Pointer to Object casted to OBJTYPE, or @c NULL on error.
+ * @return Pointer to Object casted to OBJTYPE, or #NULL on error.
  */
 #define S_CAST_SAFE(OBJECT, OBJTYPE, ERROR)							\
 	((OBJTYPE*)s_safe_cast(S_OBJECT(OBJECT), ( # OBJTYPE), ERROR))
@@ -287,7 +312,7 @@ S_BEGIN_C_DECLS
  * @hideinitializer
  * @def S_CAST
  * Cast the given object to the given type. This cast reverts to
- * either #S_CAST_SAFE or #S_CAST_SAFE, depending on the build time
+ * either #S_CAST_SAFE or #S_CAST_UNSAFE, depending on the build time
  * definition of SPCT_DO_SAFE_CAST.
  *
  * @param OBJECT Pointer to the object to cast.
@@ -318,14 +343,16 @@ S_BEGIN_C_DECLS
 
 /**
  * @hideinitializer
- * Call the given function method of the given #SObject,
- * see full description #S_OBJECT_CALL for usage.
+ * Call the given function method of the given #SObject
  *
  * @param SELF The given #SObject*.
  * @param FUNC The function method of the given object to call.
  *
  * @note This casting is not safety checked.
- * @note Example usage: @code S_OBJECT_CALL(self, func)(param1, param2, ..., paramN); @endcode
+ * @note Example usage:
+ @verbatim
+ S_OBJECT_CALL(self, func)(param1, param2, ..., paramN);
+ @endverbatim
  * where @c param1, @c param2, ..., @c paramN are the parameters
  * passed to the object function @c func.
  */
@@ -408,6 +435,19 @@ S_BEGIN_C_DECLS
  * @note This casting is not safety checked.
  */
 #define S_OBJECT_CLS(SELF) ((SObjectClass*)S_OBJECT(SELF)->cls)
+
+
+/**
+ * @hideinitializer
+ * Get the given object type class.
+ *
+ * @param OBJTYPE Object type to find the class of.
+ * @param ERROR Error code (of type #s_erc*).
+ *
+ * @return Pointer to the class of object type (of type OBJTYPECLASS*).
+ */
+#define S_FIND_CLASS(OBJTYPE, ERROR)						\
+	((S_CONCAT(OBJTYPE, Class)*)s_class_find((# OBJTYPE), (ERROR)))
 
 
 /**

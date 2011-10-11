@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2009 The Department of Arts and Culture,                           */
+/* Copyright (c) 2009-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -63,7 +63,7 @@ static SSyllabificationClass SyllabificationClass; /* SSyllabification class dec
 S_LOCAL void _s_syllabification_class_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(&SyllabificationClass, error);
+	s_class_reg(S_OBJECTCLASS(&SyllabificationClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_syllabification_class_reg",
 			  "Failed to register SSyllabificationClass");
@@ -73,7 +73,7 @@ S_LOCAL void _s_syllabification_class_reg(s_erc *error)
 S_LOCAL void _s_syllabification_class_free(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_free(&SyllabificationClass, error);
+	s_class_free(S_OBJECTCLASS(&SyllabificationClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_syllabification_class_free",
 			  "Failed to free SSyllabificationClass");

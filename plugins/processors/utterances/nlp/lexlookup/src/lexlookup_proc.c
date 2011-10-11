@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2009 The Department of Arts and Culture,                           */
+/* Copyright (c) 2009-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -77,7 +77,7 @@ static void s_get_lexical_objects(const SUttProcessor *self, SUtterance *utt,
 S_LOCAL void _s_lexlookup_utt_proc_class_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(&LexLookupUttProcClass, error);
+	s_class_reg(S_OBJECTCLASS(&LexLookupUttProcClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_lexlookup_utt_proc_class_reg",
 			  "Failed to register SLexLookupUttProcClass");
@@ -87,7 +87,7 @@ S_LOCAL void _s_lexlookup_utt_proc_class_reg(s_erc *error)
 S_LOCAL void _s_lexlookup_utt_proc_class_free(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_free(&LexLookupUttProcClass, error);
+	s_class_free(S_OBJECTCLASS(&LexLookupUttProcClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_lexlookup_utt_proc_class_free",
 			  "Failed to free SLexLookupUttProcClass");
@@ -254,12 +254,7 @@ static void Initialize(SUttProcessor *self, const SVoice *voice, s_erc *error)
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Initialize",
 				  "Call to \"S_CAST (SMap)\" failed"))
-	{
-		/* this is here to silence the compiler's
-		 * messages about unused parameters */
-		voice = NULL;
 		return;
-	}
 
 	plugin_name = SMapGetString(syllInfo, "plug-in", error);
 	if (S_CHK_ERR(error, S_CONTERR,
@@ -287,7 +282,7 @@ static void Initialize(SUttProcessor *self, const SVoice *voice, s_erc *error)
 		return;
 
 	/* create a syllabification object */
-	syllab = (SSyllabification*)S_NEW(class_name, error);
+	syllab = (SSyllabification*)S_NEW_FROM_NAME(class_name, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Initialize",
 				  "Failed to create new '%s' object", class_name))
@@ -316,6 +311,8 @@ static void Initialize(SUttProcessor *self, const SVoice *voice, s_erc *error)
 		S_DELETE(syllab, "Initialize", error);
 		return;
 	}
+
+	S_UNUSED(voice);
 }
 
 
@@ -481,7 +478,7 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 			}
 			else
 			{
-				syllablesPhones = (SList*)S_NEW("SListList", error);
+				syllablesPhones = S_LIST(S_NEW(SListList, error));
 				if (S_CHK_ERR(error, S_CONTERR,
 							  "Run",
 							  "Failed to create new 'SList' object"))

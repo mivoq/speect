@@ -32,9 +32,6 @@ set(SPCT_SRC_FILES
     src/base/errdbg/errdbg_impl.c
     src/base/errdbg/errdbg_utils.c
 
-    # src/base/iniparser
-    src/base/iniparser/iniparser.c
-
     # src/base/log
     src/base/log/event/event.c
     src/base/log/layout/layout.c
@@ -60,9 +57,9 @@ set(SPCT_SRC_FILES
     # src/base/utils
     src/base/utils/alloc.c
     src/base/utils/byteswap.c
-    src/base/utils/math.c
+    src/base/utils/smath.c
     src/base/utils/path.c
-    src/base/utils/time.c
+    src/base/utils/stime.c
     src/base/utils/utils.c
     src/base/utils/vernum.c
 
@@ -121,11 +118,11 @@ set(SPCT_SRC_FILES
 ######## src/main ###################
 
     # src/main
-    src/main/ini.c
     src/main/loggers.c
     src/main/main.c
     src/main/managers.c
     src/main/modules.c
+    src/main/plugin_path.c
 
 
 ######## src/pluginmanager #########
@@ -198,9 +195,6 @@ set(SPCT_SRC_INCLUDE_FILES
    src/base/errdbg/errdbg_macros.h
    src/base/errdbg/errdbg_utils.h
 
-   # src/base/iniparser
-   src/base/iniparser/iniparser.h
-
    # src/base/log
    src/base/log/event/event.h
    src/base/log/layout/layout.h
@@ -234,9 +228,9 @@ set(SPCT_SRC_INCLUDE_FILES
    # src/base/utils
    src/base/utils/alloc.h
    src/base/utils/byteswap.h
-   src/base/utils/math.h
+   src/base/utils/smath.h
    src/base/utils/path.h
-   src/base/utils/time.h
+   src/base/utils/stime.h
    src/base/utils/types.h
    src/base/utils/utils.h
    src/base/utils/vernum.h
@@ -308,11 +302,11 @@ set(SPCT_SRC_INCLUDE_FILES
 ######## src/main ##################
  
    # src/main
-   src/main/ini.h
    src/main/loggers.h
    src/main/main.h
    src/main/managers.h
    src/main/modules.h
+   src/main/plugin_path.h
 
 
 ######## src/pluginmanager #########

@@ -61,7 +61,7 @@ def setLogger(logger):
     for error and debugging purposes.
 
     :param logger: The logger to be used by the Speect Engine.
-    :type logger: Instance of the logging.Logger module.
+    :type logger: Instance of the logging.Logger module
     """
 
     import logging

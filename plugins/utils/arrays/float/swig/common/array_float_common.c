@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2010 The Department of Arts and Culture,                           */
+/* Copyright (c) 2010-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -75,7 +75,7 @@ typedef struct
 		SArrayFloat *tmp;
 
 
-		tmp = (SArrayFloat*)S_NEW("SArrayFloat", error);
+		tmp = S_NEW(SArrayFloat, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "SArrayFloat()",
 					  "Failed to create new 'SArrayFloat' object"))

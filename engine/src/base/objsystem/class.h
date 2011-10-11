@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2008-2009 The Department of Arts and Culture,                      */
+/* Copyright (c) 2008-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -104,6 +104,25 @@ S_BEGIN_C_DECLS
 
 /************************************************************************************/
 /*                                                                                  */
+/* Macros                                                                           */
+/*                                                                                  */
+/************************************************************************************/
+
+/**
+ * @hideinitializer
+ * Get the given class's base class.
+ *
+ * @param SELF The given class.
+ *
+ * @return Pointer to the #SObjectClass class of the given class.
+ *
+ * @note This casting is not safety checked.
+ */
+#define S_OBJECTCLASS(SELF) ((SObjectClass*)SELF)
+
+
+/************************************************************************************/
+/*                                                                                  */
 /* Function prototypes                                                              */
 /*                                                                                  */
 /************************************************************************************/
@@ -117,7 +136,7 @@ S_BEGIN_C_DECLS
  *
  * @note Class names must be unique.
  */
-S_API void s_class_add(const void *cls, s_erc *error);
+S_API void s_class_add(const SObjectClass *cls, s_erc *error);
 
 
 /**
@@ -128,7 +147,7 @@ S_API void s_class_add(const void *cls, s_erc *error);
  * @param cls Class object to initialize.
  * @param error Error Code.
  */
-S_API void s_class_init(const void *cls, s_erc *error);
+S_API void s_class_init(const SObjectClass *cls, s_erc *error);
 
 
 /**
@@ -139,62 +158,62 @@ S_API void s_class_init(const void *cls, s_erc *error);
  * @param cls Class object to register.
  * @param error Error Code.
  */
-S_API void s_class_reg(const void *cls, s_erc *error);
+S_API void s_class_reg(const SObjectClass *cls, s_erc *error);
 
 
 /**
  * Free a class from the object system. After this function is called
  * on a class no objects of that class type can be instantiated
- * anymore. Plugins must call this function on exit for any classes
+ * anymore. Plug-ins must call this function on exit for any classes
  * registered by the plug-in.
  *
  * @param cls Class object to free.
  * @param error Error Code.
  */
-S_API void s_class_free(const void *cls, s_erc *error);
+S_API void s_class_free(const SObjectClass *cls, s_erc *error);
 
 
 /**
- * Get the name of the given class. The inheritance hierarchy is
- * removed from the class's registered name and only the actual class
- * name is returned.
+ * Get the name of the given class's object. The inheritance hierarchy
+ * is removed from the class's registered name and only the actual
+ * class object name is returned.
  *
  * @param cls Class object to get name from.
  * @param error Error Code.
  *
- * @return The class name.
+ * @return The class's object name.
  */
 S_API const char *s_class_name(const SObjectClass *cls, s_erc *error);
 
 
 /**
- * Get the complete inheritance of the given class. The inheritance
- * will exclude the #SObject.
+ * Get the complete inheritance of the given class's object. The
+ * inheritance will exclude the #SObject.
  *
  * @param cls Class object to get inheritance from.
  * @param error Error Code.
  *
- * @return A ":" separated string of the given classes inheritance
- * hierarchy, excluding #SObject.
+ * @return A colon (":") separated string of the given class's object
+ * inheritance hierarchy, excluding #SObject.
  */
 S_API const char *s_class_inheritance(const SObjectClass *cls, s_erc *error);
 
 
 /**
- * Query if the given class name is registered.
+ * Query if the given object's class is registered.
  *
- * @param name The class name to query.
+ * @param name The object name to query.
  * @param error Error code.
  *
- * @return @c TRUE if registered else @c FALSE.
+ * @return #TRUE if the object's class is registered else #FALSE.
  */
 S_API s_bool s_class_is_reg(const char *name, s_erc *error);
 
 
 /**
- * Get a class object by name.
+ * Get an object's class by name.
  *
- * @param name The name of the desired class.
+ * @param name The object type name of the desired object's class.
  * @param error Error Code.
  *
  * @return The class object.
@@ -206,7 +225,7 @@ S_API const SObjectClass *s_class_find(const char *name, s_erc *error);
  * @ingroup SBaseObject
  * Delete an object.
  * Free up any resources allocated to the object by the
- * #SObjectClass::init function.
+ * #SObjectClass @c init function pointer.
  * @private @memberof SObject
  *
  * @param self Object to delete.
@@ -231,7 +250,7 @@ S_API void SObjectDelete(SObject *self, s_erc *error);
  * @return Pointer to the newly created object.
  *
  * @note Do not use this function, rather use one of the macros
- * #S_NEW.
+ * #S_NEW, or #S_NEW_FROM_NAME.
  *
  * @todo check that everything is free'd on error.
  */

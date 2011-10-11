@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2008-2009 The Department of Arts and Culture,                      */
+/* Copyright (c) 2008-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -96,22 +96,6 @@ S_BEGIN_C_DECLS
  * @note Thread safe.
  */
 S_API SPlugin *s_pm_load_plugin(const char *path, s_erc *error);
-
-
-/**
- * Query if the plug-in at the given path is loaded in the
- * PluginManager cache. If the given path does not include any path
- * separators (just a file name) then the path is concatenated with
- * the default plug-in path.
- *
- * @param path he full path and name of the plug-in to query.
- * @param error Error code.
- *
- * @return #TRUE or #FALSE.
- *
- * @note Thread safe.
- */
-S_API s_bool s_pm_plugin_loaded(const char *path, s_erc *error);
 
 
 /**

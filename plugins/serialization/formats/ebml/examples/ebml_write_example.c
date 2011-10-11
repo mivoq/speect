@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2008-2009 The Department of Arts and Culture,                      */
+/* Copyright (c) 2008-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -120,7 +120,7 @@ int main()
 	/*
 	 * create ebml writer object
 	 */
-	ebmlWriter = (SEbmlWrite*)S_NEW("SEbmlWrite", &error);
+	ebmlWriter = S_NEW(SEbmlWrite, &error);
 	if (S_CHK_ERR(&error, S_CONTERR,
 				  "main",
 				  "Failed to create new SEbmlWrite object"))

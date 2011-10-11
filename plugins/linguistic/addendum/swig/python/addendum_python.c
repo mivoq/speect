@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2010 The Department of Arts and Culture,                           */
+/* Copyright (c) 2010-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -133,6 +133,7 @@
 
 %extend SAddendum
 {
+#ifdef SPCT_SWIG_PYTHON_3 	
 %pythoncode
 %{
 def get_word(self, word, features=None):
@@ -147,7 +148,7 @@ def get_word(self, word, features=None):
                      entries of the word exists in the addendum. If ``None`` then the
                      first entry of the word is returned.
     :type features: dict
-    :return: The return value is dependant on the word definition in the addendum, and can be:
+    :return: The return value is dependent on the word definition in the addendum, and can be:
 
                  * A list of phones for the given word (no syllables were defined in the addendum).
                  * A list of syllables, where the syllables are lists of phones.
@@ -163,6 +164,13 @@ def get_word(self, word, features=None):
 
     :rtype: list, bool
     """
+
+    if not isinstance(word, str):
+        raise TypeError("Argument \"word\" must be a str type")
+
+    if features is not None and not isinstance(features, dict):
+        raise TypeError("Argument \"features\" must be a dict type")
+
     tmp_tuple = _addendum_get_word(self, word, features)
     if tmp_tuple is not None:
         wlist = tmp_tuple[0]
@@ -173,6 +181,55 @@ def get_word(self, word, features=None):
 
     return wlist, syllabified
 %}
+#else /*! SPCT_SWIG_PYTHON_3 */
+%pythoncode
+%{
+def get_word(self, word, features=None):
+    """
+    get_word(word, features)
+
+    Get a word from the addendum.
+
+    :param word: The word to get.
+    :type word: string
+    :param features: Specific features which might distinguish the word if multiple
+                     entries of the word exists in the addendum. If ``None`` then the
+                     first entry of the word is returned.
+    :type features: dict
+    :return: The return value is dependent on the word definition in the addendum, and can be:
+
+                 * A list of phones for the given word (no syllables were defined in the addendum).
+                 * A list of syllables, where the syllables are lists of phones.
+                 * ``None`` if word was not found in the addendum.
+
+             As well as a ``bool`` value, specifying if the returned list is phones or syllables.
+             If ``True`` then syllables were returned, else if ``False`` a list of phones were
+             returned.
+
+             For example::
+
+                 list, syllabified = myaddendum.get_word(\"hello\", None)
+
+    :rtype: list, bool
+    """
+
+    if not isinstance(word, unicode) and not isinstance(word, str):
+        raise TypeError("Argument \"word\" must be a str or unicode type")
+
+    if features is not None and not isinstance(features, dict):
+        raise TypeError("Argument \"features\" must be a dict type")
+
+    tmp_tuple = _addendum_get_word(self, word, features)
+    if tmp_tuple is not None:
+        wlist = tmp_tuple[0]
+        syllabified = tmp_tuple[1]
+    else:
+        wlist = None
+        syllabified = False
+
+    return wlist, syllabified
+%}
+#endif /* SPCT_SWIG_PYTHON_3 */
 };
 
 

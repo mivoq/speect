@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2010 The Department of Arts and Culture,                           */
+/* Copyright (c) 2010-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -74,7 +74,7 @@ static const SPhoneset *_get_phoneset(const SItem *item, s_bool *multilingual, s
 S_LOCAL void _s_syl_vowel_class_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(&SylVowelFeatProcClass, error);
+	s_class_reg(S_OBJECTCLASS(&SylVowelFeatProcClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_syl_vowel_class_reg",
 			  "Failed to register SSylVowelFeatProcClass");
@@ -84,7 +84,7 @@ S_LOCAL void _s_syl_vowel_class_reg(s_erc *error)
 S_LOCAL void _s_syl_vowel_class_free(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_free(&SylVowelFeatProcClass, error);
+	s_class_free(S_OBJECTCLASS(&SylVowelFeatProcClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_syl_vowel_class_free",
 			  "Failed to free SSylVowelFeatProcClass");
@@ -144,11 +144,11 @@ static const SPhoneset *_get_phoneset(const SItem *item, s_bool *multilingual, s
 
 
 		(*multilingual) = TRUE;
-		tokenItem = s_path_to_item(item, "R:SylStructure.parent.R:Token.parent",
-								   error);
+		tokenItem = SItemPathToItem(item, "R:SylStructure.parent.R:Token.parent",
+									error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "_get_phoneset",
-					  "Call to \"s_path_to_item\" failed"))
+					  "Call to \"SItemPathToItem\" failed"))
 			return NULL;
 
 		if (tokenItem == NULL)
@@ -291,12 +291,12 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 		{
 			if (multilingual)
 			{
-				extractedFeat = s_path_to_featproc(segment,
-												   "segment_name_multilingual",
-												   error);
+				extractedFeat = SItemPathToFeatProc(segment,
+													"segment_name_multilingual",
+													error);
 				if (S_CHK_ERR(error, S_CONTERR,
 							  "Run",
-							  "Call to \"s_path_to_featproc\" failed"))
+							  "Call to \"SItemPathToFeatProc\" failed"))
 					goto quit_error;
 			}
 			else
@@ -333,8 +333,9 @@ quit_error:
 	if (extractedFeat != NULL)
 		S_DELETE(extractedFeat, "Run", error);
 
-	self = NULL; /* compiler noise about unused parameters */
 	return NULL;
+
+	S_UNUSED(self);
 }
 
 

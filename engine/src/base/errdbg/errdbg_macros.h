@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2008-2009 The Department of Arts and Culture,                      */
+/* Copyright (c) 2008-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -47,134 +47,6 @@
  * @ingroup SErrDbg
  * @defgroup SErrDbgMacros Macros
  * Error and debugging macros definitions. Detailed description of macros:
- *
- * <ul>
- * <li> <h3> @anchor S_SETCLEAR_MACROS Set/Clear </h3>
- * Macros that sets and clears errors.
- *
- *  <ul>
- *   <li> @anchor S_NEW_ERR_DETAIL @code void S_NEW_ERR(s_erc *error, s_erc new_error) @endcode
- *   Set a new error with no context.
- *
- *   Set @a error to the error code that occured, @a new_error. This macro
- *   is useful in deeply nested functions where there is not enough context to add, i.e.
- *   it is only known that an error of @a new_error type occured, but not why it
- *   occured.
- *   <h4> Paramaters: </h4>
- *    <ul>
- *     <li> @a error     Pointer to error code variable to set. </li>
- *     <li> @a new_error The new error code. </li>
- *    </ul>
- *   </li>
- *
- *   <li> @anchor S_CLR_ERR_DETAIL @code void S_CLR_ERR(s_erc *error) @endcode
- *   Clear the given error.
- *
- *   It is good practice to clear the error code (*@a error == #S_SUCCESS) at the
- *   beginning of all functions.
- *   <h4> Paramaters: </h4>
- *    <ul>
- *     <li> @a error Pointer to error code to clear. </li>
- *    </ul>
- *
- *   <li> @anchor S_CTX_ERR_DETAIL @code void S_CTX_ERR(s_erc *error, s_erc new_error, const char *function_name, const char *msg, ...) @endcode
- *   Set a new error with a context.
- *
- *   Sets @a error to the error code that occured, @a new_error, as well as giving
- *   the error logger the function name and a variable length argument string of the context
- *   wherein this error occured.
- *   <h4> Paramaters: </h4>
- *    <ul>
- *     <li> @a error  Pointer to error code variable to set. </li>
- *     <li> @a new_error  The new error code. </li>
- *     <li> @a function_name  The name of the function where the error occured (optional, can be @c NULL). </li>
- *     <li> @a msg  A format string specifying the error message and the format of the variable
- *                  length argument list. Same as the the standard @c printf() function. </li>
- *    </ul>
- *   </li>
- *
- *   <li> @anchor S_FTL_ERR_DETAIL @code void S_FTL_ERR(s_erc *error, s_erc new_error, const char *function_name, const char *msg, ...) @endcode
- *   Set a new @b fatal context error.
-
- *   Sets @a error to the fatal error code that occured, @a new_error, as well as giving
- *   the error logger the function name and a variable length argument string of the context
- *   wherein this error occured. The same as @b S_CTX_ERR except that if the build
- *   option @a ERROR_ABORT_FATAL is set then the program is aborted.
- *   <h4> Paramaters: </h4>
- *    <ul>
- *     <li> @a error  Pointer to error code variable to set. </li>
- *     <li> @a new_error  The new error code. </li>
- *     <li> @a function_name  The name of the function where the error occured (optional, can be @c NULL). </li>
- *     <li> @a msg  A format string specifying the error message and the format of the variable
- *                  length argument list. Same as the the standard @c printf() function. </li>
- *    </ul>
- *   </li>
- *   </ul>
- *
- * <li> <h3> @anchor S_CHECK_MACROS Check & set </h3>
- * Macro that tests for errors and sets new context based on test.
- *
- *  <ul>
- *   <li> @anchor S_CHK_ERR_DETAIL @code s_bool S_CHK_ERR(s_erc *error, s_erc new_error, const char *function_name, const char *msg, ...) @endcode
- *   Check for an error.
- *
- *   Test if an error has occured (if @a error is set, i.e. not equal to #S_SUCCESS), and if so set a new
- *   context error (same as @b S_CTX_ERR), and return #TRUE. If no error was set,
- *   (*@a error == #S_SUCCESS) then nothing is done and #FALSE is returned. This macro
- *   can be used in @c if statements directly after calling a function with an error code parameter,
- *   testing if an error occured, setting a new error context and executing the @c if statement. If
- *   no error occured then no new context is set and the @c if statement is not executed.
- *   <h4> Paramaters: </h4>
- *    <ul>
- *     <li> @a error  Pointer to error code variable to set. </li>
- *     <li> @a new_error  The new error code. </li>
- *     <li> @a function_name  The name of the function where the error occured (optional, can be @c NULL). </li>
- *     <li> @a msg  A format string specifying the error message and the format of the variable
- *                  length argument list. Same as the the standard @c printf() function. </li>
- *    </ul>
- *   </li>
- *  </ul>
- *
- * <li> <h3> @anchor S_WARNING_MACROS Warnings </h3>
- * Macro that sets warning messages.
- *
- *  <ul>
- *   <li> @anchor S_WARNING_DETAIL @code void S_WARNING(s_erc error, const char *function_name, const char *msg, ...) @endcode
- *   Set a warning.
- *
- *   Set a warning with the given context. The warning is logged with the given context and message.
- *   <h4> Paramaters: </h4>
- *    <ul>
- *     <li> @a error  The error code associated with the warning message. </li>
- *     <li> @a function_name  The name of the function where the error occured (optional, can be @c NULL). </li>
- *     <li> @a msg  A format string specifying the error message and the format of the variable
- *                  length argument list. Same as the the standard @c printf() function. </li>
- *    </ul>
- *   </li>
- *  </ul>
- *
- *
- * <li> <h3> @anchor S_DEBUG_MACROS Debugging </h3>
- * Macro that sets debug messages.
- *
- *  <ul>
- *   <li> @anchor S_DEBUG_DETAIL @code void S_DEBUG(s_dbg_lvl level, const char *msg, ...) @endcode
- *   Set a debug message.
- *
- *   The debug message is logged only if the the given debug level is equal or lower that
- *   the set level of the @ref SErrDbg module. This level can be changed with the #s_errdbg_level
- *   function.
- *   <h4> Paramaters: </h4>
- *    <ul>
- *     <li> @a level  The debug level of this message. </li>
- *     <li> @a msg  A format string specifying the error message and the format of the variable
- *                  length argument list. Same as the the standard @c printf() function. </li>
- *    </ul>
- *   </li>
- *  </ul>
- * </li>
- * </ul>
- *
  */
 
 
@@ -213,109 +85,205 @@ S_BEGIN_C_DECLS
  * @ingroup SErrDbgMacros
  * @hideinitializer
  * @def S_NEW_ERR
- * Set a new error with no context.
- * See @ref S_NEW_ERR_DETAIL "description".
+ * Set a new error with no context. Set @a ERROR to the error code
+ * that occurred, @a ERROR_CODE. This macro is useful in deeply nested
+ * functions where there is not enough context to add, i.e. it is only
+ * known that an error of @a ERROR_CODE type occurred, but not why it
+ * occurred.
+ *
+ * @param ERROR Pointer to error code variable to set (type #s_erc*).
+ * @param ERROR_CODE The new error code (type #s_erc).
  */
-#ifdef SPCT_ERROR_HANDLING
-#  define S_NEW_ERR(ERROR, ERROR_CODE)			\
-	do {										\
-		if ((ERROR) != NULL)					\
-			(*(ERROR)) = ERROR_CODE;			\
+#ifdef SPCT_DOXYGEN_ONLY
+#  define S_NEW_ERR(ERROR, ERROR_CODE)
+#else /* !SPCT_DOXYGEN_ONLY */
+#  ifdef SPCT_ERROR_HANDLING
+#    define S_NEW_ERR(ERROR, ERROR_CODE)				\
+	do {												\
+		if ((ERROR) != NULL)							\
+			(*(ERROR)) = ERROR_CODE;					\
 	} while(0)
-#else /* ! SPCT_ERROR_HANDLING */
-# define S_NEW_ERR(ERROR, ERROR_CODE) ((void) 0)
-#endif /* SPCT_ERROR_HANDLING */
+#  else /* ! SPCT_ERROR_HANDLING */
+#    define S_NEW_ERR(ERROR, ERROR_CODE) ((void) 0)
+#  endif /* SPCT_ERROR_HANDLING */
+#endif /* SPCT_DOXYGEN_ONLY */
 
 
 /**
  * @ingroup SErrDbgMacros
  * @hideinitializer
  * @def S_CLR_ERR
- * Clear the given error.
- * See @ref S_CLR_ERR_DETAIL "description".
+ * Clear the given error. It is good practice to clear the error code
+ * (*@a ERROR = #S_SUCCESS) at the beginning of all functions.
+ *
+ * @param ERROR Pointer to error code to clear (type #s_erc*).
  */
-#ifdef SPCT_ERROR_HANDLING
+/*
+ * NOTE: always the same macro, irrespective of SPCT_ERROR_HANDLING.
+ */
+#ifdef SPCT_DOXYGEN_ONLY
+#  define S_CLR_ERR(ERROR)
+#else /* !SPCT_DOXYGEN_ONLY */
 #  define S_CLR_ERR(ERROR)			\
-	do {							\
-		if ((ERROR) != NULL)		\
-			(*(ERROR)) = S_SUCCESS;	\
+	do {								\
+		if ((ERROR) != NULL)			\
+			(*(ERROR)) = S_SUCCESS;		\
 	} while(0)
-#else /* ! SPCT_ERROR_HANDLING */
-# define S_CLR_ERR(ERROR) ((void) 0)
-#endif /* SPCT_ERROR_HANDLING */
+#endif /* SPCT_DOXYGEN_ONLY */
 
 
 /**
  * @ingroup SErrDbgMacros
  * @hideinitializer
  * @def S_CTX_ERR
- * Set a new error with a context.
- * See @ref S_CTX_ERR_DETAIL "description".
+ * Set a new error with a context. Sets @a ERROR to the error code
+ * that occurred, @a NEW_ERROR, as well as giving the error logger the
+ * function name and a variable length argument string of the context
+ * wherein this error occurred.
+ *
+ * @param ERROR Pointer to error code variable to set (type #s_erc*).
+ * @param NEW_ERROR The new error code (type #s_erc).
+ * @param FUNCTION_NAME The name of the function where the error
+ *        occurred (optional, can be #NULL).
+ * @param MSG A format string specifying the error message and the
+ *        format of the variable length argument list. Same as the
+ *        standard @c printf() function.
  */
-#ifdef SPCT_ERROR_HANDLING
-#  define S_CTX_ERR (*_s_err(__FILE__, __LINE__))
-#else /* ! SPCT_ERROR_HANDLING */
-#  define S_CTX_ERR 1 ? 0 : _s_err_dummy
-#endif /* SPCT_ERROR_HANDLING */
+#ifdef SPCT_DOXYGEN_ONLY
+#  define S_CTX_ERR(ERROR, NEW_ERROR, FUNCTION_NAME, MSG, ...)
+#else /* !SPCT_DOXYGEN_ONLY */
+#  ifdef SPCT_ERROR_HANDLING
+#    define S_CTX_ERR (*_s_err(__FILE__, __LINE__))
+#  else /* ! SPCT_ERROR_HANDLING */
+#    define S_CTX_ERR _s_err_dummy_void
+#  endif /* SPCT_ERROR_HANDLING */
+#endif /* SPCT_DOXYGEN_ONLY */
 
 
 /**
  * @ingroup SErrDbgMacros
  * @hideinitializer
  * @def S_FTL_ERR
- * Set a new @b fatal context error.
- * See @ref S_FTL_ERR_DETAIL "description".
+ * Set a new @b fatal context error. Sets @a ERROR to the fatal error
+ * code that occurred, @a NEW_ERROR, as well as giving the error logger
+ * the function name and a variable length argument string of the
+ * context wherein this error occurred. The same as #S_CTX_ERR except
+ * that if the build option @b SPCT_ERROR_ABORT_FATAL is set then the
+ * program is aborted.
+ *
+ * @param ERROR Pointer to error code variable to set (type #s_erc*).
+ * @param NEW_ERROR The new error code (type #s_erc).
+ * @param FUNCTION_NAME The name of the function where the error
+ *        occurred (optional, can be #NULL).
+ * @param MSG A format string specifying the error message and the
+ *        format of the variable length argument list. Same as the
+ *        standard @c printf() function.
  */
-#ifdef SPCT_ERROR_ABORT_FATAL
-#  define S_FTL_ERR (*_s_fatal_err(__FILE__, __LINE__))
-#else /* !S_ERROR_ABORT_FATAL */
-#  define S_FTL_ERR (*_s_err(__FILE__, __LINE__))
-#endif /* S_ERROR_ABORT_FATAL */
+#ifdef SPCT_DOXYGEN_ONLY
+#  define S_FTL_ERR(ERROR, NEW_ERROR, FUNCTION_NAME, MSG, ...)
+#else /* !SPCT_DOXYGEN_ONLY */
+#  ifdef SPCT_ERROR_HANDLING
+#    ifdef SPCT_ERROR_ABORT_FATAL
+#      define S_FTL_ERR (*_s_fatal_err(__FILE__, __LINE__))
+#    else /* !S_ERROR_ABORT_FATAL */
+#      define S_FTL_ERR (*_s_err(__FILE__, __LINE__))
+#    endif /* S_ERROR_ABORT_FATAL */
+#  else /* !SPCT_ERROR_HANDLING */
+#    ifdef SPCT_ERROR_ABORT_FATAL
+#      define S_FTL_ERR _s_fatal_err_no_checking
+#    else /* !S_ERROR_ABORT_FATAL */
+#      define S_FTL_ERR _s_err_dummy_void
+#    endif /* S_ERROR_ABORT_FATAL */
+#  endif /* SPCT_ERROR_HANDLING */
+#endif /* SPCT_DOXYGEN_ONLY */
 
 
 /**
  * @ingroup SErrDbgMacros
  * @hideinitializer
  * @def S_CHK_ERR
- * Check if an error has been set.
- * See @ref S_CHK_ERR_DETAIL "description".
+ * Check if an error has been set. Test if an error has occurred (if @a ERROR is
+ * set, i.e. not equal to #S_SUCCESS), and if so set a new context
+ * error (same as #S_CTX_ERR), and return #TRUE. If no error was
+ * set, (*@a ERROR = #S_SUCCESS) then nothing is done and #FALSE is
+ * returned. This macro can be used in @c if statements directly after
+ * calling a function with an error code parameter, testing if an
+ * error occurred, setting a new error context and executing the @c if
+ * statement. If no error occurred then no new context is set and the
+ * @c if statement is not executed.
+ *
+ * @param ERROR Pointer to error code variable to set (type #s_erc*).
+ * @param NEW_ERROR The new error code (type #s_erc).
+ * @param FUNCTION_NAME The name of the function where the error
+ *        occurred (optional, can be #NULL).
+ * @param MSG A format string specifying the error message and the
+ *        format of the variable length argument list. Same as the
+ *        standard @c printf() function.
  */
-#ifdef SPCT_ERROR_HANDLING
-#  define S_CHK_ERR (*_s_check_err(__FILE__, __LINE__))
-#else /* ! SPCT_ERROR_HANDLING */
-#  define S_CHK_ERR 1 ? 0 : _s_err_dummy
-#endif /* SPCT_ERROR_HANDLING */
+#ifdef SPCT_DOXYGEN_ONLY
+#  define S_CHK_ERR(ERROR, NEW_ERROR, FUNCTION_NAME, MSG, ...)
+#else /* !SPCT_DOXYGEN_ONLY */
+#  ifdef SPCT_ERROR_HANDLING
+#    define S_CHK_ERR (*_s_check_err(__FILE__, __LINE__))
+#  else /* ! SPCT_ERROR_HANDLING */
+#    define S_CHK_ERR _s_err_dummy
+#  endif /* SPCT_ERROR_HANDLING */
+#endif /* SPCT_DOXYGEN_ONLY */
 
 
 /**
  * @ingroup SErrDbgMacros
  * @hideinitializer
  * @def S_WARNING
- * Set a warning message.
- * See @ref S_WARNING_DETAIL "description".
- * @todo add example
+ * Macro that sets a warning message.  Set a warning with the given
+ * context. The warning is logged with the given context and message.
+ *
+ * @param ERROR Pointer to error code variable to set (type #s_erc*).
+ * @param FUNCTION_NAME The name of the function where the error
+ *        occurred (optional, can be #NULL).
+ * @param MSG A format string specifying the error message and the
+ *        format of the variable length argument list. Same as the
+ *        standard @c printf() function.
  */
-#ifdef SPCT_ERROR_HANDLING
-#  define S_WARNING (*_s_warn(__FILE__, __LINE__))
-#else /* ! SPCT_ERROR_HANDLING */
-#  define S_WARNING 1 ? 0 : _s_warn_dummy
-#endif /* SPCT_ERROR_HANDLING */
+#ifdef SPCT_DOXYGEN_ONLY
+#  define S_WARNING(ERROR, FUNCTION_NAME, MSG, ...)
+#else /* !SPCT_DOXYGEN_ONLY */
+#  ifdef SPCT_ERROR_HANDLING
+#    define S_WARNING (*_s_warn(__FILE__, __LINE__))
+#  else /* ! SPCT_ERROR_HANDLING */
+#    define S_WARNING _s_warn_dummy
+#  endif /* SPCT_ERROR_HANDLING */
+#endif /* SPCT_DOXYGEN_ONLY */
 
 
 /**
  * @ingroup SErrDbgMacros
  * @hideinitializer
  * @def S_DEBUG
- * Sets a debug message.
- * See @ref S_DEBUG_DETAIL "description".
- * @todo add more examples
+ * Macro that sets a debug message. The debug message is logged only
+ * if the given debug level is equal or lower that  the set level
+ * of the @ref SErrDbg module. This level can be changed with the
+ * #s_set_errdbg_level function.
+ *
+ * @param LEVEL The debug level (#s_dbg_lvl) of this message.
+ * @param MSG A format string specifying the error message and the
+ *        format of the variable length argument list. Same as the
+ *        standard @c printf() function.
  */
 /* SPCT_DEBUGMODE is a compiler switch, -DSPCT_DEBUGMODE=1 */
-#ifdef SPCT_DEBUGMODE
-#  define S_DEBUG _s_dbg
-#else /* !SPCT_DEBUGMODE */
-#  define S_DEBUG 1 ? 0 : _s_dbg
-#endif /* SPCT_DEBUGMODE */
+#ifdef SPCT_DOXYGEN_ONLY
+#  define S_DEBUG(LEVEL, MSG, ...)
+#else
+#  ifdef SPCT_ERROR_HANDLING
+#    ifdef SPCT_DEBUGMODE
+#      define S_DEBUG _s_dbg
+#    else /* !SPCT_DEBUGMODE */
+#      define S_DEBUG _s_debug_dummy
+#    endif /* SPCT_DEBUGMODE */
+#  else /* !SPCT_ERROR_HANDLING and !SPCT_DEBUGMODE */
+#    define S_DEBUG _s_debug_dummy
+#  endif /* SPCT_DEBUGMODE */
+#endif /* SPCT_DOXYGEN_ONLY */
 
 
 /************************************************************************************/
@@ -334,7 +302,7 @@ S_BEGIN_C_DECLS
  *
  * Print an error to stderr.
  * ERR The error, of type s_erc.
- * FUNC String function name in which the error occured.
+ * FUNC String function name in which the error occurred.
  * MSG String error message.
  *
  * -------------------------------------
@@ -343,7 +311,7 @@ S_BEGIN_C_DECLS
  *
  * Print a fatal error to stderr and abort.
  * ERR The error, of type s_erc.
- * FUNC String function name in which the error occured.
+ * FUNC String function name in which the error occurred.
  * MSG String error message.
  *
  * -------------------------------------

@@ -7,7 +7,7 @@ The license is as follows:
 
 =================================================================================
 
-   Copyright (c) 2008-2010 The Department of Arts and Culture,                        
+   Copyright (c) 2008-2011 The Department of Arts and Culture,                        
    The Government of the Republic of South Africa.                                    
                                                                                       
    Contributors:  Meraka Institute, CSIR, South Africa.                               
@@ -38,3 +38,9 @@ free software licenses ("non-copyleft").
 
 See the files copying/LICENSE.engine.extra and copying/LICENSE.plugins.extra for 
 more details.
+
+
+Speect includes some utilities (tools) code from other projects. All the licenses
+of the other projects are permissive free software licenses ("non-copyleft"). 
+
+See the file copying/LICENSE.other.extra for more details.

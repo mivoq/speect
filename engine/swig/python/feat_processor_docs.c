@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2010 The Department of Arts and Culture,                           */
+/* Copyright (c) 2010-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -52,8 +52,8 @@ run(item)
 Execute the FeatProcessor on the given item.
 
 :param item: The item on which to execute the feature processor.
-:type item: SItem
-:return: The extracted information.
+:type item: :class:`SItem`
+:return: The extracted information object (can be any object).
 """
 %enddef
 

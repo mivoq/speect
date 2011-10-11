@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2008-2009 The Department of Arts and Culture,                      */
+/* Copyright (c) 2008-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -124,7 +124,7 @@ S_API SDatasource *SFilesourceOpenHandle(FILE *f, s_erc *error)
 		return NULL;
 	}
 
-	self = (SFilesource*)S_NEW("SFilesource", error);
+	self = S_NEW(SFilesource, error);
 
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "SFilesourceOpenHandle",
@@ -170,7 +170,7 @@ S_API SDatasource *SFilesourceOpenFile(const char *path, const char *mode, s_erc
 		return NULL;
 	}
 
-	self = (SFilesource*)S_NEW("SFilesource", error);
+	self = S_NEW(SFilesource, error);
 
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "SFileSourceOpenFile",
@@ -205,7 +205,7 @@ S_API SDatasource *SFilesourceOpenFile(const char *path, const char *mode, s_erc
 S_LOCAL void _s_file_source_class_add(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_add(&FilesourceClass, error);
+	s_class_add(S_OBJECTCLASS(&FilesourceClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_file_source_class_add",
 			  "Failed to add SFilesourceClass");

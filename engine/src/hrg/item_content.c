@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2008-2009 The Department of Arts and Culture,                      */
+/* Copyright (c) 2008-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -124,6 +124,42 @@
 #include "base/utils/alloc.h"
 #include "base/objsystem/objsystem.h"
 #include "hrg/item_content.h"
+
+
+/************************************************************************************/
+/*                                                                                  */
+/* Macros                                                                           */
+/*                                                                                  */
+/************************************************************************************/
+
+/**
+ * @hideinitializer
+ * Call the given function method of the given #SItmContent.
+ * @param SELF The given #SItmContent*.
+ * @param FUNC The function method of the given object to call.
+ * @note This casting is not safety checked.
+ * @note Example usage:
+ @verbatim
+ S_ITMCONTENT_CALL(self, func)(param1, param2, ..., paramN);
+ @endverbatim
+ * where @c param1, @c param2, ..., @c paramN are the parameters passed to the object function
+ * @c func.
+ */
+#define S_ITMCONTENT_CALL(SELF, FUNC)				\
+	((SItmContentClass *)S_OBJECT_CLS(SELF))->FUNC
+
+
+/**
+ * @hideinitializer
+ * Test if the given function method of the given #SItmContent
+ * can be called.
+ * @param SELF The given #SItmContent*.
+ * @param FUNC The function method of the given object to check.
+ * @return #TRUE if function can be called, otherwise #FALSE.
+ * @note This casting is not safety checked.
+ */
+#define S_ITMCONTENT_METH_VALID(SELF, FUNC)			\
+	S_ITMCONTENT_CALL(SELF, FUNC) ? TRUE : FALSE
 
 
 /************************************************************************************/
@@ -396,7 +432,7 @@ S_API size_t SItmContentNumRelations(const SItmContent *self, s_erc *error)
 S_LOCAL void _s_itm_content_class_add(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_add(&ItmContentClass, error);
+	s_class_add(S_OBJECTCLASS(&ItmContentClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_itm_content_class_add",
 			  "Failed to add SItmContentClass");
@@ -416,13 +452,13 @@ static void InitItmContent(void *obj, s_erc *error)
 
 	S_CLR_ERR(error);
 
-	self->features = S_MAP(S_NEW("SMapList", error));
+	self->features = S_MAP(S_NEW(SMapList, error));
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "InitItmContent",
 				  "Failed to create features map"))
 		return;
 
-	self->relations = S_MAP(S_NEW("SMapList", error));
+	self->relations = S_MAP(S_NEW(SMapList, error));
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "InitItmContent",
 				  "Failed to create relations map"))

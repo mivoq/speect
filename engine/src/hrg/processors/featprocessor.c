@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2008-2009 The Department of Arts and Culture,                      */
+/* Copyright (c) 2008-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -90,6 +90,42 @@
 
 /************************************************************************************/
 /*                                                                                  */
+/* Macros                                                                           */
+/*                                                                                  */
+/************************************************************************************/
+
+/**
+ * @hideinitializer
+ * Call the given function method of the given #SFeatProcessor.
+ * @param SELF The given #SFeatProcessor*.
+ * @param FUNC The function method of the given object to call.
+ * @note This casting is not safety checked.
+ * @note Example usage:
+ @verbatim
+ S_FEATPROCESSOR_CALL(self, func)(param1, param2, ..., paramN);
+ @endverbatim
+ * where @c param1, @c param2, ..., @c paramN are the parameters passed to the object function
+ * @c func.
+ */
+#define S_FEATPROCESSOR_CALL(SELF, FUNC)				\
+	((SFeatProcessorClass *)S_OBJECT_CLS(SELF))->FUNC
+
+
+/**
+ * @hideinitializer
+ * Test if the given function method of the given #SFeatProcessor
+ * can be called.
+ * @param SELF The given #SFeatProcessor*.
+ * @param FUNC The function method of the given object to check.
+ * @return #TRUE if function can be called, otherwise #FALSE.
+ * @note This casting is not safety checked.
+ */
+#define S_FEATPROCESSOR_METH_VALID(SELF, FUNC)		\
+	S_FEATPROCESSOR_CALL(SELF, FUNC) ? TRUE : FALSE
+
+
+/************************************************************************************/
+/*                                                                                  */
 /* Static variables                                                                 */
 /*                                                                                  */
 /************************************************************************************/
@@ -155,7 +191,7 @@ S_API SObject *SFeatProcessorRun(const SFeatProcessor *self, const SItem *item, 
 S_LOCAL void _s_featprocessor_class_add(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_add(&FeatProcessorClass, error);
+	s_class_add(S_OBJECTCLASS(&FeatProcessorClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_featprocessor_class_add",
 			  "Failed to add SFeatProcessorClass");

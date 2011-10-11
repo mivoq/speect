@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2009 The Department of Arts and Culture,                           */
+/* Copyright (c) 2009-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -78,7 +78,7 @@ static void process_cost_functions(const SList *costFunctions, const SItem *head
 S_LOCAL void _s_process_units_utt_proc_class_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(&ProcessUnitsUttProcClass, error);
+	s_class_reg(S_OBJECTCLASS(&ProcessUnitsUttProcClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_process_units_utt_proc_class_reg",
 			  "Failed to register SProcessUnitsUttProcClass");
@@ -88,7 +88,7 @@ S_LOCAL void _s_process_units_utt_proc_class_reg(s_erc *error)
 S_LOCAL void _s_process_units_utt_proc_class_free(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_free(&ProcessUnitsUttProcClass, error);
+	s_class_free(S_OBJECTCLASS(&ProcessUnitsUttProcClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_process_units_utt_proc_class_free",
 			  "Failed to free SProcessUnitsUttProcClass");
@@ -232,7 +232,7 @@ static void create_cost_functions(const SList *costFunctions, const SVoice *voic
 			return;
 		}
 
-		costFunc = (SCostFunction*)S_NEW(class_name, error);
+		costFunc = (SCostFunction*)S_NEW_FROM_NAME(class_name, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "create_cost_functions",
 					  "Failed to create new '%s' object", class_name))
@@ -450,12 +450,7 @@ static void Initialize(SUttProcessor *self, const SVoice *voice, s_erc *error)
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Initialize",
 				  "Call to \"S_CAST (SMap)\" failed"))
-	{
-		/* this is here to silence the compiler's
-		 * messages about unused parameters */
-		self = NULL;
 		return;
-	}
 
 	/* get target cost functions */
 	tmp = SMapGetObjectDef(allCostFunctions, "target costs", NULL, error);
@@ -502,6 +497,8 @@ static void Initialize(SUttProcessor *self, const SVoice *voice, s_erc *error)
 					  "Call to \"create_cost_functions\" failed"))
 			return;
 	}
+
+	S_UNUSED(self);
 }
 
 
@@ -530,9 +527,6 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 		S_CTX_ERR(error, S_FAILURE,
 				  "Run",
 				  "Failed to find 'Segment' relation in utterance");
-		/* this is here to silence the compiler's
-		 * messages about unused parameters */
-		self = NULL;
 		return;
 	}
 
@@ -611,6 +605,8 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 					  "Call to \"process_cost_functions\" failed"))
 			return;
 	}
+
+	S_UNUSED(self);
 }
 
 

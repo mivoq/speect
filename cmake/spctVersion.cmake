@@ -20,10 +20,34 @@ mark_as_advanced(SPCT_VERSION_RELEASE)
 
 
 #------------------------------------------------------------------------------------#
+#        Get Speect version info from, git or file or default                        #
+#------------------------------------------------------------------------------------#
+
+if(EXISTS "${CMAKE_SOURCE_DIR}/.git")
+  # this is a git repo, get version info from git
+  execute_process(COMMAND git describe --abbrev=4 HEAD
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    OUTPUT_VARIABLE TMP_VERSION
+    OUTPUT_STRIP_TRAILING_WHITESPACE)
+  # write info to file
+  file(WRITE "${CMAKE_SOURCE_DIR}/VERSION" ${TMP_VERSION})
+elseif(EXISTS "${CMAKE_SOURCE_DIR}/VERSION")
+  # this is a release tarball, read version from file
+  file(READ "${CMAKE_SOURCE_DIR}/VERSION" TMP_VERSION LIMIT 64)
+else(EXISTS "${CMAKE_SOURCE_DIR}/VERSION")
+  # use default
+  set(TMP_VERSION "v1.0.0_pre-260-g796b" CACHE STRING "Speect default version" FORCE)
+endif(EXISTS "${CMAKE_SOURCE_DIR}/.git")
+
+string(REGEX REPLACE "^v(.*)" "\\1" TMP_VERSION ${TMP_VERSION})
+mark_as_advanced(TMP_VERSION)
+
+
+#------------------------------------------------------------------------------------#
 #                           Speect major version number                              #
 #------------------------------------------------------------------------------------#
 
-set(SPCT_VERSION_MAJOR 1 CACHE STRING "Speect major version number" FORCE)
+string(REGEX REPLACE "^(.*)\\..*\\..*" "\\1" SPCT_VERSION_MAJOR ${TMP_VERSION})
 mark_as_advanced(SPCT_VERSION_MAJOR)
 
 
@@ -31,7 +55,7 @@ mark_as_advanced(SPCT_VERSION_MAJOR)
 #                           Speect minor version number                              #
 #------------------------------------------------------------------------------------#
 
-set(SPCT_VERSION_MINOR 0 CACHE STRING "Speect minor version number" FORCE)
+string(REGEX REPLACE "^.*\\.(.*)\\..*" "\\1" SPCT_VERSION_MINOR ${TMP_VERSION})
 mark_as_advanced(SPCT_VERSION_MINOR)
 
 
@@ -39,7 +63,7 @@ mark_as_advanced(SPCT_VERSION_MINOR)
 #                               Speect patch number                                  #
 #------------------------------------------------------------------------------------#
 
-set(SPCT_VERSION_PATCH 0 CACHE STRING "Speect patch number" FORCE)
+string(REGEX REPLACE "^.*\\..*\\.(.*)" "\\1" SPCT_VERSION_PATCH ${TMP_VERSION})
 mark_as_advanced(SPCT_VERSION_PATCH)
 
 

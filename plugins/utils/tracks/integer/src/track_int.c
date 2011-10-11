@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2009 The Department of Arts and Culture,                           */
+/* Copyright (c) 2009-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -63,7 +63,7 @@ static STrackIntClass TrackIntClass; /* STrackInt class declaration. */
 S_LOCAL void _s_track_int_class_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(&TrackIntClass, error);
+	s_class_reg(S_OBJECTCLASS(&TrackIntClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_track_int_class_reg",
 			  "Failed to register STrackIntClass");
@@ -73,7 +73,7 @@ S_LOCAL void _s_track_int_class_reg(s_erc *error)
 S_LOCAL void _s_track_int_class_free(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_free(&TrackIntClass, error);
+	s_class_free(S_OBJECTCLASS(&TrackIntClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_track_int_class_free",
 			  "Failed to free STrackIntClass");
@@ -93,7 +93,7 @@ static void Init(void *obj, s_erc *error)
 
 	S_CLR_ERR(error);
 	self->time = NULL;
-	self->data = (SMatrixInt*)S_NEW("SMatrixInt", error);
+	self->data = S_NEW(SMatrixInt, error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "Init",
 			  "Failed to create new 'SMatrixInt' object");

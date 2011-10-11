@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2008-2009 The Department of Arts and Culture,                      */
+/* Copyright (c) 2008-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -41,6 +41,52 @@
 /************************************************************************************/
 
 #include "serialization/serialized_object.h"
+
+
+/************************************************************************************/
+/*                                                                                  */
+/* Macros                                                                           */
+/*                                                                                  */
+/************************************************************************************/
+
+/**
+ * @hideinitializer
+ * Return the given #SSerializedObject child class object as a #SSerializedObject object.
+ * @param SELF The given object.
+ * @return Given object as #SSerializedObject* type.
+ * @note This casting is not safety checked.
+ */
+#define S_SERIALIZED_OBJECT(SELF)    ((SSerializedObject *)(SELF))
+
+
+/**
+ * @hideinitializer
+ * Call the given function method of the given #SSerializedObject.
+ * @param SELF The given #SSerializedObject*.
+ * @param FUNC The function method of the given object to call.
+ * @note This casting is not safety checked.
+ * @note Example usage:
+ @verbatim
+ S_SERIALIZED_OBJECT_CALL(self, func)(param1, param2, ..., paramN);
+ @endverbatim
+ * where @c param1, @c param2, ..., @c paramN are the parameters passed to the object function
+ * @c func.
+ */
+#define S_SERIALIZED_OBJECT_CALL(SELF, FUNC)				\
+	((SSerializedObjectClass *)S_OBJECT_CLS(SELF))->FUNC
+
+
+/**
+ * @hideinitializer
+ * Test if the given function method of the given #SSerializedObject
+ * can be called.
+ * @param SELF The given #SSerializedObject*.
+ * @param FUNC The function method of the given object to check.
+ * @return #TRUE if function can be called, otherwise #FALSE.
+ * @note This casting is not safety checked.
+ */
+#define S_SERIALIZED_OBJECT_METH_VALID(SELF, FUNC)		\
+	S_SERIALIZED_OBJECT_CALL(SELF, FUNC) ? TRUE : FALSE
 
 
 /************************************************************************************/
@@ -155,7 +201,7 @@ S_API void SSerializedObjectWrite(const SSerializedObject *self, SDataWriter *wr
 S_LOCAL void _s_serialized_object_class_add(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_add(&SerializedObjectClass, error);
+	s_class_add(S_OBJECTCLASS(&SerializedObjectClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_serialized_object_class_add",
 			  "Failed to add SSerializedObjectClass");

@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2009 The Department of Arts and Culture,                           */
+/* Copyright (c) 2009-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -178,7 +178,7 @@
 		}
 
 		/* create new Python utterance processor */
-		uttProcPy = (SUttProcessorCB*)S_NEW("SUttProcessorCB", error);
+		uttProcPy = S_NEW(SUttProcessorCB, error);
 		if (*error != S_SUCCESS)
 			return NULL;
 
@@ -219,7 +219,7 @@
 
 %pythoncode
 %{
-import speect
+from . import speect
 
 def callback(callback_function):
     """

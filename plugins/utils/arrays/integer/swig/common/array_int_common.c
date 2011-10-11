@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2010 The Department of Arts and Culture,                           */
+/* Copyright (c) 2010-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -74,7 +74,7 @@ typedef struct
 		SArrayInt *tmp;
 
 
-		tmp = (SArrayInt*)S_NEW("SArrayInt", error);
+		tmp = S_NEW(SArrayInt, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "SArrayInt()",
 					  "Failed to create new 'SArrayInt' object"))

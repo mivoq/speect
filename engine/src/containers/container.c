@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2008-2009 The Department of Arts and Culture,                      */
+/* Copyright (c) 2008-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -42,6 +42,28 @@
 
 #include "base/utils/alloc.h"
 #include "containers/container.h"
+
+
+/************************************************************************************/
+/*                                                                                  */
+/* Macros                                                                           */
+/*                                                                                  */
+/************************************************************************************/
+
+/**
+* @hideinitializer
+* Test if the given function method of the given #SContainer
+* can be called.
+*
+* @param SELF The given #SContainer*.
+* @param FUNC The function method of the given object to check.
+*
+* @return #TRUE if function can be called, otherwise #FALSE.
+*
+* @note This casting is not safety checked.
+*/
+#define S_CONTAINER_METH_VALID(SELF, FUNC)		\
+	S_CONTAINER_CALL(SELF, FUNC) ? TRUE : FALSE
 
 
 /************************************************************************************/
@@ -125,7 +147,7 @@ S_API SIterator *_s_container_get_iterator_check(const void *self, s_erc *error)
 S_LOCAL void _s_container_class_add(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_add(&ContainerClass, error);
+	s_class_add(S_OBJECTCLASS(&ContainerClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 		  "_s_container_class_add",
 		  "Failed to add SContainerClass");

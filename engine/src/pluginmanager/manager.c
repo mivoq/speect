@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2008-2009 The Department of Arts and Culture,                      */
+/* Copyright (c) 2008-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -161,7 +161,7 @@ S_API SPlugin *s_pm_load_plugin(const char *path, s_erc *error)
 	 * object. Cache and then load, this overcomes
 	 * recursion problem.
 	 */
-	loaded = (SPlugin*)S_NEW("SPlugin", error);
+	loaded = S_NEW(SPlugin, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "s_pm_load_plugin",
 				  "Failed to create new plug-in object"))
@@ -213,49 +213,6 @@ S_API SPlugin *s_pm_load_plugin(const char *path, s_erc *error)
 }
 
 
-S_API s_bool s_pm_plugin_loaded(const char *path, s_erc *error)
-{
-	s_bool cached_plugin;
-	char *new_path;
-
-
-	S_CLR_ERR(error);
-
-	if (path == NULL)
-	{
-		S_CTX_ERR(error, S_ARGERROR,
-				  "s_pm_plugin_loaded",
-				  "Argument \"path\" is NULL");
-		return FALSE;
-	}
-
-	/*
-	 * if path does not contain a path separator we concatenate the
-	 * default path.
-	 */
-	new_path = s_pm_get_plugin_path(path, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "s_pm_plugin_loaded",
-				  "Call to \"s_pm_get_plugin_path\" failed"))
-		return FALSE;
-
-	/* check if the plugin is in the cache */
-	cached_plugin = SMapObjectPresent(pluginCache, new_path,
-									  error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "s_pm_plugin_loaded",
-				  "Call to \"SMapObjectPresent\" failed for plug-in path \'%s\'",
-				  new_path))
-	{
-		S_FREE(new_path);
-		return FALSE;
-	}
-
-	S_FREE(new_path);
-	return cached_plugin;
-}
-
-
 S_API char *s_pm_get_plugin_path(const char *path, s_erc *error)
 {
 	char *new_path;
@@ -282,12 +239,23 @@ S_API char *s_pm_get_plugin_path(const char *path, s_erc *error)
 		return new_path;
 	}
 
-	/* no path separators, concatenate with default path */
-	s_asprintf(&new_path, error, "%s%c%s", plugin_path, S_PATH_SEP, path);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "s_pm_get_plugin_path",
-				  "Call to \"s_asprintf\" failed"))
-		return NULL;
+	/* no path separators, concatenate with default path, if any */
+	if (plugin_path != NULL)
+	{
+		s_asprintf(&new_path, error, "%s%c%s", plugin_path, S_PATH_SEP, path);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "s_pm_get_plugin_path",
+					  "Call to \"s_asprintf\" failed"))
+			return NULL;
+	}
+	else /* we don't have a plugin_path */
+	{
+		new_path = s_strdup(path, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "s_pm_get_plugin_path",
+					  "Call to \"s_strdup\" failed"))
+			return NULL;
+	}
 
 	return new_path;
 }
@@ -374,7 +342,7 @@ S_LOCAL void _s_pm_init(s_erc *error)
 	initialized = TRUE;
 	s_mutex_init(&pm_mutex);
 
-	pluginCache = S_MAP(S_NEW("SMapHashTable", error));
+	pluginCache = S_MAP(S_NEW(SMapHashTable, error));
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "_s_pm_init",
 				  "Failed to create new SMapHashTable for plug-in cache"))
@@ -439,7 +407,7 @@ static void load_plugin(SPlugin *self, const char *path, s_erc *error)
 				  "Call to \"s_strdup\" failed"))
 		return;
 
-	pluginDso = (SDso*)S_NEW("SDso", error);
+	pluginDso = S_NEW(SDso, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "load_plugin",
 				  "Failed to create new dynamic shared object for plug-in"))
@@ -503,7 +471,7 @@ static void load_plugin(SPlugin *self, const char *path, s_erc *error)
 	{
 		S_CTX_ERR(error, S_FAILURE,
 				  "load_plugin",
-				  "Plug-in at \"%s\" (compiled ABI version %d.%d) is not compatible with this ABI version (%d.%d.%d) of the Speect Engine",
+				  "Plug-in at \"%s\" (compiled ABI version %d.%d) is not compatible with this ABI version (%d.%d.%s) of the Speect Engine",
 				  path, self->plugin_info->s_abi.major, self->plugin_info->s_abi.minor,
 				  S_MAJOR_VERSION, S_MINOR_VERSION, S_PATCHLEVEL);
 		S_DELETE(pluginDso, "PluginLoad", error);

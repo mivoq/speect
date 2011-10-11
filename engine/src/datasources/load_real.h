@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2008-2009 The Department of Arts and Culture,                      */
+/* Copyright (c) 2008-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -116,8 +116,8 @@ S_BEGIN_C_DECLS
 
 
 /**
- * Read a float value from a datasource.
- * @param ds The datasource form which to read the float value.
+ * Read a float value from a data source.
+ * @param ds The data source from which to read the float value.
  * @param error Error code.
  * @return The read float value.
  */
@@ -125,8 +125,8 @@ S_API float s_float_read(SDatasource *ds, s_erc *error);
 
 
 /**
- * Read a float value from a datasource starting at a given offset position.
- * @param ds The datasource form which to read the float value.
+ * Read a float value from a data source starting at a given offset position.
+ * @param ds The data source from which to read the float value.
  * @param pos The offset to start reading from.
  * @param error Error code.
  * @return The read float value.
@@ -136,7 +136,7 @@ S_API float s_float_read_at(SDatasource *ds, long pos, s_erc *error);
 
 /**
  * Write a float value to a data source.
- * @param ds The datasource which to write the float value to.
+ * @param ds The data source which to write the float value to.
  * @param f The float value to write.
  * @param error Error code.
  */
@@ -144,8 +144,8 @@ S_API void s_float_write(SDatasource *ds, float f, s_erc *error);
 
 
 /**
- * Write a float value to a datasource with an offset.
- * @param ds The datasource which to write the float value to.
+ * Write a float value to a data source with an offset.
+ * @param ds The data source which to write the float value to.
  * @param f The float value to write.
  * @param pos The offset.
  * @param error Error code.
@@ -165,8 +165,8 @@ S_API void s_float_write_at(SDatasource *ds, float f, long pos, s_erc *error);
 
 
 /**
- * Read a double value from a datasource.
- * @param ds The datasource form which to read the double value.
+ * Read a double value from a data source.
+ * @param ds The data source from which to read the double value.
  * @param error Error code.
  * @return The read double value.
  */
@@ -174,8 +174,8 @@ S_API double s_double_read(SDatasource *ds, s_erc *error);
 
 
 /**
- * Read a double value from a datasource starting at a given offset position.
- * @param ds The datasource form which to read the double value.
+ * Read a double value from a data source starting at a given offset position.
+ * @param ds The data source from which to read the double value.
  * @param pos The offset to start reading from.
  * @param error Error code.
  * @return The read double value.
@@ -185,7 +185,7 @@ S_API double s_double_read_at(SDatasource *ds, long pos, s_erc *error);
 
 /**
  * Write a double value to a data source.
- * @param ds The datasource which to write the double value to.
+ * @param ds The data source which to write the double value to.
  * @param d The double value to write.
  * @param error Error code.
  */
@@ -193,8 +193,8 @@ S_API void s_double_write(SDatasource *ds, double d, s_erc *error);
 
 
 /**
- * Write a double value to a datasource with an offset.
- * @param ds The datasource which to write the double value to.
+ * Write a double value to a data source with an offset.
+ * @param ds The data source which to write the double value to.
  * @param d The double value to write.
  * @param pos The offset.
  * @param error Error code.
@@ -205,57 +205,6 @@ S_API void s_double_write_at(SDatasource *ds, double d, long pos, s_erc *error);
 /**
  * @}
  */
-
-
-#ifdef SPCT_LONG_DOUBLE
-/**
- * @name long double Read/Write
- * @{
- */
-
-
-/**
- * Read a long double value from a datasource.
- * @param ds The datasource form which to read the long double value.
- * @param error Error code.
- * @return The read long double value.
- */
-S_API long double s_ldouble_read(SDatasource *ds, s_erc *error);
-
-
-/**
- * Read a long double value from a datasource starting at a given offset position.
- * @param ds The datasource form which to read the long double value.
- * @param pos The offset to start reading from.
- * @param error Error code.
- * @return The read long double value.
- */
-S_API long double s_ldouble_read_at(SDatasource *ds, long pos, s_erc *error);
-
-
-/**
- * Write a long double value to a data source.
- * @param ds The datasource which to write the long double value to.
- * @param ld The long double value to write.
- * @param error Error code.
- */
-S_API void s_ldouble_write(SDatasource *ds, long double ld, s_erc *error);
-
-
-/**
- * Write a long double value to a datasource with an offset.
- * @param ds The datasource which to write the long double value to.
- * @param ld The long double value to write.
- * @param pos The offset.
- * @param error Error code.
- */
-S_API void s_ldouble_write_at(SDatasource *ds, long double ld, long pos, s_erc *error);
-
-
-/**
- * @}
- */
-#endif /* SPCT_LONG_DOUBLE */
 
 
 /************************************************************************************/

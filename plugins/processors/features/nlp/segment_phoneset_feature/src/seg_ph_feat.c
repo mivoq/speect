@@ -64,7 +64,7 @@ static SSegPhonesetFeatureFeatProcClass SegPhonesetFeatureFeatProcClass; /* SSeg
 S_LOCAL void _s_seg_ph_feat_class_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(&SegPhonesetFeatureFeatProcClass, error);
+	s_class_reg(S_OBJECTCLASS(&SegPhonesetFeatureFeatProcClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_seg_ph_feat_class_reg",
 			  "Failed to register SSegPhonesetFeatureFeatProcClass");
@@ -74,7 +74,7 @@ S_LOCAL void _s_seg_ph_feat_class_reg(s_erc *error)
 S_LOCAL void _s_seg_ph_feat_class_free(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_free(&SegPhonesetFeatureFeatProcClass, error);
+	s_class_free(S_OBJECTCLASS(&SegPhonesetFeatureFeatProcClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_seg_ph_feat_class_free",
 			  "Failed to free SSegPhonesetFeatureFeatProcClass");
@@ -191,8 +191,9 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 	return extractedFeat;
 
 
-	self = NULL; /* compiler noise about unused parameters */
 	return NULL;
+
+	S_UNUSED(self);
 }
 
 

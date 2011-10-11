@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2009 The Department of Arts and Culture,                           */
+/* Copyright (c) 2009-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -78,7 +78,7 @@ typedef struct
 		/*
 		 * create ebml reader object
 		 */
-		ebmlReader = (SEbmlRead*)S_NEW("SEbmlRead", error);
+		ebmlReader = S_NEW(SEbmlRead, error);
 		if (*error != S_SUCCESS)
 		{
 			S_DELETE(ds, "SEbmlRead()", error);

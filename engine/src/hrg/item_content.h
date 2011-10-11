@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2008-2009 The Department of Arts and Culture,                      */
+/* Copyright (c) 2008-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -176,34 +176,6 @@ S_BEGIN_C_DECLS
 
 
 /**
- * @hideinitializer
- * Call the given function method of the given #SItmContent,
- * see full description #S_ITMCONTENT_CALL for usage.
- * @param SELF The given #SItmContent*.
- * @param FUNC The function method of the given object to call.
- * @note This casting is not safety checked.
- * @note Example usage: @code S_ITMCONTENT_CALL(self, func)(param1, param2, ..., paramN); @endcode
- * where @c param1, @c param2, ..., @c paramN are the parameters passed to the object function
- * @c func.
- */
-#define S_ITMCONTENT_CALL(SELF, FUNC)				\
-	((SItmContentClass *)S_OBJECT_CLS(SELF))->FUNC
-
-
-/**
- * @hideinitializer
- * Test if the given function method of the given #SItmContent
- * can be called.
- * @param SELF The given #SItmContent*.
- * @param FUNC The function method of the given object to check.
- * @return #TRUE if function can be called, otherwise #FALSE.
- * @note This casting is not safety checked.
- */
-#define S_ITMCONTENT_METH_VALID(SELF, FUNC)			\
-	S_ITMCONTENT_CALL(SELF, FUNC) ? TRUE : FALSE
-
-
-/**
  * @}
  */
 
@@ -215,7 +187,7 @@ S_BEGIN_C_DECLS
 /************************************************************************************/
 
 /**
- * The SItmContent structure.
+ * The item content object structure.
  * A class for containing the shared contents of items, that is
  * the individual linguistic features and references to relations.
  * @extends SObject
@@ -251,7 +223,9 @@ struct SItmContent
 /************************************************************************************/
 
 /**
- * The SItmContentClass structure.
+ * The item content class structure.
+ * A class for containing the shared contents of items, that is
+ * the individual linguistic features and references to relations.
  * @extends SObjectClass
  */
 typedef struct
@@ -276,8 +250,8 @@ typedef struct
 	 * @param item The item reference in the relation.
 	 * @param error Error code.
 	 */
-	void         (*add)           (SItmContent *self, const char *relation,
-								   const SItem *item, s_erc *error);
+	void         (* const add)           (SItmContent *self, const char *relation,
+										  const SItem *item, s_erc *error);
 
 	/**
 	 * @protected Get function pointer.
@@ -291,8 +265,8 @@ typedef struct
 	 * @return The item associated with this item content in the named
 	 * relation.
 	 */
-	const SItem *(*get)           (const SItmContent *self, const char *relation,
-								   s_erc *error);
+	const SItem *(* const get)           (const SItmContent *self, const char *relation,
+										  s_erc *error);
 
 	/**
 	 * @protected Remove function pointer.
@@ -303,8 +277,8 @@ typedef struct
 	 * @param relation The name of the relation/item (key-value) to remove.
 	 * @param error Error code.
 	 */
-	void         (*remove)        (SItmContent *self, const char *relation,
-								   s_erc *error);
+	void         (* const remove)        (SItmContent *self, const char *relation,
+										  s_erc *error);
 
 
 	/**
@@ -318,8 +292,8 @@ typedef struct
 	 *
 	 * @return #TRUE if relation is in content else #FALSE.
 	 */
-	s_bool       (*in_relation)   (const SItmContent *self, const char *relation,
-								   s_erc *error);
+	s_bool       (* const in_relation)   (const SItmContent *self, const char *relation,
+										  s_erc *error);
 
 	/**
 	 * @protected Features function pointer.
@@ -330,7 +304,7 @@ typedef struct
 	 *
 	 * @return A key-value map of the features for the given content.
 	 */
-	const SMap  *(*features)      (const SItmContent *self, s_erc *error);
+	const SMap  *(* const features)      (const SItmContent *self, s_erc *error);
 
 	/**
 	 * @protected NumRelations function pointer.
@@ -343,7 +317,7 @@ typedef struct
 	 * @return The number of relations in which the item content owner
 	 * item is in.
 	 */
-	size_t       (*num_relations) (const SItmContent *self, s_erc *error);
+	size_t       (* const num_relations) (const SItmContent *self, s_erc *error);
 } SItmContentClass;
 
 

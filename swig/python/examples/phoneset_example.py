@@ -28,6 +28,6 @@ v = item.voice()
 phoneset = v.data_get("phoneset")
 
 # get the vowel feature of item from phoneset
-print phoneset.phone_has_feature("a", "vowel")
+print(phoneset.phone_has_feature("a", "vowel"))
 
 

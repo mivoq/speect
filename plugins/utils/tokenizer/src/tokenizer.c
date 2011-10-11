@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2009 The Department of Arts and Culture,                           */
+/* Copyright (c) 2009-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -106,7 +106,7 @@ static const char * const s_default_postpunctuationsymbols = "\"'`.,:;!?(){}[]";
 S_LOCAL void _s_tokenizer_class_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(&TokenizerClass, error);
+	s_class_reg(S_OBJECTCLASS(&TokenizerClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_tokenizer_class_reg",
 			  "Failed to register STokenizerClass");
@@ -116,7 +116,7 @@ S_LOCAL void _s_tokenizer_class_reg(s_erc *error)
 S_LOCAL void _s_tokenizer_class_free(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_free(&TokenizerClass, error);
+	s_class_free(S_OBJECTCLASS(&TokenizerClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_tokenizer_class_free",
 			  "Failed to free STokenizerClass");
@@ -834,7 +834,7 @@ static SToken *s_get_token(STokenizer *ts, s_erc *error)
 	if (ts->currentToken != NULL)
 		S_DELETE(ts->currentToken, "s_get_token", error);
 
-	ts->currentToken = (SToken*)S_NEW("SToken", error);
+	ts->currentToken = S_NEW(SToken, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "s_get_token",
 				  "Failed to create new token"))

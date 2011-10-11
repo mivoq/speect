@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2010 The Department of Arts and Culture,                           */
+/* Copyright (c) 2010-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -47,11 +47,11 @@ the given utterance.
 
 
 :param utt: The utterance that the newly created relation should be placed in.
-:type utt: SUtterance
+:type utt: :class:`SUtterance`
 :param name: The name of the newly created relation.
-:type name: string
+:type name: str
 :return: Newly created relation object.
-:rtype: SRelation
+:rtype: :class:`SRelation`
 :raises: RuntimeError if Speect was unable to create the utterance.
 :note: Parameter *utt* may be ``None``.
 :note: A relation with the same name that already exists in the utterance will be deleted.
@@ -70,9 +70,9 @@ in the relation.
 
 
 :param toShare: The item with which the newly created item will share it's content. If ``None`` then a new content will be created for the appended item.
-:type toShare: SItem
+:type toShare: :class:`SItem`
 :return: Newly created and appended item object.
-:rtype: SItem
+:rtype: :class:`SItem`
 :raises: RuntimeError if Speect was unable to create the item.
 """
 %enddef
@@ -89,9 +89,9 @@ in the relation.
 
 
 :param toShare: The item with which the newly created item will share it's content. If ``None`` then a new content will be created for the prepended item.
-:type toShare: SItem
+:type toShare: :class:`SItem`
 :return: Newly created and prepended item object.
-:rtype: SItem
+:rtype: :class:`SItem`
 :raises: RuntimeError if Speect was unable to create the item.
 """
 %enddef
@@ -106,7 +106,7 @@ head()
 Get the first item in the relation.
 
 :return: The first item in the relation or ``None`` if the relation is empty.
-:rtype: SItem
+:rtype: :class:`SItem`
 """
 %enddef
 
@@ -120,7 +120,7 @@ tail()
 Get the last item in the relation.
 
 :return: The last item in the relation or ``None`` if the relation is empty.
-:rtype: SItem
+:rtype: :class:`SItem`
 """
 %enddef
 
@@ -134,7 +134,7 @@ name()
 Get the relation's name.
 
 :return: The relation's name.
-:rtype: string
+:rtype: str
 """
 %enddef
 
@@ -148,7 +148,7 @@ utterance()
 Get the relation's utterance.
 
 :return: The relation's utterance or ``None`` if no utterance was set.
-:rtype: SUtterance
+:rtype: :class:`SUtterance`
 """
 %enddef
 

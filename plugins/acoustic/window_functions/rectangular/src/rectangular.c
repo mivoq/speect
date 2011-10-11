@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2009 The Department of Arts and Culture,                           */
+/* Copyright (c) 2009-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -62,7 +62,7 @@ static SWinRectClass WinRectClass; /* SWinRect class declaration. */
 S_LOCAL void _s_winrect_class_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(&WinRectClass, error);
+	s_class_reg(S_OBJECTCLASS(&WinRectClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_winrect_class_reg",
 			  "Failed to register SWinRectClass");
@@ -72,7 +72,7 @@ S_LOCAL void _s_winrect_class_reg(s_erc *error)
 S_LOCAL void _s_winrect_class_free(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_free(&WinRectClass, error);
+	s_class_free(S_OBJECTCLASS(&WinRectClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_winrect_class_free",
 			  "Failed to free SWinRectClass");
@@ -133,7 +133,8 @@ static void InitWindow(SWinFunc **self, sint32 size, sint32 centre, s_erc *error
 quit_error:
 	S_DELETE(*self, "InitWindow", error);
 	*self = NULL;
-	centre = 0; /* suppress compiler noise about unused parameters */
+
+	S_UNUSED(centre);
 }
 
 

@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2009 The Department of Arts and Culture,                           */
+/* Copyright (c) 2009-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -63,7 +63,7 @@ static SWordDurFeatProcClass WordDurFeatProcClass; /* SWordDurFeatProc class dec
 S_LOCAL void _s_word_dur_class_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(&WordDurFeatProcClass, error);
+	s_class_reg(S_OBJECTCLASS(&WordDurFeatProcClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_word_dur_class_reg",
 			  "Failed to register SWordDurFeatProcClass");
@@ -73,7 +73,7 @@ S_LOCAL void _s_word_dur_class_reg(s_erc *error)
 S_LOCAL void _s_word_dur_class_free(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_free(&WordDurFeatProcClass, error);
+	s_class_free(S_OBJECTCLASS(&WordDurFeatProcClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_word_dur_class_free",
 			  "Failed to free SWordDurFeatProcClass");
@@ -206,8 +206,9 @@ quit_error:
 	if (extractedFeat != NULL)
 		S_DELETE(extractedFeat, "Run", error);
 
-	self = NULL; /* compiler noise about unused parameters */
 	return NULL;
+
+	S_UNUSED(self);
 }
 
 

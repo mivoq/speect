@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2010 The Department of Arts and Culture,                           */
+/* Copyright (c) 2010-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -138,7 +138,7 @@ error_clean_up:
 S_LOCAL void _s_map_py_class_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(&MapPyClass, error);
+	s_class_reg(S_OBJECTCLASS(&MapPyClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_map_py_class_reg",
 			  "Failed to add SMapPyClass");
@@ -157,13 +157,13 @@ static void InitMapPy(void *obj, s_erc *error)
 
 
 	S_CLR_ERR(error);
-	self->staticObjects = (SList*)S_NEW("SListList", error);
+	self->staticObjects = S_LIST(S_NEW(SListList, error));
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "InitMapPy",
 				  "Failed to create new 'SListList' object"))
 		return;
 
-	self->pyObject = (SPyObject*)S_NEW("SPyObject", error);
+	self->pyObject = S_NEW(SPyObject, error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "InitMapPy",
 			  "Failed to create new 'SPyObject' object");
@@ -559,7 +559,7 @@ static SList *MapPyValKeys(const SMap *self, s_erc *error)
 		return NULL;
 	}
 
-	pyList = (SListPy*)S_NEW("SListPy", error);
+	pyList = S_NEW(SListPy, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "MapPyValKeys",
 				  "Failed to create new 'SListPy' object"))
@@ -617,7 +617,7 @@ static SIterator *MapPyIterator(const SContainer *self, s_erc *error)
 
 	S_CLR_ERR(error);
 
-	itr = (SMapPyIterator*)S_NEW("SMapPyIterator", error);
+	itr = S_NEW(SMapPyIterator, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "MapPyIterator",
 				  "Failed to create new iterator"))

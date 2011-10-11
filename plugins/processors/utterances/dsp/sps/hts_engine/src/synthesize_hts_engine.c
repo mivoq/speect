@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2010 The Department of Arts and Culture,                           */
+/* Copyright (c) 2010-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -121,7 +121,7 @@ static void load_hts_engine_data(const SMap *data, HTS_Engine *engine,
 S_LOCAL void _s_hts_engine_synth_utt_proc_class_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(&HTSEngineSynthUttProcClass, error);
+	s_class_reg(S_OBJECTCLASS(&HTSEngineSynthUttProcClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_hts_engine_synth_utt_proc_class_reg",
 			  "Failed to register SHTSEngineSynthUttProcClass");
@@ -131,7 +131,7 @@ S_LOCAL void _s_hts_engine_synth_utt_proc_class_reg(s_erc *error)
 S_LOCAL void _s_hts_engine_synth_utt_proc_class_free(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_free(&HTSEngineSynthUttProcClass, error);
+	s_class_free(S_OBJECTCLASS(&HTSEngineSynthUttProcClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_hts_engine_synth_utt_proc_class_free",
 			  "Failed to free SHTSEngineSynthUttProcClass");
@@ -964,10 +964,10 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 		const char *tmp;
 
 
-		dFeat = s_path_to_featproc(itemItr, "hts_labels", error);
+		dFeat = SItemPathToFeatProc(itemItr, "hts_labels", error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "Run",
-					  "Call to \"s_path_to_featproc\" failed"))
+					  "Call to \"SItemPathToFeatProc\" failed"))
 			goto quit_error;
 
 		if (dFeat == NULL)
@@ -1041,7 +1041,7 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 	}
 
 	/* create an audio object */
-	audio = (SAudio*)S_NEW("SAudio", error);
+	audio = S_NEW(SAudio, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Run",
 				  "Failed to create new 'SAudio' object"))

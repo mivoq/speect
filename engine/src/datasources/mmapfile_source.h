@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2008-2009 The Department of Arts and Culture,                      */
+/* Copyright (c) 2008-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -112,7 +112,7 @@ S_BEGIN_C_DECLS
 
 /**
  * The mmap file source structure. Provides an interface to a memory mapped
- * file based datasource.
+ * file based data source.
  * @extends SDatasource
  */
 typedef struct
@@ -170,16 +170,18 @@ typedef SDatasourceClass SMMapFilesourceClass;
 
 /**
  * Opens a file to be memory mapped and used as a data source.
- * Open the file at path, where mode is character string as used by fopen().
+ * Open the file at path, where mode is character string as used by
+ * the standard function @c fopen().
  * @public @memberof SMMapFilesource
+ *
  * @param path The path and name of the file to open.
  * @param error Error code.
+ *
  * @return Pointer to the newly created data source.
- * @note The #SMMapFilesource data source is read only and does @b not implement
- * <ul>
- *  <li> #SDatasourceClass::write   (#SDatasourceWrite) and </li>
- *  <li> #SDatasourceClass::write_at   (#SDatasourceWriteAt). </li>
- * </ul>
+ *
+ * @note The #SMMapFilesource data source is read only and does @b not
+ * implement #SDatasourceClass methods @c write (#SDatasourceWrite) and
+ * @c write_at (#SDatasourceWriteAt).
  */
 S_API SDatasource *SMMapFilesourceOpenFile(const char *path, s_erc *error);
 

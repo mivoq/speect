@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2009 The Department of Arts and Culture,                           */
+/* Copyright (c) 2009-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -64,7 +64,7 @@ static SPhonesetClass PhonesetClass; /* SPhoneset class declaration. */
 S_LOCAL void _s_phoneset_class_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(&PhonesetClass, error);
+	s_class_reg(S_OBJECTCLASS(&PhonesetClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_phoneset_class_reg",
 			  "Failed to register SPhonesetClass");
@@ -74,7 +74,7 @@ S_LOCAL void _s_phoneset_class_reg(s_erc *error)
 S_LOCAL void _s_phoneset_class_free(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_free(&PhonesetClass, error);
+	s_class_free(S_OBJECTCLASS(&PhonesetClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_phoneset_class_free",
 			  "Failed to free SPhonesetClass");

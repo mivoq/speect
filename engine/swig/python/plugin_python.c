@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2010 The Department of Arts and Culture,                           */
+/* Copyright (c) 2010-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -62,7 +62,7 @@
 			return NULL;
 		}
 
-		pluginDso = (SDso*)S_NEW("SDso", error);
+		pluginDso = S_NEW(SDso, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "_s_get_plugin_info",
 					  "Failed to create new dynamic shared object for plug-in"))
@@ -328,10 +328,14 @@
 %{
 def get_plugin_info(path):
     """
+    get_plugin_info(path)
+
     Get information on the plug-in at the given path.
     If the given path does not include any path separators (just a file name)
     then the path is concatenated with the default plug-in path.
 
+    :param path: Path to plug-in file.
+    :type path: str
     :return: A dictionary with information on the given plug-in.
     :rtype: dict
     """

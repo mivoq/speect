@@ -74,7 +74,7 @@ static s_bool segment_is_pause(const SItem *item, s_erc *error);
 S_LOCAL void _s_seg_name_multilingual_class_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(&SegNameMultilingualFeatProcClass, error);
+	s_class_reg(S_OBJECTCLASS(&SegNameMultilingualFeatProcClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_seg_name_multilingual_class_reg",
 			  "Failed to register SSegNameMultilingualFeatProcClass");
@@ -84,7 +84,7 @@ S_LOCAL void _s_seg_name_multilingual_class_reg(s_erc *error)
 S_LOCAL void _s_seg_name_multilingual_class_free(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_free(&SegNameMultilingualFeatProcClass, error);
+	s_class_free(S_OBJECTCLASS(&SegNameMultilingualFeatProcClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_seg_name_multilingual_class_free",
 			  "Failed to free SSegNameMultilingualFeatProcClass");
@@ -209,11 +209,11 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 	/* not a pause */
 
 	/* get item's token */
-	tokenItem = s_path_to_item(item, "R:SylStructure.parent.parent.R:Token.parent",
-							   error);
+	tokenItem = SItemPathToItem(item, "R:SylStructure.parent.parent.R:Token.parent",
+								error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Run",
-				  "Call to \"s_path_to_item\" failed"))
+				  "Call to \"SItemPathToItem\" failed"))
 		return NULL;
 
 	if (tokenItem == NULL)
@@ -247,7 +247,7 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 	S_FREE(lang_name);
 	return extractedFeat;
 
-	self = NULL; /* compiler noise about unused parameters */
+	S_UNUSED(self);
 }
 
 

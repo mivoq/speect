@@ -58,10 +58,11 @@ include(${SWIG_USE_FILE})  # UseSWIG.cmake, provides swig functions
 
 #################################### Python ##########################################
 
-# has speect_include_python_directories macro
+# has speect_include_python_directories and speect_find_python macros
 include(${CMAKE_SOURCE_DIR}/swig/python/cmake/swigPythonFunctions.cmake)
 
-find_package(PythonLibs REQUIRED) # Note, CMake does not look for Python 3
+# find Python
+speect_find_python()
 
 # add Python to includes
 speect_include_python_directories()
@@ -96,7 +97,8 @@ set(CMAKE_C_FLAGS "")
 #                                speect.i properties                                 #
 #------------------------------------------------------------------------------------#
 
-list(APPEND SPCT_SWIG_FLAGS -Wall -Werror)
+# SWIG flags, macro in swigPythonFunctions.cmake
+speect_plugin_swig_python_flags()
 
 # add flags for Python Speect Engine wrapper generation
 set_source_files_properties(${CMAKE_BINARY_DIR}/engine/swig/python/speect.i 

@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2008-2009 The Department of Arts and Culture,                      */
+/* Copyright (c) 2008-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -168,7 +168,7 @@ S_BEGIN_C_DECLS
  *
  * @return The @b item from the path, relative to the given item.
  */
-S_API const SItem *s_path_to_item(const SItem *item, const char *path, s_erc *error);
+S_API const SItem *SItemPathToItem(const SItem *item, const char *path, s_erc *error);
 
 
 /**
@@ -184,8 +184,8 @@ S_API const SItem *s_path_to_item(const SItem *item, const char *path, s_erc *er
  * @return The item @b feature from the path, relative to the given
  * item.
  */
-S_API const SObject *s_path_to_feature(const SItem *item, const char *path,
-									   s_erc *error);
+S_API const SObject *SItemPathToFeature(const SItem *item, const char *path,
+										s_erc *error);
 
 
 /**
@@ -202,8 +202,8 @@ S_API const SObject *s_path_to_feature(const SItem *item, const char *path,
  * @return The result of the feature processor executed on the item
  * from the path, relative to the given item.
  */
-S_API SObject *s_path_to_featproc(const SItem *item, const char *path,
-								  s_erc *error);
+S_API SObject *SItemPathToFeatProc(const SItem *item, const char *path,
+								   s_erc *error);
 
 
 /**
@@ -211,7 +211,7 @@ S_API SObject *s_path_to_featproc(const SItem *item, const char *path,
  * object at the path. The object may be another item, a feature, or a
  * feature that has been calculated by a <i> feature processor
  * </i>. This function can be used as a replacement for
- * #s_path_to_item, #s_path_to_feature or #s_path_to_featproc.
+ * #SItemPathToItem, #SItemPathToFeature or #SItemPathToFeatProc.
  *
  * @public @memberof SItem
  *

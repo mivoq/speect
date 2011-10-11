@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2010 The Department of Arts and Culture,                           */
+/* Copyright (c) 2010-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -183,7 +183,7 @@
 		}
 
 		/* create new Python feature processor */
-		featProcPy = (SFeatProcessorCB*)S_NEW("SFeatProcessorCB", error);
+		featProcPy = S_NEW(SFeatProcessorCB, error);
 		if (*error != S_SUCCESS)
 			return NULL;
 
@@ -224,7 +224,7 @@
 
 %pythoncode
 %{
-import speect
+from . import speect
 
 def callback(callback_function):
     """

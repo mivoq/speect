@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2010 The Department of Arts and Culture,                           */
+/* Copyright (c) 2010-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -78,7 +78,7 @@ typedef struct
 		SMatrixInt *tmp;
 
 
-		tmp = (SMatrixInt*)S_NEW("SMatrixInt", error);
+		tmp = S_NEW(SMatrixInt, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "SMatrixInt()",
 					  "Failed to create new 'SMatrixInt' object"))

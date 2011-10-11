@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2010 The Department of Arts and Culture,                           */
+/* Copyright (c) 2010-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -72,7 +72,7 @@ static s_bool syl_is_accented(const SItem *syl, s_erc *error);
 S_LOCAL void _s_syl_accent_all_out_class_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(&SylAccentAllOutFeatProcClass, error);
+	s_class_reg(S_OBJECTCLASS(&SylAccentAllOutFeatProcClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_syl_accent_all_out_class_reg",
 			  "Failed to register SSylAccentAllOutFeatProcClass");
@@ -82,7 +82,7 @@ S_LOCAL void _s_syl_accent_all_out_class_reg(s_erc *error)
 S_LOCAL void _s_syl_accent_all_out_class_free(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_free(&SylAccentAllOutFeatProcClass, error);
+	s_class_free(S_OBJECTCLASS(&SylAccentAllOutFeatProcClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_syl_accent_all_out_class_free",
 			  "Failed to free SSylAccentAllOutFeatProcClass");
@@ -220,8 +220,9 @@ quit_error:
 	if (extractedFeat != NULL)
 		S_DELETE(extractedFeat, "Run", error);
 
-	self = NULL; /* compiler noise about unused parameters */
 	return NULL;
+
+	S_UNUSED(self);
 }
 
 

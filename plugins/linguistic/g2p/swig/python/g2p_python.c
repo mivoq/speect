@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2010 The Department of Arts and Culture,                           */
+/* Copyright (c) 2010-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -81,6 +81,29 @@
 
 %extend SG2P
 {
+#ifdef SPCT_SWIG_PYTHON_3 
+%pythoncode
+%{
+def apply(self, word):
+    """
+    apply(word)
+
+    Apply the g2p to the given word to get a phone list.
+
+    :param word: The word to convert to a phone list.
+    :type word: string
+    :return: A list of phones for the given word or ``None`` if the
+                 g2p failed. If the g2p failed a warning will be set in the
+                 error log.
+    :rtype: list
+    """
+
+    if not isinstance(word, str):
+        raise TypeError("Argument \"word\" must be a str type")
+
+    return _g2p_apply(self, word)
+%}
+#else /*! SPCT_SWIG_PYTHON_3 */
 %pythoncode
 %{
 def apply(self, word):
@@ -102,6 +125,7 @@ def apply(self, word):
 
     return _g2p_apply(self, word)
 %}
+#endif /* SPCT_SWIG_PYTHON_3 */
 };
 
 

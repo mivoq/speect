@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2009 The Department of Arts and Culture,                           */
+/* Copyright (c) 2009-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -75,7 +75,7 @@ static const SItem *word_get_next_item(const SItem *wordItem, s_erc *error);
 S_LOCAL void _s_morphdecomp_utt_proc_class_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(&MorphDecompUttProcClass, error);
+	s_class_reg(S_OBJECTCLASS(&MorphDecompUttProcClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_morphdecomp_utt_proc_class_reg",
 			  "Failed to register SMorphDecompUttProcClass");
@@ -85,7 +85,7 @@ S_LOCAL void _s_morphdecomp_utt_proc_class_reg(s_erc *error)
 S_LOCAL void _s_morphdecomp_utt_proc_class_free(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_free(&MorphDecompUttProcClass, error);
+	s_class_free(S_OBJECTCLASS(&MorphDecompUttProcClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_morphdecomp_utt_proc_class_free",
 			  "Failed to free SMorphDecompUttProcClass");
@@ -155,10 +155,10 @@ static const SItem *word_get_next_item(const SItem *wordItem, s_erc *error)
 		return nextItem;  /* easy */
 
 	/* now check syllables */
-	syl = s_path_to_item(wordItem, "R:SylStructure.parent", error);
+	syl = SItemPathToItem(wordItem, "R:SylStructure.parent", error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "word_get_next_item",
-				  "Call to \"s_path_to_item\" failed"))
+				  "Call to \"SItemPathToItem\" failed"))
 		return NULL;
 
 	if (syl == NULL)
@@ -304,7 +304,7 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 			goto quit_error;
 
 		/* get first segment (phone) of this word */
-		segmentItem = s_path_to_item(wordItem, "R:SylStructure.daughter.daughter", error);
+		segmentItem = SItemPathToItem(wordItem, "R:SylStructure.daughter.daughter", error);
 
 		/* get morphemes and their classes */
 		morphInfo = (SMap*)SFeatProcessorRun(morphDecompFeatProc, wordItem, error);

@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2008-2009 The Department of Arts and Culture,                      */
+/* Copyright (c) 2008-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -46,10 +46,10 @@
 /**
  * @ingroup SBase
  * @defgroup SLogging Logging
- * Loggin facilities.
+ * Logging facilities.
  * The logging system provides a mechanism to write @a formatted
  * messages to different types of streams. It is used by all the error
- * and debug reporting facilites in @ref SErrDbg, and therefore aims
+ * and debug reporting facilities in @ref SErrDbg, and therefore aims
  * to be as robust as possible. If any error occurs during one of the
  * logging functions, an error will be printed to @c stderr, and the
  * logging system will attempt to write the message to @c stdout.
@@ -72,7 +72,7 @@
  * </li>
  * <li> @ref SLogger
  *
- * The logger ouputs the log message to a stream.
+ * The logger outputs the log message to a stream.
  *
  * </li>
  * </ul>

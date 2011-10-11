@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2009 The Department of Arts and Culture,                           */
+/* Copyright (c) 2009-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -62,7 +62,7 @@ static SNumSylsCostFuncClass NumSylsCostFuncClass; /* SNumSylsCostFunc class dec
 S_LOCAL void _s_num_syls_class_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(&NumSylsCostFuncClass, error);
+	s_class_reg(S_OBJECTCLASS(&NumSylsCostFuncClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_num_syls_class_reg",
 			  "Failed to register SNumSylsCostFuncClass");
@@ -72,7 +72,7 @@ S_LOCAL void _s_num_syls_class_reg(s_erc *error)
 S_LOCAL void _s_num_syls_class_free(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_free(&NumSylsCostFuncClass, error);
+	s_class_free(S_OBJECTCLASS(&NumSylsCostFuncClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_num_syls_class_free",
 			  "Failed to free SNumSylsCostFuncClass");
@@ -106,12 +106,12 @@ static void SetFeature(const SCostFunction *self, SItem *item, s_erc *error)
 		goto quit_error;
 	}
 
-	extractedFeature = s_path_to_featproc(item,
-										  "R:SylStructure.parent.parent.word_num_syls",
-										  error);
+	extractedFeature = SItemPathToFeatProc(item,
+										   "R:SylStructure.parent.parent.word_num_syls",
+										   error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "SetFeature",
-				  "Call to \"s_path_to_featproc\" failed"))
+				  "Call to \"SItemPathToFeatProc\" failed"))
 		goto quit_error;
 
 	if (extractedFeature == NULL)

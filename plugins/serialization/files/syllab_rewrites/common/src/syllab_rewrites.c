@@ -91,7 +91,7 @@ static void replace_B(const s_str_list *B, s_str_list *A,
 S_LOCAL void _s_syllabification_rewrites_class_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(&SyllabificationRewritesClass, error);
+	s_class_reg(S_OBJECTCLASS(&SyllabificationRewritesClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_syllabification_rewrites_class_reg",
 			  "Failed to register SSyllabificationRewritesClass");
@@ -101,7 +101,7 @@ S_LOCAL void _s_syllabification_rewrites_class_reg(s_erc *error)
 S_LOCAL void _s_syllabification_rewrites_class_free(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_free(&SyllabificationRewritesClass, error);
+	s_class_free(S_OBJECTCLASS(&SyllabificationRewritesClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_syllabification_rewrites_class_free",
 			  "Failed to free SSyllabificationRewritesClass");
@@ -713,14 +713,14 @@ static SList *Syllabify(const SSyllabification *self, const SItem *word,
 		goto error_return;
 
 	/* create a new syllable */
-	syl = (SList*)S_NEW("SListList", error);
+	syl = S_LIST(S_NEW(SListList, error));
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Syllabify",
 				  "Failed to create new list"))
 		goto error_return;
 
 	/* create a new syllables list */
-	syllables = (SList*)S_NEW("SListList", error);
+	syllables = S_LIST(S_NEW(SListList, error));
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Syllabify",
 				  "Failed to create new list"))
@@ -773,7 +773,7 @@ static SList *Syllabify(const SSyllabification *self, const SItem *word,
 			got_more_syllables = FALSE;
 
 			/* create a new syl */
-			syl = (SList*)S_NEW("SListList", error);
+			syl = S_LIST(S_NEW(SListList, error));
 			if (S_CHK_ERR(error, S_CONTERR,
 						  "Syllabify",
 						  "Failed to create new list"))
@@ -828,7 +828,7 @@ error_return:
 
 	return NULL;
 
-	word = NULL; /* compiler noise about unused parameters */
+	S_UNUSED(word);
 }
 
 /************************************************************************************/

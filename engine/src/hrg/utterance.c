@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2008-2009 The Department of Arts and Culture,                      */
+/* Copyright (c) 2008-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -160,6 +160,42 @@
 
 #include "base/utils/alloc.h"
 #include "hrg/utterance.h"
+
+
+/************************************************************************************/
+/*                                                                                  */
+/* Macros                                                                           */
+/*                                                                                  */
+/************************************************************************************/
+
+/**
+ * @hideinitializer
+ * Call the given function method of the given #SUtterance.
+ * @param SELF The given #SUtterance*.
+ * @param FUNC The function method of the given object to call.
+ * @note This casting is not safety checked.
+ * @note Example usage:
+ @verbatim
+ S_UTTERANCE_CALL(self, func)(param1, param2, ..., paramN);
+ @endverbatim
+ * where @c param1, @c param2, ..., @c paramN are the parameters passed to the object function
+ * @c func.
+ */
+#define S_UTTERANCE_CALL(SELF, FUNC)				\
+	((SUtteranceClass *)S_OBJECT_CLS(SELF))->FUNC
+
+
+/**
+ * @hideinitializer
+ * Test if the given function method of the given #SUtterance
+ * can be called.
+ * @param SELF The given #SUtterance*.
+ * @param FUNC The function method of the given object to check.
+ * @return #TRUE if function can be called, otherwise #FALSE.
+ * @note This casting is not safety checked.
+ */
+#define S_UTTERANCE_METH_VALID(SELF, FUNC)		\
+	S_UTTERANCE_CALL(SELF, FUNC) ? TRUE : FALSE
 
 
 /************************************************************************************/
@@ -678,7 +714,7 @@ S_API SList *SUtteranceFeatKeys(const SUtterance *self, s_erc *error)
 S_LOCAL void _s_utterance_class_add(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_add(&UtteranceClass, error);
+	s_class_add(S_OBJECTCLASS(&UtteranceClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_utterance_class_add",
 			  "Failed to add SUtteranceClass");
@@ -700,13 +736,13 @@ static void InitUtterance(void *obj, s_erc *error)
 
 	self->voice = NULL;
 
-	self->features = S_MAP(S_NEW("SMapList", error));
+	self->features = S_MAP(S_NEW(SMapList, error));
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "InitUtterance",
 				  "Failed to create new map-list features"))
 		return;
 
-	self->relations = S_MAP(S_NEW("SMapList", error));
+	self->relations = S_MAP(S_NEW(SMapList, error));
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "InitUtterance",
 				  "Failed to create new map-list relations"))
@@ -859,7 +895,7 @@ static SRelation *UttNewRelation(SUtterance *self, const char *name, s_erc *erro
 
 	S_CLR_ERR(error);
 
-	newRel = (SRelation*)S_NEW("SRelation", error);
+	newRel = S_NEW(SRelation, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "UttNewRelation",
 				  "Failed to create new relation"))

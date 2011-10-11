@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2008-2009 The Department of Arts and Culture,                      */
+/* Copyright (c) 2008-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -45,7 +45,7 @@
 
 /**
  * @ingroup SLogger
- * @defgroup SFileStream File Streaming
+ * @defgroup SFileStream File Stream
  * Implements a file stream.
  * @{
  */
@@ -76,11 +76,10 @@ S_BEGIN_C_DECLS
 /************************************************************************************/
 
 /**
- * Create a new file stream. The file stream implementes the
- * function pointers of #s_stream (#s_stream::v_write and
- * #s_stream::destroy).
+ * Create a new file stream. The file stream implements the
+ * function pointers of #s_stream (v_write and destroy).
  *
- * @param path The full path and filename of the file which to
+ * @param path The full path and file name of the file which to
  * log to. If the file already exists, then it will be overwritten.
  *
  * @return Pointer to newly created file stream that can be used with

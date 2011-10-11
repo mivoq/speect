@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2008-2009 The Department of Arts and Culture,                      */
+/* Copyright (c) 2008-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -28,7 +28,7 @@
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* Initialization and quit of the Speect Engine loggers.                            */
+/* Speect Engine loggers helper functions.                                          */
 /*                                                                                  */
 /*                                                                                  */
 /************************************************************************************/
@@ -39,7 +39,7 @@
 
 /**
  * @file loggers.h
- * Initialization and quit of the Speect Engine loggers.
+ * Speect Engine loggers helper functions.
  */
 
 
@@ -51,7 +51,6 @@
 
 #include "include/common.h"
 #include "base/errdbg/errdbg.h"
-#include "base/iniparser/iniparser.h"
 #include "base/log/log.h"
 
 
@@ -68,18 +67,6 @@ S_BEGIN_C_DECLS
 /* Function prototypes                                                              */
 /*                                                                                  */
 /************************************************************************************/
-
-/**
- * Initialize the Speect Engine loggers.
- * Used internally by #speect_init.
- *
- * @private
- * @param spct_ini INI parser structure.
- * @param logger Logger to create and initialize.
- * @param error Error code.
- */
-S_LOCAL void _s_create_logger(s_ini_parser *spct_ini, s_logger **logger, s_erc *error);
-
 
 /**
  * Quit the Speect Engine loggers.

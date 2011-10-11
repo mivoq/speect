@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2009 The Department of Arts and Culture,                           */
+/* Copyright (c) 2009-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -74,7 +74,7 @@ static char *s_add_gzeros(const SG2PRewrites *self, const char *word, s_erc *err
 S_LOCAL void _s_g2p_rewrites_class_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(&G2PRewritesClass, error);
+	s_class_reg(S_OBJECTCLASS(&G2PRewritesClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_g2p_rewrites_class_reg",
 			  "Failed to register SG2PRewritesClass");
@@ -84,7 +84,7 @@ S_LOCAL void _s_g2p_rewrites_class_reg(s_erc *error)
 S_LOCAL void _s_g2p_rewrites_class_free(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_free(&G2PRewritesClass, error);
+	s_class_free(S_OBJECTCLASS(&G2PRewritesClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_g2p_rewrites_class_free",
 			  "Failed to free SG2PRewritesClass");
@@ -399,7 +399,7 @@ static SList *Apply(const SG2P *self, const char *word, s_erc *error)
 	}
 
 	/* create a list for the phones */
-	phoneList = (SList*)S_NEW("SListList", error);
+	phoneList = S_LIST(S_NEW(SListList, error));
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Apply",
 				  "Failed to create new 'SList' object"))

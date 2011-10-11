@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2008-2009 The Department of Arts and Culture,                      */
+/* Copyright (c) 2008-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -134,7 +134,7 @@ static SObject *s_internal_ff_clever(const SItem *item, const char *path,
 /************************************************************************************/
 
 
-S_API const SItem *s_path_to_item(const SItem *item, const char *path, s_erc *error)
+S_API const SItem *SItemPathToItem(const SItem *item, const char *path, s_erc *error)
 {
 	const SItem *pItem;
 
@@ -142,14 +142,14 @@ S_API const SItem *s_path_to_item(const SItem *item, const char *path, s_erc *er
 	S_CLR_ERR(error);
 	pItem = (const SItem*)s_internal_ff(item, path, 2, error);
 	S_CHK_ERR(error, S_CONTERR,
-			  "s_path_to_item",
+			  "SItemPathToItem",
 			  "Call to \"s_internal_ff\" failed");
 
 	return pItem;
 }
 
 
-S_API const SObject *s_path_to_feature(const SItem *item, const char *path, s_erc *error)
+S_API const SObject *SItemPathToFeature(const SItem *item, const char *path, s_erc *error)
 {
 	const SObject *feature;
 
@@ -157,14 +157,14 @@ S_API const SObject *s_path_to_feature(const SItem *item, const char *path, s_er
 	S_CLR_ERR(error);
 	feature = (const SObject*)s_internal_ff(item, path, 1, error);
 	S_CHK_ERR(error, S_CONTERR,
-			  "s_path_to_feature",
+			  "SItemPathToFeature",
 			  "Call to \"s_internal_ff\" failed");
 
 	return feature;
 }
 
 
-S_API SObject *s_path_to_featproc(const SItem *item, const char *path, s_erc *error)
+S_API SObject *SItemPathToFeatProc(const SItem *item, const char *path, s_erc *error)
 {
 	SObject *derivedFeature;
 
@@ -172,7 +172,7 @@ S_API SObject *s_path_to_featproc(const SItem *item, const char *path, s_erc *er
 	S_CLR_ERR(error);
 	derivedFeature = (SObject*)s_internal_ff(item, path, 0, error);
 	S_CHK_ERR(error, S_CONTERR,
-			  "s_path_to_featproc",
+			  "SItemPathToFeatProc",
 			  "Call to \"s_internal_ff\" failed");
 
 	return derivedFeature;

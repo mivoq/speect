@@ -104,9 +104,8 @@ static void plugin_register_function(s_erc *error)
 {
 	S_CLR_ERR(error);
 
-	/* register plug-in classes here */
-
 	/* TODO: your plug-in register function */
+	/* register plug-in classes here with s_class_reg */
 
 	S_CHK_ERR(error, S_CONTERR,
 			  SPCT_PLUGIN_REG_STR,
@@ -119,9 +118,8 @@ static void plugin_exit_function(s_erc *error)
 {
 	S_CLR_ERR(error);
 
-	/* free plug-in classes here */
-
 	/* TODO: your plug-in free function here */
+	/* free plug-in classes here with s_class_free */
 
 	S_CHK_ERR(error, S_CONTERR,
 			  SPCT_PLUGIN_EXIT_STR,

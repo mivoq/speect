@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2008-2009 The Department of Arts and Culture,                      */
+/* Copyright (c) 2008-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -42,7 +42,7 @@
 
 #include <locale.h>
 #include "speect.h"
-#include "main/ini.h"
+#include "main/plugin_path.h"
 #include "main/loggers.h"
 #include "main/modules.h"
 #include "main/managers.h"
@@ -71,9 +71,7 @@ static uint initialized_count = 0;
 S_API s_erc speect_init(s_logger *logger)
 {
 	s_erc local_err = S_SUCCESS;
-	s_ini_parser *spct_ini;
-	s_bool have_plugin_path;
-	const char *def_plugin_path;
+	const char *plugin_path;
 	s_logger *local_logger;
 
 
@@ -83,30 +81,36 @@ S_API s_erc speect_init(s_logger *logger)
 	/* set the current locale */
 	setlocale(LC_ALL, "");
 
-	/* load the Speect Engine initialization file (INI). */
-	spct_ini = _s_load_speect_ini(&local_err);
-	if ((spct_ini == NULL) || (local_err != S_SUCCESS))
-	{
-		S_ERR_PRINT(S_FAILURE, "speect_init",
-					"Failed to load Speect Engine INI file");
-		initialized_count--;
-		return S_FAILURE;
-	}
-
-	/* create logger to stderr if no logger was given */
+#ifdef SPCT_ERROR_HANDLING
+	/* create a logger if no logger was given and
+	 * SPCT_ERROR_HANDLING is defined.
+	 */
 	if (logger == NULL)
 	{
-		local_logger = s_logger_console_new(FALSE); /* FALSE == log to stderr */
+		/* if SPCT_DEBUGMODE is defined (defined for CMake Debug
+		 * builds) then log to console (stderr), else a null logger
+		 * will be created (error checking still takes place, not
+		 * logged).
+		 */
+#ifdef SPCT_DEBUGMODE
+		/* FALSE == log to stderr */
+		local_logger = s_logger_console_new(FALSE);
+#else /* !SPCT_DEBUGMODE */
+		local_logger = s_logger_null_new();
+#endif /* SPCT_DEBUGMODE */
 		if (local_logger == NULL)
 		{
 			S_ERR_PRINT(S_FAILURE, "speect_init",
-						"Failed to create a logger to stderr");
+						"Failed to create a null logger");
 			initialized_count--;
 			return S_FAILURE;
 		}
 
 		logger = local_logger;
 	}
+#else /* !SPCT_ERROR_HANDLING */
+	local_logger = NULL;
+#endif /* SPCT_ERROR_HANDLING */
 
 	/* initialize error handling module */
 	_s_errdbg_init(logger, S_DBG_NONE, &local_err);
@@ -121,8 +125,22 @@ S_API s_erc speect_init(s_logger *logger)
 		 * it takes hold of the loggers and destroys them
 		 * when it is quit.
 		 */
+#ifdef SPCT_ERROR_HANDLING
 		_s_destroy_loggers(logger, &local_err);
 		logger = NULL;
+#endif /* SPCT_ERROR_HANDLING */
+		initialized_count--;
+		return S_FAILURE;
+	}
+
+	/* get the plug-in path */
+	plugin_path = _s_find_plugin_path(&local_err);
+	if (S_CHK_ERR(&local_err, S_CONTERR,
+				  "speect_init",
+				  "Unable to find the plug-in path, call to \"_s_find_plugin_path\" failed"))
+	{
+		logger = NULL;
+		_s_errdbg_quit(&local_err);
 		initialized_count--;
 		return S_FAILURE;
 	}
@@ -178,28 +196,21 @@ S_API s_erc speect_init(s_logger *logger)
 		return S_FAILURE;
 	}
 
-	/* get default plug-in path from INI parser */
-	have_plugin_path = s_iniparser_entry_present(spct_ini, "paths:plug-ins");
-	if (have_plugin_path)
-	{
-		def_plugin_path = s_iniparser_get_string(spct_ini, "paths:plug-ins",
-												 NULL);
-		_s_pm_set_plugin_path(def_plugin_path, &local_err);
-		if (S_CHK_ERR(&local_err, S_CONTERR,
-					  "speect_init",
-					  "Failed to set default plug-in path"))
-		{
-			logger = NULL;
-			_s_managers_quit(&local_err);
-			_s_modules_quit(&local_err);
-			_s_classes_clear(&local_err);
-			_s_errdbg_quit(&local_err);
-			initialized_count--;
-			return S_FAILURE;
-		}
-	}
 
-	s_iniparser_free(spct_ini);
+	/* set the plug-in path in the plugin-manager */
+	_s_pm_set_plugin_path(plugin_path, &local_err);
+	if (S_CHK_ERR(&local_err, S_CONTERR,
+				  "speect_init",
+				  "Failed to set plug-in path in the plugin-manager"))
+	{
+		logger = NULL;
+		_s_managers_quit(&local_err);
+		_s_modules_quit(&local_err);
+		_s_classes_clear(&local_err);
+		_s_errdbg_quit(&local_err);
+		initialized_count--;
+		return S_FAILURE;
+	}
 
 #ifdef SPCT_DEBUGMODE
 	_s_classes_print(&local_err);

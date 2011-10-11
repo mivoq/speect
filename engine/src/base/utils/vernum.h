@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2008-2009 The Department of Arts and Culture,                      */
+/* Copyright (c) 2008-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -78,7 +78,7 @@
 /**
  * @ingroup SBaseUtils
  * @defgroup SVernum Version Numbers
- * Function relating to version information and data structures for
+ * Functions relating to version information and data structures for
  * the storage of version information.
  * @{
  */
@@ -124,9 +124,9 @@ typedef struct
 	uint8 minor;
 
 	/**
-	 * Patch number.
+	 * Patch name.
 	 */
-	uint8 patch;
+	const char *patch;
 
 	/**
 	 * Release name.
@@ -175,7 +175,7 @@ S_API s_lib_version s_speect_version(void);
  * @param minor_min The <i> minimum </i> required minor version of the
  * Speect Engine.
  *
- * @return TRUE if OK, else FALSE.
+ * @return #TRUE if OK, else #FALSE.
  */
 S_API s_bool s_lib_version_ok(uint8 major_min, uint8 minor_min);
 
@@ -186,7 +186,7 @@ S_API s_bool s_lib_version_ok(uint8 major_min, uint8 minor_min);
  *
  * @param version The version to test.
  *
- * @return TRUE if OK, else FALSE.
+ * @return #TRUE if OK, else #FALSE.
  */
 S_LOCAL s_bool s_version_ok(const s_version version);
 

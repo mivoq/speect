@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2009 The Department of Arts and Culture,                           */
+/* Copyright (c) 2009-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -62,7 +62,7 @@ static SWordPosCostFuncClass WordPosCostFuncClass; /* SWordPosCostFunc class dec
 S_LOCAL void _s_word_pos_class_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(&WordPosCostFuncClass, error);
+	s_class_reg(S_OBJECTCLASS(&WordPosCostFuncClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_word_pos_class_reg",
 			  "Failed to register SWordPosCostFuncClass");
@@ -72,7 +72,7 @@ S_LOCAL void _s_word_pos_class_reg(s_erc *error)
 S_LOCAL void _s_word_pos_class_free(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_free(&WordPosCostFuncClass, error);
+	s_class_free(S_OBJECTCLASS(&WordPosCostFuncClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_word_pos_class_free",
 			  "Failed to free SWordPosCostFuncClass");
@@ -109,22 +109,22 @@ static void SetFeature(const SCostFunction *self, SItem *item, s_erc *error)
 		goto quit_error;
 	}
 
-	thisItemWord = s_path_to_item(item, "R:SylStructure.parent.parent", error);
+	thisItemWord = SItemPathToItem(item, "R:SylStructure.parent.parent", error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "SetFeature",
-				  "Call to \"s_path_to_item\" failed"))
+				  "Call to \"SItemPathToItem\" failed"))
 		goto quit_error;
 
-	nextItemWord = s_path_to_item(item, "n.R:SylStructure.parent.parent", error);
+	nextItemWord = SItemPathToItem(item, "n.R:SylStructure.parent.parent", error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "SetFeature",
-				  "Call to \"s_path_to_item\" failed"))
+				  "Call to \"SItemPathToItem\" failed"))
 		goto quit_error;
 
-	prevItemWord = s_path_to_item(item, "p.R:SylStructure.parent.parent", error);
+	prevItemWord = SItemPathToItem(item, "p.R:SylStructure.parent.parent", error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "SetFeature",
-				  "Call to \"s_path_to_item\" failed"))
+				  "Call to \"SItemPathToItem\" failed"))
 		goto quit_error;
 
 	if (thisItemWord == NULL)

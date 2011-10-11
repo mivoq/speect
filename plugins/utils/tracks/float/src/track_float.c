@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2009 The Department of Arts and Culture,                           */
+/* Copyright (c) 2009-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -63,7 +63,7 @@ static STrackFloatClass TrackFloatClass; /* STrackFloat class declaration. */
 S_LOCAL void _s_track_float_class_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(&TrackFloatClass, error);
+	s_class_reg(S_OBJECTCLASS(&TrackFloatClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_track_float_class_reg",
 			  "Failed to register STrackFloatClass");
@@ -73,7 +73,7 @@ S_LOCAL void _s_track_float_class_reg(s_erc *error)
 S_LOCAL void _s_track_float_class_free(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_free(&TrackFloatClass, error);
+	s_class_free(S_OBJECTCLASS(&TrackFloatClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_track_float_class_free",
 			  "Failed to free STrackFloatClass");
@@ -93,7 +93,7 @@ static void Init(void *obj, s_erc *error)
 
 	S_CLR_ERR(error);
 	self->time = NULL;
-	self->data = (SMatrixFloat*)S_NEW("SMatrixFloat", error);
+	self->data = S_NEW(SMatrixFloat, error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "Init",
 			  "Failed to create new 'SMatrixFloat' object");

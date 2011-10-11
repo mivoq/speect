@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2008-2009 The Department of Arts and Culture,                      */
+/* Copyright (c) 2008-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -81,7 +81,7 @@ S_BEGIN_C_DECLS
 
 /**
  * @typedef s_bool
- * Type definition of a boolean type.
+ * Type definition of a boolean type (#TRUE or #FALSE).
  */
 
 

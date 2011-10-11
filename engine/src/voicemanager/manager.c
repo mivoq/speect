@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2008-2009 The Department of Arts and Culture,                      */
+/* Copyright (c) 2008-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -303,7 +303,7 @@ S_LOCAL void _s_vm_init(s_erc *error)
 	initialized = TRUE;
 	s_mutex_init(&vm_mutex);
 
-	dataTypes = S_MAP(S_NEW("SMapList", error));
+	dataTypes = S_MAP(S_NEW(SMapList, error));
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "_s_vm_init",
 				  "Failed to create new map for data cache"))
@@ -313,7 +313,7 @@ S_LOCAL void _s_vm_init(s_erc *error)
 		return;
 	}
 
-	dataIdentity = S_MAP(S_NEW("SMapList", error));
+	dataIdentity = S_MAP(S_NEW(SMapList, error));
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "_s_vm_init",
 				  "Failed to create new map for data identity"))
@@ -369,7 +369,7 @@ static SVoice *load_voice_no_data(const char *path, SMap **dataConfig, s_erc *er
 				  path))
 		return NULL;
 
-	voice = (SVoice*)S_NEW("SVoice", error);
+	voice = S_NEW(SVoice, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "load_voice_no_data",
 				  "Failed to create new \'SVoice\' object"))
@@ -502,10 +502,10 @@ static const SObject *load_data(const char *plugin_path,
 		 * it's loaded, increase the dataType object tmp's reference
 		 * count, and return the data object.
 		 */
-		dataEntry = (dataType*)SObjectGetVoidStruct(tmp, "dataType", error);
+		dataEntry = (dataType*)SObjectGetVoid(tmp, "dataType", error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "load_data",
-					  "Call to \"SObjectGetVoidStruct\" for type \'dataType\' failed"))
+					  "Call to \"SObjectGetVoid\" for type \'dataType\' failed"))
 			return NULL;
 
 		SObjectIncRef(tmp);
@@ -560,10 +560,10 @@ static const SObject *load_data(const char *plugin_path,
 
 	dataEntry->dataObject = dataObject;
 	dataEntry->dataPlugin = dataPlugin;
-	tmp = SObjectSetVoidStruct(dataEntry, "dataType", free_dataType, error);
+	tmp = SObjectSetVoid(dataEntry, "dataType", free_dataType, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "load_data",
-				  "Call to \"SObjectSetVoidStruct\" failed for data at path \'%s\'",
+				  "Call to \"SObjectSetVoid\" failed for data at path \'%s\'",
 				  data_path))
 	{
 		S_DELETE(dataPlugin, "load_data", error);

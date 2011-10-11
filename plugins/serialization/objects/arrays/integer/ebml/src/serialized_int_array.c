@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2009 The Department of Arts and Culture,                           */
+/* Copyright (c) 2009-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -79,7 +79,7 @@ S_LOCAL void _s_serialized_ebml_array_int_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
 
-	s_class_reg(&EbmlArrayIntClass, error);
+	s_class_reg(S_OBJECTCLASS(&EbmlArrayIntClass), error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "_s_serialized_ebml_array_int_reg",
 				  "Failed to register SEbmlArrayIntClass"))
@@ -105,7 +105,7 @@ S_LOCAL void _s_serialized_ebml_array_int_free(s_erc *error)
 			  "_s_serialized_ebml_array_int_free",
 			  "Failed to remove serialized object class SEbmlArrayIntClass");
 
-	s_class_free(&EbmlArrayIntClass, error);
+	s_class_free(S_OBJECTCLASS(&EbmlArrayIntClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_serialized_ebml_array_int_free",
 			  "Failed to free SEbmlArrayIntClass");

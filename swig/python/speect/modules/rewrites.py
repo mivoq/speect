@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 ######################################################################################
-## Copyright (c) 2010 The Department of Arts and Culture,                           ##
+## Copyright (c) 2010-2011 The Department of Arts and Culture,                      ##
 ## The Government of the Republic of South Africa.                                  ##
 ##                                                                                  ##
 ## Contributors:  Meraka Institute, CSIR, South Africa.                             ##
@@ -69,11 +69,11 @@ class RewriteRule(object):
         """Print in 'semicolon format'...
         """
         ### PYTHON2 ###
-        return ";".join([unicode(self.LC),
-                         unicode(self.A),
-                         unicode(self.RC),
-                         unicode(self.B),
-                         unicode(self.ordinal)])
+        return ";".join([str(self.LC),
+                         str(self.A),
+                         str(self.RC),
+                         str(self.B),
+                         str(self.ordinal)])
         ### PYTHON2 ###
 
     def _itemMatch(self, PATT, THING, sets):

@@ -267,6 +267,6 @@ S_API void s_set_py_logger(PyObject *logger, s_erc *error)
 	 */
 	s_set_errdbg_level(S_DBG_ALL, NULL);
 
-	s_errdbg_set_logger(slogger);
+	s_set_errdbg_logger(slogger);
 }
 

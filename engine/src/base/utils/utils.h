@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2008-2009 The Department of Arts and Culture,                      */
+/* Copyright (c) 2008-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -61,9 +61,9 @@
 #include "base/utils/alloc.h"       /* Memory allocation and deallocation. */
 #include "base/utils/types.h"       /* Defines basic data types.           */
 #include "base/utils/vernum.h"      /* Definiton of version data types.    */
-#include "base/utils/math.h"        /* Basic math functions and constants. */
+#include "base/utils/smath.h"       /* Basic math functions and constants. */
 #include "base/utils/byteswap.h"    /* Endian byteswapping functions.      */
-#include "base/utils/time.h"        /* Time functions and definitions.     */
+#include "base/utils/stime.h"       /* Time functions and definitions.     */
 #include "base/utils/path.h"        /* File system path functions.         */
 
 
@@ -87,7 +87,7 @@ S_BEGIN_C_DECLS
  *
  * @param error Error code.
  *
- * @note Dependant on the @ref SErrDbg module being intialized.
+ * @note Dependent on the @ref SErrDbg module being initialized.
  */
 S_LOCAL void _s_base_utils_init(s_erc *error);
 

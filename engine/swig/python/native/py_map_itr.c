@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2010 The Department of Arts and Culture,                           */
+/* Copyright (c) 2010-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -246,7 +246,7 @@ clean_up:
 S_LOCAL void _s_map_py_iterator_class_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(&MapPyIteratorClass, error);
+	s_class_reg(S_OBJECTCLASS(&MapPyIteratorClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_map_py_iterator_class_reg",
 			  "Failed to add SMapPyIteratorClass");

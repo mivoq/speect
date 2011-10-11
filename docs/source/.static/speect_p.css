@@ -1,0 +1,79 @@
+/*
+ * speect_p.css_t
+ * ~~~~~~~~~~~~~~
+ *
+ * Sphinx stylesheet -- Speect project specific settings.
+ * Created by Aby Louw
+ *
+ * :copyright: Copyright 2011, Human Language Technologies Group, Meraka Institute, CSIR, South Africa
+ * :license: BSD
+ *
+ */
+
+/* -- index graphical links ----------------------------------------------------------- */
+
+
+/*#getting-started ul {*/
+.quicklinks ul {
+	float: left; 
+	padding: 0;
+}
+/*#getting-started li {*/
+.quicklinks li {
+	float: left; 
+	display: inline;
+	margin: 1.1em;
+}
+
+/*#getting-started a {*/
+.quicklinks a {
+  float: left;
+  text-align: center;
+  padding-top: 5em;
+  min-width: 49px;
+  background-position: center top;
+  background-repeat: no-repeat;
+}
+
+.quicklinks {
+/*   width: 100%; */
+  margin-top: 0;
+  margin-bottom: 0;
+  margin-left: 35%;
+          
+}
+
+
+/* -- images for quicklinks ------------------------------------------------- */
+
+
+.link-documentation a { 
+  background-image: url(index_documentation.png)
+ }
+
+.link-download a { 
+  background-image: url(index_download.png)
+
+ }
+
+.link-license a { 
+  background-image: url(index_license.png)
+
+ }
+
+
+
+/* -- index logo ----------------------------------------------------------- */
+
+.index-logo { 
+  margin-top: 1%;
+  margin-bottom: 1%;
+  width: 60%;
+ }
+
+
+div.highlight-py,
+div.highlight-c { 
+  overflow: auto;
+}
+

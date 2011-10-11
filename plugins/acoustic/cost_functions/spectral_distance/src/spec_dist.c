@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2009 The Department of Arts and Culture,                           */
+/* Copyright (c) 2009-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -63,7 +63,7 @@ static SSpecDistCostFuncClass SpecDistCostFuncClass; /* SSpecDistCostFunc class 
 S_LOCAL void _s_spec_dist_class_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(&SpecDistCostFuncClass, error);
+	s_class_reg(S_OBJECTCLASS(&SpecDistCostFuncClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_spec_dist_class_reg",
 			  "Failed to register SSpecDistCostFuncClass");
@@ -73,7 +73,7 @@ S_LOCAL void _s_spec_dist_class_reg(s_erc *error)
 S_LOCAL void _s_spec_dist_class_free(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_free(&SpecDistCostFuncClass, error);
+	s_class_free(S_OBJECTCLASS(&SpecDistCostFuncClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_spec_dist_class_free",
 			  "Failed to free SSpecDistCostFuncClass");
@@ -107,8 +107,6 @@ float GetCost(const SCostFunction *self, const SItem *item1, const SItem *item2,
 	S_CLR_ERR(error);
 	if (item1 == NULL)
 	{
-		self = NULL; /* compiler noise about unused parameters */
-
 		S_CTX_ERR(error, S_ARGERROR,
 				  "GetCost",
 				  "Argument \"item1\" is NULL");
@@ -165,6 +163,8 @@ float GetCost(const SCostFunction *self, const SItem *item1, const SItem *item2,
 	spectral_distance = sqrt(spectral_distance/i);
 
 	return (float)spectral_distance;
+
+	S_UNUSED(self);
 }
 
 

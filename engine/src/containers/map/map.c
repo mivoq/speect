@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2008-2009 The Department of Arts and Culture,                      */
+/* Copyright (c) 2008-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -87,6 +87,25 @@
 
 /************************************************************************************/
 /*                                                                                  */
+/* Macros                                                                           */
+/*                                                                                  */
+/************************************************************************************/
+
+/**
+ * @hideinitializer
+ * Test if the given function method of the given #SMap
+ * can be called.
+ * @param SELF The given #SMap*.
+ * @param FUNC The function method of the given object to check.
+ * @return #TRUE if function can be called, otherwise #FALSE.
+ * @note This casting is not safety checked.
+ */
+#define S_MAP_METH_VALID(SELF, FUNC)			\
+	S_MAP_CALL(SELF, FUNC) ? TRUE : FALSE
+
+
+/************************************************************************************/
+/*                                                                                  */
 /*  Static variables                                                                */
 /*                                                                                  */
 /************************************************************************************/
@@ -140,6 +159,15 @@ S_API sint32 SMapGetInt(const SMap *self, const char *key, s_erc *error)
 				  "SMapGetInt",
 				  "Call to class method \"val_get\" failed"))
 	{
+		S_UNLOCK_CONTAINER;
+		return 0;
+	}
+
+	if (tmp == NULL)
+	{
+		S_CTX_ERR(error, S_ARGERROR,
+				  "SMapGetInt",
+				  "No key, \"%s\", value in map", key);
 		S_UNLOCK_CONTAINER;
 		return 0;
 	}
@@ -199,6 +227,15 @@ S_API float SMapGetFloat(const SMap *self, const char *key, s_erc *error)
 		return 0.0;
 	}
 
+	if (tmp == NULL)
+	{
+		S_CTX_ERR(error, S_ARGERROR,
+				  "SMapGetFloat",
+				  "No key, \"%s\", value in map", key);
+		S_UNLOCK_CONTAINER;
+		return 0.0;
+	}
+
 	f = SObjectGetFloat(tmp, error);
 	S_UNLOCK_CONTAINER;
 
@@ -247,6 +284,15 @@ S_API const char *SMapGetString(const SMap *self, const char *key, s_erc *error)
 				  "SMapGetString",
 				  "Call to class method \"val_get\" failed"))
 	{
+		S_UNLOCK_CONTAINER;
+		return NULL;
+	}
+
+	if (tmp == NULL)
+	{
+		S_CTX_ERR(error, S_ARGERROR,
+				  "SMapGetString",
+				  "No key, \"%s\", value in map", key);
 		S_UNLOCK_CONTAINER;
 		return NULL;
 	}
@@ -300,6 +346,15 @@ S_API const SObject *SMapGetObject(const SMap *self, const char *key, s_erc *err
 				  "SMapGetObject",
 				  "Call to class method \"val_get\" failed"))
 	{
+		S_UNLOCK_CONTAINER;
+		return NULL;
+	}
+
+	if (tmp == NULL)
+	{
+		S_CTX_ERR(error, S_ARGERROR,
+				  "SMapGetObject",
+				  "No key, \"%s\", value in map", key);
 		S_UNLOCK_CONTAINER;
 		return NULL;
 	}
@@ -1023,7 +1078,7 @@ S_API SMap *SMapCopy(SMap *dst, const SMap *src, s_erc *error)
 S_LOCAL void _s_map_class_add(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_add(&MapClass, error);
+	s_class_add(S_OBJECTCLASS(&MapClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_map_class_add",
 			  "Failed to add SMapClass");

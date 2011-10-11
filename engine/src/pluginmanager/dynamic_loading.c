@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2008-2009 The Department of Arts and Culture,                      */
+/* Copyright (c) 2008-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -66,7 +66,7 @@ S_DECLARE_MUTEX_STATIC(dll_mutex);
 /*                                                                                  */
 /************************************************************************************/
 
-S_API void *s_dso_open(const char *filename, s_erc *error)
+S_LOCAL void *s_dso_open(const char *filename, s_erc *error)
 {
 	void *handle;
 
@@ -96,7 +96,7 @@ S_API void *s_dso_open(const char *filename, s_erc *error)
 }
 
 
-S_API void *s_dso_sym(void *dso_handle, const char *symbol, s_erc *error)
+S_LOCAL void *s_dso_sym(void *dso_handle, const char *symbol, s_erc *error)
 {
 	void *symbol_add;
 
@@ -135,7 +135,7 @@ S_API void *s_dso_sym(void *dso_handle, const char *symbol, s_erc *error)
 }
 
 
-S_API void s_dso_close(void *dso_handle, s_erc *error)
+S_LOCAL void s_dso_close(void *dso_handle, s_erc *error)
 {
 	S_CLR_ERR(error);
 	s_mutex_lock(&dll_mutex);

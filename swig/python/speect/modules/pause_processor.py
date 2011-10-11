@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 ######################################################################################
-## Copyright (c) 2010 The Department of Arts and Culture,                           ##
+## Copyright (c) 2010-2011 The Department of Arts and Culture,                      ##
 ## The Government of the Republic of South Africa.                                  ##
 ##                                                                                  ##
 ## Contributors:  Meraka Institute, CSIR, South Africa.                             ##

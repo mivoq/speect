@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2008-2009 The Department of Arts and Culture,                      */
+/* Copyright (c) 2008-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -72,7 +72,7 @@ S_LOCAL SMap *_s_load_voice_feature_processors(const SMap *voiceConfig,
 	S_CLR_ERR(error);
 
 	/* create a map container for feature-processors */
-	featProcessors = S_MAP(S_NEW("SMapList", error));
+	featProcessors = S_MAP(S_NEW(SMapList, error));
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "_s_load_voice_feature_processors",
 				  "Failed to create new map for voice feature-processors"))
@@ -130,7 +130,7 @@ S_LOCAL SMap *_s_load_voice_feature_processors(const SMap *voiceConfig,
 	if (itr)
 	{
 		/* create a plug-in list */
-		featProcPlugins = S_LIST(S_NEW("SListList", error));
+		featProcPlugins = S_LIST(S_NEW(SListList, error));
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "_s_load_voice_feature_processors",
 					  "Failed to create new list for voice feature-processor plug-ins"))
@@ -236,7 +236,7 @@ S_LOCAL SMap *_s_load_voice_feature_processors(const SMap *voiceConfig,
 			return NULL;
 		}
 
-		fProcessor = S_FEATPROCESSOR(S_NEW(featproc_class, error));
+		fProcessor = S_FEATPROCESSOR(S_NEW_FROM_NAME(featproc_class, error));
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "_s_load_voice_feature_processors",
 					  "Failed to create new feature-processor of class \'%s\'",

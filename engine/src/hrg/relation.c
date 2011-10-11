@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2008-2009 The Department of Arts and Culture,                      */
+/* Copyright (c) 2008-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -132,6 +132,42 @@
 
 /************************************************************************************/
 /*                                                                                  */
+/* Macros                                                                           */
+/*                                                                                  */
+/************************************************************************************/
+
+/**
+ * @hideinitializer
+ * Call the given function method of the given #SRelation.
+ * @param SELF The given #SRelation*.
+ * @param FUNC The function method of the given object to call.
+ * @note This casting is not safety checked.
+ * @note Example usage:
+ @verbatim
+ S_RELATION_CALL(self, func)(param1, param2, ..., paramN);
+ @endverbatim
+ * where @c param1, @c param2, ..., @c paramN are the parameters passed to the object function
+ * @c func.
+ */
+#define S_RELATION_CALL(SELF, FUNC)					\
+	((SRelationClass *)S_OBJECT_CLS(SELF))->FUNC
+
+
+/**
+ * @hideinitializer
+ * Test if the given function method of the given #SRelation
+ * can be called.
+ * @param SELF The given #SRelation*.
+ * @param FUNC The function method of the given object to check.
+ * @return #TRUE if function can be called, otherwise #FALSE.
+ * @note This casting is not safety checked.
+ */
+#define S_RELATION_METH_VALID(SELF, FUNC)		\
+	S_RELATION_CALL(SELF, FUNC) ? TRUE : FALSE
+
+
+/************************************************************************************/
+/*                                                                                  */
 /* Static variables                                                                 */
 /*                                                                                  */
 /************************************************************************************/
@@ -241,9 +277,9 @@ S_API const SUtterance *SRelationUtterance(const SRelation *self, s_erc *error)
 }
 
 
-S_API const SItem *SRelationHead(const SRelation *self, s_erc *error)
+S_API SItem *SRelationHead(const SRelation *self, s_erc *error)
 {
-	const SItem *item;
+	SItem *item;
 
 	if (self == NULL)
 	{
@@ -271,9 +307,9 @@ S_API const SItem *SRelationHead(const SRelation *self, s_erc *error)
 }
 
 
-S_API const SItem *SRelationTail(const SRelation *self, s_erc *error)
+S_API SItem *SRelationTail(const SRelation *self, s_erc *error)
 {
-	const SItem *item;
+	SItem *item;
 
 	if (self == NULL)
 	{
@@ -376,7 +412,7 @@ S_API SItem *SRelationPrepend(SRelation *self, const SItem *toShare, s_erc *erro
 S_LOCAL void _s_relation_class_add(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_add(&RelationClass, error);
+	s_class_add(S_OBJECTCLASS(&RelationClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 		  "_s_relation_class_add",
 		  "Failed to add SRelationClass");
@@ -450,14 +486,14 @@ static const SUtterance *RelationUtterance(const SRelation *self, s_erc *error)
 }
 
 
-static const SItem *RelationHead(const SRelation *self, s_erc *error)
+static SItem *RelationHead(const SRelation *self, s_erc *error)
 {
 	S_CLR_ERR(error);
 	return self->head;
 }
 
 
-static const SItem *RelationTail(const SRelation *self, s_erc *error)
+static SItem *RelationTail(const SRelation *self, s_erc *error)
 {
 	S_CLR_ERR(error);
 	return self->tail;
@@ -470,7 +506,7 @@ static SItem *RelationAppend(SRelation *self, const SItem *toShare, s_erc *error
 
 
 	S_CLR_ERR(error);
-	newItem = (SItem*)S_NEW("SItem", error);
+	newItem = S_NEW(SItem, error);
 	if (S_CHK_ERR(error, S_FAILURE,
 		      "RelationAppend",
 		      "Failed to create new item"))
@@ -502,7 +538,7 @@ static SItem *RelationPrepend(SRelation *self, const SItem *toShare, s_erc *erro
 
 
 	S_CLR_ERR(error);
-	newItem = (SItem*)S_NEW("SItem", error);
+	newItem = S_NEW(SItem, error);
 	if (S_CHK_ERR(error, S_FAILURE,
 		      "RelationAppend",
 		      "Failed to create new item"))

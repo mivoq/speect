@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2009 The Department of Arts and Culture,                           */
+/* Copyright (c) 2009-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -74,7 +74,7 @@ static SEBMLHalfphoneDBFileClass EBMLHalfphoneDBFileClass; /* SEBMLHalfphoneDBFi
 S_LOCAL void _s_serialized_ebml_halfphone_db_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(&EBMLHalfphoneDBFileClass, error);
+	s_class_reg(S_OBJECTCLASS(&EBMLHalfphoneDBFileClass), error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "_s_serialized_ebml_halfphone_db_reg",
 				  "Failed to register SEBMLHalfphoneDBFileClass"))
@@ -88,7 +88,7 @@ S_LOCAL void _s_serialized_ebml_halfphone_db_reg(s_erc *error)
 		s_erc local_err = S_SUCCESS;
 
 
-		s_class_free(&EBMLHalfphoneDBFileClass, &local_err);
+		s_class_free(S_OBJECTCLASS(&EBMLHalfphoneDBFileClass), &local_err);
 		return;
 	}
 }
@@ -107,7 +107,7 @@ S_LOCAL void _s_serialized_ebml_halfphone_db_free(s_erc *error)
 			  "_s_serialized_ebml_halfphone_db_free",
 			  "Failed to remove serialized file class SEBMLHalfphoneDBFileClass");
 
-	s_class_free(&EBMLHalfphoneDBFileClass, error);
+	s_class_free(S_OBJECTCLASS(&EBMLHalfphoneDBFileClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_serialized_ebml_halfphone_db_free",
 			  "Failed to free SEBMLHalfphoneDBFileClass");

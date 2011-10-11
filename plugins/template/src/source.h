@@ -25,14 +25,6 @@
  * A simple description
  */
 
-
-/**
- * @defgroup ClassName description
- * description
- * @{
- */
-
-
 /************************************************************************************/
 /*                                                                                  */
 /* Modules used                                                                     */
@@ -56,6 +48,7 @@ S_BEGIN_C_DECLS
 /*                                                                                  */
 /************************************************************************************/
 
+/* TODO: add correct names */
 /**
  * @hideinitializer
  * Return the given #SYour child/parent class object as a
@@ -69,10 +62,11 @@ S_BEGIN_C_DECLS
 #define S_YOUR(SELF)    ((SObjectName *)(SELF))  /* TODO: add object name */
 
 
+/* TODO: add correct names */
 /**
  * @hideinitializer
  * Call the given function method of the given #SYour,
- * see full description #S_AUDIO_CALL for usage.
+ * see full description #S_YOUR_CALL for usage.
  *
  * @param SELF The given #SYour*.
  * @param FUNC The function method of the given object to call.
@@ -86,7 +80,7 @@ S_BEGIN_C_DECLS
 	((SClassName *)S_OBJECT_CLS(SELF))->FUNC  /* TODO: add class name */
 
 
-
+/* TODO: add correct names */
 /**
  * @hideinitializer
  * Test if the given function method of the given #SYour

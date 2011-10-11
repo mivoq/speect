@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2008-2009 The Department of Arts and Culture,                      */
+/* Copyright (c) 2008-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -111,7 +111,7 @@ static void s_list_list_del_function(void *le, s_erc *error);
 S_LOCAL void _s_list_list_class_add(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_add(&ListListClass, error);
+	s_class_add(S_OBJECTCLASS(&ListListClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_list_list_class_add",
 			  "Failed to add SListListClass");
@@ -412,7 +412,7 @@ static SList *ListListCopy(SList *dst, const SList *src, s_erc *error)
 	if (dst == NULL)
 	{
 		made_new = TRUE;
-		listDst = (SListList*)S_NEW("SListList", error);
+		listDst = S_NEW(SListList, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "ListListCopy",
 					  "Failed to create new 'SListList' object"))
@@ -608,7 +608,7 @@ static SIterator *ListListIterator(const SContainer *self, s_erc *error)
 
 	S_CLR_ERR(error);
 
-	itr = (SListListIterator*)S_NEW("SListListIterator", error);
+	itr = S_NEW(SListListIterator, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "ListListIterator",
 				  "Failed to create new iterator"))

@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2009 The Department of Arts and Culture,                           */
+/* Copyright (c) 2009-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -63,7 +63,7 @@ static SF0DistCostFuncClass F0DistCostFuncClass; /* SF0DistCostFunc class declar
 S_LOCAL void _s_f0_dist_class_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(&F0DistCostFuncClass, error);
+	s_class_reg(S_OBJECTCLASS(&F0DistCostFuncClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_f0_dist_class_reg",
 			  "Failed to register SF0DistCostFuncClass");
@@ -73,7 +73,7 @@ S_LOCAL void _s_f0_dist_class_reg(s_erc *error)
 S_LOCAL void _s_f0_dist_class_free(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_free(&F0DistCostFuncClass, error);
+	s_class_free(S_OBJECTCLASS(&F0DistCostFuncClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_f0_dist_class_free",
 			  "Failed to free SF0DistCostFuncClass");
@@ -106,8 +106,6 @@ float GetCost(const SCostFunction *self, const SItem *item1, const SItem *item2,
 	S_CLR_ERR(error);
 	if (item1 == NULL)
 	{
-		self = NULL; /* compiler noise about unused parameters */
-
 		S_CTX_ERR(error, S_ARGERROR,
 				  "GetCost",
 				  "Argument \"item1\" is NULL");
@@ -159,6 +157,8 @@ float GetCost(const SCostFunction *self, const SItem *item1, const SItem *item2,
 	f0_distance = sqrt(pow((left_f0 - right_f0),2));
 
  	return (float)f0_distance;
+
+	S_UNUSED(self);
 }
 
 

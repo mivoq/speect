@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2009 The Department of Arts and Culture,                           */
+/* Copyright (c) 2009-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -62,7 +62,7 @@ static SSylPosCostFuncClass SylPosCostFuncClass; /* SSylPosCostFunc class declar
 S_LOCAL void _s_syl_pos_class_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(&SylPosCostFuncClass, error);
+	s_class_reg(S_OBJECTCLASS(&SylPosCostFuncClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_syl_pos_class_reg",
 			  "Failed to register SSylPosCostFuncClass");
@@ -72,7 +72,7 @@ S_LOCAL void _s_syl_pos_class_reg(s_erc *error)
 S_LOCAL void _s_syl_pos_class_free(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_free(&SylPosCostFuncClass, error);
+	s_class_free(S_OBJECTCLASS(&SylPosCostFuncClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_syl_pos_class_free",
 			  "Failed to free SSylPosCostFuncClass");
@@ -109,22 +109,22 @@ static void SetFeature(const SCostFunction *self, SItem *item, s_erc *error)
 		goto quit_error;
 	}
 
-	thisItemInSylRel = s_path_to_item(item, "R:SylStructure", error);
+	thisItemInSylRel = SItemPathToItem(item, "R:SylStructure", error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "SetFeature",
-				  "Call to \"s_path_to_item\" failed"))
+				  "Call to \"SItemPathToItem\" failed"))
 		goto quit_error;
 
-	nextItemInSylRel = s_path_to_item(item, "R:SylStructure.n", error);
+	nextItemInSylRel = SItemPathToItem(item, "R:SylStructure.n", error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "SetFeature",
-				  "Call to \"s_path_to_item\" failed"))
+				  "Call to \"SItemPathToItem\" failed"))
 		goto quit_error;
 
-	prevItemInSylRel = s_path_to_item(item, "R:SylStructure.p", error);
+	prevItemInSylRel = SItemPathToItem(item, "R:SylStructure.p", error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "SetFeature",
-				  "Call to \"s_path_to_item\" failed"))
+				  "Call to \"SItemPathToItem\" failed"))
 		goto quit_error;
 
 	if (thisItemInSylRel == NULL)

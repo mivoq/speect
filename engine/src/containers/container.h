@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2008-2009 The Department of Arts and Culture,                      */
+/* Copyright (c) 2008-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -102,35 +102,21 @@ S_BEGIN_C_DECLS
 
 /**
  * @hideinitializer
- * Call the given function method of the given #SContainer,
- * see full description #S_CONTAINER_CALL for usage.
+ * Call the given function method of the given #SContainer.
  *
  * @param SELF The given #SContainer*.
  * @param FUNC The function method of the given object to call.
  *
  * @note This casting is not safety checked.
- * @note Example usage: @code S_CONTAINER_CALL(self, func)(param1, param2, ..., paramN); @endcode
+ * @note Example usage:
+ @verbatim
+ S_CONTAINER_CALL(self, func)(param1, param2, ..., paramN);
+ @endverbatim
  * where @c param1, @c param2, ..., @c paramN are the parameters
  * passed to the object function @c func.
  */
 #define S_CONTAINER_CALL(SELF, FUNC)					\
 	((SContainerClass *)S_OBJECT_CLS(SELF))->FUNC
-
-
-/**
- * @hideinitializer
- * Test if the given function method of the given #SContainer
- * can be called.
- *
- * @param SELF The given #SContainer*.
- * @param FUNC The function method of the given object to check.
- *
- * @return #TRUE if function can be called, otherwise #FALSE.
- *
- * @note This casting is not safety checked.
- */
-#define S_CONTAINER_METH_VALID(SELF, FUNC)		\
-	S_CONTAINER_CALL(SELF, FUNC) ? TRUE : FALSE
 
 
 /**
@@ -180,8 +166,8 @@ S_BEGIN_C_DECLS
 /************************************************************************************/
 
 /**
- * The SContainer structure.
  * An abstract data type which is a collections of other objects.
+ * All containers inherit from this object.
  * @extends SObject
  */
 typedef struct SContainer
@@ -205,7 +191,8 @@ typedef struct SContainer
 /************************************************************************************/
 
 /**
- * The SContainerClass structure.
+ * The container class structure.
+ * All containers classes inherit from this class.
  * @extends SObjectClass
  */
 typedef struct
@@ -225,10 +212,10 @@ typedef struct
 	 * @param error Error code.
 	 *
 	 * @return Iterator to the first object of the container. If there
-	 * are no objects in the container, then @c NULL must be
+	 * are no objects in the container, then #NULL must be
 	 * returned.
 	 */
-	SIterator  *(*get_iterator)(const SContainer *self, s_erc *error);
+	SIterator  *(* const get_iterator)(const SContainer *self, s_erc *error);
 } SContainerClass;
 
 
@@ -240,14 +227,14 @@ typedef struct
 
 /**
  * Get an iterator that points to the first object of the
- * container. If the container is empty then @c NULL is returned.
+ * container. If the container is empty then #NULL is returned.
  * @public @memberof SContainer
  *
  * @param self The container for which an iterator is requested.
  * @param error Error code.
  *
- * @return Iterator that points to first object in container or @c
- * NULL if the container is empty.
+ * @return Iterator that points to first object in container or #NULL
+ * if the container is empty.
  *
  * @sa #S_ITERATOR_GET
  */
@@ -258,13 +245,13 @@ S_API SIterator *SContainerGetIterator(const SContainer *self, s_erc *error);
  * Utility function for macro #S_ITERATOR_GET.
  * If @c SPCT_DO_SAFE_CAST is defined then this function is called and
  * it tries to cast the @c self variable to #SContainer. If it fails
- * it sets an error an returns @c NULL.
+ * it sets an error an returns #NULL.
  * @private
  *
  * @param self The SContainer type variable to get an iterator from.
  * @param error Error code.
  *
- * @return Iterator to container is cast was successful, else @c NULL.
+ * @return Iterator to container is cast was successful, else #NULL.
  */
 S_API SIterator *_s_container_get_iterator_check(const void *self, s_erc *error);
 

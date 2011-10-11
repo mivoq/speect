@@ -46,7 +46,7 @@
 /**
  * @ingroup SBaseStrings
  * @defgroup SUtf8StringLists String List
- * Provides s utf-8 aware string list.
+ * Provides UTF-8 aware string list.
  * @{
  */
 
@@ -108,21 +108,21 @@ S_API s_str_list *s_str_list_new(s_erc *error);
 
 
 /**
- * Create a new string list from sub-strings of @c string divided
- * by @c split_string.
+ * Create a new string list by splitting the given @c string with
+ * the given @c separator.
  *
  * @param string The string to split into sub-strings.
- * @param split_string The string to split @c string with.
+ * @param separator The string to split @c string with.
  * @param error Error code.
  *
  * @return Pointer to the newly created string list.
  */
-S_API s_str_list *s_str_list_split(const char *string, const char *split_string,
+S_API s_str_list *s_str_list_split(const char *string, const char *separator,
 								   s_erc *error);
 
 
 /**
- * Delete a string list.
+ * Delete the given string list.
  * Deletes the list and frees up all the strings contained in the
  * list.
  *
@@ -134,21 +134,22 @@ S_API void s_str_list_delete(s_str_list *self, s_erc *error);
 
 /**
  * @private
- * Find the string in the list which matches the given string.
+ * Find the string in the given string list which matches the given
+ * string.
  *
  * @param self The string list.
- * @param f Start searching from this string element (including) onwards. If
- * @c NULL then start from first string element.
+ * @param f Start searching from this string element (including)
+ * onwards. If #NULL then start from first string element.
  * @param string The string to match.
  * @param index A variable to hold the index of the string element found
- * which matches the data. -1 if not found. Set to @c NULL if not required.
+ * which matches the data. -1 if not found. Set to #NULL if not required.
  * @param error Error code.
  *
  * @return Pointer to the string list element which matches the data,
- * else @c NULL.
+ * else #NULL.
  *
  * @note String lists are indexed starting from 0.
- * @note The index variable will be relative if f is @b not @c NULL.
+ * @note The index variable will be relative if @c f is @b not #NULL.
  */
 S_API const s_str_list_element *s_str_list_find_index(const s_str_list *self,
 													  const s_str_list_element *f,
@@ -158,7 +159,7 @@ S_API const s_str_list_element *s_str_list_find_index(const s_str_list *self,
 
 
 /**
- * Return the first string element in the list.
+ * Return the first string element in the given string list.
  *
  * @param self The string list.
  * @param error Error code.
@@ -170,7 +171,7 @@ S_API const s_str_list_element *s_str_list_first(const s_str_list *self,
 
 
 /**
- * Return the last string element in the list.
+ * Return the last string element in the given string list.
  *
  * @param self The string list.
  * @param error Error code.
@@ -183,7 +184,7 @@ S_API const s_str_list_element *s_str_list_last(const s_str_list *self,
 
 /**
  * @hideinitializer
- * Find the index into the string list of the given string list
+ * Find the index into the given string list of the given string list
  * element.
  *
  * @param self The string list.
@@ -193,7 +194,7 @@ S_API const s_str_list_element *s_str_list_last(const s_str_list *self,
  * @param error Error code.
  *
  * @return Pointer to the string list element which matches the data,
- * else @c NULL.
+ * else #NULL.
  *
  * @note String lists are indexed starting from 0.
  */
@@ -202,13 +203,13 @@ S_API const s_str_list_element *s_str_list_last(const s_str_list *self,
 
 
 /**
- * Find the nth string element in the list.
+ * Find the nth string element in the given string list.
  *
  * @param self The string list.
  * @param n Index of string element to find.
  * @param error Error code.
  *
- * @return Pointer to the nth string list element or @c NULL if index
+ * @return Pointer to the nth string list element or #NULL if index
  * is out of bounds.
  *
  * @note The string list elements are indexed from 0.
@@ -219,13 +220,13 @@ S_API const s_str_list_element *s_str_list_nth(const s_str_list *self,
 
 
 /**
- * Find the nth string in the list.
+ * Find the nth string in the given string list.
  *
  * @param self The string list.
  * @param n Index of string to find.
  * @param error Error code.
  *
- * @return Pointer to the nth string or @c NULL if index
+ * @return Pointer to the nth string or #NULL if index
  * is out of bounds.
  *
  * @note The string list elements are indexed from 0.
@@ -236,7 +237,7 @@ S_API const char *s_str_list_nth_string(const s_str_list *self,
 
 
 /**
- * Get the string list element's string.
+ * Get the given string list element's string.
  *
  * @param self The string list element.
  * @param error Error code.
@@ -248,8 +249,8 @@ S_API const char *s_str_list_element_get(const s_str_list_element *self,
 
 
 /**
- * Replace the string list element's string. The replaced string is
- * freed.
+ * Replace the given string list element's string. The replaced string
+ * is freed.
  *
  * @param self The string list element who's string is to be replaced.
  * @param string The new string list element string.
@@ -263,8 +264,8 @@ S_API void s_str_list_element_replace(s_str_list_element *self,
 
 
 /**
- * Unlink string list element from string list, and return the string
- * list element's string.
+ * Unlink the given string list element from it's parent string list,
+ * and return the string list element's string.
  *
  * @param self The string list element to be unlinked.
  * @param error Error code.
@@ -277,13 +278,13 @@ S_API char *s_str_list_element_unlink(s_str_list_element *self, s_erc *error);
 
 
 /**
- * Remove the string list element from it's parent string list and
- * delete string list element's string.
+ * Delete the given string list element from it's parent string list,
+ * and free the string list element's string.
  *
  * @param self The string list element to be deleted.
  * @param error Error code.
  *
- * @return Pointer to the previous string list element or @c NULL if none.
+ * @return Pointer to the previous string list element or #NULL if none.
  *
  */
 S_API s_str_list_element *s_str_list_element_delete(s_str_list_element *self,
@@ -319,14 +320,15 @@ S_API const s_str_list_element *s_str_list_element_prev(const s_str_list_element
 
 /**
  * @hideinitializer
- * Find the string list element which matches the given string.
+ * Find the string list element in the given string list, which
+ * matches the given string.
  *
  * @param self The string list.
  * @param string The string to match.
  * @param error Error code.
  *
  * @return Pointer to the string list element which matches the given
- * string, else @c NULL if no match.
+ * string, else #NULL if no match.
  *
  * @note Returns the first match.
  */
@@ -335,7 +337,7 @@ S_API const s_str_list_element *s_str_list_element_prev(const s_str_list_element
 
 
 /**
- * Query if the string list has any elements.
+ * Query if the given string list has any elements.
  *
  * @param self The string list to query.
  * @param error Error code.
@@ -346,7 +348,7 @@ S_API s_bool s_str_list_isempty(const s_str_list *self, s_erc *error);
 
 
 /**
- * Get the number of elements in the string list.
+ * Get the number of elements in the given string list.
  *
  * @param self The string list to query.
  * @param error Error code.
@@ -361,8 +363,8 @@ S_API uint32 s_str_list_size(const s_str_list *self, s_erc *error);
  * #s_str_list_append.
  *
  * @param self The string list.
+ * @param string The string to append.
  * @param error Error code.
- * @param data The string to append.
  *
  * @note Internally a duplicate of @c string is made and ownership
  * taken thereof.
@@ -372,8 +374,9 @@ S_API void s_str_list_push(s_str_list *self, const char *string,
 
 
 /**
- * Pop last string of string list. Removes last string list element
- * from the string list and returns the string list element's string.
+ * Pop last string from the given string list. Removes last string
+ * list element from the string list and returns the string list
+ * element's string.
  *
  * @param self The string list.
  * @param error Error code.
@@ -387,7 +390,8 @@ S_API char *s_str_list_pop(s_str_list *self, s_erc *error);
 
 
 /**
- * Reverse the order of the string list elements in the string list.
+ * Reverse the order of the string list elements in the given string
+ * list.
  *
  * @param self The string list to reverse.
  * @param error Error code.
@@ -398,11 +402,11 @@ S_API void s_str_list_reverse(s_str_list *self, s_erc *error);
 
 
 /**
- * Prepend a string to beginning of the string list.
+ * Prepend a string to beginning of the given string list.
  *
  * @param self The string list.
- * @param error Error code.
  * @param string The string to prepend.
+ * @param error Error code.
  *
  * @note Internally a duplicate of @c string is made and ownership
  * taken thereof.
@@ -412,11 +416,11 @@ S_API void s_str_list_prepend(s_str_list *self, const char *string,
 
 
 /**
- * Append a string to end of the string list.
+ * Append a string to end of the given string list.
  *
  * @param self The string list.
- * @param error Error code.
  * @param string The string to append.
+ * @param error Error code.
  *
  * @note Internally a duplicate of @c string is made and ownership
  * taken thereof.
@@ -440,7 +444,8 @@ S_API void s_str_list_append(s_str_list *self, const char *string,
  * taken thereof.
  */
 S_API const s_str_list_element *s_str_list_insert_before(s_str_list_element *self,
-														 const char *string, s_erc *error);
+														 const char *string,
+														 s_erc *error);
 
 
 /**
@@ -458,17 +463,18 @@ S_API const s_str_list_element *s_str_list_insert_before(s_str_list_element *sel
  * taken thereof.
  */
 S_API const s_str_list_element *s_str_list_insert_after(s_str_list_element *self,
-														const char *string, s_erc *error);
+														const char *string,
+														s_erc *error);
 
 
 /**
- * Return a newly allocated copy of the source string list, which must
+ * Return a newly allocated copy of the given string list, which must
  * later be freed by the caller.
  *
  * @param src The source string list.
  * @param error Error code.
  *
- * @return A copy of @a src.
+ * @return A copy of @c src.
  *
  * @note This is a <em> deep copy </em>.
  */
@@ -476,18 +482,18 @@ S_API s_str_list *s_str_list_dup(const s_str_list *src, s_erc *error);
 
 
 /**
- * Return a newly allocated slice of the given string list of the
- * source string list, which must later be freed by the caller.
+ * Return a newly allocated slice of the given string list, which must
+ * later be freed by the caller.
  *
  * @param src The source string list.
  * @param a Start position of the slice in the source string list. If
- * a is greater than or equal to the list size then @c NULL is returned.
+ * a is greater than or equal to the list size then #NULL is returned.
  * @param b End position of the slice in the source string list. If b = -1, or
  * b is greater than the number of elements in the source string list then
  * the slice is to the end of the source string list
  * @param error Error code.
  *
- * @return A slice of @a src.
+ * @return A slice of @c src.
  *
  * @note This is a <em> deep copy </em>.
  */
@@ -526,7 +532,7 @@ S_API void s_str_list_merge(s_str_list *self, const s_str_list *with,
  * between elements of the string list.
  *
  * @param self The string list.
- * @param sep The separator to put between the string elements.
+ * @param separator The separator to put between the string elements.
  * @param error Error code.
  *
  * @return The string list as a string.
@@ -534,7 +540,7 @@ S_API void s_str_list_merge(s_str_list *self, const s_str_list *with,
  * @note The caller is responsible for the memory of the returned
  * string.
  */
-S_API char *s_str_list_to_string(s_str_list *self, const char *sep,
+S_API char *s_str_list_to_string(s_str_list *self, const char *separator,
 								 s_erc *error);
 
 

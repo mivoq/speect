@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2008-2009 The Department of Arts and Culture,                      */
+/* Copyright (c) 2008-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -118,7 +118,7 @@ S_BEGIN_C_DECLS
 
 /**
  * Read a uint8 value from a data source.
- * @param ds The datasource form which to read the uint8 value.
+ * @param ds The data source from which to read the uint8 value.
  * @param error Error code.
  * @return The read uint8 value.
  */
@@ -127,7 +127,7 @@ S_API uint8 s_uint8_read(SDatasource *ds, s_erc *error);
 
 /**
  * Read a uint8 value from a data source starting at a given offset position.
- * @param ds The datasource form which to read the uint8 value.
+ * @param ds The data source from which to read the uint8 value.
  * @param pos The offset to start reading from.
  * @param error Error code.
  * @return The read uint8 value.
@@ -137,7 +137,7 @@ S_API uint8 s_uint8_read_at(SDatasource *ds, long pos, s_erc *error);
 
 /**
  * Write a uint8 value to a data source.
- * @param ds The datasource which to write the uint8 value to.
+ * @param ds The data source which to write the uint8 value to.
  * @param i The uint8 value to write.
  * @param error Error code.
  */
@@ -146,7 +146,7 @@ S_API void s_uint8_write(SDatasource *ds, uint8 i, s_erc *error);
 
 /**
  * Write a uint8 value to a data source with an offset.
- * @param ds The datasource which to write the uint8 value to.
+ * @param ds The data source which to write the uint8 value to.
  * @param i The uint8 value to write.
  * @param pos The offset.
  * @param error Error code.
@@ -166,8 +166,8 @@ S_API void s_uint8_write_at(SDatasource *ds, uint8 i, long pos, s_erc *error);
 
 
 /**
- * Read a uint16 value from a datasource.
- * @param ds The datasource form which to read the uint16 value.
+ * Read a uint16 value from a data source.
+ * @param ds The data source from which to read the uint16 value.
  * @param error Error code.
  * @return The read uint16 value.
  */
@@ -175,8 +175,8 @@ S_API uint16 s_uint16_read(SDatasource *ds, s_erc *error);
 
 
 /**
- * Read a uint16 value from a datasource starting at a given offset position.
- * @param ds The datasource form which to read the uint16 value.
+ * Read a uint16 value from a data source starting at a given offset position.
+ * @param ds The data source from which to read the uint16 value.
  * @param pos The offset to start reading from.
  * @param error Error code.
  * @return The read uint16 value.
@@ -185,22 +185,22 @@ S_API uint16 s_uint16_read_at(SDatasource *ds, long pos, s_erc *error);
 
 
 /**
- * Write a uint16 value to a datasource.
- * @param ds The datasource which to write the uint16 value to.
+ * Write a uint16 value to a data source.
+ * @param ds The data source which to write the uint16 value to.
  * @param i The uint16 value to write.
  * @param error Error code.
  */
-S_API void s_write_uint16(SDatasource *ds, uint16 i, s_erc *error);
+S_API void s_uint16_write(SDatasource *ds, uint16 i, s_erc *error);
 
 
 /**
- * Write a uint16 value to a datasource with an offset.
- * @param ds The datasource which to write the uint16 value to.
+ * Write a uint16 value to a data source with an offset.
+ * @param ds The data source which to write the uint16 value to.
  * @param i The uint16 value to write.
  * @param pos The offset.
  * @param error Error code.
  */
-S_API void s_write_uint16_at(SDatasource *ds, uint16 i, long pos, s_erc *error);
+S_API void s_uint16_write_at(SDatasource *ds, uint16 i, long pos, s_erc *error);
 
 
 /**
@@ -215,8 +215,8 @@ S_API void s_write_uint16_at(SDatasource *ds, uint16 i, long pos, s_erc *error);
 
 
 /**
- * Read a uint32 value from a datasource.
- * @param ds The datasource form which to read the uint32 value.
+ * Read a uint32 value from a data source.
+ * @param ds The data source from which to read the uint32 value.
  * @param error Error code.
  * @return The read uint32 value.
  */
@@ -224,8 +224,8 @@ S_API uint32 s_uint32_read(SDatasource *ds, s_erc *error);
 
 
 /**
- * Read a uint32 value from a datasource starting at a given offset position.
- * @param ds The datasource form which to read the uint32 value.
+ * Read a uint32 value from a data source starting at a given offset position.
+ * @param ds The data source from which to read the uint32 value.
  * @param pos The offset to start reading from.
  * @param error Error code.
  * @return The read uint32 value.
@@ -234,22 +234,22 @@ S_API uint32 s_uint32_read_at(SDatasource *ds, long pos, s_erc *error);
 
 
 /**
- * Write a uint32 value to a datasource.
- * @param ds The datasource which to write the uint32 value to.
+ * Write a uint32 value to a data source.
+ * @param ds The data source which to write the uint32 value to.
  * @param i The uint32 value to write.
  * @param error Error code.
  */
-S_API void s_write_uint32(SDatasource *ds, uint32 i, s_erc *error);
+S_API void s_uint32_write(SDatasource *ds, uint32 i, s_erc *error);
 
 
 /**
- * Write a uint32 value to a datasource with an offset.
- * @param ds The datasource which to write the uint32 value to.
+ * Write a uint32 value to a data source with an offset.
+ * @param ds The data source which to write the uint32 value to.
  * @param i The uint32 value to write.
  * @param pos The offset.
  * @param error Error code.
  */
-S_API void s_write_uint32_at(SDatasource *ds, uint32 i, long pos, s_erc *error);
+S_API void s_uint32_write_at(SDatasource *ds, uint32 i, long pos, s_erc *error);
 
 
 /**
@@ -265,7 +265,7 @@ S_API void s_write_uint32_at(SDatasource *ds, uint32 i, long pos, s_erc *error);
 
 /**
  * Read a sint8 value from a data source.
- * @param ds The datasource form which to read the sint8 value.
+ * @param ds The data source from which to read the sint8 value.
  * @param error Error code.
  * @return The read sint8 value.
  */
@@ -274,7 +274,7 @@ S_API sint8 s_sint8_read(SDatasource *ds, s_erc *error);
 
 /**
  * Read a sint8 value from a data source starting at a given offset position.
- * @param ds The datasource form which to read the sint8 value.
+ * @param ds The data source from which to read the sint8 value.
  * @param pos The offset to start reading from.
  * @param error Error code.
  * @return The read sint8 value.
@@ -284,7 +284,7 @@ S_API sint8 s_sint8_read_at(SDatasource *ds, long pos, s_erc *error);
 
 /**
  * Write a sint8 value to a data source.
- * @param ds The datasource which to write the sint8 value to.
+ * @param ds The data source which to write the sint8 value to.
  * @param i The sint8 value to write.
  * @param error Error code.
  */
@@ -293,7 +293,7 @@ S_API void s_sint8_write(SDatasource *ds, sint8 i, s_erc *error);
 
 /**
  * Write a sint8 value to a data source with an offset.
- * @param ds The datasource which to write the sint8 value to.
+ * @param ds The data source which to write the sint8 value to.
  * @param i The sint8 value to write.
  * @param pos The offset.
  * @param error Error code.
@@ -313,8 +313,8 @@ S_API void s_sint8_write_at(SDatasource *ds, sint8 i, long pos, s_erc *error);
 
 
 /**
- * Read a sint16 value from a datasource.
- * @param ds The datasource form which to read the sint16 value.
+ * Read a sint16 value from a data source.
+ * @param ds The data source from which to read the sint16 value.
  * @param error Error code.
  * @return The read sint16 value.
  */
@@ -322,8 +322,8 @@ S_API sint16 s_sint16_read(SDatasource *ds, s_erc *error);
 
 
 /**
- * Read a sint16 value from a datasource starting at a given offset position.
- * @param ds The datasource form which to read the sint16 value.
+ * Read a sint16 value from a data source starting at a given offset position.
+ * @param ds The data source from which to read the sint16 value.
  * @param pos The offset to start reading from.
  * @param error Error code.
  * @return The read sint16 value.
@@ -332,22 +332,22 @@ S_API sint16 s_sint16_read_at(SDatasource *ds, long pos, s_erc *error);
 
 
 /**
- * Write a sint16 value to a datasource.
- * @param ds The datasource which to write the sint16 value to.
+ * Write a sint16 value to a data source.
+ * @param ds The data source which to write the sint16 value to.
  * @param i The sint16 value to write.
  * @param error Error code.
  */
-S_API void s_write_sint16(SDatasource *ds, sint16 i, s_erc *error);
+S_API void s_sint16_write(SDatasource *ds, sint16 i, s_erc *error);
 
 
 /**
- * Write a sint16 value to a datasource with an offset.
- * @param ds The datasource which to write the sint16 value to.
+ * Write a sint16 value to a data source with an offset.
+ * @param ds The data source which to write the sint16 value to.
  * @param i The sint16 value to write.
  * @param pos The offset.
  * @param error Error code.
  */
-S_API void s_write_sint16_at(SDatasource *ds, sint16 i, long pos, s_erc *error);
+S_API void s_sint16_write_at(SDatasource *ds, sint16 i, long pos, s_erc *error);
 
 
 /**
@@ -362,8 +362,8 @@ S_API void s_write_sint16_at(SDatasource *ds, sint16 i, long pos, s_erc *error);
 
 
 /**
- * Read a sint32 value from a datasource.
- * @param ds The datasource form which to read the sint32 value.
+ * Read a sint32 value from a data source.
+ * @param ds The data source from which to read the sint32 value.
  * @param error Error code.
  * @return The read sint32 value.
  */
@@ -371,8 +371,8 @@ S_API sint32 s_sint32_read(SDatasource *ds, s_erc *error);
 
 
 /**
- * Read a sint32 value from a datasource starting at a given offset position.
- * @param ds The datasource form which to read the sint32 value.
+ * Read a sint32 value from a data source starting at a given offset position.
+ * @param ds The data source from which to read the sint32 value.
  * @param pos The offset to start reading from.
  * @param error Error code.
  * @return The read sint32 value.
@@ -381,22 +381,22 @@ S_API sint32 s_sint32_read_at(SDatasource *ds, long pos, s_erc *error);
 
 
 /**
- * Write a sint32 value to a datasource.
- * @param ds The datasource which to write the sint32 value to.
+ * Write a sint32 value to a data source.
+ * @param ds The data source which to write the sint32 value to.
  * @param i The sint32 value to write.
  * @param error Error code.
  */
-S_API void s_write_sint32(SDatasource *ds, sint32 i, s_erc *error);
+S_API void s_sint32_write(SDatasource *ds, sint32 i, s_erc *error);
 
 
 /**
- * Write a sint32 value to a datasource with an offset.
- * @param ds The datasource which to write the sint32 value to.
+ * Write a sint32 value to a data source with an offset.
+ * @param ds The data source which to write the sint32 value to.
  * @param i The sint32 value to write.
  * @param pos The offset.
  * @param error Error code.
  */
-S_API void s_write_sint32_at(SDatasource *ds, sint32 i, long pos, s_erc *error);
+S_API void s_sint32_write_at(SDatasource *ds, sint32 i, long pos, s_erc *error);
 
 
 /**

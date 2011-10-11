@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2008-2009 The Department of Arts and Culture,                      */
+/* Copyright (c) 2008-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -45,7 +45,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "base/utils/alloc.h"
-#include "base/utils/time.h"
+#include "base/utils/stime.h"
 #include "base/strings/strings.h"
 #include "base/strings/sprint.h"
 #include "base/errdbg/errdbg_macros.h"
@@ -175,7 +175,7 @@ static char *format_std(s_log_event level, const char *error_msg,
 		out_buf = format_std_dbg(level, user_buf);
 		if (out_buf == NULL)
 		{
-			S_ERR_PRINT(S_METHFAIL, "format_std",
+			S_ERR_PRINT(S_FAILURE, "format_std",
 						"Call to \"format_std_dbg\" failed");
 		}
 	}
@@ -184,7 +184,7 @@ static char *format_std(s_log_event level, const char *error_msg,
 		out_buf = format_std_err(level, error_msg, func, file, line, user_buf);
 		if (out_buf == NULL)
 		{
-			S_ERR_PRINT(S_METHFAIL, "format_std",
+			S_ERR_PRINT(S_FAILURE, "format_std",
 						"Call to \"format_std_err\" failed");
 		}
 

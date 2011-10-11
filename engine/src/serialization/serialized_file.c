@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2008-2009 The Department of Arts and Culture,                      */
+/* Copyright (c) 2008-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -41,6 +41,52 @@
 /************************************************************************************/
 
 #include "serialization/serialized_file.h"
+
+
+/************************************************************************************/
+/*                                                                                  */
+/* Macros                                                                           */
+/*                                                                                  */
+/************************************************************************************/
+
+/**
+ * @hideinitializer
+ * Return the given #SSerializedFile child class object as a #SSerializedFile object.
+ * @param SELF The given object.
+ * @return Given object as #SSerializedFile* type.
+ * @note This casting is not safety checked.
+ */
+#define S_SERIALIZED_FILE(SELF)    ((SSerializedFile *)(SELF))
+
+
+/**
+ * @hideinitializer
+ * Call the given function method of the given #SSerializedFile.
+ * @param SELF The given #SSerializedFile*.
+ * @param FUNC The function method of the given object to call.
+ * @note This casting is not safety checked.
+ * @note Example usage:
+ @verbatim
+ S_SERIALIZED_FILE_CALL(self, func)(param1, param2, ..., paramN);
+ @endverbatim
+ * where @c param1, @c param2, ..., @c paramN are the parameters passed to the object function
+ * @c func.
+ */
+#define S_SERIALIZED_FILE_CALL(SELF, FUNC)				\
+	((SSerializedFileClass *)S_OBJECT_CLS(SELF))->FUNC
+
+
+/**
+ * @hideinitializer
+ * Test if the given function method of the given #SSerializedFile
+ * can be called.
+ * @param SELF The given #SSerializedFile*.
+ * @param FUNC The function method of the given object to check.
+ * @return #TRUE if function can be called, otherwise #FALSE.
+ * @note This casting is not safety checked.
+ */
+#define S_SERIALIZED_FILE_METH_VALID(SELF, FUNC)		\
+	S_SERIALIZED_FILE_CALL(SELF, FUNC) ? TRUE : FALSE
 
 
 /************************************************************************************/
@@ -153,7 +199,7 @@ S_LOCAL void SSerializedFileSave(const SSerializedFile *self, const SObject *obj
 S_LOCAL void _s_serialized_file_class_add(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_add(&SerializedFileClass, error);
+	s_class_add(S_OBJECTCLASS(&SerializedFileClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_serialized_file_class_add",
 			  "Failed to add SSerializedFileClass");

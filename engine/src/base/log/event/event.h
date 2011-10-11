@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2008-2009 The Department of Arts and Culture,                      */
+/* Copyright (c) 2008-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -80,26 +80,13 @@ S_BEGIN_C_DECLS
  */
 typedef enum
 {
-	/*!< Reserved. */
-	S_RESERVED_EVENT = 0,
-
-	/*!< Severe errors that cause premature termination. [FATAL] in layout. */
-	S_FATAL_EVENT    = 1,
-
-	/*!< Other runtime errors or unexpected conditions. [ERROR] in layout. */
-	S_ERROR_EVENT    = 2,
-
-	/*!< Undesirable/unexpected runtime situations, but not necessarily "wrong". [WARN] in layout.*/
-	S_WARN_EVENT     = 3,
-
-	/*!< Interesting runtime events (startup/shutdown). [INFO] in layout. */
-	S_INFO_EVENT     = 4,
-
-	/*!< Detailed information on the flow through the system. [DEBUG] in layout. */
-	S_DEBUG_EVENT    = 5,
-
-	/*!< More detailed information. [TRACE] in layout. */
-	S_TRACE_EVENT    = 6
+	S_RESERVED_EVENT = 0, /*!< Reserved. Not to be used. */
+	S_FATAL_EVENT    = 1, /*!< Severe errors that cause premature termination. [FATAL] in layout. */
+	S_ERROR_EVENT    = 2, /*!< Other run time errors or unexpected conditions. [ERROR] in layout. */
+	S_WARN_EVENT     = 3, /*!< Undesirable/unexpected run time situations, but not necessarily "wrong". [WARN] in layout.*/
+	S_INFO_EVENT     = 4, /*!< Interesting run time events (start up/shutdown). [INFO] in layout. */
+	S_DEBUG_EVENT    = 5, /*!< Detailed information on the flow through the system. [DEBUG] in layout. */
+	S_TRACE_EVENT    = 6  /*!< More detailed information. [TRACE] in layout. */
 } s_log_event;
 
 
@@ -117,7 +104,7 @@ typedef enum
  * @return Pointer to string representation of given log event level.
  * If the error code is unknown then @a "UNKNOWN EVENT" is returned.
  *
- * @note Caller is responsible for returned charachter buffer's memory.
+ * @note Caller is responsible for returned character buffer's memory.
  * @note Thread-safe.
  */
 S_API char *s_log_event_str(s_log_event level);

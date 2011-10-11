@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2010 The Department of Arts and Culture,                           */
+/* Copyright (c) 2010-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -50,9 +50,9 @@ If the given path does not include any path separators (just a file name)
 then the path is concatenated with the default plug-in path.
 
 :param path: The full path and name of the plug-in to load.
-:type path: string
+:type path: str
 :return: Plug-in object
-:rtype: Swig Object of type SPlugin
+:rtype: :class:`SPlugin`
 :raises: RuntimeError if Speect was unable to load the plug-in.
 """
 %enddef

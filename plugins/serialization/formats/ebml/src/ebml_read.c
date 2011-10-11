@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2008-2009 The Department of Arts and Culture,                      */
+/* Copyright (c) 2008-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -62,7 +62,7 @@ static SEbmlReadClass EbmlReadClass; /* SEbmlRead class declaration. */
 S_LOCAL void _s_ebml_read_class_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(&EbmlReadClass, error);
+	s_class_reg(S_OBJECTCLASS(&EbmlReadClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_ebml_read_class_reg",
 			  "Failed to register SEbmlReadClass");
@@ -72,7 +72,7 @@ S_LOCAL void _s_ebml_read_class_reg(s_erc *error)
 S_LOCAL void _s_ebml_read_class_free(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_free(&EbmlReadClass, error);
+	s_class_free(S_OBJECTCLASS(&EbmlReadClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_ebml_read_class_free",
 			  "Failed to free SEbmlReadClass");
@@ -820,7 +820,7 @@ static SObject *read_object(SEbmlRead *self, uint32 *id, s_erc *error)
 	}
 
 	/* create a new object */
-	object = S_NEW(class_name, error);
+	object = S_NEW_FROM_NAME(class_name, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "read_object",
 				  "Failed to create new object of class '%s'",

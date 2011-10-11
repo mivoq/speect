@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2009 The Department of Arts and Culture,                           */
+/* Copyright (c) 2009-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -36,7 +36,11 @@
 
 %extend _SRelationItr
 {
+#ifdef SPCT_SWIG_PYTHON_3
+	PyObject *__next__()
+#else /* ! SPCT_SWIG_PYTHON_3 */
 	PyObject *next()
+#endif /* SPCT_SWIG_PYTHON_3 */
 	{
 		s_erc error;
 		PyObject *pobject;
@@ -49,7 +53,7 @@
 			return NULL;
 		}
 
-		pobject = SWIG_NewPointerObj(SWIG_as_voidptr($self->item), SWIGTYPE_p_SItem, 0 |  0 );
+		pobject = SWIG_InternalNewPointerObj(SWIG_as_voidptr($self->item), SWIGTYPE_p_SItem, 0 |  0 );
 
 		$self->item = SItemNext($self->item, &error);
 		if (error != S_SUCCESS)

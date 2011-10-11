@@ -7,9 +7,11 @@
 ##                                                                                  ##
 ## CMake custom functions for Speect plug-ins SWIG Python interfaces                ##
 ##                                                                                  ##
+##   speect_plugin_swig_python_flags        (Set the SWIG Python compile flags)     ##
 ##   speect_plugin_swig_python_interface    (Generate SWIG interface file)          ##
 ##   speect_plugin_swig_python_loader       (Generate SWIG interface file that      ##
 ##                                           only loads plug-in when imported)      ##
+##   speect_find_python                     (Find Python libraries)                 ##
 ##   speect_plugin_swig_python_wrapper      (Generate SWIG Python wrapper)          ##
 ##   speect_include_python_directories      (Include Python include directories)    ##
 ##                                                                                  ##
@@ -19,10 +21,31 @@
 
 
 #------------------------------------------------------------------------------------#
+#                     Set the SWIG Python compile flags                              #
+#------------------------------------------------------------------------------------#
+#
+# macro(speect_plugin_swig_python_flags)
+#
+# Set the SWIG Python compile flags. Call this macro and the ``SPCT_SWIG_FLAGS``
+# will be available in your function. This is here so that there is only one place
+# where we need to modify the flags if need be.
+#
+macro(speect_plugin_swig_python_flags)
+  # flags for the SWIG generation
+  if(WANT_PYTHON_3)
+    # extra -py3 and -DSPCT_SWIG_PYTHON_3 flags for Python 3.x
+    list(APPEND SPCT_SWIG_FLAGS -Wall -Werror -py3 -DSPCT_SWIG_PYTHON_3)
+  else(WANT_PYTHON_3)
+    list(APPEND SPCT_SWIG_FLAGS -Wall -Werror)
+  endif(WANT_PYTHON_3)
+endmacro(speect_plugin_swig_python_flags)
+
+
+#------------------------------------------------------------------------------------#
 #                       Create plug-in SWIG Python interface                         #
 #------------------------------------------------------------------------------------#
 #
-# macro(speect_plugin_swig_python_interface)
+# speect_plugin_swig_python_interface()
 #
 # Create a plug-in interface file plugin_lowercase_name.i 
 # The file will be created in the CMAKE_CURRENT_BINARY_DIR
@@ -44,7 +67,7 @@
 # :param swig_python_typemaps: SWIG Python typemap files, containing typemaps for
 #                               the plug-in class functions.
 # :type swig_python_typemaps: CMake list
-# :param swig_common: SWIG common interface files, containing SWIG language independant 
+# :param swig_common: SWIG common interface files, containing SWIG language independent
 #                     interface definitions for the plug-in class functions.
 # :type swig_common: CMake list
 # :param swig_python: SWIG Python interface files, containing SWIG Python specific
@@ -150,8 +173,8 @@ macro(speect_plugin_swig_python_interface)
     file(APPEND ${filename} "\n")
   endif(swig_python)
 
-  # flags for the SWIG generation
-  list(APPEND SPCT_SWIG_FLAGS -Wall -Werror)
+  # SWIG flags
+  speect_plugin_swig_python_flags()
 
   # add the generated interface file dependencies
   set_source_files_properties(${CMAKE_CURRENT_BINARY_DIR}/${plugin_lowercase_name}.i
@@ -161,12 +184,12 @@ macro(speect_plugin_swig_python_interface)
     )
 endmacro(speect_plugin_swig_python_interface)
 
-  
+ 
 #------------------------------------------------------------------------------------#
 #                       Create plug-in SWIG Python loader                            #
 #------------------------------------------------------------------------------------#
 #
-# macro(speect_plugin_swig_python_loader)
+# speect_plugin_swig_python_loader()
 #
 # Create a plug-in loader file plugin_lowercase_name.i 
 # This is just a simple wrapper that loads the plug-in in Python when imported.
@@ -200,8 +223,8 @@ macro(speect_plugin_swig_python_loader)
   file(APPEND ${filename} "\t\t\tSWIG_Error(SWIG_RuntimeError, \"Failed to load '${plugin_lowercase_name}.spi' plug-in\");\n")
   file(APPEND ${filename} "\t}\n%}\n\n")
 
-  # flags for the SWIG generation
-  list(APPEND SPCT_SWIG_FLAGS -Wall -Werror)
+  # SWIG flags
+  speect_plugin_swig_python_flags()
 
   # add the generated interface file dependencies
   set_source_files_properties(${CMAKE_CURRENT_BINARY_DIR}/${plugin_lowercase_name}.i
@@ -221,12 +244,61 @@ endmacro(speect_plugin_swig_python_loader)
 # PYTHON_INCLUDE_PATH is deprecated in older CMAKE versions, use this macro 
 #
 macro(speect_include_python_directories)
-  if(${PYTHON_INCLUDE_PATH} STREQUAL "")
-    include_directories(${PYTHON_INCLUDE_DIRS})  
-  else(${PYTHON_INCLUDE_PATH} STREQUAL "")
+  if(DEFINED PYTHON_INCLUDE_DIRS)
+    include_directories(${PYTHON_INCLUDE_DIRS}) 
+  else(DEFINED PYTHON_INCLUDE_PATH)
     include_directories(${PYTHON_INCLUDE_PATH})  
-  endif(${PYTHON_INCLUDE_PATH} STREQUAL "")
+  endif(DEFINED PYTHON_INCLUDE_DIRS)
 endmacro(speect_include_python_directories)
+
+
+#------------------------------------------------------------------------------------#
+#                                 Find Python                                        #
+#------------------------------------------------------------------------------------#
+#
+# macro(speect_find_python)
+#
+# Find Python libraries and include files. This macro can search for Python 3, based
+# on the WANT_PYTHON_3 option in speect/cmake/spctOptions.cmake. It also checks if
+# the value of WANT_PYTHON_3 has changed between cmake invocations, if not then the
+# previously set values of PYTHON_LIBRARIES, PYTHON_INCLUDE_DIRS, PYTHON_INCLUDE_PATH
+# and PYTHON_DEBUG_LIBRARIES will be used (this was required because CMake did not
+# update these values when WANT_PYTHON_3 was changed).
+#
+macro(speect_find_python)
+  if((NOT DEFINED SPCT_INTERNAL_WANT_PYTHON_3) OR (NOT SPCT_INTERNAL_WANT_PYTHON_3 STREQUAL WANT_PYTHON_3))
+    set(SPCT_INTERNAL_WANT_PYTHON_3 ${WANT_PYTHON_3} CACHE INTERNAL "Previously set value of WANT_PYTHON_3")
+    unset(PYTHON_DEBUG_LIBRARY CACHE)
+    unset(PYTHON_LIBRARY CACHE)
+    unset(PYTHON_INCLUDE_DIR CACHE)
+    unset(PYTHON_INCLUDE_PATH CACHE)
+    unset(PYTHON_INCLUDE_DIRS)
+    unset(PYTHON_LIBRARIES)
+    unset(PYTHON_DEBUG_LIBRARIES)
+    
+    # add the directory that this file resides in to the CMake module path
+    # so that we can use FindPythonLibsSpeect.cmake
+    list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/swig/python/cmake)
+    if(WANT_PYTHON_3)
+      # Additional Python versions to search for. Stops when it finds one,
+      # so later versions first.
+      set(Python_ADDITIONAL_VERSIONS 3.2 3.1 3.0)
+    else(WANT_PYTHON_3)
+      set(Python_ADDITIONAL_VERSIONS "")
+    endif(WANT_PYTHON_3)
+    
+    find_package(PythonLibsSpeect REQUIRED)
+    set(SPCT_INTERNAL_PYTHON_LIBRARIES ${PYTHON_LIBRARIES} CACHE INTERNAL "Currently set value of PYTHON_LIBRARIES")
+    set(SPCT_INTERNAL_PYTHON_INCLUDE_DIRS ${PYTHON_INCLUDE_DIRS} CACHE INTERNAL "Currently set value of PYTHON_INCLUDE_DIRS")
+    set(SPCT_INTERNAL_PYTHON_INCLUDE_PATH ${PYTHON_INCLUDE_PATH} CACHE INTERNAL "Currently set value of PYTHON_INCLUDE_PATH")
+    set(SPCT_INTERNAL_PYTHON_DEBUG_LIBRARIES ${PYTHON_DEBUG_LIBRARIES} CACHE INTERNAL "Currently set value of PYTHON_DEBUG_LIBRARIES")
+  else((NOT DEFINED SPCT_INTERNAL_WANT_PYTHON_3) OR (NOT SPCT_INTERNAL_WANT_PYTHON_3 STREQUAL WANT_PYTHON_3))
+    set(PYTHON_LIBRARIES ${SPCT_INTERNAL_PYTHON_LIBRARIES})
+    set(PYTHON_INCLUDE_DIRS ${SPCT_INTERNAL_PYTHON_INCLUDE_DIRS})
+    set(PYTHON_INCLUDE_PATH ${SPCT_INTERNAL_PYTHON_INCLUDE_PATH})
+    set(PYTHON_DEBUG_LIBRARIES ${SPCT_INTERNAL_PYTHON_DEBUG_LIBRARIES})
+  endif((NOT DEFINED SPCT_INTERNAL_WANT_PYTHON_3) OR (NOT SPCT_INTERNAL_WANT_PYTHON_3 STREQUAL WANT_PYTHON_3))
+endmacro(speect_find_python)
 
 
 #------------------------------------------------------------------------------------#
@@ -247,7 +319,7 @@ macro(speect_plugin_swig_python_wrapper)
   include(${SWIG_USE_FILE})
 
   # find Python 
-  find_package(PythonLibs REQUIRED) # Note, currently PythonLibs does not look for Python 3
+  speect_find_python()
 
   # include Python
   speect_include_python_directories()

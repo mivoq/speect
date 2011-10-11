@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2008-2009 The Department of Arts and Culture,                      */
+/* Copyright (c) 2008-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -80,9 +80,9 @@
  * @defgroup SBaseObjectDef Base Object Definition
  * Provides the base object.
  * SObject provides an interface to a generic data container.
- * It is a simple object which can contain any other objects and
+ * It is a simple object which can encapsulate any other objects and
  * allows entities to store @a any type of data. Any data type
- * can inherit form the SObject class, and implement the basic
+ * can inherit from the SObjectClass, and implement the basic
  * methods, or not. An object can also extend these as required.
  * @{
  */
@@ -144,14 +144,14 @@ typedef struct SSerializedObject SSerializedObject;
 /************************************************************************************/
 
 /* Forward definition of the base class */
-typedef struct SObjectClass SObjectClass; /*!< Base class structure */
+typedef struct SObjectClass SObjectClass;
 
 
 /**
- * The base object structure. The base object defines the object data
- * members and inherited data members of the object. All objects that
- * want to work with the @ref SObjSystem must inherit from this
- * object.
+ * The base object structure, it provides an interface to a generic
+ * data type. It can encapsulate any other object, thereby providing
+ * abstraction. All objects that want to work with the Speect Generic
+ * Object System must have this object in their inheritance hierarchy.
  */
 typedef struct
 {
@@ -182,7 +182,8 @@ typedef struct
  * The base class structure. The class defines a constructor and
  * destructor for the class objects, as well as class members, i.e.
  * members that belong to all object instances of a specific class
- * type. All classes inherit from this class structure.
+ * type. All classes that want to work with the Speect Generic
+ * Object System must have this class in their inheritance hierarchy.
  *
  * @todo better docs for class methods?
  * @todo destroy must check all object members before delete (for
@@ -192,12 +193,17 @@ struct SObjectClass
 {
 	/* Class members */
 	/**
-	 * @protected Class hierarchy name.
+	 * @protected Object hierarchy name.
+	 * The object hierarchy name must be a colon (":") separated list
+	 * of object names, with the last object being the object
+	 * implementation. The base class's object (SObject) must not be
+	 * included, as it is assumed to be the base object of all other
+	 * objects.
 	 */
 	const char *name;
 
 	/**
-	 * @protected The size of the objects of this class, in bytes (sizeoff).
+	 * @protected The size of the objects of this class, in bytes (@c sizeof).
 	 */
 	size_t      size;
 
@@ -210,7 +216,7 @@ struct SObjectClass
 	/**
 	 * @protected Constructor function pointer.
 	 * Initialize the members of the objects of this class type.
-	 * This function receives a chunck of allocated memory for the
+	 * This function receives a chunk of allocated memory for the
 	 * object (will @a always be valid memory), and
 	 * initializes/allocated the members of the object of this class
 	 * type.
@@ -218,20 +224,20 @@ struct SObjectClass
 	 * @param obj Memory for the newly created object.
 	 * @param error Error code.
 	 */
-	void     (*init)    (void *obj, s_erc *error);
+	void     (* const init)    (void *obj, s_erc *error);
 
 	/**
 	 * @protected Destructor function pointer.
 	 * Free up any resources allocated to the object by the
-	 * #SObjectClass::init function. The object's memory itself must
-	 * @b not be freed.
+	 * #SObjectClass function pointer @c init. The object's memory
+	 * itself must @b not be freed.
 	 *
 	 * @param obj The object to be destroyed.
 	 * @param error Error code.
 	 *
 	 * @note See #S_DELETE and #S_FORCE_DELETE.
 	 */
-	void     (*destroy) (void *obj, s_erc *error);
+	void     (* const destroy) (void *obj, s_erc *error);
 
 	/**
 	 * @protected Dispose function pointer.
@@ -243,7 +249,7 @@ struct SObjectClass
 	 *
 	 * @note See #S_DELETE and #S_FORCE_DELETE.
 	 */
-	void     (*dispose) (void *obj, s_erc *error);
+	void     (* const dispose) (void *obj, s_erc *error);
 
 	/**
 	 * @protected Comparison function pointer.
@@ -259,7 +265,8 @@ struct SObjectClass
 	 *
 	 * @return #TRUE if the objects are the same, else #FALSE.
 	 */
-	s_bool   (*compare) (const SObject *first, const SObject *second, s_erc *error);
+	s_bool   (* const compare) (const SObject *first, const SObject *second,
+								s_erc *error);
 
 	/**
 	 * @protected Print function pointer.
@@ -271,7 +278,7 @@ struct SObjectClass
 	 * @return Pointer to a character buffer containing a textual
 	 * representation of the given object. Utf8 encoding is assumed.
 	 */
-	char    *(*print)   (const SObject *self, s_erc *error);
+	char    *(* const print)   (const SObject *self, s_erc *error);
 
 	/**
 	 * @protected Copy function pointer.
@@ -286,7 +293,7 @@ struct SObjectClass
 	 *
 	 * @return Pointer to new copy of the given object.
 	 */
-	SObject *(*copy)    (const SObject *self, s_erc *error);
+	SObject *(* const copy)    (const SObject *self, s_erc *error);
 };
 
 

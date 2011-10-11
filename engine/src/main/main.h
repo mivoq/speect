@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2008-2009 The Department of Arts and Culture,                      */
+/* Copyright (c) 2008-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -72,8 +72,10 @@ S_BEGIN_C_DECLS
  * before any other Speect Engine API calls.
  * @ingroup Speect
  *
- * @param logger Logger where messages should be written to. If @c
- * NULL, then messages of error type will be written to @c stderr.
+ * @param logger Logger where messages should be written to. If #NULL,
+ * then messages of error type will be written to @c stderr if the
+ * build type (@c CMAKE_BUILD_TYPE) is @c Debug, otherwise no messages
+ * will be logged.
  *
  * @return Error code.
  *

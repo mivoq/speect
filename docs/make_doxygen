@@ -1,0 +1,6 @@
+#!/bin/sh
+
+cd doxygen
+rm -fr xml html
+doxygen Doxyfile
+cd ..

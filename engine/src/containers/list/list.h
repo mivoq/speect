@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2008-2009 The Department of Arts and Culture,                      */
+/* Copyright (c) 2008-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -151,30 +151,19 @@ S_BEGIN_C_DECLS
 
 /**
  * @hideinitializer
- * Call the given function method of the given #SList,
- * see full description #S_LIST_CALL for usage.
+ * Call the given function method of the given #SList.
  * @param SELF The given #SList*.
  * @param FUNC The function method of the given object to call.
  * @note This casting is not safety checked.
- * @note Example usage: @code S_LIST_CALL(self, func)(param1, param2, ..., paramN); @endcode
+ * @note Example usage:
+ @verbatim
+ S_LIST_CALL(self, func)(param1, param2, ..., paramN);
+ @endverbatim
  * where @c param1, @c param2, ..., @c paramN are the parameters passed to the object function
  * @c func.
  */
 #define S_LIST_CALL(SELF, FUNC)					\
 	((SListClass *)S_OBJECT_CLS(SELF))->FUNC
-
-
-/**
- * @hideinitializer
- * Test if the given function method of the given #SList
- * can be called.
- * @param SELF The given #SList*.
- * @param FUNC The function method of the given object to check.
- * @return #TRUE if function can be called, otherwise #FALSE.
- * @note This casting is not safety checked.
- */
-#define S_LIST_METH_VALID(SELF, FUNC)			\
-	S_LIST_CALL(SELF, FUNC) ? TRUE : FALSE
 
 
 /**
@@ -189,7 +178,9 @@ S_BEGIN_C_DECLS
 /************************************************************************************/
 
 /**
- * The SList structure.
+ * A list class. An abstract data structure that implements an ordered
+ * collection of values (of type #SObject), where the same value may
+ * occur more than once.
  * @extends SContainer
  */
 typedef struct
@@ -208,7 +199,7 @@ typedef struct
 /************************************************************************************/
 
 /**
- * The SListClass structure. It inherits from #SContainer so that it supports
+ * The list class structure. It inherits from #SContainer so that it supports
  * different list implementations.
  * @extends SContainerClass
  */
@@ -230,7 +221,7 @@ typedef struct
 	 *
 	 * @return #TRUE if empty else, #FALSE.
 	 */
-	s_bool         (*is_empty)     (const SList *self, s_erc *error);
+	s_bool         (* const is_empty)     (const SList *self, s_erc *error);
 
 	/**
 	 * @protected Size function pointer.
@@ -241,7 +232,7 @@ typedef struct
 	 *
 	 * @return The number of #SObject objects in the list.
 	 */
-	size_t         (*size)         (const SList *self, s_erc *error);
+	size_t         (* const size)         (const SList *self, s_erc *error);
 
 	/**
 	 * @protected Append function pointer.
@@ -251,7 +242,8 @@ typedef struct
 	 * @param object #SObject to append to end of list.
 	 * @param error Error code.
 	 */
-	void           (*append)       (SList *self, const SObject *object, s_erc *error);
+	void           (* const append)       (SList *self, const SObject *object,
+										   s_erc *error);
 
 	/**
 	 * @protected Prepend function pointer.
@@ -261,7 +253,8 @@ typedef struct
 	 * @param object #SObject to prepend to beginning of list.
 	 * @param error Error code.
 	 */
-	void           (*prepend)      (SList *self, const SObject *object, s_erc *error);
+	void           (* const prepend)      (SList *self, const SObject *object,
+										   s_erc *error);
 
 	/**
 	 * @protected InsertBefore function pointer.
@@ -273,8 +266,9 @@ typedef struct
 	 * @param object #SObject to insert.
 	 * @param error Error code.
 	 */
-	void           (*insert_before)(SList *self, SIterator *itr, const SObject *object,
-									s_erc *error);
+	void           (* const insert_before)(SList *self, SIterator *itr,
+										   const SObject *object,
+										   s_erc *error);
 
 	/**
 	 * @protected InsertAfter function pointer.
@@ -286,8 +280,9 @@ typedef struct
 	 * @param object #SObject to insert.
 	 * @param error Error code.
 	 */
-	void           (*insert_after) (SList *self, SIterator *itr, const SObject *object,
-									s_erc *error);
+	void           (* const insert_after) (SList *self, SIterator *itr,
+										   const SObject *object,
+										   s_erc *error);
 
 	/**
 	 * @protected Merge function pointer.
@@ -307,7 +302,8 @@ typedef struct
 	 * @param with The list to merge with @c self.
 	 * @param error Error code.
 	 */
-	void           (*merge)        (SList *self, const SList *with, s_erc *error);
+	void           (* const merge)        (SList *self, const SList *with,
+										   s_erc *error);
 
 	/**
 	 * @protected Copy (shallow) function pointer.
@@ -321,7 +317,8 @@ typedef struct
 	 *
 	 * @return Pointer to destination list.
 	 */
-	SList         *(*copy)         (SList *dst, const SList *src, s_erc *error);
+	SList         *(* const copy)         (SList *dst, const SList *src,
+										   s_erc *error);
 
 	/**
 	 * @protected Push function pointer.
@@ -331,7 +328,8 @@ typedef struct
 	 * @param object #SObject to push into end of list.
 	 * @param error Error code.
 	 */
-	void           (*push)         (SList *self, const SObject *object, s_erc *error);
+	void           (* const push)         (SList *self, const SObject *object,
+										   s_erc *error);
 
 	/**
 	 * @protected Pop function pointer.
@@ -345,7 +343,7 @@ typedef struct
 	 * @note The #SObject is unlinked from the list and it's memory
 	 * is the responsibility of the caller.
 	 */
-	SObject       *(*pop)          (SList *self, s_erc *error);
+	SObject       *(* const pop)          (SList *self, s_erc *error);
 
 	/**
 	 * @protected Reverse function pointer.
@@ -354,7 +352,7 @@ typedef struct
 	 * @param self The list container to reverse.
 	 * @param error Error code.
 	 */
-	void           (*reverse)      (SList *self, s_erc *error);
+	void           (* const reverse)      (SList *self, s_erc *error);
 
 	/**
 	 * @protected Nth function pointer.
@@ -368,7 +366,8 @@ typedef struct
 	 *
 	 * @note Indexing starts at 0.
 	 */
-	const SObject *(*nth)          (const SList *self, uint32 n, s_erc *error);
+	const SObject *(* const nth)          (const SList *self, uint32 n,
+										   s_erc *error);
 
 	/**
 	 * @protected ValPresent function pointer.
@@ -380,11 +379,12 @@ typedef struct
 	 *
 	 * @return #TRUE or #FALSE.
 	 *
-	 * @note The #SObjectClass::compare function must be implemented for the given
-	 * object type (class).
+	 * @note The #SObjectClass function pointer @c compare must be
+	 * implemented for the given object type (class).
 	 */
-	s_bool         (*val_present)  (const SList *self, const SObject *object,
-									s_erc *error);
+	s_bool         (* const val_present)  (const SList *self,
+										   const SObject *object,
+										   s_erc *error);
 } SListClass;
 
 
@@ -434,8 +434,8 @@ S_API size_t SListSize(const SList *self, s_erc *error);
  *
  * @return #TRUE or #FALSE.
  *
- * @note The #SObjectClass::compare function must be implemented for
- * the given object type.
+ * @note The #SObjectClass function pointer @c compare must be
+ * implemented for the given object type.
  */
 S_API s_bool SListValPresent(const SList *self, const SObject *object, s_erc *error);
 
@@ -458,6 +458,9 @@ S_API s_bool SListValPresent(const SList *self, const SObject *object, s_erc *er
  * @param self The list container.
  * @param object #SObject to append to end of list.
  * @param error Error code.
+ *
+ * @note The list takes hold of the appended object, and therefore the
+ * object should not be deleted with a call to #S_DELETE.
  */
 S_API void SListAppend(SList *self, const SObject *object, s_erc *error);
 
@@ -469,6 +472,9 @@ S_API void SListAppend(SList *self, const SObject *object, s_erc *error);
  * @param self The list container.
  * @param object #SObject to prepend to beginning of list.
  * @param error Error code.
+ *
+ * @note The list takes hold of the prepended object, and therefore the
+ * object should not be deleted with a call to #S_DELETE.
  */
 S_API void SListPrepend(SList *self, const SObject *object, s_erc *error);
 
@@ -482,6 +488,9 @@ S_API void SListPrepend(SList *self, const SObject *object, s_erc *error);
  * @param itr Iterator to current list object.
  * @param object #SObject to insert.
  * @param error Error code.
+ *
+ * @note The list takes hold of the inserted object, and therefore the
+ * object should not be deleted with a call to #S_DELETE.
  */
 S_API void SListInsertBefore(SList *self, SIterator *itr, const SObject *object,
 							 s_erc *error);
@@ -496,6 +505,9 @@ S_API void SListInsertBefore(SList *self, SIterator *itr, const SObject *object,
  * @param itr Iterator to current list object.
  * @param object #SObject to insert.
  * @param error Error code.
+ *
+ * @note The list takes hold of the inserted object, and therefore the
+ * object should not be deleted with a call to #S_DELETE.
  */
 S_API void SListInsertAfter(SList *self, SIterator *itr, const SObject *object,
 							s_erc *error);
@@ -567,6 +579,9 @@ S_API SList *SListCopy(SList *dst, const SList *src, s_erc *error);
  * @param self The list container.
  * @param object #SObject to push into end of list.
  * @param error Error code.
+ *
+ * @note The list takes hold of the pushed object, and therefore the
+ * object should not be deleted with a call to #S_DELETE.
  */
 S_API void SListPush(SList *self, const SObject *object, s_erc *error);
 

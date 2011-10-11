@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2008-2009 The Department of Arts and Culture,                      */
+/* Copyright (c) 2008-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -200,7 +200,7 @@ S_API void s_buffer_clear(s_buffer *buf, s_erc *error)
 }
 
 
-S_API const uchar *s_buffer_data(s_buffer *buf, s_erc *error)
+S_API const uchar *s_buffer_data(const s_buffer *buf, s_erc *error)
 {
 	S_CLR_ERR(error);
 
@@ -211,7 +211,7 @@ S_API const uchar *s_buffer_data(s_buffer *buf, s_erc *error)
 }
 
 
-S_API size_t s_buffer_size(s_buffer *buf, s_erc *error)
+S_API size_t s_buffer_size(const s_buffer *buf, s_erc *error)
 {
 	S_CLR_ERR(error);
 

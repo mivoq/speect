@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2010 The Department of Arts and Culture,                           */
+/* Copyright (c) 2010-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -64,7 +64,7 @@ static SSylPosWordRevFeatProcClass SylPosWordRevFeatProcClass;
 S_LOCAL void _s_syl_pos_word_rev_class_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(&SylPosWordRevFeatProcClass, error);
+	s_class_reg(S_OBJECTCLASS(&SylPosWordRevFeatProcClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_syl_pos_word_rev_class_reg",
 			  "Failed to register SSylPosWordRevFeatProcClass");
@@ -74,7 +74,7 @@ S_LOCAL void _s_syl_pos_word_rev_class_reg(s_erc *error)
 S_LOCAL void _s_syl_pos_word_rev_class_free(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_free(&SylPosWordRevFeatProcClass, error);
+	s_class_free(S_OBJECTCLASS(&SylPosWordRevFeatProcClass), error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "_s_syl_pos_word_rev_class_free",
 			  "Failed to free SSylPosWordRevFeatProcClass");
@@ -186,8 +186,9 @@ quit_error:
 	if (extractedFeat != NULL)
 		S_DELETE(extractedFeat, "Run", error);
 
-	self = NULL; /* compiler noise about unused parameters */
 	return NULL;
+
+	S_UNUSED(self);
 }
 
 

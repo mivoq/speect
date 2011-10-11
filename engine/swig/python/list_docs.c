@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2010 The Department of Arts and Culture,                           */
+/* Copyright (c) 2010-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -49,14 +49,14 @@ of values (``SObject``), where the same value may occur more than once.
 """
 __getitem__(key)
 
-Get the value in the map that is associated with the given key, where the key
-is the index of the value in the list. Called to implement evaluation of::
+Get the item in the list that is associated with the given key, where the key
+is the index of the item in the list. Called to implement evaluation of::
 
     i = self[key]
 
-:param key: The index of the value in the list.
-:type key: integer
-:return: The value associated with the given key (index).
+:param key: The index of the item in the list.
+:type key: int
+:return: The item associated with the given key (index).
 :note: Indexing starts from 0.
 """
 %enddef
@@ -103,25 +103,25 @@ Delete the value at the given key (index) in the list. Called to implement delet
 
 %define list_value_get_DOCSTRING
 """
-value_get(key)
+value_get(index)
 
-Get the raw ``SObject`` value in the list that is associated with the given key (index).
+Get the raw ``SObject`` value in the list that is associated with the given index.
 This function can be used in place of the normal::
 
-    list['key']
+    list[index]
 
 The reason for this is that the above will try to convert the returned
 value into a Python object if possible. Sometimes we want the value
 as a Speect object. So instead we can use this function::
 
-    list.value_get('key')
+    list.value_get(index)
 
 which will return the value object as it is in Speect, i.e. an ``SObject``.
 
-:param key: The index of the value in the list to delete.
-:type key: int
+:param index: The index of the value in the list to get.
+:type index: int
 :return: The value at the given index.
-:rtype: SObject
+:rtype: :class:`SObject`
 :note: Indexing starts from 0.
 """
 %enddef
@@ -133,7 +133,7 @@ which will return the value object as it is in Speect, i.e. an ``SObject``.
 """
 __len__()
 
-Return the number of key-value pairs that are in the map. Called to implement the
+Return the number of items that are in the list. Called to implement the
 built-in function::
 
   len()

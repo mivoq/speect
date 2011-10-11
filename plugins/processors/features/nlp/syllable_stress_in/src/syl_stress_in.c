@@ -177,11 +177,11 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 		return NULL;
 
 	/* get current phrase */
-	phraseItem = s_path_to_item(item, "R:SylStructure.parent.R:Phrase.parent",
-								error);
+	phraseItem = SItemPathToItem(item, "R:SylStructure.parent.R:Phrase.parent",
+								 error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Run",
-				  "Call to \"s_path_to_item\" failed"))
+				  "Call to \"SItemPathToItem\" failed"))
 		goto quit_error;
 
 	if (phraseItem == NULL)

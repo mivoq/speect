@@ -109,22 +109,22 @@ static void SetFeature(const SCostFunction *self, SItem *item, s_erc *error)
 		goto quit_error;
 	}
 
-	thisItemInSylRel = s_path_to_item(item, "R:SylStructure", error);
+	thisItemInSylRel = SItemPathToItem(item, "R:SylStructure", error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "SetFeature",
-				  "Call to \"s_path_to_item\" failed"))
+				  "Call to \"SItemPathToItem\" failed"))
 		goto quit_error;
 
-	nextItemInSylRel = s_path_to_item(item, "R:SylStructure.n", error);
+	nextItemInSylRel = SItemPathToItem(item, "R:SylStructure.n", error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "SetFeature",
-				  "Call to \"s_path_to_item\" failed"))
+				  "Call to \"SItemPathToItem\" failed"))
 		goto quit_error;
 
-	prevItemInSylRel = s_path_to_item(item, "R:SylStructure.p", error);
+	prevItemInSylRel = SItemPathToItem(item, "R:SylStructure.p", error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "SetFeature",
-				  "Call to \"s_path_to_item\" failed"))
+				  "Call to \"SItemPathToItem\" failed"))
 		goto quit_error;
 
 	if (thisItemInSylRel == NULL)

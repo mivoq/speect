@@ -109,22 +109,22 @@ static void SetFeature(const SCostFunction *self, SItem *item, s_erc *error)
 		goto quit_error;
 	}
 
-	thisItemWord = s_path_to_item(item, "R:SylStructure.parent.parent", error);
+	thisItemWord = SItemPathToItem(item, "R:SylStructure.parent.parent", error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "SetFeature",
-				  "Call to \"s_path_to_item\" failed"))
+				  "Call to \"SItemPathToItem\" failed"))
 		goto quit_error;
 
-	nextItemWord = s_path_to_item(item, "n.R:SylStructure.parent.parent", error);
+	nextItemWord = SItemPathToItem(item, "n.R:SylStructure.parent.parent", error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "SetFeature",
-				  "Call to \"s_path_to_item\" failed"))
+				  "Call to \"SItemPathToItem\" failed"))
 		goto quit_error;
 
-	prevItemWord = s_path_to_item(item, "p.R:SylStructure.parent.parent", error);
+	prevItemWord = SItemPathToItem(item, "p.R:SylStructure.parent.parent", error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "SetFeature",
-				  "Call to \"s_path_to_item\" failed"))
+				  "Call to \"SItemPathToItem\" failed"))
 		goto quit_error;
 
 	if (thisItemWord == NULL)

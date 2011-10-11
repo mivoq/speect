@@ -155,10 +155,10 @@ static const SItem *word_get_next_item(const SItem *wordItem, s_erc *error)
 		return nextItem;  /* easy */
 
 	/* now check syllables */
-	syl = s_path_to_item(wordItem, "R:SylStructure.parent", error);
+	syl = SItemPathToItem(wordItem, "R:SylStructure.parent", error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "word_get_next_item",
-				  "Call to \"s_path_to_item\" failed"))
+				  "Call to \"SItemPathToItem\" failed"))
 		return NULL;
 
 	if (syl == NULL)
@@ -304,7 +304,7 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 			goto quit_error;
 
 		/* get first segment (phone) of this word */
-		segmentItem = s_path_to_item(wordItem, "R:SylStructure.daughter.daughter", error);
+		segmentItem = SItemPathToItem(wordItem, "R:SylStructure.daughter.daughter", error);
 
 		/* get morphemes and their classes */
 		morphInfo = (SMap*)SFeatProcessorRun(morphDecompFeatProc, wordItem, error);

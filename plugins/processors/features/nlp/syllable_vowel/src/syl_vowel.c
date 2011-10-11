@@ -144,11 +144,11 @@ static const SPhoneset *_get_phoneset(const SItem *item, s_bool *multilingual, s
 
 
 		(*multilingual) = TRUE;
-		tokenItem = s_path_to_item(item, "R:SylStructure.parent.R:Token.parent",
-								   error);
+		tokenItem = SItemPathToItem(item, "R:SylStructure.parent.R:Token.parent",
+									error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "_get_phoneset",
-					  "Call to \"s_path_to_item\" failed"))
+					  "Call to \"SItemPathToItem\" failed"))
 			return NULL;
 
 		if (tokenItem == NULL)
@@ -291,12 +291,12 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 		{
 			if (multilingual)
 			{
-				extractedFeat = s_path_to_featproc(segment,
-												   "segment_name_multilingual",
-												   error);
+				extractedFeat = SItemPathToFeatProc(segment,
+													"segment_name_multilingual",
+													error);
 				if (S_CHK_ERR(error, S_CONTERR,
 							  "Run",
-							  "Call to \"s_path_to_featproc\" failed"))
+							  "Call to \"SItemPathToFeatProc\" failed"))
 					goto quit_error;
 			}
 			else

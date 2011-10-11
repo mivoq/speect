@@ -4,43 +4,60 @@
 Documentation
 =============
 
+Welcome! This is the documentation for Speect |version|, last updated |today|. 
+
+
+
 .. toctree::
-   :maxdepth: 1
+   :hidden: 
 
    topics/main
    api/main
    examples/main
    installation
    todo
+   toc_complete
+
+
+| 
+
+**Parts of the documentation**:
+
+      .. list-table:: 
+      	 :widths: 55 60
+   	 :header-rows: 0
+   	 :class: contentsdocs
+
+
+   	 * - :ref:`topics_main`
+     	   - :ref:`api_main`
+	 * - start here
+	   - Python, C and CMake reference
+   	 * - :ref:`examples_main`
+	   - :ref:`installation`
+	 * - Python and C example snippets
+	   - build and install Speect from source
+
+
+| 
+
+**Indices and tables:**:
+
+      .. list-table:: 
+      	 :widths: 60 60
+   	 :header-rows: 0
+   	 :class: contentsdocs
+
+
+   	 * - :ref:`genindex`
+     	   - :doc:`Complete Table of Contents <toc_complete>`
+	 * - all functions, classes, terms
+	   - lists all sections and subsections
+   	 * - :ref:`search`
+	   - 
+	 * - search this documentation
+	   - 
 
 
 
-.. list-table:: Frozen Delights!
-   :widths: 15 10 30
-   :header-rows: 1
 
-
-   * - Treat
-     - Quantity
-     - Description
-   * - Albatross
-     - 2.99
-     - On a stick!
-   * - Crunchy Frog
-     - 1.49
-     - If we took the bones out, it wouldn't be
-       crunchy, now would it?
-   * - Gannet Ripple
-     - 1.99
-     - On a stick!
-
-
-.. table:: Truth table for "not"
-   :class: aby
-
-   =====  =====
-     A    not A
-   =====  =====
-   False  True
-   True   False
-   =====  =====

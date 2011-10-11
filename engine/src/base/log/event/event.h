@@ -80,26 +80,13 @@ S_BEGIN_C_DECLS
  */
 typedef enum
 {
-	/*!< Reserved. Not to be used. */
-	S_RESERVED_EVENT = 0,
-
-	/*!< Severe errors that cause premature termination. [FATAL] in layout. */
-	S_FATAL_EVENT    = 1,
-
-	/*!< Other run time errors or unexpected conditions. [ERROR] in layout. */
-	S_ERROR_EVENT    = 2,
-
-	/*!< Undesirable/unexpected run time situations, but not necessarily "wrong". [WARN] in layout.*/
-	S_WARN_EVENT     = 3,
-
-	/*!< Interesting run time events (start up/shutdown). [INFO] in layout. */
-	S_INFO_EVENT     = 4,
-
-	/*!< Detailed information on the flow through the system. [DEBUG] in layout. */
-	S_DEBUG_EVENT    = 5,
-
-	/*!< More detailed information. [TRACE] in layout. */
-	S_TRACE_EVENT    = 6
+	S_RESERVED_EVENT = 0, /*!< Reserved. Not to be used. */
+	S_FATAL_EVENT    = 1, /*!< Severe errors that cause premature termination. [FATAL] in layout. */
+	S_ERROR_EVENT    = 2, /*!< Other run time errors or unexpected conditions. [ERROR] in layout. */
+	S_WARN_EVENT     = 3, /*!< Undesirable/unexpected run time situations, but not necessarily "wrong". [WARN] in layout.*/
+	S_INFO_EVENT     = 4, /*!< Interesting run time events (start up/shutdown). [INFO] in layout. */
+	S_DEBUG_EVENT    = 5, /*!< Detailed information on the flow through the system. [DEBUG] in layout. */
+	S_TRACE_EVENT    = 6  /*!< More detailed information. [TRACE] in layout. */
 } s_log_event;
 
 

@@ -56,3 +56,19 @@ dl.speectclass dt {
     border-top: 1px solid #aaa;
 }
 
+
+/* -- Top level documentation table ---------------------------------------- */
+
+table.contentsdocs td {
+    background-color: white;
+    padding: 2px;
+    border: 1px solid white;
+    text-align: left;
+    font-size: 20px;
+}
+
+table.contentsdocs tr.row-even td { 
+    font-size: 14px;
+    padding-bottom: 25px;
+ }
+

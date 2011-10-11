@@ -7,7 +7,7 @@ Error Handling and Logging
 ==========================
 
 Error handling and logging module, utilities, macros and
-definitions.  See the :doc:`../../../../../topics/errdbg_topic` topic
+definitions.  See the :ref:`errdbg_topic_python` topic
 guide for more details. 
 
 

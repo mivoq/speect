@@ -1,8 +1,8 @@
-.. _api/main:
+.. _api_main:
 
-===
-API
-===
+=============
+API Reference
+=============
 
 .. toctree::
    :maxdepth: 2

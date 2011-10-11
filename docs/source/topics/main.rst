@@ -1,6 +1,6 @@
-.. _topics/main:
-
 .. index:: ! Topic Guides 
+
+.. _topics_main:
 
 ============
 Topic Guides

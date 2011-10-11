@@ -2,7 +2,7 @@
 
 
 :mod:`speect.syllabification` -- Syllabification Class
-======================================
+======================================================
 
 .. module:: speect.syllabification
    :synopsis: Syllabification class

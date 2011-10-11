@@ -13,7 +13,7 @@ be as robust as possible. If any error occurs during one of the logger
 functions, an error will be printed to ``stderr``. If a logger is
 unsuccessful at writing the log message to the log stream then it will
 log the message to ``stdout``. Also see
-:doc:`../../../../../topics/init_logging_topic`.
+:ref:`init_logging_topic_c`.
 
 
 .. todo::

@@ -167,7 +167,7 @@ Debugging
 
    .. seealso::
       
-      :ref:`init_logging_topic/main`.
+      :ref:`init_logging_topic_c`.
 
 
 Casting

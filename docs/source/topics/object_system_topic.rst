@@ -291,7 +291,7 @@ method has been implemented. ``SShapeMove`` can be implemented as:
    }
 
 Notice that there is a lot of error checking being done, which is
-discussed in detail in :doc:`errdbg_topic`. Lines 13 and 22 contain
+discussed in detail in :ref:`errdbg_topic_c`. Lines 13 and 22 contain
 the interesting bits, firstly a check is done on the given ``self``
 shape to see if it has implemented the ``move`` function pointer, and
 if so, then the function is called with the correct signature as

@@ -284,7 +284,18 @@ static size_t FileRead(SDatasource *ds, void *buf, size_t size,
 					  (self->path ? self->path : "file path unknown"));
 		}
 		else if (feof(f))
-			S_NEW_ERR(error, S_IOEOF); /* caller must decide if this is an error */
+		{
+			if (error != NULL)
+			{
+				*error = S_IOEOF; /* caller must decide if this is an error */
+			}
+			else
+			{
+				/* if we cannot tell the caller that we reached EOF abort */
+				fprintf(stderr, "[FATAL ERROR (file_source.c, line 295)] reach end-of-file, cannot set S_IOEOF");
+				abort();
+			}
+		}
 	}
 
 	return rv;
@@ -337,7 +348,16 @@ static size_t FileReadAt(SDatasource *ds, void *buf, size_t size,
 		}
 		else if (feof(f))
 		{
-			S_NEW_ERR(error, S_IOEOF); /* caller must decide if this is an error */
+			if (error != NULL)
+			{
+				*error = S_IOEOF; /* caller must decide if this is an error */
+			}
+			else
+			{
+				/* if we cannot tell the caller that we reached EOF abort */
+				fprintf(stderr, "[FATAL ERROR (file_source.c, line 295)] reach end-of-file, cannot set S_IOEOF");
+				abort();
+			}
 		}
 	}
 

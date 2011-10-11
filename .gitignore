@@ -6,16 +6,6 @@
 
 
 ##########################################################################
-# Ignore Makefile and cmake files
-
-Makefile
-CMakeCache.txt
-*_install.cmake
-*_uninstall.cmake
-CMakeFiles
-
-
-##########################################################################
 # Ignore build files
 
 build/*

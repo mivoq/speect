@@ -126,7 +126,7 @@ static s_bool data_loaded_inc_ref(SObject *dataObject, s_erc *error);
 S_API SVoice *s_vm_load_voice(const char *path, s_erc *error)
 {
 	SVoice *voice;
-	SMap *dataConfig;
+	SMap *dataConfig = NULL;
 
 
 	S_CLR_ERR(error);

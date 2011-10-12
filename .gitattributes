@@ -1,0 +1,5 @@
+.gitattributes export-ignore
+.gitignore export-ignore
+HOWTO_DITZ export-ignore
+git-ditz.sh export-ignore
+.ditz/ export-ignore

@@ -3,3 +3,4 @@
 HOWTO_DITZ export-ignore
 git-ditz.sh export-ignore
 .ditz/ export-ignore
+cscope* export-ignore

@@ -33,13 +33,18 @@ configure_file(${CMAKE_SOURCE_DIR}/engine/config/speect_conf_install.cmake.in
 #               Create the Speect Engine library export cmake file                   #
 #------------------------------------------------------------------------------------#
 
-export(TARGETS SPCT_LIBRARIES
-  FILE spctConfig.cmake)
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+  export(TARGETS SPCT_LIBRARIES
+    FILE spctConfig.cmake)
+endif(CMAKE_BUILD_TYPE STREQUAL "Debug")
+
 
 #------------------------------------------------------------------------------------#
 #                   Set the installation script (UNIX only)                          #
 #------------------------------------------------------------------------------------#
 
 if(SPCT_UNIX)
-  install(SCRIPT ${CMAKE_BINARY_DIR}/engine/cmake/speect_conf_install.cmake)
+  if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    install(SCRIPT ${CMAKE_BINARY_DIR}/engine/cmake/speect_conf_install.cmake)
+  endif(CMAKE_BUILD_TYPE STREQUAL "Debug")
 endif(SPCT_UNIX)

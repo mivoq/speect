@@ -80,9 +80,11 @@ configure_file(${CMAKE_SOURCE_DIR}/engine/config/mmapfile_impl.h.in
 
 if(SPCT_UNIX)
   install(FILES ${CMAKE_SOURCE_DIR}/engine/src/datasources/platform/${SPCT_MMAP_SPECIFIC_IMPL_INCLUDES}
+    CONFIGURATIONS "Debug"
     DESTINATION include/speect/engine/datasources/platform/${SPCT_MMAP_SPECIFIC_IMPL_DIR}/)
 
   install(FILES ${CMAKE_BINARY_DIR}/engine/src/datasources/platform/mmapfile_impl.h
+    CONFIGURATIONS "Debug"
     DESTINATION include/speect/engine/datasources/platform)
 endif(SPCT_UNIX)
 

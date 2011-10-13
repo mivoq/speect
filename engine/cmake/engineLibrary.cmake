@@ -115,11 +115,13 @@ if(SPCT_UNIX)
   # Install header files.  
   install(DIRECTORY "${CMAKE_SOURCE_DIR}/engine/src/"
     DESTINATION include/speect/engine
+    CONFIGURATIONS "Debug"
     FILES_MATCHING PATTERN "*.h"
     PATTERN "platform" EXCLUDE)
 
   install(DIRECTORY "${CMAKE_BINARY_DIR}/engine/src/"
     DESTINATION include/speect/engine
+    CONFIGURATIONS "Debug"
     FILES_MATCHING PATTERN "*.h"
     PATTERN "platform" EXCLUDE)
   
@@ -130,5 +132,7 @@ if(SPCT_UNIX)
     )
 
   # export CMake config
-  install(EXPORT spctConfig DESTINATION include/speect/engine)
+  if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    install(EXPORT spctConfig DESTINATION include/speect/engine)
+  endif(CMAKE_BUILD_TYPE STREQUAL "Debug")
 endif(SPCT_UNIX)

@@ -39,7 +39,13 @@ else(EXISTS "${CMAKE_SOURCE_DIR}/VERSION")
   set(TMP_VERSION "v1.0.0_pre-260-g796b" CACHE STRING "Speect default version" FORCE)
 endif(EXISTS "${CMAKE_SOURCE_DIR}/.git")
 
-string(REGEX REPLACE "^v(.*)" "\\1" TMP_VERSION ${TMP_VERSION})
+if(TMP_VERSION MATCHES "^v(.*)")
+  string(REGEX REPLACE "^v(.*)" "\\1" TMP_VERSION ${TMP_VERSION})
+elseif(TMP_VERSION MATCHES "^upstream/(.*)")
+  string(REGEX REPLACE "^upstream/(.*)" "\\1" TMP_VERSION ${TMP_VERSION})
+else(TMP_VERSION MATCHES "^upstream/(.*)")
+  message(FATAL_ERROR "Failed to match the version regex to: ${TMP_VERSION}")
+endif(TMP_VERSION MATCHES "^v(.*)")
 mark_as_advanced(TMP_VERSION)
 
 

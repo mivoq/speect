@@ -1,1 +1,5 @@
 Directory for creating different builds of Speect.
+
+You can run CMake directly from this directory as ``cmake ..``, or you
+can create different build directories for different configurations
+and run CMake from them, with reference to the top level directory.

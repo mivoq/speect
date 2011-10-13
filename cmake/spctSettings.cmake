@@ -58,3 +58,27 @@ if(ERROR_HANDLING)
 else(ERROR_HANDLING)
   unset(SPCT_ERROR_HANDLING)
 endif(ERROR_HANDLING)
+
+
+#------------------------------------------------------------------------------------#
+#                              Do we need SWIG?                                      #
+#------------------------------------------------------------------------------------#
+
+# if no wrappers are defined then we do not need SWIG
+if(NOT WANT_PYTHON_WRAPPER)
+  set(NO_SWIG 1)
+else(NOT WANT_PYTHON_WRAPPER)
+  unset(NO_SWIG)
+endif(NOT WANT_PYTHON_WRAPPER)
+
+#------------------------------------------------------------------------------------#
+#                              Add plug-ins?                                         #
+#------------------------------------------------------------------------------------#
+
+# used for building libraries without plug-ins
+if(NO_PLUGINS)
+  unset(SPCT_ADD_PLUGINS)
+else(NO_PLUGINS)
+  set(SPCT_ADD_PLUGINS 1)
+  mark_as_advanced(SPCT_ADD_PLUGINS)
+endif(NO_PLUGINS)

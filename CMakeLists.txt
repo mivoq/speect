@@ -97,10 +97,14 @@ include(spctSettings)
 add_subdirectory(engine)
 
 # Speect Plug-ins
-add_subdirectory(plugins)
+if(SPCT_ADD_PLUGINS)  # controlled by NO_PLUGINS in speect/cmake/spctSettings.cmake
+  add_subdirectory(plugins)
+endif(SPCT_ADD_PLUGINS)
 
 # Speect SWIG interface
-add_subdirectory(swig)
+if(NOT NO_SWIG)
+  add_subdirectory(swig)
+endif(NOT NO_SWIG)
 
 # Speect documentation, see docs/CMakeLists.txt for generation of documentation.
 # Not included in general build as doc generating software and versions are 

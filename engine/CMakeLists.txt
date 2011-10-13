@@ -117,5 +117,7 @@ endif(WANT_TESTS)
 #                              SWIG wrappers                                         #
 #------------------------------------------------------------------------------------#
 
-add_subdirectory(swig)
+if(NOT NO_SWIG)
+  add_subdirectory(swig)
+endif(NOT NO_SWIG)
 

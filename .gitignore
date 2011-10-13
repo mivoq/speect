@@ -62,7 +62,9 @@ swig/python/speect/*.pyc
 docs/build/*
 docs/sphinxext/*.pyc
 docs/doxygen/*
-docs/Makefile
+
+# except the Doxyfile
+!docs/doxygen/Doxyfile
 
 
 ##########################################################################

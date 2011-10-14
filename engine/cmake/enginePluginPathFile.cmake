@@ -32,7 +32,5 @@ configure_file(${CMAKE_SOURCE_DIR}/engine/config/plugin_path_install.cmake.in
 #------------------------------------------------------------------------------------#
 
 if(SPCT_UNIX)
-  if(CMAKE_BUILD_TYPE STREQUAL "Debug" AND SPCT_ADD_PLUGINS)
-    install(SCRIPT ${CMAKE_BINARY_DIR}/engine/cmake/plugin_path_install.cmake)
-  endif(CMAKE_BUILD_TYPE STREQUAL "Debug" AND SPCT_ADD_PLUGINS)
+  install(SCRIPT ${CMAKE_BINARY_DIR}/engine/cmake/plugin_path_install.cmake)
 endif(SPCT_UNIX)

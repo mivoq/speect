@@ -88,6 +88,8 @@ include(spctBuild)
 # Speect settings
 include(spctSettings)
 
+# "dist" target for make
+include(spctArchive)
 
 #------------------------------------------------------------------------------------#
 #                               Include subdirectories                               #

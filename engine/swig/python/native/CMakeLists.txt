@@ -125,14 +125,14 @@ endif(SPCT_GCC)
 #                          Library definition                                        #
 #------------------------------------------------------------------------------------#
 
-set(SPCT_PYTHON_NATIVE_LIBRARY spct_python_native)
+set(SPCT_PYTHON_NATIVE_LIBRARY spct_py_native)
 
 add_library(SPCT_PYTHON_NATIVE_LIBRARY ${SPCT_PYTHON_NATIVE_SOURCES})
 
 set_target_properties(SPCT_PYTHON_NATIVE_LIBRARY
   PROPERTIES
-  VERSION "${SPCT_VERSION_MAJOR}.${SPCT_VERSION_MINOR}.${SPCT_VERSION_PATCH}"
-  SOVERSION "${SPCT_VERSION_MAJOR}"
+#  VERSION "${SPCT_VERSION_MAJOR}.${SPCT_VERSION_MINOR}.${SPCT_VERSION_PATCH}"
+  SOVERSION "${SPCT_VERSION_MAJOR}.${SPCT_VERSION_MINOR}"
   COMPILE_FLAGS "${SWIG_C_COMPILE_FLAGS}"
   LINK_FLAGS "${SPCT_LIBRARY_LINK_FLAGS}"
   OUTPUT_NAME ${SPCT_PYTHON_NATIVE_LIBRARY}

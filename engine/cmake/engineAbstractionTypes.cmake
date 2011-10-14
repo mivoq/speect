@@ -64,11 +64,9 @@ configure_file(${CMAKE_SOURCE_DIR}/engine/config/types_impl.h.in
 
 if(SPCT_UNIX)
   install(FILES ${CMAKE_SOURCE_DIR}/engine/src/base/utils/platform/${SPCT_TYPES_SPECIFIC_IMPL}
-    CONFIGURATIONS "Debug"
     DESTINATION include/speect/engine/base/utils/platform/${SPCT_TYPES_SPECIFIC_IMPL_DIR}/)
 
   install(FILES ${CMAKE_BINARY_DIR}/engine/src/base/utils/platform/types_impl.h
-    CONFIGURATIONS "Debug"
     DESTINATION include/speect/engine/base/utils/platform)
 endif(SPCT_UNIX)
 

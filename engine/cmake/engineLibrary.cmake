@@ -127,7 +127,7 @@ if(SPCT_UNIX)
   
   # Install library
   install(TARGETS SPCT_LIBRARIES
-    DESTINATION "lib${LIB_SUFFIX}/speect/engine"
+    DESTINATION "lib${LIB_SUFFIX}/"
     EXPORT spctConfig 
     )
 

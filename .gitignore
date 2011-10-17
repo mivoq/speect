@@ -60,17 +60,8 @@ swig/python/speect/*.pyc
 # Ignore generated documentation 
 
 docs/build/*
-docs/sphinxext/*.pyc
+docs/sphinxext/doxybridge/*.pyc
 docs/doxygen/*
-
-# except the Doxyfile
-!docs/doxygen/Doxyfile
-
-
-##########################################################################
-# Ignore documentation tools pyc files
-
-docs/sphinx_ext/*.pyc
 
 
 ##########################################################################

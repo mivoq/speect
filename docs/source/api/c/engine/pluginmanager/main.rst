@@ -1,4 +1,4 @@
-.. index:: ! Plug-ins (C API)
+.. index:: Plug-ins (C API)
 
 .. _pluginmanager_main_c:
 

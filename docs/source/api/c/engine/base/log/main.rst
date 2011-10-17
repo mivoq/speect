@@ -1,4 +1,4 @@
-.. index:: ! Logger (C API)
+.. index:: Logger (C API)
 
 .. _log_main_c:
 

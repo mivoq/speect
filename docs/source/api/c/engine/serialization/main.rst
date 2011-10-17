@@ -1,4 +1,4 @@
-.. index:: ! Serialization (C API)
+.. index:: Serialization (C API)
 
 .. _serialization/main:
 

@@ -1,5 +1,5 @@
 
-.. index:: ! API Reference
+.. index:: API Reference
 
 .. _api_main:
 

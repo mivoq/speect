@@ -1,6 +1,6 @@
 .. _python/engine/voice:
 
-.. index:: ! Voices (Python API)
+.. index:: Voices (Python API)
 
 .. index::
    single: Voices (Python API); SVoice

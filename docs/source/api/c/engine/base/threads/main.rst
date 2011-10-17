@@ -1,4 +1,4 @@
-.. index:: ! Threads (C API)
+.. index:: Threads (C API)
 
 .. _threads/main:
 

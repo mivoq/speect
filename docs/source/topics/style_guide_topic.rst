@@ -1,7 +1,7 @@
 .. index:: 
    single: Topic Guides; Style Guide
 
-.. index:: ! Style Guide
+.. index:: Style Guide
 
 .. _style_guide_topic:
 

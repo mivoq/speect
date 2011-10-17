@@ -1,4 +1,4 @@
-.. index:: ! Byteswapping Functions (C API)
+.. index:: Byteswapping Functions (C API)
 
 .. _utils/byteswap:
 

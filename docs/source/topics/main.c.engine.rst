@@ -1,4 +1,4 @@
-.. index:: ! Topic Guides 
+.. index:: Topic Guides 
 
 .. _topics_main:
 

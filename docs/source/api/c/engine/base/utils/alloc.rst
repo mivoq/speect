@@ -1,4 +1,4 @@
-.. index:: ! Memory Allocation (C API)
+.. index:: Memory Allocation (C API)
 
 .. _utils_alloc_c:
 

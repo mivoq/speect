@@ -5,7 +5,7 @@ Examples
 ========
 
 
-.. index:: ! Examples (C API)
+.. index:: Examples (C API)
 
 C Language
 ==========
@@ -24,7 +24,7 @@ C Language
    c/datasources_example 
 
 
-.. index:: ! Examples (Miscellaneous)
+.. index:: Examples (Miscellaneous)
 
 Miscellaneous
 =============

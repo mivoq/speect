@@ -3,7 +3,7 @@
 .. index:: 
    single: Topic Guides; System Architecture
 
-.. index:: ! System Architecture
+.. index:: System Architecture
 
 ===================
 System Architecture

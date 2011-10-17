@@ -1,4 +1,4 @@
-.. index:: ! Generic Object System (C API)
+.. index:: Generic Object System (C API)
 
 .. _objsystem_main_c:
 

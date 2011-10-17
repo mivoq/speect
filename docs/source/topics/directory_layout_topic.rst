@@ -1,7 +1,7 @@
 .. index:: 
    single: Topic Guides; Directory Layout
 
-.. index:: ! Directory Layout
+.. index:: Directory Layout
 
 .. _directory_layout_topic:
 

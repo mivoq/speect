@@ -1,4 +1,4 @@
-.. index:: ! Building and Installing Speect
+.. index:: Building and Installing Speect
 
 .. _installation:
 

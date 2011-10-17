@@ -1,5 +1,5 @@
 
-.. index:: ! Processors (C API)
+.. index:: Processors (C API)
 
 .. _processors_c_api:
 

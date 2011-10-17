@@ -1,4 +1,4 @@
-.. index:: ! Path Functions (C API)
+.. index:: Path Functions (C API)
 
 .. _utils/path:
 

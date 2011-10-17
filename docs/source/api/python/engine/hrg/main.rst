@@ -1,5 +1,5 @@
 
-.. index:: ! Heterogeneous Relation Graphs (Python API)
+.. index:: Heterogeneous Relation Graphs (Python API)
 
 .. _hrg_main_python:
 

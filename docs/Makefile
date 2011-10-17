@@ -58,6 +58,25 @@ html:
 	@echo
 	@echo "Build finished. The HTML pages are in $(BUILDDIR)/html."
 
+html_c_engine:
+	make doxygen_make
+	-rm -f source/conf.py
+	-rm -f source/api/main.rst
+	-rm -f source/examples/main.rst
+	-rm -f source/topics/main.rst
+	-rm -f source/topics/hrg_topic.rst
+	-rm -f source/topics/processors_topic.rst
+	ln -s conf.c.engine.py source/conf.py
+	ln -s main.c.engine.rst source/api/main.rst
+	ln -s main.c.engine.rst source/examples/main.rst
+	ln -s main.c.engine.rst source/topics/main.rst
+	ln -s hrg_topic.c.engine.rst source/topics/hrg_topic.rst
+	ln -s processors_topic.c.engine.rst source/topics/processors_topic.rst
+	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
+	@echo
+	@echo "Build finished. The HTML pages are in $(BUILDDIR)/html."
+
+
 dirhtml:
 	make doxygen_make
 	$(SPHINXBUILD) -b dirhtml $(ALLSPHINXOPTS) $(BUILDDIR)/dirhtml

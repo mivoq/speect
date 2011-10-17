@@ -40,7 +40,7 @@ div.document {
 }
 
 div.bodywrapper {
-    margin: 0 0 0 {{ theme_sidebarwidth|toint + 10 }}px;
+    margin: 0 0 0 {{ theme_bodywidth }}px;
     border-left: 1px solid #ccc;
 }
 
@@ -127,7 +127,7 @@ div.related_nav ul li a:hover {
 div.sphinxsidebar {
     margin: 0;
     padding: 0.5em 0 15px 15px;
-    width: {{ theme_sidebarwidth|toint - 20 }}px;
+    width: {{ theme_sidebarwidth }}px;
     float: left;
     font-size: 1em;
     text-align: left;

@@ -1,4 +1,4 @@
-.. index:: ! Containers (C API)
+.. index:: Containers (C API)
 
 .. _containers_main_c:
 

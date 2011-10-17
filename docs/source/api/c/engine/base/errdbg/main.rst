@@ -1,4 +1,4 @@
-.. index:: ! Error Handling and Debugging (C API)
+.. index:: Error Handling and Debugging (C API)
 
 .. _errdbg_main_c:
 

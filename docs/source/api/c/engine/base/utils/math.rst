@@ -1,4 +1,4 @@
-.. index:: ! Math Functions (C API)
+.. index:: Math Functions (C API)
 
 .. _utils/math:
 

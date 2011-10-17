@@ -1,4 +1,4 @@
-.. index:: ! Time Functions (C API)
+.. index:: Time Functions (C API)
 
 .. _utils/time:
 

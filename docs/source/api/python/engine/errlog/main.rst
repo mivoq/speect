@@ -1,6 +1,6 @@
 .. _python/errdbg/main:
 
-.. index:: ! Error Handling and Logging (Python API)
+.. index:: Error Handling and Logging (Python API)
 
 ==========================
 Error Handling and Logging

@@ -1,4 +1,4 @@
-.. index:: ! Version Numbers (C API)
+.. index:: Version Numbers (C API)
 
 .. _utils/vernum:
 

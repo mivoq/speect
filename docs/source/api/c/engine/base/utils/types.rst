@@ -1,4 +1,4 @@
-.. index:: ! Type Definitions (C API)
+.. index:: Type Definitions (C API)
 
 .. _utils/types:
 

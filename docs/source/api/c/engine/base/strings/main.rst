@@ -1,4 +1,4 @@
-.. index:: ! Strings (C API)
+.. index:: Strings (C API)
 
 .. _strings/main:
 

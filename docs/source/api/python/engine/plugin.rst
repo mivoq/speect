@@ -1,6 +1,6 @@
 .. _python/engine/plugin:
 
-.. index:: ! Plug-ins (Python API)
+.. index:: Plug-ins (Python API)
 
 .. index::
    single: Plug-ins (Python API); SPlugin

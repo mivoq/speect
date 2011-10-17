@@ -1,7 +1,7 @@
 .. index:: 
    single: Topic Guides; Creating New Voices
 
-.. index:: ! Voicetools
+.. index:: Voicetools
 
 
 .. _creating_new_voices:

@@ -1,5 +1,5 @@
 
-.. index:: ! CMake API
+.. index:: CMake API
 
 .. _cmake/main:
 

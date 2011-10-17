@@ -2,7 +2,7 @@
 .. index:: 
    single: Topic Guides; Plug-ins
 
-.. index:: ! Plug-ins
+.. index:: Plug-ins
 
 .. _plugins_topic:
 

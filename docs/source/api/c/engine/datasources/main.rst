@@ -1,4 +1,4 @@
-.. index:: ! Data Sources (C API)
+.. index:: Data Sources (C API)
 
 
 .. _datasources/main:

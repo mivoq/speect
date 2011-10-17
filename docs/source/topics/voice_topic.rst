@@ -1,4 +1,4 @@
-.. index:: ! Voice Definition
+.. index:: Voice Definition
 
 .. index:: 
    single: Topic Guides; Voice Definition

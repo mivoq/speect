@@ -1,4 +1,4 @@
-.. index:: ! Processors (Python API)
+.. index:: Processors (Python API)
 
 .. _processors_python_api:
 

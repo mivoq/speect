@@ -1,6 +1,6 @@
 .. _containers/main:
 
-.. index:: ! Containers (Python API)
+.. index:: Containers (Python API)
 
 ==========
 Containers

@@ -1,4 +1,4 @@
-.. index:: ! Heterogeneous Relation Graphs (C API)
+.. index:: Heterogeneous Relation Graphs (C API)
 
 .. _hrg_main_c:
 

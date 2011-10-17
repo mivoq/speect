@@ -1,4 +1,4 @@
-.. index:: ! Simple Containers (C API)
+.. index:: Simple Containers (C API)
 
 .. _base_containers/main:
 

@@ -68,6 +68,12 @@ docs/doxygen/*
 
 
 ##########################################################################
+# Ignore documentation tools pyc files
+
+docs/sphinx_ext/*.pyc
+
+
+##########################################################################
 # Ignore ditz config file
 
 .ditz-config

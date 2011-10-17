@@ -45,6 +45,7 @@ doxygen_clean:
 	-rm -rf $(DOXYDIR)/*
 
 doxygen_make:
+	-mkdir -p $(DOXYDIR)
 	$(DOXYGEN) $(DOXYFILE)
 
 clean:

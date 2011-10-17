@@ -82,7 +82,9 @@ release = str(sversion[0]) + "." + str(sversion[1]) + "." + str(sversion[2])
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
-exclude_patterns = []
+exclude_patterns = ['api/python', 'api/main.c.engine.rst',
+                    'examples/python', 'examples/main.c.engine.rst',
+                    'topics/*python*.rst', 'topics/*c.engine*.rst']
 
 # The reST default role (used for this markup: `text`) to use for all documents.
 #default_role = None

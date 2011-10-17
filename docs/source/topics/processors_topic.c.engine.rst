@@ -21,4 +21,3 @@ Utterance and feature processors are defined as :ref:`plug-ins
 API's:
 
     	 * :doc:`Processors C API <processors_topic_c>`
-	 * :doc:`Processors Python API <processors_topic_python>`

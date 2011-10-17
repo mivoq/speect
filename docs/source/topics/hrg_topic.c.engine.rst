@@ -201,6 +201,5 @@ Examples
 Examples of the API usage of the HRG modules:
 
 	 * :doc:`hrg_topic_c`
-	 * :doc:`hrg_topic_python`
 
   

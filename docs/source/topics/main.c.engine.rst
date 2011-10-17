@@ -42,28 +42,6 @@ Topic Guides
    hrg_topic_c
    
 
-
-.. index:: Topic Guides; Python Specific
-
-.. _python_specific_topics:
-
-.. rubric:: Python Specific
-
-.. toctree::
-   :maxdepth: 1
-
-   errdbg_topic_python
-   init_logging_topic_python
-   processors_topic_python
-   voice_topic_python
-
-.. toctree::
-   :hidden: 
-
-   hrg_topic_python
-
-
-
 .. index:: Topic Guides; Miscellaneous
 
 .. _miscellaneous_topics:

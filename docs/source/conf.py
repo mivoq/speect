@@ -16,8 +16,7 @@ import sys, os
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
-#sys.path.insert(0, os.path.abspath('.'))
-sys.path.append("/home/aby/Software/Projects/sphinx_doxygen_ext/")
+sys.path.insert(0, os.path.abspath('../sphinx_ext'))
 
 # -- General configuration -----------------------------------------------------
 
@@ -37,7 +36,7 @@ extensions = ['sphinx.ext.autodoc',
 todo_include_todos = True
 
 # tell doxybridge  about the projects:
-doxybridge_projects = { "speect": ("/home/aby/Development/speect/docs/doxygen/xml", "c") }
+doxybridge_projects = { "speect": (os.path.abspath('../doxygen/xml'), "c") }
 
 # specify a default project:
 doxybridge_default_project = "speect"

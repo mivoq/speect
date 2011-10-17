@@ -99,8 +99,7 @@ freeing for your plug-in:
    :language: c
    :tab-width: 4
    :linenos:
-   :lines: 102-131
-
+   :lines: 102-127
 
 
 source.c and source.h

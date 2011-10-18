@@ -125,7 +125,7 @@ endif(SPCT_GCC)
 #                          Library definition                                        #
 #------------------------------------------------------------------------------------#
 
-set(SPCT_PYTHON_NATIVE_LIBRARY spct_py_native)
+set(SPCT_PYTHON_NATIVE_LIBRARY spct-py-native)
 
 add_library(SPCT_PYTHON_NATIVE_LIBRARY ${SPCT_PYTHON_NATIVE_SOURCES})
 

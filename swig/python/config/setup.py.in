@@ -15,7 +15,7 @@ be extended for other languages supported by SWIG.
 
 setup(
     name='Speect',
-    version='@SPCT_VERSION_RELEASE@',
+    version='@SPCT_VERSION@',
     description='Multilingual text-to-speech system',
     long_description=long_desc,
     author='Human Language Technologies Group, Meraka Institute, CSIR, South Africa',

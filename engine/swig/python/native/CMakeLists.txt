@@ -174,14 +174,14 @@ endif(WANT_EXAMPLES)
 if(SPCT_UNIX)
 
   # Install header files.  
-  install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+  file(GLOB tmpfiles "${CMAKE_CURRENT_SOURCE_DIR}/py*.h")
+  install(FILES ${tmpfiles}
     DESTINATION include/speect/engine/python/native
-    FILES_MATCHING PATTERN "*.h"
     )
 
-  install(DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
+  file(GLOB tmpfiles "${CMAKE_CURRENT_BINARY_DIR}/py*.h")
+  install(FILES ${tmpfiles}
     DESTINATION include/speect/engine/python/native
-    FILES_MATCHING PATTERN "*.h"
     )
   
   # Install library

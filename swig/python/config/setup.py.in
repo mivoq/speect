@@ -19,7 +19,7 @@ setup(
     description='Multilingual text-to-speech system',
     long_description=long_desc,
     author='Human Language Technologies Group, Meraka Institute, CSIR, South Africa',
-    author_email='jalouw@csir.co.za',
+    author_email='speect-developers@lists.sourceforge.net',
     url='http://speect.sourceforge.net',
     packages=['speect', 'speect.modules'],
     package_dir={'speect': 'speect',

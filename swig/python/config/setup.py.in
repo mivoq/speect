@@ -1,0 +1,28 @@
+#!/usr/bin/env python
+
+from distutils.core import setup
+
+long_desc = '''
+Speect is a multilingual TTS system. It offers a full text-to-speech system with
+various API\'s, as well an environment for research and development of TTS systems
+and voices.
+
+It is written in ISO C and uses a plug-in mechanism for extensions. Speect also
+includes an extensive set of Python bindings for quick implementation of new ideas,
+these bindings are derived from SWIG (www.swig.org) interface files and can easily
+be extended for other languages supported by SWIG.
+'''
+
+setup(
+    name='Speect',
+    version='@SPCT_VERSION_RELEASE@',
+    description='Multilingual text-to-speech system',
+    long_description=long_desc,
+    author='Human Language Technologies Group, Meraka Institute, CSIR, South Africa',
+    author_email='jalouw@csir.co.za',
+    url='http://speect.sourceforge.net',
+    packages=['speect', 'speect.modules'],
+    package_dir={'speect': 'speect',
+                 'speect.modules': 'speect/modules'},
+    package_data={'speect': ['lib/*']},
+    )

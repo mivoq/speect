@@ -186,7 +186,7 @@ if(SPCT_UNIX)
   
   # Install library
   install(TARGETS SPCT_PYTHON_NATIVE_LIBRARY 
-    DESTINATION "lib${LIB_SUFFIX}/speect/engine/python"
+    DESTINATION "lib${LIB_SUFFIX}/"
     EXPORT spctPythonNativeConfig 
     )
 

@@ -18,6 +18,7 @@ setup(
     version='@SPCT_VERSION@',
     description='Multilingual text-to-speech system',
     long_description=long_desc,
+    license= 'MIT',
     author='Human Language Technologies Group, Meraka Institute, CSIR, South Africa',
     author_email='speect-developers@lists.sourceforge.net',
     url='http://speect.sourceforge.net',
@@ -25,4 +26,17 @@ setup(
     package_dir={'speect': 'speect',
                  'speect.modules': 'speect/modules'},
     package_data={'speect': ['lib/*']},
+    classifiers=[
+        'Development Status :: 4 - Beta',
+        'Environment :: Console',
+        'Intended Audience :: Developers',
+        'Intended Audience :: Science/Research',
+        'License :: OSI Approved :: MIT License',
+        'Programming Language :: C',
+        'Programming Language :: Python',
+        'Topic :: Adaptive Technologies',
+        'Topic :: Multimedia :: Sound/Audio :: Sound Synthesis',
+        'Topic :: Multimedia :: Sound/Audio :: Speech',
+        'Topic :: Scientific/Engineering :: Human Machine Interfaces'
+        ]
     )

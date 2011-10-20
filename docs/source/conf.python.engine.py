@@ -82,16 +82,14 @@ release = "1.0.0"
 exclude_patterns = [
     'contents.python.engine.rst',
     'contents.c.engine.rst',
-    'api/python',
+    'api/python/plugins',
     'api/main.c.engine.rst',
     'api/main.python.engine.rst',
-    'examples/python',
     'examples/main.c.engine.rst',
     'examples/main.python.engine.rst',
     'topics/*c.engine*.rst',
     'topics/*python.engine*.rst'
     ]
-
 
 # The reST default role (used for this markup: `text`) to use for all documents.
 #default_role = None

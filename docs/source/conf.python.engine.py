@@ -82,11 +82,15 @@ release = "1.0.0"
 exclude_patterns = [
     'contents.python.engine.rst',
     'contents.c.engine.rst',
+    'contents.all.rst',
     'api/python/plugins',
+    'api/main.all.rst',
     'api/main.c.engine.rst',
     'api/main.python.engine.rst',
+    'examples/main.all.rst',
     'examples/main.c.engine.rst',
     'examples/main.python.engine.rst',
+    'topics/*.all.*rst',
     'topics/*c.engine*.rst',
     'topics/*python.engine*.rst'
     ]

@@ -21,25 +21,27 @@ I18NSPHINXOPTS  = $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) source
 
 help:
 	@echo "Please use \`make <target>' where <target> is one of"
-	@echo "  html       to make standalone HTML files"
-	@echo "  dirhtml    to make HTML files named index.html in directories"
-	@echo "  singlehtml to make a single large HTML file"
-	@echo "  pickle     to make pickle files"
-	@echo "  json       to make JSON files"
-	@echo "  htmlhelp   to make HTML files and a HTML help project"
-	@echo "  qthelp     to make HTML files and a qthelp project"
-	@echo "  devhelp    to make HTML files and a Devhelp project"
-	@echo "  epub       to make an epub"
-	@echo "  latex      to make LaTeX files, you can set PAPER=a4 or PAPER=letter"
-	@echo "  latexpdf   to make LaTeX files and run them through pdflatex"
-	@echo "  text       to make text files"
-	@echo "  man        to make manual pages"
-	@echo "  texinfo    to make Texinfo files"
-	@echo "  info       to make Texinfo files and run them through makeinfo"
-	@echo "  gettext    to make PO message catalogs"
-	@echo "  changes    to make an overview of all changed/added/deprecated items"
-	@echo "  linkcheck  to check all external links for integrity"
-	@echo "  doctest    to run all doctests embedded in the documentation (if enabled)"
+	@echo "  html                to make standalone HTML files"
+	@echo "  html_c_engine       to make standalone HTML files, Speect Engine C API only"
+	@echo "  html_python_engine  to make standalone HTML files, Speect Engine C/Python API only"
+	@echo "  dirhtml             to make HTML files named index.html in directories"
+	@echo "  singlehtml          to make a single large HTML file"
+	@echo "  pickle              to make pickle files"
+	@echo "  json                to make JSON files"
+	@echo "  htmlhelp            to make HTML files and a HTML help project"
+	@echo "  qthelp              to make HTML files and a qthelp project"
+	@echo "  devhelp             to make HTML files and a Devhelp project"
+	@echo "  epub                to make an epub"
+	@echo "  latex               to make LaTeX files, you can set PAPER=a4 or PAPER=letter"
+	@echo "  latexpdf            to make LaTeX files and run them through pdflatex"
+	@echo "  text                to make text files"
+	@echo "  man                 to make manual pages"
+	@echo "  texinfo             to make Texinfo files"
+	@echo "  info                to make Texinfo files and run them through makeinfo"
+	@echo "  gettext             to make PO message catalogs"
+	@echo "  changes             to make an overview of all changed/added/deprecated items"
+	@echo "  linkcheck           to check all external links for integrity"
+	@echo "  doctest             to run all doctests embedded in the documentation (if enabled)"
 
 doxygen_clean:
 	-rm -rf $(DOXYDIR)/*
@@ -54,6 +56,20 @@ clean:
 
 html:
 	make doxygen_make
+	-rm -f source/conf.py
+	-rm -f source/api/main.rst
+	-rm -f source/examples/main.rst
+	-rm -f source/topics/main.rst
+	-rm -f source/topics/hrg_topic.rst
+	-rm -f source/topics/processors_topic.rst
+	-rm -f source/contents.rst
+	ln -s conf.all.py source/conf.py
+	ln -s main.all.rst source/api/main.rst
+	ln -s main.all.rst source/examples/main.rst
+	ln -s main.all.rst source/topics/main.rst
+	ln -s hrg_topic.all.rst source/topics/hrg_topic.rst
+	ln -s processors_topic.all.rst source/topics/processors_topic.rst
+	ln -s contents.all.rst source/contents.rst
 	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
 	@echo
 	@echo "Build finished. The HTML pages are in $(BUILDDIR)/html."
@@ -66,16 +82,37 @@ html_c_engine:
 	-rm -f source/topics/main.rst
 	-rm -f source/topics/hrg_topic.rst
 	-rm -f source/topics/processors_topic.rst
+	-rm -f source/contents.rst
 	ln -s conf.c.engine.py source/conf.py
 	ln -s main.c.engine.rst source/api/main.rst
 	ln -s main.c.engine.rst source/examples/main.rst
 	ln -s main.c.engine.rst source/topics/main.rst
 	ln -s hrg_topic.c.engine.rst source/topics/hrg_topic.rst
 	ln -s processors_topic.c.engine.rst source/topics/processors_topic.rst
+	ln -s contents.c.engine.rst source/contents.rst
 	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
 	@echo
 	@echo "Build finished. The HTML pages are in $(BUILDDIR)/html."
 
+html_python_engine:
+	make doxygen_make
+	-rm -f source/conf.py
+	-rm -f source/api/main.rst
+	-rm -f source/examples/main.rst
+	-rm -f source/topics/main.rst
+	-rm -f source/topics/hrg_topic.rst
+	-rm -f source/topics/processors_topic.rst
+	-rm -f source/contents.rst
+	ln -s conf.python.engine.py source/conf.py
+	ln -s main.python.engine.rst source/api/main.rst
+	ln -s main.python.engine.rst source/examples/main.rst
+	ln -s main.python.engine.rst source/topics/main.rst
+	ln -s hrg_topic.python.engine.rst source/topics/hrg_topic.rst
+	ln -s processors_topic.python.engine.rst source/topics/processors_topic.rst
+	ln -s contents.python.engine.rst source/contents.rst
+	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
+	@echo
+	@echo "Build finished. The HTML pages are in $(BUILDDIR)/html."
 
 dirhtml:
 	make doxygen_make

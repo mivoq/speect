@@ -18,14 +18,6 @@
 configure_file(${CMAKE_SOURCE_DIR}/swig/python/config/__init__.py.in
   ${CMAKE_BINARY_DIR}/swig/python/speect/__init__.py @only)
 
-#------------------------------------------------------------------------------------#
-#                                Generate setup.py                                   #
-#------------------------------------------------------------------------------------#
-
-configure_file(${CMAKE_SOURCE_DIR}/swig/python/config/setup.py.in
-  ${CMAKE_BINARY_DIR}/swig/python/setup.py @only)
-
-
 
 #------------------------------------------------------------------------------------#
 #                          Copy examples and other files                             #

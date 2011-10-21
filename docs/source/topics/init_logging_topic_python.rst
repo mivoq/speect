@@ -19,6 +19,12 @@ the Speect Engine C initialization)::
 
     import speect
 
+.. note::
+   
+   When using Speect from a built tree one must tell Python where to
+   find the Speect Python bindings, see the installation
+   :ref:`documentation <python_path_installation>`.
+
 
 Finalization
 ============

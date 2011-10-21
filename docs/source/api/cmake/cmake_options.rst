@@ -10,7 +10,7 @@ CMake Configuration Options
 
 Several configuration options are available to customize the Speect
 build system.  These options can be configured through an interactive
-CMake interface as described in :ref:`installation`, or through the
+CMake interface as described in :ref:`build_install`, or through the
 command line.
 
 

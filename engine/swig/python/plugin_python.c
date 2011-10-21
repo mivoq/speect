@@ -48,7 +48,7 @@
 		SDso *pluginDso;
 		char *new_path;
 		PyObject *info;
-		const s_plugin_init_fp plugin_initialize;
+		s_plugin_init_fp plugin_initialize;
 		const s_plugin_params *plugin_info;
 		PyObject *tmp;
 

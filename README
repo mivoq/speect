@@ -6,30 +6,31 @@
                   \/\____/\ \ ,__/\ \____\ \____\ \____\\ \__\
                    \/___/  \ \ \/  \/____/\/____/\/____/ \/__/
                             \ \_\
-                             \/_/  version 1.0.0 RELEASE June 2010
+                             \/_/  version 1.0.0 RELEASE October 2011
 
 
-Speect is a multilingual TTS system. It offers a full text-to-speech system with 
-various API's, as well an environment for research and development of TTS systems
-and voices. 
+Speect is a multilingual TTS system. It offers a full text-to-speech
+system with various API's, as well as an environment for research and
+development of TTS systems and voices.
 
-It is written in ANSI C and uses a plug-in mechanism for extensions. Speect also
-includes an extensive set of Python bindings for quick implementation of new ideas,
-these bindings are derived from SWIG (www.swig.org) interface files and can easily
-be extended for other languages supported by SWIG.
+It is written in ANSI C and uses a plug-in mechanism for
+extensions. Speect also includes an extensive set of Python bindings
+for quick implementation of new ideas, these bindings are derived from
+SWIG (www.swig.org) interface files and can easily be extended for
+other languages supported by SWIG.
 
 
 License
 -------
 
-Speect is free and open source software. As a collection it is distributed under
-a MIT license, see LICENSE for more details. See NEWS for more details of this
-release.
+Speect is free and open source software. As a collection it is
+distributed under a MIT license, see LICENSE for more details. See
+NEWS for more details of this release.
 
 
 Requirements
 ------------
 
-To build Speect one needs CMake (http://www.cmake.org, minimum version 2.8) and
-a ANSI C/ISO C90 compliant compiler. See INSTALL for more details. Python and SWIG
-are required for the Python bindings.
+To build Speect one needs CMake (http://www.cmake.org, minimum version
+2.8) and a ANSI C/ISO C90 compliant compiler. See INSTALL for more
+details. Python and SWIG are required for the Python bindings.

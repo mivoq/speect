@@ -1,13 +1,31 @@
+* October 2011
+  Speect version 1.0.0 is a major update which includes the following
+  features:
+  - Refactoring of build system, engine and plug-ins built together,
+  - plug-in templates,
+  - Python bindings for linguistic objects,
+  - load voices defined in Python functions,
+  - support for hts_engine versions 1.02, 1.03, 1.04 and 1.05,
+  - syllabification module for syllabification with rewrite rules,
+  - callbacks to logging system, can now be integrated with external
+    logging mechanism (for example uses Python's logging module in
+    Python)
+  - Doxygen C API documentation integrated with Sphinx documentation
+    generation,
+  - extensive topic documentation,
+  - lots of bug fixes.
+
 * June 4, 2010
-  Speect version 0.9.5 is an update, and includes many bug fixes.
-  The Python interface and voice building tools are also included.
-  Voicetools is in a seperate git repository on the Sourceforge
+  Speect version 0.9.5 is an update, and includes many bug fixes.  The
+  Python interface and voice building tools are also included.
+  Voicetools is in a separate git repository on the Sourceforge
   project page.
 
 * December 2009
-  Speect version 0.9.0 is a rewrite of version 0.1.0 with better error handling,
-  logging and debugging. The build system has been redone to ease the bulding of 
-  plug-ins. The plug-in system has changed completely with the Speect
-  Engine having a minimal number of modules. All linguistic/acoustic objects and their
-  implementation is now done through plug-ins.
+  Speect version 0.9.0 is a rewrite of version 0.1.0 with better error
+  handling, logging and debugging. The build system has been redone to
+  ease the building of plug-ins. The plug-in system has changed
+  completely with the Speect Engine having a minimal number of
+  modules. All linguistic/acoustic objects and their implementation is
+  now done through plug-ins.
 

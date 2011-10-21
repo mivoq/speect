@@ -91,8 +91,8 @@ command line, for example::
     $ ls -d speect
     speect/
     $ cd speect/build
-    $ cmake ../ -DERROR_HANDLING=off -DHTS_ENGINE_INCLUDE=/path/to/hts/include \
-     -DHTS_ENGINE_LIB=/path/to/hts/lib/libHTSEngine.a
+    $ cmake ../ -DERROR_HANDLING=off -DHTS_ENGINE_INCLUDE_104=/path/to/hts/include \
+     -DHTS_ENGINE_LIB_104=/path/to/hts/lib/libHTSEngine.a
     $ make	      
 
 
@@ -197,7 +197,12 @@ libraries are available. The options include:
 Installation
 ============
 
-Speect can be used from the build tree or it can be installed.
+Speect can be used from the build tree or it can be installed.  When
+using the Speect Python bindings from the build tree one needs to tell
+Python where to find Speect. This is done by adding the
+``speect/build/swig/python`` path to the PYTHONPATH environment
+variable.
+
 Installing Speect from a source distribution requires first that it be
 compiled in a build tree. See the `Configuration and Compilation`_
 section above for details. Once Speect has been compiled in a build
@@ -208,8 +213,18 @@ of the build tree. The installation process will install all files in
 a directory structure rooted at the directory specified by
 CMAKE_INSTALL_PREFIX.
 
-WARNING: The ``make install`` command has an option to specify a destination
+WARNING:
+
+The ``make install`` command has an option to specify a destination
 directory (``DESTDIR`` = "...") on the command line or through an
-environment variable. Do **not** use this option as the Speect
-library will not be able to find the plug-in library paths at runtime.
+environment variable. If ``DESTDIR`` is specified then Speect needs
+the environment variable SPCT_PLUGIN_PATH set to the
+``DESTDIR``/CMAKE_INSTALL_PREFIX/speect/plugins directory to be able
+to find the plug-ins (see the default plug-in path documentation for
+more details).
+
+NOTE:
+  
+The Python wrappers are currently not installed.
+
 

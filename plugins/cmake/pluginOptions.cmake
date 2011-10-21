@@ -26,3 +26,7 @@ set(HTS_ENGINE_LIB_103 CACHE FILEPATH "HTS Engine (1.03) library location (full 
 # Current version (1.03)
 set(HTS_ENGINE_INCLUDE CACHE PATH "Path to HTS Engine (current version 1.03) include directory")
 set(HTS_ENGINE_LIB CACHE FILEPATH "HTS Engine (current version 1.03) library location (full path and library)")
+
+# 104
+set(HTS_ENGINE_INCLUDE_104 CACHE PATH "Path to HTS Engine (1.04) include directory")
+set(HTS_ENGINE_LIB_104 CACHE FILEPATH "HTS Engine (1.04) library location (full path and library)")

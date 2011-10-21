@@ -83,7 +83,7 @@ release = str(sversion[0]) + "." + str(sversion[1]) + "." + str(sversion[2])
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 exclude_patterns = [
-    'python_quick_start.rst'
+    'python_quick_start.rst',
     'contents.python.engine.rst',
     'contents.c.engine.rst',
     'contents.all.rst',

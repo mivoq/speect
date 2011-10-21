@@ -256,7 +256,7 @@ much easier as everything is consistent.
       Where all the ``$tags$`` are replaced with their appropriate entries.
 
     
-      **Inclusion gaurd** (header files only)
+      **Inclusion guard** (header files only)
 
       .. literalinclude:: layout_example.h
          :language: c
@@ -361,7 +361,7 @@ much easier as everything is consistent.
 
       .. literalinclude:: layout_example.h
          :language: c
-	 :lines: 114-117
+	 :lines: 114-118
 
 
       **Class initialization**  (source files only)

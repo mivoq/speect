@@ -64,7 +64,7 @@ can code it as follows:
    item_one["name"] = "one"
 
    item21.add_daughter(item_twenty)
-   item21.add_daughter(item_twenty)
+   item21.add_daughter(item_one)
 
 
 :ref:`Figure 5 <figure_hrg_sharedp>` shows a representation of the HRG that

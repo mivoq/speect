@@ -15,6 +15,7 @@ Welcome! This is the documentation for Speect |version|, last updated |today|.
    api/main
    examples/main
    installation
+   python_quick_start
 
 
 
@@ -36,6 +37,10 @@ Welcome! This is the documentation for Speect |version|, last updated |today|.
 	   - :doc:`installation`
 	 * - Python and C example snippets
 	   - build and install Speect from source
+	 * - :doc:`python_quick_start`
+	   -
+	 * - for the Impatient 
+	   -
 
 
 | 

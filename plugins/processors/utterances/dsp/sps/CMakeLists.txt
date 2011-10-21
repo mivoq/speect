@@ -14,10 +14,6 @@
 #                        Plug-in directories                                         #
 #------------------------------------------------------------------------------------#
 
-if(HTS_ENGINE_INCLUDE AND HTS_ENGINE_LIB)
-  add_subdirectory(hts_engine)
-endif(HTS_ENGINE_INCLUDE AND HTS_ENGINE_LIB)
-
 if(HTS_ENGINE_INCLUDE_102 AND HTS_ENGINE_LIB_102)
   add_subdirectory(hts_engine_102)
 endif(HTS_ENGINE_INCLUDE_102 AND HTS_ENGINE_LIB_102)

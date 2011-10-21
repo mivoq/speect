@@ -53,7 +53,7 @@
 			return NULL;
 		}
 
-		pobject = SWIG_InternalNewPointerObj(SWIG_as_voidptr($self->item), SWIGTYPE_p_SItem, 0 |  0 );
+		pobject = SWIG_NewPointerObj(SWIG_as_voidptr($self->item), SWIGTYPE_p_SItem, 0 |  0 );
 
 		$self->item = SItemNext($self->item, &error);
 		if (error != S_SUCCESS)

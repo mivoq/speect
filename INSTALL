@@ -213,18 +213,17 @@ of the build tree. The installation process will install all files in
 a directory structure rooted at the directory specified by
 CMAKE_INSTALL_PREFIX.
 
-WARNING:
-
-The ``make install`` command has an option to specify a destination
-directory (``DESTDIR`` = "...") on the command line or through an
-environment variable. If ``DESTDIR`` is specified then Speect needs
-the environment variable SPCT_PLUGIN_PATH set to the
+WARNING: The ``make install`` command has an option to specify a
+destination directory (``DESTDIR`` = "...") on the command line or
+through an environment variable. If ``DESTDIR`` is specified then
+Speect needs the environment variable SPCT_PLUGIN_PATH set to the
 ``DESTDIR``/CMAKE_INSTALL_PREFIX/speect/plugins directory to be able
 to find the plug-ins (see the default plug-in path documentation for
 more details).
 
-NOTE:
-  
-The Python wrappers are currently not installed.
+The Python wrappers are installed using ``distutils`` as follows::
+
+    $ cd speect/build/swig/python
+    $ python setup.py install
 
 

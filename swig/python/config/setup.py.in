@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 '''
 Speect is a multilingual TTS system. It offers a full text-to-speech system with
-various API\'s, as well an environment for research and development of TTS systems
+various API\'s, as well as an environment for research and development of TTS systems
 and voices.
 
-It is written in ISO C and uses a plug-in mechanism for extensions. Speect also
+It is written in ANSI C and uses a plug-in mechanism for extensions. Speect also
 includes an extensive set of Python bindings for quick implementation of new ideas,
 these bindings are derived from SWIG (www.swig.org) interface files and can easily
 be extended for other languages supported by SWIG.
@@ -12,25 +12,10 @@ be extended for other languages supported by SWIG.
 
 
 from distutils.core import setup, Extension
-from distutils.sysconfig import get_python_version
 
-
-# get python version and create a library name
-python_lib = "python" + get_python_version()
-
-# speect extension
-_speect = Extension('_speect',
-                    ['speect.i'],
-                    swig_opts=['-Wall','-Werror', '-outdir', '@TMP_OUT_DIR@'],
-                    define_macros=[('SWIG_TYPE_TABLE', 'speect'),
-                                   ('_speect_EXPORTS', None)],
-                    include_dirs=['@TMP_INCLUDE_DIRS@'],
-                    libraries=[python_lib, '@TMP_LIBRARIES@'],
-                    extra_compile_args=['-fno-strict-aliasing']
-                    )
 
 setup(
-    name='Speect',
+    name='speect',
     version='@SPCT_VERSION@',
     description='Speect Python bindings',
     long_description = __doc__.lstrip(),
@@ -38,10 +23,8 @@ setup(
     author='Human Language Technologies Group, Meraka Institute, CSIR, South Africa',
     author_email='speect-developers@lists.sourceforge.net',
     url='http://speect.sourceforge.net',
-    ext_package='speect.lib',
-    ext_modules=[_speect],
     packages=['speect', 'speect.modules'],
-    package_dir={'speect.modules' : '@TMP_MODULES_DIR@'},
+    package_data={'speect': ['lib/_speect*']},
     classifiers=[
         'Development Status :: 4 - Beta',
         'Environment :: Console',

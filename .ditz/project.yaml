@@ -7,10 +7,23 @@ components:
 releases: 
 - !ditz.rubyforge.org,2008-03-06/release 
   name: Beryllium
-  status: :unreleased
-  release_time: 
+  status: :released
+  release_time: 2011-10-24 11:30:00.442432 Z
   log_events: 
   - - 2010-07-01 13:04:48.694171 Z
     - Aby Louw <jalouw@csir.co.za>
     - created
     - Speect release v1.0.0
+  - - 2011-10-24 11:30:00.442450 Z
+    - Aby Louw <jalouw@csir.co.za>
+    - released
+    - Beryllium, v1.0.0 released
+- !ditz.rubyforge.org,2008-03-06/release 
+  name: Boron
+  status: :unreleased
+  release_time: 
+  log_events: 
+  - - 2011-10-24 11:31:42.441902 Z
+    - Aby Louw <jalouw@csir.co.za>
+    - created
+    - Next Speect release, Boron.

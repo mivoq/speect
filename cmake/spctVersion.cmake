@@ -15,7 +15,7 @@
 #                             Speect version codename                                #
 #------------------------------------------------------------------------------------#
 
-set(SPCT_VERSION_RELEASE "Beryllium" CACHE STRING "Speect version codename" FORCE)
+set(SPCT_VERSION_RELEASE "Boron" CACHE STRING "Speect version codename" FORCE)
 mark_as_advanced(SPCT_VERSION_RELEASE)
 
 

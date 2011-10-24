@@ -10,8 +10,8 @@ type: :task
 component: Speect
 release: Beryllium
 reporter: Aby Louw <jalouw@csir.co.za>
-status: :unstarted
-disposition: 
+status: :closed
+disposition: :reorg
 creation_time: 2010-07-07 10:56:12.534834 Z
 references: []
 
@@ -21,3 +21,7 @@ log_events:
   - Aby Louw <jalouw@csir.co.za>
   - created
   - ""
+- - 2011-10-24 11:13:30.473916 Z
+  - Aby Louw <jalouw@csir.co.za>
+  - closed with disposition reorg
+  - Not going to worry about this now. To be done as needed.

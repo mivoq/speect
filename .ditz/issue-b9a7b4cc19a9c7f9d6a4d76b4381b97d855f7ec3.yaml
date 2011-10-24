@@ -5,8 +5,8 @@ type: :task
 component: Speect
 release: Beryllium
 reporter: Aby Louw <jalouw@csir.co.za>
-status: :unstarted
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2010-07-13 09:22:07.495832 Z
 references: []
 
@@ -16,3 +16,7 @@ log_events:
   - Aby Louw <jalouw@csir.co.za>
   - created
   - ""
+- - 2011-10-24 11:12:43.369920 Z
+  - Aby Louw <jalouw@csir.co.za>
+  - closed with disposition fixed
+  - CPack is broken, will handle as we go. Currently have Debian packages and Python distutils.

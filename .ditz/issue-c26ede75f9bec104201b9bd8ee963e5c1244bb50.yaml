@@ -8,8 +8,8 @@ type: :task
 component: Speect
 release: 
 reporter: Aby Louw <jalouw@csir.co.za>
-status: :unstarted
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2010-07-01 13:29:42.202849 Z
 references: []
 
@@ -23,3 +23,7 @@ log_events:
   - Aby Louw <jalouw@csir.co.za>
   - unassigned from release Beryllium
   - This is probably not in the time frame for Beryllium release
+- - 2011-10-24 11:11:01.145961 Z
+  - Aby Louw <jalouw@csir.co.za>
+  - closed with disposition fixed
+  - Done through Python file loading voice, see docs

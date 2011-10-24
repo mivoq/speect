@@ -11,8 +11,8 @@ type: :feature
 component: Speect
 release: 
 reporter: Aby Louw <jalouw@csir.co.za>
-status: :unstarted
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2010-07-07 22:01:04.967231 Z
 references: []
 
@@ -22,3 +22,7 @@ log_events:
   - Aby Louw <jalouw@csir.co.za>
   - created
   - ""
+- - 2011-10-24 11:10:06.777918 Z
+  - Aby Louw <jalouw@csir.co.za>
+  - closed with disposition fixed
+  - Error handling can be disabled, see docs

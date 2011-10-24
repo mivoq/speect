@@ -7,7 +7,9 @@ Python Quick Start
 ==================
 
 :doc:`download` Speect and look at :ref:`build_install` or get the
-Debian :ref:`packages <debian_packages>`.  Download a voice from
+Debian :ref:`packages <debian_packages>` (install the ``libspct1.0``,
+``libspct-py-native1.0``, ``libspct-plugins-base1.0`` and
+``python-speect`` packages).  Download a voice from
 `<http://hlt.mirror.ac.za/TTS/Speect/>`_.
 
 Unpack the voice in some directory::
@@ -19,7 +21,7 @@ Unpack the voice in some directory::
 .. note::
    This voice does not have extensive NLP modules. Therefore,
    text to be synthesized must be plain text (normalized). For
-   example:: "we want one goal" and *not* "we want 1 goal".
+   example, "we want one goal" and *not* "we want 1 goal".
 
 
 Run the Python interpreter::
@@ -59,7 +61,9 @@ Play the synthesized audio::
 .. note::
 
    See :py:meth:`speect.SUtterance.play()` for more information if
-   playback fails.
+   playback fails, also if :py:meth:`speect.SUtterance.play()` uses
+   :py:mod:`pyaudio` then some errors might be printed. The ``WAV``
+   can still be saved to file even if errors occurred, see below.
 
 View the utterance structure::
 

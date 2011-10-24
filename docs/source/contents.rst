@@ -4,7 +4,7 @@
 Documentation
 =============
 
-Welcome! This is the documentation for Speect |version|, last updated |today|. 
+This is the documentation for Speect |version|, last updated |today|. 
 
 
 

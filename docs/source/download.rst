@@ -55,44 +55,28 @@ voices as soon as possible.
 Debian Packages
 ===============
 
-Speect has a project page on Launchpad from which Debian packages can be downloaded and installed.
+Speect has a project page on Launchpad
+(`<https://launchpad.net/~speect>`_) from which Debian packages can be
+downloaded and installed. Help on the use of *ppa* software can be
+found here
+`<https://launchpad.net/+help/soyuz/ppa-sources-list.html>`_.
+
 There are three archives:
 
 .. rubric:: release
 
-For released packages
-(`<https://launchpad.net/~speect/+archive/release>`_) you can add the
-following *ppa* to your system::
-
-    deb http://ppa.launchpad.net/speect/release/ubuntu natty main 
-    deb-src http://ppa.launchpad.net/speect/release/ubuntu natty main 
-
+| For released packages, `<https://launchpad.net/~speect/+archive/release>`_.
+| Direct ``.deb`` downloads `<https://launchpad.net/~speect/+archive/release/+packages>`_.
+|
 
 .. rubric:: voices
 
-For packaged voices
-(`<https://launchpad.net/~speect/+archive/voices>`_) you can add the
-following *ppa* to your system::
-
-    deb http://ppa.launchpad.net/speect/voices/ubuntu natty main 
-    deb-src http://ppa.launchpad.net/speect/voices/ubuntu natty main 
-
+| For packaged voices, `<https://launchpad.net/~speect/+archive/voices>`_.
+| Direct ``.deb`` downloads `<https://launchpad.net/~speect/+archive/voices/+packages>`_.
+|
 
 .. rubric:: external dependencies
 
-For external dependencies packages
-(`<https://launchpad.net/~speect/+archive/external>`_) you can add the
-following *ppa* to your system::
-
-    deb http://ppa.launchpad.net/speect/external/ubuntu natty main 
-    deb-src http://ppa.launchpad.net/speect/external/ubuntu natty main 
-
-
-| 
-
-Help on the use of *ppa* software can be found here
-`<https://launchpad.net/+help/soyuz/ppa-sources-list.html>`_. The
-``.deb`` packages can be downloaded directly from
-`<https://launchpad.net/~speect/+archive/release/+packages>`_,
-`<https://launchpad.net/~speect/+archive/voices/+packages>`_ and
-`<https://launchpad.net/~speect/+archive/external/+packages>`_.
+| For external dependencies packages (if any), `<https://launchpad.net/~speect/+archive/external>`_.
+| Direct ``.deb`` downloads `<https://launchpad.net/~speect/+archive/external/+packages>`_.
+|

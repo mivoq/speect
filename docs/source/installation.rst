@@ -157,6 +157,7 @@ a directory structure rooted at the directory specified by
    to be able to find the plug-ins (see :ref:`default plug-in path
    <default_plugin_path>`).
 
-.. note::
-   
-   The Python wrappers are currently not installed.
+The Python wrappers are installed using :py:mod:`distutils` as follows::
+
+    $ cd speect/build/swig/python
+    $ python setup.py install

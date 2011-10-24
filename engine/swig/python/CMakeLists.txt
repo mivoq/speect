@@ -33,40 +33,6 @@ configure_file(${CMAKE_SOURCE_DIR}/engine/swig/python/config/engineSWIGpython.cm
 
 
 #------------------------------------------------------------------------------------#
-#                          setup.py configuration                                    #
-#------------------------------------------------------------------------------------#
-
-if(SPCT_UNIX)
- set(TMP_INCLUDE_DIRS "${CMAKE_INSTALL_PREFIX}/include/speect/engine','${CMAKE_INSTALL_PREFIX}/include/speect/engine/python/native")
-endif(SPCT_UNIX)
-
-# speect and speect python native libaries to link with
-get_target_property(TMP ${SPCT_LIBRARIES_TARGET} OUTPUT_NAME)
-set(TMP_LIBRARIES ${TMP})
-
-get_target_property(TMP ${SPCT_PYTHON_NATIVE_LIBRARY_TARGET} OUTPUT_NAME)
-set(TMP_LIBRARIES "${TMP_LIBRARIES}','${TMP}")
-
-# directory where speect.py is built
-set(TMP_OUT_DIR "${CMAKE_CURRENT_BINARY_DIR}/speect")
-
-# directory where modules are
-set(TMP_MODULES_DIR "${CMAKE_BINARY_DIR}/swig/python/speect/modules")
-
-configure_file(${CMAKE_SOURCE_DIR}/engine/swig/python/config/setup.py.in 
-  ${CMAKE_BINARY_DIR}/engine/swig/python/setup.py)
-
-
-#------------------------------------------------------------------------------------#
-#                              Generate __init__.py                                  #
-#------------------------------------------------------------------------------------#
-
-# uses same __init__.py.in as in speect/engine/swig/python/config
-configure_file(${CMAKE_SOURCE_DIR}/swig/python/config/__init__.py.in
-  ${CMAKE_BINARY_DIR}/engine/swig/python/speect/__init__.py @only)
-
-
-#------------------------------------------------------------------------------------#
 #         Create a list of dependencies of the SWIG Python interface                 #
 #------------------------------------------------------------------------------------#
 

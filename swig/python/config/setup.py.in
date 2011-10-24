@@ -10,6 +10,7 @@ these bindings are derived from SWIG (www.swig.org) interface files and can easi
 be extended for other languages supported by SWIG.
 
 This package provides Python bindings for the Speect engine and base plug-ins.
+Also includes hts_engine plug-ins for versions 1.03, 1.04 and 1.05.
 '''
 
 

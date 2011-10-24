@@ -8,6 +8,8 @@ It is written in ANSI C and uses a plug-in mechanism for extensions. Speect also
 includes an extensive set of Python bindings for quick implementation of new ideas,
 these bindings are derived from SWIG (www.swig.org) interface files and can easily
 be extended for other languages supported by SWIG.
+
+This package provides Python bindings for the Speect engine and base plug-ins.
 '''
 
 
@@ -17,14 +19,14 @@ from distutils.core import setup, Extension
 setup(
     name='speect',
     version='@SPCT_VERSION@',
-    description='Speect Python bindings',
+    description='Python bindings for the Speect engine and base plug-ins',
     long_description = __doc__.lstrip(),
     license= 'mit',
     author='Human Language Technologies Group, Meraka Institute, CSIR, South Africa',
     author_email='speect-developers@lists.sourceforge.net',
     url='http://speect.sourceforge.net',
     packages=['speect', 'speect.modules'],
-    package_data={'speect': ['lib/_speect*']},
+    package_data={'speect': ['lib/*']},
     classifiers=[
         'Development Status :: 4 - Beta',
         'Environment :: Console',

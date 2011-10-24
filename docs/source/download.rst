@@ -35,6 +35,12 @@ The latest development code can be cloned (read-only) with git::
     git clone git://speect.git.sourceforge.net/gitroot/speect/voicetools
 
 
+.. rubric:: Documentation
+
+This documentation can be downloaded at
+`<http://sourceforge.net/projects/speect/files/docs/>`_.
+
+
 Voices
 ======
 

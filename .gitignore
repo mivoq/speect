@@ -63,13 +63,6 @@ swig/python/speect/*.pyc
 docs/build/*
 docs/sphinxext/doxybridge/*.pyc
 docs/doxygen/*
-docs/source/examples/main.rst
-docs/source/api/main.rst
-docs/source/conf.py
-docs/source/contents.rst
-docs/source/topics/hrg_topic.rst
-docs/source/topics/main.rst
-docs/source/topics/processors_topic.rst
 
 
 ##########################################################################

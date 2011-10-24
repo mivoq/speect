@@ -56,60 +56,6 @@ clean:
 
 html:
 	make doxygen_make
-	-rm -f source/conf.py
-	-rm -f source/api/main.rst
-	-rm -f source/examples/main.rst
-	-rm -f source/topics/main.rst
-	-rm -f source/topics/hrg_topic.rst
-	-rm -f source/topics/processors_topic.rst
-	-rm -f source/contents.rst
-	ln -s conf.all.py source/conf.py
-	ln -s main.all.rst source/api/main.rst
-	ln -s main.all.rst source/examples/main.rst
-	ln -s main.all.rst source/topics/main.rst
-	ln -s hrg_topic.all.rst source/topics/hrg_topic.rst
-	ln -s processors_topic.all.rst source/topics/processors_topic.rst
-	ln -s contents.all.rst source/contents.rst
-	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
-	@echo
-	@echo "Build finished. The HTML pages are in $(BUILDDIR)/html."
-
-html_c_engine:
-	make doxygen_make
-	-rm -f source/conf.py
-	-rm -f source/api/main.rst
-	-rm -f source/examples/main.rst
-	-rm -f source/topics/main.rst
-	-rm -f source/topics/hrg_topic.rst
-	-rm -f source/topics/processors_topic.rst
-	-rm -f source/contents.rst
-	ln -s conf.c.engine.py source/conf.py
-	ln -s main.c.engine.rst source/api/main.rst
-	ln -s main.c.engine.rst source/examples/main.rst
-	ln -s main.c.engine.rst source/topics/main.rst
-	ln -s hrg_topic.c.engine.rst source/topics/hrg_topic.rst
-	ln -s processors_topic.c.engine.rst source/topics/processors_topic.rst
-	ln -s contents.c.engine.rst source/contents.rst
-	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
-	@echo
-	@echo "Build finished. The HTML pages are in $(BUILDDIR)/html."
-
-html_python_engine:
-	make doxygen_make
-	-rm -f source/conf.py
-	-rm -f source/api/main.rst
-	-rm -f source/examples/main.rst
-	-rm -f source/topics/main.rst
-	-rm -f source/topics/hrg_topic.rst
-	-rm -f source/topics/processors_topic.rst
-	-rm -f source/contents.rst
-	ln -s conf.python.engine.py source/conf.py
-	ln -s main.python.engine.rst source/api/main.rst
-	ln -s main.python.engine.rst source/examples/main.rst
-	ln -s main.python.engine.rst source/topics/main.rst
-	ln -s hrg_topic.python.engine.rst source/topics/hrg_topic.rst
-	ln -s processors_topic.python.engine.rst source/topics/processors_topic.rst
-	ln -s contents.python.engine.rst source/contents.rst
 	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
 	@echo
 	@echo "Build finished. The HTML pages are in $(BUILDDIR)/html."

@@ -395,10 +395,10 @@ static void add_value_to_container(s_json_context *context, SObject *value, s_er
 
 static void s_json_callback_null(void *ctx, s_erc *error)
 {
-	ctx = NULL;
 	S_CTX_ERR(error, S_FAILURE,
 			  "s_json_callback_null",
 			  "file contains a \"null\"");
+	S_UNUSED(ctx);
 }
 
 

@@ -151,13 +151,11 @@ static SObject *Load(const char *path, s_erc *error)
 
 static void Save(const SObject *object, const char *path, s_erc *error)
 {
-	SPhonesetJSON *phoneset = S_PHONESET_JSON(object);
-
-	phoneset = NULL;
 	S_CTX_ERR(error, S_FAILURE,
 			  "Save",
 			  "Failed to save phoneset to file '%s', save method not implemented",
 			  path);
+	S_UNUSED(object);
 }
 
 

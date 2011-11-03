@@ -151,13 +151,11 @@ static SObject *Load(const char *path, s_erc *error)
 
 static void Save(const SObject *object, const char *path, s_erc *error)
 {
-	SLexiconJSON *lex = S_LEXICON_JSON(object);
-
-	lex = NULL;
 	S_CTX_ERR(error, S_FAILURE,
 			  "Save",
 			  "Failed to save lexicon to file '%s', save method not implemented",
 			  path);
+	S_UNUSED(object);
 }
 
 

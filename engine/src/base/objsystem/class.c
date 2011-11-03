@@ -763,7 +763,6 @@ S_LOCAL void _s_classes_create(size_t size, s_erc *error)
 /* iterate through class repository and initialize each one */
 S_LOCAL void _s_classes_init(s_erc *error)
 {
-	const char *class_name;
 	s_class_info *class_info;
 	const SObjectClass *class;
 	const s_hash_element *hte;
@@ -791,7 +790,6 @@ S_LOCAL void _s_classes_init(s_erc *error)
 
 	do
 	{
-		class_name = s_hash_element_key(hte, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "_s_classes_init",
 					  "Call to \"s_hash_element_key\" failed"))
@@ -1009,16 +1007,15 @@ static const SObjectClass *s_class_find_no_lock(const char *name, s_erc *error)
 static void s_hash_table_delete_classes(void *key, void *data, s_erc *error)
 {
 	s_class_info *class_info;
-	const char *class_name;
 
 
 	S_CLR_ERR(error);
-	class_name = (const char *)key;
 	class_info = (s_class_info *)data;
 
 	S_FREE(class_info->init_hier);
 	S_FREE(class_info->destroy_hier);
 	S_FREE(class_info);
+	S_UNUSED(key);
 }
 
 

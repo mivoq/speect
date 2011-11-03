@@ -181,6 +181,7 @@ S_BEGIN_C_DECLS
 		{													\
 			s_erc _local_err = S_SUCCESS;					\
 			s_erc _delete_err = S_SUCCESS;					\
+			s_erc *err_ptr = ERROR;							\
 															\
 															\
 			SObjectDispose(S_OBJECT(SELF), &_delete_err);	\
@@ -207,16 +208,16 @@ S_BEGIN_C_DECLS
 				}											\
 			}												\
 															\
-			if ((ERROR != NULL)								\
-			    && (*ERROR == S_SUCCESS)					\
+			if ((err_ptr != NULL)							\
+			    && (*err_ptr == S_SUCCESS)					\
 			    && (_local_err != S_SUCCESS))				\
 			{												\
 				if (FUNC_NAME != NULL)						\
-					S_CTX_ERR(ERROR, _local_err,			\
+					S_CTX_ERR(err_ptr, _local_err,			\
 							  FUNC_NAME,					\
 							  "Failed to delete object");	\
 				else										\
-					*ERROR = _local_err;					\
+					*err_ptr = _local_err;					\
 			}												\
 															\
 			SELF = NULL;									\
@@ -243,6 +244,7 @@ S_BEGIN_C_DECLS
 		if (SELF != NULL)										\
 		{														\
 			s_erc _delete_err = S_SUCCESS;						\
+			s_erc *err_ptr = ERROR;								\
 																\
 																\
 			SObjectDelete(S_OBJECT(SELF), &_delete_err);		\
@@ -251,16 +253,16 @@ S_BEGIN_C_DECLS
 						  "Call to \"SObjectDelete"				\
 						  "\" failed"))							\
 			{													\
-				if ((ERROR != NULL)								\
-					&& (*ERROR == S_SUCCESS)					\
+				if ((err_ptr != NULL)							\
+					&& (*err_ptr == S_SUCCESS)					\
 					&& (_delete_err != S_SUCCESS))				\
 				{												\
 					if (FUNC_NAME != NULL)						\
-						S_CTX_ERR(ERROR, _delete_err,			\
+						S_CTX_ERR(err_ptr, _delete_err,			\
 								  FUNC_NAME,					\
 								  "Failed to delete object");	\
 					else										\
-						*ERROR = _delete_err;					\
+						*err_ptr = _delete_err;					\
 				}												\
 			}													\
 			 													\

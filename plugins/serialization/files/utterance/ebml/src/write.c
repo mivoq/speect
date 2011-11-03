@@ -929,10 +929,10 @@ static void items_nodes_free_fp(void *key, void *data, s_erc *error)
 	S_CLR_ERR(error);
 
 	/* key's are items, we don't delete them */
-	key = NULL;
 	node = data;
 
 	S_FREE(node);
+	S_UNUSED(key);
 }
 
 

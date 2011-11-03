@@ -158,14 +158,11 @@ static SObject *Load(const char *path, s_erc *error)
 
 static void Save(const SObject *object, const char *path, s_erc *error)
 {
-	SHalfphoneDBEbml *db = (SHalfphoneDBEbml*)object;
-
-
-	db = NULL;
 	S_CTX_ERR(error, S_FAILURE,
 			  "Save",
 			  "Failed to save halfphone database to file '%s', save method not implemented",
 			  path);
+	S_UNUSED(object);
 }
 
 

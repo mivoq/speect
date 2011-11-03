@@ -135,6 +135,7 @@ S_API SIterator *_s_container_get_iterator_check(const void *self, s_erc *error)
 		return NULL;
 
 	return SContainerGetIterator(S_CONTAINER(self), error);
+	S_UNUSED(tmp);
 }
 
 

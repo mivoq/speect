@@ -158,13 +158,11 @@ static SObject *Load(const char *path, s_erc *error)
 
 static void Save(const SObject *object, const char *path, s_erc *error)
 {
-	SG2PRewrites *g2p = (SG2PRewrites*)object;
-
-	g2p = NULL;
 	S_CTX_ERR(error, S_FAILURE,
 			  "Save",
 			  "Failed to save g2p rewrites to file '%s', save method not implemented",
 			  path);
+	S_UNUSED(object);
 }
 
 

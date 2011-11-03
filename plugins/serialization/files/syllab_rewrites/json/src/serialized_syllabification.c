@@ -153,11 +153,11 @@ static SObject *Load(const char *path, s_erc *error)
 
 static void Save(const SObject *object, const char *path, s_erc *error)
 {
-	object = NULL;
 	S_CTX_ERR(error, S_FAILURE,
 			  "Save",
 			  "Failed to save syllabification rewrites rule-set to file '%s', save method not implemented",
 			  path);
+	S_UNUSED(object);
 }
 
 

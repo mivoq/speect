@@ -478,16 +478,12 @@ static char *create_A_context(const SItem *item, s_erc *error)
 {
 	SObject *dFeat;
 	char *a_context;
-	sint32 a1;
-	sint32 a2;
 	sint32 a3;
 
 
 	S_CLR_ERR(error);
 
 	/* we currently cannot compute a1 and a2 */
-	a1 = 0;
-	a2 = 0;
 
 	/* a3 */
 	dFeat = SItemPathToFeatProc(item, "R:SylStructure.parent.R:Syllable.p.syllable_num_phones",
@@ -528,16 +524,12 @@ static char *create_A_context_pause(const SItem *item, s_erc *error)
 {
 	SObject *dFeat;
 	char *a_context;
-	sint32 a1;
-	sint32 a2;
 	sint32 a3;
 
 
 	S_CLR_ERR(error);
 
 	/* we currently cannot compute a1 and a2 */
-	a1 = 0;
-	a2 = 0;
 
 	/* a3 */
 	dFeat = SItemPathToFeatProc(item, "p.R:SylStructure.parent.R:Syllable.syllable_num_phones",
@@ -596,29 +588,17 @@ static char *create_B_context(const SItem *item, s_erc *error)
 {
 	SObject *dFeat;
 	char *b_context;
-	sint32 b1;
-	sint32 b2;
 	sint32 b3;
 	sint32 b4;
 	sint32 b5;
 	sint32 b6;
 	sint32 b7;
-	sint32 b8;
-	sint32 b9;
-	sint32 b10;
-	sint32 b11;
-	sint32 b12;
-	sint32 b13;
-	sint32 b14;
-	sint32 b15;
 	const char *b16;
 
 
 	S_CLR_ERR(error);
 
 	/* no stress/accented methods */
-	b1 = 0;
-	b2 = 0;
 
 	/* b3 */
 	dFeat = SItemPathToFeatProc(item, "R:SylStructure.parent.R:Syllable.syllable_num_phones",
@@ -739,14 +719,6 @@ static char *create_B_context(const SItem *item, s_erc *error)
 	}
 
 	/* no stress/accented methods */
-	b8 = 0;
-	b9 = 0;
-	b10 = 0;
-	b11 = 0;
-	b12 = 0;
-	b13 = 0;
-	b14 = 0;
-	b15 = 0;
 
 	/* b16 */
 	dFeat = SItemPathToFeatProc(item, "R:SylStructure.parent.R:Syllable.syllable_vowel",
@@ -818,16 +790,12 @@ static char *create_C_context(const SItem *item, s_erc *error)
 {
 	SObject *dFeat;
 	char *c_context;
-	sint32 c1;
-	sint32 c2;
 	sint32 c3;
 
 
 	S_CLR_ERR(error);
 
 	/* we currently cannot compute c1 and c2 */
-	c1 = 0;
-	c2 = 0;
 
 	/* c3 */
 	dFeat = SItemPathToFeatProc(item, "R:SylStructure.parent.R:Syllable.n.syllable_num_phones",
@@ -868,16 +836,12 @@ static char *create_C_context_pause(const SItem *item, s_erc *error)
 {
 	SObject *dFeat;
 	char *c_context;
-	sint32 c1;
-	sint32 c2;
 	sint32 c3;
 
 
 	S_CLR_ERR(error);
 
 	/* we currently cannot compute c1 and c2 */
-	c1 = 0;
-	c2 = 0;
 
 	/* c3 */
 	dFeat = SItemPathToFeatProc(item, "n.R:SylStructure.parent.R:Syllable.syllable_num_phones",

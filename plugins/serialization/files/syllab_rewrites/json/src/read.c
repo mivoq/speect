@@ -250,7 +250,6 @@ quit:
 
 static s_str_list *reverse_fix_LC(const s_str_list *LC, s_erc *error)
 {
-	const s_str_list_element *itr;
 	uint32 LC_size;
 	s_str_list *new_LC = NULL;
 	s_bool skip;
@@ -283,13 +282,6 @@ static s_str_list *reverse_fix_LC(const s_str_list *LC, s_erc *error)
 				  "reverse_fix_LC",
 				  "Call to \"s_str_list_new\" failed"))
 		goto error_return;
-
-
-	itr = s_str_list_first(LC, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "reverse_fix_LC",
-				  "Call to \"s_str_list_first\" failed"))
-		return NULL;
 
 	skip = FALSE;
 	for (cnt = 0; cnt < (LC_size - 1); cnt++)

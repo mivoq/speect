@@ -2143,7 +2143,6 @@ static char *create_H_context(const SItem *item, s_erc *error)
 	sint32 h2;
 	sint32 h3;
 	sint32 h4;
-	const char *h5;
 
 
 	S_CLR_ERR(error);
@@ -2242,8 +2241,6 @@ static char *create_H_context(const SItem *item, s_erc *error)
 	}
 
 	/* we currently cannot compute h5 */
-	h5 = NULL;
-
 	s_asprintf(&h_context, error, "/H:%d=%d@%d=%d|x", h1, h2, h3, h4);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "create_H_context",
@@ -2266,7 +2263,6 @@ static char *create_H_context_pause(const SItem *item, s_erc *error)
 	sint32 h2;
 	sint32 h3;
 	sint32 h4;
-	const char *h5;
 
 
 	S_CLR_ERR(error);
@@ -2411,8 +2407,6 @@ static char *create_H_context_pause(const SItem *item, s_erc *error)
 	}
 
 	/* we currently cannot compute h5 */
-	h5 = NULL;
-
 	s_asprintf(&h_context, error, "/H:%d=%d@%d=%d|x", h1, h2, h3, h4);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "create_H_context_pause",

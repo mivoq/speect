@@ -125,6 +125,7 @@ macro(speect_plugin_swig_python_interface)
     file(APPEND ${filename} "\t\tplugin = s_pm_load_plugin(\"@plugin_lowercase_name@.spi\", &rv);\n")
     file(APPEND ${filename} "\t\tif (rv != S_SUCCESS)\n")
     file(APPEND ${filename} "\t\t\tSWIG_Error(SWIG_RuntimeError, \"Failed to load ${swig_classname} plug-in\");\n")
+    file(APPEND ${filename} "\n\t\tS_UNUSED(plugin);\n")
     file(APPEND ${filename} "\t}\n%}\n\n")
   endif(swig_load_plugin)
 
@@ -221,6 +222,7 @@ macro(speect_plugin_swig_python_loader)
   file(APPEND ${filename} "\t\tplugin = s_pm_load_plugin(\"@plugin_lowercase_name@.spi\", &rv);\n")
   file(APPEND ${filename} "\t\tif (rv != S_SUCCESS)\n")
   file(APPEND ${filename} "\t\t\tSWIG_Error(SWIG_RuntimeError, \"Failed to load '${plugin_lowercase_name}.spi' plug-in\");\n")
+  file(APPEND ${filename} "\t\t\nS_UNUSED(plugin);\n")
   file(APPEND ${filename} "\t}\n%}\n\n")
 
   # SWIG flags

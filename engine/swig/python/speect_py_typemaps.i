@@ -143,6 +143,7 @@
 	{
 		$result = s_set_pyobject_str($1, &error);
 	}
+	S_UNUSED(slen);
 }
 
 

@@ -100,8 +100,9 @@ S_BEGIN_C_DECLS
 #  ifdef SPCT_ERROR_HANDLING
 #    define S_NEW_ERR(ERROR, ERROR_CODE)				\
 	do {												\
-		if ((ERROR) != NULL)							\
-			(*(ERROR)) = ERROR_CODE;					\
+		s_erc *err_ptr = ERROR;							\
+		if ((err_ptr) != NULL)							\
+			(*(err_ptr)) = ERROR_CODE;					\
 	} while(0)
 #  else /* ! SPCT_ERROR_HANDLING */
 #    define S_NEW_ERR(ERROR, ERROR_CODE) ((void) 0)
@@ -124,10 +125,11 @@ S_BEGIN_C_DECLS
 #ifdef SPCT_DOXYGEN_ONLY
 #  define S_CLR_ERR(ERROR)
 #else /* !SPCT_DOXYGEN_ONLY */
-#  define S_CLR_ERR(ERROR)			\
-	do {								\
-		if ((ERROR) != NULL)			\
-			(*(ERROR)) = S_SUCCESS;		\
+#  define S_CLR_ERR(ERROR)					\
+	do {									\
+		s_erc *err_ptr = ERROR;				\
+		if ((err_ptr) != NULL)				\
+			(*(err_ptr)) = S_SUCCESS;		\
 	} while(0)
 #endif /* SPCT_DOXYGEN_ONLY */
 

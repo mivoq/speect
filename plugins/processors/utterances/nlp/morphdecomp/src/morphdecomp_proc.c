@@ -287,7 +287,6 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 		const SList *classList;
 		SItem *morphStructureWordItem;
 		const SItem *segmentItem;
-		size_t word_size;
 		uint word_index_counter = 0;
 
 		/* get word and downcase it */
@@ -295,12 +294,6 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "Run",
 					  "Failed to down-case word item"))
-			goto quit_error;
-
-		word_size = s_strlen(downcase_word, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "Run",
-					  "Call to \"s_strlen\" failed"))
 			goto quit_error;
 
 		/* get first segment (phone) of this word */
@@ -412,7 +405,6 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 			for (i = word_index_counter; i < morpheme_graphemes_size + word_index_counter; i++)
 			{
 				const char *phone;
-				SItem *morphStructSegItem;
 
 
 				phone = S_G2P_CALL(g2p, apply_at)(g2p, downcase_word, i, error);
@@ -424,8 +416,7 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 				if (phone != NULL)
 				{
 					/* we have a match with segment, create a new daughter */
-					morphStructSegItem = SItemAddDaughter(morphStructMorphItem,
-														  segmentItem, error);
+					SItemAddDaughter(morphStructMorphItem, segmentItem, error);
 					if (S_CHK_ERR(error, S_CONTERR,
 								  "Run",
 								  "Call to \"SItemAddDaughter\" failed"))
@@ -509,7 +500,7 @@ quit_error:
 	if (morphClassItr != NULL)
 		S_DELETE(morphClassItr, "Run", error);
 
-	self = NULL;
+	S_UNUSED(self);
 }
 
 

@@ -392,6 +392,7 @@ static void skip_element(SEbmlRead *self, s_erc *error)
 	S_CHK_ERR(error, S_CONTERR,
 			  "skip_element",
 			  "Failed to seek ebml data source to skip element");
+	S_UNUSED(id);
 }
 
 

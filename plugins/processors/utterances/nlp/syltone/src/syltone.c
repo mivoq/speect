@@ -257,7 +257,7 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 
 	/* error clean-up code */
 quit_error:
-	self = NULL;
+	S_UNUSED(self);
 }
 
 

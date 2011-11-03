@@ -824,10 +824,9 @@ static void relation_items_table_free_fp(void *key, void *data, s_erc *error)
 	 * to delete the item, as when we delete the relation the item will go
 	 * as well.
 	 */
-	data = NULL;
-
 	if (item_node_number != NULL)
 		S_FREE(item_node_number);
+	S_UNUSED(data);
 }
 
 

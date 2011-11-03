@@ -336,7 +336,6 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 	SItem *syllableItem;
 	SItem *sylStructSylItem;
 	SItem *segmentItem;
-	SItem *sylStructSegItem;
 	SIterator *sylItr = NULL;
 	SIterator *phoneItr = NULL;
 	const SObject *phone;
@@ -559,7 +558,7 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 							  "Call to \"SItemSetName/SObjectGetString\" failed"))
 					goto quit_error;
 
-				sylStructSegItem = SItemAddDaughter(sylStructSylItem, segmentItem, error);
+				SItemAddDaughter(sylStructSylItem, segmentItem, error);
 				if (S_CHK_ERR(error, S_CONTERR,
 							  "Run",
 							  "Call to \"SItemAddDaughter\" failed"))

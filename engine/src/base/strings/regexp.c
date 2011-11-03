@@ -1503,7 +1503,6 @@ static s_regex *s_regcomp1(const char *s, int literal, int dot_type, s_erc *erro
 	size_t ssize;
 	s_regex_inst *freep;
 	s_regex_char_class *classp;
-	int errors;
 	s_bool lexdone;
 	char *exprp;                             /* pointer to next character in source expression */
 	uint nclass;
@@ -1550,7 +1549,6 @@ static s_regex *s_regcomp1(const char *s, int literal, int dot_type, s_erc *erro
 
 	freep = pp->first_inst;
 	classp = pp->class;
-	errors = 0;
 
 	/* compile the regular expression */
 	lexdone = FALSE;

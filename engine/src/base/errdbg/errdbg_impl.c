@@ -355,10 +355,10 @@ S_API int _s_err_dummy(s_erc *error_code, s_erc this_error,
 {
 	return 0;
 
-	S_CLR_ERR(error_code);
-	this_error = S_SUCCESS;
-	function_name = NULL;
-	fmt = NULL;
+	S_UNUSED(error_code);
+	S_UNUSED(this_error);
+	S_UNUSED(function_name);
+	S_UNUSED(fmt);
 }
 
 
@@ -381,10 +381,10 @@ S_API void _s_err_dummy_void(s_erc *error_code, s_erc this_error,
 {
 	return;
 
-	S_CLR_ERR(error_code);
-	this_error = S_SUCCESS;
-	function_name = NULL;
-	fmt = NULL;
+	S_UNUSED(error_code);
+	S_UNUSED(this_error);
+	S_UNUSED(function_name);
+	S_UNUSED(fmt);
 }
 
 
@@ -401,10 +401,10 @@ S_API void _s_fatal_err_no_checking(s_erc *error_code, s_erc this_error,
 {
 	abort();
 
-	S_CLR_ERR(error_code);
-	this_error = S_SUCCESS;
-	function_name = NULL;
-	fmt = NULL;
+	S_UNUSED(error_code);
+	S_UNUSED(this_error);
+	S_UNUSED(function_name);
+	S_UNUSED(fmt);
 }
 
 
@@ -421,9 +421,9 @@ S_API void _s_warn_dummy(s_erc this_error, const char *function_name,
 {
 	return;
 
-	this_error = S_SUCCESS;
-	function_name = NULL;
-	fmt = NULL;
+	S_UNUSED(this_error);
+	S_UNUSED(function_name);
+	S_UNUSED(fmt);
 }
 
 
@@ -439,8 +439,8 @@ S_API void _s_debug_dummy(s_dbg_lvl level, const char *fmt, ...)
 {
 	return;
 
-	level = S_DBG_ALL;
-	fmt = NULL;
+	S_UNUSED(level);
+	S_UNUSED(fmt);
 }
 
 

@@ -771,8 +771,8 @@ static char *create_B_context(const SItem *item, s_erc *error)
 	}
 
 	/* we currently cannot compute b1, b2, b8, b9, b10, b11, b12, b13, b14 and b15 */
-	s_asprintf(&b_context, error, "/B:0-0-%d@%d-%d&%d-%d#x-x$x-x!x-x;x-x|x",
-			   b3, b4, b5, b6, b7);
+	s_asprintf(&b_context, error, "/B:0-0-%d@%d-%d&%d-%d#x-x$x-x!x-x;x-x|%s",
+			   b3, b4, b5, b6, b7, b16);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "create_B_context",
 				  "Call to \"s_asprintf\" failed"))

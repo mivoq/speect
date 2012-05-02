@@ -46,3 +46,10 @@ set(HTS_ENGINE_LIB_105 CACHE FILEPATH "HTS Engine (1.05) library location (full 
 if(HTS_ENGINE_INCLUDE_105 AND HTS_ENGINE_LIB_105)
   set(HAVE_HTS "on" CACHE BOOL "Variable to check if hts_engine has been defined")
 endif(HTS_ENGINE_INCLUDE_105 AND HTS_ENGINE_LIB_105)
+
+# 106
+set(HTS_ENGINE_INCLUDE_106 CACHE PATH "Path to HTS Engine (1.06) include directory")
+set(HTS_ENGINE_LIB_106 CACHE FILEPATH "HTS Engine (1.06) library location (full path and library)")
+if(HTS_ENGINE_INCLUDE_106 AND HTS_ENGINE_LIB_106)
+  set(HAVE_HTS "on" CACHE BOOL "Variable to check if hts_engine has been defined")
+endif(HTS_ENGINE_INCLUDE_106 AND HTS_ENGINE_LIB_106)

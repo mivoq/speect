@@ -10,6 +10,8 @@
 ##                                                                                  ##
 ######################################################################################
 
+# Also see speect/plugins/cmake/pluginOptions.cmake
+
 #------------------------------------------------------------------------------------#
 #                        Plug-in directories                                         #
 #------------------------------------------------------------------------------------#
@@ -29,3 +31,7 @@ endif(HTS_ENGINE_INCLUDE_104 AND HTS_ENGINE_LIB_104)
 if(HTS_ENGINE_INCLUDE_105 AND HTS_ENGINE_LIB_105)
   add_subdirectory(hts_engine_105)
 endif(HTS_ENGINE_INCLUDE_105 AND HTS_ENGINE_LIB_105)
+
+if(HTS_ENGINE_INCLUDE_106 AND HTS_ENGINE_LIB_106)
+  add_subdirectory(hts_engine_106)
+endif(HTS_ENGINE_INCLUDE_106 AND HTS_ENGINE_LIB_106)

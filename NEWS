@@ -1,3 +1,11 @@
+* May 2012
+  Speect version 1.1.0 is a minor update which includes the following
+  features:
+  - Clean up of unused files,
+  - fixes for gcc 4.6 warnings,
+  - bug fixes,
+  - builds for various versions of Ubuntu.
+
 * October 2011
   Speect version 1.0.0 is a major update which includes the following
   features:

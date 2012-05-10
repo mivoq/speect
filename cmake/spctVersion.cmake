@@ -36,7 +36,7 @@ elseif(EXISTS "${CMAKE_SOURCE_DIR}/VERSION")
   file(READ "${CMAKE_SOURCE_DIR}/VERSION" TMP_VERSION LIMIT 64)
 else(EXISTS "${CMAKE_SOURCE_DIR}/VERSION")
   # use default
-  set(TMP_VERSION "v1.0.0" CACHE STRING "Speect default version" FORCE)
+  set(TMP_VERSION "v1.1.0" CACHE STRING "Speect default version" FORCE)
 endif(EXISTS "${CMAKE_SOURCE_DIR}/.git")
 
 if(TMP_VERSION MATCHES "^v(.*)")

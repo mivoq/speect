@@ -110,9 +110,19 @@ static void get_trees_pdfs(const SList *trees, const SList *pdfs,
 						   char ***ctrees, char ***cpdfs, int *num,
 						   const char *voice_base_path, s_erc *error);
 
-static void load_hts_engine_data(const SMap *data, HTS_Engine *engine,
-								 const char *voice_base_path, s_bool me,
-								 s_erc *error);
+static void load_hts_engine_data(const SMap *data,
+								 SHTSEngineMESynthUttProc105 *HTSsynth,
+								 const char *voice_base_path, s_erc *error);
+
+static void filter_constructor(SHTSEngineMESynthUttProc105 *HTSsynth, s_erc *error);
+
+static void filter_destructor(SHTSEngineMESynthUttProc105 *HTSsynth);
+
+static void load_mixed_excitation_data(const SMap *data,
+									   SHTSEngineMESynthUttProc105 *HTSsynth,
+									   const char *voice_base_path, s_erc *error);
+
+
 
 
 /************************************************************************************/
@@ -243,11 +253,7 @@ static hts_params *get_hts_engine_params(const SMap *features, s_bool *me, s_erc
 					  "get_hts_engine_params",
 					  "Call to \"SMapGetFloat\" failed"))
 			goto quit_error;
-
-		printf("mixed excitation voice\n");
 	}
-	else
-		printf("normal voice\n");
 
 	/* set "use_log_gain" to FALSE as default */
 	engine_params->use_log_gain = FALSE;
@@ -486,9 +492,346 @@ static void get_windows(const SList *windows, char ***cwindows,
 }
 
 
-static void load_hts_engine_data(const SMap *data, HTS_Engine *engine,
-								 const char *voice_base_path, s_bool me,
-								 s_erc *error)
+static void filter_constructor(SHTSEngineMESynthUttProc105 *HTSsynth, s_erc *error)
+{
+	double **h;
+	int i;
+	int j;
+
+
+	S_CLR_ERR(error);
+
+	h = S_MALLOC(double*, HTSsynth->num_filters);
+	if (h == NULL)
+	{
+		S_FTL_ERR(error, S_MEMERROR,
+				  "filter_constructor",
+				  "Failed to allocate memory for mixed excitation filters");
+		return;
+	}
+
+	for (i = 0; i < HTSsynth->num_filters; i++)
+	{
+		h[i] = S_MALLOC(double, HTSsynth->filter_order);
+		if (h[i] == NULL)
+		{
+			for (j = 0; j < i; j++)
+				S_FREE(h[j]);
+			S_FREE(h);
+			S_FTL_ERR(error, S_MEMERROR,
+					  "filter_constructor",
+					  "Failed to allocate memory for mixed excitation filters");
+			return;
+		}
+	}
+
+	HTSsynth->h = h;
+	HTSsynth->xp_sig = S_MALLOC(double, HTSsynth->filter_order);
+	if (HTSsynth->xp_sig == NULL)
+	{
+		for (j = 0; j < HTSsynth->num_filters; j++)
+			S_FREE(h[j]);
+		S_FREE(h);
+		S_FTL_ERR(error, S_MEMERROR,
+				  "filter_constructor",
+				  "Failed to allocate memory for mixed excitation pulse signal");
+		return;
+	}
+
+	HTSsynth->xn_sig = S_MALLOC(double, HTSsynth->filter_order);
+	if (HTSsynth->xn_sig == NULL)
+	{
+		for (j = 0; j < HTSsynth->num_filters; j++)
+			S_FREE(h[j]);
+		S_FREE(h);
+		S_FREE(HTSsynth->xp_sig);
+		S_FTL_ERR(error, S_MEMERROR,
+				  "filter_constructor",
+				  "Failed to allocate memory for mixed excitation noise signal");
+		return;
+	}
+
+	HTSsynth->hp = S_MALLOC(double, HTSsynth->filter_order);
+	if (HTSsynth->hp == NULL)
+	{
+		for (j = 0; j < HTSsynth->num_filters; j++)
+			S_FREE(h[j]);
+		S_FREE(h);
+		S_FREE(HTSsynth->xp_sig);
+		S_FREE(HTSsynth->xn_sig);
+		S_FTL_ERR(error, S_MEMERROR,
+				  "filter_constructor",
+				  "Failed to allocate memory for mixed excitation pulse shaping filter");
+		return;
+	}
+
+	HTSsynth->hn = S_MALLOC(double, HTSsynth->filter_order);
+	if (HTSsynth->hn == NULL)
+	{
+		for (j = 0; j < HTSsynth->num_filters; j++)
+			S_FREE(h[j]);
+		S_FREE(h);
+		S_FREE(HTSsynth->xp_sig);
+		S_FREE(HTSsynth->xn_sig);
+		S_FREE(HTSsynth->hp);
+		S_FTL_ERR(error, S_MEMERROR,
+				  "filter_constructor",
+				  "Failed to allocate memory for mixed excitation noise shaping filter");
+		return;
+	}
+}
+
+
+static void filter_destructor(SHTSEngineMESynthUttProc105 *HTSsynth)
+{
+	int i;
+
+	for (i = 0; i < HTSsynth->num_filters; i++)
+	{
+		if (HTSsynth->h[i] != NULL)
+			S_FREE(HTSsynth->h[i]);
+	}
+
+	if (HTSsynth->h != NULL)
+		S_FREE(HTSsynth->h);
+
+	if (HTSsynth->xp_sig != NULL)
+		S_FREE(HTSsynth->xp_sig);
+
+	if (HTSsynth->xn_sig != NULL)
+		S_FREE(HTSsynth->xn_sig);
+
+	if (HTSsynth->hp != NULL)
+		S_FREE(HTSsynth->hp);
+
+	if (HTSsynth->hn != NULL)
+		S_FREE(HTSsynth->hn);
+}
+
+
+static void load_mixed_excitation_data(const SMap *data,
+									   SHTSEngineMESynthUttProc105 *HTSsynth,
+									   const char *voice_base_path, s_erc *error)
+{
+	const char *filter;
+	SMap *meFilterFile = NULL;
+	const SList *coeffs;
+	char *combined_path;
+	int i;
+	int j;
+	const SObject *tmp;
+	SIterator *itr_i;
+	SIterator *itr_j;
+
+
+	S_CLR_ERR(error);
+
+	/* strengths:filter */
+	filter = SMapGetStringDef(data, "filter", NULL, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "load_mixed_excitation_data",
+				  "Call to \"SMapGetStringDef\" failed"))
+		return;
+
+	if (filter == NULL)
+	{
+		S_CTX_ERR(error, S_FAILURE,
+				  "load_mixed_excitation_data",
+				  "Failed to find 'strengths:filter' HTS Engine data");
+		return;
+	}
+
+	/* get data path, the one in the config file may be relative
+	 * to the voice base path
+	 */
+	combined_path = s_path_combine(voice_base_path, filter, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "load_mixed_excitation_data",
+				  "Call to \"s_path_combine\" failed"))
+		return;
+
+
+	/* parse filter file */
+	meFilterFile = s_json_parse_config_file(combined_path, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "load_mixed_excitation_data",
+				  "Call to \"s_json_parse_config_file\" failed"))
+	{
+		S_FREE(combined_path);
+		return;
+	}
+
+	S_FREE(combined_path);
+
+	/* num (number of filters) */
+	tmp = SMapGetObjectDef(meFilterFile, "num", NULL, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "load_mixed_excitation_data",
+				  "Call to \"SMapGetObjectDef\" failed"))
+	{
+		S_DELETE(meFilterFile, "load_mixed_excitation_data", error);
+		return;
+	}
+
+	if (tmp == NULL)
+	{
+		S_CTX_ERR(error, S_FAILURE,
+				  "load_mixed_excitation_data",
+				  "Failed to find 'num' in mixed excitation filter file");
+		S_DELETE(meFilterFile, "load_mixed_excitation_data", error);
+		return;
+	}
+
+	HTSsynth->num_filters = SObjectGetInt(tmp, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "load_mixed_excitation_data",
+				  "Call to \"SObjectGetInt\" failed"))
+	{
+		S_DELETE(meFilterFile, "load_mixed_excitation_data", error);
+		return;
+	}
+
+	/* order (order of filters) */
+	tmp = SMapGetObjectDef(meFilterFile, "order", NULL, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "load_mixed_excitation_data",
+				  "Call to \"SMapGetObjectDef\" failed"))
+	{
+		S_DELETE(meFilterFile, "load_mixed_excitation_data", error);
+		return;
+	}
+
+	if (tmp == NULL)
+	{
+		S_CTX_ERR(error, S_FAILURE,
+				  "load_mixed_excitation_data",
+				  "Failed to find 'order' in mixed excitation filter file");
+		S_DELETE(meFilterFile, "load_mixed_excitation_data", error);
+		return;
+	}
+
+	HTSsynth->filter_order = SObjectGetInt(tmp, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "load_mixed_excitation_data",
+				  "Call to \"SObjectGetInt\" failed"))
+	{
+		S_DELETE(meFilterFile, "load_mixed_excitation_data", error);
+		return;
+	}
+
+	/* allocate memory for filter coefficients and other filter
+	 * buffers */
+	filter_constructor(HTSsynth, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "load_mixed_excitation_data",
+				  "Call to \"filter_constructor\" failed"))
+	{
+		S_DELETE(meFilterFile, "load_mixed_excitation_data", error);
+		return;
+	}
+
+	/* coefficients */
+	coeffs = S_LIST(SMapGetObjectDef(meFilterFile, "coefficients", NULL, error));
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "load_mixed_excitation_data",
+				  "Call to \"SMapGetObjectDef\" failed"))
+	{
+		filter_destructor(HTSsynth);
+		S_DELETE(meFilterFile, "load_mixed_excitation_data", error);
+		return;
+	}
+
+	if (coeffs == NULL)
+	{
+		filter_destructor(HTSsynth);
+		S_CTX_ERR(error, S_FAILURE,
+				  "load_mixed_excitation_data",
+				  "Failed to find 'coefficients' in mixed excitation filter file");
+		S_DELETE(meFilterFile, "load_mixed_excitation_data", error);
+		return;
+	}
+
+
+	/*
+	 * iterate through the coefficients (number then order)
+	 */
+	itr_i = S_ITERATOR_GET(coeffs, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "load_mixed_excitation_data",
+				  "Call to \"S_ITERATOR_GET\" failed"))
+	{
+		filter_destructor(HTSsynth);
+		S_DELETE(meFilterFile, "load_mixed_excitation_data", error);
+		return;
+	}
+
+	for (i = 0; itr_i != NULL; i++, itr_i = SIteratorNext(itr_i))
+	{
+		const SList *icoef;
+
+
+		icoef = S_LIST(SIteratorObject(itr_i, error));
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "load_mixed_excitation_data",
+					  "Call to \"SIteratorObject\" failed"))
+		{
+			filter_destructor(HTSsynth);
+			S_DELETE(meFilterFile, "load_mixed_excitation_data", error);
+			S_DELETE(itr_i, "load_mixed_excitation_data", error);
+			return;
+		}
+
+		/*
+		 * iterate through the coefficients (order)
+		 */
+		itr_j = S_ITERATOR_GET(icoef, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "load_mixed_excitation_data",
+					  "Call to \"S_ITERATOR_GET\" failed"))
+		{
+			filter_destructor(HTSsynth);
+			S_DELETE(meFilterFile, "load_mixed_excitation_data", error);
+			S_DELETE(itr_i, "load_mixed_excitation_data", error);
+			return;
+		}
+
+		for (j = 0; itr_j != NULL; j++, itr_j = SIteratorNext(itr_j))
+		{
+			const SObject *coef;
+
+			coef = SIteratorObject(itr_j, error);
+			if (S_CHK_ERR(error, S_CONTERR,
+						  "load_mixed_excitation_data",
+						  "Call to \"SIteratorObject\" failed"))
+			{
+				filter_destructor(HTSsynth);
+				S_DELETE(meFilterFile, "load_mixed_excitation_data", error);
+				S_DELETE(itr_i, "load_mixed_excitation_data", error);
+				S_DELETE(itr_j, "load_mixed_excitation_data", error);
+				return;
+			}
+
+			HTSsynth->h[i][j] = (double)SObjectGetFloat(coef, error);
+			if (S_CHK_ERR(error, S_CONTERR,
+						  "load_mixed_excitation_data",
+						  "Call to \"SObjectGetFloat\" failed"))
+			{
+				filter_destructor(HTSsynth);
+				S_DELETE(meFilterFile, "load_mixed_excitation_data", error);
+				S_DELETE(itr_i, "load_mixed_excitation_data", error);
+				S_DELETE(itr_j, "load_mixed_excitation_data", error);
+				return;
+			}
+		}
+	}
+
+	S_DELETE(meFilterFile, "load_mixed_excitation_data", error);
+}
+
+
+static void load_hts_engine_data(const SMap *data,
+								 SHTSEngineMESynthUttProc105 *HTSsynth,
+								 const char *voice_base_path, s_erc *error)
 {
 	const SMap *tmp;
 	const SList *trees;
@@ -502,6 +845,7 @@ static void load_hts_engine_data(const SMap *data, HTS_Engine *engine,
 	int num_win;
 	const char *gv;
 	const char *gv_switch;
+	HTS_Engine *engine = &(HTSsynth->engine);
 
 
 	S_CLR_ERR(error);
@@ -791,10 +1135,8 @@ static void load_hts_engine_data(const SMap *data, HTS_Engine *engine,
 	}
 
 	/* band strengths */
-	if (me == TRUE)
+	if (HTSsynth->me == TRUE)
 	{
-		printf("loading strengths data\n");
-
 		tmp = S_MAP(SMapGetObjectDef(data, "strengths", NULL, error));
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "load_hts_engine_data",
@@ -902,11 +1244,17 @@ static void load_hts_engine_data(const SMap *data, HTS_Engine *engine,
 						  "Call to \"s_path_combine\" failed"))
 				return;
 
-			HTS_Engine_load_gv_from_fn(engine, (char**)&combined_path, NULL, 0, 1);
+			HTS_Engine_load_gv_from_fn(engine, (char**)&combined_path, NULL, 2, 1);
 			S_FREE(combined_path);
 		}
-	}
 
+		/* strengths filter data */
+		load_mixed_excitation_data(tmp, HTSsynth, voice_base_path, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "load_hts_engine_data",
+					  "Call to \"load_mixed_excitation_data\" failed"))
+			return;
+	}
 
 	/* gv switch */
 	gv_switch = SMapGetStringDef(data, "gv-switch", NULL, error);
@@ -950,6 +1298,7 @@ static void Destroy(void *obj, s_erc *error)
 
 	S_CLR_ERR(error);
 	HTS_Engine_clear(&(self->engine));
+	filter_destructor(self);
 }
 
 
@@ -971,7 +1320,13 @@ static void Initialize(SUttProcessor *self, const SVoice *voice, s_erc *error)
 
 	S_CLR_ERR(error);
 
-	HTSsynth->me = FALSE; /* assume non mixed excitation voice */
+	HTSsynth->me = FALSE;     /* assume non mixed excitation voice */
+	HTSsynth->h = NULL;       /* filter coefficients               */
+	HTSsynth->xp_sig = NULL;  /* pulse signal                      */
+	HTSsynth->xn_sig = NULL;  /* noise signal                      */
+	HTSsynth->hp = NULL;      /* pulse shaping filter              */
+	HTSsynth->hn = NULL;      /* noise shaping filter              */
+
 
 	/* get voice base path */
 	vcfgObject = SVoiceGetFeature(voice, "config_file", error);
@@ -997,7 +1352,15 @@ static void Initialize(SUttProcessor *self, const SVoice *voice, s_erc *error)
 	}
 
 	/* initialize the engine */
-	HTS_Engine_initialize(&(HTSsynth->engine), 2);
+	if (HTSsynth->me == TRUE)
+	{
+		/* extra stream for strengths */
+		HTS_Engine_initialize(&(HTSsynth->engine), 3);
+	}
+	else
+	{
+		HTS_Engine_initialize(&(HTSsynth->engine), 2);
+	}
 
 	/* set the engine parameters */
 	HTS_Engine_set_sampling_rate(&(HTSsynth->engine), engine_params->sampling_rate);
@@ -1013,7 +1376,6 @@ static void Initialize(SUttProcessor *self, const SVoice *voice, s_erc *error)
 
 	if (HTSsynth->me == TRUE)
 	{
-		printf("loading gv weight for strengths\n");
 		HTS_Engine_set_gv_weight(&(HTSsynth->engine), 2, engine_params->gv_weight_str);
 	}
 
@@ -1033,7 +1395,7 @@ static void Initialize(SUttProcessor *self, const SVoice *voice, s_erc *error)
 		goto quit_error;
 	}
 
-	load_hts_engine_data(hts_data, &(HTSsynth->engine), voice_base_path, HTSsynth->me, error);
+	load_hts_engine_data(hts_data, HTSsynth, voice_base_path, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Initialize",
 				  "Call to \"load_hts_engine_data\" failed"))
@@ -1046,6 +1408,7 @@ static void Initialize(SUttProcessor *self, const SVoice *voice, s_erc *error)
 	/* error clean up */
 quit_error:
 	HTS_Engine_clear(&(HTSsynth->engine));
+	filter_destructor(HTSsynth);
 	if (voice_base_path != NULL)
 		S_FREE(voice_base_path);
 }
@@ -1158,12 +1521,13 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 
 	if (HTSsynth->me == TRUE) /* mixed excitation */
 	{
-		printf("mixed excitation synthesis\n");
-		HTS_Engine_create_gstream_me(&(HTSsynth->engine));
+		HTS_Engine_create_gstream_me(&(HTSsynth->engine),
+									 HTSsynth->num_filters, HTSsynth->filter_order,
+									 HTSsynth->h, HTSsynth->xp_sig, HTSsynth->xn_sig,
+									 HTSsynth->hp, HTSsynth->hn);
 	}
 	else
 	{
-		printf("normal excitation synthesis\n");
 		HTS_Engine_create_gstream(&(HTSsynth->engine));
 	}
 

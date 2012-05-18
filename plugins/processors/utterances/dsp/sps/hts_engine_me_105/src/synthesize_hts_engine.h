@@ -91,6 +91,41 @@ typedef struct
 	 * @protected #TRUE if this is a mixed excitation voice.
 	 */
 	s_bool        me;
+
+	/**
+	 * @protected number of filters
+	 */
+	int      num_filters;
+
+	/**
+	 * @protected filter order
+	 */
+	int      filter_order;
+
+	/**
+	 * @protected filter coefficients
+	 */
+	double **h;
+
+	/**
+	 * @protected pulse signal, the size of this should be the filter order
+	 */
+	double  *xp_sig;
+
+	/**
+	 * @protected noise signal, the size of this should be the filter order
+	 */
+	double  *xn_sig;
+
+	/**
+	 * @protected pulse shaping filter, size of the filter order
+	 */
+	double  *hp;
+
+	/**
+	 * @protected noise shaping filter, size of the filter order
+	 */
+    double  *hn;
 } SHTSEngineMESynthUttProc105;
 
 

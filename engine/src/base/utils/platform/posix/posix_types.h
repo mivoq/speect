@@ -88,7 +88,7 @@ typedef long int          slong;
 
 typedef unsigned long int ulong;
 
-typedef char              schar;
+typedef signed char       schar;
 
 typedef unsigned char     uchar;
 

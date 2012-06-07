@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2011 The Department of Arts and Culture,                           */
+/* Copyright (c) 2012 The Department of Arts and Culture,                           */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -24,11 +24,12 @@
 /************************************************************************************/
 /*                                                                                  */
 /* AUTHOR  : Aby Louw                                                               */
-/* DATE    : October 2011                                                           */
+/* DATE    : May 2012                                                               */
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* An utterance processor to do HTS Engine synthesis of a segment relation stream.  */
+/* An utterance processor to do HTS Engine (mixed excitation) synthesis of a        */
+/* segment relation stream.                                                         */
 /*                                                                                  */
 /*                                                                                  */
 /************************************************************************************/
@@ -80,6 +81,7 @@ typedef struct
 	HTS_Boolean use_log_gain;
 	double gv_weight_mcp;
 	double gv_weight_lf0;
+	double gv_weight_str;
 } hts_params;
 
 
@@ -89,8 +91,8 @@ typedef struct
 /*                                                                                  */
 /************************************************************************************/
 
-/* SHTSEngineSynthUttProc105 class declaration. */
-static SHTSEngineSynthUttProc105Class HTSEngineSynthUttProc105Class;
+/* SHTSEngineMESynthUttProc105 class declaration. */
+static SHTSEngineMESynthUttProc105Class HTSEngineMESynthUttProc105Class;
 
 
 /************************************************************************************/
@@ -99,7 +101,7 @@ static SHTSEngineSynthUttProc105Class HTSEngineSynthUttProc105Class;
 /*                                                                                  */
 /************************************************************************************/
 
-static hts_params *get_hts_engine_params(const SMap *features, s_erc *error);
+static hts_params *get_hts_engine_params(const SMap *features, s_bool *me, s_erc *error);
 
 static void get_windows(const SList *windows, char ***cwindows,
 						int *num, const char *voice_base_path, s_erc *error);
@@ -108,8 +110,14 @@ static void get_trees_pdfs(const SList *trees, const SList *pdfs,
 						   char ***ctrees, char ***cpdfs, int *num,
 						   const char *voice_base_path, s_erc *error);
 
-static void load_hts_engine_data(const SMap *data, HTS_Engine *engine,
+static void load_hts_engine_data(const SMap *data,
+								 SHTSEngineMESynthUttProc105 *HTSsynth,
 								 const char *voice_base_path, s_erc *error);
+
+static void filter_constructor(SHTSEngineMESynthUttProc105 *HTSsynth, s_erc *error);
+
+static void filter_destructor(SHTSEngineMESynthUttProc105 *HTSsynth);
+
 
 /************************************************************************************/
 /*                                                                                  */
@@ -118,23 +126,23 @@ static void load_hts_engine_data(const SMap *data, HTS_Engine *engine,
 /************************************************************************************/
 
 /* local functions to register and free classes */
-S_LOCAL void _s_hts_engine_synth_utt_proc_105_class_reg(s_erc *error)
+S_LOCAL void _s_hts_engine_me_synth_utt_proc_105_class_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(S_OBJECTCLASS(&HTSEngineSynthUttProc105Class), error);
+	s_class_reg(S_OBJECTCLASS(&HTSEngineMESynthUttProc105Class), error);
 	S_CHK_ERR(error, S_CONTERR,
-			  "_s_hts_engine_synth_utt_proc_class_reg",
-			  "Failed to register SHTSEngineSynthUttProc105Class");
+			  "_s_hts_engine_me_synth_utt_proc_class_reg",
+			  "Failed to register SHTSEngineMESynthUttProc105Class");
 }
 
 
-S_LOCAL void _s_hts_engine_synth_utt_proc_105_class_free(s_erc *error)
+S_LOCAL void _s_hts_engine_me_synth_utt_proc_105_class_free(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_free(S_OBJECTCLASS(&HTSEngineSynthUttProc105Class), error);
+	s_class_free(S_OBJECTCLASS(&HTSEngineMESynthUttProc105Class), error);
 	S_CHK_ERR(error, S_CONTERR,
-			  "_s_hts_engine_synth_utt_proc_class_free",
-			  "Failed to free SHTSEngineSynthUttProc105Class");
+			  "_s_hts_engine_me_synth_utt_proc_class_free",
+			  "Failed to free SHTSEngineMESynthUttProc105Class");
 }
 
 
@@ -144,7 +152,7 @@ S_LOCAL void _s_hts_engine_synth_utt_proc_105_class_free(s_erc *error)
 /*                                                                                  */
 /************************************************************************************/
 
-static hts_params *get_hts_engine_params(const SMap *features, s_erc *error)
+static hts_params *get_hts_engine_params(const SMap *features, s_bool *me, s_erc *error)
 {
 	hts_params *engine_params;
 	const char *tmp;
@@ -223,6 +231,23 @@ static hts_params *get_hts_engine_params(const SMap *features, s_erc *error)
 				  "get_hts_engine_params",
 				  "Call to \"SMapGetFloatDef\" failed"))
 		goto quit_error;
+
+
+	(*me) = SMapObjectPresent(features, "gv_weight_str", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "get_hts_engine_params",
+				  "Call to \"SMapObjectPresent\" failed"))
+		goto quit_error;
+
+	if (*me)
+	{
+		engine_params->gv_weight_str = (double)SMapGetFloat(features, "gv_weight_str",
+															error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "get_hts_engine_params",
+					  "Call to \"SMapGetFloat\" failed"))
+			goto quit_error;
+	}
 
 	/* set "use_log_gain" to FALSE as default */
 	engine_params->use_log_gain = FALSE;
@@ -461,7 +486,86 @@ static void get_windows(const SList *windows, char ***cwindows,
 }
 
 
-static void load_hts_engine_data(const SMap *data, HTS_Engine *engine,
+static void filter_constructor(SHTSEngineMESynthUttProc105 *HTSsynth, s_erc *error)
+{
+	S_CLR_ERR(error);
+
+	HTSsynth->xp_sig = S_MALLOC(double, HTSsynth->me_filter_order);
+	if (HTSsynth->xp_sig == NULL)
+	{
+		S_FTL_ERR(error, S_MEMERROR,
+				  "filter_constructor",
+				  "Failed to allocate memory for mixed excitation pulse signal");
+		return;
+	}
+
+	HTSsynth->xn_sig = S_MALLOC(double, HTSsynth->me_filter_order);
+	if (HTSsynth->xn_sig == NULL)
+	{
+		S_FREE(HTSsynth->xp_sig);
+		S_FTL_ERR(error, S_MEMERROR,
+				  "filter_constructor",
+				  "Failed to allocate memory for mixed excitation noise signal");
+		return;
+	}
+
+	HTSsynth->hp = S_MALLOC(double, HTSsynth->me_filter_order);
+	if (HTSsynth->hp == NULL)
+	{
+		S_FREE(HTSsynth->xp_sig);
+		S_FREE(HTSsynth->xn_sig);
+		S_FTL_ERR(error, S_MEMERROR,
+				  "filter_constructor",
+				  "Failed to allocate memory for mixed excitation pulse shaping filter");
+		return;
+	}
+
+	HTSsynth->hn = S_MALLOC(double, HTSsynth->me_filter_order);
+	if (HTSsynth->hn == NULL)
+	{
+		S_FREE(HTSsynth->xp_sig);
+		S_FREE(HTSsynth->xn_sig);
+		S_FREE(HTSsynth->hp);
+		S_FTL_ERR(error, S_MEMERROR,
+				  "filter_constructor",
+				  "Failed to allocate memory for mixed excitation noise shaping filter");
+		return;
+	}
+}
+
+
+static void filter_destructor(SHTSEngineMESynthUttProc105 *HTSsynth)
+{
+	int i;
+
+	for (i = 0; i < HTSsynth->me_num_filters; i++)
+	{
+		if (HTSsynth->me_filter[i] != NULL)
+			S_FREE(HTSsynth->me_filter[i]);
+	}
+
+	if (HTSsynth->me_filter != NULL)
+		S_FREE(HTSsynth->me_filter);
+
+	if (HTSsynth->xp_sig != NULL)
+		S_FREE(HTSsynth->xp_sig);
+
+	if (HTSsynth->xn_sig != NULL)
+		S_FREE(HTSsynth->xn_sig);
+
+	if (HTSsynth->hp != NULL)
+		S_FREE(HTSsynth->hp);
+
+	if (HTSsynth->hn != NULL)
+		S_FREE(HTSsynth->hn);
+
+	if (HTSsynth->pd_filter != NULL)
+		S_FREE(HTSsynth->pd_filter);
+}
+
+
+static void load_hts_engine_data(const SMap *data,
+								 SHTSEngineMESynthUttProc105 *HTSsynth,
 								 const char *voice_base_path, s_erc *error)
 {
 	const SMap *tmp;
@@ -477,6 +581,8 @@ static void load_hts_engine_data(const SMap *data, HTS_Engine *engine,
 	const char *gv;
 	const char *gv_tree;
 	const char *gv_switch;
+	const char *pd_filter;
+	HTS_Engine *engine = &(HTSsynth->engine);
 
 
 	S_CLR_ERR(error);
@@ -831,6 +937,197 @@ static void load_hts_engine_data(const SMap *data, HTS_Engine *engine,
 			S_FREE(combined_path_gv_tree);
 	}
 
+	/* band strengths */
+	if (HTSsynth->me == TRUE)
+	{
+		const char *me_filter;
+
+
+		tmp = S_MAP(SMapGetObjectDef(data, "strengths", NULL, error));
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "load_hts_engine_data",
+					  "Call to \"SMapGetObjectDef\" failed"))
+			return;
+
+		if (tmp == NULL)
+		{
+			S_CTX_ERR(error, S_FAILURE,
+					  "load_hts_engine_data",
+					  "Failed to find 'strengths' HTS Engine data");
+			return;
+		}
+
+		trees = S_LIST(SMapGetObjectDef(tmp, "trees", NULL, error));
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "load_hts_engine_data",
+					  "Call to \"SMapGetObjectDef\" failed"))
+			return;
+
+		if (trees == NULL)
+		{
+			S_CTX_ERR(error, S_FAILURE,
+					  "load_hts_engine_data",
+					  "Failed to find 'strengths:trees' HTS Engine data");
+			return;
+		}
+
+		pdfs = S_LIST(SMapGetObjectDef(tmp, "pdfs", NULL, error));
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "load_hts_engine_data",
+					  "Call to \"SMapGetObjectDef\" failed"))
+			return;
+
+		if (pdfs == NULL)
+		{
+			S_CTX_ERR(error, S_FAILURE,
+					  "load_hts_engine_data",
+					  "Failed to find 'strengths:pdfs' HTS Engine data");
+			return;
+		}
+
+		get_trees_pdfs(trees, pdfs, &ctrees, &cpdfs, &num, voice_base_path, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "load_hts_engine_data",
+					  "Call to \"get_trees_pdfs\" failed"))
+			return;
+
+		windows = S_LIST(SMapGetObjectDef(tmp, "windows", NULL, error));
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "load_hts_engine_data",
+					  "Call to \"SMapGetObjectDef\" failed"))
+			return;
+
+		if (windows == NULL)
+		{
+			S_CTX_ERR(error, S_FAILURE,
+					  "load_hts_engine_data",
+					  "Failed to find 'strengths:windows' HTS Engine data");
+			return;
+		}
+
+		get_windows(windows, &cwindows, &num_win, voice_base_path, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "load_hts_engine_data",
+					  "Call to \"get_windows\" failed"))
+			return;
+
+		/* strengths is stream 2, and msd_flag is FALSE */
+		HTS_Engine_load_parameter_from_fn(engine, cpdfs, ctrees, cwindows,
+										  2, FALSE, num_win, 1);
+
+		for (i = 0; i < num; i++)
+		{
+			S_FREE(ctrees[i]);
+			S_FREE(cpdfs[i]);
+		}
+
+		S_FREE(ctrees);
+		S_FREE(cpdfs);
+
+		for (i = 0; i < num_win; i++)
+			S_FREE(cwindows[i]);
+
+		S_FREE(cwindows);
+
+		/* strengths gv */
+		gv = SMapGetStringDef(tmp, "gv-str", NULL, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "load_hts_engine_data",
+					  "Call to \"SMapGetStringDef\" failed"))
+			return;
+
+		/* strengths gv tree */
+		gv_tree = SMapGetStringDef(tmp, "tree-gv-str", NULL, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "load_hts_engine_data",
+					  "Call to \"SMapGetStringDef\" failed"))
+			return;
+
+		if (gv != NULL)
+		{
+			char *combined_path_gv;
+			char *combined_path_gv_tree;
+
+
+			/* get data path, the one in the config file may be relative
+			 * to the voice base path
+			 */
+			combined_path_gv = s_path_combine(voice_base_path, gv,
+											  error);
+			if (S_CHK_ERR(error, S_CONTERR,
+						  "load_hts_engine_data",
+						  "Call to \"s_path_combine\" failed"))
+				return;
+
+			if (gv_tree != NULL)
+			{
+				/* get data path, the one in the config file may be relative
+				 * to the voice base path
+				 */
+				combined_path_gv_tree = s_path_combine(voice_base_path, gv_tree,
+													   error);
+				if (S_CHK_ERR(error, S_CONTERR,
+							  "load_hts_engine_data",
+							  "Call to \"s_path_combine\" failed"))
+				{
+					S_FREE(combined_path_gv);
+					return;
+				}
+			}
+			else
+			{
+				combined_path_gv_tree = NULL;
+			}
+
+
+			HTS_Engine_load_gv_from_fn(engine, (char**)&combined_path_gv,
+									   (char**)&combined_path_gv_tree, 2, 1);
+			S_FREE(combined_path_gv);
+			if (combined_path_gv_tree != NULL)
+				S_FREE(combined_path_gv_tree);
+		}
+
+		/* mixed excitation filter */
+		me_filter = SMapGetStringDef(tmp, "mixed excitation filter", NULL, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "load_hts_engine_data",
+					  "Call to \"SMapGetStringDef\" failed"))
+			return;
+
+		if (me_filter != NULL)
+		{
+			char *combined_path;
+
+			/* get data path, the one in the config file may be relative
+			 * to the voice base path
+			 */
+			combined_path = s_path_combine(voice_base_path, me_filter,
+										   error);
+			if (S_CHK_ERR(error, S_CONTERR,
+						  "load_hts_engine_data",
+						  "Call to \"s_path_combine\" failed"))
+				return;
+
+			HTS_Engine_load_me_filter_from_fn(combined_path, &(HTSsynth->me_filter),
+											  &(HTSsynth->me_num_filters), &(HTSsynth->me_filter_order));
+			S_FREE(combined_path);
+
+			/* allocate memory for other filter buffers */
+			filter_constructor(HTSsynth, error);
+			if (S_CHK_ERR(error, S_CONTERR,
+						  "load_hts_engine_data",
+						  "Call to \"filter_constructor\" failed"))
+				return;
+		}
+		else
+		{
+			S_CTX_ERR(error, S_FAILURE,
+					  "load_hts_engine_data",
+					  "Failed to find 'strengths:mixed excitation filter' HTS Engine data");
+			return;
+		}
+	}
+
 	/* gv switch */
 	gv_switch = SMapGetStringDef(data, "gv-switch", NULL, error);
 	if (S_CHK_ERR(error, S_CONTERR,
@@ -856,6 +1153,33 @@ static void load_hts_engine_data(const SMap *data, HTS_Engine *engine,
 		HTS_Engine_load_gv_switch_from_fn(engine, combined_path);
 		S_FREE(combined_path);
 	}
+
+	/* pulse dispersion filter */
+	pd_filter = SMapGetStringDef(data, "pulse dispersion filter", NULL, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "load_hts_engine_data",
+				  "Call to \"SMapGetObjectDef\" failed"))
+		return;
+
+	if (pd_filter != NULL)
+	{
+		char *combined_path;
+
+
+		/* get data path, the one in the config file may be relative
+		 * to the voice base path
+		 */
+		combined_path = s_path_combine(voice_base_path, pd_filter,
+									   error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "load_hts_engine_data",
+					  "Call to \"s_path_combine\" failed"))
+			return;
+
+		HTS_Engine_load_pd_filter_from_fn(combined_path, &(HTSsynth->pd_filter),
+										  &(HTSsynth->pd_filter_order));
+		S_FREE(combined_path);
+	}
 }
 
 
@@ -868,11 +1192,12 @@ static void load_hts_engine_data(const SMap *data, HTS_Engine *engine,
 /* we need to delete the window plug-in if any */
 static void Destroy(void *obj, s_erc *error)
 {
-	SHTSEngineSynthUttProc105 *self = obj;
+	SHTSEngineMESynthUttProc105 *self = obj;
 
 
 	S_CLR_ERR(error);
 	HTS_Engine_clear(&(self->engine));
+	filter_destructor(self);
 }
 
 
@@ -886,13 +1211,22 @@ static void Dispose(void *obj, s_erc *error)
 static void Initialize(SUttProcessor *self, const SVoice *voice, s_erc *error)
 {
 	hts_params *engine_params;
-	SHTSEngineSynthUttProc105 *HTSsynth = (SHTSEngineSynthUttProc105*)self;
+	SHTSEngineMESynthUttProc105 *HTSsynth = (SHTSEngineMESynthUttProc105*)self;
 	const SMap *hts_data;
 	const SObject *vcfgObject;
 	char *voice_base_path;
 
 
 	S_CLR_ERR(error);
+
+	HTSsynth->me = FALSE;            /* assume non mixed excitation voice     */
+	HTSsynth->me_filter = NULL;      /* mixed excitation filter coefficients  */
+	HTSsynth->xp_sig = NULL;         /* pulse signal                          */
+	HTSsynth->xn_sig = NULL;         /* noise signal                          */
+	HTSsynth->hp = NULL;             /* pulse shaping filter                  */
+	HTSsynth->hn = NULL;             /* noise shaping filter                  */
+	HTSsynth->pd_filter = NULL;      /* pulse dispersion filter coefficients  */
+
 
 	/* get voice base path */
 	vcfgObject = SVoiceGetFeature(voice, "config_file", error);
@@ -908,7 +1242,7 @@ static void Initialize(SUttProcessor *self, const SVoice *voice, s_erc *error)
 		return;
 
 	/* get the HTS engine settings */
-	engine_params = get_hts_engine_params(self->features, error);
+	engine_params = get_hts_engine_params(self->features, &(HTSsynth->me), error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Initialize",
 				  "Call to \"get_hts_engine_params\" failed"))
@@ -918,7 +1252,15 @@ static void Initialize(SUttProcessor *self, const SVoice *voice, s_erc *error)
 	}
 
 	/* initialize the engine */
-	HTS_Engine_initialize(&(HTSsynth->engine), 2);
+	if (HTSsynth->me == TRUE)
+	{
+		/* extra stream for strengths */
+		HTS_Engine_initialize(&(HTSsynth->engine), 3);
+	}
+	else
+	{
+		HTS_Engine_initialize(&(HTSsynth->engine), 2);
+	}
 
 	/* set the engine parameters */
 	HTS_Engine_set_sampling_rate(&(HTSsynth->engine), engine_params->sampling_rate);
@@ -932,6 +1274,8 @@ static void Initialize(SUttProcessor *self, const SVoice *voice, s_erc *error)
 	HTS_Engine_set_gv_weight(&(HTSsynth->engine), 0, engine_params->gv_weight_mcp);
 	HTS_Engine_set_gv_weight(&(HTSsynth->engine), 1, engine_params->gv_weight_lf0);
 
+	if (HTSsynth->me == TRUE)
+		HTS_Engine_set_gv_weight(&(HTSsynth->engine), 2, engine_params->gv_weight_str);
 
 	S_FREE(engine_params);
 
@@ -949,7 +1293,7 @@ static void Initialize(SUttProcessor *self, const SVoice *voice, s_erc *error)
 		goto quit_error;
 	}
 
-	load_hts_engine_data(hts_data, &(HTSsynth->engine), voice_base_path, error);
+	load_hts_engine_data(hts_data, HTSsynth, voice_base_path, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Initialize",
 				  "Call to \"load_hts_engine_data\" failed"))
@@ -958,9 +1302,15 @@ static void Initialize(SUttProcessor *self, const SVoice *voice, s_erc *error)
 	HTS_Engine_set_duration_interpolation_weight(&(HTSsynth->engine), 0, 1.0);
 	HTS_Engine_set_parameter_interpolation_weight(&(HTSsynth->engine), 0, 0, 1.0);
 	HTS_Engine_set_parameter_interpolation_weight(&(HTSsynth->engine), 1, 0, 1.0);
+
+	if (HTSsynth->me == TRUE)
+		HTS_Engine_set_parameter_interpolation_weight(&(HTSsynth->engine), 2, 0, 1.0);
+
 	HTS_Engine_set_gv_interpolation_weight(&(HTSsynth->engine), 0, 0, 1.0);
 	HTS_Engine_set_gv_interpolation_weight(&(HTSsynth->engine), 1, 0, 1.0);
 
+	if (HTSsynth->me == TRUE)
+		HTS_Engine_set_gv_interpolation_weight(&(HTSsynth->engine), 2, 0, 1.0);
 
 	/* all OK */
 	S_FREE(voice_base_path);
@@ -969,6 +1319,7 @@ static void Initialize(SUttProcessor *self, const SVoice *voice, s_erc *error)
 	/* error clean up */
 quit_error:
 	HTS_Engine_clear(&(HTSsynth->engine));
+	filter_destructor(HTSsynth);
 	if (voice_base_path != NULL)
 		S_FREE(voice_base_path);
 }
@@ -977,7 +1328,7 @@ quit_error:
 static void Run(const SUttProcessor *self, SUtterance *utt,
 				s_erc *error)
 {
-	SHTSEngineSynthUttProc105 *HTSsynth = (SHTSEngineSynthUttProc105*)self;
+	SHTSEngineMESynthUttProc105 *HTSsynth = (SHTSEngineMESynthUttProc105*)self;
 	SPlugin *audioPlugin;
 	const SRelation *segmentRel;
 	SAudio *audio = NULL;
@@ -1078,7 +1429,19 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 	HTS_Engine_load_label_from_string_list(&(HTSsynth->engine), label_data, label_size);
 	HTS_Engine_create_sstream(&(HTSsynth->engine));
 	HTS_Engine_create_pstream(&(HTSsynth->engine));
-	HTS_Engine_create_gstream(&(HTSsynth->engine));
+
+	if (HTSsynth->me == TRUE) /* mixed excitation */
+	{
+		HTS_Engine_create_gstream_me(&(HTSsynth->engine),
+									 HTSsynth->me_num_filters, HTSsynth->me_filter_order,
+									 HTSsynth->me_filter, HTSsynth->xp_sig, HTSsynth->xn_sig,
+									 HTSsynth->hp, HTSsynth->hn,
+									 HTSsynth->pd_filter, HTSsynth->pd_filter_order);
+	}
+	else
+	{
+		HTS_Engine_create_gstream(&(HTSsynth->engine));
+	}
 
 	itemItr = item;
 	counter = 0;
@@ -1195,16 +1558,16 @@ quit_error:
 
 /************************************************************************************/
 /*                                                                                  */
-/* SHTSEngineSynthUttProc105 class initialization                                   */
+/* SHTSEngineMESynthUttProc105 class initialization                                 */
 /*                                                                                  */
 /************************************************************************************/
 
-static SHTSEngineSynthUttProc105Class HTSEngineSynthUttProc105Class =
+static SHTSEngineMESynthUttProc105Class HTSEngineMESynthUttProc105Class =
 {
 	/* SObjectClass */
 	{
-		"SUttProcessor:SHTSEngineSynthUttProc105",
-		sizeof(SHTSEngineSynthUttProc105),
+		"SUttProcessor:SHTSEngineMESynthUttProc105",
+		sizeof(SHTSEngineMESynthUttProc105),
 		{ 0, 1},
 		NULL,            /* init    */
 		Destroy,         /* destroy */

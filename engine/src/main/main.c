@@ -78,8 +78,16 @@ S_API s_erc speect_init(s_logger *logger)
 	if (initialized_count++ > 0)
 		return S_SUCCESS;
 
+#if 0  /* this seems to break stuff */
 	/* set the current locale */
-	setlocale(LC_ALL, "");
+	if (setlocale(LC_ALL, "") == NULL)
+	{
+		S_ERR_PRINT(S_FAILURE, "speect_init",
+					"Failed to set the locale");
+		initialized_count--;
+		return S_FAILURE;
+	}
+#endif
 
 #ifdef SPCT_ERROR_HANDLING
 	/* create a logger if no logger was given and

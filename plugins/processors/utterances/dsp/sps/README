@@ -1,2 +1,4 @@
-hts_engine is the current version of hts (1.03) where the other
-plug-ins are for voices that require specific versions.
+hts_engine_10x is normal hts_engine plug-ins.
+
+hts_engine_me_10x corresponds to above, but includes mixed excitation code.
+hts_engine_me_10x can also handle voices trained without mixed excitation.

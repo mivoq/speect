@@ -1,18 +1,21 @@
 ######################################################################################
 ##                                                                                  ##
 ## AUTHOR  : Aby Louw                                                               ##
-## DATE    : 11 June 2010                                                           ##
+## DATE    : June 2012                                                              ##
 ##                                                                                  ##
 ######################################################################################
 ##                                                                                  ##
-## CMakeList for utterane serialization plug-ins                                    ##
+## CMakeList for SUtterance TextGrid SWIG Wrappers                                  ##
 ##                                                                                  ##
 ##                                                                                  ##
 ######################################################################################
 
+
 #------------------------------------------------------------------------------------#
-#                        Plug-in directories                                         #
+#                   Include wrappers for different languages                         #
 #------------------------------------------------------------------------------------#
 
-add_subdirectory(ebml)
-add_subdirectory(textgrid)
+if(WANT_PYTHON_WRAPPER)
+  add_subdirectory(python)
+endif(WANT_PYTHON_WRAPPER)
+

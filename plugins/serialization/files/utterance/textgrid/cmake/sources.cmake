@@ -1,18 +1,28 @@
 ######################################################################################
 ##                                                                                  ##
 ## AUTHOR  : Aby Louw                                                               ##
-## DATE    : 11 June 2010                                                           ##
+## DATE    : 5 November 2009                                                        ##
 ##                                                                                  ##
 ######################################################################################
 ##                                                                                  ##
-## CMakeList for utterane serialization plug-ins                                    ##
+## Source files for SEbmlUttFile plug-in                                            ##
 ##                                                                                  ##
 ##                                                                                  ##
 ######################################################################################
 
-#------------------------------------------------------------------------------------#
-#                        Plug-in directories                                         #
-#------------------------------------------------------------------------------------#
 
-add_subdirectory(ebml)
-add_subdirectory(textgrid)
+######## source files ##################
+
+speect_plugin_sources(
+  src/plugin.c
+  src/utt_textgrid.c
+  src/write.c
+  )
+ 
+
+######## header files ##################
+
+speect_plugin_headers(
+  src/utt_textgrid.h
+  )
+

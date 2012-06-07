@@ -1310,6 +1310,26 @@ static void load_hts_engine_data(const SMap *data,
 /*                                                                                  */
 /************************************************************************************/
 
+
+static void Init(void *obj, s_erc *error)
+{
+	SHTSEngineMESynthUttProc105 *HTSsynth = obj;
+
+
+	S_CLR_ERR(error);
+	HTSsynth->me = FALSE;            /* assume non mixed excitation voice     */
+	HTSsynth->me_filter = NULL;      /* mixed excitation filter coefficients  */
+	HTSsynth->me_num_filters = 0;    /* mixed excitation number of filters    */
+	HTSsynth->me_filter_order = 0;   /* mixed excitation filters order        */
+	HTSsynth->xp_sig = NULL;         /* pulse signal                          */
+	HTSsynth->xn_sig = NULL;         /* noise signal                          */
+	HTSsynth->hp = NULL;             /* pulse shaping filter                  */
+	HTSsynth->hn = NULL;             /* noise shaping filter                  */
+	HTSsynth->pd_filter = NULL;      /* pulse dispersion filter coefficients  */
+	HTSsynth->pd_filter_order = 0;   /* pulse dispersion filters order        */
+}
+
+
 /* we need to delete the window plug-in if any */
 static void Destroy(void *obj, s_erc *error)
 {
@@ -1339,15 +1359,6 @@ static void Initialize(SUttProcessor *self, const SVoice *voice, s_erc *error)
 
 
 	S_CLR_ERR(error);
-
-	HTSsynth->me = FALSE;            /* assume non mixed excitation voice     */
-	HTSsynth->me_filter = NULL;      /* mixed excitation filter coefficients  */
-	HTSsynth->xp_sig = NULL;         /* pulse signal                          */
-	HTSsynth->xn_sig = NULL;         /* noise signal                          */
-	HTSsynth->hp = NULL;             /* pulse shaping filter                  */
-	HTSsynth->hn = NULL;             /* noise shaping filter                  */
-	HTSsynth->pd_filter = NULL;      /* pulse dispersion filter coefficients  */
-
 
 	/* get voice base path */
 	vcfgObject = SVoiceGetFeature(voice, "config_file", error);
@@ -1702,7 +1713,7 @@ static SHTSEngineMESynthUttProc105Class HTSEngineMESynthUttProc105Class =
 		"SUttProcessor:SHTSEngineMESynthUttProc105",
 		sizeof(SHTSEngineMESynthUttProc105),
 		{ 0, 1},
-		NULL,            /* init    */
+		Init,            /* init    */
 		Destroy,         /* destroy */
 		Dispose,         /* dispose */
 		NULL,            /* compare */

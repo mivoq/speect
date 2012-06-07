@@ -237,6 +237,13 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 						  "Run",
 						  "Call to \"SRelationAppend\" failed"))
 				goto quit_error;
+
+			/* add an item name, NB, no break */
+			SItemSetString(phraseItem, "name", "NB", error);
+			if (S_CHK_ERR(error, S_CONTERR,
+						  "Run",
+						  "Call to \"SItemSetString\" failed"))
+				goto quit_error;
 		}
 
 		/* Create a daughter item for the phrase item. Shared content

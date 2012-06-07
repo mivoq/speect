@@ -138,8 +138,10 @@ static SObject *Load(const char *path, s_erc *error)
 			  "Load",
 			  "Failed to load audio from file '%s', load method not implemented",
 			  path);
-	path = NULL;
+
 	return NULL;
+
+	S_UNUSED(path);
 }
 
 

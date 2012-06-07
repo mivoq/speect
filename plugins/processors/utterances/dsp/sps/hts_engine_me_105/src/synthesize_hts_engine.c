@@ -118,12 +118,6 @@ static void filter_constructor(SHTSEngineMESynthUttProc105 *HTSsynth, s_erc *err
 
 static void filter_destructor(SHTSEngineMESynthUttProc105 *HTSsynth);
 
-static void load_mixed_excitation_data(const SMap *data,
-									   SHTSEngineMESynthUttProc105 *HTSsynth,
-									   const char *voice_base_path, s_erc *error);
-
-
-
 
 /************************************************************************************/
 /*                                                                                  */
@@ -494,56 +488,20 @@ static void get_windows(const SList *windows, char ***cwindows,
 
 static void filter_constructor(SHTSEngineMESynthUttProc105 *HTSsynth, s_erc *error)
 {
-	double **h;
-	int i;
-	int j;
-
-
 	S_CLR_ERR(error);
 
-	h = S_MALLOC(double*, HTSsynth->num_filters);
-	if (h == NULL)
-	{
-		S_FTL_ERR(error, S_MEMERROR,
-				  "filter_constructor",
-				  "Failed to allocate memory for mixed excitation filters");
-		return;
-	}
-
-	for (i = 0; i < HTSsynth->num_filters; i++)
-	{
-		h[i] = S_MALLOC(double, HTSsynth->filter_order);
-		if (h[i] == NULL)
-		{
-			for (j = 0; j < i; j++)
-				S_FREE(h[j]);
-			S_FREE(h);
-			S_FTL_ERR(error, S_MEMERROR,
-					  "filter_constructor",
-					  "Failed to allocate memory for mixed excitation filters");
-			return;
-		}
-	}
-
-	HTSsynth->h = h;
-	HTSsynth->xp_sig = S_MALLOC(double, HTSsynth->filter_order);
+	HTSsynth->xp_sig = S_MALLOC(double, HTSsynth->me_filter_order);
 	if (HTSsynth->xp_sig == NULL)
 	{
-		for (j = 0; j < HTSsynth->num_filters; j++)
-			S_FREE(h[j]);
-		S_FREE(h);
 		S_FTL_ERR(error, S_MEMERROR,
 				  "filter_constructor",
 				  "Failed to allocate memory for mixed excitation pulse signal");
 		return;
 	}
 
-	HTSsynth->xn_sig = S_MALLOC(double, HTSsynth->filter_order);
+	HTSsynth->xn_sig = S_MALLOC(double, HTSsynth->me_filter_order);
 	if (HTSsynth->xn_sig == NULL)
 	{
-		for (j = 0; j < HTSsynth->num_filters; j++)
-			S_FREE(h[j]);
-		S_FREE(h);
 		S_FREE(HTSsynth->xp_sig);
 		S_FTL_ERR(error, S_MEMERROR,
 				  "filter_constructor",
@@ -551,12 +509,9 @@ static void filter_constructor(SHTSEngineMESynthUttProc105 *HTSsynth, s_erc *err
 		return;
 	}
 
-	HTSsynth->hp = S_MALLOC(double, HTSsynth->filter_order);
+	HTSsynth->hp = S_MALLOC(double, HTSsynth->me_filter_order);
 	if (HTSsynth->hp == NULL)
 	{
-		for (j = 0; j < HTSsynth->num_filters; j++)
-			S_FREE(h[j]);
-		S_FREE(h);
 		S_FREE(HTSsynth->xp_sig);
 		S_FREE(HTSsynth->xn_sig);
 		S_FTL_ERR(error, S_MEMERROR,
@@ -565,12 +520,9 @@ static void filter_constructor(SHTSEngineMESynthUttProc105 *HTSsynth, s_erc *err
 		return;
 	}
 
-	HTSsynth->hn = S_MALLOC(double, HTSsynth->filter_order);
+	HTSsynth->hn = S_MALLOC(double, HTSsynth->me_filter_order);
 	if (HTSsynth->hn == NULL)
 	{
-		for (j = 0; j < HTSsynth->num_filters; j++)
-			S_FREE(h[j]);
-		S_FREE(h);
 		S_FREE(HTSsynth->xp_sig);
 		S_FREE(HTSsynth->xn_sig);
 		S_FREE(HTSsynth->hp);
@@ -586,14 +538,14 @@ static void filter_destructor(SHTSEngineMESynthUttProc105 *HTSsynth)
 {
 	int i;
 
-	for (i = 0; i < HTSsynth->num_filters; i++)
+	for (i = 0; i < HTSsynth->me_num_filters; i++)
 	{
-		if (HTSsynth->h[i] != NULL)
-			S_FREE(HTSsynth->h[i]);
+		if (HTSsynth->me_filter[i] != NULL)
+			S_FREE(HTSsynth->me_filter[i]);
 	}
 
-	if (HTSsynth->h != NULL)
-		S_FREE(HTSsynth->h);
+	if (HTSsynth->me_filter != NULL)
+		S_FREE(HTSsynth->me_filter);
 
 	if (HTSsynth->xp_sig != NULL)
 		S_FREE(HTSsynth->xp_sig);
@@ -606,226 +558,9 @@ static void filter_destructor(SHTSEngineMESynthUttProc105 *HTSsynth)
 
 	if (HTSsynth->hn != NULL)
 		S_FREE(HTSsynth->hn);
-}
 
-
-static void load_mixed_excitation_data(const SMap *data,
-									   SHTSEngineMESynthUttProc105 *HTSsynth,
-									   const char *voice_base_path, s_erc *error)
-{
-	const char *filter;
-	SMap *meFilterFile = NULL;
-	const SList *coeffs;
-	char *combined_path;
-	int i;
-	int j;
-	const SObject *tmp;
-	SIterator *itr_i;
-	SIterator *itr_j;
-
-
-	S_CLR_ERR(error);
-
-	/* strengths:filter */
-	filter = SMapGetStringDef(data, "filter", NULL, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "load_mixed_excitation_data",
-				  "Call to \"SMapGetStringDef\" failed"))
-		return;
-
-	if (filter == NULL)
-	{
-		S_CTX_ERR(error, S_FAILURE,
-				  "load_mixed_excitation_data",
-				  "Failed to find 'strengths:filter' HTS Engine data");
-		return;
-	}
-
-	/* get data path, the one in the config file may be relative
-	 * to the voice base path
-	 */
-	combined_path = s_path_combine(voice_base_path, filter, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "load_mixed_excitation_data",
-				  "Call to \"s_path_combine\" failed"))
-		return;
-
-
-	/* parse filter file */
-	meFilterFile = s_json_parse_config_file(combined_path, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "load_mixed_excitation_data",
-				  "Call to \"s_json_parse_config_file\" failed"))
-	{
-		S_FREE(combined_path);
-		return;
-	}
-
-	S_FREE(combined_path);
-
-	/* num (number of filters) */
-	tmp = SMapGetObjectDef(meFilterFile, "num", NULL, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "load_mixed_excitation_data",
-				  "Call to \"SMapGetObjectDef\" failed"))
-	{
-		S_DELETE(meFilterFile, "load_mixed_excitation_data", error);
-		return;
-	}
-
-	if (tmp == NULL)
-	{
-		S_CTX_ERR(error, S_FAILURE,
-				  "load_mixed_excitation_data",
-				  "Failed to find 'num' in mixed excitation filter file");
-		S_DELETE(meFilterFile, "load_mixed_excitation_data", error);
-		return;
-	}
-
-	HTSsynth->num_filters = SObjectGetInt(tmp, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "load_mixed_excitation_data",
-				  "Call to \"SObjectGetInt\" failed"))
-	{
-		S_DELETE(meFilterFile, "load_mixed_excitation_data", error);
-		return;
-	}
-
-	/* order (order of filters) */
-	tmp = SMapGetObjectDef(meFilterFile, "order", NULL, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "load_mixed_excitation_data",
-				  "Call to \"SMapGetObjectDef\" failed"))
-	{
-		S_DELETE(meFilterFile, "load_mixed_excitation_data", error);
-		return;
-	}
-
-	if (tmp == NULL)
-	{
-		S_CTX_ERR(error, S_FAILURE,
-				  "load_mixed_excitation_data",
-				  "Failed to find 'order' in mixed excitation filter file");
-		S_DELETE(meFilterFile, "load_mixed_excitation_data", error);
-		return;
-	}
-
-	HTSsynth->filter_order = SObjectGetInt(tmp, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "load_mixed_excitation_data",
-				  "Call to \"SObjectGetInt\" failed"))
-	{
-		S_DELETE(meFilterFile, "load_mixed_excitation_data", error);
-		return;
-	}
-
-	/* allocate memory for filter coefficients and other filter
-	 * buffers */
-	filter_constructor(HTSsynth, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "load_mixed_excitation_data",
-				  "Call to \"filter_constructor\" failed"))
-	{
-		S_DELETE(meFilterFile, "load_mixed_excitation_data", error);
-		return;
-	}
-
-	/* coefficients */
-	coeffs = S_LIST(SMapGetObjectDef(meFilterFile, "coefficients", NULL, error));
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "load_mixed_excitation_data",
-				  "Call to \"SMapGetObjectDef\" failed"))
-	{
-		filter_destructor(HTSsynth);
-		S_DELETE(meFilterFile, "load_mixed_excitation_data", error);
-		return;
-	}
-
-	if (coeffs == NULL)
-	{
-		filter_destructor(HTSsynth);
-		S_CTX_ERR(error, S_FAILURE,
-				  "load_mixed_excitation_data",
-				  "Failed to find 'coefficients' in mixed excitation filter file");
-		S_DELETE(meFilterFile, "load_mixed_excitation_data", error);
-		return;
-	}
-
-
-	/*
-	 * iterate through the coefficients (number then order)
-	 */
-	itr_i = S_ITERATOR_GET(coeffs, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "load_mixed_excitation_data",
-				  "Call to \"S_ITERATOR_GET\" failed"))
-	{
-		filter_destructor(HTSsynth);
-		S_DELETE(meFilterFile, "load_mixed_excitation_data", error);
-		return;
-	}
-
-	for (i = 0; itr_i != NULL; i++, itr_i = SIteratorNext(itr_i))
-	{
-		const SList *icoef;
-
-
-		icoef = S_LIST(SIteratorObject(itr_i, error));
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "load_mixed_excitation_data",
-					  "Call to \"SIteratorObject\" failed"))
-		{
-			filter_destructor(HTSsynth);
-			S_DELETE(meFilterFile, "load_mixed_excitation_data", error);
-			S_DELETE(itr_i, "load_mixed_excitation_data", error);
-			return;
-		}
-
-		/*
-		 * iterate through the coefficients (order)
-		 */
-		itr_j = S_ITERATOR_GET(icoef, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "load_mixed_excitation_data",
-					  "Call to \"S_ITERATOR_GET\" failed"))
-		{
-			filter_destructor(HTSsynth);
-			S_DELETE(meFilterFile, "load_mixed_excitation_data", error);
-			S_DELETE(itr_i, "load_mixed_excitation_data", error);
-			return;
-		}
-
-		for (j = 0; itr_j != NULL; j++, itr_j = SIteratorNext(itr_j))
-		{
-			const SObject *coef;
-
-			coef = SIteratorObject(itr_j, error);
-			if (S_CHK_ERR(error, S_CONTERR,
-						  "load_mixed_excitation_data",
-						  "Call to \"SIteratorObject\" failed"))
-			{
-				filter_destructor(HTSsynth);
-				S_DELETE(meFilterFile, "load_mixed_excitation_data", error);
-				S_DELETE(itr_i, "load_mixed_excitation_data", error);
-				S_DELETE(itr_j, "load_mixed_excitation_data", error);
-				return;
-			}
-
-			HTSsynth->h[i][j] = (double)SObjectGetFloat(coef, error);
-			if (S_CHK_ERR(error, S_CONTERR,
-						  "load_mixed_excitation_data",
-						  "Call to \"SObjectGetFloat\" failed"))
-			{
-				filter_destructor(HTSsynth);
-				S_DELETE(meFilterFile, "load_mixed_excitation_data", error);
-				S_DELETE(itr_i, "load_mixed_excitation_data", error);
-				S_DELETE(itr_j, "load_mixed_excitation_data", error);
-				return;
-			}
-		}
-	}
-
-	S_DELETE(meFilterFile, "load_mixed_excitation_data", error);
+	if (HTSsynth->pd_filter != NULL)
+		S_FREE(HTSsynth->pd_filter);
 }
 
 
@@ -844,7 +579,9 @@ static void load_hts_engine_data(const SMap *data,
 	char **cwindows;
 	int num_win;
 	const char *gv;
+	const char *gv_tree;
 	const char *gv_switch;
+	const char *pd_filter;
 	HTS_Engine *engine = &(HTSsynth->engine);
 
 
@@ -1004,22 +741,55 @@ static void load_hts_engine_data(const SMap *data,
 				  "Call to \"SMapGetStringDef\" failed"))
 		return;
 
+	/* log f0 gv tree */
+	gv_tree = SMapGetStringDef(tmp, "tree-gv-lf0", NULL, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "load_hts_engine_data",
+				  "Call to \"SMapGetStringDef\" failed"))
+		return;
+
 	if (gv != NULL)
 	{
-		char *combined_path;
+		char *combined_path_gv;
+		char *combined_path_gv_tree;
+
 
 		/* get data path, the one in the config file may be relative
 		 * to the voice base path
 		 */
-		combined_path = s_path_combine(voice_base_path, gv,
-									   error);
+		combined_path_gv = s_path_combine(voice_base_path, gv,
+										  error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "load_hts_engine_data",
 					  "Call to \"s_path_combine\" failed"))
 			return;
 
-		HTS_Engine_load_gv_from_fn(engine, (char**)&combined_path, NULL, 1, 1);
-		S_FREE(combined_path);
+		if (gv_tree != NULL)
+		{
+			/* get data path, the one in the config file may be relative
+			 * to the voice base path
+			 */
+			combined_path_gv_tree = s_path_combine(voice_base_path, gv_tree,
+												   error);
+			if (S_CHK_ERR(error, S_CONTERR,
+						  "load_hts_engine_data",
+						  "Call to \"s_path_combine\" failed"))
+			{
+				S_FREE(combined_path_gv);
+				return;
+			}
+		}
+		else
+		{
+			combined_path_gv_tree = NULL;
+		}
+
+
+		HTS_Engine_load_gv_from_fn(engine, (char**)&combined_path_gv,
+								   (char**)&combined_path_gv_tree, 1, 1);
+		S_FREE(combined_path_gv);
+		if (combined_path_gv_tree != NULL)
+			S_FREE(combined_path_gv_tree);
 	}
 
 	/* spectrum */
@@ -1116,27 +886,63 @@ static void load_hts_engine_data(const SMap *data,
 				  "Call to \"SMapGetStringDef\" failed"))
 		return;
 
+	/* spectrum gv tree */
+	gv_tree = SMapGetStringDef(tmp, "tree-gv-mgc", NULL, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "load_hts_engine_data",
+				  "Call to \"SMapGetStringDef\" failed"))
+		return;
+
 	if (gv != NULL)
 	{
-		char *combined_path;
+		char *combined_path_gv;
+		char *combined_path_gv_tree;
+
 
 		/* get data path, the one in the config file may be relative
 		 * to the voice base path
 		 */
-		combined_path = s_path_combine(voice_base_path, gv,
-									   error);
+		combined_path_gv = s_path_combine(voice_base_path, gv,
+										  error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "load_hts_engine_data",
 					  "Call to \"s_path_combine\" failed"))
 			return;
 
-		HTS_Engine_load_gv_from_fn(engine, (char**)&combined_path, NULL, 0, 1);
-		S_FREE(combined_path);
+		if (gv_tree != NULL)
+		{
+			/* get data path, the one in the config file may be relative
+			 * to the voice base path
+			 */
+			combined_path_gv_tree = s_path_combine(voice_base_path, gv_tree,
+												   error);
+			if (S_CHK_ERR(error, S_CONTERR,
+						  "load_hts_engine_data",
+						  "Call to \"s_path_combine\" failed"))
+			{
+				S_FREE(combined_path_gv);
+				return;
+			}
+		}
+		else
+		{
+			combined_path_gv_tree = NULL;
+		}
+
+
+		HTS_Engine_load_gv_from_fn(engine, (char**)&combined_path_gv,
+								   (char**)&combined_path_gv_tree, 0, 1);
+		S_FREE(combined_path_gv);
+		if (combined_path_gv_tree != NULL)
+			S_FREE(combined_path_gv_tree);
 	}
 
 	/* band strengths */
 	if (HTSsynth->me == TRUE)
 	{
+		const char *me_filter;
+
+
 		tmp = S_MAP(SMapGetObjectDef(data, "strengths", NULL, error));
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "load_hts_engine_data",
@@ -1230,30 +1036,96 @@ static void load_hts_engine_data(const SMap *data,
 					  "Call to \"SMapGetStringDef\" failed"))
 			return;
 
+		/* strengths gv tree */
+		gv_tree = SMapGetStringDef(tmp, "tree-gv-str", NULL, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "load_hts_engine_data",
+					  "Call to \"SMapGetStringDef\" failed"))
+			return;
+
 		if (gv != NULL)
+		{
+			char *combined_path_gv;
+			char *combined_path_gv_tree;
+
+
+			/* get data path, the one in the config file may be relative
+			 * to the voice base path
+			 */
+			combined_path_gv = s_path_combine(voice_base_path, gv,
+											  error);
+			if (S_CHK_ERR(error, S_CONTERR,
+						  "load_hts_engine_data",
+						  "Call to \"s_path_combine\" failed"))
+				return;
+
+			if (gv_tree != NULL)
+			{
+				/* get data path, the one in the config file may be relative
+				 * to the voice base path
+				 */
+				combined_path_gv_tree = s_path_combine(voice_base_path, gv_tree,
+													   error);
+				if (S_CHK_ERR(error, S_CONTERR,
+							  "load_hts_engine_data",
+							  "Call to \"s_path_combine\" failed"))
+				{
+					S_FREE(combined_path_gv);
+					return;
+				}
+			}
+			else
+			{
+				combined_path_gv_tree = NULL;
+			}
+
+
+			HTS_Engine_load_gv_from_fn(engine, (char**)&combined_path_gv,
+									   (char**)&combined_path_gv_tree, 2, 1);
+			S_FREE(combined_path_gv);
+			if (combined_path_gv_tree != NULL)
+				S_FREE(combined_path_gv_tree);
+		}
+
+		/* mixed excitation filter */
+		me_filter = SMapGetStringDef(tmp, "mixed excitation filter", NULL, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "load_hts_engine_data",
+					  "Call to \"SMapGetStringDef\" failed"))
+			return;
+
+		if (me_filter != NULL)
 		{
 			char *combined_path;
 
 			/* get data path, the one in the config file may be relative
 			 * to the voice base path
 			 */
-			combined_path = s_path_combine(voice_base_path, gv,
+			combined_path = s_path_combine(voice_base_path, me_filter,
 										   error);
 			if (S_CHK_ERR(error, S_CONTERR,
 						  "load_hts_engine_data",
 						  "Call to \"s_path_combine\" failed"))
 				return;
 
-			HTS_Engine_load_gv_from_fn(engine, (char**)&combined_path, NULL, 2, 1);
+			HTS_Engine_load_me_filter_from_fn(combined_path, &(HTSsynth->me_filter),
+											  &(HTSsynth->me_num_filters), &(HTSsynth->me_filter_order));
 			S_FREE(combined_path);
-		}
 
-		/* strengths filter data */
-		load_mixed_excitation_data(tmp, HTSsynth, voice_base_path, error);
-		if (S_CHK_ERR(error, S_CONTERR,
+			/* allocate memory for other filter buffers */
+			filter_constructor(HTSsynth, error);
+			if (S_CHK_ERR(error, S_CONTERR,
+						  "load_hts_engine_data",
+						  "Call to \"filter_constructor\" failed"))
+				return;
+		}
+		else
+		{
+			S_CTX_ERR(error, S_FAILURE,
 					  "load_hts_engine_data",
-					  "Call to \"load_mixed_excitation_data\" failed"))
+					  "Failed to find 'strengths:mixed excitation filter' HTS Engine data");
 			return;
+		}
 	}
 
 	/* gv switch */
@@ -1279,6 +1151,33 @@ static void load_hts_engine_data(const SMap *data,
 			return;
 
 		HTS_Engine_load_gv_switch_from_fn(engine, combined_path);
+		S_FREE(combined_path);
+	}
+
+	/* pulse dispersion filter */
+	pd_filter = SMapGetStringDef(data, "pulse dispersion filter", NULL, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "load_hts_engine_data",
+				  "Call to \"SMapGetObjectDef\" failed"))
+		return;
+
+	if (pd_filter != NULL)
+	{
+		char *combined_path;
+
+
+		/* get data path, the one in the config file may be relative
+		 * to the voice base path
+		 */
+		combined_path = s_path_combine(voice_base_path, pd_filter,
+									   error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "load_hts_engine_data",
+					  "Call to \"s_path_combine\" failed"))
+			return;
+
+		HTS_Engine_load_pd_filter_from_fn(combined_path, &(HTSsynth->pd_filter),
+										  &(HTSsynth->pd_filter_order));
 		S_FREE(combined_path);
 	}
 }
@@ -1320,12 +1219,13 @@ static void Initialize(SUttProcessor *self, const SVoice *voice, s_erc *error)
 
 	S_CLR_ERR(error);
 
-	HTSsynth->me = FALSE;     /* assume non mixed excitation voice */
-	HTSsynth->h = NULL;       /* filter coefficients               */
-	HTSsynth->xp_sig = NULL;  /* pulse signal                      */
-	HTSsynth->xn_sig = NULL;  /* noise signal                      */
-	HTSsynth->hp = NULL;      /* pulse shaping filter              */
-	HTSsynth->hn = NULL;      /* noise shaping filter              */
+	HTSsynth->me = FALSE;            /* assume non mixed excitation voice     */
+	HTSsynth->me_filter = NULL;      /* mixed excitation filter coefficients  */
+	HTSsynth->xp_sig = NULL;         /* pulse signal                          */
+	HTSsynth->xn_sig = NULL;         /* noise signal                          */
+	HTSsynth->hp = NULL;             /* pulse shaping filter                  */
+	HTSsynth->hn = NULL;             /* noise shaping filter                  */
+	HTSsynth->pd_filter = NULL;      /* pulse dispersion filter coefficients  */
 
 
 	/* get voice base path */
@@ -1375,9 +1275,7 @@ static void Initialize(SUttProcessor *self, const SVoice *voice, s_erc *error)
 	HTS_Engine_set_gv_weight(&(HTSsynth->engine), 1, engine_params->gv_weight_lf0);
 
 	if (HTSsynth->me == TRUE)
-	{
 		HTS_Engine_set_gv_weight(&(HTSsynth->engine), 2, engine_params->gv_weight_str);
-	}
 
 	S_FREE(engine_params);
 
@@ -1400,6 +1298,19 @@ static void Initialize(SUttProcessor *self, const SVoice *voice, s_erc *error)
 				  "Initialize",
 				  "Call to \"load_hts_engine_data\" failed"))
 		goto quit_error;
+
+	HTS_Engine_set_duration_interpolation_weight(&(HTSsynth->engine), 0, 1.0);
+	HTS_Engine_set_parameter_interpolation_weight(&(HTSsynth->engine), 0, 0, 1.0);
+	HTS_Engine_set_parameter_interpolation_weight(&(HTSsynth->engine), 1, 0, 1.0);
+
+	if (HTSsynth->me == TRUE)
+		HTS_Engine_set_parameter_interpolation_weight(&(HTSsynth->engine), 2, 0, 1.0);
+
+	HTS_Engine_set_gv_interpolation_weight(&(HTSsynth->engine), 0, 0, 1.0);
+	HTS_Engine_set_gv_interpolation_weight(&(HTSsynth->engine), 1, 0, 1.0);
+
+	if (HTSsynth->me == TRUE)
+		HTS_Engine_set_gv_interpolation_weight(&(HTSsynth->engine), 2, 0, 1.0);
 
 	/* all OK */
 	S_FREE(voice_base_path);
@@ -1522,9 +1433,10 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 	if (HTSsynth->me == TRUE) /* mixed excitation */
 	{
 		HTS_Engine_create_gstream_me(&(HTSsynth->engine),
-									 HTSsynth->num_filters, HTSsynth->filter_order,
-									 HTSsynth->h, HTSsynth->xp_sig, HTSsynth->xn_sig,
-									 HTSsynth->hp, HTSsynth->hn);
+									 HTSsynth->me_num_filters, HTSsynth->me_filter_order,
+									 HTSsynth->me_filter, HTSsynth->xp_sig, HTSsynth->xn_sig,
+									 HTSsynth->hp, HTSsynth->hn,
+									 HTSsynth->pd_filter, HTSsynth->pd_filter_order);
 	}
 	else
 	{

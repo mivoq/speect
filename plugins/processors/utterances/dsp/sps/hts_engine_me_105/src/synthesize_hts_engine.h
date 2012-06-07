@@ -93,39 +93,49 @@ typedef struct
 	s_bool        me;
 
 	/**
-	 * @protected number of filters
+	 * @protected number of mixed excitation filters
 	 */
-	int      num_filters;
+	int           me_num_filters;
 
 	/**
-	 * @protected filter order
+	 * @protected mixed excitation filter order
 	 */
-	int      filter_order;
+	int           me_filter_order;
 
 	/**
-	 * @protected filter coefficients
+	 * @protected mixed excitation filter coefficients
 	 */
-	double **h;
+	double        **me_filter;
 
 	/**
 	 * @protected pulse signal, the size of this should be the filter order
 	 */
-	double  *xp_sig;
+	double        *xp_sig;
 
 	/**
 	 * @protected noise signal, the size of this should be the filter order
 	 */
-	double  *xn_sig;
+	double        *xn_sig;
 
 	/**
 	 * @protected pulse shaping filter, size of the filter order
 	 */
-	double  *hp;
+	double        *hp;
 
 	/**
 	 * @protected noise shaping filter, size of the filter order
 	 */
-    double  *hn;
+    double        *hn;
+
+	/**
+	 * @protected pulse dispersion filter
+	 */
+    double        *pd_filter;
+
+	/**
+	 * @protected pulse dispersion filter order
+	 */
+    int           pd_filter_order;
 } SHTSEngineMESynthUttProc105;
 
 

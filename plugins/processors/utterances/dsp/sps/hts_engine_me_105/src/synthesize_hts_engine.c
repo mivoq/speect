@@ -118,6 +118,12 @@ static void filter_constructor(SHTSEngineMESynthUttProc105 *HTSsynth, s_erc *err
 
 static void filter_destructor(SHTSEngineMESynthUttProc105 *HTSsynth);
 
+static void check_and_change_rate_volume(SHTSEngineMESynthUttProc105 *HTSsynth,
+										 const SUtterance *utt, s_erc *error);
+
+static void check_and_change_tone(SHTSEngineMESynthUttProc105 *HTSsynth,
+								  const SUtterance *utt, s_erc *error);
+
 
 /************************************************************************************/
 /*                                                                                  */
@@ -151,6 +157,121 @@ S_LOCAL void _s_hts_engine_me_synth_utt_proc_105_class_free(s_erc *error)
 /* Static function implementations                                                  */
 /*                                                                                  */
 /************************************************************************************/
+
+static void check_and_change_rate_volume(SHTSEngineMESynthUttProc105 *HTSsynth,
+										 const SUtterance *utt, s_erc *error)
+{
+	const SVoice *voice;
+	const SObject *tmp;
+	float var;
+
+
+	S_CLR_ERR(error);
+
+	/* get voice */
+	voice = SUtteranceVoice(utt, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "check_and_change_rate_volume",
+				  "Call to \"SUtteranceVoice\" failed"))
+		return;
+
+	if (voice == NULL)
+		return;
+
+	/* get rate feature */
+	tmp = SVoiceGetFeature(voice, "rate", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "check_and_change_rate_volume",
+				  "Call to \"SVoiceGetFeature\" failed"))
+		return;
+
+	if (tmp != NULL)
+	{
+		var = SObjectGetFloat(tmp, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "check_and_change_rate_volume",
+					  "Call to \"SObjectGetFloat\" failed"))
+			return;
+
+		if (var != 1.0)
+			HTS_Label_set_speech_speed(&(HTSsynth->engine.label), var);
+	}
+
+	/* get volume feature */
+	tmp = SVoiceGetFeature(voice, "volume", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "check_and_change_rate_volume",
+				  "Call to \"SVoiceGetFeature\" failed"))
+		return;
+
+	if (tmp == NULL)
+		return;
+
+	var = SObjectGetFloat(tmp, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "check_and_change_rate_volume",
+				  "Call to \"SObjectGetFloat\" failed"))
+		return;
+
+	if (var == 1.0)
+		return;
+	else
+		HTS_Engine_set_volume(&(HTSsynth->engine), var);
+}
+
+
+static void check_and_change_tone(SHTSEngineMESynthUttProc105 *HTSsynth,
+								  const SUtterance *utt, s_erc *error)
+{
+	const SVoice *voice;
+	const SObject *tmp;
+	float var;
+
+
+	S_CLR_ERR(error);
+
+	/* get voice */
+	voice = SUtteranceVoice(utt, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "check_and_change_tone",
+				  "Call to \"SUtteranceVoice\" failed"))
+		return;
+
+	if (voice == NULL)
+		return;
+
+	/* get half-tone feature */
+	tmp = SVoiceGetFeature(voice, "half-tone", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "check_and_change_tone",
+				  "Call to \"SVoiceGetFeature\" failed"))
+		return;
+
+	if (tmp == NULL)
+		return;
+
+	var = SObjectGetFloat(tmp, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "check_and_change_tone",
+				  "Call to \"SObjectGetFloat\" failed"))
+		return;
+
+	if (var != 0.0)
+	{
+		int i;
+		double f;
+
+		for (i = 0; i < HTS_SStreamSet_get_total_state(&(HTSsynth->engine.sss)); i++)
+		{
+			f = HTS_SStreamSet_get_mean(&(HTSsynth->engine.sss), 1, i, 0); /* logf0 is stream 1 */
+			f += var * log(2.0) / 12;
+			if (f < log(10.0))
+				f = log(10.0);
+			HTS_SStreamSet_set_mean(&(HTSsynth->engine.sss), 1, i, 0, f);
+		}
+	}
+}
+
 
 static hts_params *get_hts_engine_params(const SMap *features, s_bool *me, s_erc *error)
 {
@@ -1427,7 +1548,19 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 
 	/* speech synthesis part */
 	HTS_Engine_load_label_from_string_list(&(HTSsynth->engine), label_data, label_size);
+	check_and_change_rate_volume(HTSsynth, utt, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "Run",
+				  "Call to \"check_and_change_rate_volume\" failed"))
+		goto quit_error;
+
 	HTS_Engine_create_sstream(&(HTSsynth->engine));
+	check_and_change_tone(HTSsynth, utt, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "Run",
+				  "Call to \"check_and_change_tone\" failed"))
+		goto quit_error;
+
 	HTS_Engine_create_pstream(&(HTSsynth->engine));
 
 	if (HTSsynth->me == TRUE) /* mixed excitation */

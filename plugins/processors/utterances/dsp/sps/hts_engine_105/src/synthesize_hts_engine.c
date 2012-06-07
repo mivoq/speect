@@ -240,7 +240,7 @@ static hts_params *get_hts_engine_params(const SMap *features, s_erc *error)
 
 		scomp = s_strcmp("TRUE", tmp, error);
 		if (S_CHK_ERR(error, S_CONTERR,
-					  "set_viterbi_params",
+					  "get_hts_engine_params",
 					  "Call to \"s_strcmp\" failed"))
 			goto quit_error;
 
@@ -475,6 +475,7 @@ static void load_hts_engine_data(const SMap *data, HTS_Engine *engine,
 	char **cwindows;
 	int num_win;
 	const char *gv;
+	const char *gv_tree;
 	const char *gv_switch;
 
 
@@ -634,22 +635,55 @@ static void load_hts_engine_data(const SMap *data, HTS_Engine *engine,
 				  "Call to \"SMapGetStringDef\" failed"))
 		return;
 
+	/* log f0 gv tree */
+	gv_tree = SMapGetStringDef(tmp, "tree-gv-lf0", NULL, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "load_hts_engine_data",
+				  "Call to \"SMapGetStringDef\" failed"))
+		return;
+
 	if (gv != NULL)
 	{
-		char *combined_path;
+		char *combined_path_gv;
+		char *combined_path_gv_tree;
+
 
 		/* get data path, the one in the config file may be relative
 		 * to the voice base path
 		 */
-		combined_path = s_path_combine(voice_base_path, gv,
-									   error);
+		combined_path_gv = s_path_combine(voice_base_path, gv,
+										  error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "load_hts_engine_data",
 					  "Call to \"s_path_combine\" failed"))
 			return;
 
-		HTS_Engine_load_gv_from_fn(engine, (char**)&combined_path, NULL, 1, 1);
-		S_FREE(combined_path);
+		if (gv_tree != NULL)
+		{
+			/* get data path, the one in the config file may be relative
+			 * to the voice base path
+			 */
+			combined_path_gv_tree = s_path_combine(voice_base_path, gv_tree,
+												   error);
+			if (S_CHK_ERR(error, S_CONTERR,
+						  "load_hts_engine_data",
+						  "Call to \"s_path_combine\" failed"))
+			{
+				S_FREE(combined_path_gv);
+				return;
+			}
+		}
+		else
+		{
+			combined_path_gv_tree = NULL;
+		}
+
+
+		HTS_Engine_load_gv_from_fn(engine, (char**)&combined_path_gv,
+								   (char**)&combined_path_gv_tree, 1, 1);
+		S_FREE(combined_path_gv);
+		if (combined_path_gv_tree != NULL)
+			S_FREE(combined_path_gv_tree);
 	}
 
 	/* spectrum */
@@ -746,22 +780,55 @@ static void load_hts_engine_data(const SMap *data, HTS_Engine *engine,
 				  "Call to \"SMapGetStringDef\" failed"))
 		return;
 
+	/* spectrum gv tree */
+	gv_tree = SMapGetStringDef(tmp, "tree-gv-mgc", NULL, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "load_hts_engine_data",
+				  "Call to \"SMapGetStringDef\" failed"))
+		return;
+
 	if (gv != NULL)
 	{
-		char *combined_path;
+		char *combined_path_gv;
+		char *combined_path_gv_tree;
+
 
 		/* get data path, the one in the config file may be relative
 		 * to the voice base path
 		 */
-		combined_path = s_path_combine(voice_base_path, gv,
-									   error);
+		combined_path_gv = s_path_combine(voice_base_path, gv,
+										  error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "load_hts_engine_data",
 					  "Call to \"s_path_combine\" failed"))
 			return;
 
-		HTS_Engine_load_gv_from_fn(engine, (char**)&combined_path, NULL, 0, 1);
-		S_FREE(combined_path);
+		if (gv_tree != NULL)
+		{
+			/* get data path, the one in the config file may be relative
+			 * to the voice base path
+			 */
+			combined_path_gv_tree = s_path_combine(voice_base_path, gv_tree,
+												   error);
+			if (S_CHK_ERR(error, S_CONTERR,
+						  "load_hts_engine_data",
+						  "Call to \"s_path_combine\" failed"))
+			{
+				S_FREE(combined_path_gv);
+				return;
+			}
+		}
+		else
+		{
+			combined_path_gv_tree = NULL;
+		}
+
+
+		HTS_Engine_load_gv_from_fn(engine, (char**)&combined_path_gv,
+								   (char**)&combined_path_gv_tree, 0, 1);
+		S_FREE(combined_path_gv);
+		if (combined_path_gv_tree != NULL)
+			S_FREE(combined_path_gv_tree);
 	}
 
 	/* gv switch */
@@ -865,6 +932,7 @@ static void Initialize(SUttProcessor *self, const SVoice *voice, s_erc *error)
 	HTS_Engine_set_gv_weight(&(HTSsynth->engine), 0, engine_params->gv_weight_mcp);
 	HTS_Engine_set_gv_weight(&(HTSsynth->engine), 1, engine_params->gv_weight_lf0);
 
+
 	S_FREE(engine_params);
 
 	hts_data = S_MAP(SVoiceGetFeature(voice, "hts engine data", error));
@@ -886,6 +954,13 @@ static void Initialize(SUttProcessor *self, const SVoice *voice, s_erc *error)
 				  "Initialize",
 				  "Call to \"load_hts_engine_data\" failed"))
 		goto quit_error;
+
+	HTS_Engine_set_duration_interpolation_weight(&(HTSsynth->engine), 0, 1.0);
+	HTS_Engine_set_parameter_interpolation_weight(&(HTSsynth->engine), 0, 0, 1.0);
+	HTS_Engine_set_parameter_interpolation_weight(&(HTSsynth->engine), 1, 0, 1.0);
+	HTS_Engine_set_gv_interpolation_weight(&(HTSsynth->engine), 0, 0, 1.0);
+	HTS_Engine_set_gv_interpolation_weight(&(HTSsynth->engine), 1, 0, 1.0);
+
 
 	/* all OK */
 	S_FREE(voice_base_path);

@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2008-2011 The Department of Arts and Culture,                      */
+/* Copyright (c) 2012 The Department of Arts and Culture,                           */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -24,12 +24,13 @@
 /************************************************************************************/
 /*                                                                                  */
 /* AUTHOR  : Aby Louw                                                               */
-/* DATE    : 4 December 2008                                                        */
+/* DATE    : June 2012                                                              */
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* Dynamic Shared Object support.                                                   */
-/*                                                                                  */
+/* Library implementation. A library encapsulates the DSO and plug-in               */
+/* information, and is used inside the plug-in object. This allows us               */
+/* to easily share plug-ins without needing to reload them.                         */
 /*                                                                                  */
 /************************************************************************************/
 
@@ -41,8 +42,9 @@
 /************************************************************************************/
 
 #include "base/utils/alloc.h"
-#include "pluginmanager/dso.h"
-#include "pluginmanager/dynamic_loading.h"
+#include "base/strings/strings.h"
+#include "pluginmanager/manager.h"
+#include "pluginmanager/library.h"
 
 
 /************************************************************************************/
@@ -53,49 +55,32 @@
 
 /**
  * @hideinitializer
- * Call the given function method of the given #SDso.
- * @param SELF The given #SDso*.
+ * Call the given function method of the given #SLibrary.
+ * @param SELF The given #SLibrary*.
  * @param FUNC The function method of the given object to call.
  * @note This casting is not safety checked.
  * @note Example usage:
  @verbatim
- S_DSO_CALL(self, func)(param1, param2, ..., paramN);
+ S_LIBRARY_CALL(self, func)(param1, param2, ..., paramN);
  @endverbatim
  * where @c param1, @c param2, ..., @c paramN are the parameters passed to the object function
  * @c func.
  */
-#define S_DSO_CALL(SELF, FUNC)					\
-	((SDsoClass *)S_OBJECT_CLS(SELF))->FUNC
+#define S_LIBRARY_CALL(SELF, FUNC)					\
+	((SLibraryClass *)S_OBJECT_CLS(SELF))->FUNC
 
 
 /**
  * @hideinitializer
- * Test if the given function method of the given #SDso
+ * Test if the given function method of the given #SLibrary
  * can be called.
- * @param SELF The given #SDso*.
+ * @param SELF The given #SLibrary*.
  * @param FUNC The function method of the given object to check.
  * @return #TRUE if function can be called, otherwise #FALSE.
  * @note This casting is not safety checked.
  */
-#define S_DSO_METH_VALID(SELF, FUNC)			\
-	S_DSO_CALL(SELF, FUNC) ? TRUE : FALSE
-
-
-/************************************************************************************/
-/*                                                                                  */
-/* Defines                                                                          */
-/*                                                                                  */
-/************************************************************************************/
-
-/*
- * This is for testing memory leaks in plug-ins. Uncomment  to
- * check a newly created plug-in for memory leaks. When set, the
- * plug-in manager will not unload plug-ins, thereby allowing valgrind
- * to find the leaks.
- * Note that this will cause leaks because of unloaded plug-ins, but
- * it should be easily distinguishable from other memory leaks.
- */
-/* #define SPCT_VALGRIND_PLUGINS */
+#define S_LIBRARY_METH_VALID(SELF, FUNC)			\
+	S_LIBRARY_CALL(SELF, FUNC) ? TRUE : FALSE
 
 
 /************************************************************************************/
@@ -104,7 +89,7 @@
 /*                                                                                  */
 /************************************************************************************/
 
-static SDsoClass DsoClass; /* Dso class declaration. */
+static SLibraryClass LibraryClass; /* Library class declaration. */
 
 
 /************************************************************************************/
@@ -113,14 +98,14 @@ static SDsoClass DsoClass; /* Dso class declaration. */
 /*                                                                                  */
 /************************************************************************************/
 
-S_API void SDsoLoad(SDso *self, const char *path, s_erc *error)
+S_API void SLibraryLoad(SLibrary *self, const char *path, s_erc *error)
 {
 	S_CLR_ERR(error);
 
 	if (self == NULL)
 	{
 		S_CTX_ERR(error, S_ARGERROR,
-				  "SDsoLoad",
+				  "SLibraryLoad",
 				  "Argument \"self\" is NULL");
 		return;
 	}
@@ -128,70 +113,26 @@ S_API void SDsoLoad(SDso *self, const char *path, s_erc *error)
 	if (path == NULL)
 	{
 		S_CTX_ERR(error, S_ARGERROR,
-				  "SDsoLoad",
+				  "SLibraryLoad",
 				  "Argument \"path\" is NULL");
 		return;
 	}
 
-	if (!S_DSO_METH_VALID(self, load))
+	if (!S_LIBRARY_METH_VALID(self, load))
 	{
 		S_WARNING(S_METHINVLD,
-				  "SDsoLoad",
+				  "SLibraryLoad",
 				  "Dso method \"load\" not implemented");
 		return;
 	}
 
-	s_mutex_lock(&(self->dso_mutex));
-	S_DSO_CALL(self, load)(self, path, error);
-	s_mutex_unlock(&(self->dso_mutex));
+	s_mutex_lock(&(self->library_mutex));
+	S_LIBRARY_CALL(self, load)(self, path, error);
+	s_mutex_unlock(&(self->library_mutex));
 
 	S_CHK_ERR(error, S_CONTERR,
-			  "SDsoLoad",
+			  "SLibraryLoad",
 			  "Call to class method \"load\" failed");
-}
-
-
-S_API void *SDsoGetSymbol(const SDso *self, const char *name, s_erc *error)
-{
-	void *sym_handle;
-
-
-	S_CLR_ERR(error);
-
-	if (self == NULL)
-	{
-		S_CTX_ERR(error, S_ARGERROR,
-				  "SDsoGetSymbol",
-				  "Argument \"self\" is NULL");
-		return NULL;
-	}
-
-	if (name == NULL)
-	{
-		S_CTX_ERR(error, S_ARGERROR,
-				  "SDsoGetSymbol",
-				  "Argument \"name\" is NULL");
-		return NULL;
-	}
-
-	if (!S_DSO_METH_VALID(self, get_symbol))
-	{
-		S_WARNING(S_METHINVLD,
-				  "SDsoLoad",
-				  "Dso method \"get_symbol\" not implemented");
-		return NULL;
-	}
-
-	s_mutex_lock((s_mutex*)&(self->dso_mutex));
-	sym_handle = S_DSO_CALL(self, get_symbol)(self, name, error);
-	s_mutex_unlock((s_mutex*)&(self->dso_mutex));
-
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "SDsoLoad",
-				  "Call to class method \"get_symbol\" failed"))
-		return NULL;
-
-	return sym_handle;
 }
 
 
@@ -201,13 +142,13 @@ S_API void *SDsoGetSymbol(const SDso *self, const char *name, s_erc *error)
 /*                                                                                  */
 /************************************************************************************/
 
-S_LOCAL void _s_dso_class_add(s_erc *error)
+S_LOCAL void _s_library_class_add(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_add(S_OBJECTCLASS(&DsoClass), error);
+	s_class_add(S_OBJECTCLASS(&LibraryClass), error);
 	S_CHK_ERR(error, S_CONTERR,
-			  "_s_dso_class_add",
-			  "Failed to add SDsoClass");
+			  "_s_library_class_add",
+			  "Failed to add SLibraryClass");
 }
 
 
@@ -217,104 +158,186 @@ S_LOCAL void _s_dso_class_add(s_erc *error)
 /*                                                                                  */
 /************************************************************************************/
 
-static void InitDso(void *obj, s_erc *error)
+static void InitLibrary(void *obj, s_erc *error)
 {
-	SDso *self = obj;
+	SLibrary *self = obj;
 
 	S_CLR_ERR(error);
-	self->_handle = NULL;
-	s_mutex_init(&(self->dso_mutex));
+	self->dso = NULL;
+	self->plugin_info = NULL;
+	self->path = NULL;
+	self->in_pluginmanager = FALSE;
+	self->ready = FALSE;              /* set and queried by plug-in
+										 object */
+	s_mutex_init(&(self->library_mutex));
 }
 
 
-static void DestroyDso(void *obj, s_erc *error)
+static void DestroyLibrary(void *obj, s_erc *error)
 {
-	SDso *self = obj;
+	SLibrary *self = obj;
+	s_plugin_exit_fp exit_function;
+	s_erc local_err = S_SUCCESS;
 
 
 	S_CLR_ERR(error);
-	s_mutex_lock(&(self->dso_mutex));
+	s_mutex_lock(&(self->library_mutex));
 
-	if (self->_handle != NULL)
+	if (self->dso != NULL)
 	{
-#ifndef SPCT_VALGRIND_PLUGINS  /* for memory leaks testing, see top */
-		s_dso_close(self->_handle, error);
-#endif
-		S_CHK_ERR(error, S_CONTERR,
-				  "DestroyDso",
-				  "Call to \"s_dso_close\" failed");
+		exit_function = self->plugin_info->at_exit;
+
+		if (exit_function != NULL)
+		{
+			exit_function(&local_err);
+			S_CHK_ERR(&local_err, S_CONTERR,
+					  "DestroyLibrary",
+					  "Plugin dso at_exit function reported error");
+		}
+
+		S_DELETE(self->dso, "DestroyLibrary", error);
 	}
 
-	s_mutex_unlock(&(self->dso_mutex));
-	s_mutex_destroy(&(self->dso_mutex));
+	if (self->path != NULL)
+		S_FREE(self->path);
+
+	self->plugin_info = NULL;
+	self->in_pluginmanager = FALSE;
+	self->ready = FALSE;
+
+	if ((local_err != S_SUCCESS) && (*error == S_SUCCESS))
+		*error = local_err;
+
+	s_mutex_unlock(&(self->library_mutex));
+	s_mutex_destroy(&(self->library_mutex));
 }
 
 
-static void DisposeDso(void *obj, s_erc *error)
+static void DisposeLibrary(void *obj, s_erc *error)
 {
 	S_CLR_ERR(error);
 	SObjectDecRef(obj);
+	_s_pm_unload_library(S_LIBRARY(obj), error);
 }
 
 
-static void LoadDso(SDso *self, const char *path, s_erc *error)
+/* name change because of clash in Windows */
+static void LoadLib(SLibrary *self, const char *path, s_erc *error)
 {
-	void *dso_handle;
+	SDso *libraryDso;
+	s_plugin_init_fp plugin_initialize;
 
 
 	S_CLR_ERR(error);
 
-	dso_handle = s_dso_open(path, error);
+	/* path gets freed when SLibrary is deleted */
+	self->path = s_strdup(path, error);
 	if (S_CHK_ERR(error, S_CONTERR,
-				  "LoadDso",
-				  "Call to \"s_dso_open\" failed"))
+				  "LoadLib",
+				  "Call to \"s_strdup\" failed"))
 		return;
 
-	self->_handle = dso_handle;
-}
-
-
-static void *GetSymbol(const SDso *self, const char* name, s_erc *error)
-{
-	void *sym_handle;
-
-
-	S_CLR_ERR(error);
-
-	if (self->_handle == NULL)
-		return NULL;
-
-	sym_handle = s_dso_sym(self->_handle, name, error);
+	libraryDso = S_NEW(SDso, error);
 	if (S_CHK_ERR(error, S_CONTERR,
-				  "GetSymbol",
-				  "Call to \"s_dso_sym\" failed"))
-		return NULL;
+				  "LoadLib",
+				  "Failed to create new dynamic shared object for Library"))
+		return;
 
-	return sym_handle;
+	SDsoLoad(libraryDso, path, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "LoadLib",
+				  "Failed to load plug-in dynamic shared object at \"%s\"",
+				  path))
+	{
+		S_DELETE(libraryDso, "LoadLib", error);
+		return;
+	}
+
+	/*
+	 * get the plugin initialization function
+	 * done as described in dlsym man page.
+	 */
+	plugin_initialize = (s_plugin_init_fp)SDsoGetSymbol(libraryDso, "s_plugin_init", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "LoadLib",
+				  "Failed to get \'s_plugin_init\' symbol from plug-in at \"%s\"",
+				  path))
+	{
+		S_DELETE(libraryDso, "LoadLib", error);
+		return;
+	}
+
+	if (plugin_initialize == NULL)
+	{
+		S_CTX_ERR(error, S_FAILURE,
+				  "LoadLib",
+				  "Plug-in symbol \'s_plugin_init\' is NULL for plug-in at \"%s\"",
+				  path);
+		S_DELETE(libraryDso, "LoadLib", error);
+		return;
+	}
+
+	/* run the plug-in initialization function */
+	self->plugin_info = (plugin_initialize)(error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "LoadLib",
+				  "Call to \"plugin_initialize\" failed"))
+	{
+		S_DELETE(libraryDso, "LoadLib", error);
+		return;
+	}
+
+	/* check version compatibility */
+	if (!s_version_ok(self->plugin_info->s_abi))
+	{
+		S_CTX_ERR(error, S_FAILURE,
+				  "LoadLib",
+				  "Plug-in at \"%s\" (compiled ABI version %d.%d) is not compatible with this ABI version (%d.%d.%s) of the Speect Engine",
+				  path, self->plugin_info->s_abi.major, self->plugin_info->s_abi.minor,
+				  S_MAJOR_VERSION, S_MINOR_VERSION, S_PATCHLEVEL);
+		S_DELETE(libraryDso, "LoadLib", error);
+		return;
+	}
+
+	/* call plug-in register function */
+	if (self->plugin_info->reg_func != NULL)
+	{
+		self->plugin_info->reg_func(error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "LoadLib",
+					  "Plug-in at \"%s\" failed to register",
+					  path))
+		{
+			S_DELETE(libraryDso, "LoadLib", error);
+			return;
+		}
+	}
+
+	self->dso = libraryDso;
 }
 
 
+
 /************************************************************************************/
 /*                                                                                  */
-/* SDso class initialization                                                        */
+/* SLibrary class initialization                                                    */
 /*                                                                                  */
 /************************************************************************************/
 
-static SDsoClass DsoClass =
+static SLibraryClass LibraryClass =
 {
 	/* SObjectClass */
 	{
-		"SDso",
-		sizeof(SDso),
+		"SLibrary",
+		sizeof(SLibrary),
 		{ 0, 1},
-		InitDso,       /* init    */
-		DestroyDso,    /* destroy */
-		DisposeDso,    /* dispose */
-		NULL,          /* compare */
-		NULL,          /* print   */
-		NULL,          /* copy    */
+		InitLibrary,       /* init    */
+		DestroyLibrary,    /* destroy */
+		DisposeLibrary,    /* dispose */
+		NULL,              /* compare */
+		NULL,              /* print   */
+		NULL,              /* copy    */
 	},
-	/* SDsoClass */
-	LoadDso,          /* load       */
-	GetSymbol         /* get_symbol */
+	/* SLibraryClass */
+	LoadLib                /* load    */
 };

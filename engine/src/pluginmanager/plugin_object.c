@@ -42,7 +42,6 @@
 
 #include "base/utils/alloc.h"
 #include "base/strings/utf8.h"
-#include "pluginmanager/manager.h"
 #include "pluginmanager/plugin_object.h"
 
 
@@ -184,10 +183,6 @@ static void InitPlugin(void *obj, s_erc *error)
 
 	S_CLR_ERR(error);
 	self->library = NULL;
-	self->plugin_info = NULL;
-	self->path = NULL;
-	self->in_pluginmanager = FALSE;
-	self->ready = FALSE;
 	s_mutex_init(&(self->plugin_mutex));
 }
 
@@ -195,9 +190,6 @@ static void InitPlugin(void *obj, s_erc *error)
 static void DestroyPlugin(void *obj, s_erc *error)
 {
 	SPlugin *self = obj;
-	s_plugin_exit_fp exit_function;
-	char *path_c;
-	s_erc local_err = S_SUCCESS;
 
 
 	S_CLR_ERR(error);
@@ -205,32 +197,7 @@ static void DestroyPlugin(void *obj, s_erc *error)
 	s_mutex_lock(&(self->plugin_mutex));
 
 	if (self->library != NULL)
-	{
-		exit_function = self->plugin_info->at_exit;
-
-		if (exit_function != NULL)
-		{
-			exit_function(&local_err);
-			S_CHK_ERR(&local_err, S_CONTERR,
-				  "DestroyPlugin",
-				  "Plugin dso at_exit function reported error");
-		}
-
 		S_DELETE(self->library, "DestroyPlugin", error);
-	}
-
-	if (self->path != NULL)
-	{
-		path_c = (char*)self->path;
-		S_FREE(path_c);
-		self->path = NULL;
-	}
-
-	self->plugin_info = NULL;
-	self->in_pluginmanager = FALSE;
-
-	if ((local_err != S_SUCCESS) && (*error == S_SUCCESS))
-		*error = local_err;
 
 	s_mutex_unlock(&(self->plugin_mutex));
 	s_mutex_destroy(&(self->plugin_mutex));
@@ -241,19 +208,22 @@ static void DisposePlugin(void *obj, s_erc *error)
 {
 	S_CLR_ERR(error);
 	SObjectDecRef(obj);
-	_s_pm_unload_plugin(S_PLUGIN(obj), error);
 }
 
 
 static s_bool IsReady(const SPlugin *self)
 {
-	return self->ready;
+	if (self->library != NULL)
+		return self->library->ready;
+
+	return FALSE;
 }
 
 
 static void SetReady(SPlugin *self)
 {
-	self->ready = TRUE;
+	if (self->library != NULL)
+		self->library->ready = TRUE;
 }
 
 

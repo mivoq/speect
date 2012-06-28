@@ -64,6 +64,7 @@
 #include "pluginmanager/pluginmanager.h"
 #include "serialization/serialization.h"
 #include "voicemanager/voicemanager.h"
+#include "utils/utils.h"
 #include "main/main.h"
 
 

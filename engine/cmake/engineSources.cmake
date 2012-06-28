@@ -153,6 +153,16 @@ set(SPCT_SRC_FILES
     src/serialization/serialized_object.c
 
 
+######## src/utils #################
+
+    # src/utils
+    src/utils/token.c
+    src/utils/tokenizer.c
+    src/utils/tokenizer_file.c
+    src/utils/tokenizer_string.c
+    src/utils/utils.c
+
+
 ######## src/voicemanager ##########
 
     # src/voicemanager/loaders
@@ -168,7 +178,6 @@ set(SPCT_SRC_FILES
     src/voicemanager/manager.c
     src/voicemanager/voice.c
     src/voicemanager/voicemanager.c
-
 )
  
 
@@ -344,6 +353,16 @@ set(SPCT_SRC_INCLUDE_FILES
    
    src/speect.h
 
+
+######## src/utils #################
+
+   # src/utils
+   src/utils/token.h
+   src/utils/tokenizer.h
+   src/utils/tokenizer_file.h
+   src/utils/tokenizer_string.h
+   src/utils/utils.h
+   
 
 ######## src/voicemanager ##########
 

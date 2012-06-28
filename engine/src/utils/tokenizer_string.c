@@ -28,16 +28,13 @@
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* A file tokenizer class implementation.                                           */
+/* A string tokenizer class implementation.                                         */
 /* Loosely based on EST_Token of Edinburgh Speech Tools,                            */
 /* http://www.cstr.ed.ac.uk/projects/speech_tools (1.2.96)                          */
 /* Note that this is a derived work with no verbatim source code from above         */
 /* mentioned project.                                                               */
 /*                                                                                  */
 /************************************************************************************/
-
-#ifndef _SPCT_PLUGIN_TOKENIZER_FILE_H__
-#define _SPCT_PLUGIN_TOKENIZER_FILE_H__
 
 
 /************************************************************************************/
@@ -74,19 +71,6 @@
 /*                                                                                  */
 /************************************************************************************/
 
-/**
- * @file tokenizer_file.h
- * A file tokenizer class implementation.
- */
-
-
-/**
- * @ingroup STokenizer
- * @defgroup STokenizerFile File Tokenizer
- * A file tokenizer class implementation.
- * @{
- */
-
 
 /************************************************************************************/
 /*                                                                                  */
@@ -94,15 +78,8 @@
 /*                                                                                  */
 /************************************************************************************/
 
-#include "speect.h"
-#include "tokenizer.h"
-
-/************************************************************************************/
-/*                                                                                  */
-/* Begin external c declaration                                                     */
-/*                                                                                  */
-/************************************************************************************/
-S_BEGIN_C_DECLS
+#include "base/strings/utf8.h"
+#include "utils/tokenizer_string.h"
 
 
 /************************************************************************************/
@@ -113,145 +90,382 @@ S_BEGIN_C_DECLS
 
 /**
  * @hideinitializer
- * Return the given #STokenizerFile child/parent class object as a
- * #STokenizerFile object.
+ * Call the given function method of the given #STokenizerString,
+ * see full description #S_TOKENIZER_STRING_CALL for usage.
  *
- * @param SELF The given object.
- *
- * @return Given object as #STokenizerFile* type.
- * @note This casting is not safety checked.
- */
-#define S_TOKENIZER_FILE(SELF)    ((STokenizerFile *)(SELF))
-
-
-/**
- * @hideinitializer
- * Call the given function method of the given #STokenizerFile,
- * see full description #S_TOKENIZER_FILE_CALL for usage.
- *
- * @param SELF The given #STokenizerFile*.
+ * @param SELF The given #STokenizerString*.
  * @param FUNC The function method of the given object to call.
  *
  * @note This casting is not safety checked.
- * @note Example usage: @code S_TOKENIZER_FILE_CALL(self, func)(param1, param2, ..., paramN); @endcode
+ * @note Example usage: @code S_TOKENIZER_STRING_CALL(self, func)(param1, param2, ..., paramN); @endcode
  * where @c param1, @c param2, ..., @c paramN are the parameters passed to the object function
  * @c func.
  */
-#define S_TOKENIZER_FILE_CALL(SELF, FUNC)					\
-	((STokenizerFileClass *)S_OBJECT_CLS(SELF))->FUNC
+#define S_TOKENIZER_STRING_CALL(SELF, FUNC)				\
+	((STokenizerStringClass *)S_OBJECT_CLS(SELF))->FUNC
 
 
 /**
  * @hideinitializer
- * Test if the given function method of the given #STokenizerFile
+ * Call the given function method of the given #STokenizer,
+ * see full description #S_TOKENIZER_CALL for usage.
+ *
+ * @param SELF The given #STokenizer*.
+ * @param FUNC The function method of the given object to call.
+ *
+ * @note This casting is not safety checked.
+ * @note Example usage: @code S_TOKENIZER_CALL(self, func)(param1, param2, ..., paramN); @endcode
+ * where @c param1, @c param2, ..., @c paramN are the parameters passed to the object function
+ * @c func.
+ */
+#define S_TOKENIZER_CALL(SELF, FUNC)				\
+	((STokenizerClass *)S_OBJECT_CLS(SELF))->FUNC
+
+
+/**
+ * @hideinitializer
+ * Test if the given function method of the given #STokenizerString
  * can be called.
  *
- * @param SELF The given #STokenizerFile*.
+ * @param SELF The given #STokenizerString*.
  * @param FUNC The function method of the given object to check.
  *
  * @return #TRUE if function can be called, otherwise #FALSE.
  *
  * @note This casting is not safety checked.
  */
-#define S_TOKENIZER_FILE_METH_VALID(SELF, FUNC)		\
-	S_TOKENIZER_FILE_CALL(SELF, FUNC) ? TRUE : FALSE
+#define S_TOKENIZER_STRING_METH_VALID(SELF, FUNC)		\
+	S_TOKENIZER_STRING_CALL(SELF, FUNC) ? TRUE : FALSE
 
 
 /************************************************************************************/
 /*                                                                                  */
-/* STokenizerFile definition                                                        */
+/* Static variables                                                                 */
 /*                                                                                  */
 /************************************************************************************/
 
-/**
- * The file tokenizer structure.
- * @extends STokenizer
- */
-typedef struct
+static STokenizerStringClass TokenizerStringClass; /* STokenizerString class declaration. */
+
+/* A tokenizer to give us access to the STokenizerClass functions */
+static STokenizer *tokenizer = NULL;
+
+static uint num_string_tokenizers = 0;
+
+
+/************************************************************************************/
+/*                                                                                  */
+/* Function implementations                                                         */
+/*                                                                                  */
+/************************************************************************************/
+
+S_API void STokenizerStringInit(STokenizerString **self, const char *string, s_erc *error)
 {
-	/**
-	 * @protected Inherit from #STokenizer.
-	 */
-	STokenizer     obj;
+	S_CLR_ERR(error);
 
-	/**
-	 * @protected The file data source.
-	 */
-	SDatasource   *ds;
-} STokenizerFile;
+	if (string == NULL)
+	{
+		S_CTX_ERR(error, S_ARGERROR,
+				  "STokenizerStringInit",
+				  "Argument \"string\" is NULL");
+		return;
+	}
+
+	(*self)->string = s_strdup(string, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "STokenizerStringInit",
+				  "Call to \"s_strdup\" failed"))
+	{
+		S_DELETE(*self, "STokenizerStringInit", error);
+		*self = NULL;
+		return;
+	}
+
+	/* get the first character */
+	STokenizerGetChar(S_TOKENIZER(*self), error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "STokenizerStringInit",
+				  "Call to \"STokenizerGetChar\" failed"))
+	{
+		S_DELETE(*self, "STokenizerStringInit", error);
+		*self = NULL;
+		return;
+	}
+}
 
 
 /************************************************************************************/
 /*                                                                                  */
-/* STokenizerFileClass definition                                                   */
+/* Static class function implementations                                            */
 /*                                                                                  */
 /************************************************************************************/
 
-/**
- * The file tokenizer class structure.
- * @extends STokenizerClass
- */
-typedef struct
+static void Init(void *obj, s_erc *error)
 {
-	/* Class members */
-	/**
-	 * @protected Inherit from #STokenizerClass.
-	 */
-	STokenizerClass  _inherit;
+	STokenizerString *self = obj;
 
-	/* Class methods */
-	/**
-	 * @protected Init function pointer.
-	 * Initialize a file tokenizer with a file path.
-	 *
-	 * @param self The file tokenizer to initialize.
-	 * @param path The full path and file name of the file to
-	 * tokenize.
-	 * @param error Error code.
-	 *
-	 * @note If this function fails the file tokenizer will be deleted
-	 * and the @c self pointer will be set to @c NULL.
-	 */
-	void (*init) (STokenizerFile **self, const char *path, s_erc *error);
-} STokenizerFileClass;
+
+	S_CLR_ERR(error);
+
+	if (num_string_tokenizers++ == 0)
+	{
+		/* create a tokenizer to give us access to the STokenizerClass functions */
+		tokenizer = S_NEW(STokenizer, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "Init",
+					  "Failed to create tokenizer to give STokenizerClass function access"))
+			return;
+	}
+
+	self->string = NULL;
+	self->pos = 0;
+}
+
+
+static void Destroy(void *obj, s_erc *error)
+{
+	STokenizerString *self = obj;
+
+
+	S_CLR_ERR(error);
+
+	if (self->string != NULL)
+		S_FREE(self->string);
+
+	if (--num_string_tokenizers == 0)
+		S_DELETE(tokenizer, "Destroy", error);
+}
+
+
+static void Dispose(void *obj, s_erc *error)
+{
+	S_CLR_ERR(error);
+	SObjectDecRef(obj);
+}
+
+
+static uint32 GetChar(STokenizer *self, s_erc *error)
+{
+	uint32 utf8char = 0;
+	STokenizerString *ts = S_TOKENIZER_STRING(self);
+	size_t strlen;
+
+
+	S_CLR_ERR(error);
+	strlen = s_strlen(ts->string, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "GetChar",
+				  "Call to \"s_strlen\" failed"))
+		return 0;
+
+	if (ts->pos < strlen)
+	{
+		utf8char = s_getat(ts->string, ts->pos++, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "GetChar",
+					  "Call to \"s_getat\" failed"))
+			return 0 ;
+	}
+	else
+	{
+		self->eof = TRUE;
+	}
+
+	self->current_char = utf8char;
+	return utf8char;
+}
+
+
+static void Seek(STokenizer *self, ulong pos, s_erc *error)
+{
+	STokenizerString *ts = S_TOKENIZER_STRING(self);
+	size_t strlen;
+
+
+	S_CLR_ERR(error);
+	strlen = s_strlen(ts->string, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "Seek",
+				  "Call to \"s_strlen\" failed"))
+		return;
+
+	if (pos < strlen)
+	{
+		ts->pos = (uint32)pos;
+	}
+	else
+	{
+		self->eof = TRUE;
+	}
+}
+
+
+static ulong Tell(const STokenizer *self, s_erc *error)
+{
+	STokenizerString *ts = S_TOKENIZER_STRING(self);
+
+
+	S_CLR_ERR(error);
+	return (ulong)ts->pos;
+}
+
+
+
+static SToken *GetToken(STokenizer *self, s_erc *error)
+{
+	SToken *token;
+
+
+	S_CLR_ERR(error);
+	/* calling get_token of STokenizerClass */
+	token = S_TOKENIZER_CALL(tokenizer, get_token)(self, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "GetToken",
+				  "Call to method \"get_token\" failed"))
+		return NULL;
+
+	return token;
+}
+
+
+static SToken *PeekToken(STokenizer *self, s_erc *error)
+{
+	SToken *token;
+
+
+	S_CLR_ERR(error);
+	/* calling peek_token of STokenizerClass */
+	token = S_TOKENIZER_CALL(tokenizer, peek_token)(self, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "PeekToken",
+				  "Call to method \"peek_token\" failed"))
+		return NULL;
+
+	return token;
+}
+
+
+static void SetWhitespaceChars(STokenizer *self, const char *white_space_chars,
+							   s_erc *error)
+{
+	S_CLR_ERR(error);
+	/* calling set_whitespace_chars of STokenizerClass */
+	S_TOKENIZER_CALL(tokenizer, set_whitespace_chars)(self, white_space_chars, error);
+	S_CHK_ERR(error, S_CONTERR,
+			  "SetWhitespaceChars",
+			  "Call to method \"set_whitespace_chars\" failed");
+}
+
+
+static void SetSingleChars(STokenizer *self, const char *single_chars,
+						   s_erc *error)
+{
+	S_CLR_ERR(error);
+	/* calling set_single_chars of STokenizerClass */
+	S_TOKENIZER_CALL(tokenizer, set_single_chars)(self, single_chars, error);
+	S_CHK_ERR(error, S_CONTERR,
+			  "SetSingleChars",
+			  "Call to method \"set_single_chars\" failed");
+}
+
+
+static void SetPrePuncChars(STokenizer *self, const char *pre_punc_chars,
+							s_erc *error)
+{
+	S_CLR_ERR(error);
+	/* calling set_prepunc_chars of STokenizerClass */
+	S_TOKENIZER_CALL(tokenizer, set_prepunc_chars)(self, pre_punc_chars, error);
+	S_CHK_ERR(error, S_CONTERR,
+			  "SetPrePuncChars",
+			  "Call to method \"set_prepunc_chars\" failed");
+}
+
+
+static void SetPostPuncChars(STokenizer *self, const char *post_punc_chars,
+							 s_erc *error)
+{
+	S_CLR_ERR(error);
+	/* calling set_postpunc_chars of STokenizerClass */
+	S_TOKENIZER_CALL(tokenizer, set_postpunc_chars)(self, post_punc_chars, error);
+	S_CHK_ERR(error, S_CONTERR,
+			  "SetPostPuncChars",
+			  "Call to method \"set_postpunc_chars\" failed");
+}
+
+
+static void SetQuotes(STokenizer *self, uint32 quote, uint32 escape, s_erc *error)
+{
+	S_CLR_ERR(error);
+	/* calling set_quotes of STokenizerClass */
+	S_TOKENIZER_CALL(tokenizer, set_quotes)(self, quote, escape, error);
+	S_CHK_ERR(error, S_CONTERR,
+			  "SetQuotes",
+			  "Call to method \"set_quotes\" failed");
+}
+
+
+static s_bool QueryQuoteMode(const STokenizer *self, s_erc *error)
+{
+	S_CLR_ERR(error);
+
+	return self->quote_mode;
+}
+
+
+static s_bool QueryEOF(const STokenizer *self, s_erc *error)
+{
+	S_CLR_ERR(error);
+
+	return self->eof;
+}
 
 
 /************************************************************************************/
 /*                                                                                  */
-/* Plug-in class registration/free                                                  */
+/* Class registration                                                               */
 /*                                                                                  */
 /************************************************************************************/
 
-/**
- * Register the #STokenizerFile plug-in class with the Speect Engine object
- * system.
- * @private
- *
- * @param error Error code.
- */
-S_LOCAL void _s_tokenizer_file_class_reg(s_erc *error);
-
-/**
- * Free the #STokenizerFile plug-in class from the Speect Engine object
- * system.
- * @private
- *
- * @param error Error code.
- */
-S_LOCAL void _s_tokenizer_file_class_free(s_erc *error);
+S_LOCAL void _s_tokenizer_string_class_add(s_erc *error)
+{
+	S_CLR_ERR(error);
+	s_class_add(S_OBJECTCLASS(&TokenizerStringClass), error);
+	S_CHK_ERR(error, S_CONTERR,
+			  "_s_tokenizer_string_class_add",
+			  "Failed to add STokenizerStringClass");
+}
 
 
 /************************************************************************************/
 /*                                                                                  */
-/* End external c declaration                                                       */
+/* STokenizerString class initialization                                            */
 /*                                                                                  */
 /************************************************************************************/
-S_END_C_DECLS
 
-
-/**
- * @}
- * end documentation
- */
-
-#endif /* _SPCT_PLUGIN_TOKENIZER_FILE_H__ */
+static STokenizerStringClass TokenizerStringClass =
+{
+	/* SObjectClass */
+	{
+		"STokenizer:STokenizerString",
+		sizeof(STokenizerString),
+		{ 0, 1},
+		Init,            /* init    */
+		Destroy,         /* destroy */
+		Dispose,         /* dispose */
+		NULL,            /* compare */
+		NULL,            /* print   */
+		NULL,            /* copy    */
+	},
+	/* STokenizerClass */
+	GetChar,             /* get_char             */
+	Seek,                /* seek                 */
+	Tell,                /* tell                 */
+	GetToken,            /* get_token            */
+	PeekToken,           /* peek_token           */
+	SetWhitespaceChars,  /* set_whitespace_chars */
+	SetSingleChars,      /* set_single_chars     */
+	SetPrePuncChars,     /* set_prepunc_chars    */
+	SetPostPuncChars,    /* set_postpunc_chars   */
+	SetQuotes,           /* set_quotes           */
+	QueryQuoteMode,      /* query_quote_mode     */
+	QueryEOF             /* query_eof            */
+};

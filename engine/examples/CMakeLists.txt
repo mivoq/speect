@@ -19,4 +19,5 @@ add_subdirectory(base)
 add_subdirectory(containers)
 add_subdirectory(datasources)
 add_subdirectory(hrg)
+add_subdirectory(utils)
 

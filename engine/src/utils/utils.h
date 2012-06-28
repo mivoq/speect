@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2009-2011 The Department of Arts and Culture,                      */
+/* Copyright (c) 2012 The Department of Arts and Culture,                           */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -24,184 +24,90 @@
 /************************************************************************************/
 /*                                                                                  */
 /* AUTHOR  : Aby Louw                                                               */
-/* DATE    : December 2009                                                          */
+/* DATE    : June 2012                                                              */
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* Token, tokenizer, file tokenizer and string tokenizer plug-in.                   */
+/* Intialize and quit utils module.                                                 */
 /*                                                                                  */
 /*                                                                                  */
 /************************************************************************************/
 
-
-/************************************************************************************/
-/*                                                                                  */
-/* Modules used                                                                     */
-/*                                                                                  */
-/************************************************************************************/
-
-#include "token.h"
-#include "tokenizer.h"
-#include "tokenizer_file.h"
-#include "tokenizer_string.h"
-#include "plugin_info.h"
+#ifndef _SPCT_UTILS_H__
+#define _SPCT_UTILS__H__
 
 
-/************************************************************************************/
-/*                                                                                  */
-/* Static function prototypes                                                       */
-/*                                                                                  */
-/************************************************************************************/
+/**
+ * @file utils.h
+ * Intialize and quit utils module.
+ */
 
-static void plugin_register_function(s_erc *error);
 
-static void plugin_exit_function(s_erc *error);
+/**
+ * @ingroup Speect
+ * @defgroup SUtils Utilities
+ * Object based utilities.
+ * @{
+ */
 
 
 /************************************************************************************/
 /*                                                                                  */
-/* Plug-in parameters                                                               */
+/*  Include files in utils                                                          */
 /*                                                                                  */
 /************************************************************************************/
 
-static const s_plugin_params plugin_params =
-{
-	/* plug-in name */
-	SPCT_PLUGIN_NAME,
-
-	/* description */
-	SPCT_PLUGIN_DESCRIPTION,
-
-	/* version */
-	{
-		SPCT_PLUGIN_VERSION_MAJOR,
-		SPCT_PLUGIN_VERSION_MINOR
-	},
-
-	/* Speect ABI version (which plug-in was compiled with) */
-	{
-		S_MAJOR_VERSION,
-		S_MINOR_VERSION
-	},
-
-	/* register function pointer */
-	plugin_register_function,
-
-	/* exit function pointer */
-	plugin_exit_function
-};
+#include "utils/token.h"            /* token class      */
+#include "utils/tokenizer.h"        /* tokenizer class  */
+#include "utils/tokenizer_string.h" /* string tokenizer */
+#include "utils/tokenizer_file.h"   /* file tokenizer   */
 
 
 /************************************************************************************/
 /*                                                                                  */
-/* Function implementations                                                         */
+/* Begin external c declaration                                                     */
 /*                                                                                  */
 /************************************************************************************/
-
-S_PLUGIN_API const s_plugin_params *s_plugin_init(s_erc *error)
-{
-	S_CLR_ERR(error);
-
-	if (!s_lib_version_ok(SPCT_MAJOR_VERSION_MIN, SPCT_MINOR_VERSION_MIN))
-	{
-		S_CTX_ERR(error, S_FAILURE,
-				  SPCT_PLUGIN_INIT_STR,
-				  "Incorrect Speect Engine version, require at least '%d.%d.x'",
-				  SPCT_MAJOR_VERSION_MIN, SPCT_MINOR_VERSION_MIN);
-		return NULL;
-	}
-
-	return &plugin_params;
-}
+S_BEGIN_C_DECLS
 
 
 /************************************************************************************/
 /*                                                                                  */
-/* Static function implementations                                                  */
+/*  Function prototypes                                                             */
 /*                                                                                  */
 /************************************************************************************/
 
-/* plug-in register function */
-static void plugin_register_function(s_erc *error)
-{
-	s_erc local_err = S_SUCCESS;
+/**
+ * Initialize utils module.
+ * Used internally by #speect_init.
+ *
+ * @private
+ * @param error Error code.
+ */
+S_LOCAL void _s_utils_init(s_erc *error);
 
 
-	S_CLR_ERR(error);
-
-	/* register plug-in classes here */
-
-	_s_token_class_reg(error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  SPCT_PLUGIN_REG_STR,
-				  "Failed to register SToken class"))
-		return;
-
-	_s_tokenizer_class_reg(error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  SPCT_PLUGIN_REG_STR,
-				  "Failed to register STokenizer class"))
-	{
-		_s_token_class_free(&local_err);
-		return;
-	}
-
-	_s_tokenizer_file_class_reg(error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  SPCT_PLUGIN_REG_STR,
-				  "Failed to register STokenizerFile class"))
-	{
-		_s_tokenizer_class_free(&local_err);
-		_s_token_class_free(&local_err);
-		return;
-	}
-
-	_s_tokenizer_string_class_reg(error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  SPCT_PLUGIN_REG_STR,
-				  "Failed to register STokenizerString class"))
-	{
-		_s_tokenizer_file_class_free(&local_err);
-		_s_tokenizer_class_free(&local_err);
-		_s_token_class_free(&local_err);
-		return;
-	}
-}
+/**
+ * Quit utils module.
+ * Used internally by #speect_quit.
+ *
+ * @private
+ * @param error Error code.
+ */
+S_LOCAL void _s_utils_quit(s_erc *error);
 
 
-/* plug-in exit function */
-static void plugin_exit_function(s_erc *error)
-{
-	s_erc local_err = S_SUCCESS;
+/************************************************************************************/
+/*                                                                                  */
+/* End external c declaration                                                       */
+/*                                                                                  */
+/************************************************************************************/
+S_END_C_DECLS
 
 
-	S_CLR_ERR(error);
+/**
+ * @}
+ * end documentation
+ */
 
-	/* free plug-in classes here */
-	_s_tokenizer_string_class_free(error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  SPCT_PLUGIN_EXIT_STR,
-				  "Failed to free STokenizerString class"))
-		local_err = *error;
-
-	_s_tokenizer_file_class_free(error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  SPCT_PLUGIN_EXIT_STR,
-				  "Failed to free STokenizerFile class"))
-		local_err = *error;
-
-	_s_tokenizer_class_free(error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  SPCT_PLUGIN_EXIT_STR,
-				  "Failed to free STokenizer class"))
-		local_err = *error;
-
-	_s_token_class_free(error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  SPCT_PLUGIN_EXIT_STR,
-				  "Failed to free SToken class"))
-		local_err = *error;
-
-	if ((local_err != S_SUCCESS) && (*error == S_SUCCESS))
-		*error = local_err;
-}
+#endif /* _SPCT_UTILS__H__ */

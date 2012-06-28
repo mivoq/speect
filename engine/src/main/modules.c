@@ -74,6 +74,12 @@ S_LOCAL void _s_modules_init(s_erc *error)
 				  "Failed to intialize datasources module"))
 		local_err = *error;
 
+	_s_utils_init(error);                                  /* 4 classes */
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "_s_modules_init",
+				  "Failed to intialize utils module"))
+		local_err = *error;
+
 	_s_hrg_init(error);                                    /* 6 classes */
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "_s_modules_init",
@@ -135,6 +141,12 @@ S_LOCAL void _s_modules_quit(s_erc *error)
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "_s_modules_quit",
 				  "Failed to quit hrg module"))
+		local_err = *error;
+
+	_s_utils_quit(error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "_s_modules_quit",
+				  "Failed to quit utils module"))
 		local_err = *error;
 
 	_s_datasources_quit(error);

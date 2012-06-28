@@ -61,7 +61,7 @@ int main(void)
 	}
 	else
 	{
-		printf("the length (number of characters) of 'こんにちは' is %d\n", word_length);
+		printf("the length (number of characters) of 'こんにちは' is %lu\n", (unsigned long)word_length);
 	}
 
 	/* quit speect */

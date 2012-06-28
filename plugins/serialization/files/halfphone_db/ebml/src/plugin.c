@@ -121,7 +121,7 @@ static const s_plugin_params plugin_params =
 /*                                                                                  */
 /************************************************************************************/
 
-const s_plugin_params *s_plugin_init(s_erc *error)
+S_PLUGIN_API const s_plugin_params *s_plugin_init(s_erc *error)
 {
 	S_CLR_ERR(error);
 

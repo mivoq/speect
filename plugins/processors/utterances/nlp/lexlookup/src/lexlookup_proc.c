@@ -53,7 +53,7 @@
 /*                                                                                  */
 /************************************************************************************/
 
-static SLexLookupUttProcClass LexLookupUttProcClass; /* STokenizationUttProc class declaration. */
+static SLexLookupUttProcClass LexLookupUttProcClass; /* SLexLookupUttProc class declaration. */
 
 
 /************************************************************************************/
@@ -622,7 +622,7 @@ quit_error:
 
 /************************************************************************************/
 /*                                                                                  */
-/* STokenizationUttProc class initialization                                        */
+/* SLexLookupUttProc class initialization                                           */
 /*                                                                                  */
 /************************************************************************************/
 

@@ -44,7 +44,9 @@ if(TMP_VERSION MATCHES "^v(.*)")
 elseif(TMP_VERSION MATCHES "^upstream/(.*)")
   string(REGEX REPLACE "^upstream/(.*)" "\\1" TMP_VERSION ${TMP_VERSION})
 else(TMP_VERSION MATCHES "^upstream/(.*)")
-  message(FATAL_ERROR "Failed to match the version regex to: ${TMP_VERSION}")
+ # use default
+ set(TMP_VERSION "1.1.0" CACHE STRING "Speect default version" FORCE)
+ #message(FATAL_ERROR "Failed to match the version regex to: ${TMP_VERSION}")
 endif(TMP_VERSION MATCHES "^v(.*)")
 mark_as_advanced(TMP_VERSION)
 

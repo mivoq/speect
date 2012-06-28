@@ -124,7 +124,7 @@ typedef s_mutex_t s_mutex;
 /*                                                                                  */
 /************************************************************************************/
 
-#ifdef SPCT_USE_THREADS
+#ifndef S_DECLARE_MUTEX /* defined in threads_none.h if no threading */
 
 /**
  * Declare a #s_mutex. Declare a #s_mutex with the given name,
@@ -135,6 +135,11 @@ typedef s_mutex_t s_mutex;
  */
 #  define S_DECLARE_MUTEX(NAME) s_mutex NAME
 
+#endif /* S_DECLARE_MUTEX */
+
+
+#ifndef S_DECLARE_MUTEX_STATIC /* defined in threads_none.h if no threading */
+
 /**
  * Declare a static #s_mutex. Declare a static #s_mutex with the
  * given name, based on the threads implementation.
@@ -144,13 +149,7 @@ typedef s_mutex_t s_mutex;
  */
 #  define S_DECLARE_MUTEX_STATIC(NAME) static s_mutex NAME
 
-
-#else /* !SPCT_USE_THREADS */
-
-#  define S_DECLARE_MUTEX_STATIC(NAME)
-#  define S_DECLARE_MUTEX(NAME)
-
-#endif /* SPCT_USE_THREADS */
+#endif /* S_DECLARE_MUTEX_STATIC */
 
 
 /**

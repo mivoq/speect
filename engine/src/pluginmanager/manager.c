@@ -56,9 +56,9 @@
 /*                                                                                  */
 /************************************************************************************/
 
-/* 128 plugins for now, used for cache initialization size (can grow
+/* 128 libraries for now, used for cache initialization size (can grow
  * but expensive) */
-#define SPCT_MAX_NUM_PLUGINS 128
+#define SPCT_MAX_NUM_LIBRARIES 128
 
 
 /************************************************************************************/
@@ -67,7 +67,7 @@
 /*                                                                                  */
 /************************************************************************************/
 
-static SMap *pluginCache = NULL;
+static SMap *libraryCache = NULL;
 
 static s_bool initialized = FALSE;
 
@@ -82,11 +82,9 @@ static char *plugin_path = NULL;
 /*                                                                                  */
 /************************************************************************************/
 
-static void load_plugin(SPlugin *self, const char *path, s_erc *error);
+static void cache_add_library(SLibrary *library, const char *path, s_erc *error);
 
-static void cache_add_plugin(SPlugin *plugin, const char *path, s_erc *error);
-
-static void cache_remove_plugin(SPlugin *plugin, s_erc *error);
+static void cache_remove_library(SLibrary *library, s_erc *error);
 
 
 /************************************************************************************/
@@ -97,7 +95,8 @@ static void cache_remove_plugin(SPlugin *plugin, s_erc *error);
 
 S_API SPlugin *s_pm_load_plugin(const char *path, s_erc *error)
 {
-	SPlugin *loaded;
+	SPlugin *plugin;
+	SLibrary *loaded;
 	char *new_path;
 
 
@@ -123,13 +122,28 @@ S_API SPlugin *s_pm_load_plugin(const char *path, s_erc *error)
 				  "Call to \"s_pm_get_plugin_path\" failed"))
 		return NULL;
 
-	/* we know it is a plugin, therefore the unsafe cast */
-	loaded = S_PLUGIN(SMapGetObjectDef(pluginCache, new_path, NULL, error));
+	/* Create a new plug-in object */
+	plugin = S_NEW(SPlugin, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "s_pm_load_plugin",
+				  "Failed to create new plug-in object"))
+	{
+		S_FREE(new_path);
+		s_mutex_unlock(&pm_mutex);
+		return NULL;
+	}
+
+	/*
+	 * get the library that is associated with this path from the
+	 * cache, we know it is a library, therefore the unsafe cast
+	 */
+	loaded = S_LIBRARY(SMapGetObjectDef(libraryCache, new_path, NULL, error));
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "s_pm_load_plugin",
 				  "Call to \"SMapGetObjectDef\" failed"))
 	{
 		S_FREE(new_path);
+		S_DELETE(plugin, "s_pm_load_plugin", error);
 		s_mutex_unlock(&pm_mutex);
 		return NULL;
 	}
@@ -142,42 +156,44 @@ S_API SPlugin *s_pm_load_plugin(const char *path, s_erc *error)
 		 */
 		SObjectIncRef(S_OBJECT(loaded));
 		S_FREE(new_path);
+		plugin->library = loaded;
+
 		s_mutex_unlock(&pm_mutex);
 
-		/* wait until plug-in has loaded before
-		 * returning and
-		 * using it
-		 */
-		while (!SPluginIsReady(loaded))
+		/* wait until plug-in library has loaded before
+		 * returning and using it */
+		while (!SPluginIsReady(plugin))
 		{
 			/* NOP */
 		}
 
-		return loaded;
+		return plugin;
 	}
 
 	/*
-	 * it has not been cached, create a new plugin
+	 * it has not been cached, create a new library
 	 * object. Cache and then load, this overcomes
 	 * recursion problem.
 	 */
-	loaded = S_NEW(SPlugin, error);
+	loaded = S_NEW(SLibrary, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "s_pm_load_plugin",
-				  "Failed to create new plug-in object"))
+				  "Failed to create new library object"))
 	{
 		S_FREE(new_path);
+		S_DELETE(plugin, "s_pm_load_plugin", error);
 		s_mutex_unlock(&pm_mutex);
 		return NULL;
 	}
 
-	cache_add_plugin(loaded, new_path, error);
+	cache_add_library(loaded, new_path, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "s_pm_load_plugin",
-				  "Failed to cache plug-in at \'%s\'", new_path))
+				  "Failed to cache library at \'%s\'", new_path))
 	{
-		S_FORCE_DELETE(loaded, "s_pm_load_plugin", error);
+		S_DELETE(loaded, "s_pm_load_plugin", error);
 		S_FREE(new_path);
+		S_DELETE(plugin, "s_pm_load_plugin", error);
 		s_mutex_unlock(&pm_mutex);
 		return NULL;
 	}
@@ -188,28 +204,37 @@ S_API SPlugin *s_pm_load_plugin(const char *path, s_erc *error)
 	 */
 	s_mutex_unlock(&pm_mutex);
 
-	load_plugin(loaded, new_path, error);
+	/* load library */
+	SLibraryLoad(loaded, new_path, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "s_pm_load_plugin",
-				  "Failed to load plug-in at \'%s\'", new_path))
+				  "Failed to load libraery at \'%s\'", new_path))
 	{
-		cache_remove_plugin(loaded, NULL);
-		S_FORCE_DELETE(loaded, "s_pm_load_plugin", error);
+		cache_remove_library(loaded, NULL);
+		S_DELETE(loaded, "s_pm_load_plugin", error);
 		S_FREE(new_path);
+		S_DELETE(plugin, "s_pm_load_plugin", error);;
 		return NULL;
 	}
 
 	S_FREE(new_path);
 
-	/* other threads can start using the plug-in */
-	SPluginSetReady(loaded);
+	/* set the plug-in manager flag so that we know that this library
+	 * was loaded by the plug-in manager */
+	loaded->in_pluginmanager = TRUE;
 
 	/*
 	 * it's loaded and added to cache,
 	 * increase reference count and return it.
 	 */
-	SObjectIncRef(S_OBJECT(loaded)); /* ref = 2, caller and cache */
-	return loaded;
+	SObjectIncRef(S_OBJECT(loaded));  /* ref = 2, caller and cache */
+
+	plugin->library = loaded;
+
+	/* other threads can start using the plug-in */
+	SPluginSetReady(plugin);
+
+	return plugin;
 }
 
 
@@ -261,45 +286,45 @@ S_API char *s_pm_get_plugin_path(const char *path, s_erc *error)
 }
 
 
-S_LOCAL void _s_pm_unload_plugin(SPlugin *plugin, s_erc *error)
+S_LOCAL void _s_pm_unload_library(SLibrary *library, s_erc *error)
 {
 	S_CLR_ERR(error);
 
-	if (S_OBJECT_REF(plugin) != 1)
+	if (S_OBJECT_REF(library) != 1)
 	{
 		/* nothing to do */
 		return;
 	}
 
-	if (plugin->in_pluginmanager == FALSE)
+	if (library->in_pluginmanager == FALSE)
 	{
 		/*
-		 * plugin does not belong to plugin manager,
+		 * library does not belong to plug-in manager,
 		 * nothing to do.
 		 */
 		return;
 	}
 
 	/*
-	 * The plugin must be unloaded from the
-	 * pluginmanager. Unlink from cache and
+	 * The library must be unloaded from the
+	 * plug-in manager. Unlink from cache and
 	 * force delete.
 	 */
 
 	/*
 	 * we dont need this return value, as we
-	 * already have hold of plugin.
+	 * already have hold of library.
 	 */
-	cache_remove_plugin(plugin, error);
+	cache_remove_library(library, error);
 	S_CHK_ERR(error, S_CONTERR,
-			  "_s_pm_unload_plugin",
-			  "Failed to remove plug-in,  at \'%s\', from cached",
-			  plugin->path);
+			  "_s_pm_unload_library",
+			  "Failed to remove library,  at \'%s\', from cache",
+			  library->path);
 
 	/*
 	 * Make sure that it will be deleted.
 	 */
-	S_OBJECT(plugin)->ref = 0;
+	S_OBJECT(library)->ref = 0;
 }
 
 
@@ -342,10 +367,10 @@ S_LOCAL void _s_pm_init(s_erc *error)
 	initialized = TRUE;
 	s_mutex_init(&pm_mutex);
 
-	pluginCache = S_MAP(S_NEW(SMapHashTable, error));
+	libraryCache = S_MAP(S_NEW(SMapHashTable, error));
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "_s_pm_init",
-				  "Failed to create new SMapHashTable for plug-in cache"))
+				  "Failed to create new SMapHashTable for library cache"))
 	{
 		s_mutex_destroy(&pm_mutex);
 		initialized = FALSE;
@@ -353,12 +378,12 @@ S_LOCAL void _s_pm_init(s_erc *error)
 	}
 
 	/* 128 plugins for now */
-	SMapHashTableResize(S_MAPHASHTABLE(pluginCache), SPCT_MAX_NUM_PLUGINS, error);
+	SMapHashTableResize(S_MAPHASHTABLE(libraryCache), SPCT_MAX_NUM_LIBRARIES, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "_s_pm_init",
-				  "Failed to resize SMapHashTable for plug-in cache"))
+				  "Failed to resize SMapHashTable for library cache"))
 	{
-		S_DELETE(pluginCache, "_s_pm_init", error);
+		S_DELETE(libraryCache, "_s_pm_init", error);
 		s_mutex_destroy(&pm_mutex);
 		initialized = FALSE;
 		return;
@@ -376,7 +401,7 @@ S_LOCAL void _s_pm_quit(s_erc *error)
 		return;
 
 	initialized = FALSE;
-	S_DELETE(pluginCache, "_s_pm_init", error);
+	S_DELETE(libraryCache, "_s_pm_init", error);
 
 	if (plugin_path != NULL)
 		S_FREE(plugin_path);
@@ -392,131 +417,27 @@ S_LOCAL void _s_pm_quit(s_erc *error)
 /*                                                                                  */
 /************************************************************************************/
 
-static void load_plugin(SPlugin *self, const char *path, s_erc *error)
-{
-	SDso *pluginDso;
-	s_plugin_init_fp plugin_initialize;
-
-
-	S_CLR_ERR(error);
-
-	/* path gets freed when SPlugin is deleted */
-	self->path = s_strdup(path, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "load_plugin",
-				  "Call to \"s_strdup\" failed"))
-		return;
-
-	pluginDso = S_NEW(SDso, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "load_plugin",
-				  "Failed to create new dynamic shared object for plug-in"))
-		return;
-
-
-	SDsoLoad(pluginDso, path, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "load_plugin",
-				  "Failed to load plug-in dynamic shared object at \"%s\"",
-				  path))
-	{
-		S_DELETE(pluginDso, "PluginLoad", error);
-		return;
-	}
-
-	/*
-	 * get the plugin initialization function
-	 * done as described in dlsym man page.
-	 */
-	plugin_initialize = (s_plugin_init_fp)SDsoGetSymbol(pluginDso, "s_plugin_init", error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "load_plugin",
-				  "Failed to get \'s_plugin_init\' symbol from plug-in at \"%s\"",
-				  path))
-	{
-		S_DELETE(pluginDso, "PluginLoad", error);
-		return;
-	}
-
-	if (plugin_initialize == NULL)
-	{
-		S_CTX_ERR(error, S_FAILURE,
-				  "load_plugin",
-				  "Plug-in symbol \'s_plugin_init\' is NULL for plug-in at \"%s\"",
-				  path);
-		S_DELETE(pluginDso, "PluginLoad", error);
-		return;
-	}
-
-	self->plugin_info = (plugin_initialize)(error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "load_plugin",
-				  "Call to \"s_plugin_init\" failed"))
-	{
-		S_DELETE(pluginDso, "PluginLoad", error);
-		return;
-	}
-
-	if (self->plugin_info == NULL)
-	{
-		S_CTX_ERR(error, S_FAILURE,
-				  "load_plugin",
-				  "Plug-in at \"%s\" failed to return 's_plugin_params' structure information",
-				  path);
-		S_DELETE(pluginDso, "PluginLoad", error);
-		return;
-	}
-
-	if (!s_version_ok(self->plugin_info->s_abi))
-	{
-		S_CTX_ERR(error, S_FAILURE,
-				  "load_plugin",
-				  "Plug-in at \"%s\" (compiled ABI version %d.%d) is not compatible with this ABI version (%d.%d.%s) of the Speect Engine",
-				  path, self->plugin_info->s_abi.major, self->plugin_info->s_abi.minor,
-				  S_MAJOR_VERSION, S_MINOR_VERSION, S_PATCHLEVEL);
-		S_DELETE(pluginDso, "PluginLoad", error);
-		return;
-	}
-
-	/* call plug-in register function */
-	if (self->plugin_info->reg_func != NULL)
-	{
-		self->plugin_info->reg_func(error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "load_plugin",
-					  "Plug-in at \"%s\" failed to register",
-					  path))
-		{
-			S_DELETE(pluginDso, "load_plugin", error);
-			return;
-		}
-	}
-
-	self->library = pluginDso;
-	self->in_pluginmanager = TRUE;
-}
-
 
 /* path might not yet be set in plugin when we want to add it. */
-static void cache_add_plugin(SPlugin *plugin, const char *path, s_erc *error)
+static void cache_add_library(SLibrary *library, const char *path, s_erc *error)
 {
-	SMapSetObject(pluginCache, path, S_OBJECT(plugin), error);
+	SMapSetObject(libraryCache, path, S_OBJECT(library), error);
 	S_CHK_ERR(error, S_CONTERR,
-			  "cache_add_plugin",
+			  "cache_add_library",
 			  "Call to \"SMapSetObject\" failed, could not"
-			  " add plugin at \'%s\' to cache", path);
+			  " add library at \'%s\' to cache", path);
 }
 
 
-static void cache_remove_plugin(SPlugin *plugin, s_erc *error)
+static void cache_remove_library(SLibrary *library, s_erc *error)
 {
-	SMapObjectUnlink(pluginCache, plugin->path,
+	SMapObjectUnlink(libraryCache, library->path,
 					 error);
 	S_CHK_ERR(error, S_CONTERR,
-			  "cache_remove_plugin",
+			  "cache_remove_library",
 			  "Call to \"SMapObjectUnlink\" failed, could not"
-			  " remove plug-in at \'%s\' from cache",
-			  plugin->path? plugin->path : "NULL");
+			  " remove library at \'%s\' from cache",
+			  library->path? library->path : "NULL");
 }
 
 

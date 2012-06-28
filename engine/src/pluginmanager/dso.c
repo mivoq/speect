@@ -125,6 +125,14 @@ S_API void SDsoLoad(SDso *self, const char *path, s_erc *error)
 		return;
 	}
 
+	if (path == NULL)
+	{
+		S_CTX_ERR(error, S_ARGERROR,
+				  "SDsoLoad",
+				  "Argument \"path\" is NULL");
+		return;
+	}
+
 	if (!S_DSO_METH_VALID(self, load))
 	{
 		S_WARNING(S_METHINVLD,

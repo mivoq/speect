@@ -16,13 +16,15 @@
 #------------------------------------------------------------------------------------#
 
 # Choose static or shared libraries.
-#option(BUILD_SHARED_LIBS "Build Speect with shared libraries." ON)
-#set(SPCT_BUILD_SHARED_LIBS ${BUILD_SHARED_LIBS})
+#option(BUILD_SHARED_LIBS "Build Shared Libraries" on) 
 
-# This is the only option for now
-set(BUILD_SHARED_LIBS 1)
-set(SPCT_BUILD_SHARED_LIBS 1)
+set(SPCT_LIB_TYPE SHARED) 
 
+# we support only shared libraries for now.
+#if(BUILD_SHARED_LIBS)
+  # User wants to build Static Libraries, so change the SPCT_LIB_TYPE variable to CMake keyword 'STATIC'
+#  set(LIB_TYPE STATIC)
+#endif(BUILD_SHARED_LIBS)
 
 #------------------------------------------------------------------------------------#
 #                              Library suffix                                        #
@@ -84,6 +86,7 @@ option(WANT_EXAMPLES "Include the example suite in the compilation." off)
 # Python (Default ON)
 #--------------------
 
+# default off in speect/cmake/spctOS.cmake if on WIN32
 option(WANT_PYTHON_WRAPPER "Enable generation of the Python wrapper." on)
 
 option(WANT_PYTHON_3 "Generate wrapper code for Python versions >= 3" off)

@@ -54,15 +54,26 @@ S_LOCAL void _s_base_utils_init(s_erc *error)
 	S_CLR_ERR(error);
 
 	_s_time_init(error);
+	if (S_CHK_ERR(error, S_FAILURE,
+				  "_s_base_utils_init",
+				  "Failed to initialize time module"))
+		return;
+
+	_s_envvar_init(error);
 	S_CHK_ERR(error, S_FAILURE,
 			  "_s_base_utils_init",
-			  "Failed to initialize time module");
+			  "Failed to initialize environment variables module");
 }
 
 
 S_LOCAL void _s_base_utils_quit(s_erc *error)
 {
 	S_CLR_ERR(error);
+
+	_s_envvar_init(error);
+	S_CHK_ERR(error, S_FAILURE,
+			  "_s_base_utils_init",
+			  "Failed to quit environment variables module");
 
 	_s_time_quit(error);
 	S_CHK_ERR(error, S_FAILURE,

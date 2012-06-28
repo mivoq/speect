@@ -77,12 +77,13 @@ endif(SPCT_MACOSX)
 
 set(SPCT_LIBRARIES spct)
 
-if(NOT BUILD_SHARED_LIBS)
-  set(SPCT_LIBRARIES ${SPCT_LIBRARIES}-static)
-  set(static_flag "-DSPCT_STATICLINK")
-endif(NOT BUILD_SHARED_LIBS)
+# only shared libraries for now #in speect/cmake/spctOptions.cmake
+#if(NOT BUILD_SHARED_LIBS)
+#  set(SPCT_LIBRARIES ${SPCT_LIBRARIES}-static)
+#  set(static_flag "-DSPCT_STATICLINK")
+#endif(NOT BUILD_SHARED_LIBS)
 
-add_library(SPCT_LIBRARIES ${SPCT_LIBRARY_SOURCES})
+add_library(SPCT_LIBRARIES ${SPCT_LIB_TYPE} ${SPCT_LIBRARY_SOURCES})
 
 set_target_properties(SPCT_LIBRARIES
   PROPERTIES

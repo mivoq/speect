@@ -218,7 +218,7 @@ function(speect_plugin_create)
   ############################ Plugin library ##########################################
   set(${plugin_lowercase_name}_plugin ${plugin_lowercase_name}_SONAME)
 
-  add_library(${plugin_lowercase_name}_plugin ${${plugin_lowercase_name}_SRC_FILES})
+  add_library(${plugin_lowercase_name}_plugin ${SPCT_LIB_TYPE} ${${plugin_lowercase_name}_SRC_FILES})
 
   set_target_properties(${plugin_lowercase_name}_plugin
     PROPERTIES

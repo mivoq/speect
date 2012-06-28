@@ -60,6 +60,7 @@
 #include "include/common.h"
 #include "pluginmanager/dynamic_loading.h"
 #include "pluginmanager/dso.h"
+#include "pluginmanager/library.h"
 #include "pluginmanager/plugin.h"
 #include "pluginmanager/plugin_object.h"
 #include "pluginmanager/manager.h"

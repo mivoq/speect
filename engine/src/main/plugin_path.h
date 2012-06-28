@@ -75,8 +75,9 @@ S_BEGIN_C_DECLS
  * @return The Speect plug-in path or @c NULL.
  *
  * @note Not thread safe.
+ * @note Caller is responsible for returned memory.
  */
-S_LOCAL const char *_s_find_plugin_path(s_erc *error);
+S_LOCAL char *_s_find_plugin_path(s_erc *error);
 
 
 /************************************************************************************/

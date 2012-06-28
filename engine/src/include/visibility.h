@@ -83,6 +83,13 @@
  */
 
 
+/**
+ * @def S_PLUGIN_API
+ * @hideinitializer
+ * Declares a symbol to be exported for plug-in usage.
+ */
+
+
 /* Generic helper definitions for shared library support */
 #if defined _WIN32 || defined __CYGWIN__
 #  define SPCT_HELPER_DLL_IMPORT __declspec(dllimport)
@@ -133,6 +140,13 @@
 #  define S_API
 #  define S_LOCAL
 #endif /* SPCT_LIBRARIES_EXPORTS */
+
+
+/*
+ * Plug-in s_plugin_init functions need this modifier so that the
+ * function is visible to the outside.
+ */
+#define S_PLUGIN_API SPCT_HELPER_DLL_EXPORT
 
 
 /**

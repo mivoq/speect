@@ -69,6 +69,12 @@ S_LOCAL void _s_pluginmanager_init(s_erc *error)
 		      "Failed to intialize SDso class"))
 		local_err = *error;
 
+	_s_library_class_add(error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "_s_pluginmanager_init",
+				  "Failed to intialize SLibrary class"))
+		local_err = *error;
+
 	_s_plugin_class_add(error);
 	if (S_CHK_ERR(error, S_CONTERR,
 		      "_s_pluginmanager_init",

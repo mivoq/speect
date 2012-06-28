@@ -81,11 +81,12 @@ S_BEGIN_C_DECLS
 
 /**
  * Load a plug-in from the given path. If the plug-in at the given
- * path has already been loaded, then the plug-in's reference counter
- * is increased and a pointer to the loaded plug-in is returned. This
- * reduces the need for multiple redundant calls. If the given path
- * does not include any path separators (just a file name) then the
- * path is concatenated with the default plug-in path.
+ * path has already been loaded, then the plug-in library's reference
+ * counter is increased and a pointer to the loaded library is set in
+ * the returned plug-in. This reduces the need for multiple redundant
+ * calls. If the given path does not include any path separators (just
+ * a file name) then the path is concatenated with the default plug-in
+ * path.
  *
  * @param path The full path and name of the plug-in to load.
  * @param error Error code.
@@ -115,15 +116,15 @@ S_API char *s_pm_get_plugin_path(const char *path, s_erc *error);
 
 
 /**
- * Unload the given plug-in.
+ * Unload the given library.
  * @private
  *
- * @param plugin The plug-in to unload.
+ * @param library The library to unload.
  * @param error Error code.
  *
- * @note Used inernally in SPlugin::dispose.
+ * @note Used inernally in SLibrary::dispose.
  */
-S_LOCAL void _s_pm_unload_plugin(SPlugin *plugin, s_erc *error);
+S_LOCAL void _s_pm_unload_library(SLibrary *library, s_erc *error);
 
 
 /**

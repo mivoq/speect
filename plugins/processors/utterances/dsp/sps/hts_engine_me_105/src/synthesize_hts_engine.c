@@ -1473,6 +1473,8 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 	uint i;
 	int frame;
 	int state;
+	const double rate = HTSsynth->engine.global.fperiod * 1e+7 / HTSsynth->engine.global.sampling_rate;
+	int nstate;
 
 
 	S_CLR_ERR(error);
@@ -1587,6 +1589,7 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 		HTS_Engine_create_gstream(&(HTSsynth->engine));
 	}
 
+	nstate = HTS_Speect_ModelSet_get_nstate(&(HTSsynth->engine));
 	itemItr = item;
 	counter = 0;
 	frame = 0;
@@ -1594,14 +1597,11 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 	while (itemItr != NULL)
 	{
 		int j;
-		int duration;
-		HTS_SStreamSet *sss = &(HTSsynth->engine.sss);
-		const int nstate = HTS_ModelSet_get_nstate(&(HTSsynth->engine.ms));
-		const double rate = HTSsynth->engine.global.fperiod * 1e+7 / HTSsynth->engine.global.sampling_rate;
+		int duration = 0;
 		float tmp;
 
-		for (j = 0, duration = 0; j < nstate; j++)
-			duration += HTS_SStreamSet_get_duration(sss, state++);
+		for (j = 0; j < nstate; j++)
+			duration += HTS_Speect_SStreamSet_get_duration(&(HTSsynth->engine), state++);
 
 		tmp = frame * rate;
 		SItemSetFloat((SItem*)itemItr, "start", tmp/1e+7, error);
@@ -1622,26 +1622,12 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 		counter++;
 	}
 
-	/* create an audio object */
-	audio = S_NEW(SAudio, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "Run",
-				  "Failed to create new 'SAudio' object"))
-		goto quit_error;
-
-	/* set audio feature in utterance */
-	SUtteranceSetFeature(utt, "audio", S_OBJECT(audio), error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "Run",
-				  "Call to \"SUtteranceSetFeature\" failed"))
-		goto quit_error;
-
 	/* We need to give the utterance the audio plug-in. If we don't do
 	 * this and the voice is deleted before the utterance, then the
 	 * utterance can't do *anything* with the audio. Not even delete
 	 * it (segfault). This should be fast because it is already
 	 * loaded.
-	 * Note that this happens after the audio is set. This is because
+	 * Note that this happens before the audio is set. This is because
 	 * utt features are a list implementation.
 	 */
 	audioPlugin = s_pm_load_plugin("audio.spi", error);
@@ -1659,8 +1645,25 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 		goto quit_error;
 	}
 
+	/* create an audio object */
+	audio = S_NEW(SAudio, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "Run",
+				  "Failed to create new 'SAudio' object"))
+		goto quit_error;
+
+	/* set audio feature in utterance */
+	SUtteranceSetFeature(utt, "audio", S_OBJECT(audio), error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "Run",
+				  "Call to \"SUtteranceSetFeature\" failed"))
+	{
+		S_DELETE(audio, "Run", error);
+		goto quit_error;
+    }
+
 	audio->sample_rate = HTSsynth->engine.global.sampling_rate;
-	audio->num_samples = (uint32)HTS_GStreamSet_get_total_nsample(&(HTSsynth->engine).gss);
+	audio->num_samples = (uint32)HTS_Speect_GStreamSet_get_total_nsample(&(HTSsynth->engine));
 	audio->samples = S_MALLOC(float, audio->num_samples);
 	if (audio->samples == NULL)
 	{
@@ -1672,7 +1675,7 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 
 	/* write data */
 	for (i = 0; i < audio->num_samples; i++)
-		audio->samples[i] = (float)(HTS_GStreamSet_get_speech(&(HTSsynth->engine).gss, i) * 1.0);
+		audio->samples[i] = (float)(HTS_Speect_GStreamSet_get_speech(&(HTSsynth->engine), i) * 1.0);
 
 	for (counter = 0; counter < label_size; counter++)
 		S_FREE(label_data[counter]);

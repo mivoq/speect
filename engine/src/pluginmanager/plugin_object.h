@@ -61,7 +61,7 @@
 #include "include/common.h"
 #include "base/objsystem/objsystem.h"
 #include "base/errdbg/errdbg.h"
-#include "pluginmanager/dso.h"
+#include "pluginmanager/library.h"
 #include "pluginmanager/plugin.h"
 
 
@@ -109,7 +109,8 @@ S_BEGIN_C_DECLS
 /************************************************************************************/
 
 /**
- * The SPlugin structure.
+ * The SPlugin structure. SPlugin encaptulates SLibrary, so that it is
+ * easy to share plug-ins.
  * @extends SObject
  */
 typedef struct
@@ -120,29 +121,9 @@ typedef struct
 	SObject                obj;
 
 	/**
-	 * @protected Dynamic shared object associated with this plug-in.
+	 * @protected Library associated with this plug-in.
 	 */
-	const SDso            *library;
-
-	/**
-	 * @protected Plug-in information.
-	 */
-	const s_plugin_params *plugin_info;
-
-	/**
-	 * @protected Plug-in path.
-	 */
-	const char            *path;
-
-	/**
-	 * @private Plug-in was loaded into plug-in manager.
-	 */
-	s_bool                 in_pluginmanager;
-
-	/**
-	 * @private Is the plug-in loaded and ready to be used?
-	 */
-	s_bool                 ready;
+	SLibrary              *library;
 
 	/**
 	 * @protected Main locking mutex

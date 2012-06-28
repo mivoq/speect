@@ -262,6 +262,14 @@ S_API void (*_s_warn(const char *file_name, int line))(s_erc this_error,
 S_API void _s_dbg(s_dbg_lvl level, const char *fmt, ...);
 
 
+/************************************************************************************/
+/*                                                                                  */
+/* End external c declaration                                                       */
+/*                                                                                  */
+/************************************************************************************/
+S_END_C_DECLS
+
+
 /**
  * @}
  * end documentation

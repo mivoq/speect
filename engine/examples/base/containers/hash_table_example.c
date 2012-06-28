@@ -182,7 +182,7 @@ int main()
 				  "Call to \"s_hash_table_size\" failed"))
 		goto exit_error;
 
-	printf("the hash table contains %d elements\n\n", size);
+	printf("the hash table contains %lu elements\n\n", (unsigned long)size);
 
 	/* get some statistics and info on the table and it's elements */
 	stats = s_hash_table_stats(ht_ptr, &error);

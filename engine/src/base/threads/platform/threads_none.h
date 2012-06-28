@@ -75,22 +75,35 @@ typedef int s_mutex_t;
 /*                                                                                  */
 /************************************************************************************/
 
-#define _S_DECLARE_MUTEX_STATIC(NAME)                 /* NOP */
+#ifdef SPCT_MSVC
 
+#  define S_DECLARE_MUTEX_STATIC(NAME) int NAME
 
-#define _S_DECLARE_MUTEX(NAME)                        /* NOP */
+#  define S_DECLARE_MUTEX(NAME) int NAME
 
+#  define _S_MUTEX_INIT(mutex, __FILE__, __LINE__) __noop
+
+#  define _S_MUTEX_DESTROY(mutex, __FILE__, __LINE__) __noop
+
+#  define _S_MUTEX_LOCK(mutex, __FILE__, __LINE__) __noop
+
+#  define _S_MUTEX_UNLOCK(mutex, __FILE__, __LINE__) __noop
+
+#else /* !SPCT_MSVC */
+
+#define S_DECLARE_MUTEX_STATIC(NAME)                  /* NOP */
+
+#define S_DECLARE_MUTEX(NAME)                         /* NOP */
 
 #define _S_MUTEX_INIT(mutex, __FILE__, __LINE__)      /* NOP */
 
-
 #define _S_MUTEX_DESTROY(mutex, __FILE__, __LINE__)   /* NOP */
-
 
 #define _S_MUTEX_LOCK(mutex, __FILE__, __LINE__)      /* NOP */
 
-
 #define _S_MUTEX_UNLOCK(mutex, __FILE__, __LINE__)    /* NOP */
+
+#endif /* SPCT_WIN32 */
 
 
 #define _S_THREAD_ID() (unsigned long)0

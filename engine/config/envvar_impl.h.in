@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2011 The Department of Arts and Culture,                           */
+/* Copyright (c) 2012 The Department of Arts and Culture,                           */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -24,68 +24,32 @@
 /************************************************************************************/
 /*                                                                                  */
 /* AUTHOR  : Aby Louw                                                               */
-/* DATE    : September 2011                                                         */
+/* DATE    : May 2010                                                               */
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* Find the Speect Plug-in path.                                                    */
-/*                                                                                  */
+/* envvar_impl.h is auto generated from config/envvar_impl.h.in                     */
+/* Do not edit envvar_impl.h                                                        */
 /*                                                                                  */
 /************************************************************************************/
 
-#ifndef _SPCT_MAIN_PLUGIN_PATH_H__
-#define _SPCT_MAIN_PLUGIN_PATH_H__
+#ifndef _SPCT_ENVVAR_IMPL_H__
+#define _SPCT_ENVVAR_IMPL_H__
 
 
 /**
- * @file plugin_path.h
- * Find the Speect Plug-in path.
+ * @file envvar_impl.h
+ * Platform dependent environment variables functions as determined by build system.
  */
 
 
 /************************************************************************************/
 /*                                                                                  */
-/* Modules used                                                                     */
+/* Modules used (Platform environment variable functions)                           */
 /*                                                                                  */
 /************************************************************************************/
 
-#include "include/common.h"
-#include "base/errdbg/errdbg.h"
+#include "base/utils/platform/@SPCT_ENVVAR_SPECIFIC_IMPL@"
 
 
-/************************************************************************************/
-/*                                                                                  */
-/* Begin external c declaration                                                     */
-/*                                                                                  */
-/************************************************************************************/
-S_BEGIN_C_DECLS
-
-
-/************************************************************************************/
-/*                                                                                  */
-/* Function prototypes                                                              */
-/*                                                                                  */
-/************************************************************************************/
-
-/**
- * Find the Speect plug-in path.
- *
- * @param error Error code.
- *
- * @return The Speect plug-in path or @c NULL.
- *
- * @note Not thread safe.
- * @note Caller is responsible for returned memory.
- */
-S_LOCAL char *_s_find_plugin_path(s_erc *error);
-
-
-/************************************************************************************/
-/*                                                                                  */
-/* End external c declaration                                                       */
-/*                                                                                  */
-/************************************************************************************/
-S_END_C_DECLS
-
-
-#endif /* _SPCT_MAIN_PLUGIN_PATH_H__ */
+#endif /* _SPCT_ENVVAR_IMPL_H__ */

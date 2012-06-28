@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2011 The Department of Arts and Culture,                           */
+/* Copyright (c) 2012 The Department of Arts and Culture,                           */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -24,22 +24,22 @@
 /************************************************************************************/
 /*                                                                                  */
 /* AUTHOR  : Aby Louw                                                               */
-/* DATE    : September 2011                                                         */
+/* DATE    : June 2012                                                              */
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* Find the Speect Plug-in path.                                                    */
+/* POSIX environment variable functions.                                            */
 /*                                                                                  */
 /*                                                                                  */
 /************************************************************************************/
 
-#ifndef _SPCT_MAIN_PLUGIN_PATH_H__
-#define _SPCT_MAIN_PLUGIN_PATH_H__
+#ifndef _SPCT_POSIX_ENVVAR_H__
+#define _SPCT_POSIX_ENVVAR_H__
 
 
 /**
- * @file plugin_path.h
- * Find the Speect Plug-in path.
+ * @file posix_envvar.h
+ * POSIX environment variable functions.
  */
 
 
@@ -63,29 +63,39 @@ S_BEGIN_C_DECLS
 
 /************************************************************************************/
 /*                                                                                  */
+/* Macros                                                                           */
+/*                                                                                  */
+/************************************************************************************/
+
+/* defines of the POSIX environment variable functions wrappers */
+
+#define _S_ENVVAR_GET(NAME, ERROR)	\
+	s_posix_envvar_get(NAME, ERROR)
+
+#define _S_GETENV_PLUGIN_PATH(ERROR)	\
+	s_posix_getenv_plugin_path(ERROR)
+
+
+/************************************************************************************/
+/*                                                                                  */
 /* Function prototypes                                                              */
 /*                                                                                  */
 /************************************************************************************/
 
-/**
- * Find the Speect plug-in path.
- *
- * @param error Error code.
- *
- * @return The Speect plug-in path or @c NULL.
- *
- * @note Not thread safe.
- * @note Caller is responsible for returned memory.
- */
-S_LOCAL char *_s_find_plugin_path(s_erc *error);
+/* Caller responsible for returned memory */
+S_LOCAL char *s_posix_envvar_get(const char *name, s_erc *error);
+
+/* Caller responsible for returned memory */
+S_LOCAL char *s_posix_getenv_plugin_path(s_erc *error);
 
 
-/************************************************************************************/
-/*                                                                                  */
-/* End external c declaration                                                       */
-/*                                                                                  */
-/************************************************************************************/
+/***********************************************************************************/
+/*                                                                                 */
+/* End external c declaration                                                      */
+/*                                                                                 */
+/***********************************************************************************/
 S_END_C_DECLS
 
 
-#endif /* _SPCT_MAIN_PLUGIN_PATH_H__ */
+#endif /* _SPCT_POSIX_ENVVAR_H__ */
+

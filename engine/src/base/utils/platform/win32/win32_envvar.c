@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2011 The Department of Arts and Culture,                           */
+/* Copyright (c) 2012 The Department of Arts and Culture,                           */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -24,23 +24,14 @@
 /************************************************************************************/
 /*                                                                                  */
 /* AUTHOR  : Aby Louw                                                               */
-/* DATE    : September 2011                                                         */
+/* DATE    : June 2012                                                              */
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* Find the Speect Plug-in path.                                                    */
+/* WIN32 environment variable functions.                                            */
 /*                                                                                  */
 /*                                                                                  */
 /************************************************************************************/
-
-#ifndef _SPCT_MAIN_PLUGIN_PATH_H__
-#define _SPCT_MAIN_PLUGIN_PATH_H__
-
-
-/**
- * @file plugin_path.h
- * Find the Speect Plug-in path.
- */
 
 
 /************************************************************************************/
@@ -49,43 +40,90 @@
 /*                                                                                  */
 /************************************************************************************/
 
-#include "include/common.h"
-#include "base/errdbg/errdbg.h"
+#include <Windows.h>
+#include "base/strings/strings.h"
+#include "base/utils/platform/win32/win32_envvar.h"
 
 
 /************************************************************************************/
 /*                                                                                  */
-/* Begin external c declaration                                                     */
-/*                                                                                  */
-/************************************************************************************/
-S_BEGIN_C_DECLS
-
-
-/************************************************************************************/
-/*                                                                                  */
-/* Function prototypes                                                              */
+/* Function implementations                                                         */
 /*                                                                                  */
 /************************************************************************************/
 
-/**
- * Find the Speect plug-in path.
- *
- * @param error Error code.
- *
- * @return The Speect plug-in path or @c NULL.
- *
- * @note Not thread safe.
- * @note Caller is responsible for returned memory.
- */
-S_LOCAL char *_s_find_plugin_path(s_erc *error);
+S_LOCAL char *s_win32_envvar_get(const char *name, s_erc *error)
+{
+	char *ev_sys;
+	HKEY hKey;
+	unsigned char key_value[512] = "";
+	DWORD key_value_size = sizeof(key_value);
+	DWORD key_value_type = 0;
 
 
-/************************************************************************************/
-/*                                                                                  */
-/* End external c declaration                                                       */
-/*                                                                                  */
-/************************************************************************************/
-S_END_C_DECLS
+	S_CLR_ERR(error);
+
+	if (RegOpenKeyEx(HKEY_LOCAL_MACHINE,
+					 "SOFTWARE\\Speect",
+					 0,
+					 KEY_QUERY_VALUE,
+					 &hKey) != ERROR_SUCCESS)
+	{
+		S_NEW_ERR(error, S_FAILURE);
+		S_ERR_PRINT(S_FAILURE, "s_win32_envvar_get",
+				"Call to \"RegOpenKeyEx\" failed");
+		return NULL;
+	}
+
+	if (RegQueryValueEx(hKey,
+						name,
+						NULL,
+						&key_value_type,
+						key_value,
+						&key_value_size) != ERROR_SUCCESS)
+	{
+		S_NEW_ERR(error, S_FAILURE);
+		S_ERR_PRINT(S_FAILURE, "s_win32_envvar_get",
+					"Call to \"RegQueryValueEx\" failed");
+		return NULL;
+	}
+
+	/* Make sure it is NULL terminted */
+	key_value[sizeof(key_value)-1] = 0;
+	RegCloseKey(hKey);
+
+	if (key_value == NULL)
+		return NULL;
+
+	ev_sys = s_strdup_clib(key_value);
+	if (ev_sys == NULL)
+	{
+		S_ERR_PRINT(S_FAILURE, "s_win32_envvar_get",
+					"Call to \"s_strdup\" failed");
+		return NULL;
+	}
+
+	return ev_sys;
+}
 
 
-#endif /* _SPCT_MAIN_PLUGIN_PATH_H__ */
+S_LOCAL char *s_win32_getenv_plugin_path(s_erc *error)
+{
+	char *tmp;
+
+
+	S_CLR_ERR(error);
+
+	/* Speect plug-in path is defined in registry as
+	 * HKEY_LOCAL_MACHINE\\SOFTWARE\\Speect\\plugin_path
+	 */
+	tmp = s_win32_envvar_get("plugin_path", error);
+	if ((error != NULL) & (*error != S_SUCCESS))
+	{
+		S_ERR_PRINT(S_FAILURE, "s_win32_getenv_plugin_path",
+					"Call to \"s_win32_envvar_get\" failed");
+		return NULL;
+	}
+
+	return tmp;
+}
+

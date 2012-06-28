@@ -71,7 +71,7 @@ static uint initialized_count = 0;
 S_API s_erc speect_init(s_logger *logger)
 {
 	s_erc local_err = S_SUCCESS;
-	const char *plugin_path;
+	char *plugin_path;
 	s_logger *local_logger;
 
 
@@ -141,18 +141,6 @@ S_API s_erc speect_init(s_logger *logger)
 		return S_FAILURE;
 	}
 
-	/* get the plug-in path */
-	plugin_path = _s_find_plugin_path(&local_err);
-	if (S_CHK_ERR(&local_err, S_CONTERR,
-				  "speect_init",
-				  "Unable to find the plug-in path, call to \"_s_find_plugin_path\" failed"))
-	{
-		logger = NULL;
-		_s_errdbg_quit(&local_err);
-		initialized_count--;
-		return S_FAILURE;
-	}
-
 	/* create the class repository, size of 128 should be OK for now. */
 	_s_classes_create(128, &local_err);
 	if (S_CHK_ERR(&local_err, S_CONTERR,
@@ -177,6 +165,18 @@ S_API s_erc speect_init(s_logger *logger)
 		return S_FAILURE;
 	}
 
+	/* get the plug-in path */
+	plugin_path = _s_find_plugin_path(&local_err);
+	if (S_CHK_ERR(&local_err, S_CONTERR,
+				  "speect_init",
+				  "Unable to find the plug-in path, call to \"_s_find_plugin_path\" failed"))
+	{
+		logger = NULL;
+		_s_errdbg_quit(&local_err);
+		initialized_count--;
+		return S_FAILURE;
+	}
+
 	/* initialize the class repository */
 	_s_classes_init(&local_err);
 	if (S_CHK_ERR(&local_err, S_CONTERR,
@@ -184,6 +184,7 @@ S_API s_erc speect_init(s_logger *logger)
 				  "Failed to initialize Speect Engine class repository"))
 	{
 		logger = NULL;
+		S_FREE(plugin_path);
 		_s_modules_quit(&local_err);
 		_s_errdbg_quit(&local_err);
 		initialized_count--;
@@ -197,6 +198,7 @@ S_API s_erc speect_init(s_logger *logger)
 				  "Failed to initialize Speect Engine managers"))
 	{
 		logger = NULL;
+		S_FREE(plugin_path);
 		_s_modules_quit(&local_err);
 		_s_classes_clear(&local_err);
 		_s_errdbg_quit(&local_err);
@@ -212,6 +214,7 @@ S_API s_erc speect_init(s_logger *logger)
 				  "Failed to set plug-in path in the plugin-manager"))
 	{
 		logger = NULL;
+		S_FREE(plugin_path);
 		_s_managers_quit(&local_err);
 		_s_modules_quit(&local_err);
 		_s_classes_clear(&local_err);
@@ -219,6 +222,8 @@ S_API s_erc speect_init(s_logger *logger)
 		initialized_count--;
 		return S_FAILURE;
 	}
+
+	S_FREE(plugin_path);
 
 #ifdef SPCT_DEBUGMODE
 	_s_classes_print(&local_err);

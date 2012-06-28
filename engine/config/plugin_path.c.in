@@ -42,6 +42,8 @@
 /************************************************************************************/
 
 #include <stdlib.h>
+#include "base/strings/strings.h"
+#include "base/utils/envvar.h"
 #include "main/plugin_path.h"
 
 
@@ -73,7 +75,7 @@ static const char *s_build_plugin_path = "@SPCT_BUILD_PLUGIN_PATH@";
 /*                                                                                  */
 /************************************************************************************/
 
-static const char *get_plugin_path(s_erc *error);
+static char *get_plugin_path(s_erc *error);
 
 static s_bool file_exists(const char *path, const char *mode, s_erc *error);
 
@@ -84,9 +86,9 @@ static s_bool file_exists(const char *path, const char *mode, s_erc *error);
 /*                                                                                  */
 /************************************************************************************/
 
-S_LOCAL const char *_s_find_plugin_path(s_erc *error)
+S_LOCAL char *_s_find_plugin_path(s_erc *error)
 {
-	const char *path;
+	char *path;
 
 
 	S_CLR_ERR(error);
@@ -113,7 +115,7 @@ S_LOCAL const char *_s_find_plugin_path(s_erc *error)
  * variable SPCT_PLUGIN_PATH exists then it will take preference over
  * all.
  */
-static const char *get_plugin_path(s_erc *error)
+static char *get_plugin_path(s_erc *error)
 {
 	s_bool file_ok;
 	char *tmp;
@@ -121,7 +123,14 @@ static const char *get_plugin_path(s_erc *error)
 
 	S_CLR_ERR(error);
 
-	tmp = getenv("SPCT_PLUGIN_PATH");
+	tmp = s_getenv_plugin_path(error);
+	if ((error != NULL) & (*error != S_SUCCESS))
+	{
+		S_ERR_PRINT(*error, "get_plugin_path_file",
+					"Call to \"file_exists\" failed");
+		return NULL;
+	}
+
 	if (tmp != NULL)
 		return tmp;
 
@@ -134,7 +143,17 @@ static const char *get_plugin_path(s_erc *error)
 	}
 
 	if (file_ok)
-		return s_install_plugin_path;
+	{
+		tmp = s_strdup_clib(s_install_plugin_path);
+		if (tmp == NULL)
+		{
+			S_ERR_PRINT(S_FAILURE, "get_plugin_path_file",
+						"Call to \"s_strdup_clib\" failed");
+			return NULL;
+		}
+
+		return tmp;
+	}
 
 	file_ok = file_exists(S_BUILD_PLUGIN_PATH_FILE, "r", error);
 	if ((error != NULL) & (*error != S_SUCCESS))
@@ -145,7 +164,17 @@ static const char *get_plugin_path(s_erc *error)
 	}
 
 	if (file_ok)
-		return s_build_plugin_path;
+	{
+		tmp = s_strdup_clib(s_build_plugin_path);
+		if (tmp == NULL)
+		{
+			S_ERR_PRINT(S_FAILURE, "get_plugin_path_file",
+						"Call to \"s_strdup_clib\" failed");
+			return NULL;
+		}
+
+		return tmp;
+	}
 
 	if (error != NULL)
 		S_NEW_ERR(error, S_FAILURE);

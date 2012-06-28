@@ -69,6 +69,9 @@ include(engineAbstractionDSO)
 # Memory mapped files support
 include(engineAbstractionMMap)
 
+# Environment Variables
+include(engineAbstractionEnvVar)
+
 
 #------------------------------------------------------------------------------------#
 #                      Speect Engine library include config file                     #

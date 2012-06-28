@@ -28,27 +28,23 @@
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* Simple file tokenization example.                                                */
+/* Simple string tokenization example.                                              */
 /*                                                                                  */
 /*                                                                                  */
 /************************************************************************************/
 
 #include <stdio.h>
 #include "speect.h"
-#include "tokenizer_file.h"
-
-
-static const char *plugin_path = "tokenizer.spi";
 
 
 int main()
 {
 	s_erc error;
-	SPlugin *plugin = NULL;
 	STokenizer *ts = NULL;
 	s_bool eof;
 	SToken *token;
 	const char *tmp;
+	const char *string_to_tokenize = "\"my (ma) se $10.00 en!, ek abý sal? [en;]   jy.\"";
 
 
 	S_CLR_ERR(&error);
@@ -63,38 +59,21 @@ int main()
 		return 1;
 	}
 
-	/*
-	 * load the tokenizer plug-in
-	 */
-	plugin = s_pm_load_plugin(plugin_path, &error);
+	/* create string tokenizer */
+	ts = (STokenizer*)S_NEW(STokenizerString, &error);
 	if (S_CHK_ERR(&error, S_CONTERR,
 				  "main",
-				  "Failed to load plug-in at '%s'", plugin_path))
-	{
-		printf("failed to load plug-in\n");
+				  "Failed to create new string tokenizer"))
 		goto quit;
-	}
-	else
-	{
-		printf("plug-in loaded\n");
-	}
 
-	/* create file tokenizer */
-	ts = (STokenizer*)S_NEW(STokenizerFile, &error);
+	/* initialize string tokenizer */
+	STokenizerStringInit((STokenizerString**)&ts, string_to_tokenize, &error);
 	if (S_CHK_ERR(&error, S_CONTERR,
 				  "main",
-				  "Failed to create new file tokenizer"))
+				  "Failed to initialize string tokenizer"))
 		goto quit;
 
-	/* initialize file tokenizer */
-	S_TOKENIZER_FILE_CALL(S_TOKENIZER_FILE(ts), init)((STokenizerFile**)&ts,
-													  "test_file.txt", &error);
-	if (S_CHK_ERR(&error, S_CONTERR,
-				  "main",
-				  "Failed to initialize file tokenizer"))
-		goto quit;
-
-	eof = S_TOKENIZER_CALL(ts, query_eof)(ts, &error);
+	eof = STokenizerQueryEOF(ts, &error);
 	if (S_CHK_ERR(&error, S_CONTERR,
 				  "main",
 				  "Failed to query end of file"))
@@ -102,13 +81,13 @@ int main()
 
 	while (!eof)
 	{
-		token = S_TOKENIZER_CALL(ts, peek_token)(ts, &error);
+		token = STokenizerPeekToken(ts, &error);
 		if (S_CHK_ERR(&error, S_CONTERR,
 					  "main",
 					  "Failed to peek token"))
 			goto quit;
 
-		tmp = S_TOKEN_CALL(token, get_string)(token, &error);
+		tmp = STokenGetString(token, &error);
 		if (S_CHK_ERR(&error, S_CONTERR,
 					  "main",
 					  "Failed to get token string"))
@@ -118,7 +97,7 @@ int main()
 			break;
 		else
 		{
-			token = S_TOKENIZER_CALL(ts, get_token)(ts, &error);
+			token = STokenizerGetToken(ts, &error);
 			if (S_CHK_ERR(&error, S_CONTERR,
 						  "main",
 						  "Failed to get token"))
@@ -128,7 +107,7 @@ int main()
 		printf("\nTOKEN:\n");
 
 		/* white space */
-		tmp = S_TOKEN_CALL(token, get_whitespace)(token, &error);
+		tmp = STokenGetWhitespace(token, &error);
 		if (S_CHK_ERR(&error, S_CONTERR,
 					  "main",
 					  "Failed to get token white-space"))
@@ -140,7 +119,7 @@ int main()
 			printf("token whitespace = NULL.\n");
 
 		/* pre-punctuation */
-		tmp = S_TOKEN_CALL(token, get_pre_punc)(token, &error);
+		tmp = STokenGetPrePunc(token, &error);
 		if (S_CHK_ERR(&error, S_CONTERR,
 					  "main",
 					  "Failed to get token pre-punctuation"))
@@ -152,7 +131,7 @@ int main()
 			printf("token pre-punctuation = NULL.\n");
 
 		/* token string */
-		tmp = S_TOKEN_CALL(token, get_string)(token, &error);
+		tmp = STokenGetString(token, &error);
 		if (S_CHK_ERR(&error, S_CONTERR,
 					  "main",
 					  "Failed to get token string"))
@@ -164,7 +143,7 @@ int main()
 			printf("token string = NULL.\n");
 
 		/* post-punctuation */
-		tmp = S_TOKEN_CALL(token, get_post_punc)(token, &error);
+		tmp = STokenGetPostPunc(token, &error);
 		if (S_CHK_ERR(&error, S_CONTERR,
 					  "main",
 					  "Failed to get token post-punctuation"))
@@ -175,7 +154,7 @@ int main()
 		else
 			printf("token post-punctuation = NULL.\n");
 
-		eof = S_TOKENIZER_CALL(ts, query_eof)(ts, &error);
+		eof = STokenizerQueryEOF(ts, &error);
 		if (S_CHK_ERR(&error, S_CONTERR,
 					  "main",
 					  "Failed to query end of file"))
@@ -189,10 +168,6 @@ int main()
 quit:
 	if (ts != NULL)
 		S_DELETE(ts, "main", &error);
-
-	/* must be after tokenizer */
-	if (plugin != NULL)
-		S_DELETE(plugin, "main", &error);
 
 	/*
 	 * quit speect

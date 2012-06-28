@@ -28,13 +28,16 @@
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* A string tokenizer class implementation.                                         */
+/* A token class implementation.                                                    */
 /* Loosely based on EST_Token of Edinburgh Speech Tools,                            */
 /* http://www.cstr.ed.ac.uk/projects/speech_tools (1.2.96)                          */
 /* Note that this is a derived work with no verbatim source code from above         */
 /* mentioned project.                                                               */
 /*                                                                                  */
 /************************************************************************************/
+
+#ifndef _SPCT_TOKEN_H__
+#define _SPCT_TOKEN_H__
 
 
 /************************************************************************************/
@@ -72,343 +75,329 @@
 /************************************************************************************/
 
 
+/**
+ * @file token.h
+ * A token class implementation.
+ */
+
+
+/**
+ * @ingroup STokenizer
+ * @defgroup SToken Token
+ * A token class. A token consists of four parts, any of which may be
+ * empty: the actual token, preceding whitespace, preceding
+ * punctuation, and succeeding punctuation.
+ * @{
+ */
+
+
 /************************************************************************************/
 /*                                                                                  */
 /* Modules used                                                                     */
 /*                                                                                  */
 /************************************************************************************/
 
-#include "tokenizer_string.h"
+#include "include/common.h"
+#include "base/objsystem/objsystem.h"
+#include "base/errdbg/errdbg.h"
 
 
 /************************************************************************************/
 /*                                                                                  */
-/* Static variables                                                                 */
+/* Begin external c declaration                                                     */
 /*                                                                                  */
 /************************************************************************************/
-
-static STokenizerStringClass TokenizerStringClass; /* STokenizerString class declaration. */
-
-/* A tokenizer to give us access to the STokenizerClass functions */
-static STokenizer *tokenizer = NULL;
-
-static uint num_string_tokenizers = 0;
+S_BEGIN_C_DECLS
 
 
 /************************************************************************************/
 /*                                                                                  */
-/* Plug-in class registration/free                                                  */
+/* Macros                                                                           */
 /*                                                                                  */
 /************************************************************************************/
 
-/* local functions to register and free classes */
-S_LOCAL void _s_tokenizer_string_class_reg(s_erc *error)
-{
-	S_CLR_ERR(error);
-	s_class_reg(S_OBJECTCLASS(&TokenizerStringClass), error);
-	S_CHK_ERR(error, S_CONTERR,
-			  "_s_tokenizer_string_class_reg",
-			  "Failed to register STokenizerStringClass");
-}
-
-
-S_LOCAL void _s_tokenizer_string_class_free(s_erc *error)
-{
-	S_CLR_ERR(error);
-	s_class_free(S_OBJECTCLASS(&TokenizerStringClass), error);
-	S_CHK_ERR(error, S_CONTERR,
-			  "_s_tokenizer_string_class_free",
-			  "Failed to free STokenizerStringClass");
-}
-
-/************************************************************************************/
-/*                                                                                  */
-/* Static class function implementations                                            */
-/*                                                                                  */
-/************************************************************************************/
-
-static void Init(void *obj, s_erc *error)
-{
-	STokenizerString *self = obj;
-
-
-	S_CLR_ERR(error);
-
-	if (num_string_tokenizers++ == 0)
-	{
-		/* create a tokenizer to give us access to the STokenizerClass functions */
-		tokenizer = S_NEW(STokenizer, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "Init",
-					  "Failed to create tokenizer to give STokenizerClass function access"))
-			return;
-	}
-
-	self->string = NULL;
-	self->pos = 0;
-}
-
-
-static void Destroy(void *obj, s_erc *error)
-{
-	STokenizerString *self = obj;
-
-
-	S_CLR_ERR(error);
-
-	if (self->string != NULL)
-		S_FREE(self->string);
-
-	if (--num_string_tokenizers == 0)
-		S_DELETE(tokenizer, "Destroy", error);
-}
-
-
-static void Dispose(void *obj, s_erc *error)
-{
-	S_CLR_ERR(error);
-	SObjectDecRef(obj);
-}
-
-
-static void GetChar(STokenizer *self, s_erc *error)
-{
-	uint32 utf8char = 0;
-	STokenizerString *ts = S_TOKENIZER_STRING(self);
-	size_t strlen;
-
-
-	S_CLR_ERR(error);
-	strlen = s_strlen(ts->string, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "GetChar",
-				  "Call to \"s_strlen\" failed"))
-		return;
-
-	if (ts->pos < strlen)
-	{
-		utf8char = s_getat(ts->string, ts->pos++, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "GetChar",
-					  "Call to \"s_getat\" failed"))
-			return;
-	}
-	else
-	{
-		self->eof = TRUE;
-	}
-
-	self->current_char = utf8char;
-}
-
-
-static void Seek(STokenizer *self, ulong pos, s_erc *error)
-{
-	STokenizerString *ts = S_TOKENIZER_STRING(self);
-	size_t strlen;
-
-
-	S_CLR_ERR(error);
-	strlen = s_strlen(ts->string, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "Seek",
-				  "Call to \"s_strlen\" failed"))
-		return;
-
-	if (pos < strlen)
-	{
-		ts->pos = (uint32)pos;
-	}
-	else
-	{
-		self->eof = TRUE;
-	}
-}
-
-
-static ulong Tell(STokenizer *self, s_erc *error)
-{
-	STokenizerString *ts = S_TOKENIZER_STRING(self);
-
-
-	S_CLR_ERR(error);
-	return (ulong)ts->pos;
-}
-
-
-
-static SToken *GetToken(STokenizer *self, s_erc *error)
-{
-	SToken *token;
-
-
-	S_CLR_ERR(error);
-	token = S_TOKENIZER_CALL(tokenizer, get_token)(self, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "GetToken",
-				  "Call to method \"get_token\" failed"))
-		return NULL;
-
-	return token;
-}
-
-
-static SToken *PeekToken(STokenizer *self, s_erc *error)
-{
-	SToken *token;
-
-
-	S_CLR_ERR(error);
-	token = S_TOKENIZER_CALL(tokenizer, peek_token)(self, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "PeekToken",
-				  "Call to method \"peek_token\" failed"))
-		return NULL;
-
-	return token;
-}
-
-
-static void SetWhitespaceChars(STokenizer *self, const char *white_space_chars,
-							   s_erc *error)
-{
-	S_CLR_ERR(error);
-	S_TOKENIZER_CALL(tokenizer, set_whitespace_chars)(self, white_space_chars, error);
-	S_CHK_ERR(error, S_CONTERR,
-			  "SetWhitespaceChars",
-			  "Call to method \"set_whitespace_chars\" failed");
-}
-
-
-static void SetSingleChars(STokenizer *self, const char *single_chars,
-						   s_erc *error)
-{
-	S_CLR_ERR(error);
-	S_TOKENIZER_CALL(tokenizer, set_single_chars)(self, single_chars, error);
-	S_CHK_ERR(error, S_CONTERR,
-			  "SetSingleChars",
-			  "Call to method \"set_single_chars\" failed");
-}
-
-
-static void SetPrePuncChars(STokenizer *self, const char *pre_punc_chars,
-							s_erc *error)
-{
-	S_CLR_ERR(error);
-	S_TOKENIZER_CALL(tokenizer, set_prepunc_chars)(self, pre_punc_chars, error);
-	S_CHK_ERR(error, S_CONTERR,
-			  "SetPrePuncChars",
-			  "Call to method \"set_prepunc_chars\" failed");
-}
-
-
-static void SetPostPuncChars(STokenizer *self, const char *post_punc_chars,
-							 s_erc *error)
-{
-	S_CLR_ERR(error);
-	S_TOKENIZER_CALL(tokenizer, set_postpunc_chars)(self, post_punc_chars, error);
-	S_CHK_ERR(error, S_CONTERR,
-			  "SetPostPuncChars",
-			  "Call to method \"set_postpunc_chars\" failed");
-}
-
-
-static void SetQuotes(STokenizer *self, uint32 quote, uint32 escape, s_erc *error)
-{
-	S_CLR_ERR(error);
-	S_TOKENIZER_CALL(tokenizer, set_quotes)(self, quote, escape, error);
-	S_CHK_ERR(error, S_CONTERR,
-			  "SetQuotes",
-			  "Call to method \"set_quotes\" failed");
-}
-
-
-static s_bool QueryQuoteMode(STokenizer *self, s_erc *error)
-{
-	S_CLR_ERR(error);
-
-	return self->quote_mode;
-}
-
-
-static s_bool QueryEOF(STokenizer *self, s_erc *error)
-{
-	S_CLR_ERR(error);
-
-	return self->eof;
-}
-
-
-void InitStringTokenizer(STokenizerString **self, const char *string, s_erc *error)
-{
-	S_CLR_ERR(error);
-
-	if (string == NULL)
-	{
-		S_CTX_ERR(error, S_ARGERROR,
-				  "InitStringTokenizer",
-				  "Argument \"string\" is NULL");
-		return;
-	}
-
-	(*self)->string = s_strdup(string, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "InitStringTokenizer",
-				  "Call to \"s_strdup\" failed"))
-	{
-		S_DELETE(*self, "InitStringTokenizer", error);
-		*self = NULL;
-		return;
-	}
-
-	/* get the first character */
-	GetChar(S_TOKENIZER(*self), error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "InitStringTokenizer",
-				  "Call to method \"get_char\" failed"))
-	{
-		S_DELETE(*self, "InitStringTokenizer", error);
-		*self = NULL;
-		return;
-	}
-}
+/**
+ * @hideinitializer
+ * Return the given #SToken child/parent class object as a
+ * #SToken object.
+ *
+ * @param SELF The given object.
+ *
+ * @return Given object as #SToken* type.
+ * @note This casting is not safety checked.
+ */
+#define S_TOKEN(SELF)    ((SToken *)(SELF))
 
 
 /************************************************************************************/
 /*                                                                                  */
-/* STokenizerString class initialization                                            */
+/* SToken definition                                                                */
 /*                                                                                  */
 /************************************************************************************/
 
-static STokenizerStringClass TokenizerStringClass =
+/**
+ * The token structure.
+ * @extends SObject
+ */
+typedef struct
 {
-	{
-		/* SObjectClass */
-		{
-			"STokenizer:STokenizerString",
-			sizeof(STokenizerString),
-			{ 0, 1},
-			Init,            /* init    */
-			Destroy,         /* destroy */
-			Dispose,         /* dispose */
-			NULL,            /* compare */
-			NULL,            /* print   */
-			NULL,            /* copy    */
-		},
-		/* STokenizerClass */
-		GetChar,             /* get_char             */
-		Seek,                /* seek                 */
-		Tell,                /* tell                 */
-		GetToken,            /* get_token            */
-		PeekToken,           /* peek_token           */
-		SetWhitespaceChars,  /* set_whitespace_chars */
-		SetSingleChars,      /* set_single_chars     */
-		SetPrePuncChars,     /* set_prepunc_chars    */
-		SetPostPuncChars,    /* set_postpunc_chars   */
-		SetQuotes,           /* set_quotes           */
-		QueryQuoteMode,      /* query_quote_mode     */
-		QueryEOF,            /* query_eof            */
-	},
-	/* STokenizerStringClass */
-	InitStringTokenizer        /* init  */
-};
+	/**
+	 * @protected Inherit from #SObject.
+	 */
+	SObject  obj;
+
+	/**
+	 * @protected Token preceding white-space.
+	 */
+	char *whitespace;
+
+	/**
+	 * @protected Token pre-punctuation.
+	 */
+	char *pre_punc;
+
+	/**
+	 * @protected Token post-punctuation.
+	 */
+	char *post_punc;
+
+	/**
+	 * @protected The actual token string.
+	 */
+	char *string;
+} SToken;
+
+
+/************************************************************************************/
+/*                                                                                  */
+/* STokenClass definition                                                           */
+/*                                                                                  */
+/************************************************************************************/
+
+/**
+ * The token class structure.
+ * @extends SObjectClass
+ */
+typedef struct
+{
+	/* Class members */
+	/**
+	 * @protected Inherit from #SObjectClass.
+	 */
+	SObjectClass  _inherit;
+
+	/* Class methods */
+	/**
+	 * Get the given token's preceding white-space.
+	 * @protected GetWhitespace function pointer.
+	 *
+	 * @param self The given token.
+	 * @param error Error code.
+	 *
+	 * @return The token's preceding white-space (may be @c NULL).
+	 */
+	const char *(* const get_whitespace)(const SToken *self, s_erc *error);
+
+	/**
+	 * Set the given token's preceding white-space.
+	 * @protected SetWhitespace function pointer.
+	 *
+	 * @param self The given token.
+	 * @param whitespace The white-space to set.
+	 * @param error Error code.
+	 */
+	void (* const set_whitespace)(SToken *self, const char *whitespace, s_erc *error);
+
+	/**
+	 * Get the given token's pre-punctuation.
+	 * @protected GetPrePunc function pointer.
+	 *
+	 * @param self The given token.
+	 * @param error Error code.
+	 *
+	 * @return The token's pre-punctuation (may be @c NULL).
+	 */
+	const char *(* const get_pre_punc)(const SToken *self, s_erc *error);
+
+	/**
+	 * Set the given token's pre-punctuation.
+	 * @protected SetPrePunc function pointer.
+	 *
+	 * @param self The given token.
+	 * @param pre_punc The pre-punctuation to set.
+	 * @param error Error code.
+	 */
+	void (* const set_pre_punc)(SToken *self, const char *pre_punc, s_erc *error);
+
+	/**
+	 * Get the given token's post-punctuation.
+	 * @protected GetPostPunc function pointer.
+	 *
+	 * @param self The given token.
+	 * @param error Error code.
+	 *
+	 * @return The token's post-punctuation (may be @c NULL).
+	 */
+	const char *(* const get_post_punc)(const SToken *self, s_erc *error);
+
+	/**
+	 * Set the given token's post-punctuation.
+	 * @protected SetPostPunc function pointer.
+	 *
+	 * @param self The given token.
+	 * @param post_punc The post-punctuation to set.
+	 * @param error Error code.
+	 */
+	void (* const set_post_punc)(SToken *self, const char *post_punc, s_erc *error);
+
+	/**
+	 * Get the given token's actual token string.
+	 * @protected GetTokenString function pointer.
+	 *
+	 * @param self The given token.
+	 * @param error Error code.
+	 *
+	 * @return The token's actual token string.
+	 */
+	const char *(* const get_string)(const SToken *self, s_erc *error);
+
+	/**
+	 * Set the given token's actual token string.
+	 * @protected SetTokenString function pointer.
+	 *
+	 * @param self The given token.
+	 * @param string The token string to set.
+	 * @param error Error code.
+	 */
+	void (* const set_string)(SToken *self, const char *string, s_erc *error);
+} STokenClass;
+
+
+/************************************************************************************/
+/*                                                                                  */
+/* Function prototypes                                                              */
+/*                                                                                  */
+/************************************************************************************/
+
+/**
+ * Get the given token's preceding white-space.
+ *
+ * @public @memberof SToken
+ *
+ * @param self The given token.
+ * @param error Error code.
+ *
+ * @return The token's preceding white-space (may be @c NULL).
+ */
+S_API const char *STokenGetWhitespace(const SToken *self, s_erc *error);
+
+
+/**
+ * Set the given token's preceding white-space.
+ *
+ * @public @memberof SToken
+ *
+ * @param self The given token.
+ * @param whitespace The white-space to set.
+ * @param error Error code.
+ */
+S_API void STokenSetWhitespace(SToken *self, const char *whitespace, s_erc *error);
+
+
+/**
+ * Get the given token's pre-punctuation.
+ *
+ * @public @memberof SToken
+ *
+ * @param self The given token.
+ * @param error Error code.
+ *
+ * @return The token's pre-punctuation (may be @c NULL).
+ */
+S_API const char *STokenGetPrePunc(const SToken *self, s_erc *error);
+
+
+/**
+ * Set the given token's pre-punctuation.
+ *
+ * @public @memberof SToken
+ *
+ * @param self The given token.
+ * @param pre_punc The pre-punctuation to set.
+ * @param error Error code.
+ */
+S_API void STokenSetPrePunc(SToken *self, const char *pre_punc, s_erc *error);
+
+
+/**
+ * Get the given token's post-punctuation.
+ *
+ * @public @memberof SToken
+ *
+ * @param self The given token.
+ * @param error Error code.
+ *
+ * @return The token's post-punctuation (may be @c NULL).
+ */
+S_API const char *STokenGetPostPunc(const SToken *self, s_erc *error);
+
+
+/**
+ * Set the given token's post-punctuation.
+ *
+ * @public @memberof SToken
+ *
+ * @param self The given token.
+ * @param post_punc The post-punctuation to set.
+ * @param error Error code.
+ */
+S_API void STokenSetPostPunc(SToken *self, const char *post_punc, s_erc *error);
+
+
+/**
+ * Get the given token's actual token string.
+ *
+ * @public @memberof SToken
+ *
+ * @param self The given token.
+ * @param error Error code.
+ *
+ * @return The token's actual token string.
+ */
+S_API const char *STokenGetString(const SToken *self, s_erc *error);
+
+
+/**
+ * Set the given token's actual token string.
+ *
+ * @public @memberof SToken
+ *
+ * @param self The given token.
+ * @param string The token string to set.
+ * @param error Error code.
+ */
+S_API void STokenSetString(SToken *self, const char *string, s_erc *error);
+
+
+/**
+ * Add the SToken class to the object system.
+ * @private @memberof SToken
+ * @param error Error code.
+ */
+S_LOCAL void _s_token_class_add(s_erc *error);
+
+
+/************************************************************************************/
+/*                                                                                  */
+/* End external c declaration                                                       */
+/*                                                                                  */
+/************************************************************************************/
+S_END_C_DECLS
+
+
+/**
+ * @}
+ * end documentation
+ */
+
+#endif /* _SPCT_TOKEN_H__ */

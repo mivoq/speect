@@ -28,7 +28,7 @@
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* A string tokenizer class implementation.                                         */
+/* A file tokenizer class implementation.                                           */
 /* Loosely based on EST_Token of Edinburgh Speech Tools,                            */
 /* http://www.cstr.ed.ac.uk/projects/speech_tools (1.2.96)                          */
 /* Note that this is a derived work with no verbatim source code from above         */
@@ -36,8 +36,8 @@
 /*                                                                                  */
 /************************************************************************************/
 
-#ifndef _SPCT_PLUGIN_TOKENIZER_STRING_H__
-#define _SPCT_PLUGIN_TOKENIZER_STRING_H__
+#ifndef _SPCT_TOKENIZER_FILE_H__
+#define _SPCT_TOKENIZER_FILE_H__
 
 
 /************************************************************************************/
@@ -75,15 +75,15 @@
 /************************************************************************************/
 
 /**
- * @file tokenizer_string.h
- * A string tokenizer class implementation.
+ * @file tokenizer_file.h
+ * A file tokenizer class implementation.
  */
 
 
 /**
  * @ingroup STokenizer
- * @defgroup STokenizerString String Tokenizer
- * A string tokenizer class implementation.
+ * @defgroup STokenizerFile File Tokenizer
+ * A file tokenizer class implementation.
  * @{
  */
 
@@ -94,8 +94,11 @@
 /*                                                                                  */
 /************************************************************************************/
 
-#include "speect.h"
-#include "tokenizer.h"
+#include "include/common.h"
+#include "base/errdbg/errdbg.h"
+#include "datasources/file_source.h"
+#include "utils/tokenizer.h"
+
 
 /************************************************************************************/
 /*                                                                                  */
@@ -113,58 +116,25 @@ S_BEGIN_C_DECLS
 
 /**
  * @hideinitializer
- * Return the given #STokenizerString child/parent class object as a
- * #STokenizerString object.
+ * Return the given #STokenizerFile child/parent class object as a
+ * #STokenizerFile object.
  *
  * @param SELF The given object.
  *
- * @return Given object as #STokenizerString* type.
+ * @return Given object as #STokenizerFile* type.
  * @note This casting is not safety checked.
  */
-#define S_TOKENIZER_STRING(SELF)    ((STokenizerString *)(SELF))
-
-
-/**
- * @hideinitializer
- * Call the given function method of the given #STokenizerString,
- * see full description #S_TOKENIZER_STRING_CALL for usage.
- *
- * @param SELF The given #STokenizerString*.
- * @param FUNC The function method of the given object to call.
- *
- * @note This casting is not safety checked.
- * @note Example usage: @code S_TOKENIZER_STRING_CALL(self, func)(param1, param2, ..., paramN); @endcode
- * where @c param1, @c param2, ..., @c paramN are the parameters passed to the object function
- * @c func.
- */
-#define S_TOKENIZER_STRING_CALL(SELF, FUNC)					\
-	((STokenizerStringClass *)S_OBJECT_CLS(SELF))->FUNC
-
-
-/**
- * @hideinitializer
- * Test if the given function method of the given #STokenizerString
- * can be called.
- *
- * @param SELF The given #STokenizerString*.
- * @param FUNC The function method of the given object to check.
- *
- * @return #TRUE if function can be called, otherwise #FALSE.
- *
- * @note This casting is not safety checked.
- */
-#define S_TOKENIZER_STRING_METH_VALID(SELF, FUNC)		\
-	S_TOKENIZER_STRING_CALL(SELF, FUNC) ? TRUE : FALSE
+#define S_TOKENIZER_FILE(SELF)    ((STokenizerFile *)(SELF))
 
 
 /************************************************************************************/
 /*                                                                                  */
-/* STokenizerString definition                                                      */
+/* STokenizerFile definition                                                        */
 /*                                                                                  */
 /************************************************************************************/
 
 /**
- * The string tokenizer structure.
+ * The file tokenizer structure.
  * @extends STokenizer
  */
 typedef struct
@@ -175,74 +145,53 @@ typedef struct
 	STokenizer     obj;
 
 	/**
-	 * @protected The string source.
+	 * @protected The file data source.
 	 */
-	char          *string;
-
-	/**
-	 * @protected The string position.
-	 */
-	uint32         pos;
-} STokenizerString;
+	SDatasource   *ds;
+} STokenizerFile;
 
 
 /************************************************************************************/
 /*                                                                                  */
-/* STokenizerStringClass definition                                                 */
+/* STokenizerFileClass definition                                                   */
 /*                                                                                  */
 /************************************************************************************/
 
 /**
- * The string tokenizer class structure.
- * @extends STokenizerClass
+ * The file tokenizer class structure. Same as #STokenizerClass as
+ * we are not adding any new methods.
  */
-typedef struct
-{
-	/* Class members */
-	/**
-	 * @protected Inherit from #STokenizerClass.
-	 */
-	STokenizerClass  _inherit;
-
-	/* Class methods */
-	/**
-	 * @protected Init function pointer.
-	 * Initialize a string tokenizer with a string.
-	 *
-	 * @param self The file tokenizer to initialize.
-	 * @param string The string to tokenize.
-	 * @param error Error code.
-	 *
-	 * @note If this function fails the string tokenizer will be deleted
-	 * and the @c self pointer will be set to @c NULL.
-	 */
-	void (*init) (STokenizerString **self, const char *string, s_erc *error);
-} STokenizerStringClass;
+typedef STokenizerClass STokenizerFileClass;
 
 
 /************************************************************************************/
 /*                                                                                  */
-/* Plug-in class registration/free                                                  */
+/* Function prototypes                                                              */
 /*                                                                                  */
 /************************************************************************************/
 
 /**
- * Register the #STokenizerString plug-in class with the Speect Engine object
- * system.
- * @private
+ * Initialize a file tokenizer with a file path.
  *
+ * @public @memberof STokenizerFile
+ *
+ * @param self The file tokenizer to initialize.
+ * @param path The full path and file name of the file to
+ * tokenize.
+ * @param error Error code.
+ *
+ * @note If this function fails the file tokenizer will be deleted
+ * and the @c self pointer will be set to @c NULL.
+ */
+S_API void STokenizerFileInit(STokenizerFile **self, const char *path, s_erc *error);
+
+
+/**
+ * Add the STokenizerFile class to the object system.
+ * @private @memberof STokenizerFile
  * @param error Error code.
  */
-S_LOCAL void _s_tokenizer_string_class_reg(s_erc *error);
-
-/**
- * Free the #STokenizerString plug-in class from the Speect Engine object
- * system.
- * @private
- *
- * @param error Error code.
- */
-S_LOCAL void _s_tokenizer_string_class_free(s_erc *error);
+S_LOCAL void _s_tokenizer_file_class_add(s_erc *error);
 
 
 /************************************************************************************/
@@ -258,4 +207,4 @@ S_END_C_DECLS
  * end documentation
  */
 
-#endif /* _SPCT_PLUGIN_TOKENIZER_STRING_H__ */
+#endif /* _SPCT_TOKENIZER_FILE_H__ */

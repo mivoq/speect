@@ -78,7 +78,63 @@
 /*                                                                                  */
 /************************************************************************************/
 
-#include "tokenizer_file.h"
+#include "utils/tokenizer_file.h"
+
+
+/************************************************************************************/
+/*                                                                                  */
+/* Macros                                                                           */
+/*                                                                                  */
+/************************************************************************************/
+
+/**
+ * @hideinitializer
+ * Call the given function method of the given #STokenizerFile,
+ * see full description #S_TOKENIZER_FILE_CALL for usage.
+ *
+ * @param SELF The given #STokenizerFile*.
+ * @param FUNC The function method of the given object to call.
+ *
+ * @note This casting is not safety checked.
+ * @note Example usage: @code S_TOKENIZER_FILE_CALL(self, func)(param1, param2, ..., paramN); @endcode
+ * where @c param1, @c param2, ..., @c paramN are the parameters passed to the object function
+ * @c func.
+ */
+#define S_TOKENIZER_FILE_CALL(SELF, FUNC)				\
+	((STokenizerFileClass *)S_OBJECT_CLS(SELF))->FUNC
+
+
+/**
+ * @hideinitializer
+ * Call the given function method of the given #STokenizer,
+ * see full description #S_TOKENIZER_CALL for usage.
+ *
+ * @param SELF The given #STokenizer*.
+ * @param FUNC The function method of the given object to call.
+ *
+ * @note This casting is not safety checked.
+ * @note Example usage: @code S_TOKENIZER_CALL(self, func)(param1, param2, ..., paramN); @endcode
+ * where @c param1, @c param2, ..., @c paramN are the parameters passed to the object function
+ * @c func.
+ */
+#define S_TOKENIZER_CALL(SELF, FUNC)				\
+	((STokenizerClass *)S_OBJECT_CLS(SELF))->FUNC
+
+
+/**
+ * @hideinitializer
+ * Test if the given function method of the given #STokenizerFile
+ * can be called.
+ *
+ * @param SELF The given #STokenizerFile*.
+ * @param FUNC The function method of the given object to check.
+ *
+ * @return #TRUE if function can be called, otherwise #FALSE.
+ *
+ * @note This casting is not safety checked.
+ */
+#define S_TOKENIZER_FILE_METH_VALID(SELF, FUNC)			\
+	S_TOKENIZER_FILE_CALL(SELF, FUNC) ? TRUE : FALSE
 
 
 /************************************************************************************/
@@ -97,29 +153,44 @@ static uint num_file_tokenizers = 0;
 
 /************************************************************************************/
 /*                                                                                  */
-/* Plug-in class registration/free                                                  */
+/* Function implementations                                                         */
 /*                                                                                  */
 /************************************************************************************/
 
-/* local functions to register and free classes */
-S_LOCAL void _s_tokenizer_file_class_reg(s_erc *error)
+S_API void STokenizerFileInit(STokenizerFile **self, const char *path, s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(S_OBJECTCLASS(&TokenizerFileClass), error);
-	S_CHK_ERR(error, S_CONTERR,
-			  "_s_tokenizer_file_class_reg",
-			  "Failed to register STokenizerFileClass");
+
+	if (path == NULL)
+	{
+		S_CTX_ERR(error, S_ARGERROR,
+				  "STokenizerFileInit",
+				  "Argument \"path\" is NULL");
+		return;
+	}
+
+	(*self)->ds = SFilesourceOpenFile(path, "r", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "STokenizerFileInit",
+				  "Call to \"SFilesourceOpenFile\" failed"))
+	{
+		S_DELETE(*self, "STokenizerFileInit", error);
+		*self = NULL;
+		return;
+	}
+
+	/* get the first character */
+	STokenizerGetChar(S_TOKENIZER(*self), error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "STokenizerFileInit",
+				  "Call to \"STokenizerGetChar\" failed"))
+	{
+		S_DELETE(*self, "STokenizerFileInit", error);
+		*self = NULL;
+		return;
+	}
 }
 
-
-S_LOCAL void _s_tokenizer_file_class_free(s_erc *error)
-{
-	S_CLR_ERR(error);
-	s_class_free(S_OBJECTCLASS(&TokenizerFileClass), error);
-	S_CHK_ERR(error, S_CONTERR,
-			  "_s_tokenizer_file_class_free",
-			  "Failed to free STokenizerFileClass");
-}
 
 /************************************************************************************/
 /*                                                                                  */
@@ -170,7 +241,7 @@ static void Dispose(void *obj, s_erc *error)
 }
 
 
-static void GetChar(STokenizer *self, s_erc *error)
+static uint32 GetChar(STokenizer *self, s_erc *error)
 {
 	uint32 utf8char;
 	uchar t;
@@ -186,7 +257,7 @@ static void GetChar(STokenizer *self, s_erc *error)
 	{
 		self->eof = TRUE;
 		self->current_char = 0;
-		return;
+		return 0;
 	}
 	else if (local_err != S_SUCCESS)
 	{
@@ -194,7 +265,7 @@ static void GetChar(STokenizer *self, s_erc *error)
 				  "GetChar",
 				  "Call to \"SDatasourceRead\" failed");
 		self->current_char = 0;
-		return;
+		return 0;
 	}
 
 	utf8char = t;
@@ -215,7 +286,7 @@ static void GetChar(STokenizer *self, s_erc *error)
 			{
 				self->eof = TRUE;
 				self->current_char = 0;
-				return;
+				return 0;
 			}
 			else if (local_err != S_SUCCESS)
 			{
@@ -223,7 +294,7 @@ static void GetChar(STokenizer *self, s_erc *error)
 						  "GetChar",
 						  "Call to \"SDatasourceRead\" failed");
 				self->current_char = 0;
-				return;
+				return 0;
 			}
 
 			if ((!(t & 0x80)) || (t & 0x40))
@@ -239,6 +310,7 @@ static void GetChar(STokenizer *self, s_erc *error)
 	}
 
 	self->current_char = utf8char;
+	return utf8char;
 }
 
 
@@ -255,7 +327,7 @@ static void Seek(STokenizer *self, ulong pos, s_erc *error)
 }
 
 
-static ulong Tell(STokenizer *self, s_erc *error)
+static ulong Tell(const STokenizer *self, s_erc *error)
 {
 	STokenizerFile *tf = S_TOKENIZER_FILE(self);
 	ulong pos;
@@ -277,6 +349,7 @@ static SToken *GetToken(STokenizer *self, s_erc *error)
 
 
 	S_CLR_ERR(error);
+	/* calling get_token of STokenizerClass */
 	token = S_TOKENIZER_CALL(tokenizer, get_token)(self, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "GetToken",
@@ -293,6 +366,7 @@ static SToken *PeekToken(STokenizer *self, s_erc *error)
 
 
 	S_CLR_ERR(error);
+	/* calling peek_token of STokenizerClass */
 	token = S_TOKENIZER_CALL(tokenizer, peek_token)(self, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "PeekToken",
@@ -307,6 +381,7 @@ static void SetWhitespaceChars(STokenizer *self, const char *white_space_chars,
 							   s_erc *error)
 {
 	S_CLR_ERR(error);
+	/* calling set_whitespace_chars of STokenizerClass */
 	S_TOKENIZER_CALL(tokenizer, set_whitespace_chars)(self, white_space_chars, error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "SetWhitespaceChars",
@@ -318,6 +393,7 @@ static void SetSingleChars(STokenizer *self, const char *single_chars,
 						   s_erc *error)
 {
 	S_CLR_ERR(error);
+	/* calling set_single_chars of STokenizerClass */
 	S_TOKENIZER_CALL(tokenizer, set_single_chars)(self, single_chars, error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "SetSingleChars",
@@ -329,6 +405,7 @@ static void SetPrePuncChars(STokenizer *self, const char *pre_punc_chars,
 							s_erc *error)
 {
 	S_CLR_ERR(error);
+	/* calling set_prepunc_chars of STokenizerClass */
 	S_TOKENIZER_CALL(tokenizer, set_prepunc_chars)(self, pre_punc_chars, error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "SetPrePuncChars",
@@ -340,6 +417,7 @@ static void SetPostPuncChars(STokenizer *self, const char *post_punc_chars,
 							 s_erc *error)
 {
 	S_CLR_ERR(error);
+	/* calling set_postpunc_chars of STokenizerClass */
 	S_TOKENIZER_CALL(tokenizer, set_postpunc_chars)(self, post_punc_chars, error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "SetPostPuncChars",
@@ -350,6 +428,7 @@ static void SetPostPuncChars(STokenizer *self, const char *post_punc_chars,
 static void SetQuotes(STokenizer *self, uint32 quote, uint32 escape, s_erc *error)
 {
 	S_CLR_ERR(error);
+	/* calling set_quotes of STokenizerClass */
 	S_TOKENIZER_CALL(tokenizer, set_quotes)(self, quote, escape, error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "SetQuotes",
@@ -357,7 +436,7 @@ static void SetQuotes(STokenizer *self, uint32 quote, uint32 escape, s_erc *erro
 }
 
 
-static s_bool QueryQuoteMode(STokenizer *self, s_erc *error)
+static s_bool QueryQuoteMode(const STokenizer *self, s_erc *error)
 {
 	S_CLR_ERR(error);
 
@@ -365,7 +444,7 @@ static s_bool QueryQuoteMode(STokenizer *self, s_erc *error)
 }
 
 
-static s_bool QueryEOF(STokenizer *self, s_erc *error)
+static s_bool QueryEOF(const STokenizer *self, s_erc *error)
 {
 	S_CLR_ERR(error);
 
@@ -373,38 +452,19 @@ static s_bool QueryEOF(STokenizer *self, s_erc *error)
 }
 
 
-void InitFileTokenizer(STokenizerFile **self, const char *path, s_erc *error)
+/************************************************************************************/
+/*                                                                                  */
+/* Class registration                                                               */
+/*                                                                                  */
+/************************************************************************************/
+
+S_LOCAL void _s_tokenizer_file_class_add(s_erc *error)
 {
 	S_CLR_ERR(error);
-
-	if (path == NULL)
-	{
-		S_CTX_ERR(error, S_ARGERROR,
-				  "InitFileTokenizer",
-				  "Argument \"path\" is NULL");
-		return;
-	}
-
-	(*self)->ds = SFilesourceOpenFile(path, "r", error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "InitFileTokenizer",
-				  "Call to \"SFilesourceOpenFile\" failed"))
-	{
-		S_DELETE(*self, "InitFileTokenizer", error);
-		*self = NULL;
-		return;
-	}
-
-	/* get the first character */
-	GetChar(S_TOKENIZER(*self), error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "InitFileTokenizer",
-				  "Call to method \"get_char\" failed"))
-	{
-		S_DELETE(*self, "InitFileTokenizer", error);
-		*self = NULL;
-		return;
-	}
+	s_class_add(S_OBJECTCLASS(&TokenizerFileClass), error);
+	S_CHK_ERR(error, S_CONTERR,
+			  "_s_tokenizer_file_class_add",
+			  "Failed to add STokenizerFileClass");
 }
 
 
@@ -416,33 +476,29 @@ void InitFileTokenizer(STokenizerFile **self, const char *path, s_erc *error)
 
 static STokenizerFileClass TokenizerFileClass =
 {
+	/* SObjectClass */
 	{
-		/* SObjectClass */
-		{
-			"STokenizer:STokenizerFile",
-			sizeof(STokenizerFile),
-			{ 0, 1},
-			Init,            /* init    */
-			Destroy,         /* destroy */
-			Dispose,         /* dispose */
-			NULL,            /* compare */
-			NULL,            /* print   */
-			NULL,            /* copy    */
-		},
-		/* STokenizerClass */
-		GetChar,             /* get_char             */
-		Seek,                /* seek                 */
-		Tell,                /* tell                 */
-		GetToken,            /* get_token            */
-		PeekToken,           /* peek_token           */
-		SetWhitespaceChars,  /* set_whitespace_chars */
-		SetSingleChars,      /* set_single_chars     */
-		SetPrePuncChars,     /* set_prepunc_chars    */
-		SetPostPuncChars,    /* set_postpunc_chars   */
-		SetQuotes,           /* set_quotes           */
-		QueryQuoteMode,      /* query_quote_mode     */
-		QueryEOF,            /* query_eof            */
+		"STokenizer:STokenizerFile",
+		sizeof(STokenizerFile),
+		{ 0, 1},
+		Init,            /* init    */
+		Destroy,         /* destroy */
+		Dispose,         /* dispose */
+		NULL,            /* compare */
+		NULL,            /* print   */
+		NULL,            /* copy    */
 	},
-	/* STokenizerFileClass */
-	InitFileTokenizer        /* init  */
+	/* STokenizerClass */
+	GetChar,             /* get_char             */
+	Seek,                /* seek                 */
+	Tell,                /* tell                 */
+	GetToken,            /* get_token            */
+	PeekToken,           /* peek_token           */
+	SetWhitespaceChars,  /* set_whitespace_chars */
+	SetSingleChars,      /* set_single_chars     */
+	SetPrePuncChars,     /* set_prepunc_chars    */
+	SetPostPuncChars,    /* set_postpunc_chars   */
+	SetQuotes,           /* set_quotes           */
+	QueryQuoteMode,      /* query_quote_mode     */
+	QueryEOF             /* query_eof            */
 };

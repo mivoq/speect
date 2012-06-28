@@ -41,7 +41,6 @@
 /************************************************************************************/
 
 #include "tokenizer_proc.h"
-#include "tokenizer_string.h"
 
 
 /************************************************************************************/
@@ -138,7 +137,7 @@ static void s_get_tokenizer_symbols(const SUttProcessor *uttProc, STokenizer *ts
 					  "Failed to get 'whitespace' symbols"))
 			return;
 
-		S_TOKENIZER_CALL(ts, set_whitespace_chars)(ts, symbols, error);
+		STokenizerSetWhitespaceChars(ts, symbols, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "s_get_tokenizer_symbols",
 					  "Failed to set 'whitespace' symbols"))
@@ -162,7 +161,7 @@ static void s_get_tokenizer_symbols(const SUttProcessor *uttProc, STokenizer *ts
 					  "Failed to get 'single-char' symbols"))
 			return;
 
-		S_TOKENIZER_CALL(ts, set_single_chars)(ts, symbols, error);
+		STokenizerSetSingleChars(ts, symbols, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "s_get_tokenizer_symbols",
 					  "Failed to set 'single-char' symbols"))
@@ -186,7 +185,7 @@ static void s_get_tokenizer_symbols(const SUttProcessor *uttProc, STokenizer *ts
 					  "Failed to get 'pre-punctuation' symbols"))
 			return;
 
-		S_TOKENIZER_CALL(ts, set_prepunc_chars)(ts, symbols, error);
+		STokenizerSetPrePuncChars(ts, symbols, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "s_get_tokenizer_symbols",
 					  "Failed to set 'pre-punctuation' symbols"))
@@ -210,7 +209,7 @@ static void s_get_tokenizer_symbols(const SUttProcessor *uttProc, STokenizer *ts
 					  "Failed to get 'post-punctuation' symbols"))
 			return;
 
-		S_TOKENIZER_CALL(ts, set_postpunc_chars)(ts, symbols, error);
+		STokenizerSetPostPuncChars(ts, symbols, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "s_get_tokenizer_symbols",
 					  "Failed to set 'post-punctuation' symbols"))
@@ -276,9 +275,9 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 				  "Failed to create string tokenizer"))
 		goto quit_error;
 
-	S_TOKENIZER_STRING_CALL(S_TOKENIZER_STRING(ts), init)((STokenizerString**)&ts,
-														  text,
-														  error);
+	STokenizerStringInit((STokenizerString**)&ts,
+						 text,
+						 error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Run",
 				  "Failed to initialize string tokenizer"))
@@ -297,34 +296,34 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 				  "Call to \"SUtteranceNewRelation\" failed"))
 		goto quit_error;
 
-	eof = S_TOKENIZER_CALL(ts, query_eof)(ts, error);
+	eof = STokenizerQueryEOF(ts, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Run",
-				  "Call to method \"query_eof\" failed"))
+				  "Call to \"STokenizerQueryEOF\" failed"))
 		goto quit_error;
 
 	while (!eof)
 	{
-		token = S_TOKENIZER_CALL(ts, peek_token)(ts, error);
+		token = STokenizerPeekToken(ts, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "Run",
-					  "Call to method \"peek_token\" failed"))
+					  "Call to \"STokenizerPeekToken\" failed"))
 			goto quit;
 
-		token_string = S_TOKEN_CALL(token, get_string)(token, error);
+		token_string = STokenGetString(token, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "Run",
-					  "Call to method \"get_string\" failed"))
+					  "Call to \"STokenGetString\" failed"))
 			goto quit;
 
 		if (token_string == NULL)
 			break;
 		else
 		{
-			token = S_TOKENIZER_CALL(ts, get_token)(ts, error);
+			token = STokenizerGetToken(ts, error);
 			if (S_CHK_ERR(error, S_CONTERR,
 						  "Run",
-						  "Call to method \"get_token\" failed"))
+						  "Call to \"STokenizerGetToken\" failed"))
 				goto quit;
 		}
 
@@ -343,10 +342,10 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 			goto quit;
 
 		/* get white-space */
-		token_string = S_TOKEN_CALL(token, get_whitespace)(token, error);
+		token_string = STokenGetWhitespace(token, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "Run",
-					  "Call to method \"get_whitespace\" failed"))
+					  "Call to \"STokenGetWhitespace\" failed"))
 			goto quit;
 
 		if (token_string != NULL)
@@ -359,10 +358,10 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 		}
 
 		/* get pre-punctuation */
-		token_string = S_TOKEN_CALL(token, get_pre_punc)(token, error);
+		token_string = STokenGetPrePunc(token, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "Run",
-					  "Call to method \"get_pre_punc\" failed"))
+					  "Call to  \"STokenGetPrePunc\" failed"))
 			goto quit;
 
 		if (token_string != NULL)
@@ -375,10 +374,10 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 		}
 
 		/* get post-punctuation */
-		token_string = S_TOKEN_CALL(token, get_post_punc)(token, error);
+		token_string = STokenGetPostPunc(token, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "Run",
-					  "Call to method \"get_post_punc\" failed"))
+					  "Call to \"STokenGetPostPunc\" failed"))
 			goto quit;
 
 		if (token_string != NULL)
@@ -390,10 +389,10 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 				goto quit;
 		}
 
-		eof = S_TOKENIZER_CALL(ts, query_eof)(ts, error);
+		eof = STokenizerQueryEOF(ts, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "Run",
-					  "Call to method \"query_eof\" failed"))
+					  "Call to \"STokenizerQueryEOF\" failed"))
 			goto quit_error;
 	}
 

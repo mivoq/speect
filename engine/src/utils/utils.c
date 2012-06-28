@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2009-2011 The Department of Arts and Culture,                      */
+/* Copyright (c) 2012 The Department of Arts and Culture,                           */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -24,11 +24,11 @@
 /************************************************************************************/
 /*                                                                                  */
 /* AUTHOR  : Aby Louw                                                               */
-/* DATE    : December 2009                                                          */
+/* DATE    : June 2012                                                              */
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* A Tokenization utterance processor.                                              */
+/* Intialize and quit utils module.                                                 */
 /*                                                                                  */
 /*                                                                                  */
 /************************************************************************************/
@@ -40,53 +40,8 @@
 /*                                                                                  */
 /************************************************************************************/
 
-#include "tokenizer_proc.h"
-#include "plugin_info.h"
-
-
-/************************************************************************************/
-/*                                                                                  */
-/* Static function prototypes                                                       */
-/*                                                                                  */
-/************************************************************************************/
-
-static void plugin_register_function(s_erc *error);
-
-static void plugin_exit_function(s_erc *error);
-
-
-/************************************************************************************/
-/*                                                                                  */
-/* Plug-in parameters                                                               */
-/*                                                                                  */
-/************************************************************************************/
-
-static const s_plugin_params plugin_params =
-{
-	/* plug-in name */
-	SPCT_PLUGIN_NAME,
-
-	/* description */
-	SPCT_PLUGIN_DESCRIPTION,
-
-	/* version */
-	{
-		SPCT_PLUGIN_VERSION_MAJOR,
-		SPCT_PLUGIN_VERSION_MINOR
-	},
-
-	/* Speect ABI version (which plug-in was compiled with) */
-	{
-		S_MAJOR_VERSION,
-		S_MINOR_VERSION
-	},
-
-	/* register function pointer */
-	plugin_register_function,
-
-	/* exit function pointer */
-	plugin_exit_function
-};
+#include "base/objsystem/class.h"
+#include "utils/utils.h"
 
 
 /************************************************************************************/
@@ -95,50 +50,44 @@ static const s_plugin_params plugin_params =
 /*                                                                                  */
 /************************************************************************************/
 
-S_PLUGIN_API const s_plugin_params *s_plugin_init(s_erc *error)
+S_LOCAL void _s_utils_init(s_erc *error)
 {
+	s_erc local_err;
+
+	S_CLR_ERR(&local_err);
 	S_CLR_ERR(error);
 
-	if (!s_lib_version_ok(SPCT_MAJOR_VERSION_MIN, SPCT_MINOR_VERSION_MIN))
-	{
-		S_CTX_ERR(error, S_FAILURE,
-				  SPCT_PLUGIN_INIT_STR,
-				  "Incorrect Speect Engine version, require at least '%d.%d.x'",
-				  SPCT_MAJOR_VERSION_MIN, SPCT_MINOR_VERSION_MIN);
-		return NULL;
-	}
+	_s_token_class_add(error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "_s_utils_init",
+				  "Failed to initialize SToken class"))
+		local_err = *error;
 
-	return &plugin_params;
+	_s_tokenizer_class_add(error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "_s_utils_init",
+				  "Failed to initialize STokenizer class"))
+		local_err = *error;
+
+	_s_tokenizer_file_class_add(error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "_s_utils_init",
+				  "Failed to initialize STokenizerFile class"))
+		local_err = *error;
+
+	_s_tokenizer_string_class_add(error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "_s_utils_init",
+				  "Failed to initialize STokenizerString class"))
+		local_err = *error;
+
+	/* if there was an error local_err will have it */
+	if ((local_err != S_SUCCESS) && (*error == S_SUCCESS))
+		*error = local_err;
 }
 
 
-/************************************************************************************/
-/*                                                                                  */
-/* Static function implementations                                                  */
-/*                                                                                  */
-/************************************************************************************/
-
-/* plug-in register function */
-static void plugin_register_function(s_erc *error)
+S_LOCAL void _s_utils_quit(s_erc *error)
 {
 	S_CLR_ERR(error);
-
-	/* register plug-in classes here */
-	_s_tokenization_utt_proc_class_reg(error);
-	S_CHK_ERR(error, S_CONTERR,
-			  SPCT_PLUGIN_REG_STR,
-			  SPCT_PLUGIN_REG_FAIL_STR);
-}
-
-
-/* plug-in exit function */
-static void plugin_exit_function(s_erc *error)
-{
-	S_CLR_ERR(error);
-
-	/* free plug-in classes here */
-	_s_tokenization_utt_proc_class_free(error);
-	S_CHK_ERR(error, S_CONTERR,
-			  SPCT_PLUGIN_EXIT_STR,
-			  SPCT_PLUGIN_EXIT_FAIL_STR);
 }

@@ -28,7 +28,7 @@
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* A token class implementation.                                                    */
+/* A tokenizer class implementation.                                                */
 /* Loosely based on EST_Token of Edinburgh Speech Tools,                            */
 /* http://www.cstr.ed.ac.uk/projects/speech_tools (1.2.96)                          */
 /* Note that this is a derived work with no verbatim source code from above         */
@@ -36,8 +36,8 @@
 /*                                                                                  */
 /************************************************************************************/
 
-#ifndef _SPCT_PLUGIN_TOKEN_H__
-#define _SPCT_PLUGIN_TOKEN_H__
+#ifndef _SPCT_TOKENIZER_H__
+#define _SPCT_TOKENIZER_H__
 
 
 /************************************************************************************/
@@ -74,19 +74,50 @@
 /*                                                                                  */
 /************************************************************************************/
 
-
 /**
- * @file token.h
- * A token class implementation.
+ * @file tokenizer.h
+ * A tokenizer class implementation.
  */
 
 
 /**
- * @ingroup STokenizer
- * @defgroup SToken Token
- * A token class. A token consists of four parts, any of which may be
- * empty: the actual token, preceding whitespace, preceding
- * punctuation, and succeeding punctuation.
+ * @defgroup STokenizer Tokenizer
+ * A tokenizer class implementation. A class that allows the reading
+ * of tokens (#SToken) from a file or string.  It automatically
+ * tokenizes a file based on user definable whitespace and
+ * punctuation.
+ *
+ * The definitions of whitespace and punctuation are user definable.
+ * Also support for single character symbols is included.  Single
+ * character symbols are @e always are treated as individual tokens
+ * irrespective of their white space context.  Also a quote mode can
+ * be used to read quoted tokens.
+ *
+ * The setting of whitespace, pre and post punctuation, single
+ * character symbols and quote mode must be done (immediately) after
+ * opening the stream.
+ *
+ * There is no unget but peek provides look ahead of one token.
+ *
+ * The default character symbols are:
+ * <table>
+ *  <tr>
+ *   <td> White-space </td>
+ *   <td> @code \t \n \r @endcode </td>
+ *  </tr>
+ *  <tr>
+ *   <td> Single characters </td>
+ *   <td> @code ( ) { } [ ] @endcode </td>
+ *  </tr>
+ *  <tr>
+ *   <td> Pre-punctuation </td>
+ *   <td> @code " ' ` ( { [ @endcode </td>
+ *  </tr>
+ *  <tr>
+ *   <td> Post-punctuation </td>
+ *   <td> @code " ' ` . , : ; ! ? ( ) { } [ ] @endcode </td>
+ *  </tr>
+ * </table>
  * @{
  */
 
@@ -97,7 +128,9 @@
 /*                                                                                  */
 /************************************************************************************/
 
-#include "speect.h"
+#include "include/common.h"
+#include "base/errdbg/errdbg.h"
+#include "utils/token.h"
 
 
 /************************************************************************************/
@@ -116,58 +149,25 @@ S_BEGIN_C_DECLS
 
 /**
  * @hideinitializer
- * Return the given #SToken child/parent class object as a
- * #SToken object.
+ * Return the given #STokenizer child/parent class object as a
+ * #STokenizer object.
  *
  * @param SELF The given object.
  *
- * @return Given object as #SToken* type.
+ * @return Given object as #STokenizer* type.
  * @note This casting is not safety checked.
  */
-#define S_TOKEN(SELF)    ((SToken *)(SELF))
-
-
-/**
- * @hideinitializer
- * Call the given function method of the given #SToken,
- * see full description #S_TOKEN_CALL for usage.
- *
- * @param SELF The given #SToken*.
- * @param FUNC The function method of the given object to call.
- *
- * @note This casting is not safety checked.
- * @note Example usage: @code S_TOKEN_CALL(self, func)(param1, param2, ..., paramN); @endcode
- * where @c param1, @c param2, ..., @c paramN are the parameters passed to the object function
- * @c func.
- */
-#define S_TOKEN_CALL(SELF, FUNC)					\
-	((STokenClass *)S_OBJECT_CLS(SELF))->FUNC
-
-
-/**
- * @hideinitializer
- * Test if the given function method of the given #SToken
- * can be called.
- *
- * @param SELF The given #SToken*.
- * @param FUNC The function method of the given object to check.
- *
- * @return #TRUE if function can be called, otherwise #FALSE.
- *
- * @note This casting is not safety checked.
- */
-#define S_TOKEN_METH_VALID(SELF, FUNC)		\
-	S_TOKEN_CALL(SELF, FUNC) ? TRUE : FALSE
+#define S_TOKENIZER(SELF)    ((STokenizer *)(SELF))
 
 
 /************************************************************************************/
 /*                                                                                  */
-/* SToken definition                                                                */
+/* STokenizer definition                                                            */
 /*                                                                                  */
 /************************************************************************************/
 
 /**
- * The token structure.
+ * The tokenizer structure.
  * @extends SObject
  */
 typedef struct
@@ -175,38 +175,73 @@ typedef struct
 	/**
 	 * @protected Inherit from #SObject.
 	 */
-	SObject  obj;
+	SObject     obj;
 
 	/**
-	 * @protected Token preceding white-space.
+	 * @protected Preceding white-space symbols definition.
 	 */
-	char *whitespace;
+	char       *white_space_chars;
 
 	/**
-	 * @protected Token pre-punctuation.
+	 * @protected Single character symbols definition.
 	 */
-	char *pre_punc;
+	char       *single_char_symbols;
 
 	/**
-	 * @protected Token post-punctuation.
+	 * @protected Pre-punctuation symbols definition.
 	 */
-	char *post_punc;
+	char       *pre_punc_symbols;
 
 	/**
-	 * @protected The actual token string.
+	 * @protected Post-punctuation symbols definition.
 	 */
-	char *string;
-} SToken;
+	char       *post_punc_symbols;
+
+	/**
+	 * @protected Current token.
+	 */
+	SToken     *currentToken;
+
+	/**
+	 * @protected End-of-file flag.
+	 */
+	s_bool      eof;
+
+	/**
+	 * @protected Current character.
+	 */
+	uint32      current_char;
+
+	/**
+	 * @protected Peeked flag.
+	 */
+	s_bool      peeked;
+
+	/**
+	 * @protected Quote character.
+	 */
+	uint32      quote;
+
+	/**
+	 * @protected Escape character.
+	 */
+	uint32      escape;
+
+	/**
+	 * @protected Quote mode flag.
+	 */
+	s_bool      quote_mode;
+} STokenizer;
 
 
 /************************************************************************************/
 /*                                                                                  */
-/* STokenClass definition                                                           */
+/* STokenizerClass definition                                                       */
 /*                                                                                  */
 /************************************************************************************/
 
 /**
- * The token class structure.
+ * The tokenizer class structure.
  * @extends SObjectClass
  */
 typedef struct
@@ -219,115 +254,295 @@ typedef struct
 
 	/* Class methods */
 	/**
-	 * Get the given token's preceding white-space.
-	 * @protected GetWhitespace function pointer.
+	 * Get character. Get the next character from the tokenizer and
+	 * set it the @c current_char tokenizer member.
 	 *
-	 * @param self The given token.
+	 * @param self The tokenizer.
 	 * @param error Error code.
 	 *
-	 * @return The token's preceding white-space (may be @c NULL).
+	 * @return The next character from the tokenizer, as UTF8
+	 * character represented as a 4-byte unsigned integer.
 	 */
-	const char *(*get_whitespace)(SToken *self, s_erc *error);
+	uint32 (* const get_char)(STokenizer *self, s_erc *error);
 
 	/**
-	 * Set the given token's preceding white-space.
-	 * @protected SetWhitespace function pointer.
+	 * Seek to the given position. Seek is relative to beginning of
+	 * tokenizer source.
 	 *
-	 * @param self The given token.
-	 * @param whitespace The white-space to set.
+	 * @param self The tokenizer.
+	 * @param pos The position to seek to.
 	 * @param error Error code.
 	 */
-	void (*set_whitespace)(SToken *self, const char *whitespace, s_erc *error);
+	void (* const seek)(STokenizer *self, ulong pos, s_erc *error);
 
 	/**
-	 * Get the given token's pre-punctuation.
-	 * @protected GetPrePunc function pointer.
+	 * Query the position in the tokenizer.
 	 *
-	 * @param self The given token.
+	 * @param self The tokenizer.
 	 * @param error Error code.
 	 *
-	 * @return The token's pre-punctuation (may be @c NULL).
+	 * @return The position in the tokenizer.
 	 */
-	const char *(*get_pre_punc)(SToken *self, s_erc *error);
+	ulong (* const tell)(const STokenizer *self, s_erc *error);
 
 	/**
-	 * Set the given token's pre-punctuation.
-	 * @protected SetPrePunc function pointer.
+	 * Get the next token.
 	 *
-	 * @param self The given token.
-	 * @param pre_punc The pre-punctuation to set.
+	 * @param self The tokenizer.
 	 * @param error Error code.
+	 *
+	 * @return The next token.
 	 */
-	void (*set_pre_punc)(SToken *self, const char *pre_punc, s_erc *error);
+	SToken *(* const get_token)(STokenizer *self, s_erc *error);
 
 	/**
-	 * Get the given token's post-punctuation.
-	 * @protected GetPostPunc function pointer.
+	 * Peek the next token.
 	 *
-	 * @param self The given token.
+	 * @param self The tokenizer.
 	 * @param error Error code.
 	 *
-	 * @return The token's post-punctuation (may be @c NULL).
+	 * @return The next token (peeked).
 	 */
-	const char *(*get_post_punc)(SToken *self, s_erc *error);
+	SToken *(* const peek_token)(STokenizer *self, s_erc *error);
 
 	/**
-	 * Set the given token's post-punctuation.
-	 * @protected SetPostPunc function pointer.
+	 * Set the tokenizer white-space characters.
 	 *
-	 * @param self The given token.
-	 * @param post_punc The post-punctuation to set.
+	 * @param self The tokenizer.
+	 * @param white_space_chars The white-space characters to set.
 	 * @param error Error code.
 	 */
-	void (*set_post_punc)(SToken *self, const char *post_punc, s_erc *error);
+	void (* const set_whitespace_chars)(STokenizer *self, const char *white_space_chars, s_erc *error);
 
 	/**
-	 * Get the given token's actual token string.
-	 * @protected GetTokenString function pointer.
+	 * Set the tokenizer single character symbols.
 	 *
-	 * @param self The given token.
+	 * @param self The tokenizer.
+	 * @param single_chars The single characters symbols to set.
 	 * @param error Error code.
-	 *
-	 * @return The token's actual token string.
 	 */
-	const char *(*get_string)(SToken *self, s_erc *error);
+	void (* const set_single_chars)(STokenizer *self, const char *single_chars, s_erc *error);
 
 	/**
-	 * Set the given token's actual token string.
-	 * @protected SetTokenString function pointer.
+	 * Set the tokenizer pre-punctuation symbols.
 	 *
-	 * @param self The given token.
-	 * @param string The token string to set.
+	 * @param self The tokenizer.
+	 * @param single_chars The pre-punctuation symbols to set.
 	 * @param error Error code.
 	 */
-	void (*set_string)(SToken *self, const char *string, s_erc *error);
-} STokenClass;
+	void (* const set_prepunc_chars)(STokenizer *self, const char *pre_punc_chars, s_erc *error);
+
+	/**
+	 * Set the tokenizer post-punctuation symbols.
+	 *
+	 * @param self The tokenizer.
+	 * @param single_chars The post-punctuation symbols to set.
+	 * @param error Error code.
+	 */
+	void (* const set_postpunc_chars)(STokenizer *self, const char *post_punc_chars, s_erc *error);
+
+	/**
+	 * Set the tokenizer quote symbols.
+	 *
+	 * @param self The tokenizer.
+	 * @param quote The quote symbol (use #s_getc to get the character
+	 * in a 4-byte unsigned integer).
+	 * @param escape The escape symbol (use #s_getc to get the character
+	 * in a 4-byte unsigned integer).
+	 * @param error Error code.
+	 */
+	void (* const set_quotes)(STokenizer *self, uint32 quote, uint32 escape, s_erc *error);
+
+	/**
+	 * Query if the tokenizer is in quote mode.
+	 *
+	 * @param self The tokenizer.
+	 * @param error Error code.
+	 *
+	 * @return @c TRUE if in quote mode else @c FALSE
+	 */
+	s_bool (* const query_quote_mode)(const STokenizer *self, s_erc *error);
+
+	/**
+	 * Query if the tokenizer is at the end of the file.
+	 *
+	 * @param self The tokenizer.
+	 * @param error Error code.
+	 *
+	 * @return @c TRUE if at the end of the file else @c FALSE
+	 */
+	s_bool (* const query_eof)(const STokenizer *self, s_erc *error);
+} STokenizerClass;
 
 
 /************************************************************************************/
 /*                                                                                  */
-/* Plug-in class registration/free                                                  */
+/* Function prototypes                                                              */
 /*                                                                                  */
 /************************************************************************************/
 
 /**
- * Register the #SToken plug-in class with the Speect Engine object
- * system.
- * @private
+ * Get character. Get the next character from the tokenizer and
+ * set it the @c current_char tokenizer member.
  *
+ * @public @memberof STokenizer
+ *
+ * @param self The tokenizer.
  * @param error Error code.
+ *
+ * @return The next character from the tokenizer, as UTF8
+ * character represented as a 4-byte unsigned integer.
  */
-S_LOCAL void _s_token_class_reg(s_erc *error);
+S_API uint32 STokenizerGetChar(STokenizer *self, s_erc *error);
+
 
 /**
- * Free the #SToken plug-in class from the Speect Engine object
- * system.
- * @private
+ * Seek to the given position. Seek is relative to beginning of
+ * tokenizer source.
  *
+ * @public @memberof STokenizer
+ *
+ * @param self The tokenizer.
+ * @param pos The position to seek to.
  * @param error Error code.
  */
-S_LOCAL void _s_token_class_free(s_erc *error);
+S_API void STokenizerSeek(STokenizer *self, ulong pos, s_erc *error);
 
+
+/**
+ * Query the position in the tokenizer.
+ *
+ * @public @memberof STokenizer
+ *
+ * @param self The tokenizer.
+ * @param error Error code.
+ *
+ * @return The position in the tokenizer.
+ */
+S_API ulong STokenizerTell(const STokenizer *self, s_erc *error);
+
+
+/**
+ * Get the next token.
+ *
+ * @public @memberof STokenizer
+ *
+ * @param self The tokenizer.
+ * @param error Error code.
+ *
+ * @return The next token.
+ */
+S_API SToken *STokenizerGetToken(STokenizer *self, s_erc *error);
+
+
+/**
+ * Peek the next token.
+ *
+ * @public @memberof STokenizer
+ *
+ * @param self The tokenizer.
+ * @param error Error code.
+ *
+ * @return The next token (peeked).
+ */
+S_API SToken *STokenizerPeekToken(STokenizer *self, s_erc *error);
+
+
+/**
+ * Set the tokenizer white-space characters.
+ *
+ * @public @memberof STokenizer
+ *
+ * @param self The tokenizer.
+ * @param white_space_chars The white-space characters to set.
+ * @param error Error code.
+ */
+S_API void STokenizerSetWhitespaceChars(STokenizer *self, const char *white_space_chars, s_erc *error);
+
+
+/**
+ * Set the tokenizer single character symbols.
+ *
+ * @public @memberof STokenizer
+ *
+ * @param self The tokenizer.
+ * @param single_chars The single characters symbols to set.
+ * @param error Error code.
+ */
+S_API void STokenizerSetSingleChars(STokenizer *self, const char *single_chars, s_erc *error);
+
+
+/**
+ * Set the tokenizer pre-punctuation symbols.
+ *
+ * @public @memberof STokenizer
+ *
+ * @param self The tokenizer.
+ * @param single_chars The pre-punctuation symbols to set.
+ * @param error Error code.
+ */
+S_API void STokenizerSetPrePuncChars(STokenizer *self, const char *pre_punc_chars, s_erc *error);
+
+
+/**
+ * Set the tokenizer post-punctuation symbols.
+ *
+ * @public @memberof STokenizer
+ *
+ * @param self The tokenizer.
+ * @param single_chars The post-punctuation symbols to set.
+ * @param error Error code.
+ */
+S_API void STokenizerSetPostPuncChars(STokenizer *self, const char *post_punc_chars, s_erc *error);
+
+
+/**
+ * Set the tokenizer quote symbols.
+ *
+ * @public @memberof STokenizer
+ *
+ * @param self The tokenizer.
+ * @param quote The quote symbol (use #s_getc to get the character
+ * in a 4-byte unsigned integer).
+ * @param escape The escape symbol (use #s_getc to get the character
+ * in a 4-byte unsigned integer).
+ * @param error Error code.
+ */
+S_API void STokenizerSetQuotes(STokenizer *self, uint32 quote, uint32 escape, s_erc *error);
+
+
+/**
+ * Query if the tokenizer is in quote mode.
+ *
+ * @public @memberof STokenizer
+ *
+ * @param self The tokenizer.
+ * @param error Error code.
+ *
+ * @return @c TRUE if in quote mode else @c FALSE
+ */
+S_API s_bool STokenizerQueryQuoteMode(const STokenizer *self, s_erc *error);
+
+
+/**
+ * Query if the tokenizer is at the end of the file.
+ *
+ * @public @memberof STokenizer
+ *
+ * @param self The tokenizer.
+ * @param error Error code.
+ *
+ * @return @c TRUE if at the end of the file else @c FALSE
+ */
+S_API s_bool STokenizerQueryEOF(const STokenizer *self, s_erc *error);
+
+
+/**
+ * Add the SToken class to the object system.
+ * @private @memberof SToken
+ * @param error Error code.
+ */
+S_LOCAL void _s_tokenizer_class_add(s_erc *error);
 
 /************************************************************************************/
 /*                                                                                  */
@@ -342,4 +557,4 @@ S_END_C_DECLS
  * end documentation
  */
 
-#endif /* _SPCT_PLUGIN_TOKEN_H__ */
+#endif /* _SPCT_TOKENIZER_H__ */

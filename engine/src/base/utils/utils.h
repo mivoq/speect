@@ -65,6 +65,7 @@
 #include "base/utils/byteswap.h"    /* Endian byteswapping functions.      */
 #include "base/utils/stime.h"       /* Time functions and definitions.     */
 #include "base/utils/path.h"        /* File system path functions.         */
+#include "base/utils/envvar.h"      /* Environment variable functions.     */
 
 
 /************************************************************************************/

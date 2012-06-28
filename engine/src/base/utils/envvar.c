@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2008-2011 The Department of Arts and Culture,                      */
+/* Copyright (c) 2012 The Department of Arts and Culture,                           */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -24,11 +24,11 @@
 /************************************************************************************/
 /*                                                                                  */
 /* AUTHOR  : Aby Louw                                                               */
-/* DATE    : 25 March 2008                                                          */
+/* DATE    : June 2012                                                              */
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/*  Base system utilities intialization.                                            */
+/* Environment variable routines.                                                   */
 /*                                                                                  */
 /*                                                                                  */
 /************************************************************************************/
@@ -40,7 +40,18 @@
 /*                                                                                  */
 /************************************************************************************/
 
-#include "base/utils/utils.h"
+#include "base/utils/envvar.h"
+
+
+/************************************************************************************/
+/*                                                                                  */
+/* Static variables                                                                 */
+/*                                                                                  */
+/************************************************************************************/
+
+static uint initialized_count = 0;
+
+S_DECLARE_MUTEX_STATIC(envvar_mutex);
 
 
 /************************************************************************************/
@@ -49,36 +60,103 @@
 /*                                                                                  */
 /************************************************************************************/
 
-S_LOCAL void _s_base_utils_init(s_erc *error)
+S_LOCAL void _s_envvar_init(s_erc *error)
 {
 	S_CLR_ERR(error);
 
-	_s_time_init(error);
-	if (S_CHK_ERR(error, S_FAILURE,
-				  "_s_base_utils_init",
-				  "Failed to initialize time module"))
+	if (initialized_count++ > 0)
 		return;
 
-	_s_envvar_init(error);
-	S_CHK_ERR(error, S_FAILURE,
-			  "_s_base_utils_init",
-			  "Failed to initialize environment variables module");
+	/* init mutex */
+	s_mutex_init(&envvar_mutex);
 }
 
 
-S_LOCAL void _s_base_utils_quit(s_erc *error)
+S_LOCAL void _s_envvar_quit(s_erc *error)
 {
 	S_CLR_ERR(error);
 
-	_s_envvar_init(error);
-	S_CHK_ERR(error, S_FAILURE,
-			  "_s_base_utils_init",
-			  "Failed to quit environment variables module");
+	if ((initialized_count == 0)
+		|| (--initialized_count > 0))
+		return;
 
-	_s_time_quit(error);
-	S_CHK_ERR(error, S_FAILURE,
-			  "_s_base_utils_quit",
-			  "Failed to quit time module");
+	/* destroy mutex (for s_getenv) */
+	s_mutex_destroy(&envvar_mutex);
 }
 
+
+S_API char *s_getenv(const char *name, s_erc *error)
+{
+	char *ev_sys;
+
+
+	S_CLR_ERR(error);
+	if (initialized_count == 0)
+	{
+		S_NEW_ERR(error, S_FAILURE);
+		S_ERR_PRINT(S_FAILURE,
+					"s_getenv",
+					"EnvVar module has not been initialized.\n"
+					"This will lead to undefined behaviour. Call s_envvar_init(...)\n");
+		return NULL;
+	}
+
+	if (name == NULL)
+	{
+		S_NEW_ERR(error, S_FAILURE);
+		S_ERR_PRINT(S_ARGERROR, "s_getenv",
+					"Argument \"name\" is NULL");
+		return NULL;
+	}
+
+	/* lock mutex */
+	s_mutex_lock(&envvar_mutex);
+
+	/* wrapper to the platform system environment variable implementation */
+	ev_sys = _S_ENVVAR_GET(name, error);
+	if ((error != NULL) & (*error != S_SUCCESS))
+	{
+		S_ERR_PRINT(S_FAILURE, "s_getenv",
+					"Call to \"_S_ENVVAR_GET\" failed");
+		return NULL;
+	}
+
+	/* unlock mutex */
+	s_mutex_unlock(&envvar_mutex);
+	return ev_sys;
+}
+
+
+S_API char *s_getenv_plugin_path(s_erc *error)
+{
+	char *tmp;
+
+
+	S_CLR_ERR(error);
+	if (initialized_count == 0)
+	{
+		S_NEW_ERR(error, S_FAILURE);
+		S_ERR_PRINT(S_FAILURE,
+					"s_getenv_plugin_path",
+					"EnvVar module has not been initialized.\n"
+					"This will lead to undefined behaviour. Call s_envvar_init(...)\n");
+		return NULL;
+	}
+
+	/* lock mutex */
+	s_mutex_lock(&envvar_mutex);
+
+	/* wrapper to the platform Speect plug-in path */
+	tmp = _S_GETENV_PLUGIN_PATH(error);
+	if ((error != NULL) & (*error != S_SUCCESS))
+	{
+		S_ERR_PRINT(S_FAILURE, "s_getenv_plugin_path",
+					"Call to \"_S_GETENV_PLUGIN_PATH\" failed");
+		return NULL;
+	}
+
+	/* unlock mutex */
+	s_mutex_unlock(&envvar_mutex);
+	return tmp;
+}
 

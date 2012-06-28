@@ -20,6 +20,9 @@ if(WIN32)
   # True on windows systems, including win64.
   set(SPCT_WIN32 1)
   set(SPCT_OS "SPCT_WIN32")
+
+  # turn off default build of Python wrapper, from speect/cmake/spctOptions.cmake
+  option(WANT_PYTHON_WRAPPER "Enable generation of the Python wrapper." off) 
 endif(WIN32)
 
 

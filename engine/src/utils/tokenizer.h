@@ -293,7 +293,7 @@ typedef struct
 	 *
 	 * @return The next token.
 	 */
-	SToken *(* const get_token)(STokenizer *self, s_erc *error);
+	const SToken *(* const get_token)(STokenizer *self, s_erc *error);
 
 	/**
 	 * Peek the next token.
@@ -303,7 +303,7 @@ typedef struct
 	 *
 	 * @return The next token (peeked).
 	 */
-	SToken *(* const peek_token)(STokenizer *self, s_erc *error);
+	const SToken *(* const peek_token)(STokenizer *self, s_erc *error);
 
 	/**
 	 * Set the tokenizer white-space characters.
@@ -432,7 +432,7 @@ S_API ulong STokenizerTell(const STokenizer *self, s_erc *error);
  *
  * @return The next token.
  */
-S_API SToken *STokenizerGetToken(STokenizer *self, s_erc *error);
+S_API const SToken *STokenizerGetToken(STokenizer *self, s_erc *error);
 
 
 /**
@@ -445,7 +445,7 @@ S_API SToken *STokenizerGetToken(STokenizer *self, s_erc *error);
  *
  * @return The next token (peeked).
  */
-S_API SToken *STokenizerPeekToken(STokenizer *self, s_erc *error);
+S_API const SToken *STokenizerPeekToken(STokenizer *self, s_erc *error);
 
 
 /**

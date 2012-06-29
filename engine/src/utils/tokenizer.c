@@ -263,9 +263,9 @@ S_API ulong STokenizerTell(const STokenizer *self, s_erc *error)
 }
 
 
-S_API SToken *STokenizerGetToken(STokenizer *self, s_erc *error)
+S_API const SToken *STokenizerGetToken(STokenizer *self, s_erc *error)
 {
-	SToken *token;
+	const SToken *token;
 
 
 	S_CLR_ERR(error);
@@ -296,9 +296,9 @@ S_API SToken *STokenizerGetToken(STokenizer *self, s_erc *error)
 }
 
 
-S_API SToken *STokenizerPeekToken(STokenizer *self, s_erc *error)
+S_API const SToken *STokenizerPeekToken(STokenizer *self, s_erc *error)
 {
-	SToken *token;
+	const SToken *token;
 
 
 	S_CLR_ERR(error);
@@ -1382,9 +1382,9 @@ static void Dispose(void *obj, s_erc *error)
 }
 
 
-static SToken *GetToken(STokenizer *self, s_erc *error)
+static const SToken *GetToken(STokenizer *self, s_erc *error)
 {
-	SToken *token;
+	const SToken *token;
 
 
 	S_CLR_ERR(error);
@@ -1404,9 +1404,9 @@ static SToken *GetToken(STokenizer *self, s_erc *error)
 }
 
 
-static SToken *PeekToken(STokenizer *self, s_erc *error)
+static const SToken *PeekToken(STokenizer *self, s_erc *error)
 {
-	SToken *token;
+	const SToken *token;
 
 
 	S_CLR_ERR(error);

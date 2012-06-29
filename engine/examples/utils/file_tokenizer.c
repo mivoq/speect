@@ -42,7 +42,7 @@ int main()
 	s_erc error;
 	STokenizer *ts = NULL;
 	s_bool eof;
-	SToken *token;
+	const SToken *token;
 	const char *tmp;
 
 

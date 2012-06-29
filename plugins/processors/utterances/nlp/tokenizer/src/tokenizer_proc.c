@@ -239,7 +239,7 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 	STokenizer *ts = NULL;
 	SRelation *tokenRelation = NULL;
 	s_bool eof;
-	SToken *token;
+	const SToken *token;
 	const char *token_string;
 	SItem *tokenItem;
 

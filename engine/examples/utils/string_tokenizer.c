@@ -42,7 +42,7 @@ int main()
 	s_erc error;
 	STokenizer *ts = NULL;
 	s_bool eof;
-	SToken *token;
+	const SToken *token;
 	const char *tmp;
 	const char *string_to_tokenize = "\"my (ma) se $10.00 en!, ek abý sal? [en;]   jy.\"";
 

@@ -310,9 +310,9 @@ static ulong Tell(const STokenizer *self, s_erc *error)
 
 
 
-static SToken *GetToken(STokenizer *self, s_erc *error)
+static const SToken *GetToken(STokenizer *self, s_erc *error)
 {
-	SToken *token;
+	const SToken *token;
 
 
 	S_CLR_ERR(error);
@@ -327,9 +327,9 @@ static SToken *GetToken(STokenizer *self, s_erc *error)
 }
 
 
-static SToken *PeekToken(STokenizer *self, s_erc *error)
+static const SToken *PeekToken(STokenizer *self, s_erc *error)
 {
-	SToken *token;
+	const SToken *token;
 
 
 	S_CLR_ERR(error);

@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2008-2011 The Department of Arts and Culture,                      */
+/* Copyright (c) 2012 The Department of Arts and Culture,                           */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -24,47 +24,77 @@
 /************************************************************************************/
 /*                                                                                  */
 /* AUTHOR  : Aby Louw                                                               */
-/* DATE    : 19 May 2008                                                            */
+/* DATE    : June 2012                                                              */
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* Base utf8 strings.                                                               */
+/* Windows specific string functions.                                               */
 /*                                                                                  */
 /*                                                                                  */
 /************************************************************************************/
 
-#ifndef _SPCT_UTF8_STRINGS_H__
-#define _SPCT_UTF8_STRINGS_H__
+#ifndef _SPCT_STRING_WIN32_STRINGS_H__
+#define _SPCT_STRING_WIN32_STRINGS_H__
 
 
 /**
- * @file utf8.h
- * Base system UTF8 character, strings and regular expressions includes.
- */
-
-
-/**
- * @ingroup SBase
- * @defgroup SBaseStrings UTF-8 Aware String Functions
- * Provides UTF-8 aware string utilities and functions.
- * @todo document regular expressions
+ * @file win32_strings.h
+ * Windows specific string functions.
  */
 
 
 /************************************************************************************/
 /*                                                                                  */
-/*  Include files in base strings                                                   */
+/* Modules used                                                                     */
 /*                                                                                  */
 /************************************************************************************/
 
+#include "Windows.h"
 #include "include/common.h"
-#include "base/strings/char.h"                   /* UTF-8 character handling functions.     */
-#include "base/strings/regexp.h"                 /* UTF-8 regular expressions.              */
-#include "base/strings/sprint.h"                 /* UTF-8 string print functions.           */
-#include "base/strings/strings.h"                /* UTF-8 string handling functions.        */
-#include "base/strings/str_list.h"               /* UTF-8 string lists.                     */
-#include "base/strings/platform/strings_impl.h"  /* UTF-8 platform specific implementations */
+#include "base/errdbg/errdbg.h"
 
 
-#endif /* _SPCT_UTF8_STRINGS_H__ */
+/************************************************************************************/
+/*                                                                                  */
+/* Begin external c declaration                                                     */
+/*                                                                                  */
+/************************************************************************************/
+S_BEGIN_C_DECLS
+
+
+/************************************************************************************/
+/*                                                                                  */
+/* Function prototypes                                                              */
+/*                                                                                  */
+/************************************************************************************/
+
+/**
+ * Copy a UTF-8 string from a UTF-16 string.
+ *
+ * @param from UTF-16 string to copy from.
+ * @param n Number of characters of @c from to copy. If -1
+ * then all characters.
+ * @param error Error code.
+ *
+ * @return Pointer to resulting UTF-8 string.
+ *
+ * @note Caller is responsible for returned memory.
+ */
+S_API char *s_utf8_from_utf16(const wchar_t* from, int n, s_erc *error);
+
+
+/************************************************************************************/
+/*                                                                                  */
+/* End external c declaration                                                       */
+/*                                                                                  */
+/************************************************************************************/
+S_END_C_DECLS
+
+
+/**
+ * @}
+ * end documentation
+ */
+
+#endif /* _SPCT_STRING_WIN32_STRINGS_H__ */
 

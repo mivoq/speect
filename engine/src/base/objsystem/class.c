@@ -561,7 +561,7 @@ S_API SObject *SObjectNewFromName(const char *name, s_erc *error)
 		return NULL;
 	}
 
-	obj = S_MALLOC_SIZE(class->size);
+	obj = S_CALLOC_SIZE(class->size);
 	if (obj == NULL)
 	{
 		S_FTL_ERR(error, S_MEMERROR,

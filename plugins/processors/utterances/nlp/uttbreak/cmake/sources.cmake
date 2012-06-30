@@ -1,24 +1,27 @@
 ######################################################################################
 ##                                                                                  ##
 ## AUTHOR  : Aby Louw                                                               ##
-## DATE    : 11 June 2010                                                           ##
+## DATE    : 5 November 2009                                                        ##
 ##                                                                                  ##
 ######################################################################################
 ##                                                                                  ##
-## CMakeList for nlp utterance processors plug-ins                                  ##
+## Source files for Tokenizer utterance processor plug-in                           ##
 ##                                                                                  ##
 ##                                                                                  ##
 ######################################################################################
 
-#------------------------------------------------------------------------------------#
-#                        Plug-in directories                                         #
-#------------------------------------------------------------------------------------#
 
-add_subdirectory(tokenizer)
-add_subdirectory(normalizer)
-add_subdirectory(phrasify)
-add_subdirectory(lexlookup)
-add_subdirectory(pauses)
-add_subdirectory(syltone)
-add_subdirectory(morphdecomp)
-add_subdirectory(uttbreak)
+######## source files ##################
+
+speect_plugin_sources(
+  src/plugin.c
+  src/uttbreak_proc.c
+  )
+ 
+
+######## header files ##################
+
+speect_plugin_headers(
+  src/uttbreak_proc.h
+  )
+

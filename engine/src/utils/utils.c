@@ -63,22 +63,22 @@ S_LOCAL void _s_utils_init(s_erc *error)
 				  "Failed to initialize SToken class"))
 		local_err = *error;
 
-	_s_tokenizer_class_add(error);
+	_s_tokenstream_class_add(error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "_s_utils_init",
-				  "Failed to initialize STokenizer class"))
+				  "Failed to initialize STokenstream class"))
 		local_err = *error;
 
-	_s_tokenizer_file_class_add(error);
+	_s_tokenstream_file_class_add(error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "_s_utils_init",
-				  "Failed to initialize STokenizerFile class"))
+				  "Failed to initialize STokenstreamFile class"))
 		local_err = *error;
 
-	_s_tokenizer_string_class_add(error);
+	_s_tokenstream_string_class_add(error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "_s_utils_init",
-				  "Failed to initialize STokenizerString class"))
+				  "Failed to initialize STokenstreamString class"))
 		local_err = *error;
 
 	/* if there was an error local_err will have it */

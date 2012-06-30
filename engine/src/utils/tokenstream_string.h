@@ -28,7 +28,7 @@
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* A string tokenizer class implementation.                                         */
+/* A string tokenstream class implementation.                                       */
 /* Loosely based on EST_Token of Edinburgh Speech Tools,                            */
 /* http://www.cstr.ed.ac.uk/projects/speech_tools (1.2.96)                          */
 /* Note that this is a derived work with no verbatim source code from above         */
@@ -36,8 +36,8 @@
 /*                                                                                  */
 /************************************************************************************/
 
-#ifndef _SPCT_TOKENIZER_STRING_H__
-#define _SPCT_TOKENIZER_STRING_H__
+#ifndef _SPCT_TOKENSTREAM_STRING_H__
+#define _SPCT_TOKENSTREAM_STRING_H__
 
 
 /************************************************************************************/
@@ -75,15 +75,15 @@
 /************************************************************************************/
 
 /**
- * @file tokenizer_string.h
- * A string tokenizer class implementation.
+ * @file tokenstream_string.h
+ * A string tokenstream class implementation.
  */
 
 
 /**
- * @ingroup STokenizer
- * @defgroup STokenizerString String Tokenizer
- * A string tokenizer class implementation.
+ * @ingroup STokenstream
+ * @defgroup STokenstreamString String Tokenstream
+ * A string tokenstream class implementation.
  * @{
  */
 
@@ -96,7 +96,7 @@
 
 #include "include/common.h"
 #include "base/errdbg/errdbg.h"
-#include "utils/tokenizer.h"
+#include "utils/tokenstream.h"
 
 
 /************************************************************************************/
@@ -115,33 +115,33 @@ S_BEGIN_C_DECLS
 
 /**
  * @hideinitializer
- * Return the given #STokenizerString child/parent class object as a
- * #STokenizerString object.
+ * Return the given #STokenstreamString child/parent class object as a
+ * #STokenstreamString object.
  *
  * @param SELF The given object.
  *
- * @return Given object as #STokenizerString* type.
+ * @return Given object as #STokenstreamString* type.
  * @note This casting is not safety checked.
  */
-#define S_TOKENIZER_STRING(SELF)    ((STokenizerString *)(SELF))
+#define S_TOKENSTREAM_STRING(SELF)    ((STokenstreamString *)(SELF))
 
 
 /************************************************************************************/
 /*                                                                                  */
-/* STokenizerString definition                                                      */
+/* STokenstreamString definition                                                    */
 /*                                                                                  */
 /************************************************************************************/
 
 /**
- * The string tokenizer structure.
- * @extends STokenizer
+ * The string tokenstream structure.
+ * @extends STokenstream
  */
 typedef struct
 {
 	/**
-	 * @protected Inherit from #STokenizer.
+	 * @protected Inherit from #STokenstream.
 	 */
-	STokenizer     obj;
+	STokenstream     obj;
 
 	/**
 	 * @protected The string source.
@@ -152,20 +152,20 @@ typedef struct
 	 * @protected The string position.
 	 */
 	uint32         pos;
-} STokenizerString;
+} STokenstreamString;
 
 
 /************************************************************************************/
 /*                                                                                  */
-/* STokenizerStringClass definition                                                 */
+/* STokenstreamStringClass definition                                               */
 /*                                                                                  */
 /************************************************************************************/
 
 /**
- * The string tokenizer class structure. Same as #STokenizerClass as
+ * The string tokenstream class structure. Same as #STokenstreamClass as
  * we are not adding any new methods.
  */
-typedef STokenizerClass STokenizerStringClass;
+typedef STokenstreamClass STokenstreamStringClass;
 
 
 /************************************************************************************/
@@ -175,26 +175,26 @@ typedef STokenizerClass STokenizerStringClass;
 /************************************************************************************/
 
 /**
- * Initialize a string tokenizer with a string.
+ * Initialize a string tokenstream with a string.
  *
- * @public @memberof STokenizerString
+ * @public @memberof STokenstreamString
  *
- * @param self The file tokenizer to initialize.
+ * @param self The file tokenstream to initialize.
  * @param string The string to tokenize.
  * @param error Error code.
  *
- * @note If this function fails the string tokenizer will be deleted
+ * @note If this function fails the string tokenstream will be deleted
  * and the @c self pointer will be set to @c NULL.
  */
-S_API void STokenizerStringInit(STokenizerString **self, const char *string, s_erc *error);
+S_API void STokenstreamStringInit(STokenstreamString **self, const char *string, s_erc *error);
 
 
 /**
- * Add the STokenizerString class to the object system.
- * @private @memberof STokenizerString
+ * Add the STokenstreamString class to the object system.
+ * @private @memberof STokenstreamString
  * @param error Error code.
  */
-S_LOCAL void _s_tokenizer_string_class_add(s_erc *error);
+S_LOCAL void _s_tokenstream_string_class_add(s_erc *error);
 
 
 /************************************************************************************/
@@ -210,4 +210,4 @@ S_END_C_DECLS
  * end documentation
  */
 
-#endif /* _SPCT_TOKENIZER_STRING_H__ */
+#endif /* _SPCT_TOKENSTREAM_STRING_H__ */

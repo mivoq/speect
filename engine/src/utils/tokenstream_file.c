@@ -28,7 +28,7 @@
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* A string tokenizer class implementation.                                         */
+/* A file tokenstream class implementation.                                         */
 /* Loosely based on EST_Token of Edinburgh Speech Tools,                            */
 /* http://www.cstr.ed.ac.uk/projects/speech_tools (1.2.96)                          */
 /* Note that this is a derived work with no verbatim source code from above         */
@@ -78,8 +78,7 @@
 /*                                                                                  */
 /************************************************************************************/
 
-#include "base/strings/utf8.h"
-#include "utils/tokenizer_string.h"
+#include "utils/tokenstream_file.h"
 
 
 /************************************************************************************/
@@ -90,52 +89,52 @@
 
 /**
  * @hideinitializer
- * Call the given function method of the given #STokenizerString,
- * see full description #S_TOKENIZER_STRING_CALL for usage.
+ * Call the given function method of the given #STokenstreamFile,
+ * see full description #S_TOKENSTREAM_FILE_CALL for usage.
  *
- * @param SELF The given #STokenizerString*.
+ * @param SELF The given #STokenstreamFile*.
  * @param FUNC The function method of the given object to call.
  *
  * @note This casting is not safety checked.
- * @note Example usage: @code S_TOKENIZER_STRING_CALL(self, func)(param1, param2, ..., paramN); @endcode
+ * @note Example usage: @code S_TOKENSTREAM_FILE_CALL(self, func)(param1, param2, ..., paramN); @endcode
  * where @c param1, @c param2, ..., @c paramN are the parameters passed to the object function
  * @c func.
  */
-#define S_TOKENIZER_STRING_CALL(SELF, FUNC)				\
-	((STokenizerStringClass *)S_OBJECT_CLS(SELF))->FUNC
+#define S_TOKENSTREAM_FILE_CALL(SELF, FUNC)				\
+	((STokenstreamFileClass *)S_OBJECT_CLS(SELF))->FUNC
 
 
 /**
  * @hideinitializer
- * Call the given function method of the given #STokenizer,
- * see full description #S_TOKENIZER_CALL for usage.
+ * Call the given function method of the given #STokenstream,
+ * see full description #S_TOKENSTREAM_CALL for usage.
  *
- * @param SELF The given #STokenizer*.
+ * @param SELF The given #STokenstream*.
  * @param FUNC The function method of the given object to call.
  *
  * @note This casting is not safety checked.
- * @note Example usage: @code S_TOKENIZER_CALL(self, func)(param1, param2, ..., paramN); @endcode
+ * @note Example usage: @code S_TOKENSTREAM_CALL(self, func)(param1, param2, ..., paramN); @endcode
  * where @c param1, @c param2, ..., @c paramN are the parameters passed to the object function
  * @c func.
  */
-#define S_TOKENIZER_CALL(SELF, FUNC)				\
-	((STokenizerClass *)S_OBJECT_CLS(SELF))->FUNC
+#define S_TOKENSTREAM_CALL(SELF, FUNC)				\
+	((STokenstreamClass *)S_OBJECT_CLS(SELF))->FUNC
 
 
 /**
  * @hideinitializer
- * Test if the given function method of the given #STokenizerString
+ * Test if the given function method of the given #STokenstreamFile
  * can be called.
  *
- * @param SELF The given #STokenizerString*.
+ * @param SELF The given #STokenstreamFile*.
  * @param FUNC The function method of the given object to check.
  *
  * @return #TRUE if function can be called, otherwise #FALSE.
  *
  * @note This casting is not safety checked.
  */
-#define S_TOKENIZER_STRING_METH_VALID(SELF, FUNC)		\
-	S_TOKENIZER_STRING_CALL(SELF, FUNC) ? TRUE : FALSE
+#define S_TOKENSTREAM_FILE_METH_VALID(SELF, FUNC)			\
+	S_TOKENSTREAM_FILE_CALL(SELF, FUNC) ? TRUE : FALSE
 
 
 /************************************************************************************/
@@ -144,12 +143,12 @@
 /*                                                                                  */
 /************************************************************************************/
 
-static STokenizerStringClass TokenizerStringClass; /* STokenizerString class declaration. */
+static STokenstreamFileClass TokenstreamFileClass; /* STokenstreamFile class declaration. */
 
-/* A tokenizer to give us access to the STokenizerClass functions */
-static STokenizer *tokenizer = NULL;
+/* A tokenstream to give us access to the STokenstreamClass functions */
+static STokenstream *tokenstream = NULL;
 
-static uint num_string_tokenizers = 0;
+static uint num_file_tokenstreams = 0;
 
 
 /************************************************************************************/
@@ -158,35 +157,35 @@ static uint num_string_tokenizers = 0;
 /*                                                                                  */
 /************************************************************************************/
 
-S_API void STokenizerStringInit(STokenizerString **self, const char *string, s_erc *error)
+S_API void STokenstreamFileInit(STokenstreamFile **self, const char *path, s_erc *error)
 {
 	S_CLR_ERR(error);
 
-	if (string == NULL)
+	if (path == NULL)
 	{
 		S_CTX_ERR(error, S_ARGERROR,
-				  "STokenizerStringInit",
-				  "Argument \"string\" is NULL");
+				  "STokenstreamFileInit",
+				  "Argument \"path\" is NULL");
 		return;
 	}
 
-	(*self)->string = s_strdup(string, error);
+	(*self)->ds = SFilesourceOpenFile(path, "r", error);
 	if (S_CHK_ERR(error, S_CONTERR,
-				  "STokenizerStringInit",
-				  "Call to \"s_strdup\" failed"))
+				  "STokenstreamFileInit",
+				  "Call to \"SFilesourceOpenFile\" failed"))
 	{
-		S_DELETE(*self, "STokenizerStringInit", error);
+		S_DELETE(*self, "STokenstreamFileInit", error);
 		*self = NULL;
 		return;
 	}
 
 	/* get the first character */
-	STokenizerGetChar(S_TOKENIZER(*self), error);
+	STokenstreamGetChar(S_TOKENSTREAM(*self), error);
 	if (S_CHK_ERR(error, S_CONTERR,
-				  "STokenizerStringInit",
-				  "Call to \"STokenizerGetChar\" failed"))
+				  "STokenstreamFileInit",
+				  "Call to \"STokenstreamGetChar\" failed"))
 	{
-		S_DELETE(*self, "STokenizerStringInit", error);
+		S_DELETE(*self, "STokenstreamFileInit", error);
 		*self = NULL;
 		return;
 	}
@@ -201,38 +200,37 @@ S_API void STokenizerStringInit(STokenizerString **self, const char *string, s_e
 
 static void Init(void *obj, s_erc *error)
 {
-	STokenizerString *self = obj;
+	STokenstreamFile *self = obj;
 
 
 	S_CLR_ERR(error);
 
-	if (num_string_tokenizers++ == 0)
+	if (num_file_tokenstreams++ == 0)
 	{
-		/* create a tokenizer to give us access to the STokenizerClass functions */
-		tokenizer = S_NEW(STokenizer, error);
+		/* create a tokenstream to give us access to the STokenstreamClass functions */
+		tokenstream = S_NEW(STokenstream, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "Init",
-					  "Failed to create tokenizer to give STokenizerClass function access"))
+					  "Failed to create tokenstream to give STokenstreamClass function access"))
 			return;
 	}
 
-	self->string = NULL;
-	self->pos = 0;
+	self->ds = NULL;
 }
 
 
 static void Destroy(void *obj, s_erc *error)
 {
-	STokenizerString *self = obj;
+	STokenstreamFile *self = obj;
 
 
 	S_CLR_ERR(error);
 
-	if (self->string != NULL)
-		S_FREE(self->string);
+	if (self->ds != NULL)
+		S_DELETE(self->ds, "Destroy", error);
 
-	if (--num_string_tokenizers == 0)
-		S_DELETE(tokenizer, "Destroy", error);
+	if (--num_file_tokenstreams == 0)
+		S_DELETE(tokenstream, "Destroy", error);
 }
 
 
@@ -243,31 +241,72 @@ static void Dispose(void *obj, s_erc *error)
 }
 
 
-static uint32 GetChar(STokenizer *self, s_erc *error)
+static uint32 GetChar(STokenstream *self, s_erc *error)
 {
-	uint32 utf8char = 0;
-	STokenizerString *ts = S_TOKENIZER_STRING(self);
-	size_t strlen;
+	uint32 utf8char;
+	uchar t;
+	int n;
+	STokenstreamFile *tf = S_TOKENSTREAM_FILE(self);
+	s_erc local_err = S_SUCCESS;
 
 
 	S_CLR_ERR(error);
-	strlen = s_strlen(ts->string, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "GetChar",
-				  "Call to \"s_strlen\" failed"))
-		return 0;
 
-	if (ts->pos < strlen)
-	{
-		utf8char = s_getat(ts->string, ts->pos++, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "GetChar",
-					  "Call to \"s_getat\" failed"))
-			return 0 ;
-	}
-	else
+	SDatasourceRead(tf->ds, &t, sizeof(uchar), 1, &local_err);
+	if (local_err == S_IOEOF)
 	{
 		self->eof = TRUE;
+		self->current_char = 0;
+		return 0;
+	}
+	else if (local_err != S_SUCCESS)
+	{
+		S_CTX_ERR(error, S_CONTERR,
+				  "GetChar",
+				  "Call to \"SDatasourceRead\" failed");
+		self->current_char = 0;
+		return 0;
+	}
+
+	utf8char = t;
+
+	if (utf8char & 0x80)
+	{
+		n = 1;
+
+		while (utf8char & (0x80>>n))
+			n++;
+
+		utf8char &= (1 << (8 - n)) - 1;
+
+		while (--n > 0)
+		{
+			SDatasourceRead(tf->ds, &t, sizeof(uchar), 1, &local_err);
+			if (local_err == S_IOEOF)
+			{
+				self->eof = TRUE;
+				self->current_char = 0;
+				return 0;
+			}
+			else if (local_err != S_SUCCESS)
+			{
+				S_CTX_ERR(error, S_CONTERR,
+						  "GetChar",
+						  "Call to \"SDatasourceRead\" failed");
+				self->current_char = 0;
+				return 0;
+			}
+
+			if ((!(t & 0x80)) || (t & 0x40))
+			{
+				self->current_char = '^';
+				S_CTX_ERR(error, S_CONTERR,
+						  "GetChar",
+						  "Read invalid character");
+			}
+
+			utf8char = (utf8char << 6) | (t & 0x3F);
+		}
 	}
 
 	self->current_char = utf8char;
@@ -275,49 +314,43 @@ static uint32 GetChar(STokenizer *self, s_erc *error)
 }
 
 
-static void Seek(STokenizer *self, ulong pos, s_erc *error)
+static void Seek(STokenstream *self, ulong pos, s_erc *error)
 {
-	STokenizerString *ts = S_TOKENIZER_STRING(self);
-	size_t strlen;
+	STokenstreamFile *tf = S_TOKENSTREAM_FILE(self);
 
 
 	S_CLR_ERR(error);
-	strlen = s_strlen(ts->string, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "Seek",
-				  "Call to \"s_strlen\" failed"))
-		return;
-
-	if (pos < strlen)
-	{
-		ts->pos = (uint32)pos;
-	}
-	else
-	{
-		self->eof = TRUE;
-	}
+	SDatasourceSeek(tf->ds, pos, S_SEEK_SET, error);
+	S_CHK_ERR(error, S_CONTERR,
+			  "Seek",
+			  "Call to \"SDatasourceSeek\" failed");
 }
 
 
-static ulong Tell(const STokenizer *self, s_erc *error)
+static ulong Tell(const STokenstream *self, s_erc *error)
 {
-	STokenizerString *ts = S_TOKENIZER_STRING(self);
+	STokenstreamFile *tf = S_TOKENSTREAM_FILE(self);
+	ulong pos;
 
 
 	S_CLR_ERR(error);
-	return (ulong)ts->pos;
+	pos = (ulong)SDatasourceTell(tf->ds,  error);
+	S_CHK_ERR(error, S_CONTERR,
+			  "Tell",
+			  "Call to \"SDatasourceTell\" failed");
+	return pos;
 }
 
 
 
-static const SToken *GetToken(STokenizer *self, s_erc *error)
+static const SToken *GetToken(STokenstream *self, s_erc *error)
 {
 	const SToken *token;
 
 
 	S_CLR_ERR(error);
-	/* calling get_token of STokenizerClass */
-	token = S_TOKENIZER_CALL(tokenizer, get_token)(self, error);
+	/* calling get_token of STokenstreamClass */
+	token = S_TOKENSTREAM_CALL(tokenstream, get_token)(self, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "GetToken",
 				  "Call to method \"get_token\" failed"))
@@ -327,14 +360,14 @@ static const SToken *GetToken(STokenizer *self, s_erc *error)
 }
 
 
-static const SToken *PeekToken(STokenizer *self, s_erc *error)
+static const SToken *PeekToken(STokenstream *self, s_erc *error)
 {
 	const SToken *token;
 
 
 	S_CLR_ERR(error);
-	/* calling peek_token of STokenizerClass */
-	token = S_TOKENIZER_CALL(tokenizer, peek_token)(self, error);
+	/* calling peek_token of STokenstreamClass */
+	token = S_TOKENSTREAM_CALL(tokenstream, peek_token)(self, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "PeekToken",
 				  "Call to method \"peek_token\" failed"))
@@ -344,66 +377,66 @@ static const SToken *PeekToken(STokenizer *self, s_erc *error)
 }
 
 
-static void SetWhitespaceChars(STokenizer *self, const char *white_space_chars,
+static void SetWhitespaceChars(STokenstream *self, const char *white_space_chars,
 							   s_erc *error)
 {
 	S_CLR_ERR(error);
-	/* calling set_whitespace_chars of STokenizerClass */
-	S_TOKENIZER_CALL(tokenizer, set_whitespace_chars)(self, white_space_chars, error);
+	/* calling set_whitespace_chars of STokenstreamClass */
+	S_TOKENSTREAM_CALL(tokenstream, set_whitespace_chars)(self, white_space_chars, error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "SetWhitespaceChars",
 			  "Call to method \"set_whitespace_chars\" failed");
 }
 
 
-static void SetSingleChars(STokenizer *self, const char *single_chars,
+static void SetSingleChars(STokenstream *self, const char *single_chars,
 						   s_erc *error)
 {
 	S_CLR_ERR(error);
-	/* calling set_single_chars of STokenizerClass */
-	S_TOKENIZER_CALL(tokenizer, set_single_chars)(self, single_chars, error);
+	/* calling set_single_chars of STokenstreamClass */
+	S_TOKENSTREAM_CALL(tokenstream, set_single_chars)(self, single_chars, error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "SetSingleChars",
 			  "Call to method \"set_single_chars\" failed");
 }
 
 
-static void SetPrePuncChars(STokenizer *self, const char *pre_punc_chars,
+static void SetPrePuncChars(STokenstream *self, const char *pre_punc_chars,
 							s_erc *error)
 {
 	S_CLR_ERR(error);
-	/* calling set_prepunc_chars of STokenizerClass */
-	S_TOKENIZER_CALL(tokenizer, set_prepunc_chars)(self, pre_punc_chars, error);
+	/* calling set_prepunc_chars of STokenstreamClass */
+	S_TOKENSTREAM_CALL(tokenstream, set_prepunc_chars)(self, pre_punc_chars, error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "SetPrePuncChars",
 			  "Call to method \"set_prepunc_chars\" failed");
 }
 
 
-static void SetPostPuncChars(STokenizer *self, const char *post_punc_chars,
+static void SetPostPuncChars(STokenstream *self, const char *post_punc_chars,
 							 s_erc *error)
 {
 	S_CLR_ERR(error);
-	/* calling set_postpunc_chars of STokenizerClass */
-	S_TOKENIZER_CALL(tokenizer, set_postpunc_chars)(self, post_punc_chars, error);
+	/* calling set_postpunc_chars of STokenstreamClass */
+	S_TOKENSTREAM_CALL(tokenstream, set_postpunc_chars)(self, post_punc_chars, error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "SetPostPuncChars",
 			  "Call to method \"set_postpunc_chars\" failed");
 }
 
 
-static void SetQuotes(STokenizer *self, uint32 quote, uint32 escape, s_erc *error)
+static void SetQuotes(STokenstream *self, uint32 quote, uint32 escape, s_erc *error)
 {
 	S_CLR_ERR(error);
-	/* calling set_quotes of STokenizerClass */
-	S_TOKENIZER_CALL(tokenizer, set_quotes)(self, quote, escape, error);
+	/* calling set_quotes of STokenstreamClass */
+	S_TOKENSTREAM_CALL(tokenstream, set_quotes)(self, quote, escape, error);
 	S_CHK_ERR(error, S_CONTERR,
 			  "SetQuotes",
 			  "Call to method \"set_quotes\" failed");
 }
 
 
-static s_bool QueryQuoteMode(const STokenizer *self, s_erc *error)
+static s_bool QueryQuoteMode(const STokenstream *self, s_erc *error)
 {
 	S_CLR_ERR(error);
 
@@ -411,7 +444,7 @@ static s_bool QueryQuoteMode(const STokenizer *self, s_erc *error)
 }
 
 
-static s_bool QueryEOF(const STokenizer *self, s_erc *error)
+static s_bool QueryEOF(const STokenstream *self, s_erc *error)
 {
 	S_CLR_ERR(error);
 
@@ -425,28 +458,28 @@ static s_bool QueryEOF(const STokenizer *self, s_erc *error)
 /*                                                                                  */
 /************************************************************************************/
 
-S_LOCAL void _s_tokenizer_string_class_add(s_erc *error)
+S_LOCAL void _s_tokenstream_file_class_add(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_add(S_OBJECTCLASS(&TokenizerStringClass), error);
+	s_class_add(S_OBJECTCLASS(&TokenstreamFileClass), error);
 	S_CHK_ERR(error, S_CONTERR,
-			  "_s_tokenizer_string_class_add",
-			  "Failed to add STokenizerStringClass");
+			  "_s_tokenstream_file_class_add",
+			  "Failed to add STokenstreamFileClass");
 }
 
 
 /************************************************************************************/
 /*                                                                                  */
-/* STokenizerString class initialization                                            */
+/* STokenstreamFile class initialization                                            */
 /*                                                                                  */
 /************************************************************************************/
 
-static STokenizerStringClass TokenizerStringClass =
+static STokenstreamFileClass TokenstreamFileClass =
 {
 	/* SObjectClass */
 	{
-		"STokenizer:STokenizerString",
-		sizeof(STokenizerString),
+		"STokenstream:STokenstreamFile",
+		sizeof(STokenstreamFile),
 		{ 0, 1},
 		Init,            /* init    */
 		Destroy,         /* destroy */
@@ -455,7 +488,7 @@ static STokenizerStringClass TokenizerStringClass =
 		NULL,            /* print   */
 		NULL,            /* copy    */
 	},
-	/* STokenizerClass */
+	/* STokenstreamClass */
 	GetChar,             /* get_char             */
 	Seek,                /* seek                 */
 	Tell,                /* tell                 */

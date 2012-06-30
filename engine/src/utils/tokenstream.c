@@ -28,7 +28,7 @@
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* A tokenizer class implementation.                                                */
+/* A tokenstream class implementation.                                              */
 /* Loosely based on EST_Token of Edinburgh Speech Tools,                            */
 /* http://www.cstr.ed.ac.uk/projects/speech_tools (1.2.96)                          */
 /* Note that this is a derived work with no verbatim source code from above         */
@@ -80,7 +80,7 @@
 
 #include "base/containers/buffer/buffer.h"
 #include "base/strings/utf8.h"
-#include "utils/tokenizer.h"
+#include "utils/tokenstream.h"
 
 
 /************************************************************************************/
@@ -91,35 +91,35 @@
 
 /**
  * @hideinitializer
- * Call the given function method of the given #STokenizer,
- * see full description #S_TOKENIZER_CALL for usage.
+ * Call the given function method of the given #STokenstream,
+ * see full description #S_TOKENSTREAM_CALL for usage.
  *
- * @param SELF The given #STokenizer*.
+ * @param SELF The given #STokenstream*.
  * @param FUNC The function method of the given object to call.
  *
  * @note This casting is not safety checked.
- * @note Example usage: @code S_TOKENIZER_CALL(self, func)(param1, param2, ..., paramN); @endcode
+ * @note Example usage: @code S_TOKENSTREAM_CALL(self, func)(param1, param2, ..., paramN); @endcode
  * where @c param1, @c param2, ..., @c paramN are the parameters passed to the object function
  * @c func.
  */
-#define S_TOKENIZER_CALL(SELF, FUNC)				\
-	((STokenizerClass *)S_OBJECT_CLS(SELF))->FUNC
+#define S_TOKENSTREAM_CALL(SELF, FUNC)				\
+	((STokenstreamClass *)S_OBJECT_CLS(SELF))->FUNC
 
 
 /**
  * @hideinitializer
- * Test if the given function method of the given #STokenizer
+ * Test if the given function method of the given #STokenstream
  * can be called.
  *
- * @param SELF The given #STokenizer*.
+ * @param SELF The given #STokenstream*.
  * @param FUNC The function method of the given object to check.
  *
  * @return #TRUE if function can be called, otherwise #FALSE.
  *
  * @note This casting is not safety checked.
  */
-#define S_TOKENIZER_METH_VALID(SELF, FUNC)		\
-	S_TOKENIZER_CALL(SELF, FUNC) ? TRUE : FALSE
+#define S_TOKENSTREAM_METH_VALID(SELF, FUNC)		\
+	S_TOKENSTREAM_CALL(SELF, FUNC) ? TRUE : FALSE
 
 
 /************************************************************************************/
@@ -128,7 +128,7 @@
 /*                                                                                  */
 /************************************************************************************/
 
-static STokenizerClass TokenizerClass; /* STokenizer class declaration. */
+static STokenstreamClass TokenstreamClass; /* STokenstream class declaration. */
 
 /* default character symbols */
 static const char * const s_default_whitespacesymbols      = " \t\n\r";
@@ -145,23 +145,23 @@ static const char * const s_default_postpunctuationsymbols = "\"'`.,:;!?(){}[]";
 
 static void s_add_to_buffer(s_buffer *buffer, uint32 c, s_erc *error);
 
-static SToken *s_get_token(STokenizer *ts, s_erc *error);
+static SToken *s_get_token(STokenstream *ts, s_erc *error);
 
-static s_bool s_char_is_whitespace(STokenizer *ts, uint32 c, s_erc *error);
+static s_bool s_char_is_whitespace(STokenstream *ts, uint32 c, s_erc *error);
 
-static s_bool s_char_is_singlechar(STokenizer *ts, uint32 c, s_erc *error);
+static s_bool s_char_is_singlechar(STokenstream *ts, uint32 c, s_erc *error);
 
-static s_bool s_char_is_prepunc(STokenizer *ts, uint32 c, s_erc *error);
+static s_bool s_char_is_prepunc(STokenstream *ts, uint32 c, s_erc *error);
 
-static s_bool s_char_is_postpunc(STokenizer *ts, uint32 c, s_erc *error);
+static s_bool s_char_is_postpunc(STokenstream *ts, uint32 c, s_erc *error);
 
-static void s_get_whitespace(STokenizer *ts, s_erc *error);
+static void s_get_whitespace(STokenstream *ts, s_erc *error);
 
-static void s_get_pre_punc(STokenizer *ts, s_erc *error);
+static void s_get_pre_punc(STokenstream *ts, s_erc *error);
 
-static void s_get_post_punc(STokenizer *ts, s_erc *error);
+static void s_get_post_punc(STokenstream *ts, s_erc *error);
 
-static void s_get_string(STokenizer *ts, s_erc *error);
+static void s_get_string(STokenstream *ts, s_erc *error);
 
 
 /************************************************************************************/
@@ -170,7 +170,7 @@ static void s_get_string(STokenizer *ts, s_erc *error);
 /*                                                                                  */
 /************************************************************************************/
 
-S_API uint32 STokenizerGetChar(STokenizer *self, s_erc *error)
+S_API uint32 STokenstreamGetChar(STokenstream *self, s_erc *error)
 {
 	uint32 uc;
 
@@ -180,22 +180,22 @@ S_API uint32 STokenizerGetChar(STokenizer *self, s_erc *error)
 	if (self == NULL)
 	{
 		S_CTX_ERR(error, S_ARGERROR,
-				  "STokenizerGetChar",
+				  "STokenstreamGetChar",
 				  "Argument \"self\" is NULL");
 		return 0;
 	}
 
-	if (!S_TOKENIZER_METH_VALID(self, get_char))
+	if (!S_TOKENSTREAM_METH_VALID(self, get_char))
 	{
 		S_WARNING(S_METHINVLD,
-				  "STokenizerGetChar",
+				  "STokenstreamGetChar",
 				  "Token method \"get_char\" not implemented");
 		return 0;
 	}
 
-	uc = S_TOKENIZER_CALL(self, get_char)(self, error);
+	uc = S_TOKENSTREAM_CALL(self, get_char)(self, error);
 	if (S_CHK_ERR(error, S_CONTERR,
-				  "STokenizerGetChar",
+				  "STokenstreamGetChar",
 				  "Call to class method \"get_char\" failed"))
 		return 0;
 
@@ -203,34 +203,34 @@ S_API uint32 STokenizerGetChar(STokenizer *self, s_erc *error)
 }
 
 
-S_API void STokenizerSeek(STokenizer *self, ulong pos, s_erc *error)
+S_API void STokenstreamSeek(STokenstream *self, ulong pos, s_erc *error)
 {
 	S_CLR_ERR(error);
 
 	if (self == NULL)
 	{
 		S_CTX_ERR(error, S_ARGERROR,
-				  "STokenizerSeek",
+				  "STokenstreamSeek",
 				  "Argument \"self\" is NULL");
 		return;
 	}
 
-	if (!S_TOKENIZER_METH_VALID(self, seek))
+	if (!S_TOKENSTREAM_METH_VALID(self, seek))
 	{
 		S_WARNING(S_METHINVLD,
-				  "STokenizerSeek",
+				  "STokenstreamSeek",
 				  "Token method \"seek\" not implemented");
 		return;
 	}
 
-	S_TOKENIZER_CALL(self, seek)(self, pos, error);
+	S_TOKENSTREAM_CALL(self, seek)(self, pos, error);
 	S_CHK_ERR(error, S_CONTERR,
-			  "STokenizerSeek",
+			  "STokenstreamSeek",
 			  "Call to class method \"seek\" failed");
 }
 
 
-S_API ulong STokenizerTell(const STokenizer *self, s_erc *error)
+S_API ulong STokenstreamTell(const STokenstream *self, s_erc *error)
 {
 	ulong pos;
 
@@ -240,22 +240,22 @@ S_API ulong STokenizerTell(const STokenizer *self, s_erc *error)
 	if (self == NULL)
 	{
 		S_CTX_ERR(error, S_ARGERROR,
-				  "STokenizerTell",
+				  "STokenstreamTell",
 				  "Argument \"self\" is NULL");
 		return 0;
 	}
 
-	if (!S_TOKENIZER_METH_VALID(self, tell))
+	if (!S_TOKENSTREAM_METH_VALID(self, tell))
 	{
 		S_WARNING(S_METHINVLD,
-				  "STokenizerTell",
+				  "STokenstreamTell",
 				  "Token method \"tell\" not implemented");
 		return 0;
 	}
 
-	pos = S_TOKENIZER_CALL(self, tell)(self, error);
+	pos = S_TOKENSTREAM_CALL(self, tell)(self, error);
 	if (S_CHK_ERR(error, S_CONTERR,
-				  "STokenizerTell",
+				  "STokenstreamTell",
 				  "Call to class method \"tell\" failed"))
 		return 0;
 
@@ -263,7 +263,7 @@ S_API ulong STokenizerTell(const STokenizer *self, s_erc *error)
 }
 
 
-S_API const SToken *STokenizerGetToken(STokenizer *self, s_erc *error)
+S_API const SToken *STokenstreamGetToken(STokenstream *self, s_erc *error)
 {
 	const SToken *token;
 
@@ -273,22 +273,22 @@ S_API const SToken *STokenizerGetToken(STokenizer *self, s_erc *error)
 	if (self == NULL)
 	{
 		S_CTX_ERR(error, S_ARGERROR,
-				  "STokenizerGetToken",
+				  "STokenstreamGetToken",
 				  "Argument \"self\" is NULL");
 		return NULL;
 	}
 
-	if (!S_TOKENIZER_METH_VALID(self, get_token))
+	if (!S_TOKENSTREAM_METH_VALID(self, get_token))
 	{
 		S_WARNING(S_METHINVLD,
-				  "STokenizerGetToken",
+				  "STokenstreamGetToken",
 				  "Token method \"get_token\" not implemented");
 		return NULL;
 	}
 
-	token = S_TOKENIZER_CALL(self, get_token)(self, error);
+	token = S_TOKENSTREAM_CALL(self, get_token)(self, error);
 	if (S_CHK_ERR(error, S_CONTERR,
-				  "STokenizerGetToken",
+				  "STokenstreamGetToken",
 				  "Call to class method \"get_token\" failed"))
 		return NULL;
 
@@ -296,7 +296,7 @@ S_API const SToken *STokenizerGetToken(STokenizer *self, s_erc *error)
 }
 
 
-S_API const SToken *STokenizerPeekToken(STokenizer *self, s_erc *error)
+S_API const SToken *STokenstreamPeekToken(STokenstream *self, s_erc *error)
 {
 	const SToken *token;
 
@@ -306,22 +306,22 @@ S_API const SToken *STokenizerPeekToken(STokenizer *self, s_erc *error)
 	if (self == NULL)
 	{
 		S_CTX_ERR(error, S_ARGERROR,
-				  "STokenizerPeekToken",
+				  "STokenstreamPeekToken",
 				  "Argument \"self\" is NULL");
 		return NULL;
 	}
 
-	if (!S_TOKENIZER_METH_VALID(self, peek_token))
+	if (!S_TOKENSTREAM_METH_VALID(self, peek_token))
 	{
 		S_WARNING(S_METHINVLD,
-				  "STokenizerPeekToken",
+				  "STokenstreamPeekToken",
 				  "Token method \"peek_token\" not implemented");
 		return NULL;
 	}
 
-	token = S_TOKENIZER_CALL(self, peek_token)(self, error);
+	token = S_TOKENSTREAM_CALL(self, peek_token)(self, error);
 	if (S_CHK_ERR(error, S_CONTERR,
-				  "STokenizerPeekToken",
+				  "STokenstreamPeekToken",
 				  "Call to class method \"peek_token\" failed"))
 		return NULL;
 
@@ -329,7 +329,7 @@ S_API const SToken *STokenizerPeekToken(STokenizer *self, s_erc *error)
 }
 
 
-S_API void STokenizerSetWhitespaceChars(STokenizer *self, const char *white_space_chars,
+S_API void STokenstreamSetWhitespaceChars(STokenstream *self, const char *white_space_chars,
 										s_erc *error)
 {
 	S_CLR_ERR(error);
@@ -337,7 +337,7 @@ S_API void STokenizerSetWhitespaceChars(STokenizer *self, const char *white_spac
 	if (self == NULL)
 	{
 		S_CTX_ERR(error, S_ARGERROR,
-				  "STokenizerSetWhitespaceChars",
+				  "STokenstreamSetWhitespaceChars",
 				  "Argument \"self\" is NULL");
 		return;
 	}
@@ -345,34 +345,34 @@ S_API void STokenizerSetWhitespaceChars(STokenizer *self, const char *white_spac
 	if (white_space_chars == NULL)
 	{
 		S_CTX_ERR(error, S_ARGERROR,
-				  "STokenizerSetWhitespaceChars",
+				  "STokenstreamSetWhitespaceChars",
 				  "Argument \"white_space_chars\" is NULL");
 		return;
 	}
 
-	if (!S_TOKENIZER_METH_VALID(self, set_whitespace_chars))
+	if (!S_TOKENSTREAM_METH_VALID(self, set_whitespace_chars))
 	{
 		S_WARNING(S_METHINVLD,
-				  "STokenizerSetWhitespaceChars",
+				  "STokenstreamSetWhitespaceChars",
 				  "Token method \"set_whitespace_chars\" not implemented");
 		return;
 	}
 
-	S_TOKENIZER_CALL(self, set_whitespace_chars)(self, white_space_chars, error);
+	S_TOKENSTREAM_CALL(self, set_whitespace_chars)(self, white_space_chars, error);
 	S_CHK_ERR(error, S_CONTERR,
-			  "STokenizerSetWhitespaceChars",
+			  "STokenstreamSetWhitespaceChars",
 			  "Call to class method \"set_whitespace_chars\" failed");
 }
 
 
-S_API void STokenizerSetSingleChars(STokenizer *self, const char *single_chars, s_erc *error)
+S_API void STokenstreamSetSingleChars(STokenstream *self, const char *single_chars, s_erc *error)
 {
 	S_CLR_ERR(error);
 
 	if (self == NULL)
 	{
 		S_CTX_ERR(error, S_ARGERROR,
-				  "STokenizerSetSingleChars",
+				  "STokenstreamSetSingleChars",
 				  "Argument \"self\" is NULL");
 		return;
 	}
@@ -380,34 +380,34 @@ S_API void STokenizerSetSingleChars(STokenizer *self, const char *single_chars, 
 	if (single_chars == NULL)
 	{
 		S_CTX_ERR(error, S_ARGERROR,
-				  "STokenizerSetSingleChars",
+				  "STokenstreamSetSingleChars",
 				  "Argument \"single_chars\" is NULL");
 		return;
 	}
 
-	if (!S_TOKENIZER_METH_VALID(self, set_single_chars))
+	if (!S_TOKENSTREAM_METH_VALID(self, set_single_chars))
 	{
 		S_WARNING(S_METHINVLD,
-				  "STokenizerSetSingleChars",
+				  "STokenstreamSetSingleChars",
 				  "Token method \"set_single_chars\" not implemented");
 		return;
 	}
 
-	S_TOKENIZER_CALL(self, set_single_chars)(self, single_chars, error);
+	S_TOKENSTREAM_CALL(self, set_single_chars)(self, single_chars, error);
 	S_CHK_ERR(error, S_CONTERR,
-			  "STokenizerSetSingleChars",
+			  "STokenstreamSetSingleChars",
 			  "Call to class method \"set_single_chars\" failed");
 }
 
 
-S_API void STokenizerSetPrePuncChars(STokenizer *self, const char *pre_punc_chars, s_erc *error)
+S_API void STokenstreamSetPrePuncChars(STokenstream *self, const char *pre_punc_chars, s_erc *error)
 {
 	S_CLR_ERR(error);
 
 	if (self == NULL)
 	{
 		S_CTX_ERR(error, S_ARGERROR,
-				  "STokenizerSetPrePuncChars",
+				  "STokenstreamSetPrePuncChars",
 				  "Argument \"self\" is NULL");
 		return;
 	}
@@ -415,34 +415,34 @@ S_API void STokenizerSetPrePuncChars(STokenizer *self, const char *pre_punc_char
 	if (pre_punc_chars == NULL)
 	{
 		S_CTX_ERR(error, S_ARGERROR,
-				  "STokenizerSetPrePuncChars",
+				  "STokenstreamSetPrePuncChars",
 				  "Argument \"pre_punc_chars\" is NULL");
 		return;
 	}
 
-	if (!S_TOKENIZER_METH_VALID(self, set_prepunc_chars))
+	if (!S_TOKENSTREAM_METH_VALID(self, set_prepunc_chars))
 	{
 		S_WARNING(S_METHINVLD,
-				  "STokenizerSetPrePuncChars",
+				  "STokenstreamSetPrePuncChars",
 				  "Token method \"set_prepunc_chars\" not implemented");
 		return;
 	}
 
-	S_TOKENIZER_CALL(self, set_prepunc_chars)(self, pre_punc_chars, error);
+	S_TOKENSTREAM_CALL(self, set_prepunc_chars)(self, pre_punc_chars, error);
 	S_CHK_ERR(error, S_CONTERR,
-			  "STokenizerSetPrePuncChars",
+			  "STokenstreamSetPrePuncChars",
 			  "Call to class method \"set_prepunc_chars\" failed");
 }
 
 
-S_API void STokenizerSetPostPuncChars(STokenizer *self, const char *post_punc_chars, s_erc *error)
+S_API void STokenstreamSetPostPuncChars(STokenstream *self, const char *post_punc_chars, s_erc *error)
 {
 	S_CLR_ERR(error);
 
 	if (self == NULL)
 	{
 		S_CTX_ERR(error, S_ARGERROR,
-				  "STokenizerSetPostPuncChars",
+				  "STokenstreamSetPostPuncChars",
 				  "Argument \"self\" is NULL");
 		return;
 	}
@@ -450,54 +450,54 @@ S_API void STokenizerSetPostPuncChars(STokenizer *self, const char *post_punc_ch
 	if (post_punc_chars == NULL)
 	{
 		S_CTX_ERR(error, S_ARGERROR,
-				  "STokenizerSetPostPuncChars",
+				  "STokenstreamSetPostPuncChars",
 				  "Argument \"post_punc_chars\" is NULL");
 		return;
 	}
 
-	if (!S_TOKENIZER_METH_VALID(self, set_postpunc_chars))
+	if (!S_TOKENSTREAM_METH_VALID(self, set_postpunc_chars))
 	{
 		S_WARNING(S_METHINVLD,
-				  "STokenizerSetPostPuncChars",
+				  "STokenstreamSetPostPuncChars",
 				  "Token method \"set_postpunc_chars\" not implemented");
 		return;
 	}
 
-	S_TOKENIZER_CALL(self, set_postpunc_chars)(self, post_punc_chars, error);
+	S_TOKENSTREAM_CALL(self, set_postpunc_chars)(self, post_punc_chars, error);
 	S_CHK_ERR(error, S_CONTERR,
-			  "STokenizerSetPostPuncChars",
+			  "STokenstreamSetPostPuncChars",
 			  "Call to class method \"set_postpunc_chars\" failed");
 }
 
 
-S_API void STokenizerSetQuotes(STokenizer *self, uint32 quote, uint32 escape, s_erc *error)
+S_API void STokenstreamSetQuotes(STokenstream *self, uint32 quote, uint32 escape, s_erc *error)
 {
 	S_CLR_ERR(error);
 
 	if (self == NULL)
 	{
 		S_CTX_ERR(error, S_ARGERROR,
-				  "STokenizerSetQuotes",
+				  "STokenstreamSetQuotes",
 				  "Argument \"self\" is NULL");
 		return;
 	}
 
-	if (!S_TOKENIZER_METH_VALID(self, set_quotes))
+	if (!S_TOKENSTREAM_METH_VALID(self, set_quotes))
 	{
 		S_WARNING(S_METHINVLD,
-				  "STokenizerSetQuotes",
+				  "STokenstreamSetQuotes",
 				  "Token method \"set_quotes\" not implemented");
 		return;
 	}
 
-	S_TOKENIZER_CALL(self, set_quotes)(self, quote, escape, error);
+	S_TOKENSTREAM_CALL(self, set_quotes)(self, quote, escape, error);
 	S_CHK_ERR(error, S_CONTERR,
-			  "STokenizerSetQuotes",
+			  "STokenstreamSetQuotes",
 			  "Call to class method \"set_quotes\" failed");
 }
 
 
-S_API s_bool STokenizerQueryQuoteMode(const STokenizer *self, s_erc *error)
+S_API s_bool STokenstreamQueryQuoteMode(const STokenstream *self, s_erc *error)
 {
 	s_bool query;
 
@@ -507,22 +507,22 @@ S_API s_bool STokenizerQueryQuoteMode(const STokenizer *self, s_erc *error)
 	if (self == NULL)
 	{
 		S_CTX_ERR(error, S_ARGERROR,
-				  "STokenizerQueryQuoteMode",
+				  "STokenstreamQueryQuoteMode",
 				  "Argument \"self\" is NULL");
 		return FALSE;
 	}
 
-	if (!S_TOKENIZER_METH_VALID(self, query_quote_mode))
+	if (!S_TOKENSTREAM_METH_VALID(self, query_quote_mode))
 	{
 		S_WARNING(S_METHINVLD,
-				  "STokenizerQueryQuoteMode",
+				  "STokenstreamQueryQuoteMode",
 				  "Token method \"query_quote_mode\" not implemented");
 		return FALSE;
 	}
 
-	query = S_TOKENIZER_CALL(self, query_quote_mode)(self, error);
+	query = S_TOKENSTREAM_CALL(self, query_quote_mode)(self, error);
 	if (S_CHK_ERR(error, S_CONTERR,
-				  "STokenizerQueryQuoteMode",
+				  "STokenstreamQueryQuoteMode",
 				  "Call to class method \"query_quote_mode\" failed"))
 		return FALSE;
 
@@ -530,7 +530,7 @@ S_API s_bool STokenizerQueryQuoteMode(const STokenizer *self, s_erc *error)
 }
 
 
-S_API s_bool STokenizerQueryEOF(const STokenizer *self, s_erc *error)
+S_API s_bool STokenstreamQueryEOF(const STokenstream *self, s_erc *error)
 {
 	s_bool query;
 
@@ -540,22 +540,22 @@ S_API s_bool STokenizerQueryEOF(const STokenizer *self, s_erc *error)
 	if (self == NULL)
 	{
 		S_CTX_ERR(error, S_ARGERROR,
-				  "STokenizerQueryEOF",
+				  "STokenstreamQueryEOF",
 				  "Argument \"self\" is NULL");
 		return FALSE;
 	}
 
-	if (!S_TOKENIZER_METH_VALID(self, query_eof))
+	if (!S_TOKENSTREAM_METH_VALID(self, query_eof))
 	{
 		S_WARNING(S_METHINVLD,
-				  "STokenizerQueryEOF",
+				  "STokenstreamQueryEOF",
 				  "Token method \"query_eof\" not implemented");
 		return FALSE;
 	}
 
-	query = S_TOKENIZER_CALL(self, query_eof)(self, error);
+	query = S_TOKENSTREAM_CALL(self, query_eof)(self, error);
 	if (S_CHK_ERR(error, S_CONTERR,
-				  "STokenizerQueryEOF",
+				  "STokenstreamQueryEOF",
 				  "Call to class method \"query_eof\" failed"))
 		return FALSE;
 
@@ -596,7 +596,7 @@ static void s_add_to_buffer(s_buffer *buffer, uint32 c, s_erc *error)
 }
 
 
-static s_bool s_char_is_whitespace(STokenizer *ts, uint32 c, s_erc *error)
+static s_bool s_char_is_whitespace(STokenstream *ts, uint32 c, s_erc *error)
 {
 	const char *tmp;
 
@@ -615,7 +615,7 @@ static s_bool s_char_is_whitespace(STokenizer *ts, uint32 c, s_erc *error)
 }
 
 
-static s_bool s_char_is_singlechar(STokenizer *ts, uint32 c, s_erc *error)
+static s_bool s_char_is_singlechar(STokenstream *ts, uint32 c, s_erc *error)
 {
 	const char *tmp;
 
@@ -634,7 +634,7 @@ static s_bool s_char_is_singlechar(STokenizer *ts, uint32 c, s_erc *error)
 }
 
 
-static s_bool s_char_is_prepunc(STokenizer *ts, uint32 c, s_erc *error)
+static s_bool s_char_is_prepunc(STokenstream *ts, uint32 c, s_erc *error)
 {
 	const char *tmp;
 
@@ -653,7 +653,7 @@ static s_bool s_char_is_prepunc(STokenizer *ts, uint32 c, s_erc *error)
 }
 
 
-static s_bool s_char_is_postpunc(STokenizer *ts, uint32 c, s_erc *error)
+static s_bool s_char_is_postpunc(STokenstream *ts, uint32 c, s_erc *error)
 {
 	const char *tmp;
 
@@ -672,7 +672,7 @@ static s_bool s_char_is_postpunc(STokenizer *ts, uint32 c, s_erc *error)
 }
 
 
-static void s_get_whitespace(STokenizer *ts, s_erc *error)
+static void s_get_whitespace(STokenstream *ts, s_erc *error)
 {
 	s_buffer *buffer;
 	s_bool is_type;
@@ -713,10 +713,10 @@ static void s_get_whitespace(STokenizer *ts, s_erc *error)
 			return;
 		}
 
-		STokenizerGetChar(ts, error);
+		STokenstreamGetChar(ts, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "s_get_whitespace",
-					  "Call to \"STokenizerGetChar\" failed"))
+					  "Call to \"STokenstreamGetChar\" failed"))
 		{
 			s_buffer_delete(buffer, error);
 			S_CHK_ERR(error, S_CONTERR,
@@ -787,7 +787,7 @@ static void s_get_whitespace(STokenizer *ts, s_erc *error)
 }
 
 
-static void s_get_pre_punc(STokenizer *ts, s_erc *error)
+static void s_get_pre_punc(STokenstream *ts, s_erc *error)
 {
 	s_buffer *buffer;
 	s_bool is_type;
@@ -828,10 +828,10 @@ static void s_get_pre_punc(STokenizer *ts, s_erc *error)
 			return;
 		}
 
-		STokenizerGetChar(ts, error);
+		STokenstreamGetChar(ts, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "s_get_pre_punc",
-					  "Call to \"STokenizerGetChar\" failed"))
+					  "Call to \"STokenstreamGetChar\" failed"))
 		{
 			s_buffer_delete(buffer, error);
 			S_CHK_ERR(error, S_CONTERR,
@@ -902,7 +902,7 @@ static void s_get_pre_punc(STokenizer *ts, s_erc *error)
 }
 
 
-static void s_get_post_punc(STokenizer *ts, s_erc *error)
+static void s_get_post_punc(STokenstream *ts, s_erc *error)
 {
 	s_buffer *buffer;
 	s_bool is_type;
@@ -943,10 +943,10 @@ static void s_get_post_punc(STokenizer *ts, s_erc *error)
 			return;
 		}
 
-		STokenizerGetChar(ts, error);
+		STokenstreamGetChar(ts, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "s_get_post_punc",
-					  "Call to \"STokenizerGetChar\" failed"))
+					  "Call to \"STokenstreamGetChar\" failed"))
 		{
 			s_buffer_delete(buffer, error);
 			S_CHK_ERR(error, S_CONTERR,
@@ -1017,7 +1017,7 @@ static void s_get_post_punc(STokenizer *ts, s_erc *error)
 }
 
 
-static void s_get_string(STokenizer *ts, s_erc *error)
+static void s_get_string(STokenstream *ts, s_erc *error)
 {
 	s_buffer *buffer;
 	s_bool is_whitespace;
@@ -1113,10 +1113,10 @@ static void s_get_string(STokenizer *ts, s_erc *error)
 				return;
 			}
 
-			STokenizerGetChar(ts, error);
+			STokenstreamGetChar(ts, error);
 			if (S_CHK_ERR(error, S_CONTERR,
 						  "s_get_string",
-						  "Call to \"STokenizerGetChar\" failed"))
+						  "Call to \"STokenstreamGetChar\" failed"))
 			{
 				s_buffer_delete(buffer, error);
 				S_CHK_ERR(error, S_CONTERR,
@@ -1140,7 +1140,7 @@ static void s_get_string(STokenizer *ts, s_erc *error)
 			return;
 		}
 
-		S_TOKENIZER_CALL(ts, get_char)(ts, error);
+		S_TOKENSTREAM_CALL(ts, get_char)(ts, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "s_get_string",
 					  "Call to method \"get_char\" failed"))
@@ -1237,7 +1237,7 @@ static void s_get_string(STokenizer *ts, s_erc *error)
 }
 
 
-static SToken *s_get_token(STokenizer *ts, s_erc *error)
+static SToken *s_get_token(STokenstream *ts, s_erc *error)
 {
 	/* make a new token */
 	if (ts->currentToken != NULL)
@@ -1301,7 +1301,7 @@ static SToken *s_get_token(STokenizer *ts, s_erc *error)
 
 static void Init(void *obj, s_erc *error)
 {
-	STokenizer *self = obj;
+	STokenstream *self = obj;
 
 
 	S_CLR_ERR(error);
@@ -1354,7 +1354,7 @@ static void Init(void *obj, s_erc *error)
 
 static void Destroy(void *obj, s_erc *error)
 {
-	STokenizer *self = obj;
+	STokenstream *self = obj;
 
 
 	S_CLR_ERR(error);
@@ -1382,7 +1382,7 @@ static void Dispose(void *obj, s_erc *error)
 }
 
 
-static const SToken *GetToken(STokenizer *self, s_erc *error)
+static const SToken *GetToken(STokenstream *self, s_erc *error)
 {
 	const SToken *token;
 
@@ -1404,7 +1404,7 @@ static const SToken *GetToken(STokenizer *self, s_erc *error)
 }
 
 
-static const SToken *PeekToken(STokenizer *self, s_erc *error)
+static const SToken *PeekToken(STokenstream *self, s_erc *error)
 {
 	const SToken *token;
 
@@ -1422,7 +1422,7 @@ static const SToken *PeekToken(STokenizer *self, s_erc *error)
 }
 
 
-static void SetWhitespaceChars(STokenizer *self, const char *white_space_chars,
+static void SetWhitespaceChars(STokenstream *self, const char *white_space_chars,
 							   s_erc *error)
 {
 	S_CLR_ERR(error);
@@ -1436,7 +1436,7 @@ static void SetWhitespaceChars(STokenizer *self, const char *white_space_chars,
 }
 
 
-static void SetSingleChars(STokenizer *self, const char *single_chars,
+static void SetSingleChars(STokenstream *self, const char *single_chars,
 						   s_erc *error)
 {
 	S_CLR_ERR(error);
@@ -1450,7 +1450,7 @@ static void SetSingleChars(STokenizer *self, const char *single_chars,
 }
 
 
-static void SetPrePuncChars(STokenizer *self, const char *pre_punc_chars,
+static void SetPrePuncChars(STokenstream *self, const char *pre_punc_chars,
 							s_erc *error)
 {
 	S_CLR_ERR(error);
@@ -1464,7 +1464,7 @@ static void SetPrePuncChars(STokenizer *self, const char *pre_punc_chars,
 }
 
 
-static void SetPostPuncChars(STokenizer *self, const char *post_punc_chars,
+static void SetPostPuncChars(STokenstream *self, const char *post_punc_chars,
 							 s_erc *error)
 {
 	S_CLR_ERR(error);
@@ -1478,7 +1478,7 @@ static void SetPostPuncChars(STokenizer *self, const char *post_punc_chars,
 }
 
 
-static void SetQuotes(STokenizer *self, uint32 quote, uint32 escape, s_erc *error)
+static void SetQuotes(STokenstream *self, uint32 quote, uint32 escape, s_erc *error)
 {
 	S_CLR_ERR(error);
 
@@ -1488,7 +1488,7 @@ static void SetQuotes(STokenizer *self, uint32 quote, uint32 escape, s_erc *erro
 }
 
 
-static s_bool QueryQuoteMode(const STokenizer *self, s_erc *error)
+static s_bool QueryQuoteMode(const STokenstream *self, s_erc *error)
 {
 	S_CLR_ERR(error);
 
@@ -1496,7 +1496,7 @@ static s_bool QueryQuoteMode(const STokenizer *self, s_erc *error)
 }
 
 
-static s_bool QueryEOF(const STokenizer *self, s_erc *error)
+static s_bool QueryEOF(const STokenstream *self, s_erc *error)
 {
 	S_CLR_ERR(error);
 
@@ -1510,28 +1510,28 @@ static s_bool QueryEOF(const STokenizer *self, s_erc *error)
 /*                                                                                  */
 /************************************************************************************/
 
-S_LOCAL void _s_tokenizer_class_add(s_erc *error)
+S_LOCAL void _s_tokenstream_class_add(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_add(S_OBJECTCLASS(&TokenizerClass), error);
+	s_class_add(S_OBJECTCLASS(&TokenstreamClass), error);
 	S_CHK_ERR(error, S_CONTERR,
-			  "_s_tokenizer_class_add",
-			  "Failed to add STokenizerClass");
+			  "_s_tokenstream_class_add",
+			  "Failed to add STokenstreamClass");
 }
 
 
 /************************************************************************************/
 /*                                                                                  */
-/* STokenizer class initialization                                                  */
+/* STokenstream class initialization                                                */
 /*                                                                                  */
 /************************************************************************************/
 
-static STokenizerClass TokenizerClass =
+static STokenstreamClass TokenstreamClass =
 {
 	/* SObjectClass */
 	{
-		"STokenizer",
-		sizeof(STokenizer),
+		"STokenstream",
+		sizeof(STokenstream),
 		{ 0, 1},
 		Init,            /* init    */
 		Destroy,         /* destroy */
@@ -1540,7 +1540,7 @@ static STokenizerClass TokenizerClass =
 		NULL,            /* print   */
 		NULL,            /* copy    */
 	},
-	/* STokenizerClass */
+	/* STokenstreamClass */
 	NULL,                /* get_char             */
 	NULL,                /* seek                 */
 	NULL,                /* tell                 */

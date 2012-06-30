@@ -28,7 +28,7 @@
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* A tokenizer class implementation.                                                */
+/* A tokenstream class implementation.                                              */
 /* Loosely based on EST_Token of Edinburgh Speech Tools,                            */
 /* http://www.cstr.ed.ac.uk/projects/speech_tools (1.2.96)                          */
 /* Note that this is a derived work with no verbatim source code from above         */
@@ -36,8 +36,8 @@
 /*                                                                                  */
 /************************************************************************************/
 
-#ifndef _SPCT_TOKENIZER_H__
-#define _SPCT_TOKENIZER_H__
+#ifndef _SPCT_TOKENSTREAM_H__
+#define _SPCT_TOKENSTREAM_H__
 
 
 /************************************************************************************/
@@ -75,16 +75,16 @@
 /************************************************************************************/
 
 /**
- * @file tokenizer.h
- * A tokenizer class implementation.
+ * @file tokenstream.h
+ * A tokenstream class implementation.
  */
 
 
 /**
- * @defgroup STokenizer Tokenizer
- * A tokenizer class implementation. A class that allows the reading
+ * @defgroup STokenstream Tokenstream
+ * A tokenstream class implementation. A class that allows the reading
  * of tokens (#SToken) from a file or string.  It automatically
- * tokenizes a file based on user definable whitespace and
+ * tokenizes a stream based on user definable whitespace and
  * punctuation.
  *
  * The definitions of whitespace and punctuation are user definable.
@@ -149,25 +149,25 @@ S_BEGIN_C_DECLS
 
 /**
  * @hideinitializer
- * Return the given #STokenizer child/parent class object as a
- * #STokenizer object.
+ * Return the given #STokenstream child/parent class object as a
+ * #STokenstream object.
  *
  * @param SELF The given object.
  *
- * @return Given object as #STokenizer* type.
+ * @return Given object as #STokenstream* type.
  * @note This casting is not safety checked.
  */
-#define S_TOKENIZER(SELF)    ((STokenizer *)(SELF))
+#define S_TOKENSTREAM(SELF)    ((STokenstream *)(SELF))
 
 
 /************************************************************************************/
 /*                                                                                  */
-/* STokenizer definition                                                            */
+/* STokenstream definition                                                          */
 /*                                                                                  */
 /************************************************************************************/
 
 /**
- * The tokenizer structure.
+ * The tokenstream structure.
  * @extends SObject
  */
 typedef struct
@@ -231,17 +231,17 @@ typedef struct
 	 * @protected Quote mode flag.
 	 */
 	s_bool      quote_mode;
-} STokenizer;
+} STokenstream;
 
 
 /************************************************************************************/
 /*                                                                                  */
-/* STokenizerClass definition                                                       */
+/* STokenstreamClass definition                                                     */
 /*                                                                                  */
 /************************************************************************************/
 
 /**
- * The tokenizer class structure.
+ * The tokenstream class structure.
  * @extends SObjectClass
  */
 typedef struct
@@ -254,125 +254,125 @@ typedef struct
 
 	/* Class methods */
 	/**
-	 * Get character. Get the next character from the tokenizer and
-	 * set it the @c current_char tokenizer member.
+	 * Get character. Get the next character from the tokenstream and
+	 * set it the @c current_char tokenstream member.
 	 *
-	 * @param self The tokenizer.
+	 * @param self The tokenstream.
 	 * @param error Error code.
 	 *
-	 * @return The next character from the tokenizer, as UTF8
+	 * @return The next character from the tokenstream, as UTF8
 	 * character represented as a 4-byte unsigned integer.
 	 */
-	uint32 (* const get_char)(STokenizer *self, s_erc *error);
+	uint32 (* const get_char)(STokenstream *self, s_erc *error);
 
 	/**
 	 * Seek to the given position. Seek is relative to beginning of
-	 * tokenizer source.
+	 * tokenstream source.
 	 *
-	 * @param self The tokenizer.
+	 * @param self The tokenstream.
 	 * @param pos The position to seek to.
 	 * @param error Error code.
 	 */
-	void (* const seek)(STokenizer *self, ulong pos, s_erc *error);
+	void (* const seek)(STokenstream *self, ulong pos, s_erc *error);
 
 	/**
-	 * Query the position in the tokenizer.
+	 * Query the position in the tokenstream.
 	 *
-	 * @param self The tokenizer.
+	 * @param self The tokenstream.
 	 * @param error Error code.
 	 *
-	 * @return The position in the tokenizer.
+	 * @return The position in the tokenstream.
 	 */
-	ulong (* const tell)(const STokenizer *self, s_erc *error);
+	ulong (* const tell)(const STokenstream *self, s_erc *error);
 
 	/**
 	 * Get the next token.
 	 *
-	 * @param self The tokenizer.
+	 * @param self The tokenstream.
 	 * @param error Error code.
 	 *
 	 * @return The next token.
 	 */
-	const SToken *(* const get_token)(STokenizer *self, s_erc *error);
+	const SToken *(* const get_token)(STokenstream *self, s_erc *error);
 
 	/**
 	 * Peek the next token.
 	 *
-	 * @param self The tokenizer.
+	 * @param self The tokenstream.
 	 * @param error Error code.
 	 *
 	 * @return The next token (peeked).
 	 */
-	const SToken *(* const peek_token)(STokenizer *self, s_erc *error);
+	const SToken *(* const peek_token)(STokenstream *self, s_erc *error);
 
 	/**
-	 * Set the tokenizer white-space characters.
+	 * Set the tokenstream white-space characters.
 	 *
-	 * @param self The tokenizer.
+	 * @param self The tokenstream.
 	 * @param white_space_chars The white-space characters to set.
 	 * @param error Error code.
 	 */
-	void (* const set_whitespace_chars)(STokenizer *self, const char *white_space_chars, s_erc *error);
+	void (* const set_whitespace_chars)(STokenstream *self, const char *white_space_chars, s_erc *error);
 
 	/**
-	 * Set the tokenizer single character symbols.
+	 * Set the tokenstream single character symbols.
 	 *
-	 * @param self The tokenizer.
+	 * @param self The tokenstream.
 	 * @param single_chars The single characters symbols to set.
 	 * @param error Error code.
 	 */
-	void (* const set_single_chars)(STokenizer *self, const char *single_chars, s_erc *error);
+	void (* const set_single_chars)(STokenstream *self, const char *single_chars, s_erc *error);
 
 	/**
-	 * Set the tokenizer pre-punctuation symbols.
+	 * Set the tokenstream pre-punctuation symbols.
 	 *
-	 * @param self The tokenizer.
+	 * @param self The tokenstream.
 	 * @param single_chars The pre-punctuation symbols to set.
 	 * @param error Error code.
 	 */
-	void (* const set_prepunc_chars)(STokenizer *self, const char *pre_punc_chars, s_erc *error);
+	void (* const set_prepunc_chars)(STokenstream *self, const char *pre_punc_chars, s_erc *error);
 
 	/**
-	 * Set the tokenizer post-punctuation symbols.
+	 * Set the tokenstream post-punctuation symbols.
 	 *
-	 * @param self The tokenizer.
+	 * @param self The tokenstream.
 	 * @param single_chars The post-punctuation symbols to set.
 	 * @param error Error code.
 	 */
-	void (* const set_postpunc_chars)(STokenizer *self, const char *post_punc_chars, s_erc *error);
+	void (* const set_postpunc_chars)(STokenstream *self, const char *post_punc_chars, s_erc *error);
 
 	/**
-	 * Set the tokenizer quote symbols.
+	 * Set the tokenstream quote symbols.
 	 *
-	 * @param self The tokenizer.
+	 * @param self The tokenstream.
 	 * @param quote The quote symbol (use #s_getc to get the character
 	 * in a 4-byte unsigned integer).
 	 * @param escape The escape symbol (use #s_getc to get the character
 	 * in a 4-byte unsigned integer).
 	 * @param error Error code.
 	 */
-	void (* const set_quotes)(STokenizer *self, uint32 quote, uint32 escape, s_erc *error);
+	void (* const set_quotes)(STokenstream *self, uint32 quote, uint32 escape, s_erc *error);
 
 	/**
-	 * Query if the tokenizer is in quote mode.
+	 * Query if the tokenstream is in quote mode.
 	 *
-	 * @param self The tokenizer.
+	 * @param self The tokenstream.
 	 * @param error Error code.
 	 *
 	 * @return @c TRUE if in quote mode else @c FALSE
 	 */
-	s_bool (* const query_quote_mode)(const STokenizer *self, s_erc *error);
+	s_bool (* const query_quote_mode)(const STokenstream *self, s_erc *error);
 
 	/**
-	 * Query if the tokenizer is at the end of the file.
+	 * Query if the tokenstream is at the end of the file.
 	 *
-	 * @param self The tokenizer.
+	 * @param self The tokenstream.
 	 * @param error Error code.
 	 *
 	 * @return @c TRUE if at the end of the file else @c FALSE
 	 */
-	s_bool (* const query_eof)(const STokenizer *self, s_erc *error);
-} STokenizerClass;
+	s_bool (* const query_eof)(const STokenstream *self, s_erc *error);
+} STokenstreamClass;
 
 
 /************************************************************************************/
@@ -382,159 +382,159 @@ typedef struct
 /************************************************************************************/
 
 /**
- * Get character. Get the next character from the tokenizer and
- * set it the @c current_char tokenizer member.
+ * Get character. Get the next character from the tokenstream and
+ * set it the @c current_char tokenstream member.
  *
- * @public @memberof STokenizer
+ * @public @memberof STokenstream
  *
- * @param self The tokenizer.
+ * @param self The tokenstream.
  * @param error Error code.
  *
- * @return The next character from the tokenizer, as UTF8
+ * @return The next character from the tokenstream, as UTF8
  * character represented as a 4-byte unsigned integer.
  */
-S_API uint32 STokenizerGetChar(STokenizer *self, s_erc *error);
+S_API uint32 STokenstreamGetChar(STokenstream *self, s_erc *error);
 
 
 /**
  * Seek to the given position. Seek is relative to beginning of
- * tokenizer source.
+ * tokenstream source.
  *
- * @public @memberof STokenizer
+ * @public @memberof STokenstream
  *
- * @param self The tokenizer.
+ * @param self The tokenstream.
  * @param pos The position to seek to.
  * @param error Error code.
  */
-S_API void STokenizerSeek(STokenizer *self, ulong pos, s_erc *error);
+S_API void STokenstreamSeek(STokenstream *self, ulong pos, s_erc *error);
 
 
 /**
- * Query the position in the tokenizer.
+ * Query the position in the tokenstream.
  *
- * @public @memberof STokenizer
+ * @public @memberof STokenstream
  *
- * @param self The tokenizer.
+ * @param self The tokenstream.
  * @param error Error code.
  *
- * @return The position in the tokenizer.
+ * @return The position in the tokenstream.
  */
-S_API ulong STokenizerTell(const STokenizer *self, s_erc *error);
+S_API ulong STokenstreamTell(const STokenstream *self, s_erc *error);
 
 
 /**
  * Get the next token.
  *
- * @public @memberof STokenizer
+ * @public @memberof STokenstream
  *
- * @param self The tokenizer.
+ * @param self The tokenstream.
  * @param error Error code.
  *
  * @return The next token.
  */
-S_API const SToken *STokenizerGetToken(STokenizer *self, s_erc *error);
+S_API const SToken *STokenstreamGetToken(STokenstream *self, s_erc *error);
 
 
 /**
  * Peek the next token.
  *
- * @public @memberof STokenizer
+ * @public @memberof STokenstream
  *
- * @param self The tokenizer.
+ * @param self The tokenstream.
  * @param error Error code.
  *
  * @return The next token (peeked).
  */
-S_API const SToken *STokenizerPeekToken(STokenizer *self, s_erc *error);
+S_API const SToken *STokenstreamPeekToken(STokenstream *self, s_erc *error);
 
 
 /**
- * Set the tokenizer white-space characters.
+ * Set the tokenstream white-space characters.
  *
- * @public @memberof STokenizer
+ * @public @memberof STokenstream
  *
- * @param self The tokenizer.
+ * @param self The tokenstream.
  * @param white_space_chars The white-space characters to set.
  * @param error Error code.
  */
-S_API void STokenizerSetWhitespaceChars(STokenizer *self, const char *white_space_chars, s_erc *error);
+S_API void STokenstreamSetWhitespaceChars(STokenstream *self, const char *white_space_chars, s_erc *error);
 
 
 /**
- * Set the tokenizer single character symbols.
+ * Set the tokenstream single character symbols.
  *
- * @public @memberof STokenizer
+ * @public @memberof STokenstream
  *
- * @param self The tokenizer.
+ * @param self The tokenstream.
  * @param single_chars The single characters symbols to set.
  * @param error Error code.
  */
-S_API void STokenizerSetSingleChars(STokenizer *self, const char *single_chars, s_erc *error);
+S_API void STokenstreamSetSingleChars(STokenstream *self, const char *single_chars, s_erc *error);
 
 
 /**
- * Set the tokenizer pre-punctuation symbols.
+ * Set the tokenstream pre-punctuation symbols.
  *
- * @public @memberof STokenizer
+ * @public @memberof STokenstream
  *
- * @param self The tokenizer.
+ * @param self The tokenstream.
  * @param single_chars The pre-punctuation symbols to set.
  * @param error Error code.
  */
-S_API void STokenizerSetPrePuncChars(STokenizer *self, const char *pre_punc_chars, s_erc *error);
+S_API void STokenstreamSetPrePuncChars(STokenstream *self, const char *pre_punc_chars, s_erc *error);
 
 
 /**
- * Set the tokenizer post-punctuation symbols.
+ * Set the tokenstream post-punctuation symbols.
  *
- * @public @memberof STokenizer
+ * @public @memberof STokenstream
  *
- * @param self The tokenizer.
+ * @param self The tokenstream.
  * @param single_chars The post-punctuation symbols to set.
  * @param error Error code.
  */
-S_API void STokenizerSetPostPuncChars(STokenizer *self, const char *post_punc_chars, s_erc *error);
+S_API void STokenstreamSetPostPuncChars(STokenstream *self, const char *post_punc_chars, s_erc *error);
 
 
 /**
- * Set the tokenizer quote symbols.
+ * Set the tokenstream quote symbols.
  *
- * @public @memberof STokenizer
+ * @public @memberof STokenstream
  *
- * @param self The tokenizer.
+ * @param self The tokenstream.
  * @param quote The quote symbol (use #s_getc to get the character
  * in a 4-byte unsigned integer).
  * @param escape The escape symbol (use #s_getc to get the character
  * in a 4-byte unsigned integer).
  * @param error Error code.
  */
-S_API void STokenizerSetQuotes(STokenizer *self, uint32 quote, uint32 escape, s_erc *error);
+S_API void STokenstreamSetQuotes(STokenstream *self, uint32 quote, uint32 escape, s_erc *error);
 
 
 /**
- * Query if the tokenizer is in quote mode.
+ * Query if the tokenstream is in quote mode.
  *
- * @public @memberof STokenizer
+ * @public @memberof STokenstream
  *
- * @param self The tokenizer.
+ * @param self The tokenstream.
  * @param error Error code.
  *
  * @return @c TRUE if in quote mode else @c FALSE
  */
-S_API s_bool STokenizerQueryQuoteMode(const STokenizer *self, s_erc *error);
+S_API s_bool STokenstreamQueryQuoteMode(const STokenstream *self, s_erc *error);
 
 
 /**
- * Query if the tokenizer is at the end of the file.
+ * Query if the tokenstream is at the end of the file.
  *
- * @public @memberof STokenizer
+ * @public @memberof STokenstream
  *
- * @param self The tokenizer.
+ * @param self The tokenstream.
  * @param error Error code.
  *
  * @return @c TRUE if at the end of the file else @c FALSE
  */
-S_API s_bool STokenizerQueryEOF(const STokenizer *self, s_erc *error);
+S_API s_bool STokenstreamQueryEOF(const STokenstream *self, s_erc *error);
 
 
 /**
@@ -542,7 +542,7 @@ S_API s_bool STokenizerQueryEOF(const STokenizer *self, s_erc *error);
  * @private @memberof SToken
  * @param error Error code.
  */
-S_LOCAL void _s_tokenizer_class_add(s_erc *error);
+S_LOCAL void _s_tokenstream_class_add(s_erc *error);
 
 /************************************************************************************/
 /*                                                                                  */
@@ -557,4 +557,4 @@ S_END_C_DECLS
  * end documentation
  */
 
-#endif /* _SPCT_TOKENIZER_H__ */
+#endif /* _SPCT_TOKENSTREAM_H__ */

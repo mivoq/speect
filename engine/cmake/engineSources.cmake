@@ -157,9 +157,9 @@ set(SPCT_SRC_FILES
 
     # src/utils
     src/utils/token.c
-    src/utils/tokenizer.c
-    src/utils/tokenizer_file.c
-    src/utils/tokenizer_string.c
+    src/utils/tokenstream.c
+    src/utils/tokenstream_file.c
+    src/utils/tokenstream_string.c
     src/utils/utils.c
 
 
@@ -358,9 +358,9 @@ set(SPCT_SRC_INCLUDE_FILES
 
    # src/utils
    src/utils/token.h
-   src/utils/tokenizer.h
-   src/utils/tokenizer_file.h
-   src/utils/tokenizer_string.h
+   src/utils/tokenstream.h
+   src/utils/tokenstream_file.h
+   src/utils/tokenstream_string.h
    src/utils/utils.h
    
 

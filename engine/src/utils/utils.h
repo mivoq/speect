@@ -57,10 +57,10 @@
 /*                                                                                  */
 /************************************************************************************/
 
-#include "utils/token.h"            /* token class      */
-#include "utils/tokenizer.h"        /* tokenizer class  */
-#include "utils/tokenizer_string.h" /* string tokenizer */
-#include "utils/tokenizer_file.h"   /* file tokenizer   */
+#include "utils/token.h"              /* token class        */
+#include "utils/tokenstream.h"        /* tokenstream class  */
+#include "utils/tokenstream_string.h" /* string tokenstream */
+#include "utils/tokenstream_file.h"   /* file tokenstream   */
 
 
 /************************************************************************************/

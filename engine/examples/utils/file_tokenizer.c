@@ -40,7 +40,7 @@
 int main()
 {
 	s_erc error;
-	STokenizer *ts = NULL;
+	STokenstream *ts = NULL;
 	s_bool eof;
 	const SToken *token;
 	const char *tmp;
@@ -58,21 +58,21 @@ int main()
 		return 1;
 	}
 
-	/* create file tokenizer */
-	ts = (STokenizer*)S_NEW(STokenizerFile, &error);
+	/* create file tokenstream */
+	ts = (STokenstream*)S_NEW(STokenstreamFile, &error);
 	if (S_CHK_ERR(&error, S_CONTERR,
 				  "main",
-				  "Failed to create new file tokenizer"))
+				  "Failed to create new file tokenstream"))
 		goto quit;
 
-	/* initialize file tokenizer */
-	STokenizerFileInit((STokenizerFile**)&ts, "test_file.txt", &error);
+	/* initialize file tokenstream */
+	STokenstreamFileInit((STokenstreamFile**)&ts, "test_file.txt", &error);
 	if (S_CHK_ERR(&error, S_CONTERR,
 				  "main",
-				  "Failed to initialize file tokenizer"))
+				  "Failed to initialize file tokenstream"))
 		goto quit;
 
-	eof = STokenizerQueryEOF(ts, &error);
+	eof = STokenstreamQueryEOF(ts, &error);
 	if (S_CHK_ERR(&error, S_CONTERR,
 				  "main",
 				  "Failed to query end of file"))
@@ -80,7 +80,7 @@ int main()
 
 	while (!eof)
 	{
-		token = STokenizerPeekToken(ts, &error);
+		token = STokenstreamPeekToken(ts, &error);
 		if (S_CHK_ERR(&error, S_CONTERR,
 					  "main",
 					  "Failed to peek token"))
@@ -96,7 +96,7 @@ int main()
 			break;
 		else
 		{
-			token = STokenizerGetToken(ts, &error);
+			token = STokenstreamGetToken(ts, &error);
 			if (S_CHK_ERR(&error, S_CONTERR,
 						  "main",
 						  "Failed to get token"))
@@ -153,7 +153,7 @@ int main()
 		else
 			printf("token post-punctuation = NULL.\n");
 
-		eof = STokenizerQueryEOF(ts, &error);
+		eof = STokenstreamQueryEOF(ts, &error);
 		if (S_CHK_ERR(&error, S_CONTERR,
 					  "main",
 					  "Failed to query end of file"))

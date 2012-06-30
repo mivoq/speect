@@ -28,7 +28,7 @@
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* A file tokenizer class implementation.                                           */
+/* A file tokenstream class implementation.                                         */
 /* Loosely based on EST_Token of Edinburgh Speech Tools,                            */
 /* http://www.cstr.ed.ac.uk/projects/speech_tools (1.2.96)                          */
 /* Note that this is a derived work with no verbatim source code from above         */
@@ -36,8 +36,8 @@
 /*                                                                                  */
 /************************************************************************************/
 
-#ifndef _SPCT_TOKENIZER_FILE_H__
-#define _SPCT_TOKENIZER_FILE_H__
+#ifndef _SPCT_TOKENSTREAM_FILE_H__
+#define _SPCT_TOKENSTREAM_FILE_H__
 
 
 /************************************************************************************/
@@ -75,15 +75,15 @@
 /************************************************************************************/
 
 /**
- * @file tokenizer_file.h
- * A file tokenizer class implementation.
+ * @file tokenstream_file.h
+ * A file tokenstream class implementation.
  */
 
 
 /**
- * @ingroup STokenizer
- * @defgroup STokenizerFile File Tokenizer
- * A file tokenizer class implementation.
+ * @ingroup STokenstream
+ * @defgroup STokenstreamFile File Tokenstream
+ * A file tokenstream class implementation.
  * @{
  */
 
@@ -97,7 +97,7 @@
 #include "include/common.h"
 #include "base/errdbg/errdbg.h"
 #include "datasources/file_source.h"
-#include "utils/tokenizer.h"
+#include "utils/tokenstream.h"
 
 
 /************************************************************************************/
@@ -116,52 +116,52 @@ S_BEGIN_C_DECLS
 
 /**
  * @hideinitializer
- * Return the given #STokenizerFile child/parent class object as a
- * #STokenizerFile object.
+ * Return the given #STokenstreamFile child/parent class object as a
+ * #STokenstreamFile object.
  *
  * @param SELF The given object.
  *
- * @return Given object as #STokenizerFile* type.
+ * @return Given object as #STokenstreamFile* type.
  * @note This casting is not safety checked.
  */
-#define S_TOKENIZER_FILE(SELF)    ((STokenizerFile *)(SELF))
+#define S_TOKENSTREAM_FILE(SELF)    ((STokenstreamFile *)(SELF))
 
 
 /************************************************************************************/
 /*                                                                                  */
-/* STokenizerFile definition                                                        */
+/* STokenstreamFile definition                                                      */
 /*                                                                                  */
 /************************************************************************************/
 
 /**
- * The file tokenizer structure.
- * @extends STokenizer
+ * The file tokenstream structure.
+ * @extends STokenstream
  */
 typedef struct
 {
 	/**
-	 * @protected Inherit from #STokenizer.
+	 * @protected Inherit from #STokenstream.
 	 */
-	STokenizer     obj;
+	STokenstream     obj;
 
 	/**
 	 * @protected The file data source.
 	 */
 	SDatasource   *ds;
-} STokenizerFile;
+} STokenstreamFile;
 
 
 /************************************************************************************/
 /*                                                                                  */
-/* STokenizerFileClass definition                                                   */
+/* STokenstreamFileClass definition                                                 */
 /*                                                                                  */
 /************************************************************************************/
 
 /**
- * The file tokenizer class structure. Same as #STokenizerClass as
+ * The file tokenstream class structure. Same as #STokenstreamClass as
  * we are not adding any new methods.
  */
-typedef STokenizerClass STokenizerFileClass;
+typedef STokenstreamClass STokenstreamFileClass;
 
 
 /************************************************************************************/
@@ -171,27 +171,27 @@ typedef STokenizerClass STokenizerFileClass;
 /************************************************************************************/
 
 /**
- * Initialize a file tokenizer with a file path.
+ * Initialize a file tokenstream with a file path.
  *
- * @public @memberof STokenizerFile
+ * @public @memberof STokenstreamFile
  *
- * @param self The file tokenizer to initialize.
+ * @param self The file tokenstream to initialize.
  * @param path The full path and file name of the file to
  * tokenize.
  * @param error Error code.
  *
- * @note If this function fails the file tokenizer will be deleted
+ * @note If this function fails the file tokenstream will be deleted
  * and the @c self pointer will be set to @c NULL.
  */
-S_API void STokenizerFileInit(STokenizerFile **self, const char *path, s_erc *error);
+S_API void STokenstreamFileInit(STokenstreamFile **self, const char *path, s_erc *error);
 
 
 /**
- * Add the STokenizerFile class to the object system.
- * @private @memberof STokenizerFile
+ * Add the STokenstreamFile class to the object system.
+ * @private @memberof STokenstreamFile
  * @param error Error code.
  */
-S_LOCAL void _s_tokenizer_file_class_add(s_erc *error);
+S_LOCAL void _s_tokenstream_file_class_add(s_erc *error);
 
 
 /************************************************************************************/
@@ -207,4 +207,4 @@ S_END_C_DECLS
  * end documentation
  */
 
-#endif /* _SPCT_TOKENIZER_FILE_H__ */
+#endif /* _SPCT_TOKENSTREAM_FILE_H__ */

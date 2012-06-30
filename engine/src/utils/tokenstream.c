@@ -1410,6 +1410,8 @@ static const SToken *PeekToken(STokenstream *self, s_erc *error)
 
 
 	S_CLR_ERR(error);
+	if (self->peeked == TRUE)
+		return  self->currentToken;
 
 	self->peeked = TRUE;
 	token = s_get_token(self, error);

@@ -72,6 +72,9 @@ include(engineAbstractionMMap)
 # Environment Variables
 include(engineAbstractionEnvVar)
 
+# Platform specific string support
+include(engineAbstractionStrings)
+
 
 #------------------------------------------------------------------------------------#
 #                      Speect Engine library include config file                     #

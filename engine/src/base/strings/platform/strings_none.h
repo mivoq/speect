@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2008-2011 The Department of Arts and Culture,                      */
+/* Copyright (c) 2012 The Department of Arts and Culture,                           */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -24,47 +24,22 @@
 /************************************************************************************/
 /*                                                                                  */
 /* AUTHOR  : Aby Louw                                                               */
-/* DATE    : 19 May 2008                                                            */
+/* DATE    : June 2012                                                              */
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* Base utf8 strings.                                                               */
+/* Dummy include if no platform specific string functions.                          */
 /*                                                                                  */
 /*                                                                                  */
 /************************************************************************************/
 
-#ifndef _SPCT_UTF8_STRINGS_H__
-#define _SPCT_UTF8_STRINGS_H__
+#ifndef _SPCT_STRING_NONE_STRINGS_H__
+#define _SPCT_STRING_NONE_STRINGS_H__
 
 
-/**
- * @file utf8.h
- * Base system UTF8 character, strings and regular expressions includes.
- */
+/* nothing to declare here */
 
 
-/**
- * @ingroup SBase
- * @defgroup SBaseStrings UTF-8 Aware String Functions
- * Provides UTF-8 aware string utilities and functions.
- * @todo document regular expressions
- */
 
-
-/************************************************************************************/
-/*                                                                                  */
-/*  Include files in base strings                                                   */
-/*                                                                                  */
-/************************************************************************************/
-
-#include "include/common.h"
-#include "base/strings/char.h"                   /* UTF-8 character handling functions.     */
-#include "base/strings/regexp.h"                 /* UTF-8 regular expressions.              */
-#include "base/strings/sprint.h"                 /* UTF-8 string print functions.           */
-#include "base/strings/strings.h"                /* UTF-8 string handling functions.        */
-#include "base/strings/str_list.h"               /* UTF-8 string lists.                     */
-#include "base/strings/platform/strings_impl.h"  /* UTF-8 platform specific implementations */
-
-
-#endif /* _SPCT_UTF8_STRINGS_H__ */
+#endif /* _SPCT_STRING_NONE_STRINGS_H__ */
 

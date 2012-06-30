@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2008-2011 The Department of Arts and Culture,                      */
+/* Copyright (c) 2012 The Department of Arts and Culture,                           */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -24,47 +24,74 @@
 /************************************************************************************/
 /*                                                                                  */
 /* AUTHOR  : Aby Louw                                                               */
-/* DATE    : 19 May 2008                                                            */
+/* DATE    : June 2012                                                              */
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* Base utf8 strings.                                                               */
+/* Windows specific string functions.                                               */
 /*                                                                                  */
 /*                                                                                  */
 /************************************************************************************/
-
-#ifndef _SPCT_UTF8_STRINGS_H__
-#define _SPCT_UTF8_STRINGS_H__
-
-
-/**
- * @file utf8.h
- * Base system UTF8 character, strings and regular expressions includes.
- */
-
-
-/**
- * @ingroup SBase
- * @defgroup SBaseStrings UTF-8 Aware String Functions
- * Provides UTF-8 aware string utilities and functions.
- * @todo document regular expressions
- */
 
 
 /************************************************************************************/
 /*                                                                                  */
-/*  Include files in base strings                                                   */
+/* Modules used                                                                     */
 /*                                                                                  */
 /************************************************************************************/
 
-#include "include/common.h"
-#include "base/strings/char.h"                   /* UTF-8 character handling functions.     */
-#include "base/strings/regexp.h"                 /* UTF-8 regular expressions.              */
-#include "base/strings/sprint.h"                 /* UTF-8 string print functions.           */
-#include "base/strings/strings.h"                /* UTF-8 string handling functions.        */
-#include "base/strings/str_list.h"               /* UTF-8 string lists.                     */
-#include "base/strings/platform/strings_impl.h"  /* UTF-8 platform specific implementations */
+#include "base/strings/platform/win32/win32_strings.h"
 
 
-#endif /* _SPCT_UTF8_STRINGS_H__ */
+/************************************************************************************/
+/*                                                                                  */
+/* Function implementations                                                         */
+/*                                                                                  */
+/************************************************************************************/
 
+S_API char *s_utf8_from_utf16(const wchar_t* from, int n, s_erc *error)
+{
+	int n_bytes;
+	char *to;
+
+
+	S_CLR_ERR(error);
+
+	if (from == NULL)
+		return NULL;
+
+	/* get required UTF-8 string length */
+	n_bytes = WideCharToMultiByte(CP_UTF8, 0, from, n, NULL, 0, NULL, NULL);
+	if (n_bytes == 0)
+	{
+		S_CTX_ERR(error, S_FAILURE,
+				  "s_utf8_from_utf16",
+				  "Call to \"WideCharToMultiByte\" failed");
+		return NULL;
+	}
+
+	if (n != -1)
+		n_bytes += 1; /* null terminated */
+
+	to = S_CALLOC(char, n_bytes);
+	if (to == NULL)
+	{
+		S_FTL_ERR(error, S_MEMERROR,
+				  "s_utf8_from_utf16",
+				  "Failed to allocate memory for new UTF-8 string");
+		return NULL;
+	}
+
+	/* do conversion */
+	n_bytes = WideCharToMultiByte(CP_UTF8, 0, from, n, to, n_bytes + 1, NULL, NULL);
+	if (n_bytes == 0)
+	{
+		S_CTX_ERR(error, S_FAILURE,
+				  "s_utf8_from_utf16",
+				  "Call to \"WideCharToMultiByte\" failed");
+		S_FREE(to);
+		return NULL;
+	}
+
+	return to;
+}

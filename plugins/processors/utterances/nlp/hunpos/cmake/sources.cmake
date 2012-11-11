@@ -1,29 +1,29 @@
 ######################################################################################
 ##                                                                                  ##
 ## AUTHOR  : Aby Louw                                                               ##
-## DATE    : 11 June 2010                                                           ##
+## DATE    : 23 May 2012                                                            ##
 ##                                                                                  ##
 ######################################################################################
 ##                                                                                  ##
-## CMakeList for nlp utterance processors plug-ins                                  ##
+## Source files for Hunpos POS utterance processor plug-in                          ##
 ##                                                                                  ##
 ##                                                                                  ##
 ######################################################################################
 
-#------------------------------------------------------------------------------------#
-#                        Plug-in directories                                         #
-#------------------------------------------------------------------------------------#
 
-add_subdirectory(tokenizer)
-add_subdirectory(normalizer)
-add_subdirectory(phrasify)
-add_subdirectory(lexlookup)
-add_subdirectory(pauses)
-add_subdirectory(syltone)
-add_subdirectory(morphdecomp)
-add_subdirectory(uttbreak)
+######## source files ##################
 
-# Also see speect/plugins/cmake/pluginOptions.cmake
-if(HAVE_HUNPOS)
-  add_subdirectory(hunpos)
-endif(HAVE_HUNPOS)
+speect_plugin_sources(
+  src/plugin.c
+  src/hunpos_proc.c
+  src/hunposwrap.c
+  )
+ 
+
+######## header files ##################
+
+speect_plugin_headers(
+  src/hunpos_proc.h
+  src/hunpos.h
+  )
+

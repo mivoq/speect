@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2008-2011 The Department of Arts and Culture,                      */
+/* Copyright (c) 2012 The Department of Arts and Culture,                           */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -24,23 +24,14 @@
 /************************************************************************************/
 /*                                                                                  */
 /* AUTHOR  : Aby Louw                                                               */
-/* DATE    : 25 March 2008                                                          */
+/* DATE    : May 2012                                                               */
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* POSIX type definitions.                                                          */
+/* A part-of-speech tagger utterance processor using hunpos.                        */
 /*                                                                                  */
 /*                                                                                  */
 /************************************************************************************/
-
-#ifndef _SPCT_POSIX_TYPES_H__
-#define _SPCT_POSIX_TYPES_H__
-
-
-/**
- * @file posix_types.h
- * POSIX type definitions.
- */
 
 
 /************************************************************************************/
@@ -49,59 +40,105 @@
 /*                                                                                  */
 /************************************************************************************/
 
-#include "include/common.h"
+#include "hunpos_proc.h"
+#include "plugin_info.h"
 
 
 /************************************************************************************/
 /*                                                                                  */
-/* Begin external c declaration                                                     */
-/*                                                                                  */
-/************************************************************************************/
-S_BEGIN_C_DECLS
-
-
-/************************************************************************************/
-/*                                                                                  */
-/* Typedefs and data types                                                          */
+/* Static function prototypes                                                       */
 /*                                                                                  */
 /************************************************************************************/
 
-typedef u_int8_t          s_bool;
+static void plugin_register_function(s_erc *error);
 
-typedef int               sint;
-
-typedef unsigned int      uint;
-
-typedef int8_t	          sint8;
-
-typedef u_int8_t          uint8;
-
-typedef int16_t	          sint16;
-
-typedef u_int16_t         uint16;
-
-typedef int32_t	          sint32;
-
-typedef u_int32_t         uint32;
-
-typedef long int          slong;
-
-typedef unsigned long int ulong;
-
-typedef signed char       schar;
-
-typedef unsigned char     uchar;
-
-typedef uint8             s_byte;
+static void plugin_exit_function(s_erc *error);
 
 
 /************************************************************************************/
 /*                                                                                  */
-/* End external c declaration                                                       */
+/* Plug-in parameters                                                               */
 /*                                                                                  */
 /************************************************************************************/
-S_END_C_DECLS
+
+static const s_plugin_params plugin_params =
+{
+	/* plug-in name */
+	SPCT_PLUGIN_NAME,
+
+	/* description */
+	SPCT_PLUGIN_DESCRIPTION,
+
+	/* version */
+	{
+		SPCT_PLUGIN_VERSION_MAJOR,
+		SPCT_PLUGIN_VERSION_MINOR
+	},
+
+	/* Speect ABI version (which plug-in was compiled with) */
+	{
+		S_MAJOR_VERSION,
+		S_MINOR_VERSION
+	},
+
+	/* register function pointer */
+	plugin_register_function,
+
+	/* exit function pointer */
+	plugin_exit_function
+};
 
 
-#endif /* _SPCT_POSIX_TYPES_H__ */
+/************************************************************************************/
+/*                                                                                  */
+/* Function implementations                                                         */
+/*                                                                                  */
+/************************************************************************************/
 
+const s_plugin_params *s_plugin_init(s_erc *error)
+{
+	S_CLR_ERR(error);
+
+	if (!s_lib_version_ok(SPCT_MAJOR_VERSION_MIN, SPCT_MINOR_VERSION_MIN))
+	{
+		S_CTX_ERR(error, S_FAILURE,
+				  SPCT_PLUGIN_INIT_STR,
+				  "Incorrect Speect Engine version, require at least '%d.%d.x'",
+				  SPCT_MAJOR_VERSION_MIN, SPCT_MINOR_VERSION_MIN);
+		return NULL;
+	}
+
+	return &plugin_params;
+}
+
+
+/************************************************************************************/
+/*                                                                                  */
+/* Static function implementations                                                  */
+/*                                                                                  */
+/************************************************************************************/
+
+/* plug-in register function */
+static void plugin_register_function(s_erc *error)
+{
+	S_CLR_ERR(error);
+
+    /* register plug-in classes here */
+	_s_hunpos_utt_proc_class_reg(error);
+	S_CHK_ERR(error, S_CONTERR,
+			  SPCT_PLUGIN_REG_STR,
+			  SPCT_PLUGIN_REG_FAIL_STR);
+}
+
+
+/* plug-in exit function */
+static void plugin_exit_function(s_erc *error)
+{
+	S_CLR_ERR(error);
+
+	/* free plug-in classes here */
+	_s_hunpos_utt_proc_class_free(error);
+	S_CHK_ERR(error, S_CONTERR,
+			  SPCT_PLUGIN_EXIT_STR,
+			  SPCT_PLUGIN_EXIT_FAIL_STR);
+}

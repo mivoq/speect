@@ -1,5 +1,5 @@
 /************************************************************************************/
-/* Copyright (c) 2008-2011 The Department of Arts and Culture,                      */
+/* Copyright (c) 2012 The Department of Arts and Culture,                           */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
@@ -24,22 +24,22 @@
 /************************************************************************************/
 /*                                                                                  */
 /* AUTHOR  : Aby Louw                                                               */
-/* DATE    : 25 March 2008                                                          */
+/* DATE    : May 2012                                                               */
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* POSIX type definitions.                                                          */
+/* A part-of-speech tagger utterance processor using hunpos.                        */
 /*                                                                                  */
 /*                                                                                  */
 /************************************************************************************/
 
-#ifndef _SPCT_POSIX_TYPES_H__
-#define _SPCT_POSIX_TYPES_H__
+#ifndef _SPCT_PLUGIN_UTTPROCESSOR_HUNPOS_H__
+#define _SPCT_PLUGIN_UTTPROCESSOR_HUNPOS_H__
 
 
 /**
- * @file posix_types.h
- * POSIX type definitions.
+ * @file hunpos_proc.h
+ * A part-of-speech tagger utterance processor using hunpos.
  */
 
 
@@ -49,7 +49,8 @@
 /*                                                                                  */
 /************************************************************************************/
 
-#include "include/common.h"
+#include "speect.h"
+#include "hunpos.h"
 
 
 /************************************************************************************/
@@ -62,37 +63,81 @@ S_BEGIN_C_DECLS
 
 /************************************************************************************/
 /*                                                                                  */
-/* Typedefs and data types                                                          */
+/* Typedef                                                                          */
 /*                                                                                  */
 /************************************************************************************/
 
-typedef u_int8_t          s_bool;
+/**
+ * The SHunposUttProc structure.
+ * Typedef of the hunpos part-of-speech utterance processor.
+ * @extends SUttProcessor
+ */
+typedef struct
+{
+	/**
+	 * @protected Inherit from #SUttProcessor.
+	 */
+	SUttProcessor obj;
 
-typedef int               sint;
+	/**
+	 * @protected hunpos handle.
+	 */
+	hunpos        handle;
 
-typedef unsigned int      uint;
+	/**
+	 * @protected Maximum number of guessed tags.
+	 */
+	int           max_guessed_tags;
 
-typedef int8_t	          sint8;
+	/**
+	 * @protected Theta
+	 */
+	int           theta;
 
-typedef u_int8_t          uint8;
+	/**
+	 * @protected The hunpos model file.
+	 */
+	char         *model_file;
+} SHunposUttProc;
 
-typedef int16_t	          sint16;
 
-typedef u_int16_t         uint16;
+/************************************************************************************/
+/*                                                                                  */
+/* SHunposUttProcClass definition                                                   */
+/*                                                                                  */
+/************************************************************************************/
 
-typedef int32_t	          sint32;
+/**
+ * Typedef of the hunpos part-of-speech utterance processor class. Does not add any
+ * new methods, therefore exactly the same as #SUttProcessorClass.
+ */
+typedef SUttProcessorClass SHunposUttProcClass;
 
-typedef u_int32_t         uint32;
 
-typedef long int          slong;
+/************************************************************************************/
+/*                                                                                  */
+/* Plug-in class registration/free                                                  */
+/*                                                                                  */
+/************************************************************************************/
 
-typedef unsigned long int ulong;
+/**
+ * Register the #SHunposUttProc plug-in class with the Speect Engine
+ * object system.
+ * @private
+ *
+ * @param error Error code.
+ */
+S_LOCAL void _s_hunpos_utt_proc_class_reg(s_erc *error);
 
-typedef signed char       schar;
 
-typedef unsigned char     uchar;
-
-typedef uint8             s_byte;
+/**
+ * Free the #SHunposUttProc plug-in class from the Speect Engine
+ * object system.
+ * @private
+ *
+ * @param error Error code.
+ */
+S_LOCAL void _s_hunpos_utt_proc_class_free(s_erc *error);
 
 
 /************************************************************************************/
@@ -103,5 +148,10 @@ typedef uint8             s_byte;
 S_END_C_DECLS
 
 
-#endif /* _SPCT_POSIX_TYPES_H__ */
+/**
+ * @}
+ * end documentation
+ */
+
+#endif /* _SPCT_PLUGIN_UTTPROCESSOR_HUNPOS_H__ */
 

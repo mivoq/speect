@@ -60,3 +60,18 @@ set(HTS_ENGINE_LIB_106 CACHE FILEPATH "HTS Engine (1.06) library location (full 
 if(HTS_ENGINE_INCLUDE_106 AND HTS_ENGINE_LIB_106)
   set(HAVE_HTS "on" CACHE BOOL "Variable to check if hts_engine has been defined")
 endif(HTS_ENGINE_INCLUDE_106 AND HTS_ENGINE_LIB_106)
+
+
+#------------------------------------------------------------------------------------#
+#                                 hunpos POS tagger                                  #
+#------------------------------------------------------------------------------------#
+
+# HAVE_HUNPOS used in speect/plugins/processors/utterances/nlp/CMakeLists.txt
+unset(HAVE_HUNPOS CACHE)
+mark_as_advanced(HAVE_HUNPOS)
+
+set(HUNPOS_INCLUDE CACHE PATH "Path to hunpos POS tagger include directory")
+set(HUNPOS_LIB CACHE FILEPATH "hunpos POS tagger library location (full path and library)")
+if(HUNPOS_INCLUDE AND HUNPOS_LIB)
+  set(HAVE_HUNPOS "on" CACHE BOOL "Variable to check if hunpos has been defined")
+endif(HUNPOS_INCLUDE AND HUNPOS_LIB)

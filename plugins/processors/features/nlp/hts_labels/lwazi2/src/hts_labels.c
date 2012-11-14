@@ -324,27 +324,26 @@ static char *create_phone_context(const SItem *item, s_erc *error)
 	char p3[MAX_PHONE_NAME_LENGTH] = "";
 	char p4[MAX_PHONE_NAME_LENGTH] = "";
 	char p5[MAX_PHONE_NAME_LENGTH] = "";
-	SObject *dFeat;
+	const SObject *featPath;
+	const char *tmp;
 
 
 	S_CLR_ERR(error);
 
 	/* p1 = p.p.name */
-	dFeat = SItemPathToFeatProc(item, "p.p.segment_name_multilingual", error);
+	featPath = SItemPathToFeature(item, "p.p.name", error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "create_phone_context",
-				  "Call to \"SItemPathToFeatProc\" failed"))
+				  "Call to \"SItemPathToFeature\" failed"))
 		return NULL;
 
-	if (dFeat != NULL)
+	if (featPath != NULL)
 	{
-		s_strcpy(p1, SObjectGetString(dFeat, error), error);
+		s_strcpy(p1, SObjectGetString(featPath, error), error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "create_phone_context",
 					  "Call to \"s_strcpy/SObjectGetString\" failed"))
 			return NULL;
-
-		S_DELETE(dFeat, "create_phone_context", error);
 	}
 	else
 	{
@@ -356,21 +355,19 @@ static char *create_phone_context(const SItem *item, s_erc *error)
 	}
 
 	/* p2 = p.name */
-	dFeat = SItemPathToFeatProc(item, "p.segment_name_multilingual", error);
+	featPath = SItemPathToFeature(item, "p.name", error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "create_phone_context",
-				  "Call to \"SItemPathToFeatProc\" failed"))
+				  "Call to \"SItemPathToFeature\" failed"))
 		return NULL;
 
-	if (dFeat != NULL)
+	if (featPath != NULL)
 	{
-		s_strcpy(p2, SObjectGetString(dFeat, error), error);
+		s_strcpy(p2, SObjectGetString(featPath, error), error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "create_phone_context",
 					  "Call to \"s_strcpy/SObjectGetString\" failed"))
 			return NULL;
-
-		S_DELETE(dFeat, "create_phone_context", error);
 	}
 	else
 	{
@@ -382,21 +379,19 @@ static char *create_phone_context(const SItem *item, s_erc *error)
 	}
 
 	/* p3 = name */
-	dFeat = SItemPathToFeatProc(item, "segment_name_multilingual", error);
+	tmp = SItemGetName(item, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "create_phone_context",
-				  "Call to \"SItemPathToFeatProc\" failed"))
+				  "Call to \"SItemGetName\" failed"))
 		return NULL;
 
-	if (dFeat != NULL)
+	if (tmp != NULL)
 	{
-		s_strcpy(p3, SObjectGetString(dFeat, error), error);
+		s_strcpy(p3, tmp, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "create_phone_context",
-					  "Call to \"s_strcpy/SObjectGetString\" failed"))
+					  "Call to \"s_strcpy\" failed"))
 			return NULL;
-
-		S_DELETE(dFeat, "create_phone_context", error);
 	}
 	else
 	{
@@ -408,21 +403,19 @@ static char *create_phone_context(const SItem *item, s_erc *error)
 	}
 
 	/* p4 = n.name */
-	dFeat = SItemPathToFeatProc(item, "n.segment_name_multilingual", error);
+	featPath = SItemPathToFeature(item, "n.name", error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "create_phone_context",
-				  "Call to \"SItemPathToFeatProc\" failed"))
+				  "Call to \"SItemPathToFeature\" failed"))
 		return NULL;
 
-	if (dFeat != NULL)
+	if (featPath != NULL)
 	{
-		s_strcpy(p4, SObjectGetString(dFeat, error), error);
+		s_strcpy(p4, SObjectGetString(featPath, error), error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "create_phone_context",
 					  "Call to \"s_strcpy/SObjectGetString\" failed"))
 			return NULL;
-
-		S_DELETE(dFeat, "create_phone_context", error);
 	}
 	else
 	{
@@ -434,21 +427,19 @@ static char *create_phone_context(const SItem *item, s_erc *error)
 	}
 
 	/* p5 = n.n.name */
-	dFeat = SItemPathToFeatProc(item, "n.n.segment_name_multilingual", error);
+	featPath = SItemPathToFeature(item, "n.n.name", error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "create_phone_context",
-				  "Call to \"SItemPathToFeatProc\" failed"))
+				  "Call to \"SItemPathToFeature\" failed"))
 		return NULL;
 
-	if (dFeat != NULL)
+	if (featPath != NULL)
 	{
-		s_strcpy(p5, SObjectGetString(dFeat, error), error);
+		s_strcpy(p5, SObjectGetString(featPath, error), error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "create_phone_context",
 					  "Call to \"s_strcpy/SObjectGetString\" failed"))
 			return NULL;
-
-		S_DELETE(dFeat, "create_phone_context", error);
 	}
 	else
 	{
@@ -850,7 +841,6 @@ static char *create_B_context(const SItem *item, s_erc *error)
 	return b_context;
 }
 
-
 /* differs from create_B_context in that all is "x", pause does not
  * have a syllable */
 static char *create_B_context_pause(const SItem *item, s_erc *error)
@@ -980,45 +970,33 @@ static char *create_C_context_pause(const SItem *item, s_erc *error)
 static char *create_D_context(const SItem *item, s_erc *error)
 {
 	SObject *dFeat;
+	const SObject *featPath;
 	char *d_context;
+	const char *d1;
 	sint32 d2;
-	const char *tmp;
-	char *d1 = NULL;
 
 
 	S_CLR_ERR(error);
 
 	/* d1 */
-	dFeat = SItemPathToFeatProc(item, "R:SylStructure.parent.parent.R:Word.p.POS",
-								error);
+	featPath = SItemPathToFeature(item, "R:SylStructure.parent.parent.R:Word.p.POS",
+								 error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "create_D_context",
-				  "Call to \"SItemPathToFeatProc\" failed"))
+				  "Call to \"SItemPathToFeature\" failed"))
 		return NULL;
 
-	if (dFeat != NULL)
+	if (featPath != NULL)
 	{
-		tmp = SObjectGetString(dFeat, error);
+		d1 = SObjectGetString(featPath, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "create_D_context",
 					  "Call to \"SObjectGetString\" failed"))
 			return NULL;
-
-		d1 = s_strdup(tmp, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "create_D_context",
-					  "Call to \"s_strdup\" failed"))
-			return NULL;
-
-		S_DELETE(dFeat, "create_D_context", error);
 	}
 	else
 	{
-		d1 = s_strdup("x", error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "create_D_context",
-					  "Call to \"s_strdup\" failed"))
-			return NULL;;
+		d1 = none_string;
 	}
 
 	/* d2 */
@@ -1027,10 +1005,7 @@ static char *create_D_context(const SItem *item, s_erc *error)
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "create_D_context",
 				  "Call to \"SItemPathToFeatProc\" failed"))
-	{
-		S_FREE(d1);
 		return NULL;
-	}
 
 	if (dFeat != NULL)
 	{
@@ -1038,10 +1013,7 @@ static char *create_D_context(const SItem *item, s_erc *error)
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "create_D_context",
 					  "Call to \"SObjectGetInt\" failed"))
-		{
-			S_FREE(d1);
 			return NULL;
-		}
 
 		S_DELETE(dFeat, "create_D_context", error);
 	}
@@ -1051,7 +1023,6 @@ static char *create_D_context(const SItem *item, s_erc *error)
 	}
 
 	s_asprintf(&d_context, error, "/D:%s_%d", d1, d2);
-	S_FREE(d1);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "create_D_context",
 				  "Call to \"s_asprintf\" failed"))
@@ -1066,45 +1037,33 @@ static char *create_D_context(const SItem *item, s_erc *error)
 static char *create_D_context_pause(const SItem *item, s_erc *error)
 {
 	SObject *dFeat;
+	const SObject *featPath;
 	char *d_context;
+	const char *d1;
 	sint32 d2;
-	const char *tmp;
-	char *d1 = NULL;
 
 
 	S_CLR_ERR(error);
 
 	/* d1 */
-	dFeat = SItemPathToFeatProc(item, "p.R:SylStructure.parent.parent.R:Word.POS",
-								error);
+	featPath = SItemPathToFeature(item, "p.R:SylStructure.parent.parent.R:Word.POS",
+								 error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "create_D_context_pause",
-				  "Call to \"SItemPathToFeatProc\" failed"))
+				  "Call to \"SItemPathToFeature\" failed"))
 		return NULL;
 
-	if (dFeat != NULL)
+	if (featPath != NULL)
 	{
-		tmp = SObjectGetString(dFeat, error);
+		d1 = SObjectGetString(featPath, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "create_D_context_pause",
 					  "Call to \"SObjectGetString\" failed"))
 			return NULL;
-
-		d1 = s_strdup(tmp, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "create_D_context",
-					  "Call to \"s_strdup\" failed"))
-			return NULL;
-
-		S_DELETE(dFeat, "create_D_context_pause", error);
 	}
 	else
 	{
-		d1 = s_strdup("x", error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "create_D_context_pause",
-					  "Call to \"s_strdup\" failed"))
-			return NULL;;
+		d1 = none_string;
 	}
 
 	/* d2 */
@@ -1113,10 +1072,7 @@ static char *create_D_context_pause(const SItem *item, s_erc *error)
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "create_D_context_pause",
 				  "Call to \"SItemPathToFeatProc\" failed"))
-	{
-		S_FREE(d1);
 		return NULL;
-	}
 
 	if (dFeat != NULL)
 	{
@@ -1124,10 +1080,7 @@ static char *create_D_context_pause(const SItem *item, s_erc *error)
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "create_D_context_pause",
 					  "Call to \"SObjectGetInt\" failed"))
-		{
-			S_FREE(d1);
 			return NULL;
-		}
 
 		S_DELETE(dFeat, "create_D_context_pause", error);
 	}
@@ -1137,7 +1090,6 @@ static char *create_D_context_pause(const SItem *item, s_erc *error)
 	}
 
 	s_asprintf(&d_context, error, "/D:%s_%d", d1, d2);
-	S_FREE(d1);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "create_D_context_pause",
 				  "Call to \"s_asprintf\" failed"))
@@ -1160,10 +1112,10 @@ static char *create_D_context_pause(const SItem *item, s_erc *error)
  */
 static char *create_E_context(const SItem *item, s_erc *error)
 {
+	const SObject *featPath;
 	SObject *dFeat;
 	char *e_context;
-	const char *tmp;
-	char *e1 = NULL;
+	const char *e1;
 	sint32 e2;
 	sint32 e3;
 	sint32 e4;
@@ -1171,37 +1123,24 @@ static char *create_E_context(const SItem *item, s_erc *error)
 
 	S_CLR_ERR(error);
 
-	/* e1 */
-	dFeat = SItemPathToFeatProc(item, "R:SylStructure.parent.parent.R:Word.POS",
-								error);
+	featPath = SItemPathToFeature(item, "R:SylStructure.parent.parent.R:Word.POS",
+								 error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "create_E_context",
-				  "Call to \"SItemPathToFeatProc\" failed"))
+				  "Call to \"SItemPathToFeature\" failed"))
 		return NULL;
 
-	if (dFeat != NULL)
+	if (featPath != NULL)
 	{
-		tmp = SObjectGetString(dFeat, error);
+		e1 = SObjectGetString(featPath, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "create_E_context",
 					  "Call to \"SObjectGetString\" failed"))
 			return NULL;
-
-		e1 = s_strdup(tmp, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "create_E_context",
-					  "Call to \"s_strdup\" failed"))
-			return NULL;
-
-		S_DELETE(dFeat, "create_E_context", error);
 	}
 	else
 	{
-		e1 = s_strdup("x", error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "create_E_context",
-					  "Call to \"s_strdup\" failed"))
-			return NULL;;
+		e1 = none_string;
 	}
 
 	/* e2 */
@@ -1210,10 +1149,7 @@ static char *create_E_context(const SItem *item, s_erc *error)
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "create_E_context",
 				  "Call to \"SItemPathToFeatProc\" failed"))
-	{
-		S_FREE(e1);
 		return NULL;
-	}
 
 	if (dFeat != NULL)
 	{
@@ -1221,10 +1157,7 @@ static char *create_E_context(const SItem *item, s_erc *error)
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "create_E_context",
 					  "Call to \"SObjectGetInt\" failed"))
-		{
-			S_FREE(e1);
 			return NULL;
-		}
 
 		S_DELETE(dFeat, "create_E_context", error);
 	}
@@ -1239,10 +1172,7 @@ static char *create_E_context(const SItem *item, s_erc *error)
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "create_E_context",
 				  "Call to \"SItemPathToFeatProc\" failed"))
-	{
-		S_FREE(e1);
 		return NULL;
-	}
 
 	if (dFeat != NULL)
 	{
@@ -1250,10 +1180,7 @@ static char *create_E_context(const SItem *item, s_erc *error)
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "create_E_context",
 					  "Call to \"SObjectGetInt\" failed"))
-		{
-			S_FREE(e1);
 			return NULL;
-		}
 
 		S_DELETE(dFeat, "create_E_context", error);
 	}
@@ -1268,10 +1195,7 @@ static char *create_E_context(const SItem *item, s_erc *error)
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "create_E_context",
 				  "Call to \"SItemPathToFeatProc\" failed"))
-	{
-		S_FREE(e1);
 		return NULL;
-	}
 
 	if (dFeat != NULL)
 	{
@@ -1279,10 +1203,7 @@ static char *create_E_context(const SItem *item, s_erc *error)
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "create_E_context",
 					  "Call to \"SObjectGetInt\" failed"))
-		{
-			S_FREE(e1);
 			return NULL;
-		}
 
 		S_DELETE(dFeat, "create_E_context", error);
 	}
@@ -1294,7 +1215,6 @@ static char *create_E_context(const SItem *item, s_erc *error)
 	/* we currently cannot compute e5, e6, e7 and e8 */
 
 	s_asprintf(&e_context, error, "/E:%s+%d@%d+%d&x+x#x+x", e1, e2, e3, e4);
-	S_FREE(e1);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "create_E_context",
 				  "Call to \"s_asprintf\" failed"))
@@ -1334,46 +1254,34 @@ static char *create_E_context_pause(const SItem *item, s_erc *error)
  */
 static char *create_F_context(const SItem *item, s_erc *error)
 {
+	const SObject *featPath;
 	SObject *dFeat;
 	char *f_context;
-	const char *tmp;
-	char *f1 = NULL;
+	const char *f1;
 	sint32 f2;
 
 
 	S_CLR_ERR(error);
 
 	/* f1 */
-	dFeat = SItemPathToFeatProc(item, "R:SylStructure.parent.parent.R:Word.n.POS",
-								error);
+	featPath = SItemPathToFeature(item, "R:SylStructure.parent.parent.R:Word.n.POS",
+								 error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "create_F_context",
-				  "Call to \"SItemPathToFeatProc\" failed"))
+				  "Call to \"SItemPathToFeature\" failed"))
 		return NULL;
 
-	if (dFeat != NULL)
+	if (featPath != NULL)
 	{
-		tmp = SObjectGetString(dFeat, error);
+		f1 = SObjectGetString(featPath, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "create_F_context",
 					  "Call to \"SObjectGetString\" failed"))
 			return NULL;
-
-		f1 = s_strdup(tmp, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "create_F_context",
-					  "Call to \"s_strdup\" failed"))
-			return NULL;
-
-		S_DELETE(dFeat, "create_F_context", error);
 	}
 	else
 	{
-		f1 = s_strdup("x", error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "create_F_context",
-					  "Call to \"s_strdup\" failed"))
-			return NULL;;
+		f1 = none_string;
 	}
 
 	/* f2 */
@@ -1382,10 +1290,7 @@ static char *create_F_context(const SItem *item, s_erc *error)
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "create_F_context",
 				  "Call to \"SItemPathToFeatProc\" failed"))
-	{
-		S_FREE(f1);
 		return NULL;
-	}
 
 	if (dFeat != NULL)
 	{
@@ -1393,10 +1298,7 @@ static char *create_F_context(const SItem *item, s_erc *error)
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "create_F_context",
 					  "Call to \"SObjectGetInt\" failed"))
-		{
-			S_FREE(f1);
 			return NULL;
-		}
 
 		S_DELETE(dFeat, "create_F_context", error);
 	}
@@ -1406,7 +1308,6 @@ static char *create_F_context(const SItem *item, s_erc *error)
 	}
 
 	s_asprintf(&f_context, error, "/F:%s_%d", f1, f2);
-	S_FREE(f1);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "create_F_context",
 				  "Call to \"s_asprintf\" failed"))
@@ -1420,46 +1321,34 @@ static char *create_F_context(const SItem *item, s_erc *error)
  * and not next word */
 static char *create_F_context_pause(const SItem *item, s_erc *error)
 {
+	const SObject *featPath;
 	SObject *dFeat;
 	char *f_context;
-	const char *tmp;
-	char *f1 = NULL;
+	const char *f1;
 	sint32 f2;
 
 
 	S_CLR_ERR(error);
 
 	/* f1 */
-	dFeat = SItemPathToFeatProc(item, "n.R:SylStructure.parent.parent.R:Word.POS",
-								error);
+	featPath = SItemPathToFeature(item, "n.R:SylStructure.parent.parent.R:Word.POS",
+								 error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "create_F_context_pause",
-				  "Call to \"SItemPathToFeatProc\" failed"))
+				  "Call to \"SItemPathToFeature\" failed"))
 		return NULL;
 
-	if (dFeat != NULL)
+	if (featPath != NULL)
 	{
-		tmp = SObjectGetString(dFeat, error);
+		f1 = SObjectGetString(featPath, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "create_F_context_pause",
 					  "Call to \"SObjectGetString\" failed"))
 			return NULL;
-
-		f1 = s_strdup(tmp, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "create_F_context_pause",
-					  "Call to \"s_strdup\" failed"))
-			return NULL;
-
-		S_DELETE(dFeat, "create_F_context_pause", error);
 	}
 	else
 	{
-		f1 = s_strdup("x", error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "create_F_context_pause",
-					  "Call to \"s_strdup\" failed"))
-			return NULL;;
+		f1 = none_string;
 	}
 
 	/* f2 */
@@ -1468,10 +1357,7 @@ static char *create_F_context_pause(const SItem *item, s_erc *error)
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "create_F_context_pause",
 				  "Call to \"SItemPathToFeatProc\" failed"))
-	{
-		S_FREE(f1);
 		return NULL;
-	}
 
 	if (dFeat != NULL)
 	{
@@ -1479,10 +1365,7 @@ static char *create_F_context_pause(const SItem *item, s_erc *error)
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "create_F_context_pause",
 					  "Call to \"SObjectGetInt\" failed"))
-		{
-			S_FREE(f1);
 			return NULL;
-		}
 
 		S_DELETE(dFeat, "create_F_context_pause", error);
 	}
@@ -1492,7 +1375,6 @@ static char *create_F_context_pause(const SItem *item, s_erc *error)
 	}
 
 	s_asprintf(&f_context, error, "/F:%s_%d", f1, f2);
-	S_FREE(f1);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "create_F_context_pause",
 				  "Call to \"s_asprintf\" failed"))

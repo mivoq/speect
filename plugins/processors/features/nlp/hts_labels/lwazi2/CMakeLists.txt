@@ -1,11 +1,11 @@
 ######################################################################################
 ##                                                                                  ##
 ## AUTHOR  : Aby Louw                                                               ##
-## DATE    : 5 November 2009                                                        ##
+## DATE    : November 2012                                                          ##
 ##                                                                                  ##
 ######################################################################################
 ##                                                                                  ##
-## CMakeList for HTS Labels "simple6" feature processor plug-in                     ##
+## CMakeList for HTS Labels "lwazi2" feature processor plug-in                     ##
 ##                                                                                  ##
 ##                                                                                  ##
 ######################################################################################
@@ -14,14 +14,14 @@
 #                             Define plug-in                                         #
 #------------------------------------------------------------------------------------#
 
-speect_plugin_definition(HTS_Labels_Simple6_FeatProc "SHTSLabelsSimple6FeatProc" 1 0 0)
+speect_plugin_definition(HTS_Labels_Lwazi2_FeatProc "SHTSLabelsLwazi2FeatProc" 1 0 0)
 
 
 #------------------------------------------------------------------------------------#
 #                        Configure plugin_info.h.in                                  #
 #------------------------------------------------------------------------------------#
 
-set(description "Generate HTS type labels (type simple6) for the given segment item.")
+set(description "Generate HTS type labels (type lwazi2) for the given segment item.")
 
 # Minimum required Speect Engine version 
 set(major_min 1)

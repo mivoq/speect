@@ -28,7 +28,7 @@
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* Generate HTS Labels for Lwazi voices (simple6).                                  */
+/* Generate HTS Labels for Lwazi voices (lwazi2).                                   */
 /*                                                                                  */
 /*                                                                                  */
 /************************************************************************************/
@@ -59,8 +59,8 @@
 /*                                                                                  */
 /************************************************************************************/
 
-/* SHTSLabelsSimple6FeatProc class declaration. */
-static SHTSLabelsSimple6FeatProcClass HTSLabelsSimple6FeatProcClass;
+/* SHTSLabelsLwazi2FeatProc class declaration. */
+static SHTSLabelsLwazi2FeatProcClass HTSLabelsLwazi2FeatProcClass;
 
 static const char *none_string = "x";
 
@@ -229,23 +229,23 @@ static char *create_J_context(const SItem *item, s_erc *error);
 
 
 /* local functions to register and free classes */
-S_LOCAL void _s_hts_labels_simple6_class_reg(s_erc *error)
+S_LOCAL void _s_hts_labels_lwazi2_class_reg(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_reg(S_OBJECTCLASS(&HTSLabelsSimple6FeatProcClass), error);
+	s_class_reg(S_OBJECTCLASS(&HTSLabelsLwazi2FeatProcClass), error);
 	S_CHK_ERR(error, S_CONTERR,
-			  "_s_hts_labels_simple6_class_reg",
-			  "Failed to register SHTSLabelsSimple6FeatProcClass");
+			  "_s_hts_labels_lwazi2_class_reg",
+			  "Failed to register SHTSLabelsLwazi2FeatProcClass");
 }
 
 
-S_LOCAL void _s_hts_labels_simple6_class_free(s_erc *error)
+S_LOCAL void _s_hts_labels_lwazi2_class_free(s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_class_free(S_OBJECTCLASS(&HTSLabelsSimple6FeatProcClass), error);
+	s_class_free(S_OBJECTCLASS(&HTSLabelsLwazi2FeatProcClass), error);
 	S_CHK_ERR(error, S_CONTERR,
-			  "_s_hts_labels_simple6_class_free",
-			  "Failed to free SHTSLabelsSimple6FeatProcClass");
+			  "_s_hts_labels_lwazi2_class_free",
+			  "Failed to free SHTSLabelsLwazi2FeatProcClass");
 }
 
 
@@ -2585,16 +2585,16 @@ quit_error:
 
 /************************************************************************************/
 /*                                                                                  */
-/* SHTSLabelsSimple6FeatProc class initialization                                   */
+/* SHTSLabelsLwazi2FeatProc class initialization                                    */
 /*                                                                                  */
 /************************************************************************************/
 
-static SHTSLabelsSimple6FeatProcClass HTSLabelsSimple6FeatProcClass =
+static SHTSLabelsLwazi2FeatProcClass HTSLabelsLwazi2FeatProcClass =
 {
 	/* SObjectClass */
 	{
-		"SFeatProcessor:SHTSLabelsSimple6FeatProc",
-		sizeof(SHTSLabelsSimple6FeatProc),
+		"SFeatProcessor:SHTSLabelsLwazi2FeatProc",
+		sizeof(SHTSLabelsLwazi2FeatProc),
 		{ 0, 1},
 		NULL,            /* init    */
 		NULL,            /* destroy */

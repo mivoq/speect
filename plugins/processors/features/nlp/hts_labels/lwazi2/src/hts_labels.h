@@ -28,24 +28,24 @@
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* Generate HTS Labels for Lwazi voices (simple6).                                  */
+/* Generate HTS Labels for Lwazi voices (lwazi2).                                   */
 /*                                                                                  */
 /*                                                                                  */
 /************************************************************************************/
 
-#ifndef _SPCT_PLUGIN_FEATPROCESSOR_HTS_LABELS_SIMPLE6_H__
-#define _SPCT_PLUGIN_FEATPROCESSOR_HTS_LABELS_SIMPLE6_H__
+#ifndef _SPCT_PLUGIN_FEATPROCESSOR_HTS_LABELS_LWAZI2_H__
+#define _SPCT_PLUGIN_FEATPROCESSOR_HTS_LABELS_LWAZI2_H__
 
 
 /**
  * @file hts_labels.h
- * Generate HTS Labels for Lwazi voices (simple6).
+ * Generate HTS Labels for Lwazi voices (lwazi2).
  */
 
 
 /**
  * @ingroup SFeatureProc
- * @defgroup SHTSLabelsSimple6FeatProc Generate HTS Labels for Lwazi voices (simple6).
+ * @defgroup SHTSLabelsLwazi2FeatProc Generate HTS Labels for Lwazi voices (lwazi2).
  * @{
  */
 
@@ -69,29 +69,29 @@ S_BEGIN_C_DECLS
 
 /************************************************************************************/
 /*                                                                                  */
-/* SHTSLabelsSimple6FeatProc definition                                             */
+/* SHTSLabelsLwazi2FeatProc definition                                              */
 /*                                                                                  */
 /************************************************************************************/
 
 /**
- * The HTS label generator (simple6) feature processor structure. Does not add any
+ * The HTS label generator (lwazi2) feature processor structure. Does not add any
  * new members, therefore exactly the same as #SFeatProcessor.
  */
-typedef SFeatProcessor SHTSLabelsSimple6FeatProc;
+typedef SFeatProcessor SHTSLabelsLwazi2FeatProc;
 
 
 /************************************************************************************/
 /*                                                                                  */
-/* SHTSLabelsSimple6FeatProcClass definition                                        */
+/* SHTSLabelsLwazi2FeatProcClass definition                                         */
 /*                                                                                  */
 /************************************************************************************/
 
 /**
- * Typedef of the HTS label generator (simple6) feature processor
+ * Typedef of the HTS label generator (lwazi2) feature processor
  * class. Does not add any new methods, therefore exactly the same as
  * #SFeatProcessorClass.
  */
-typedef SFeatProcessorClass SHTSLabelsSimple6FeatProcClass;
+typedef SFeatProcessorClass SHTSLabelsLwazi2FeatProcClass;
 
 
 /************************************************************************************/
@@ -101,23 +101,23 @@ typedef SFeatProcessorClass SHTSLabelsSimple6FeatProcClass;
 /************************************************************************************/
 
 /**
- * Register the #SHTSLabelsSimple6FeatProc plug-in class with the Speect Engine
+ * Register the #SHTSLabelsLwazi2FeatProc plug-in class with the Speect Engine
  * object system.
  * @private
  *
  * @param error Error code.
  */
-S_LOCAL void _s_hts_labels_simple6_class_reg(s_erc *error);
+S_LOCAL void _s_hts_labels_lwazi2_class_reg(s_erc *error);
 
 
 /**
- * Free the #SHTSLabelsSimple6FeatProc plug-in class from the Speect Engine
+ * Free the #SHTSLabelsLwazi2FeatProc plug-in class from the Speect Engine
  * object system.
  * @private
  *
  * @param error Error code.
  */
-S_LOCAL void _s_hts_labels_simple6_class_free(s_erc *error);
+S_LOCAL void _s_hts_labels_lwazi2_class_free(s_erc *error);
 
 
 /************************************************************************************/
@@ -133,4 +133,4 @@ S_END_C_DECLS
  * end documentation
  */
 
-#endif /* _SPCT_PLUGIN_FEATPROCESSOR_HTS_LABELS_SIMPLE6_H__ */
+#endif /* _SPCT_PLUGIN_FEATPROCESSOR_HTS_LABELS_LWAZI2_H__ */

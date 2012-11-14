@@ -28,7 +28,7 @@
 /*                                                                                  */
 /************************************************************************************/
 /*                                                                                  */
-/* Generate HTS Labels for Lwazi voices (simple6).                                  */
+/* Generate HTS Labels for Lwazi voices (lwazi2).                                  */
 /*                                                                                  */
 /*                                                                                  */
 /************************************************************************************/
@@ -126,7 +126,7 @@ static void plugin_register_function(s_erc *error)
 	/* register plug-in classes here */
 
 	/* register plug-in classes here */
-	_s_hts_labels_simple6_class_reg(error);
+	_s_hts_labels_lwazi2_class_reg(error);
 	S_CHK_ERR(error, S_CONTERR,
 			  SPCT_PLUGIN_REG_STR,
 			  SPCT_PLUGIN_REG_FAIL_STR);
@@ -139,7 +139,7 @@ static void plugin_exit_function(s_erc *error)
 	S_CLR_ERR(error);
 
 	/* free plug-in classes here */
-	_s_hts_labels_simple6_class_free(error);
+	_s_hts_labels_lwazi2_class_free(error);
 	S_CHK_ERR(error, S_CONTERR,
 			  SPCT_PLUGIN_EXIT_STR,
 			  SPCT_PLUGIN_EXIT_FAIL_STR);

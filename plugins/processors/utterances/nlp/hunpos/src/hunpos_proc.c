@@ -446,6 +446,7 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 					  "Call to \"s_strdup\" failed"))
 			goto quit_error;
 
+/*
 		tags[i] = S_MALLOC(char, SPCT_DEF_MAX_TAG_LENGTH);
 		if (tags[i] == NULL)
 		{
@@ -454,6 +455,7 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 					  "Failed to allocate memory for \"char\" object");
 			goto quit_error;
 		}
+*/
 
 		wordItem = SItemNext(wordItem, error);
 		if (S_CHK_ERR(error, S_CONTERR,
@@ -486,7 +488,7 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 			goto quit_error;
 
 		S_FREE(words[i]);
-		S_FREE(tags[i]);
+		/* S_FREE(tags[i]); */
 
 		wordItemSet = SItemNext(wordItemSet, error);
 		if (S_CHK_ERR(error, S_CONTERR,

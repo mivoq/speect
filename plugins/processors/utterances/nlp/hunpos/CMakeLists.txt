@@ -34,7 +34,7 @@ speect_plugin_configure_info(${description} ${major_min} ${minor_min})
 #                        Include hunpos tagger                                       #
 #------------------------------------------------------------------------------------#
 
-speect_plugin_include_dirs("
+speect_plugin_include_dirs(${HUNPOS_INCLUDE} "/usr/local/lib/ocaml")
 
 
 #------------------------------------------------------------------------------------#

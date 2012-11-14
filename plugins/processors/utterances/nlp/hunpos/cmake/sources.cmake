@@ -16,7 +16,6 @@
 speect_plugin_sources(
   src/plugin.c
   src/hunpos_proc.c
-  src/hunposwrap.c
   )
  
 
@@ -24,6 +23,5 @@ speect_plugin_sources(
 
 speect_plugin_headers(
   src/hunpos_proc.h
-  src/hunpos.h
   )
 

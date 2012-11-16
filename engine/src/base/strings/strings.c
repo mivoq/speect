@@ -1058,7 +1058,6 @@ S_API char *s_sbefore(const char *haystack, const char *needle, s_erc *error)
 		return NULL;
 
 	p = s_strstr(haystack, needle, error);
-
 	if (p == NULL)
 		return NULL;
 
@@ -1067,6 +1066,12 @@ S_API char *s_sbefore(const char *haystack, const char *needle, s_erc *error)
 	hsl = s_strlen(haystack, error);
 	psl = s_strlen(p, error);
 
+	if (hsb == psb)
+	  {
+	    /* fringe case, nothing before, return NULL */
+	    return NULL;
+	  }
+	
 	q = S_MALLOC(char, hsb - psb + 1);
 
 	if (q == NULL)

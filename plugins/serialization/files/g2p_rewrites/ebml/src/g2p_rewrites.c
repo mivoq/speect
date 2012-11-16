@@ -194,16 +194,39 @@ static char *s_add_gzeros(const SG2PRewrites *self, const char *word, s_erc *err
 				goto quit_error;
 			}
 
-			s_sprintf(temp_word, error, "%s%s%s", string_before, zeros->replacement, string_after);
+			if (string_before != NULL)
+			  {
+			    if (string_after != NULL)
+			      {
+				s_sprintf(temp_word, error, "%s%s%s", string_before, zeros->replacement, string_after);
+				S_FREE(string_before);
+				S_FREE(string_after);
+			      }
+			    else
+			      {
+				s_sprintf(temp_word, error, "%s%s", string_before, zeros->replacement);
+				S_FREE(string_before);
+			      }
+			  }
+			else
+			  {
+			    if (string_after != NULL)
+			      {
+				s_sprintf(temp_word, error, "%s%s", zeros->replacement, string_after);
+				S_FREE(string_after);
+			      }
+			    else
+			      {
+				s_sprintf(temp_word, error, "%s", zeros->replacement);
+			      }
+			  }
+
 			if (S_CHK_ERR(error, S_CONTERR,
 						  "s_add_gzeros",
 						  "Call to \"s_sprintf\" failed"))
 				goto quit_error;
 
 			S_FREE(new_word);
-			S_FREE(string_before);
-			S_FREE(string_after);
-
 			new_word = temp_word;
 			temp_word = NULL;
 

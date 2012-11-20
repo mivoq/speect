@@ -19,7 +19,8 @@ if(STRICT_WARN)
   
   # Strict warnings options are ON 
   if(SPCT_GCC)
-    set(WFLAGS "-W -Wall -Werror -ansi")
+  #  set(WFLAGS "-W -Wall -Werror -ansi")
+    set(WFLAGS "-W -Wall -Werror")
     set(WFLAGS_C_ONLY "-Wmissing-declarations -Wstrict-prototypes")
   endif(SPCT_GCC)
   if(SPCT_MSVC)
@@ -30,7 +31,8 @@ else(STRICT_WARN)
 
   # Strict warnings options are OFF 
   if(SPCT_GCC)
-    set(WFLAGS "-W -Wall -ansi")
+#    set(WFLAGS "-W -Wall -ansi")
+    set(WFLAGS "-W -Wall")
   endif(SPCT_GCC)
   if(SPCT_MSVC)
     set(WFLAGS "/W3 -D_CRT_SECURE_NO_DEPRECATE -D_CRT_NONSTDC_NO_DEPRECATE")

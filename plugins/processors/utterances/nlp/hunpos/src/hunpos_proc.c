@@ -40,6 +40,9 @@
 /*                                                                                  */
 /************************************************************************************/
 
+#include <stdlib.h>
+#include <stdio.h>
+#include <unistd.h>
 #include "hunpos_proc.h"
 
 
@@ -111,6 +114,322 @@ S_LOCAL void _s_hunpos_utt_proc_class_free(s_erc *error)
 /* Static function implementations                                                  */
 /*                                                                                  */
 /************************************************************************************/
+
+
+static char *hunpos_tag(const char *words, const char *tag_model, s_erc *error)
+{
+	int fd1[2];
+    int fd2[2];
+    pid_t pid;
+
+
+	S_CLR_ERR(error);
+
+ 	if ((pipe(fd1) < 0) || (pipe(fd2) < 0))
+    {
+		S_CTX_ERR(error, S_FAILURE,
+				  "hunpos_tag",
+				  "Failed to create pipes");
+		return NULL;
+	}
+
+    if ((pid = fork()) < 0)
+    {
+		S_CTX_ERR(error, S_FAILURE,
+				  "hunpos_tag",
+				  "Failed to create fork");
+		return NULL;
+    }
+	else if (pid == 0)     /* CHILD PROCESS */
+    {
+        close(fd1[1]);
+        close(fd2[0]);
+
+        if (fd1[0] != STDIN_FILENO)
+        {
+            if (dup2(fd1[0], STDIN_FILENO) != STDIN_FILENO)
+            {
+				S_CTX_ERR(error, S_FAILURE,
+						  "hunpos_tag",
+						  "dup2 error to stdin");
+			}
+            close(fd1[0]);
+        }
+
+        if (fd2[1] != STDOUT_FILENO)
+        {
+            if (dup2(fd2[1], STDOUT_FILENO) != STDOUT_FILENO)
+            {
+				S_CTX_ERR(error, S_FAILURE,
+						  "hunpos_tag",
+						  "dup2 error to stdout");
+            }
+            close(fd2[1]);
+        }
+
+		if (execl("/home/aby/Downloads/hunpos-1.0-linux/hunpos-tag", "hunpos-tag", tag_model, NULL))
+		{
+			S_CTX_ERR(error, S_FAILURE,
+					  "hunpos_tag",
+					  "system error");
+		}
+
+        return NULL;
+    }
+	else        /* PARENT PROCESS */
+    {
+        int rv;
+		size_t size;
+		char *buf;
+
+
+        close(fd1[0]);
+        close(fd2[1]);
+
+		size = s_strsize(words, error);
+		if (S_CHK_ERR(error, S_FAILURE,
+					  "hunpos_tag",
+					  "Call to \"s_strsize\" failed"))
+			return NULL;
+
+		if (write(fd1[1], words, size) != (ssize_t)size)
+        {
+			S_CTX_ERR(error, S_FAILURE,
+					  "hunpos_tag",
+					  "Failed to write to pipe");
+			return NULL;
+		}
+
+		buf = S_CALLOC(char, size*3);
+		if (buf == NULL)
+		{
+			S_FTL_ERR(error, S_MEMERROR,
+					  "hunpos_tag",
+					  "Failed to allocate memory for char");
+			return NULL;
+		}
+
+        if ((rv = read(fd2[0], buf, size*3)) < 0)
+        {
+			S_CTX_ERR(error, S_FAILURE,
+					  "hunpos_tag",
+					  "Failed to read from pipe");
+			S_FREE(buf);
+			return NULL;
+        }
+        else if (rv == 0)
+        {
+			S_FREE(buf);
+			return NULL;
+        }
+
+		return buf;
+    }
+
+    return NULL;
+}
+
+
+
+static char *concat_words(char *dest, const char *word, s_erc *error)
+{
+	size_t size;
+
+
+	S_CLR_ERR(error);
+
+	if (dest == NULL)
+	{
+		size = s_strsize(word, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "concat_words",
+					  "Call to \"s_strsize\" failed"))
+			return NULL;
+
+		dest = S_CALLOC(char, size+2); /* one extra for newline and one for null */
+		if (dest == NULL)
+		{
+			S_FTL_ERR(error, S_MEMERROR,
+					  "concat_words",
+					  "Failed to allocate memory for char");
+			return NULL;
+		}
+	}
+	else
+	{
+		char *tmp = dest;
+		size_t tsize;
+		size_t wsize;
+
+		tsize = s_strsize(tmp, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "concat_words",
+					  "Call to \"s_strsize\" failed"))
+			return NULL;
+
+		wsize = s_strsize(word, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "concat_words",
+					  "Call to \"s_strsize\" failed"))
+			return NULL;
+
+		size = tsize+wsize;
+
+		dest = S_CALLOC(char, size+2); /* one extra for newline and one for null */
+		if (dest == NULL)
+		{
+			S_FTL_ERR(error, S_MEMERROR,
+					  "concat_words",
+					  "Failed to allocate memory for char");
+			return NULL;
+		}
+
+		s_strzcat(dest, tmp, size+2, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "concat_words",
+					  "Call to \"s_strzcat\" failed"))
+		{
+			S_FREE(dest);
+			return NULL;
+		}
+	}
+
+	s_strzcat(dest, word, size+2, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "concat_words",
+				  "Call to \"s_strzcat\" failed"))
+	{
+		S_FREE(dest);
+		return NULL;
+	}
+
+	s_strzcat(dest, "\n", size+2, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "concat_words",
+				  "Call to \"s_strzcat\" failed"))
+	{
+		S_FREE(dest);
+		return NULL;
+	}
+
+	return dest;
+}
+
+
+static char **extract_pos(const char *tagmix, int num_words, s_erc *error)
+{
+	char **pos = NULL;
+	STokenstream *ts = NULL;
+	const SToken *token;
+	const char *tmp;
+	s_bool eof;
+	int num_tokens = 0;
+	int num_pos = 0;
+
+
+	S_CLR_ERR(error);
+
+	pos = S_CALLOC(char*, num_words);
+	if (pos == NULL)
+	{
+		S_FTL_ERR(error, S_MEMERROR,
+				  "extract_pos",
+				  "Failed to allocate memory for char*");
+		goto quit;
+	}
+
+	/* create string tokenstream */
+	ts = (STokenstream*)S_NEW(STokenstreamString, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "extract_pos",
+				  "Failed to create new string tokenstream"))
+		goto quit;
+
+	/* initialize string tokenstream */
+	STokenstreamStringInit((STokenstreamString**)&ts, tagmix, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "extract_pos",
+				  "Failed to initialize string tokenstream"))
+		goto quit;
+
+	eof = STokenstreamQueryEOF(ts, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "extract_pos",
+				  "Failed to query end of file"))
+		goto quit;
+
+	while (!eof)
+	{
+		token = STokenstreamPeekToken(ts, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "extract_pos",
+					  "Failed to peek token"))
+			goto quit;
+
+		tmp = STokenGetString(token, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "extract_pos",
+					  "Failed to get token string"))
+			goto quit;
+
+		if (tmp == NULL)
+			break;
+		else
+		{
+			token = STokenstreamGetToken(ts, error);
+			if (S_CHK_ERR(error, S_CONTERR,
+						  "extract_pos",
+						  "Failed to get token"))
+				goto quit;
+		}
+
+		num_tokens++;
+
+		if (num_tokens % 2 == 0)
+		{
+			/* POS tag */
+			tmp = STokenGetString(token, error);
+			if (S_CHK_ERR(error, S_CONTERR,
+						  "extract_pos",
+						  "Call to \"STokenGetString\" failed"))
+				goto quit;
+
+			pos[num_pos++] = s_strdup(tmp, error);
+			if (S_CHK_ERR(error, S_CONTERR,
+						  "extract_pos",
+						  "Call to \"s_strdup\" failed"))
+				goto quit;
+		}
+
+		eof = STokenstreamQueryEOF(ts, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "extract_pos",
+					  "Failed to query end of file"))
+			goto quit;
+	}
+
+	return pos;
+
+	/*
+	 * quit
+	 */
+quit:
+	if (ts != NULL)
+		S_DELETE(ts, "extract_pos", error);
+
+	if (pos != NULL)
+	{
+		int i;
+
+		for (i = 0; i < num_pos; i++)
+			S_FREE(pos[i]);
+
+		S_FREE(pos);
+	}
+
+	return NULL;
+}
+
 
 static int count_words(const SRelation *wordRel, s_erc *error)
 {
@@ -284,12 +603,6 @@ static void Initialize(SUttProcessor *self, const SVoice *voice, s_erc *error)
 				  "Call to \"load_hunpos_data\" failed"))
 		goto quit_error;
 
-	/* initialize hunpos */
-	hunposProc->handle = init_hunpos(hunposProc->model_file,
-									 "",  /* no morph_table_file */
-									 hunposProc->max_guessed_tags,
-									 hunposProc->theta);
-
 	/* all OK */
 	S_FREE(voice_base_path);
 	return;
@@ -306,35 +619,17 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 				s_erc *error)
 {
 	SHunposUttProc *hunposProc = (SHunposUttProc*)self;
-	const SVoice *voice;
 	const SRelation *wordRel;
-	const SFeatProcessor *wordCounter;
 	s_bool is_present;
-	char **words = NULL;
-	char **tags = NULL;
-	int nwords = 0;
+	char *words = NULL;
+	char *tagmix = NULL;
+	char **pos = NULL;
 	const SItem *wordItem;
 	SItem *wordItemSet;
-	int i;
+	int i = 0;
 
 
 	S_CLR_ERR(error);
-
-	/* see if there is a word count feature processor in the voice */
-	voice = SUtteranceVoice(utt, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "Run",
-				  "Call to \"SUtteranceVoice\" failed"))
-		goto quit_error;
-
-	if (voice != NULL)
-	{
-		wordCounter = SVoiceGetFeatProc(voice, "utt_num_words", error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "Run",
-					  "Call to \"SVoiceGetFeatProc\" failed"))
-			goto quit_error;
-	}
 
 	/* we require the word relation */
 	is_present = SUtteranceRelationIsPresent(utt, "Word", error);
@@ -357,70 +652,8 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 				  "Call to \"SUtteranceGetRelation\" failed"))
 		goto quit_error;
 
-	/* if the utt_num_words feature processor is present, use it
-	 * The reason for doing this is that *maybe* there is a language
-	 * with some other way of getting the tokens for hunpos
-	 */
-	if (wordCounter != NULL)
-	{
-		SObject *extractedFeature = NULL;
-		const SItem *wordHeadItem = NULL;
-
-
-		wordHeadItem = SRelationHead(wordRel, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "Run",
-					  "Call to \"SRelationHead\" failed"))
-			goto quit_error;
-
-		extractedFeature = SFeatProcessorRun(wordCounter,
-											 wordHeadItem, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "Run",
-					  "Call to \"SFeatProcessorRun\" failed"))
-			goto quit_error;
-
-		nwords = SObjectGetInt(extractedFeature, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "Run",
-					  "Call to \"SObjectGetInt\" failed"))
-		{
-			S_DELETE(extractedFeature, "Run", error);
-			goto quit_error;
-		}
-
-		S_DELETE(extractedFeature, "Run", error);
-	}
-	else /* no utt_num_words feature processor, use local one */
-	{
-		nwords = count_words(wordRel, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "Run",
-					  "Call to \"count_words\" failed"))
-			goto quit_error;
-	}
-
-	/* allocate memory for words and tags */
-	words = S_MALLOC(char*, nwords);
-	if (words == NULL)
-	{
-		S_FTL_ERR(error, S_MEMERROR,
-				  "Run",
-				  "Failed to allocate memory for \"char*\" object");
-		goto quit_error;
-	}
-
-	tags = S_MALLOC(char*, nwords);
-	if (tags == NULL)
-	{
-		S_FTL_ERR(error, S_MEMERROR,
-				  "Run",
-				  "Failed to allocate memory for \"char*\" object");
-		goto quit_error;
-	}
-
 	/* Get the words.
-	 * start at the first item in the token relation
+	 * start at the first item in the word relation
 	 */
 	wordItem = SRelationHead(wordRel, error);
 	if (S_CHK_ERR(error, S_CONTERR,
@@ -428,7 +661,6 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 				  "Call to \"SRelationHead\" failed"))
 		goto quit_error;
 
-	i = 0;
 	while (wordItem != NULL)
 	{
 		const char *item_name;
@@ -440,22 +672,11 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 					  "Call to \"SItemGetName\" failed"))
 			goto quit_error;
 
-		words[i] = s_strdup(item_name, error);
+		words = concat_words(words, item_name, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "Run",
-					  "Call to \"s_strdup\" failed"))
+					  "Call to \"concat_words\" failed"))
 			goto quit_error;
-
-/*
-		tags[i] = S_MALLOC(char, SPCT_DEF_MAX_TAG_LENGTH);
-		if (tags[i] == NULL)
-		{
-			S_FTL_ERR(error, S_MEMERROR,
-					  "Run",
-					  "Failed to allocate memory for \"char\" object");
-			goto quit_error;
-		}
-*/
 
 		wordItem = SItemNext(wordItem, error);
 		if (S_CHK_ERR(error, S_CONTERR,
@@ -466,29 +687,46 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 		i++;
 	}
 
-	/* let hunpos do its thing */
-	tag(hunposProc->handle, nwords, words, tags);
+	/* add final newline */
+	words = concat_words(words, "\n", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "Run",
+				  "Call to \"concat_words\" failed"))
+		goto quit_error;
 
-	/* cycle through the word relation and add the POS feature
-	 * also free up words and tags char**
+	/* let hunpos do its thing */
+	tagmix = hunpos_tag(words, hunposProc->model_file, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "Run",
+				  "Call to \"hunpos_tag\" failed"))
+		goto quit_error;
+
+	/* get pos tags */
+	pos = extract_pos(tagmix, i, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "Run",
+				  "Call to \"extract_pos\" failed"))
+		goto quit_error;
+
+	/* Put tags back into word relation.
+	 * start at the first item in the word relation
 	 */
+	i = 0;
 	wordItemSet = (SItem*)SRelationHead(wordRel, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Run",
 				  "Call to \"SRelationHead\" failed"))
 		goto quit_error;
 
-	i = 0;
-	while (wordItemSet != NULL)
+	while (wordItem != NULL)
 	{
-		SItemSetString(wordItemSet, "POS", tags[i], error);
+		SItemSetString(wordItemSet, "POS", pos[i], error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "Run",
 					  "Call to \"SItemSetString\" failed"))
 			goto quit_error;
 
-		S_FREE(words[i]);
-		/* S_FREE(tags[i]); */
+		S_FREE(pos[i]);
 
 		wordItemSet = SItemNext(wordItemSet, error);
 		if (S_CHK_ERR(error, S_CONTERR,
@@ -499,8 +737,9 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 		i++;
 	}
 
+	S_FREE(pos);
 	S_FREE(words);
-	S_FREE(tags);
+	S_FREE(tagmix);
 
 	/* here all is OK */
 	return;
@@ -508,18 +747,13 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 	/* error clean-up code */
 quit_error:
 	if (words != NULL)
-	{
-		for (i = 0; i < nwords; i++)
-			S_FREE(words[i]);
 		S_FREE(words);
-	}
 
-	if (tags != NULL)
-	{
-		for (i = 0; i < nwords; i++)
-			S_FREE(tags[i]);
-		S_FREE(tags);
-	}
+	if (tagmix != NULL)
+		S_FREE(tagmix);
+
+	if (pos != NULL)
+		S_FREE(pos);
 }
 
 

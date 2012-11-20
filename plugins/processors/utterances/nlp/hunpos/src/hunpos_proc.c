@@ -41,8 +41,9 @@
 /************************************************************************************/
 
 #include <stdlib.h>
-#include <stdio.h>
 #include <unistd.h>
+#include <string.h>
+#include <stdio.h>
 #include "hunpos_proc.h"
 
 
@@ -118,117 +119,50 @@ S_LOCAL void _s_hunpos_utt_proc_class_free(s_erc *error)
 
 static char *hunpos_tag(const char *words, const char *tag_model, s_erc *error)
 {
-	int fd1[2];
-    int fd2[2];
-    pid_t pid;
+	const char *cmd_line = "echo \"%s\" | hunpos-tag %s";
+	char *cmd_str = NULL;
+	FILE *read_fp;
+    char buffer[BUFSIZ + 1];
+    int chars_read;
+	char *tagged = NULL;
 
 
 	S_CLR_ERR(error);
+    memset(buffer, '\0', sizeof(buffer));
 
- 	if ((pipe(fd1) < 0) || (pipe(fd2) < 0))
-    {
+	s_asprintf(&cmd_str, error, cmd_line, words, tag_model);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "hunpos_tag",
+				  "Call to \"s_asprintf\" failed"))
+		return NULL;
+
+    read_fp = popen(cmd_str, "r");
+	if (read_fp == NULL)
+	{
 		S_CTX_ERR(error, S_FAILURE,
 				  "hunpos_tag",
-				  "Failed to create pipes");
+				  "Call to \"popen\" failed");
+		S_FREE(cmd_str);
 		return NULL;
 	}
 
-    if ((pid = fork()) < 0)
-    {
-		S_CTX_ERR(error, S_FAILURE,
-				  "hunpos_tag",
-				  "Failed to create fork");
-		return NULL;
-    }
-	else if (pid == 0)     /* CHILD PROCESS */
-    {
-        close(fd1[1]);
-        close(fd2[0]);
-
-        if (fd1[0] != STDIN_FILENO)
-        {
-            if (dup2(fd1[0], STDIN_FILENO) != STDIN_FILENO)
-            {
-				S_CTX_ERR(error, S_FAILURE,
-						  "hunpos_tag",
-						  "dup2 error to stdin");
-			}
-            close(fd1[0]);
-        }
-
-        if (fd2[1] != STDOUT_FILENO)
-        {
-            if (dup2(fd2[1], STDOUT_FILENO) != STDOUT_FILENO)
-            {
-				S_CTX_ERR(error, S_FAILURE,
-						  "hunpos_tag",
-						  "dup2 error to stdout");
-            }
-            close(fd2[1]);
-        }
-
-		if (execl("/home/aby/Downloads/hunpos-1.0-linux/hunpos-tag", "hunpos-tag", tag_model, NULL))
+	chars_read = fread(buffer, sizeof(char), BUFSIZ, read_fp);
+	if (chars_read > 0)
+	{
+		tagged = s_strdup(buffer, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "hunpos_tag",
+					  "Call to \"s_strdup\" failed"))
 		{
-			S_CTX_ERR(error, S_FAILURE,
-					  "hunpos_tag",
-					  "system error");
-		}
-
-        return NULL;
-    }
-	else        /* PARENT PROCESS */
-    {
-        int rv;
-		size_t size;
-		char *buf;
-
-
-        close(fd1[0]);
-        close(fd2[1]);
-
-		size = s_strsize(words, error);
-		if (S_CHK_ERR(error, S_FAILURE,
-					  "hunpos_tag",
-					  "Call to \"s_strsize\" failed"))
-			return NULL;
-
-		if (write(fd1[1], words, size) != (ssize_t)size)
-        {
-			S_CTX_ERR(error, S_FAILURE,
-					  "hunpos_tag",
-					  "Failed to write to pipe");
+			S_FREE(cmd_str);
 			return NULL;
 		}
+	}
+	pclose(read_fp);
+	S_FREE(cmd_str);
 
-		buf = S_CALLOC(char, size*3);
-		if (buf == NULL)
-		{
-			S_FTL_ERR(error, S_MEMERROR,
-					  "hunpos_tag",
-					  "Failed to allocate memory for char");
-			return NULL;
-		}
-
-        if ((rv = read(fd2[0], buf, size*3)) < 0)
-        {
-			S_CTX_ERR(error, S_FAILURE,
-					  "hunpos_tag",
-					  "Failed to read from pipe");
-			S_FREE(buf);
-			return NULL;
-        }
-        else if (rv == 0)
-        {
-			S_FREE(buf);
-			return NULL;
-        }
-
-		return buf;
-    }
-
-    return NULL;
+	return tagged;
 }
-
 
 
 static char *concat_words(char *dest, const char *word, s_erc *error)
@@ -285,6 +219,7 @@ static char *concat_words(char *dest, const char *word, s_erc *error)
 		}
 
 		s_strzcat(dest, tmp, size+2, error);
+		S_FREE(tmp);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "concat_words",
 					  "Call to \"s_strzcat\" failed"))
@@ -329,7 +264,7 @@ static char **extract_pos(const char *tagmix, int num_words, s_erc *error)
 
 	S_CLR_ERR(error);
 
-	pos = S_CALLOC(char*, num_words);
+	pos = S_CALLOC(char*, num_words + 1);
 	if (pos == NULL)
 	{
 		S_FTL_ERR(error, S_MEMERROR,
@@ -407,6 +342,8 @@ static char **extract_pos(const char *tagmix, int num_words, s_erc *error)
 					  "Failed to query end of file"))
 			goto quit;
 	}
+
+	S_DELETE(ts, "extract_pos", error);
 
 	return pos;
 
@@ -718,7 +655,7 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 				  "Call to \"SRelationHead\" failed"))
 		goto quit_error;
 
-	while (wordItem != NULL)
+	while (wordItemSet != NULL)
 	{
 		SItemSetString(wordItemSet, "POS", pos[i], error);
 		if (S_CHK_ERR(error, S_CONTERR,

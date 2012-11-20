@@ -50,7 +50,6 @@
 /************************************************************************************/
 
 #include "speect.h"
-#include "hunpos.h"
 
 
 /************************************************************************************/
@@ -78,11 +77,6 @@ typedef struct
 	 * @protected Inherit from #SUttProcessor.
 	 */
 	SUttProcessor obj;
-
-	/**
-	 * @protected hunpos handle.
-	 */
-	hunpos        handle;
 
 	/**
 	 * @protected Maximum number of guessed tags.

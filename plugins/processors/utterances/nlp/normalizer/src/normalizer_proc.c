@@ -103,6 +103,8 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 	SItem *tokenItem;
 	const SObject *token;
 	SItem *wordItem;
+	const char *token_string;
+	char *token_string_lc = NULL;
 
 
 	S_CLR_ERR(error);
@@ -195,12 +197,33 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 						  "Call to \"SItemAddDaughter\" failed"))
 				goto quit_error;
 
-			/* set the token as the word item's name */
-			SItemSetObject(wordItem, "name", token, error);
+			/* get and lowercase token string */
+			token_string = SObjectGetString(token, error);
+			if (S_CHK_ERR(error, S_CONTERR,
+						  "Run",
+						  "Call to \"SItemGetObject\" failed"))
+				goto quit_error;
+
+			token_string_lc = s_strdup(token_string, error);
+			if (S_CHK_ERR(error, S_CONTERR,
+						  "Run",
+						  "Call to \"s_strdup\" failed"))
+				goto quit_error;
+
+			s_strlwr(token_string_lc, error);
+			if (S_CHK_ERR(error, S_CONTERR,
+						  "Run",
+						  "Call to \"s_strlwr\" failed"))
+				goto quit_error;
+
+			/* set the token lowercase as the word item's name */
+			SItemSetString(wordItem, "name", token_string_lc, error);
 			if (S_CHK_ERR(error, S_CONTERR,
 						  "Run",
 						  "Call to \"SItemSetObject\" failed"))
 				goto quit_error;
+
+			S_FREE(token_string_lc);
 
 			/* and create a new word item in word relation, shared
 			 * content it token relation's word item.
@@ -231,6 +254,9 @@ quit_error:
 				  "Run",
 				  "Call to \"SUtteranceDelRelation\" failed");
 	}
+
+	if (token_string_lc != NULL)
+		S_FREE(token_string_lc);
 
 	S_UNUSED(self);
 }

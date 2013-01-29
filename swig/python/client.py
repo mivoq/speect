@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 ######################################################################################
-## Copyright (c) 2009-2011 The Department of Arts and Culture,                      ##
+## Copyright (c) 2009-2012 The Department of Arts and Culture,                      ##
 ## The Government of the Republic of South Africa.                                  ##
 ##                                                                                  ##
 ## Contributors:  Meraka Institute, CSIR, South Africa.                             ##
@@ -39,16 +39,17 @@
 """
 
 import sys
-import cPickle as pickle
 import socket
 import time
 import ossaudiodev
 from optparse import OptionParser
 import wave
+import json
+import base64
 
 
 __author__     = "HLT - Meraka Institute CSIR"
-__copyright__  = "Copyright 2009, " + __author__
+__copyright__  = "Copyright 2009-2012, " + __author__
 __credits__    = [__author__]
 __license__    = "mit"
 __version__    = "0.1"
@@ -111,7 +112,7 @@ class TTSClient(object):
                    "voicename": voice,
                    "text": text}
 
-        fulls = pickle.dumps(message)
+        fulls = json.dumps(message)
         #create a socket
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         #connect to server
@@ -130,9 +131,13 @@ class TTSClient(object):
         #close connection..
         s.close()
         #recover reply..
-        reply = pickle.loads(replymsgfull)
+        reply = json.loads(replymsgfull)
         if not reply["success"]:
             raise Exception("Request failed..")
+
+        #base64 decode
+        if rtype != "listvoices":
+            reply["samples"] = base64.standard_b64decode(reply["samples64"])
         
         return reply
 
@@ -144,7 +149,68 @@ class TTSClient(object):
         outwf.setparams((1, 2, reply["samplerate"], len(reply["samples"]) / 2, "NONE", "not compressed"))
         outwf.writeframesraw(reply["samples"])
         outwf.close()
-        
+
+
+    def play_audio(self, voice, text):
+        reply = self.request("synth", voice, text)
+        if reply["sampletype"] != "int16":
+            raise Exception("Client currently only supports 16bit samplesize")
+
+        # try using pyaudio
+        try:
+            import pyaudio
+            chunk = 1024
+            start = 0
+            end = 1024
+
+            p = pyaudio.PyAudio()
+
+            # note: currently supports only 'int16' sample types (i.e. samplewidth = 2)
+            samplewidth = 2
+
+            # open stream
+            stream = p.open(format =
+                            p.get_format_from_width(samplewidth),
+                            channels = 1,
+                            rate = reply["samplerate"],
+                            output = True)
+            
+            num_samples = len(reply["samples"]) / 2
+            while (end < num_samples):
+                stream.write(reply["samples"][start:end])
+                start = end
+                end = end + chunk
+
+            stream.write(reply["samples"][start:])
+            stream.stop_stream()
+            stream.close()
+            p.terminate()
+            
+        #no pyaudio
+        except ImportError:
+            import os
+
+            opsys = os.name
+
+            if opsys not in ("posix", "nt"):
+                raise EnvironmentError("TTSClient.play_audio() currently works only on" + \
+                                       " \"posix\" and \"nt\" compatible systems")
+
+            if opsys == "posix":
+                import ossaudiodev
+
+                dsp = ossaudiodev.open("w")
+                dsp.setparameters(ossaudiodev.AFMT_S16_LE,
+                                  1,
+                                  reply["samplerate"],
+                                  True)
+                dsp.writeall(reply["samples"])
+                dsp.close()
+
+            else:     # nt (win)
+                import winsound
+                winsound.PlaySound(reply["samples"], winsound.SND_MEMORY)        
+
 
 
 if __name__ == "__main__":
@@ -171,14 +237,5 @@ if __name__ == "__main__":
             #assume that we only want to save - not play..
             client.write_audio(voicename, text, opts.wavefilename)
         else:
-            #init audio device and play samples..
-            reply = client.request("synth", voicename, text)
-            if reply["sampletype"] != "int16":
-                raise Exception("Client currently only supports 16bit samplesize")
-            dsp = ossaudiodev.open("/dev/dsp", "w")
-            dsp.setparameters(ossaudiodev.AFMT_S16_LE,
-                              1,
-                              reply["samplerate"],
-                              True)
-            dsp.writeall(reply["samples"])
-            dsp.close()
+            #try and play the wavfile
+            client.play_audio(voicename, text)

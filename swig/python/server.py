@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 ######################################################################################
-## Copyright (c) 2009-2011 The Department of Arts and Culture,                      ##
+## Copyright (c) 2009-2012 The Department of Arts and Culture,                      ##
 ## The Government of the Republic of South Africa.                                  ##
 ##                                                                                  ##
 ## Contributors:  Meraka Institute, CSIR, South Africa.                             ##
@@ -41,11 +41,12 @@
 import os
 import sys
 import socket
-import cPickle as pickle
 import threading
 import optparse
 import ConfigParser
 import logging
+import json
+import base64
 
 import speect
 import speect.audio
@@ -89,7 +90,9 @@ class TTSServer():
         self.voices[voicename] = v
 
     def get_voicelist(self):
-        return self.voices.keys()
+        keys = self.voices.keys()
+        keys.sort()
+        return keys
 
     def _socksetup(self, lport):
         self.lsocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -129,6 +132,9 @@ class TTSServer():
                 log.info("Synthesis successful.")
                 reply = {"success": True}
                 reply.update(speectwaveform.get_audio_waveform())
+                reply["samples64"] = base64.standard_b64encode(reply["samples"])
+                del reply["samples"]
+
         except RunTimeError:
             log.error("Synthesis failed.")
             reply = {"success": False,
@@ -165,7 +171,7 @@ class TTSHandler(threading.Thread):
                         
 
     def tx_reply(self, reply):
-        replymsg = pickle.dumps(reply)
+        replymsg = json.dumps(reply)
         self.csocket.sendall(replymsg)
         self.csocket.close()
         
@@ -181,7 +187,8 @@ class TTSHandler(threading.Thread):
                     break
             else:
                 break
-        return pickle.loads(fulls)
+        log.info("received request \"%s\"" % fulls)
+        return json.loads(fulls)
 
 def setopts():
     """ Setup all possible command line options....

@@ -55,7 +55,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Speect'
-copyright = u'2011, Human Language Technologies Group, Meraka Institute, CSIR, South Africa'
+copyright = u'2013, Human Language Technologies Group, Meraka Institute, CSIR, South Africa'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the

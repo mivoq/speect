@@ -44,7 +44,8 @@ endif(UNIX AND NOT APPLE)
 
 if(UNIX AND APPLE)
   
-  # Apple Mac OSX. 
+  # Apple Mac OSX.
+  set(SPCT_UNIX 1)
   set(SPCT_MACOSX 1)
   set(SPCT_OS "SPCT_MACOSX")
   

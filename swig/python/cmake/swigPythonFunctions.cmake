@@ -338,7 +338,7 @@ macro(speect_plugin_swig_python_wrapper)
   # wrapper file properties
   set_source_files_properties(${CMAKE_CURRENT_BINARY_DIR}/${plugin_lowercase_name}PYTHON_wrap.c 
     PROPERTIES 
-    COMPILE_FLAGS ${SWIG_C_COMPILE_FLAGS}
+    COMPILE_FLAGS "${SWIG_C_COMPILE_FLAGS}"
     GENERATED TRUE
     )
 

@@ -135,7 +135,7 @@ class TTSServer():
                 reply["samples64"] = base64.standard_b64encode(reply["samples"])
                 del reply["samples"]
 
-        except RunTimeError:
+        except RuntimeError:
             log.error("Synthesis failed.")
             reply = {"success": False,
                      "sampletype": None,

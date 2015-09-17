@@ -16,7 +16,7 @@
 #------------------------------------------------------------------------------------#
 
 configure_file(${CMAKE_SOURCE_DIR}/swig/python/config/__init__.py.in
-  ${CMAKE_BINARY_DIR}/swig/python/speect/__init__.py @only)
+  ${CMAKE_BINARY_DIR}/swig/python/speect/__init__.py @ONLY)
 
 
 #------------------------------------------------------------------------------------#
@@ -24,7 +24,7 @@ configure_file(${CMAKE_SOURCE_DIR}/swig/python/config/__init__.py.in
 #------------------------------------------------------------------------------------#
 
 configure_file(${CMAKE_SOURCE_DIR}/swig/python/config/setup.py.in
-  ${CMAKE_BINARY_DIR}/swig/python/setup.py @only)
+  ${CMAKE_BINARY_DIR}/swig/python/setup.py @ONLY)
 
 
 #------------------------------------------------------------------------------------#

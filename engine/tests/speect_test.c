@@ -115,6 +115,7 @@ int main(int argc, char **argv) {
   SPlugin *textGrid = NULL;
   struct Config config;
   char *textgrid_file = NULL;
+  int isText;
 
   SPCT_PRINT_AND_WAIT("going to initialize speect, press ENTER\n");
 
@@ -186,43 +187,51 @@ int main(int argc, char **argv) {
 
   SPCT_PRINT_AND_WAIT("synthesized utterance, getting audio object, press ENTER\n");
 
-  /* get audio object */
-  audio = SUtteranceGetFeature(utt, "audio", &error);
+  isText = s_strcmp(config.utt_type, "text", &error);
   if (S_CHK_ERR(&error, S_CONTERR,
 		"main",
-		"Call to \"SUtteranceGetFeature\" failed"))
+		"Call to \"s_strcmp\" failed"))
     goto quit;
 
-  SPCT_PRINT_AND_WAIT("got audio object, saving audio object, press ENTER\n");
-
-  /* save audio */
-  SObjectSave(audio, config.wavfile, "riff", &error);
-  if (S_CHK_ERR(&error, S_CONTERR,
-		"main",
-		"Call to \"SObjectSave\" failed"))
-    goto quit;
-
-  SPCT_PRINT_AND_WAIT("saving textgrid, press ENTER\n");
-
-  /* save textgrid */
-  s_asprintf(&textgrid_file, &error, "%s%s", config.wavfile, ".TextGrid");
-  if (S_CHK_ERR(&error, S_CONTERR,
-		"main",
-		"Call to \"s_asprinf\" failed"))
-    goto quit;
-
-  SObjectSave(S_OBJECT(utt), textgrid_file, "spct_utt_textgrid", &error);
-  if (S_CHK_ERR(&error, S_CONTERR,
-		"main",
-		"Call to \"SObjectSave\" failed"))
-    {
-      S_FREE(textgrid_file);
+  if (isText == 0) {
+    /* get audio object */
+    audio = SUtteranceGetFeature(utt, "audio", &error);
+    if (S_CHK_ERR(&error, S_CONTERR,
+		  "main",
+		  "Call to \"SUtteranceGetFeature\" failed"))
       goto quit;
-    }
 
-  S_FREE(textgrid_file);
+    SPCT_PRINT_AND_WAIT("got audio object, saving audio object, press ENTER\n");
 
-  SPCT_PRINT_AND_WAIT("saved textgrid, press ENTER\n");
+    /* save audio */
+    SObjectSave(audio, config.wavfile, "riff", &error);
+    if (S_CHK_ERR(&error, S_CONTERR,
+		  "main",
+		  "Call to \"SObjectSave\" failed"))
+      goto quit;
+
+    SPCT_PRINT_AND_WAIT("saving textgrid, press ENTER\n");
+
+    /* save textgrid */
+    s_asprintf(&textgrid_file, &error, "%s%s", config.wavfile, ".TextGrid");
+    if (S_CHK_ERR(&error, S_CONTERR,
+		  "main",
+		  "Call to \"s_asprinf\" failed"))
+      goto quit;
+
+    SObjectSave(S_OBJECT(utt), textgrid_file, "spct_utt_textgrid", &error);
+    if (S_CHK_ERR(&error, S_CONTERR,
+		  "main",
+		  "Call to \"SObjectSave\" failed"))
+      {
+	S_FREE(textgrid_file);
+	goto quit;
+      }
+
+    S_FREE(textgrid_file);
+
+    SPCT_PRINT_AND_WAIT("saved textgrid, press ENTER\n");
+  }
 
  quit:
 

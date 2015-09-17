@@ -1,4 +1,5 @@
 speect_example(synth_test)
+speect_example(speect_test)
 
 if(SPCT_UNIX OR SPCT_MACOSX)
   if(WANT_THREADS)

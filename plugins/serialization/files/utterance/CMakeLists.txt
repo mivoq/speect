@@ -16,3 +16,4 @@
 
 add_subdirectory(ebml)
 add_subdirectory(textgrid)
+add_subdirectory(maryxml)

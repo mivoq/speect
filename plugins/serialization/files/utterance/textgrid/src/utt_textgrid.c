@@ -98,7 +98,6 @@ S_LOCAL void _s_serialized_textgrid_utt_free(s_erc *error)
 {
 	s_erc local_err;
 
-
 	S_CLR_ERR(&local_err);
 	S_CLR_ERR(error);
 
@@ -167,7 +166,7 @@ static void Save(const SObject *object, const char *path, s_erc *error)
 
 /************************************************************************************/
 /*                                                                                  */
-/* YourClass class initialization                                                   */
+/* STextGridUttFileClass class initialization                                       */
 /*                                                                                  */
 /************************************************************************************/
 

@@ -262,7 +262,7 @@ S_LOCAL void s_write_utt_textgrid(const SUtterance *utt, SDatasource *ds, s_erc 
 /* cleanup */
 quit:
 	if (ds != NULL)
-		S_DELETE(ds, "s_write_utt_ebml", error);
+		S_DELETE(ds, "s_write_utt_textgrid", error);
 }
 
 

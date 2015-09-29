@@ -48,7 +48,7 @@
 /*                                                                                  */
 /************************************************************************************/
 
-#define SPCT_WAIT_MEM 1
+#define SPCT_WAIT_MEM 0
 
 /* this is a simple macro to wait for user input so that we can do
  * memory testing, it does nothing if SPCT_WAIT_MEM is 0.

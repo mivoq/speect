@@ -450,7 +450,7 @@ static SVoice *load_voice_no_data(const char *path, SMap **dataConfig, s_erc *er
 	voice->uttTypes = _s_get_voice_utterance_types(voiceConfig, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "load_voice_no_data",
-				  "Call to \"_s_load_voice_utterance_processors\" failed for '%s' voice config file",
+				  "Call to \"_s_get_voice_utterance_processors\" failed for '%s' voice config file",
 				  path))
 	{
 		S_DELETE(voice, "load_voice_no_data", error);

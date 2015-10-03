@@ -210,7 +210,7 @@ S_LOCAL void s_write_utt_maryxml(const SUtterance *utt, SDatasource *ds, s_erc *
 				      "Call to \"SItemDaughter\" failed"))
 				goto s_write_utt_exit;
 
-			while (itrWords != NULL)
+			while (itrPhraseWords != NULL)
 			{
 				/* Get the next item */
 				next = SItemNext(itrPhraseWords, error);
@@ -299,7 +299,7 @@ S_LOCAL void s_write_utt_maryxml(const SUtterance *utt, SDatasource *ds, s_erc *
 				}
 
 				/* Write the tag t */
-				rc = xmlTextWriterWriteElement(writer, BAD_CAST "t", BAD_CAST SItemGetName(itrWords, error));
+				rc = xmlTextWriterWriteElement(writer, BAD_CAST "t", BAD_CAST SItemGetName(itrPhraseWords, error));
 				if (rc < 0)
 				{
 					S_CTX_ERR(error, S_CONTERR,

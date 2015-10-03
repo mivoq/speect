@@ -98,9 +98,17 @@ S_LOCAL void s_write_utt_maryxml(const SUtterance *utt, SDatasource *ds, s_erc *
 				      _ds_close,
 				      ds,
 				      NULL);
+	if (out == NULL)
+	{
+		S_CTX_ERR(error, S_CONTERR,
+			  "s_write_utt_maryxml",
+			  "Call to \"xmlOutputBufferCreateIO\" failed");
+		return;
+	}
 	writer = xmlNewTextWriter(out);
 	if (writer == NULL)
 	{
+                xmlOutputBufferClose(out);
 		S_CTX_ERR(error, S_CONTERR,
 			  "s_write_utt_maryxml",
 			  "Call to \"xmlNewTextWriter\" failed");
@@ -113,7 +121,7 @@ S_LOCAL void s_write_utt_maryxml(const SUtterance *utt, SDatasource *ds, s_erc *
 		S_CTX_ERR(error, S_CONTERR,
 			  "s_write_utt_maryxml",
 			  "Call to \"xmlTextWriterStartDocument\" failed");
-		return;
+		goto s_write_utt_exit;
 	}
 
 	/* Write the maryxml namespace */
@@ -122,7 +130,7 @@ S_LOCAL void s_write_utt_maryxml(const SUtterance *utt, SDatasource *ds, s_erc *
 		S_CTX_ERR(error, S_CONTERR,
 			  "s_write_utt_maryxml",
 			  "Call to \"xmlTextWriterStartElement\" failed");
-		return;
+		goto s_write_utt_exit;
 	}
 
 	rc = xmlTextWriterWriteAttribute(writer, BAD_CAST "xmlns", BAD_CAST maryNms);
@@ -130,7 +138,7 @@ S_LOCAL void s_write_utt_maryxml(const SUtterance *utt, SDatasource *ds, s_erc *
 		S_CTX_ERR(error, S_CONTERR,
 			  "s_write_utt_maryxml",
 			  "Call to \"xmlTextWriterWriteAttribute\" failed");
-		return;
+		goto s_write_utt_exit;
 	}
 
 	rc = xmlTextWriterWriteAttribute(writer, BAD_CAST "xmlns:xsi", BAD_CAST maryXsi);
@@ -138,7 +146,7 @@ S_LOCAL void s_write_utt_maryxml(const SUtterance *utt, SDatasource *ds, s_erc *
 		S_CTX_ERR(error, S_CONTERR,
 			  "s_write_utt_maryxml",
 			  "Call to \"xmlTextWriterWriteAttribute\" failed");
-		return;
+		goto s_write_utt_exit;
 	}
 
 	rc = xmlTextWriterWriteAttribute(writer, BAD_CAST "version", BAD_CAST "0.5");
@@ -146,7 +154,7 @@ S_LOCAL void s_write_utt_maryxml(const SUtterance *utt, SDatasource *ds, s_erc *
 		S_CTX_ERR(error, S_CONTERR,
 			  "s_write_utt_maryxml",
 			  "Call to \"xmlTextWriterWriteAttribute\" failed");
-		return;
+		goto s_write_utt_exit;
 	}
 
 	rc = xmlTextWriterWriteFormatAttributeNS(writer, BAD_CAST "xml", BAD_CAST "lang", NULL, "it");
@@ -154,7 +162,7 @@ S_LOCAL void s_write_utt_maryxml(const SUtterance *utt, SDatasource *ds, s_erc *
 		S_CTX_ERR(error, S_CONTERR,
 			  "s_write_utt_maryxml",
 			  "Call to \"xmlTextWriterFormatAttribute\" failed");
-		return;
+		goto s_write_utt_exit;
 	}
 
 	/* Check if present at least one phrase */
@@ -162,7 +170,7 @@ S_LOCAL void s_write_utt_maryxml(const SUtterance *utt, SDatasource *ds, s_erc *
 	if (S_CHK_ERR(error, S_CONTERR,
 		      "s_write_utt_maryxml",
 		      "Call to \"SUtteranceRelationIsPresent\" failed"))
-		return;
+		goto s_write_utt_exit;
 
 	if (isPresent)
 	{
@@ -171,9 +179,9 @@ S_LOCAL void s_write_utt_maryxml(const SUtterance *utt, SDatasource *ds, s_erc *
 		if (rc < 0)
 		{
 			S_CTX_ERR(error, S_CONTERR,
-				  "s_write_utt:maryxml",
+				  "s_write_utt_maryxml",
 				  "Call to \"xmlTextWriterStartElement\" failed");
-			return;
+			goto s_write_utt_exit;
 		}
 
 		/* Get the first phrase */
@@ -181,14 +189,14 @@ S_LOCAL void s_write_utt_maryxml(const SUtterance *utt, SDatasource *ds, s_erc *
 		if (S_CHK_ERR(error, S_CONTERR,
 			      "s_write_utt_maryxml",
 			      "Call to \"SUtteranceGetRelation\" failed"))
-			return;
+			goto s_write_utt_exit;
 
 		/* Get the first word */
 		itrWords = (SItem*) SRelationHead(SUtteranceGetRelation(utt, "Word", error), error);
 		if (S_CHK_ERR(error, S_CONTERR,
 			      "s_write_utt_maryxml",
 			      "Call to \"SUtteranceGetRelation\" failed"))
-			return;
+			goto s_write_utt_exit;
 
 		mtuOpen = FALSE;
 		while (itrPhrases != NULL)
@@ -198,16 +206,16 @@ S_LOCAL void s_write_utt_maryxml(const SUtterance *utt, SDatasource *ds, s_erc *
 			if (rc < 0)
 			{
 				S_CTX_ERR(error, S_CONTERR,
-					  "s_write_utt:maryxml",
+					  "s_write_utt_maryxml",
 					  "Call to \"xmlTextWriterStartElement\" failed");
-				return;
+				goto s_write_utt_exit;
 			}
 			/* Get the first child from the current phrase */
 			itrPhraseWords = SItemDaughter(itrPhrases, error);
 			if (S_CHK_ERR(error, S_CONTERR,
 				      "s_write_utt_maryxml",
 				      "Call to \"SItemDaughter\" failed"))
-				return;
+				goto s_write_utt_exit;
 
 			while (itrPhraseWords != NULL)
 			{
@@ -216,14 +224,14 @@ S_LOCAL void s_write_utt_maryxml(const SUtterance *utt, SDatasource *ds, s_erc *
 				if (S_CHK_ERR(error, S_CONTERR,
 					      "s_write_utt_maryxml",
 					      "Call to \"SItemDaughter\" failed"))
-					return;
+					goto s_write_utt_exit;
 
 				/* Get the Token of the current word */
 				currentTokenAsWord = SItemAs(itrWords, "Token", error);
 				if (S_CHK_ERR(error, S_CONTERR,
 					      "s_write_utt_maryxml",
 					      "Call to \"SItemDaughter\" failed"))
-					return;
+					goto s_write_utt_exit;
 
 				/* Write pre-punctuation */
 				if (SItemFeatureIsPresent(currentTokenAsWord, "prepunc", error))
@@ -235,9 +243,9 @@ S_LOCAL void s_write_utt_maryxml(const SUtterance *utt, SDatasource *ds, s_erc *
 					if (rc < 0)
 					{
 						S_CTX_ERR(error, S_CONTERR,
-							  "s_write_utt:maryxml",
+							  "s_write_utt_maryxml",
 							  "Call to \"xmlTextWriterWriteElement\" failed");
-						return;
+						goto s_write_utt_exit;
 					}
 				}
 
@@ -248,7 +256,7 @@ S_LOCAL void s_write_utt_maryxml(const SUtterance *utt, SDatasource *ds, s_erc *
 					if (S_CHK_ERR(error, S_CONTERR,
 						      "s_write_utt_maryxml",
 						      "Call to \"SItemAs\" failed"))
-						return;
+						goto s_write_utt_exit;
 
 					if ((currentTokenAsWord == nextTokenAsWord) && !mtuOpen)
 					{
@@ -258,9 +266,9 @@ S_LOCAL void s_write_utt_maryxml(const SUtterance *utt, SDatasource *ds, s_erc *
 						if (rc < 0)
 						{
 							S_CTX_ERR(error, S_CONTERR,
-								  "s_write_utt:maryxml",
+								  "s_write_utt_maryxml",
 								  "Call to \"xmlTextWriterWriteElement\" failed");
-							return;
+							goto s_write_utt_exit;
 						}
 
 						/* Write the attribute orig */
@@ -268,9 +276,9 @@ S_LOCAL void s_write_utt_maryxml(const SUtterance *utt, SDatasource *ds, s_erc *
 						if (rc < 0)
 						{
 							S_CTX_ERR(error, S_CONTERR,
-								  "s_write_utt:maryxml",
+								  "s_write_utt_maryxml",
 								  "Call to \"xmlTextWriterWriteElement\" failed");
-							return;
+							goto s_write_utt_exit;
 						}
 					}
 				}
@@ -280,9 +288,9 @@ S_LOCAL void s_write_utt_maryxml(const SUtterance *utt, SDatasource *ds, s_erc *
 				if (rc < 0)
 				{
 					S_CTX_ERR(error, S_CONTERR,
-						  "s_write_utt:maryxml",
+						  "s_write_utt_maryxml",
 						  "Call to \"xmlTextWriterWriteElement\" failed");
-					return;
+					goto s_write_utt_exit;
 				}
 
 				if ((currentTokenAsWord != nextTokenAsWord) && mtuOpen)
@@ -294,9 +302,9 @@ S_LOCAL void s_write_utt_maryxml(const SUtterance *utt, SDatasource *ds, s_erc *
 					if (rc < 0)
 					{
 						S_CTX_ERR(error, S_CONTERR,
-							  "s_write_utt:maryxml",
+							  "s_write_utt_maryxml",
 							  "Call to \"xmlTextWriterEndDocument\" failed");
-						return;
+						goto s_write_utt_exit;
 					}
 				}
 
@@ -310,9 +318,9 @@ S_LOCAL void s_write_utt_maryxml(const SUtterance *utt, SDatasource *ds, s_erc *
 					if (rc < 0)
 					{
 						S_CTX_ERR(error, S_CONTERR,
-							  "s_write_utt:maryxml",
+							  "s_write_utt_maryxml",
 							  "Call to \"xmlTextWriterWriteElement\" failed");
-						return;
+						goto s_write_utt_exit;
 					}
 				}
 
@@ -320,28 +328,28 @@ S_LOCAL void s_write_utt_maryxml(const SUtterance *utt, SDatasource *ds, s_erc *
 				if (S_CHK_ERR(error, S_CONTERR,
 					      "s_write_utt_maryxml",
 					      "Call to \"SItemNext\" failed"))
-					return;
+					goto s_write_utt_exit;
 
 				itrWords = SItemNext(itrWords, error);
 				if (S_CHK_ERR(error, S_CONTERR,
 					      "s_write_utt_maryxml",
 					      "Call to \"SItemNext\" failed"))
-					return;
+					goto s_write_utt_exit;
 			}
 			/* Close the tag s */
 			rc = xmlTextWriterEndElement(writer);
 			if (rc < 0)
 			{
 				S_CTX_ERR(error, S_CONTERR,
-					  "s_write_utt:maryxml",
+					  "s_write_utt_maryxml",
 		  			  "Call to \"xmlTextWriterEndDocument\" failed");
-				return;
+				goto s_write_utt_exit;
 			}
 			itrPhrases = SItemNext(itrPhrases, error);
 			if (S_CHK_ERR(error, S_CONTERR,
 				      "s_write_utt_maryxml",
 				      "Call to \"SItemNext\" failed"))
-				return;
+				goto s_write_utt_exit;
 		}
 
 		/* Close the tag p */
@@ -349,26 +357,29 @@ S_LOCAL void s_write_utt_maryxml(const SUtterance *utt, SDatasource *ds, s_erc *
 		if (rc < 0)
 		{
 			S_CTX_ERR(error, S_CONTERR,
-				  "s_write_utt:maryxml",
+				  "s_write_utt_maryxml",
 	  			  "Call to \"xmlTextWriterEndDocument\" failed");
-			return;
+			goto s_write_utt_exit;
 		}
 		/* Close the tag maryxml */
 		rc = xmlTextWriterEndElement(writer);
 		if (rc < 0)
 		{
 			S_CTX_ERR(error, S_CONTERR,
-				  "s_write_utt:maryxml",
+				  "s_write_utt_maryxml",
 				  "Call to \"xmlTextWriterEndDocument\" failed");
-			return;
+			goto s_write_utt_exit;
 		}
 	}
 	rc = xmlTextWriterEndDocument(writer);
 	if (rc < 0)
 	{
 		S_CTX_ERR(error, S_CONTERR,
-			  "s_write_utt:maryxml",
+			  "s_write_utt_maryxml",
 			  "Call to \"xmlTextWriterEndDocument\" failed");
-		return;
-	}	
+		goto s_write_utt_exit;
+	}
+s_write_utt_exit:
+        xmlFreeTextWriter(writer);
+        return;	
 }

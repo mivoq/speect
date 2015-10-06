@@ -298,6 +298,31 @@ S_LOCAL void s_write_utt_maryxml(const SUtterance *utt, SDatasource *ds, s_erc *
 					}
 				}
 
+				/* Check if the multiToken is composed to only one word */
+				if (s_strcmp(SItemGetName(tokenWord, error), SItemGetName(itrPhraseWords, error), error) != 0)
+				{
+					/* Open tag mtu */
+					mtuOpen = TRUE;
+					rc = xmlTextWriterStartElement(writer, BAD_CAST "mtu");
+					if (rc < 0)
+					{
+						S_CTX_ERR(error, S_CONTERR,
+							  "s_write_utt_maryxml",
+							  "Call to \"xmlTextWriterStartElement\" failed");
+						goto s_write_utt_exit;
+					}
+
+					/* Write the attribute orig */
+					rc = xmlTextWriterWriteAttribute(writer, BAD_CAST "orig", BAD_CAST SItemGetName(tokenWord, error));
+					if (rc < 0)
+					{
+						S_CTX_ERR(error, S_CONTERR,
+							  "s_write_utt_maryxml",
+							  "Call to \"xmlTextWriterWriteAttribute\" failed");
+						goto s_write_utt_exit;
+					}
+				}
+
 				/* Write the tag t */
 				rc = xmlTextWriterWriteElement(writer, BAD_CAST "t", BAD_CAST SItemGetName(itrPhraseWords, error));
 				if (rc < 0)

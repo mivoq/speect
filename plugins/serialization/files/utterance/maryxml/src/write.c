@@ -43,6 +43,14 @@
 #include <libxml/xmlwriter.h>
 #define ENCODING "UTF-8"
 
+/************************************************************************************/
+/*                                                                                  */
+/* Relations names                                                                  */
+/*                                                                                  */
+/************************************************************************************/
+
+static const char * TOKEN_RELATION = "Token";
+static const char * PHRASE_RELATION = "Phrase";
 
 /************************************************************************************/
 /*                                                                                  */
@@ -166,7 +174,7 @@ S_LOCAL void s_write_utt_maryxml(const SUtterance *utt, SDatasource *ds, s_erc *
 	}
 
 	/* Check if present at least one phrase */
-	isPresent = SUtteranceRelationIsPresent(utt, "Phrase", error);
+	isPresent = SUtteranceRelationIsPresent(utt, PHRASE_RELATION, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 		      "s_write_utt_maryxml",
 		      "Call to \"SUtteranceRelationIsPresent\" failed"))
@@ -185,7 +193,7 @@ S_LOCAL void s_write_utt_maryxml(const SUtterance *utt, SDatasource *ds, s_erc *
 		}
 
 		/* Get the first phrase */
-		itrPhrases = SRelationHead(SUtteranceGetRelation(utt, "Phrase", error), error);
+		itrPhrases = SRelationHead(SUtteranceGetRelation(utt, PHRASE_RELATION, error), error);
 		if (S_CHK_ERR(error, S_CONTERR,
 			      "s_write_utt_maryxml",
 			      "Call to \"SUtteranceGetRelation\" failed"))
@@ -220,7 +228,7 @@ S_LOCAL void s_write_utt_maryxml(const SUtterance *utt, SDatasource *ds, s_erc *
 					goto s_write_utt_exit;
 
 				/* Get the Token from Word */
-				tokenWord = SItemAs(itrPhraseWords, "Token", error);
+				tokenWord = SItemAs(itrPhraseWords, TOKEN_RELATION, error);
 				if (S_CHK_ERR(error, S_CONTERR,
 					      "s_write_utt_maryxml",
 					      "Call to \"SItemAs\" failed"))
@@ -261,7 +269,7 @@ S_LOCAL void s_write_utt_maryxml(const SUtterance *utt, SDatasource *ds, s_erc *
 				if (next != NULL)
 				{
 					/* Get the Token from next */
-					nextTokenWord = SItemAs(next, "Token", error);
+					nextTokenWord = SItemAs(next, TOKEN_RELATION, error);
 					if (S_CHK_ERR(error, S_CONTERR,
 						      "s_write_utt_maryxml",
 						      "Call to \"SItemAs\" failed"))

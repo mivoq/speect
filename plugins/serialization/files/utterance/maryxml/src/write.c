@@ -261,13 +261,13 @@ S_LOCAL void s_write_utt_maryxml(const SUtterance *utt, SDatasource *ds, s_erc *
 				if (next != NULL)
 				{
 					/* Get the Token from next */
-					nextTokenWord = SItemAs(itrPhraseWords, "Token", error);
+					nextTokenWord = SItemAs(next, "Token", error);
 					if (S_CHK_ERR(error, S_CONTERR,
 						      "s_write_utt_maryxml",
 						      "Call to \"SItemAs\" failed"))
 						goto s_write_utt_exit;
 
-					nextTokenWord = SItemParent(tokenWord, error);
+					nextTokenWord = SItemParent(nextTokenWord, error);
 					if (S_CHK_ERR(error, S_CONTERR,
 						      "s_write_utt_maryxml",
 						      "Call to \"SItemParent\" failed"))

@@ -364,7 +364,24 @@ S_LOCAL void s_write_utt_maryxml(const SUtterance *utt, SDatasource *ds, s_erc *
 		goto s_write_utt_exit;
 	}
 
-	rc = xmlTextWriterWriteFormatAttributeNS(writer, BAD_CAST "xml", BAD_CAST "lang", NULL, "it");
+	/* take the language if present, else default to eng-US */
+	isPresent = SUtteranceFeatureIsPresent(utt, "lang-code", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+		"s_write_utt_maryxml",
+		"Call to \"SUtteranceFeatureIsPresent\" failed"))
+		goto s_write_utt_exit;;
+
+	char* lang = "eng-US";
+
+	if (isPresent)
+	{
+		lang = SObjectGetString(SUtteranceGetFeature(utt, "lang-code", error), error);
+		if (S_CHK_ERR(error, S_CONTERR,
+			"s_write_utt_maryxml",
+			"Call to \"SUtteranceGetFeature\" failed"))
+			goto s_write_utt_exit;;
+	}
+	rc = xmlTextWriterWriteFormatAttributeNS(writer, BAD_CAST "xml", BAD_CAST "lang", NULL, BAD_CAST lang);
 	if (rc < 0) {
 		S_CTX_ERR(error, S_CONTERR,
 			  "s_write_utt_maryxml",

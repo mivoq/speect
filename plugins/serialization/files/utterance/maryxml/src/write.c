@@ -224,7 +224,7 @@ S_LOCAL void s_write_utt_maryxml(const SUtterance *utt, SDatasource *ds, s_erc *
 				next = SItemNext(itrPhraseWords, error);
 				if (S_CHK_ERR(error, S_CONTERR,
 					      "s_write_utt_maryxml",
-					      "Call to \"SItemDaughter\" failed"))
+					      "Call to \"SItemNext\" failed"))
 					goto s_write_utt_exit;
 
 				/* Get the Token from Word */

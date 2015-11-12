@@ -2,6 +2,7 @@
 /* Copyright (c) 2015 Mivoq SRL <info@mivoq.it>                                     */
 /*                                                                                  */
 /* Contributors:  Matteo Lisotto                                                    */
+/*                Simone Daminato                                                   */
 /*                                                                                  */
 /* Permission is hereby granted, free of charge, to any person obtaining a copy     */
 /* of this software and associated documentation files (the "Software"), to deal    */
@@ -51,6 +52,10 @@
 
 static const char * TOKEN_RELATION = "Token";
 static const char * PHRASE_RELATION = "Phrase";
+static const char * WORD_RELATION = "Word";
+static const char * SYLLABLE_RELATION = "Syllable";
+static const char * SEGMENT_RELATION = "Segment";
+static const char * SYLSTRUCT_RELATION = "SylStructure";
 
 /************************************************************************************/
 /*                                                                                  */
@@ -85,22 +90,216 @@ static int _ds_close(void * context)
 	return 0;
 }
 
+static void write_word(xmlTextWriterPtr writer, SItem* wordSItem, s_bool ShouldWriteSegments, s_erc *error)
+{
+	int rc;
+
+	S_CLR_ERR(error);
+
+	if (!ShouldWriteSegments)
+	{
+		/* since we don't have segments, it's a plain t */
+		rc = xmlTextWriterWriteElement(writer, BAD_CAST "t", BAD_CAST SItemGetName(wordSItem, error));
+		if (rc < 0)
+		{
+			S_CTX_ERR(error, S_CONTERR,
+				"s_write_utt_maryxml",
+				"Call to \"xmlTextWriterWriteElement\" failed");
+			return;
+		}
+	}
+	else
+	{
+		/* open the t tag */
+		rc = xmlTextWriterStartElement(writer, BAD_CAST "t");
+		if (rc < 0)
+		{
+			S_CTX_ERR(error, S_CONTERR,
+				  "write_word",
+				  "Call to \"xmlTextWriterStartElement\" failed");
+			return;
+		}
+
+		/* create segments string */
+		char segmentsString[1024];
+		int currentStringSize = 0;
+
+		/* create syllable path, temporarly using segmentsString, that will be overwritten by the segments */
+		sprintf(segmentsString, "R:%s.daughter", SYLSTRUCT_RELATION);
+
+		/* get to the first syllable of the current word */
+		SItem* itrSyllables = SItemPathToItem(wordSItem, segmentsString,error);
+		if (S_CHK_ERR(error, S_CONTERR,
+			"write_word",
+			"Call to \"SItemPathToItem\" failed"))
+			return;
+		/* for every syllable */
+		while (itrSyllables != NULL)
+		{
+			/* get the first segment */
+			SItem* itrSegments = SItemDaughter(itrSyllables, error);
+			if (S_CHK_ERR(error, S_CONTERR,
+				"write_word",
+				"Call to \"SItemDaughter\" failed"))
+				return;
+			while (itrSegments != NULL)
+			{
+				/* get segment content */
+				char* segmentName = SItemGetName(itrSegments, error);
+				if (S_CHK_ERR(error, S_CONTERR,
+					"write_word",
+					"Call to \"SItemGetName\" failed"))
+					return;
+
+				/* append it */
+				while (*segmentName)
+				{
+					if (currentStringSize + 1 > 1024)
+					{
+						S_CTX_ERR(error, S_CONTERR,
+							  "write_word",
+							  "can't append segment character");
+						return;
+					}
+					segmentsString[currentStringSize++] = segmentName[0];
+					segmentName++;
+				}
+
+				/* get next segment */
+				itrSegments = SItemNext(itrSegments, error);
+				if (S_CHK_ERR(error, S_CONTERR,
+					"write_word",
+					"Call to \"SItemNext\" failed"))
+					return;
+
+				/* append the segment separator */
+				if (itrSegments != NULL)
+				{
+					if (currentStringSize + 1 > 1024)
+					{
+						S_CTX_ERR(error, S_CONTERR,
+							  "write_word",
+							  "can't append segment separator");
+						return;
+					}
+
+					segmentsString[currentStringSize++] = ' ';
+				}
+			}
+
+			/* get next syllable */
+			itrSyllables = SItemNext(itrSyllables, error);
+			if (S_CHK_ERR(error, S_CONTERR,
+				"write_word",
+				"Call to \"SItemNext\" failed"))
+				return;
+
+			/* append the syllable separator */
+			if (itrSyllables != NULL)
+			{
+				if (currentStringSize + 3 > 1024)
+				{
+					S_CTX_ERR(error, S_CONTERR,
+						  "write_word",
+						  "can't append syllable separator");
+					return;
+				}
+
+				segmentsString[currentStringSize++] = ' ';
+				segmentsString[currentStringSize++] = '-';
+				segmentsString[currentStringSize++] = ' ';
+			}
+		}
+
+		/* append end string */
+		if (currentStringSize + 1 > 1024)
+		{
+			S_CTX_ERR(error, S_CONTERR,
+				  "write_word",
+				  "can't append end string on segments list");
+			return;
+		}
+		segmentsString[currentStringSize++] = '\0';
+
+
+		/* write segments */
+		rc = xmlTextWriterWriteAttribute(writer, BAD_CAST "ph", BAD_CAST segmentsString);
+		if (rc < 0)
+		{
+			S_CTX_ERR(error, S_CONTERR,
+				  "write_word",
+				  "Call to \"xmlTextWriterWriteAttribute\" failed");
+			return;
+		}
+
+
+		/* write the word */
+		rc = xmlTextWriterWriteString(writer, BAD_CAST SItemGetName(wordSItem, error));
+		if (rc < 0)
+		{
+			S_CTX_ERR(error, S_CONTERR,
+				  "write_word",
+				  "Call to \"xmlTextWriterWriteString\" failed");
+			return;
+		}
+
+		/* close t tag */
+		rc = xmlTextWriterEndElement(writer);
+		if (rc < 0)
+		{
+			S_CTX_ERR(error, S_CONTERR,
+				  "write_word",
+				  "Call to \"xmlTextWriterEndDocument\" failed");
+			return;
+		}
+	}
+}
+
 S_LOCAL void s_write_utt_maryxml(const SUtterance *utt, SDatasource *ds, s_erc *error)
 {
 	int rc;
 	s_bool isPresent;
-	s_bool mtuOpen = FALSE;
 	xmlTextWriterPtr writer;
 	xmlOutputBufferPtr out;
-	const SItem * itrPhrases;
-	const SItem * itrPhraseWords;
-	SItem * next = NULL;
-	SItem * tokenWord = NULL;
-	SItem * nextTokenWord = NULL;
+	const SItem * itrTokens;
 	const char * maryNms = "http://mary.dfki.de/2002/MaryXML";
 	const char * maryXsi = "http://www.w3.org/2001/XMLSchema-instance";
 
+	s_bool isTokenRelationPresent;
+	s_bool isWordRelationPresent;
+	s_bool isPhraseRelationPresent;
+	s_bool isSegmentRelationPresent;
+
 	S_CLR_ERR(error);
+	
+	/* init relation bools */
+	isTokenRelationPresent = SUtteranceRelationIsPresent(utt, TOKEN_RELATION, error);
+	if(S_CHK_ERR(error, S_CONTERR,
+		      "s_write_utt_maryxml",
+		      "Call to \"SUtteranceRelationIsPresent\" failed"))
+		return;
+
+	/* check that we have a token relation graph. If not, we have nothing to do, so just return */
+	if(!isTokenRelationPresent)
+		return;
+
+	isWordRelationPresent = SUtteranceRelationIsPresent(utt, WORD_RELATION, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+		      "s_write_utt_maryxml",
+		      "Call to \"SUtteranceRelationIsPresent\" failed"))
+		return;
+
+	isPhraseRelationPresent = SUtteranceRelationIsPresent(utt, PHRASE_RELATION, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+		      "s_write_utt_maryxml",
+		      "Call to \"SUtteranceRelationIsPresent\" failed"))
+		return;
+
+	isSegmentRelationPresent = SUtteranceRelationIsPresent(utt, SEGMENT_RELATION, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+		      "s_write_utt_maryxml",
+		      "Call to \"SUtteranceRelationIsPresent\" failed"))
+		return;
 
 	out = xmlOutputBufferCreateIO(_ds_write,
 				      _ds_close,
@@ -173,258 +372,225 @@ S_LOCAL void s_write_utt_maryxml(const SUtterance *utt, SDatasource *ds, s_erc *
 		goto s_write_utt_exit;
 	}
 
-	/* Check if present at least one phrase */
-	isPresent = SUtteranceRelationIsPresent(utt, PHRASE_RELATION, error);
+	/**** begin of relation travelling ****/
+
+	// Write the tag p
+	rc = xmlTextWriterStartElement(writer, BAD_CAST "p");
+	if (rc < 0)
+	{
+		S_CTX_ERR(error, S_CONTERR,
+			  "s_write_utt_maryxml",
+			  "Call to \"xmlTextWriterStartElement\" failed");
+		goto s_write_utt_exit;
+	}
+
+	/* Write the tag s */
+	rc = xmlTextWriterStartElement(writer, BAD_CAST "s");
+	if (rc < 0)
+	{
+		S_CTX_ERR(error, S_CONTERR,
+			  "s_write_utt_maryxml",
+			  "Call to \"xmlTextWriterStartElement\" failed");
+		goto s_write_utt_exit;
+	}
+
+	/* iterate throught the tokens */
+	itrTokens = SRelationHead(SUtteranceGetRelation(utt, TOKEN_RELATION, error), error);
 	if (S_CHK_ERR(error, S_CONTERR,
-		      "s_write_utt_maryxml",
-		      "Call to \"SUtteranceRelationIsPresent\" failed"))
+		"s_write_utt_maryxml",
+		"Call to \"SUtteranceGetRelation\" failed"))
 		goto s_write_utt_exit;
 
-	if (isPresent)
+	while (itrTokens != NULL)
 	{
-		/* Write the tag p */
-		rc = xmlTextWriterStartElement(writer, BAD_CAST "p");
-		if (rc < 0)
-		{
-			S_CTX_ERR(error, S_CONTERR,
-				  "s_write_utt_maryxml",
-				  "Call to \"xmlTextWriterStartElement\" failed");
-			goto s_write_utt_exit;
-		}
-
-		/* Get the first phrase */
-		itrPhrases = SRelationHead(SUtteranceGetRelation(utt, PHRASE_RELATION, error), error);
+		/* Check if the token has pre-punctuation */
+		isPresent = SItemFeatureIsPresent(itrTokens, "prepunc", error);
 		if (S_CHK_ERR(error, S_CONTERR,
-			      "s_write_utt_maryxml",
-			      "Call to \"SUtteranceGetRelation\" failed"))
+			"s_write_utt_maryxml",
+			"Call to \"SItemFeatureIsPresent\" failed"))
 			goto s_write_utt_exit;
 
-		while (itrPhrases != NULL)
+		if (isPresent)
 		{
-			/* Write the tag s */
-			rc = xmlTextWriterStartElement(writer, BAD_CAST "s");
+			const char * prepunc = SItemGetString(itrTokens,"prepunc", error);
+			if (S_CHK_ERR(error, S_CONTERR,
+				"s_write_utt_maryxml",
+				"Call to \"SItemGetString\" failed"))
+				goto s_write_utt_exit;
+
+			/* Write the tag t with pre-punctuation */
+			rc = xmlTextWriterWriteElement(writer, BAD_CAST "t", BAD_CAST prepunc);
 			if (rc < 0)
 			{
 				S_CTX_ERR(error, S_CONTERR,
-					  "s_write_utt_maryxml",
-					  "Call to \"xmlTextWriterStartElement\" failed");
+						"s_write_utt_maryxml",
+						"Call to \"xmlTextWriterWriteElement\" failed");
 				goto s_write_utt_exit;
 			}
+		}
 
-			/* Get the first child from the current phrase */
-			itrPhraseWords = SItemDaughter(itrPhrases, error);
+		/* write down this token's data */
+
+		const char * TokenName = SItemGetName(itrTokens, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+			"s_write_utt_maryxml",
+			"Call to \"SItemGetName\" failed"))
+			goto s_write_utt_exit;
+
+		/* if we have the Word relation graph */
+		if ( isWordRelationPresent )
+		{
+			/* get Word representation */
+			char pathTarget[255];
+			sprintf( pathTarget, "daughter.R:%s.name", WORD_RELATION );
+
+			SItem* itrWord = SItemPathToItem(itrTokens, pathTarget,error);
+			const char * word = SItemGetName(itrWord, error);
 			if (S_CHK_ERR(error, S_CONTERR,
-				      "s_write_utt_maryxml",
-				      "Call to \"SItemDaughter\" failed"))
+				"s_write_utt_maryxml",
+				"Call to \"SItemPathToFeature\" failed"))
 				goto s_write_utt_exit;
 
-			while (itrPhraseWords != NULL)
+			/* if the word is different than the token, we need a MTU */
+			if ( s_strcmp(TokenName, word, error) != 0)
 			{
-				/* Get the next item */
-				next = SItemNext(itrPhraseWords, error);
-				if (S_CHK_ERR(error, S_CONTERR,
-					      "s_write_utt_maryxml",
-					      "Call to \"SItemNext\" failed"))
-					goto s_write_utt_exit;
-
-				/* Get the Token from Word */
-				tokenWord = SItemAs(itrPhraseWords, TOKEN_RELATION, error);
-				if (S_CHK_ERR(error, S_CONTERR,
-					      "s_write_utt_maryxml",
-					      "Call to \"SItemAs\" failed"))
-					goto s_write_utt_exit;
-
-				tokenWord = SItemParent(tokenWord, error);
-				if (S_CHK_ERR(error, S_CONTERR,
-					      "s_write_utt_maryxml",
-					      "Call to \"SItemParent\" failed"))
-					goto s_write_utt_exit;
-
-				/* Check if the token has pre-punctuation */
-				isPresent = SItemFeatureIsPresent(tokenWord, "prepunc", error);
-				if (S_CHK_ERR(error, S_CONTERR,
-					      "s_write_utt_maryxml",
-					      "Call to \"SItemFeatureIsPresent\" failed"))
-					goto s_write_utt_exit;
-
-				if (isPresent)
+				// Open tag mtu
+				rc = xmlTextWriterStartElement(writer, BAD_CAST "mtu");
+				if (rc < 0)
 				{
-					const char * prepunc = SItemGetString(tokenWord,"prepunc", error);
-					if (S_CHK_ERR(error, S_CONTERR,
-						      "s_write_utt_maryxml",
-						      "Call to \"SItemGetString\" failed"))
-						goto s_write_utt_exit;
-
-					/* Write the tag t with pre-punctuation */
-					rc = xmlTextWriterWriteElement(writer, BAD_CAST "t", BAD_CAST prepunc);
-					if (rc < 0)
-					{
-						S_CTX_ERR(error, S_CONTERR,
-							  "s_write_utt_maryxml",
-							  "Call to \"xmlTextWriterWriteElement\" failed");
-						goto s_write_utt_exit;
-					}
+					S_CTX_ERR(error, S_CONTERR,
+						"s_write_utt_maryxml",
+						"Call to \"xmlTextWriterStartElement\" failed");
+					goto s_write_utt_exit;
 				}
 
-				if (next != NULL)
+				/* Write the attribute orig */
+				rc = xmlTextWriterWriteAttribute(writer, BAD_CAST "orig", BAD_CAST TokenName);
+				if (rc < 0)
 				{
-					/* Get the Token from next */
-					nextTokenWord = SItemAs(next, TOKEN_RELATION, error);
-					if (S_CHK_ERR(error, S_CONTERR,
-						      "s_write_utt_maryxml",
-						      "Call to \"SItemAs\" failed"))
-						goto s_write_utt_exit;
-
-					nextTokenWord = SItemParent(nextTokenWord, error);
-					if (S_CHK_ERR(error, S_CONTERR,
-						      "s_write_utt_maryxml",
-						      "Call to \"SItemParent\" failed"))
-						goto s_write_utt_exit;
-
-					if ((tokenWord == nextTokenWord) && !mtuOpen)
-					{
-						/* Open tag mtu */
-						mtuOpen = TRUE;
-						rc = xmlTextWriterStartElement(writer, BAD_CAST "mtu");
-						if (rc < 0)
-						{
-							S_CTX_ERR(error, S_CONTERR,
-								  "s_write_utt_maryxml",
-								  "Call to \"xmlTextWriterStartElement\" failed");
-							goto s_write_utt_exit;
-						}
-
-						/* Write the attribute orig */
-						rc = xmlTextWriterWriteAttribute(writer, BAD_CAST "orig", BAD_CAST SItemGetName(tokenWord, error));
-						if (rc < 0)
-						{
-							S_CTX_ERR(error, S_CONTERR,
-								  "s_write_utt_maryxml",
-								  "Call to \"xmlTextWriterWriteAttribute\" failed");
-							goto s_write_utt_exit;
-						}
-					}
+					S_CTX_ERR(error, S_CONTERR,
+						"s_write_utt_maryxml",
+						"Call to \"xmlTextWriterWriteAttribute\" failed");
+					goto s_write_utt_exit;
 				}
 
-				/* Check if the multiToken is composed to only one word */
-				if (s_strcmp(SItemGetName(tokenWord, error), SItemGetName(itrPhraseWords, error), error) != 0)
+				sprintf( pathTarget, "R:%s.parent", TOKEN_RELATION );
+				/* write all the words that are daughters of the current token */
+				while (itrWord != NULL && SItemPathToItem(itrWord, pathTarget,error) == itrTokens )
 				{
-					/* Open tag mtu */
-					mtuOpen = TRUE;
-					rc = xmlTextWriterStartElement(writer, BAD_CAST "mtu");
-					if (rc < 0)
-					{
-						S_CTX_ERR(error, S_CONTERR,
-							  "s_write_utt_maryxml",
-							  "Call to \"xmlTextWriterStartElement\" failed");
+					write_word(writer, itrWord, isSegmentRelationPresent, error);
+					if (S_CHK_ERR(error, S_CONTERR,
+						"s_write_utt_maryxml",
+						"Call to \"write_word\" failed"))
 						goto s_write_utt_exit;
-					}
 
-					/* Write the attribute orig */
-					rc = xmlTextWriterWriteAttribute(writer, BAD_CAST "orig", BAD_CAST SItemGetName(tokenWord, error));
-					if (rc < 0)
-					{
-						S_CTX_ERR(error, S_CONTERR,
-							  "s_write_utt_maryxml",
-							  "Call to \"xmlTextWriterWriteAttribute\" failed");
+					itrWord = SItemNext(itrWord, error);
+					if (S_CHK_ERR(error, S_CONTERR,
+						"s_write_utt_maryxml",
+						"Call to \"SItemNext\" failed"))
 						goto s_write_utt_exit;
-					}
 				}
 
-				/* Write the tag t */
-				rc = xmlTextWriterWriteElement(writer, BAD_CAST "t", BAD_CAST SItemGetName(itrPhraseWords, error));
+
+				/* Close the tag mtu */
+				rc = xmlTextWriterEndElement(writer);
 				if (rc < 0)
 				{
 					S_CTX_ERR(error, S_CONTERR,
 						  "s_write_utt_maryxml",
-						  "Call to \"xmlTextWriterWriteElement\" failed");
+						  "Call to \"xmlTextWriterEndElement\" failed");
 					goto s_write_utt_exit;
 				}
 
-				if ((((next != NULL) && (tokenWord != nextTokenWord)) || next == NULL) && mtuOpen)
-				{
-					mtuOpen = FALSE;
-					/* Close the tag mtu */
-					rc = xmlTextWriterEndElement(writer);
-					if (rc < 0)
-					{
-						S_CTX_ERR(error, S_CONTERR,
-							  "s_write_utt_maryxml",
-							  "Call to \"xmlTextWriterEndElement\" failed");
-						goto s_write_utt_exit;
-					}
-				}
-
-				/* Check if the token has post-punctuation */
-				isPresent = SItemFeatureIsPresent(tokenWord, "postpunc", error);
+			}
+			else
+			{
+				/* we don't need a MTU, just a simple t */
+				write_word(writer, itrWord, isSegmentRelationPresent, error);
 				if (S_CHK_ERR(error, S_CONTERR,
-					      "s_write_utt_maryxml",
-					      "Call to \"SItemFeatureIsPresent\" failed"))
-					goto s_write_utt_exit;
-
-				if (isPresent)
-				{
-					const char * prepunc = SItemGetString(tokenWord,"postpunc", error);
-					if (S_CHK_ERR(error, S_CONTERR,
-						      "s_write_utt_maryxml",
-						      "Call to \"SItemGetString\" failed"))
-						goto s_write_utt_exit;
-
-					/* Write the tag t with post-punctuation */
-					rc = xmlTextWriterWriteElement(writer, BAD_CAST "t", BAD_CAST prepunc);
-					if (rc < 0)
-					{
-						S_CTX_ERR(error, S_CONTERR,
-							  "s_write_utt_maryxml",
-							  "Call to \"xmlTextWriterWriteElement\" failed");
-						goto s_write_utt_exit;
-					}
-				}
-
-				itrPhraseWords = SItemNext(itrPhraseWords, error);
-				if (S_CHK_ERR(error, S_CONTERR,
-					      "s_write_utt_maryxml",
-					      "Call to \"SItemNext\" failed"))
+					"s_write_utt_maryxml",
+					"Call to \"write_word\" failed"))
 					goto s_write_utt_exit;
 			}
-
-			/* Close the tag s */
-			rc = xmlTextWriterEndElement(writer);
+		}
+		else
+		{
+			/* fallback in case we have only tokens */
+			rc = xmlTextWriterWriteElement(writer, BAD_CAST "t", BAD_CAST TokenName);
 			if (rc < 0)
 			{
 				S_CTX_ERR(error, S_CONTERR,
-					  "s_write_utt_maryxml",
-					  "Call to \"xmlTextWriterEndDocument\" failed");
+					"s_write_utt_maryxml",
+					"Call to \"xmlTextWriterWriteElement\" failed");
 				goto s_write_utt_exit;
 			}
+		}
 
-			itrPhrases = SItemNext(itrPhrases, error);
+		/* Check if the token has post-punctuation */
+		isPresent = SItemFeatureIsPresent(itrTokens, "postpunc", error);
+		if (S_CHK_ERR(error, S_CONTERR,
+			"s_write_utt_maryxml",
+			"Call to \"SItemFeatureIsPresent\" failed"))
+			goto s_write_utt_exit;
+
+		if (isPresent)
+		{
+			const char * postpunc = SItemGetString(itrTokens,"postpunc", error);
 			if (S_CHK_ERR(error, S_CONTERR,
-				      "s_write_utt_maryxml",
-				      "Call to \"SItemNext\" failed"))
+				"s_write_utt_maryxml",
+				"Call to \"SItemGetString\" failed"))
 				goto s_write_utt_exit;
+
+			/* Write the tag t with post-punctuation */
+			rc = xmlTextWriterWriteElement(writer, BAD_CAST "t", BAD_CAST postpunc);
+			if (rc < 0)
+			{
+				S_CTX_ERR(error, S_CONTERR,
+						"s_write_utt_maryxml",
+						"Call to \"xmlTextWriterWriteElement\" failed");
+				goto s_write_utt_exit;
+			}
 		}
 
-		/* Close the tag p */
-		rc = xmlTextWriterEndElement(writer);
-		if (rc < 0)
-		{
-			S_CTX_ERR(error, S_CONTERR,
-				  "s_write_utt_maryxml",
-				  "Call to \"xmlTextWriterEndDocument\" failed");
+		/* Go to next token */
+		itrTokens = SItemNext(itrTokens, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+			"s_write_utt_maryxml",
+			"Call to \"SItemNext\" failed"))
 			goto s_write_utt_exit;
-		}
-		/* Close the tag maryxml */
-		rc = xmlTextWriterEndElement(writer);
-		if (rc < 0)
-		{
-			S_CTX_ERR(error, S_CONTERR,
-				  "s_write_utt_maryxml",
-				  "Call to \"xmlTextWriterEndDocument\" failed");
-			goto s_write_utt_exit;
-		}
 	}
 
+	/* Close the tag s */
+	rc = xmlTextWriterEndElement(writer);
+	if (rc < 0)
+	{
+		S_CTX_ERR(error, S_CONTERR,
+			  "s_write_utt_maryxml",
+	    "Call to \"xmlTextWriterEndDocument\" failed");
+		goto s_write_utt_exit;
+	}
+
+	/* Close the tag p */
+	rc = xmlTextWriterEndElement(writer);
+	if (rc < 0)
+	{
+		S_CTX_ERR(error, S_CONTERR,
+			  "s_write_utt_maryxml",
+	    "Call to \"xmlTextWriterEndDocument\" failed");
+		goto s_write_utt_exit;
+	}
+
+	/**** end of relation travelling ****/
+
+	/* Close the tag maryxml */
+	rc = xmlTextWriterEndElement(writer);
+	if (rc < 0)
+	{
+		S_CTX_ERR(error, S_CONTERR,
+			  "s_write_utt_maryxml",
+			  "Call to \"xmlTextWriterEndDocument\" failed");
+		goto s_write_utt_exit;
+	}
 	/* Close the document */
 	rc = xmlTextWriterEndDocument(writer);
 	if (rc < 0)
@@ -436,5 +602,5 @@ S_LOCAL void s_write_utt_maryxml(const SUtterance *utt, SDatasource *ds, s_erc *
 	}
 s_write_utt_exit:
         xmlFreeTextWriter(writer);
-        return;	
+        return;
 }

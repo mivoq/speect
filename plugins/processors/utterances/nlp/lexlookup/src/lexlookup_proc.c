@@ -409,6 +409,9 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 					  "Failed to down-case word item"))
 			goto quit_error;
 
+		if  (downcase_word == NULL || s_strcmp(downcase_word, "", error) == 0)
+			goto continue_cycle;
+
 		phones = NULL;
 		syllabified = FALSE;
 
@@ -572,7 +575,7 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 		}
 
 		S_DELETE(syllablesPhones, "Run", error);
-
+continue_cycle:
 		wordItem = SItemNext(wordItem, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "Run",

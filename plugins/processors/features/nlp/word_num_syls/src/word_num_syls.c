@@ -97,7 +97,7 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 {
 	SObject *extractedFeat = NULL;
 	const SItem *itemInSylStructRel;
-	const SItem *itrItem;
+	const SItem *itrItem = NULL;
 	sint32 count;
 
 
@@ -120,12 +120,14 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 					  "Call to \"SObjectSetInt\" failed"))
 			goto quit_error;
 	}
-
-	itrItem = SItemDaughter(itemInSylStructRel, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "Run",
-				  "Call to \"SItemDaughter\" failed"))
-		goto quit_error;
+	else
+	{
+		itrItem = SItemDaughter(itemInSylStructRel, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					"Run",
+					"Call to \"SItemDaughter\" failed"))
+			goto quit_error;
+	}
 
 	count = 0;
 	while (itrItem != NULL)

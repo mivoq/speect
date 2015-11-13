@@ -317,15 +317,19 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 			goto quit;
 
 		if (token_string == NULL)
-			break;
-		else
 		{
-			token = STokenstreamGetToken(ts, error);
+			token_string = "";
+			STokenSetString(token, "", error);
 			if (S_CHK_ERR(error, S_CONTERR,
-						  "Run",
-						  "Call to \"STokenstreamGetToken\" failed"))
+				"Run",
+				"Call to \"STokenSetString\" failed"))
 				goto quit;
 		}
+		token = STokenstreamGetToken(ts, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					"Run",
+					"Call to \"STokenstreamGetToken\" failed"))
+			goto quit;
 
 		/* create item, NULL shared content */
 		tokenItem = SRelationAppend(tokenRelation, NULL, error);

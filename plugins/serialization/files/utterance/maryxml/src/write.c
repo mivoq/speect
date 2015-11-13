@@ -156,12 +156,15 @@ static void write_word(xmlTextWriterPtr writer, SItem* wordSItem, s_bool ShouldW
 					"Call to \"SItemNext\" failed"))
 					goto cleanup;
 
-				/* append the segment separator */
-				s_buffer_append(buffer, " ", 1, error);
-				if (S_CHK_ERR(error, S_CONTERR,
-					"write_word",
-					"Call to \"s_buffer_append\" failed"))
-					goto cleanup;
+				if (itrSegments != NULL)
+				{
+					/* append the segment separator */
+					s_buffer_append(buffer, " ", 1, error);
+					if (S_CHK_ERR(error, S_CONTERR,
+						"write_word",
+						"Call to \"s_buffer_append\" failed"))
+						goto cleanup;
+				}
 			}
 
 			/* get next syllable */
@@ -171,12 +174,15 @@ static void write_word(xmlTextWriterPtr writer, SItem* wordSItem, s_bool ShouldW
 				"Call to \"SItemNext\" failed"))
 				goto cleanup;
 
-			/* append the syllable separator */
-			s_buffer_append(buffer, " - ", 3, error);
-			if (S_CHK_ERR(error, S_CONTERR,
-				"write_word",
-				"Call to \"s_buffer_append\" failed"))
-				goto cleanup;
+			if (itrSyllables != NULL)
+			{
+				/* append the syllable separator */
+				s_buffer_append(buffer, " - ", 3, error);
+				if (S_CHK_ERR(error, S_CONTERR,
+					"write_word",
+					"Call to \"s_buffer_append\" failed"))
+					goto cleanup;
+			}
 		}
 
 		char* word = SItemGetName(wordSItem, error);

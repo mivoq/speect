@@ -357,7 +357,7 @@ S_LOCAL void s_write_utt_maryxml(const SUtterance *utt, SDatasource *ds, s_erc *
 		"Call to \"SUtteranceFeatureIsPresent\" failed"))
 		goto s_write_utt_exit;;
 
-	char* lang = "eng-US";
+	char* lang = "en-US";
 
 	if (isPresent)
 	{

@@ -414,12 +414,14 @@ static float get_word_start(const SItem *word, s_erc *error)
 				  "Call to \"SItemAs\" failed"))
 		return 0.0;
 
+	if (wordSylStructure == NULL) return start;
 	firstSyllable = SItemDaughter(wordSylStructure, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "get_word_start",
 				  "Call to \"SItemDaughter\" failed"))
 		return 0.0;
 
+	if (firstSyllable == NULL) return start;
 	start = get_syllable_start(firstSyllable, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "get_word_start",
@@ -444,12 +446,14 @@ static float get_word_end(const SItem *word, s_erc *error)
 				  "Call to \"SItemAs\" failed"))
 		return 0.0;
 
+	if (wordSylStructure == NULL) return end;
 	lastSyllable = SItemLastDaughter(wordSylStructure, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "get_word_end",
 				  "Call to \"SItemLastDaughter\" failed"))
 		return 0.0;
 
+	if (lastSyllable == NULL) return end;
 	end = get_syllable_end(lastSyllable, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "get_word_end",

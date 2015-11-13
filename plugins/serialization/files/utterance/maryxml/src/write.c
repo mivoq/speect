@@ -42,6 +42,7 @@
 
 #include "utt_maryxml.h"
 #include <libxml/xmlwriter.h>
+#include <string.h>
 #define ENCODING "UTF-8"
 
 /************************************************************************************/
@@ -95,6 +96,7 @@ static void write_word(xmlTextWriterPtr writer, SItem* wordSItem, s_bool ShouldW
 	int rc;
 
 	S_CLR_ERR(error);
+	s_buffer *buffer = s_buffer_new(error);
 
 	if (!ShouldWriteSegments)
 	{
@@ -105,34 +107,23 @@ static void write_word(xmlTextWriterPtr writer, SItem* wordSItem, s_bool ShouldW
 			S_CTX_ERR(error, S_CONTERR,
 				"s_write_utt_maryxml",
 				"Call to \"xmlTextWriterWriteElement\" failed");
-			return;
+			goto cleanup;
 		}
 	}
 	else
 	{
-		/* open the t tag */
-		rc = xmlTextWriterStartElement(writer, BAD_CAST "t");
-		if (rc < 0)
-		{
-			S_CTX_ERR(error, S_CONTERR,
-				  "write_word",
-				  "Call to \"xmlTextWriterStartElement\" failed");
-			return;
-		}
-
 		/* create segments string */
-		char segmentsString[1024];
-		int currentStringSize = 0;
-
-		/* create syllable path, temporarly using segmentsString, that will be overwritten by the segments */
-		sprintf(segmentsString, "R:%s.daughter", SYLSTRUCT_RELATION);
+		if (S_CHK_ERR(error, S_CONTERR,
+			"write_word",
+			"Call to \"s_buffer_new\" failed"))
+			goto cleanup;
 
 		/* get to the first syllable of the current word */
-		SItem* itrSyllables = SItemPathToItem(wordSItem, segmentsString,error);
+		SItem* itrSyllables = SItemPathToItem(wordSItem, "R:SylStructure.daughter",error);
 		if (S_CHK_ERR(error, S_CONTERR,
 			"write_word",
 			"Call to \"SItemPathToItem\" failed"))
-			return;
+			goto cleanup;
 		/* for every syllable */
 		while (itrSyllables != NULL)
 		{
@@ -141,7 +132,7 @@ static void write_word(xmlTextWriterPtr writer, SItem* wordSItem, s_bool ShouldW
 			if (S_CHK_ERR(error, S_CONTERR,
 				"write_word",
 				"Call to \"SItemDaughter\" failed"))
-				return;
+				goto cleanup;
 			while (itrSegments != NULL)
 			{
 				/* get segment content */
@@ -149,42 +140,28 @@ static void write_word(xmlTextWriterPtr writer, SItem* wordSItem, s_bool ShouldW
 				if (S_CHK_ERR(error, S_CONTERR,
 					"write_word",
 					"Call to \"SItemGetName\" failed"))
-					return;
+					goto cleanup;
 
 				/* append it */
-				while (*segmentName)
-				{
-					if (currentStringSize + 1 > 1024)
-					{
-						S_CTX_ERR(error, S_CONTERR,
-							  "write_word",
-							  "can't append segment character");
-						return;
-					}
-					segmentsString[currentStringSize++] = segmentName[0];
-					segmentName++;
-				}
+				s_buffer_append(buffer, segmentName, strlen(segmentName), error);
+				if (S_CHK_ERR(error, S_CONTERR,
+					"write_word",
+					"Call to \"s_buffer_append\" failed"))
+					goto cleanup;
 
 				/* get next segment */
 				itrSegments = SItemNext(itrSegments, error);
 				if (S_CHK_ERR(error, S_CONTERR,
 					"write_word",
 					"Call to \"SItemNext\" failed"))
-					return;
+					goto cleanup;
 
 				/* append the segment separator */
-				if (itrSegments != NULL)
-				{
-					if (currentStringSize + 1 > 1024)
-					{
-						S_CTX_ERR(error, S_CONTERR,
-							  "write_word",
-							  "can't append segment separator");
-						return;
-					}
-
-					segmentsString[currentStringSize++] = ' ';
-				}
+				s_buffer_append(buffer, " ", 1, error);
+				if (S_CHK_ERR(error, S_CONTERR,
+					"write_word",
+					"Call to \"s_buffer_append\" failed"))
+					goto cleanup;
 			}
 
 			/* get next syllable */
@@ -192,67 +169,76 @@ static void write_word(xmlTextWriterPtr writer, SItem* wordSItem, s_bool ShouldW
 			if (S_CHK_ERR(error, S_CONTERR,
 				"write_word",
 				"Call to \"SItemNext\" failed"))
-				return;
+				goto cleanup;
 
 			/* append the syllable separator */
-			if (itrSyllables != NULL)
+			s_buffer_append(buffer, " - ", 3, error);
+			if (S_CHK_ERR(error, S_CONTERR,
+				"write_word",
+				"Call to \"s_buffer_append\" failed"))
+				goto cleanup;
+		}
+
+		char* word = SItemGetName(wordSItem, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+			"write_word",
+			"Call to \"SItemGetName\" failed"))
+			goto cleanup;
+
+		if (word != NULL && s_strcmp(word, "", error) != 0)
+		{
+			/* open the t tag */
+			rc = xmlTextWriterStartElement(writer, BAD_CAST "t");
+			if (rc < 0)
 			{
-				if (currentStringSize + 3 > 1024)
+				S_CTX_ERR(error, S_CONTERR,
+					"write_word",
+					"Call to \"xmlTextWriterStartElement\" failed");
+				goto cleanup;
+			}
+
+			size_t buff_size = s_buffer_size(buffer, error);
+			if (buff_size != 0)
+			{
+				/* write segments */
+				rc = xmlTextWriterWriteAttribute(writer, BAD_CAST "ph", BAD_CAST (const char*)s_buffer_data(buffer, error));
+				if (rc < 0)
 				{
 					S_CTX_ERR(error, S_CONTERR,
-						  "write_word",
-						  "can't append syllable separator");
-					return;
+						"write_word",
+						"Call to \"xmlTextWriterWriteAttribute\" failed");
+					goto cleanup;
 				}
+			}
 
-				segmentsString[currentStringSize++] = ' ';
-				segmentsString[currentStringSize++] = '-';
-				segmentsString[currentStringSize++] = ' ';
+
+			/* write the word */
+			rc = xmlTextWriterWriteString(writer, BAD_CAST word);
+			if (rc < 0)
+			{
+				S_CTX_ERR(error, S_CONTERR,
+					"write_word",
+					"Call to \"xmlTextWriterWriteString\" failed");
+				goto cleanup;
+			}
+
+			/* close t tag */
+			rc = xmlTextWriterEndElement(writer);
+			if (rc < 0)
+			{
+				S_CTX_ERR(error, S_CONTERR,
+					"write_word",
+					"Call to \"xmlTextWriterEndDocument\" failed");
+				goto cleanup;
 			}
 		}
-
-		/* append end string */
-		if (currentStringSize + 1 > 1024)
-		{
-			S_CTX_ERR(error, S_CONTERR,
-				  "write_word",
-				  "can't append end string on segments list");
-			return;
-		}
-		segmentsString[currentStringSize++] = '\0';
-
-
-		/* write segments */
-		rc = xmlTextWriterWriteAttribute(writer, BAD_CAST "ph", BAD_CAST segmentsString);
-		if (rc < 0)
-		{
-			S_CTX_ERR(error, S_CONTERR,
-				  "write_word",
-				  "Call to \"xmlTextWriterWriteAttribute\" failed");
-			return;
-		}
-
-
-		/* write the word */
-		rc = xmlTextWriterWriteString(writer, BAD_CAST SItemGetName(wordSItem, error));
-		if (rc < 0)
-		{
-			S_CTX_ERR(error, S_CONTERR,
-				  "write_word",
-				  "Call to \"xmlTextWriterWriteString\" failed");
-			return;
-		}
-
-		/* close t tag */
-		rc = xmlTextWriterEndElement(writer);
-		if (rc < 0)
-		{
-			S_CTX_ERR(error, S_CONTERR,
-				  "write_word",
-				  "Call to \"xmlTextWriterEndDocument\" failed");
-			return;
-		}
 	}
+
+cleanup:
+	s_buffer_delete(buffer, error);
+	S_CHK_ERR(error, S_CONTERR,
+		  "write_word",
+		  "Call to \"s_buffer_delete\" failed");
 }
 
 S_LOCAL void s_write_utt_maryxml(const SUtterance *utt, SDatasource *ds, s_erc *error)
@@ -271,7 +257,7 @@ S_LOCAL void s_write_utt_maryxml(const SUtterance *utt, SDatasource *ds, s_erc *
 	s_bool isSegmentRelationPresent;
 
 	S_CLR_ERR(error);
-	
+
 	/* init relation bools */
 	isTokenRelationPresent = SUtteranceRelationIsPresent(utt, TOKEN_RELATION, error);
 	if(S_CHK_ERR(error, S_CONTERR,

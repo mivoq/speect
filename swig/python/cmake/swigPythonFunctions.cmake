@@ -335,8 +335,11 @@ macro(speect_plugin_swig_python_wrapper)
   # clear C flags, we don't want the same stuff as Speect
   set(CMAKE_C_FLAGS "")
 
+  # SWIG Python wrapper output directory
+  set(CMAKE_SWIG_OUTDIR ${CMAKE_BINARY_DIR}/swig/python/speect)
+  
   # wrapper file properties
-  set_source_files_properties(${CMAKE_CURRENT_BINARY_DIR}/${plugin_lowercase_name}PYTHON_wrap.c 
+  set_source_files_properties(${CMAKE_SWIG_OUTDIR}/${plugin_lowercase_name}PYTHON_wrap.c 
     PROPERTIES 
     COMPILE_FLAGS "${SWIG_C_COMPILE_FLAGS}"
     GENERATED TRUE
@@ -344,9 +347,6 @@ macro(speect_plugin_swig_python_wrapper)
 
   # swig dependencies
   set(SWIG_MODULE_${plugin_lowercase_name}_EXTRA_DEPS "${swig_deps}")
-
-  # SWIG Python wrapper output directory
-  set(CMAKE_SWIG_OUTDIR ${CMAKE_BINARY_DIR}/swig/python/speect)
 
   # create the wrapper with SWIG
   swig_add_module(${plugin_lowercase_name} python ${CMAKE_CURRENT_BINARY_DIR}/${plugin_lowercase_name}.i)

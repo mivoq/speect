@@ -104,23 +104,23 @@ set_source_files_properties(${CMAKE_BINARY_DIR}/engine/swig/python/speect.i
 )
 
 
-#------------------------------------------------------------------------------------#
-#                              speectPYTHON_wrap.c flags                             #
-#------------------------------------------------------------------------------------#
-
-# add flags for Python Speect Engine wrapper compilation
-set_source_files_properties(${CMAKE_BINARY_DIR}/engine/swig/python/speectPYTHON_wrap.c 
-  PROPERTIES 
-  COMPILE_FLAGS "${SWIG_C_COMPILE_FLAGS}"
-  GENERATED TRUE
-)
-
 
 #------------------------------------------------------------------------------------#
 #                                 CMAKE_SWIG_OUTDIR                                  #
 #------------------------------------------------------------------------------------#
 
 set(CMAKE_SWIG_OUTDIR ${CMAKE_BINARY_DIR}/swig/python/speect)
+
+#------------------------------------------------------------------------------------#
+#                              speectPYTHON_wrap.c flags                             #
+#------------------------------------------------------------------------------------#
+
+# add flags for Python Speect Engine wrapper compilation
+set_source_files_properties(${CMAKE_SWIG_OUTDIR}/speectPYTHON_wrap.c 
+  PROPERTIES 
+  COMPILE_FLAGS "${SWIG_C_COMPILE_FLAGS}"
+  GENERATED TRUE
+)
 
 
 #------------------------------------------------------------------------------------#

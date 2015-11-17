@@ -52,11 +52,8 @@
 /************************************************************************************/
 
 static const char * TOKEN_RELATION = "Token";
-static const char * PHRASE_RELATION = "Phrase";
 static const char * WORD_RELATION = "Word";
-static const char * SYLLABLE_RELATION = "Syllable";
 static const char * SEGMENT_RELATION = "Segment";
-static const char * SYLSTRUCT_RELATION = "SylStructure";
 
 /************************************************************************************/
 /*                                                                                  */
@@ -91,7 +88,7 @@ static int _ds_close(void * context)
 	return 0;
 }
 
-static void write_word(xmlTextWriterPtr writer, SItem* wordSItem, s_bool ShouldWriteSegments, s_erc *error)
+static void write_word(xmlTextWriterPtr writer, const SItem* wordSItem, s_bool ShouldWriteSegments, s_erc *error)
 {
 	int rc;
 
@@ -119,7 +116,7 @@ static void write_word(xmlTextWriterPtr writer, SItem* wordSItem, s_bool ShouldW
 			goto cleanup;
 
 		/* get to the first syllable of the current word */
-		SItem* itrSyllables = SItemPathToItem(wordSItem, "R:SylStructure.daughter",error);
+		const SItem* itrSyllables = SItemPathToItem(wordSItem, "R:SylStructure.daughter",error);
 		if (S_CHK_ERR(error, S_CONTERR,
 			"write_word",
 			"Call to \"SItemPathToItem\" failed"))
@@ -128,7 +125,7 @@ static void write_word(xmlTextWriterPtr writer, SItem* wordSItem, s_bool ShouldW
 		while (itrSyllables != NULL)
 		{
 			/* get the first segment */
-			SItem* itrSegments = SItemDaughter(itrSyllables, error);
+			const SItem* itrSegments = SItemDaughter(itrSyllables, error);
 			if (S_CHK_ERR(error, S_CONTERR,
 				"write_word",
 				"Call to \"SItemDaughter\" failed"))
@@ -136,7 +133,7 @@ static void write_word(xmlTextWriterPtr writer, SItem* wordSItem, s_bool ShouldW
 			while (itrSegments != NULL)
 			{
 				/* get segment content */
-				char* segmentName = SItemGetName(itrSegments, error);
+				const char* segmentName = SItemGetName(itrSegments, error);
 				if (S_CHK_ERR(error, S_CONTERR,
 					"write_word",
 					"Call to \"SItemGetName\" failed"))
@@ -185,7 +182,7 @@ static void write_word(xmlTextWriterPtr writer, SItem* wordSItem, s_bool ShouldW
 			}
 		}
 
-		char* word = SItemGetName(wordSItem, error);
+		const char* word = SItemGetName(wordSItem, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 			"write_word",
 			"Call to \"SItemGetName\" failed"))
@@ -259,7 +256,6 @@ S_LOCAL void s_write_utt_maryxml(const SUtterance *utt, SDatasource *ds, s_erc *
 
 	s_bool isTokenRelationPresent;
 	s_bool isWordRelationPresent;
-	s_bool isPhraseRelationPresent;
 	s_bool isSegmentRelationPresent;
 
 	S_CLR_ERR(error);
@@ -276,12 +272,6 @@ S_LOCAL void s_write_utt_maryxml(const SUtterance *utt, SDatasource *ds, s_erc *
 		return;
 
 	isWordRelationPresent = SUtteranceRelationIsPresent(utt, WORD_RELATION, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-		      "s_write_utt_maryxml",
-		      "Call to \"SUtteranceRelationIsPresent\" failed"))
-		return;
-
-	isPhraseRelationPresent = SUtteranceRelationIsPresent(utt, PHRASE_RELATION, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 		      "s_write_utt_maryxml",
 		      "Call to \"SUtteranceRelationIsPresent\" failed"))
@@ -363,7 +353,7 @@ S_LOCAL void s_write_utt_maryxml(const SUtterance *utt, SDatasource *ds, s_erc *
 		"Call to \"SUtteranceFeatureIsPresent\" failed"))
 		goto s_write_utt_exit;;
 
-	char* lang = "en-US";
+	const char* lang = "en-US";
 
 	if (isPresent)
 	{
@@ -373,7 +363,7 @@ S_LOCAL void s_write_utt_maryxml(const SUtterance *utt, SDatasource *ds, s_erc *
 			"Call to \"SUtteranceGetFeature\" failed"))
 			goto s_write_utt_exit;;
 	}
-	rc = xmlTextWriterWriteFormatAttributeNS(writer, BAD_CAST "xml", BAD_CAST "lang", NULL, BAD_CAST lang);
+	rc = xmlTextWriterWriteFormatAttributeNS(writer, BAD_CAST "xml", BAD_CAST "lang", NULL, lang);
 	if (rc < 0) {
 		S_CTX_ERR(error, S_CONTERR,
 			  "s_write_utt_maryxml",
@@ -453,7 +443,7 @@ S_LOCAL void s_write_utt_maryxml(const SUtterance *utt, SDatasource *ds, s_erc *
 			char pathTarget[255];
 			sprintf( pathTarget, "daughter.R:%s.name", WORD_RELATION );
 
-			SItem* itrWord = SItemPathToItem(itrTokens, pathTarget,error);
+			const SItem* itrWord = SItemPathToItem(itrTokens, pathTarget,error);
 			const char * word = SItemGetName(itrWord, error);
 			if (S_CHK_ERR(error, S_CONTERR,
 				"s_write_utt_maryxml",

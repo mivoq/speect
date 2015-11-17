@@ -320,7 +320,6 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 		if (token_string == NULL)
 		{
 			token_string = "";
-			STokenSetString(token, "", error);
 			if (S_CHK_ERR(error, S_CONTERR,
 				"Run",
 				"Call to \"STokenSetString\" failed"))

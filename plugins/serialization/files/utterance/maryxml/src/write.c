@@ -200,10 +200,10 @@ static void write_word(xmlTextWriterPtr writer, const SItem* wordSItem, s_bool S
 				goto cleanup;
 			}
 
+			/* write segments if present */
 			size_t buff_size = s_buffer_size(buffer, error);
 			if (buff_size != 0)
 			{
-				/* write segments */
 				rc = xmlTextWriterWriteAttribute(writer, BAD_CAST "ph", BAD_CAST (const char*)s_buffer_data(buffer, error));
 				if (rc < 0)
 				{
@@ -214,6 +214,28 @@ static void write_word(xmlTextWriterPtr writer, const SItem* wordSItem, s_bool S
 				}
 			}
 
+			/* write pos-tagging data if present */
+			s_bool isPresent = SItemFeatureIsPresent(wordSItem, "POS", error);
+			if (S_CHK_ERR(error, S_CONTERR,
+				"write_word",
+				"Call to \"SItemFeatureIsPresent\" failed"))
+				goto cleanup;
+			if (isPresent)
+			{
+				const char* pos = SItemGetString(wordSItem, "POS", error);
+				if (S_CHK_ERR(error, S_CONTERR,
+					"write_word",
+					"Call to \"SItemGetString\" failed"))
+					goto cleanup;
+				rc = xmlTextWriterWriteAttribute(writer, BAD_CAST "pos", BAD_CAST pos);
+				if (rc < 0)
+				{
+					S_CTX_ERR(error, S_CONTERR,
+						  "write_word",
+						  "Call to \"xmlTextWriterWriteAttribute\" failed");
+					goto cleanup;
+				}
+			}
 
 			/* write the word */
 			rc = xmlTextWriterWriteString(writer, BAD_CAST word);

@@ -368,7 +368,7 @@ S_LOCAL void s_write_utt_maryxml(const SUtterance *utt, SDatasource *ds, s_erc *
 		goto s_write_utt_exit;
 	}
 
-	/* take the language if present, else default to eng-US */
+	/* take the language if present, else default to en-US */
 	isPresent = SUtteranceFeatureIsPresent(utt, "lang-code", error);
 	if (S_CHK_ERR(error, S_CONTERR,
 		"s_write_utt_maryxml",

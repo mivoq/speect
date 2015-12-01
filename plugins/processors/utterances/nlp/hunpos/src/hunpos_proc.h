@@ -50,6 +50,7 @@
 /************************************************************************************/
 
 #include "speect.h"
+#include <hunpos.h>
 
 
 /************************************************************************************/
@@ -92,6 +93,11 @@ typedef struct
 	 * @protected The hunpos model file.
 	 */
 	char         *model_file;
+	
+	/**
+	 * @protected The hunpos instance.
+	 */
+	Hunpos       *hunpos_instance;
 } SHunposUttProc;
 
 

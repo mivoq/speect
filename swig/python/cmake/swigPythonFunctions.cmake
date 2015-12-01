@@ -87,7 +87,7 @@ macro(speect_plugin_swig_python_interface)
   file(APPEND ${filename} " * macro in speect/swig/python/cmake/swigPythonFunctions.cmake, do not edit ${plugin_lowercase_name}.i\n */\n\n")
 
   # docstring
-  file(APPEND ${filename} "%module(docstring=\"Speect Plug-in for ${swig_classname} class\") @plugin_lowercase_name@\n\n")
+  file(APPEND ${filename} "%module(docstring=\"Speect Plug-in for ${swig_classname} class\") ${plugin_lowercase_name}\n\n")
 
   # version and license info
   file(APPEND ${filename} "%pythoncode\n")
@@ -122,7 +122,7 @@ macro(speect_plugin_swig_python_interface)
     file(APPEND ${filename} "%init\n%{\n\t{\n")
     file(APPEND ${filename} "\t\ts_erc rv = S_SUCCESS;\n")
     file(APPEND ${filename} "\t\tSPlugin *plugin;\n\n\n")
-    file(APPEND ${filename} "\t\tplugin = s_pm_load_plugin(\"@plugin_lowercase_name@.spi\", &rv);\n")
+    file(APPEND ${filename} "\t\tplugin = s_pm_load_plugin(\"${plugin_lowercase_name}.spi\", &rv);\n")
     file(APPEND ${filename} "\t\tif (rv != S_SUCCESS)\n")
     file(APPEND ${filename} "\t\t\tSWIG_Error(SWIG_RuntimeError, \"Failed to load ${swig_classname} plug-in\");\n")
     file(APPEND ${filename} "\n\t\tS_UNUSED(plugin);\n")
@@ -206,7 +206,7 @@ macro(speect_plugin_swig_python_loader)
   file(APPEND ${filename} " * macro in speect/swig/python/cmake/swigPythonFunctions.cmake, do not edit ${plugin_lowercase_name}.i\n */\n\n")
 
   # docstring
-  file(APPEND ${filename} "%module(docstring=\"A simple wrapper to load the ${plugin_lowercase_name}.spi plug-in.\") @plugin_lowercase_name@\n\n")
+  file(APPEND ${filename} "%module(docstring=\"A simple wrapper to load the ${plugin_lowercase_name}.spi plug-in.\") ${plugin_lowercase_name}\n\n")
 
   # C header files (speect.h is always included) 
   file(APPEND ${filename} "/* Speect Engine header. */\n")
@@ -219,7 +219,7 @@ macro(speect_plugin_swig_python_loader)
   file(APPEND ${filename} "%init\n%{\n\t{\n")
   file(APPEND ${filename} "\t\ts_erc rv = S_SUCCESS;\n")
   file(APPEND ${filename} "\t\tSPlugin *plugin;\n\n\n")
-  file(APPEND ${filename} "\t\tplugin = s_pm_load_plugin(\"@plugin_lowercase_name@.spi\", &rv);\n")
+  file(APPEND ${filename} "\t\tplugin = s_pm_load_plugin(\"${plugin_lowercase_name}.spi\", &rv);\n")
   file(APPEND ${filename} "\t\tif (rv != S_SUCCESS)\n")
   file(APPEND ${filename} "\t\t\tSWIG_Error(SWIG_RuntimeError, \"Failed to load '${plugin_lowercase_name}.spi' plug-in\");\n")
   file(APPEND ${filename} "\t\t\nS_UNUSED(plugin);\n")

@@ -35,6 +35,7 @@ speect_plugin_configure_info(${description} ${major_min} ${minor_min})
 #------------------------------------------------------------------------------------#
 
 # Lists of all the source files
+speect_plugin_include_dirs(${HUNPOS_INCLUDE})
 include(sources)
 
 
@@ -42,6 +43,6 @@ include(sources)
 #                        Plug-in shared object                                       #
 #------------------------------------------------------------------------------------#
 
-speect_plugin_create()
+speect_plugin_create(${HUNPOS_LIB} "/usr/lib/ocaml/libcamlstr.a" "/usr/lib/ocaml/libunix.a" "/usr/lib/ocaml/libasmrun_pic.a" ${HUNPOS_LIB} "/usr/lib/ocaml/libcamlstr.a" "/usr/lib/ocaml/libunix.a" "/usr/lib/ocaml/libasmrun_pic.a" "dl")
 
 

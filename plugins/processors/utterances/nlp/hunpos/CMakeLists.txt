@@ -36,13 +36,21 @@ speect_plugin_configure_info(${description} ${major_min} ${minor_min})
 
 # Lists of all the source files
 speect_plugin_include_dirs(${HUNPOS_INCLUDE})
+find_package( OCaml REQUIRED )
 include(sources)
 
+find_library(OCAML_STR_LIBRARY NAMES camlstr
+             HINTS ${CMAKE_OCAML_STDLIB_PATH})
 
+find_library(OCAML_UNIX_LIBRARY NAMES unix
+             HINTS ${CMAKE_OCAML_STDLIB_PATH})
+
+find_library(OCAML_ASMRUN_LIBRARY NAMES asmrun_pic asmrun_shared asmrun
+             HINTS ${CMAKE_OCAML_STDLIB_PATH})
 #------------------------------------------------------------------------------------#
 #                        Plug-in shared object                                       #
 #------------------------------------------------------------------------------------#
 
-speect_plugin_create(${HUNPOS_LIB} "/usr/lib/ocaml/libcamlstr.a" "/usr/lib/ocaml/libunix.a" "/usr/lib/ocaml/libasmrun_pic.a" ${HUNPOS_LIB} "/usr/lib/ocaml/libcamlstr.a" "/usr/lib/ocaml/libunix.a" "/usr/lib/ocaml/libasmrun_pic.a" "dl")
+speect_plugin_create(${HUNPOS_LIB} ${OCAML_STR_LIBRARY} ${OCAML_UNIX_LIBRARY} ${OCAML_ASMRUN_LIBRARY} ${HUNPOS_LIB} ${OCAML_STR_LIBRARY} ${OCAML_UNIX_LIBRARY} ${OCAML_ASMRUN_LIBRARY} "m" "dl")
 
 

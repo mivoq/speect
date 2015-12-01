@@ -215,14 +215,19 @@ static void write_word(xmlTextWriterPtr writer, const SItem* wordSItem, s_bool S
 			}
 
 			/* write pos-tagging data if present */
-			s_bool isPresent = SItemFeatureIsPresent(wordSItem, "POS", error);
+			SItem* token = SItemPathToItem(wordSItem, "R:Token.parent" ,error);
+			if (S_CHK_ERR(error, S_CONTERR,
+				"write_word",
+				"Call to \"SItemPathToItem\" failed"))
+				goto cleanup;
+			s_bool isPresent = SItemFeatureIsPresent(token, "POS", error);
 			if (S_CHK_ERR(error, S_CONTERR,
 				"write_word",
 				"Call to \"SItemFeatureIsPresent\" failed"))
 				goto cleanup;
 			if (isPresent)
 			{
-				const char* pos = SItemGetString(wordSItem, "POS", error);
+				const char* pos = SItemGetString(token, "POS", error);
 				if (S_CHK_ERR(error, S_CONTERR,
 					"write_word",
 					"Call to \"SItemGetString\" failed"))

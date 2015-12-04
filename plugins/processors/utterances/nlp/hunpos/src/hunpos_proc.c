@@ -57,7 +57,7 @@
 /* default values for hunpos params */
 #define SPCT_DEF_MAX_GUESSED_TAGS 3
 #define SPCT_DEF_THETA 1000
-#define SPCT_DEF_MAX_TAG_LENGTH 100
+#define SPCT_DEF_MAX_TOKENS_NUMBER 100
 
 
 /************************************************************************************/
@@ -142,6 +142,14 @@ static void load_hunpos_data(const SMap *data, SHunposUttProc *hunposProc,
 				  "Call to \"SMapGetIntDef\" failed"))
 		return;
 
+	/* max tokens */
+	hunposProc->max_tokens_number = SMapGetIntDef(data, "max_tokens_number",
+												 SPCT_DEF_MAX_TOKENS_NUMBER, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+		"load_hunpos_data",
+	       "Call to \"SMapGetIntDef\" failed"))
+		return;
+
 	/* model file */
 	tmp = SMapGetObjectDef(data, "model file", NULL, error);
 	if (S_CHK_ERR(error, S_CONTERR,
@@ -189,23 +197,159 @@ static void clear_hunpos_data(SHunposUttProc *hunposProc, s_erc *error)
 }
 
 
-static const char* read_token(void* data, int n)
+static const char* read_token(void* data, int n, int* error)
 {
-	s_erc error;
+	s_erc tmperror;
 	SItem** nodeList = data;
-	return SItemGetName(nodeList[n], &error);
+	const char* name =  SItemGetName(nodeList[n], &tmperror);
+	if (S_CHK_ERR(&tmperror, S_CONTERR,
+			"read_token",
+			"Call to \"SItemGetName\" failed"))
+		*error = 1;
+	return name;
 }
 
-static int set_tag(void* data, int n, const char * tag)
+static void set_tag(void* data, int n, const char * tag, int* error)
 {
-	s_erc error;
+	s_erc tmperror;
 	SItem** nodeList = data;
-	SItemSetString(nodeList[n], "POS", tag, &error);
-	if (S_CHK_ERR(&error, S_CONTERR,
-		"set_tag",
-	       "Call to \"SItemSetString\" failed"))
-		return 1;
-	return 0;
+	SItemSetString(nodeList[n], "POS", tag, &tmperror);
+	if (S_CHK_ERR(&tmperror, S_CONTERR,
+			"set_tag",
+			"Call to \"SItemSetString\" failed"))
+		*error = 1;
+}
+
+/**
+ * Prepare the structure for the next call to hunpos.
+ * @private
+ *
+ * @param relation_head starting SItem for this new phrase. It must be a Phrase SItem if @p is_phrase_present is true, a Token otherwise.
+ * @param data data structure to fill with new SItem pointers.
+ * @param is_phrase_present tells if we're using phrases or directly tokens
+ * @param error Error code.
+ *
+ */
+static void call_hunpos(const SHunposUttProc *hunposProc, const SItem* relation_head, const SItem** data, s_bool is_phrase_present, s_erc *error)
+{
+	const SItem* phrase_start_item;
+	const SItem* current_token;
+	const SItem* start_token; /* start point of the next phrase */
+	const SItem* last_safe_cut_token; /* last token from where we can cut for the next phrase */
+	int last_safe_cut_count;
+	int tokens_count;
+	S_CLR_ERR(error);
+
+	phrase_start_item = relation_head;
+
+	/* we already have the starting item if we have only tokens, else grab the token */
+	start_token = phrase_start_item;
+	if (is_phrase_present)
+	{
+		/* go grab the first token of this phrase */
+		start_token = SItemPathToItem(relation_head, "R:Phrase.daughter.R:Token.parent", error);
+		if (S_CHK_ERR(error, S_CONTERR,
+			"call_hunpos",
+		"Call to \"SItemPathToItem\" failed"))
+			return;
+	}
+
+	current_token = start_token;
+
+	/* for each phrase */
+	while (current_token != NULL)
+	{
+		tokens_count = 0;
+		last_safe_cut_count = 0;
+		start_token = current_token;
+		last_safe_cut_token = current_token;
+
+		/* we stop collecting tokens if the next item is null or if we reached the maximum number of tokens allowed */
+		while (current_token != NULL && tokens_count < hunposProc->max_tokens_number)
+		{
+			data[tokens_count] = current_token;
+
+			char* NAME = SItemGetName(current_token, error);
+
+			/* check if it's a safe cut point */
+			s_bool is_present = SItemFeatureIsPresent(current_token, "IsPunctuation", error);
+			if (S_CHK_ERR(error, S_CONTERR,
+				"call_hunpos",
+				"Call to \"SItemFeatureIsPresent\" failed"))
+				return;
+			if (is_present)
+			{
+				/* is it a punctiation token? */
+				sint32 is_punctuation = SItemGetInt(current_token, "IsPunctuation", error);
+				if (is_punctuation > 0)
+				{
+					last_safe_cut_token = current_token;
+					last_safe_cut_count = tokens_count + 1;
+				}
+			}
+
+			current_token = SItemNext(current_token, error);
+			if (S_CHK_ERR(error, S_CONTERR,
+					  "call_hunpos",
+					  "Call to \"SItemNext\" failed"))
+				return;
+
+			/* if we're using phrases, check if the current phrase finished */
+			if (is_phrase_present)
+			{
+				if (current_token != NULL)
+				{
+					const SItem* next_token_parent = SItemPathToItem(current_token, "R:Token.daughter.R:Phrase.parent", error);
+					if (S_CHK_ERR(error, S_CONTERR,
+								"call_hunpos",
+								"Call to \"SItemPathToItem\" failed"))
+						return;
+					if (next_token_parent != phrase_start_item)
+					{
+						/* save the next phrase start and stop the cycle*/
+						phrase_start_item = next_token_parent;
+						start_token = current_token;
+						current_token = NULL;
+					}
+				}
+				else
+				{
+					phrase_start_item = NULL;
+					start_token = NULL;
+				}
+			}
+
+			tokens_count++;
+		}
+
+		/* do we need to cut it? */
+		if (current_token != NULL && last_safe_cut_token != start_token)
+		{
+			tokens_count = last_safe_cut_count;
+			current_token = SItemNext(last_safe_cut_token, error);
+			if (S_CHK_ERR(error, S_CONTERR,
+					  "call_hunpos",
+					  "Call to \"SItemNext\" failed"))
+				return;
+		}
+
+		/* do the tagging */
+		int hunpos_error = 0;
+		hunpos_tagger_tag(hunposProc->hunpos_instance, tokens_count, data, &read_token, data, &set_tag, &hunpos_error);
+		if (hunpos_error !=0)
+		{
+			S_CTX_ERR(error, S_FAILURE,
+				  "call_hunpos",
+				  "Call to \"hunpos_tagger_tag\" failed");
+			return;
+		}
+
+		/* if we're using phrases, go on with the next one */
+		if (is_phrase_present && current_token == NULL)
+			current_token = start_token;
+	}
+
+	return;
 }
 
 
@@ -289,11 +433,15 @@ static void Initialize(SUttProcessor *self, const SVoice *voice, s_erc *error)
 
 
 	/* create the hunpos instance */
-	hunposProc->hunpos_instance = hunpos_tagger_new( hunposProc->model_file, NULL, hunposProc->max_guessed_tags, hunposProc->theta, error );
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "Initialize",
-				  "Call to \"hunpos_tagger_new\" failed"))
+	int hunpos_error = 0;
+	hunposProc->hunpos_instance = hunpos_tagger_new( hunposProc->model_file, NULL, hunposProc->max_guessed_tags, hunposProc->theta, &hunpos_error );
+	if (hunpos_error !=0)
+	{
+		S_CTX_ERR(error, S_FAILURE,
+			  "Initialize",
+			  "Call to \"hunpos_tagger_new\" failed");
 		goto quit_error;
+	}
 
 	/* all OK */
 	S_FREE(voice_base_path);
@@ -311,12 +459,11 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 				s_erc *error)
 {
 	SHunposUttProc *hunposProc = (SHunposUttProc*)self;
-	const SRelation *tokenRel;
+	const SRelation *relation;
 	s_bool is_present;
-	const SItem *tokenItem;
-	const SItem **dataList;
-	int tokenCount;
-	int i = 0;
+	s_bool is_phrase_present;
+	const SItem *current_item;
+	const SItem **data_list;
 
 
 	S_CLR_ERR(error);
@@ -326,74 +473,88 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Run",
 				  "Call to \"SUtteranceRelationIsPresent\" failed"))
-		goto quit_error;
+		return;
 
 	if (!is_present)
 	{
 		S_CTX_ERR(error, S_FAILURE,
 				  "Run",
 				  "Failed to find 'Token' relation in utterance");
-		goto quit_error;
+		return;
 	}
 
-	tokenRel = SUtteranceGetRelation(utt, "Token", error);
+	/* check if phrase relation is present */
+	is_phrase_present = SUtteranceRelationIsPresent(utt, "Phrase", error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Run",
-				  "Call to \"SUtteranceGetRelation\" failed"))
-		goto quit_error;
+				  "Call to \"SUtteranceRelationIsPresent\" failed"))
+		return;
 
-	/* Get the tokens.
-	 * start at the first item in the token relation
+	if (is_phrase_present)
+	{
+		relation = SUtteranceGetRelation(utt, "Phrase", error);
+		if (S_CHK_ERR(error, S_CONTERR,
+				  "Run",
+				  "Call to \"SUtteranceGetRelation\" failed"))
+			return;
+	}
+	else
+	{
+		relation = SUtteranceGetRelation(utt, "Token", error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					"Run",
+					"Call to \"SUtteranceGetRelation\" failed"))
+			return;
+	}
+
+	/* Get the items.
+	 * start at the first item in the relation
 	 */
-	tokenItem = SRelationHead(tokenRel, error);
+	current_item = SRelationHead(relation, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Run",
 				  "Call to \"SRelationHead\" failed"))
-		goto quit_error;
+		return;
 
-	/* count tokens */
-	while (tokenItem != NULL)
+
+	/* count tokens
+	while (current_item != NULL)
 	{
 		tokenCount++;
-		tokenItem = SItemNext(tokenItem, error);
+		current_item = SItemNext(current_item, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 				  "Run",
 				  "Call to \"SItemNext\" failed"))
 			goto quit_error;
-	}
+	}*/
 
 	/* alloc the needed structure */
-	dataList = S_MALLOC(SItem*, tokenCount);
-	/* restart from the begin */
-	tokenItem = SRelationHead(tokenRel, error);
+	data_list = S_MALLOC(SItem*, hunposProc->max_tokens_number);
+	/* restart from the begin and add them to the structure
+	current_item = SRelationHead(relation, error);
 	if (S_CHK_ERR(error, S_CONTERR,
-		"Run",
-	       "Call to \"SRelationHead\" failed"))
+				  "Run",
+				  "Call to \"SRelationHead\" failed"))
 		goto quit_error;
-	while (tokenItem != NULL)
+	while (current_item != NULL)
 	{
-		dataList[i] = tokenItem;
-		tokenItem = SItemNext(tokenItem, error);
+		data_list[i] = current_item;
+		current_item = SItemNext(current_item, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "Run",
 					  "Call to \"SItemNext\" failed"))
 			goto quit_error;
 		i++;
-	}
+	}*/
 
 	/* tag the data */
-	int errors;
-	hunpos_tagger_tag(hunposProc->hunpos_instance, tokenCount, dataList, &read_token, dataList, &set_tag, &errors);
 
-	S_FREE(dataList);
+	call_hunpos(hunposProc, current_item, data_list, is_phrase_present, error);
+
+	S_FREE(data_list);
 
 	/* here all is OK */
 	return;
-
-	/* error clean-up code */
-quit_error:
-	if (dataList != NULL)
-		S_FREE(dataList);
 }
 
 

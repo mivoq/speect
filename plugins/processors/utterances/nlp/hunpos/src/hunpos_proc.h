@@ -93,7 +93,12 @@ typedef struct
 	 * @protected The hunpos model file.
 	 */
 	char         *model_file;
-	
+
+	/**
+	 * @protected Maximum lenght of token passed in a single call to hunpos.
+	 */
+	int           max_tokens_number;
+
 	/**
 	 * @protected The hunpos instance.
 	 */

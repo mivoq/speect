@@ -516,39 +516,10 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 				  "Call to \"SRelationHead\" failed"))
 		return;
 
-
-	/* count tokens
-	while (current_item != NULL)
-	{
-		tokenCount++;
-		current_item = SItemNext(current_item, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-				  "Run",
-				  "Call to \"SItemNext\" failed"))
-			goto quit_error;
-	}*/
-
 	/* alloc the needed structure */
 	data_list = S_MALLOC(SItem*, hunposProc->max_tokens_number);
-	/* restart from the begin and add them to the structure
-	current_item = SRelationHead(relation, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "Run",
-				  "Call to \"SRelationHead\" failed"))
-		goto quit_error;
-	while (current_item != NULL)
-	{
-		data_list[i] = current_item;
-		current_item = SItemNext(current_item, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "Run",
-					  "Call to \"SItemNext\" failed"))
-			goto quit_error;
-		i++;
-	}*/
 
 	/* tag the data */
-
 	call_hunpos(hunposProc, current_item, data_list, is_phrase_present, error);
 
 	S_FREE(data_list);

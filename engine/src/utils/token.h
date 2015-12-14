@@ -3,6 +3,7 @@
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
+/*                Daminato Simone                                                   */
 /*                                                                                  */
 /* Permission is hereby granted, free of charge, to any person obtaining a copy     */
 /* of this software and associated documentation files (the "Software"), to deal    */
@@ -165,6 +166,16 @@ typedef struct
 	 * @protected The actual token string.
 	 */
 	char *string;
+
+	/**
+	 * @protected Starting byte index
+	 */
+	size_t byte_start;
+
+	/**
+	 * @protected Ending byte index (the next byte after this token)
+	 */
+	size_t byte_end;
 } SToken;
 
 
@@ -270,6 +281,48 @@ typedef struct
 	 * @param error Error code.
 	 */
 	void (* const set_string)(SToken *self, const char *string, s_erc *error);
+
+	/**
+	 * Get the given token's byte start.
+	 * @protected GetTokenByteStart function pointer.
+	 *
+	 * @param self The given token.
+	 * @param error Error code.
+	 *
+	 * @return The token's actual byte start.
+	 */
+	size_t (* const get_byte_start)(const SToken *self,  s_erc *error);
+
+	/**
+	 * Set the given token's byte start.
+	 * @protected SetTokenByteStart function pointer.
+	 *
+	 * @param self The given token.
+	 * @param byte_start The byte start to set.
+	 * @param error Error code.
+	 */
+	 void (* const set_byte_start)(SToken *self, size_t byte_start, s_erc *error);
+
+	 /**
+	  * Get the given token's byte end.
+	  * @protected GetTokenByteEnd function pointer.
+	  *
+	  * @param self The given token.
+	  * @param error Error code.
+	  *
+	  * @return The token's actual byte end.
+	  */
+	 size_t (* const get_byte_end)(const SToken *self,  s_erc *error);
+
+	 /**
+	  * Set the given token's byte end.
+	  * @protected SetTokenByteEnd function pointer.
+	  *
+	  * @param self The given token.
+	  * @param byte_end The byte end to set.
+	  * @param error Error code.
+	  */
+	 void (* const set_byte_end)(SToken *self, size_t byte_end, s_erc *error);
 } STokenClass;
 
 
@@ -377,6 +430,56 @@ S_API const char *STokenGetString(const SToken *self, s_erc *error);
  * @param error Error code.
  */
 S_API void STokenSetString(SToken *self, const char *string, s_erc *error);
+
+
+/**
+ * Get the given token's byte start.
+ *
+ * @public @memberof SToken
+ *
+ * @param self The given token.
+ * @param error Error code.
+ *
+ * @return The token's byte start.
+ */
+S_API size_t STokenGetByteStart(const SToken *self, s_erc *error);
+
+
+/**
+ * Set the given token's byte start.
+ *
+ * @public @memberof SToken
+ *
+ * @param self The given token.
+ * @param byte_start The byte start to set.
+ * @param error Error code.
+ */
+S_API void STokenSetByteStart(SToken *self, size_t byte_start, s_erc *error);
+
+
+/**
+ * Get the given token's byte end.
+ *
+ * @public @memberof SToken
+ *
+ * @param self The given token.
+ * @param error Error code.
+ *
+ * @return The token's byte end.
+ */
+S_API size_t STokenGetByteEnd(const SToken *self, s_erc *error);
+
+
+/**
+ * Set the given token's byte end.
+ *
+ * @public @memberof SToken
+ *
+ * @param self The given token.
+ * @param byte_end The byte end to set.
+ * @param error Error code.
+ */
+S_API void STokenSetByteEnd(SToken *self, size_t byte_end, s_erc *error);
 
 
 /**

@@ -3,6 +3,7 @@
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
+/*                Daminato Simone                                                   */
 /*                                                                                  */
 /* Permission is hereby granted, free of charge, to any person obtaining a copy     */
 /* of this software and associated documentation files (the "Software"), to deal    */
@@ -410,6 +411,123 @@ S_API void STokenSetString(SToken *self, const char *string, s_erc *error)
 }
 
 
+S_API size_t STokenGetByteStart(const SToken *self, s_erc *error)
+{
+	size_t byte_start;
+
+	S_CLR_ERR(error);
+
+	if (self == NULL)
+	{
+		S_CTX_ERR(error, S_ARGERROR,
+				  "STokenGetByteStart",
+				  "Argument \"self\" is NULL");
+		return 0;
+	}
+
+	if (!S_TOKEN_METH_VALID(self, get_byte_start))
+	{
+		S_WARNING(S_METHINVLD,
+				  "STokenGetByteStart",
+				  "Token method \"get_byte_start\" not implemented");
+		return 0;
+	}
+
+	byte_start = S_TOKEN_CALL(self, get_byte_start)(self, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "STokenGetByteStart",
+				  "Call to class method \"get_byte_start\" failed"))
+		return 0;
+
+	return byte_start;
+}
+
+
+S_API void STokenSetByteStart(SToken *self, size_t byte_start, s_erc *error)
+{
+	S_CLR_ERR(error);
+
+	if (self == NULL)
+	{
+		S_CTX_ERR(error, S_ARGERROR,
+				  "STokenSetByteStart",
+				  "Argument \"self\" is NULL");
+		return;
+	}
+
+	if (!S_TOKEN_METH_VALID(self, set_byte_start))
+	{
+		S_WARNING(S_METHINVLD,
+				  "STokenSetByteStart",
+				  "Token method \"set_byte_start\" not implemented");
+		return;
+	}
+
+	S_TOKEN_CALL(self, set_byte_start)(self, byte_start, error);
+	S_CHK_ERR(error, S_CONTERR,
+			  "STokenSetByteStart",
+			  "Call to class method \"set_byte_start\" failed");
+}
+
+
+S_API size_t STokenGetByteEnd(const SToken *self, s_erc *error)
+{
+	size_t byte_end;
+
+	S_CLR_ERR(error);
+
+	if (self == NULL)
+	{
+		S_CTX_ERR(error, S_ARGERROR,
+				  "STokenGetByteEnd",
+				  "Argument \"self\" is NULL");
+		return 0;
+	}
+
+	if (!S_TOKEN_METH_VALID(self, get_byte_end))
+	{
+		S_WARNING(S_METHINVLD,
+				  "STokenGetByteEnd",
+				  "Token method \"get_byte_end\" not implemented");
+		return 0;
+	}
+
+	byte_end = S_TOKEN_CALL(self, get_byte_end)(self, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "STokenGetByteEnd",
+				  "Call to class method \"get_byte_end\" failed"))
+		return 0;
+
+		return byte_end;
+}
+
+
+S_API void STokenSetByteEnd(SToken *self, size_t byte_end, s_erc *error)
+{
+	S_CLR_ERR(error);
+
+	if (self == NULL)
+	{
+		S_CTX_ERR(error, S_ARGERROR,
+				  "STokenSetByteEnd",
+				  "Argument \"self\" is NULL");
+		return;
+	}
+
+	if (!S_TOKEN_METH_VALID(self, set_byte_end))
+	{
+		S_WARNING(S_METHINVLD,
+				  "STokenSetByteEnd",
+				  "Token method \"set_byte_end\" not implemented");
+		return;
+	}
+
+	S_TOKEN_CALL(self, set_byte_end)(self, byte_end, error);
+	S_CHK_ERR(error, S_CONTERR,
+			  "STokenSetByteEnd",
+			  "Call to class method \"set_byte_end\" failed");
+}
+
 /************************************************************************************/
 /*                                                                                  */
 /* Static class function implementations                                            */
@@ -426,6 +544,8 @@ static void Init(void *obj, s_erc *error)
 	self->pre_punc = NULL;
 	self->post_punc = NULL;
 	self->string = NULL;
+	self->byte_start = 0;
+	self->byte_end = 0;
 }
 
 
@@ -540,6 +660,35 @@ static void SetString(SToken *self, const char *string, s_erc *error)
 }
 
 
+static size_t GetByteStart(const SToken *self, s_erc *error)
+{
+	S_CLR_ERR(error);
+	return self->byte_start;
+}
+
+
+static void SetByteStart(SToken *self, size_t byte_start, s_erc *error)
+{
+	S_CLR_ERR(error);
+
+	self->byte_start = byte_start;
+}
+
+
+static size_t GetByteEnd(const SToken *self, s_erc *error)
+{
+	S_CLR_ERR(error);
+	return self->byte_end;
+}
+
+
+static void SetByteEnd(SToken *self, size_t byte_end, s_erc *error)
+{
+	S_CLR_ERR(error);
+
+	self->byte_end = byte_end;
+}
+
 /************************************************************************************/
 /*                                                                                  */
 /* Class registration                                                               */
@@ -584,5 +733,10 @@ static STokenClass TokenClass =
 	GetPostPunc,         /* get_post_punc  */
 	SetPostPunc,         /* set_post_punc  */
 	GetString,           /* get_string     */
-	SetString            /* set_string     */
+	SetString,           /* set_string     */
+	GetByteStart,        /* get_byte_start */
+	SetByteStart,        /* set_byte_start */
+	GetByteEnd,          /* get_byte_end   */
+	SetByteEnd           /* set_byte_end   */
 };
+

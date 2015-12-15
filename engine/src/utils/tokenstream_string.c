@@ -3,6 +3,7 @@
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
+/*                Daminato Simone                                                   */
 /*                                                                                  */
 /* Permission is hereby granted, free of charge, to any person obtaining a copy     */
 /* of this software and associated documentation files (the "Software"), to deal    */
@@ -218,6 +219,7 @@ static void Init(void *obj, s_erc *error)
 
 	self->string = NULL;
 	self->pos = 0;
+	self->byte_pos = 0;
 }
 
 
@@ -263,7 +265,12 @@ static uint32 GetChar(STokenstream *self, s_erc *error)
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "GetChar",
 					  "Call to \"s_getat\" failed"))
-			return 0 ;
+			return 0;
+		ts->byte_pos += s_cwidth(utf8char, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "GetChar",
+					  "Call to \"s_cwidth\" failed"))
+			return 0;
 	}
 	else
 	{
@@ -313,15 +320,54 @@ static ulong Tell(const STokenstream *self, s_erc *error)
 static const SToken *GetToken(STokenstream *self, s_erc *error)
 {
 	const SToken *token;
-
+	size_t byte_start;
+	size_t byte_end;
+	s_bool is_new_token;
+	STokenstreamString *ts = S_TOKENSTREAM_STRING(self);
 
 	S_CLR_ERR(error);
+
+	is_new_token = FALSE;
+	byte_start = ts->byte_pos;
+	if (self->peeked == FALSE)
+	{
+		is_new_token = TRUE;
+		byte_start -= s_cwidth(self->current_char, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "PeekToken",
+					  "Call to method \"s_cwidth\" failed"))
+			return NULL;
+	}
+
 	/* calling get_token of STokenstreamClass */
 	token = S_TOKENSTREAM_CALL(tokenstream, get_token)(self, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "GetToken",
 				  "Call to method \"get_token\" failed"))
 		return NULL;
+
+	byte_end = ts->byte_pos;
+	if (self->eof == FALSE)
+	{
+		byte_end -= s_cwidth(self->current_char, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "PeekToken",
+					  "Call to method \"s_cwidth\" failed"))
+			return NULL;
+	}
+	if (is_new_token && self->currentToken != NULL)
+	{
+		STokenSetByteStart(self->currentToken, byte_start, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "PeekToken",
+					  "Call to method \"STokenSetByteStart\" failed"))
+			return NULL;
+		STokenSetByteEnd(self->currentToken, byte_end, error);
+			if (S_CHK_ERR(error, S_CONTERR,
+					  "PeekToken",
+					  "Call to method \"STokenSetByteEnd\" failed"))
+				return NULL;
+	}
 
 	return token;
 }
@@ -330,15 +376,55 @@ static const SToken *GetToken(STokenstream *self, s_erc *error)
 static const SToken *PeekToken(STokenstream *self, s_erc *error)
 {
 	const SToken *token;
+	size_t byte_start;
+	size_t byte_end;
+	s_bool just_peeked;
+	STokenstreamString *ts = S_TOKENSTREAM_STRING(self);
 
 
 	S_CLR_ERR(error);
+
+	just_peeked = FALSE;
+	byte_start = ts->byte_pos;
+	if (self->peeked == FALSE)
+	{
+		just_peeked = TRUE;
+		byte_start -= s_cwidth(self->current_char, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "PeekToken",
+					  "Call to method \"s_cwidth\" failed"))
+			return NULL;
+	}
+
 	/* calling peek_token of STokenstreamClass */
 	token = S_TOKENSTREAM_CALL(tokenstream, peek_token)(self, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "PeekToken",
 				  "Call to method \"peek_token\" failed"))
 		return NULL;
+
+	byte_end = ts->byte_pos;
+	if (self->eof == FALSE)
+	{
+		byte_end -= s_cwidth(self->current_char, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "PeekToken",
+					  "Call to method \"s_cwidth\" failed"))
+			return NULL;
+	}
+	if (just_peeked && self->currentToken != NULL)
+	{
+		STokenSetByteStart(self->currentToken, byte_start, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "PeekToken",
+					  "Call to method \"STokenSetByteStart\" failed"))
+			return NULL;
+		STokenSetByteEnd(self->currentToken, byte_end, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "PeekToken",
+					  "Call to method \"STokenSetByteEnd\" failed"))
+			return NULL;
+	}
 
 	return token;
 }

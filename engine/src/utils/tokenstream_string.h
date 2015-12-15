@@ -3,6 +3,7 @@
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
+/*                Daminato Simone                                                   */
 /*                                                                                  */
 /* Permission is hereby granted, free of charge, to any person obtaining a copy     */
 /* of this software and associated documentation files (the "Software"), to deal    */
@@ -152,6 +153,11 @@ typedef struct
 	 * @protected The string position.
 	 */
 	uint32         pos;
+
+	/**
+	 * @protected Byte position.
+	 */
+	size_t         byte_pos;
 } STokenstreamString;
 
 

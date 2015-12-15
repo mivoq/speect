@@ -215,7 +215,7 @@ static void write_word(xmlTextWriterPtr writer, const SItem* wordSItem, s_bool S
 			}
 
 			/* write pos-tagging data if present */
-			SItem* token = SItemPathToItem(wordSItem, "R:Token.parent" ,error);
+			const SItem* token = SItemPathToItem(wordSItem, "R:Token.parent" ,error);
 			if (S_CHK_ERR(error, S_CONTERR,
 				"write_word",
 				"Call to \"SItemPathToItem\" failed"))

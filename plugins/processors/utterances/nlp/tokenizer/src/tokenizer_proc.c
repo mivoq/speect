@@ -219,6 +219,35 @@ static void s_get_tokenizer_symbols(const SUttProcessor *uttProc, STokenstream *
 }
 
 
+static void s_set_token_string_and_bytes(SItem *tokenItem, const char *token_string, size_t byte_start, size_t byte_end, s_erc *error)
+{
+	S_CLR_ERR(error);
+
+	if (tokenItem == NULL)
+	{
+		S_CTX_ERR(error, S_ARGERROR,
+				  "s_set_token_string_and_bytes",
+				  "Argument \"token\" is NULL");
+		return;
+	}
+	SItemSetName(tokenItem, token_string, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+			  "s_set_token_string_and_bytes",
+			  "Call to \"SItemSetName\" failed"))
+		return;
+	SItemSetInt(tokenItem, "ByteStart", (sint32) byte_start, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+			  "s_set_token_string_and_bytes",
+			  "Call to \"SItemSetInt\" failed"))
+		return;
+	SItemSetInt(tokenItem, "ByteEnd", (sint32) byte_end, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+			  "s_set_token_string_and_bytes",
+			  "Call to \"SItemSetInt\" failed"))
+		return;
+}
+
+
 /************************************************************************************/
 /*                                                                                  */
 /* Static class function implementations                                            */
@@ -243,6 +272,8 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 	const SToken *token;
 	const char *token_string;
 	SItem *tokenItem;
+	size_t byte_start;
+	size_t byte_end;
 
 
 	S_CLR_ERR(error);
@@ -305,26 +336,16 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 
 	while (!eof)
 	{
-		token = STokenstreamPeekToken(ts, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "Run",
-					  "Call to \"STokenstreamPeekToken\" failed"))
-			goto quit;
-
-		token_string = STokenGetString(token, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "Run",
-					  "Call to \"STokenGetString\" failed"))
-			goto quit;
-
-		if (token_string == NULL)
-		{
-			token_string = "";
-		}
 		token = STokenstreamGetToken(ts, error);
 		if (S_CHK_ERR(error, S_CONTERR,
-					"Run",
-					"Call to \"STokenstreamGetToken\" failed"))
+					  "Run",
+					  "Call to \"STokenstreamGetToken\" failed"))
+			goto quit;
+
+		byte_start = STokenGetByteStart(token, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "Run",
+					  "Call to \"STokenGetByteStart\" failed"))
 			goto quit;
 
 		/* create item, NULL shared content */
@@ -332,13 +353,6 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "Run",
 					  "Call to \"SRelationAppend\" failed"))
-			goto quit;
-
-		/* item's name is the token string */
-		SItemSetName(tokenItem, token_string, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "Run",
-					  "Call to \"SItemSetName\" failed"))
 			goto quit;
 
 		/* get white-space */
@@ -355,6 +369,12 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 						  "Run",
 						  "Call to \"SItemSetString\" failed"))
 				goto quit;
+			/* we need to not count the whitespace in start_byte */
+			byte_start += s_strlen(token_string, error) * sizeof(*token_string);
+			if (S_CHK_ERR(error, S_CONTERR,
+						  "Run",
+						  "Call to \"s_strlen\" failed"))
+				goto quit;
 		}
 
 		/* get pre-punctuation */
@@ -366,11 +386,55 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 
 		if (token_string != NULL)
 		{
-			SItemSetString(tokenItem, "prepunc", token_string, error);
+			byte_end = byte_start + strlen(token_string);
+
+			s_set_token_string_and_bytes(tokenItem, token_string, byte_start, byte_end, error);
 			if (S_CHK_ERR(error, S_CONTERR,
 						  "Run",
-						  "Call to \"SItemSetString\" failed"))
+						  "Call to \"s_set_token_string_and_bytes\" failed"))
 				goto quit;
+			SItemSetInt(tokenItem, "IsPunctuation", 1, error);
+			if (S_CHK_ERR(error, S_CONTERR,
+						  "Run",
+						  "Call to \"SItemSetInt\" failed"))
+				return;
+
+			byte_start = byte_end;
+			/* we will need a new token item */
+			tokenItem = NULL;
+		}
+
+		/* get token string */
+		token_string = STokenGetString(token, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "Run",
+					  "Call to \"STokenGetString\" failed"))
+			goto quit;
+
+		if (token_string != NULL)
+		{
+			if (tokenItem == NULL)
+			{
+				/* append new item */
+				/* create item, NULL shared content */
+				tokenItem = SRelationAppend(tokenRelation, NULL, error);
+				if (S_CHK_ERR(error, S_CONTERR,
+							  "Run",
+							  "Call to \"SRelationAppend\" failed"))
+					goto quit;
+			}
+
+			byte_end = byte_start + strlen(token_string);
+
+			s_set_token_string_and_bytes(tokenItem, token_string, byte_start, byte_end, error);
+			if (S_CHK_ERR(error, S_CONTERR,
+						  "Run",
+						  "Call to \"s_set_token_string_and_bytes\" failed"))
+				goto quit;
+
+			byte_start = byte_end;
+			/* we will need a new token item */
+			tokenItem = NULL;
 		}
 
 		/* get post-punctuation */
@@ -382,11 +446,46 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 
 		if (token_string != NULL)
 		{
-			SItemSetString(tokenItem, "postpunc", token_string, error);
+			if (tokenItem == NULL)
+			{
+				/* append new item */
+				/* create item, NULL shared content */
+				tokenItem = SRelationAppend(tokenRelation, NULL, error);
+				if (S_CHK_ERR(error, S_CONTERR,
+							  "Run",
+							  "Call to \"SRelationAppend\" failed"))
+					goto quit;
+			}
+
+			byte_end = byte_start + strlen(token_string);
+
+			s_set_token_string_and_bytes(tokenItem, token_string, byte_start, byte_end, error);
 			if (S_CHK_ERR(error, S_CONTERR,
 						  "Run",
-						  "Call to \"SItemSetString\" failed"))
+						  "Call to \"s_set_token_string_and_bytes\" failed"))
 				goto quit;
+			SItemSetInt(tokenItem, "IsPunctuation", 1, error);
+			if (S_CHK_ERR(error, S_CONTERR,
+						  "Run",
+						  "Call to \"SItemSetInt\" failed"))
+				return;
+
+			byte_start = byte_end;
+			/* we will need a new token item */
+			tokenItem = NULL;
+		}
+
+		/* check if the size is correct */
+		size_t token_byte_end = STokenGetByteEnd(token, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "Run",
+					  "Call to \"STokenGetByteEnd\" failed"))
+			goto quit_error;
+		if (token_byte_end != byte_end)
+		{
+			S_CTX_ERR(error, S_WARNERR,
+				  "Run",
+				  "Byte end doesn't match");
 		}
 
 		eof = STokenstreamQueryEOF(ts, error);

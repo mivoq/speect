@@ -3,6 +3,7 @@
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */
 /* Contributors:  Meraka Institute, CSIR, South Africa.                             */
+/*                Simone Daminato                                                   */
 /*                                                                                  */
 /* Permission is hereby granted, free of charge, to any person obtaining a copy     */
 /* of this software and associated documentation files (the "Software"), to deal    */
@@ -164,75 +165,96 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 
 	while (tokenItem != NULL)
 	{
-		/* Give the item to the normalization feature processor, if
-		 * any. Normalization feature processor can set daughter items
-		 * in Word relation, return would be NULL.
-		 */
-		if (normProcessor)
+		/* Ignore punctuation: check if we should skip this token */
+		s_bool should_skip = FALSE;
+		is_present = SItemFeatureIsPresent(tokenItem, "IsPunctuation", error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "Run",
+					  "Call to \"SItemFeatureIsPresent\" failed"))
+			goto quit_error;
+		if (is_present)
 		{
-			SFeatProcessorRun(normProcessor, tokenItem, error);
+			sint32 value = SItemGetInt(tokenItem, "IsPunctuation", error);
 			if (S_CHK_ERR(error, S_CONTERR,
 						  "Run",
-						  "Call to \"SFeatProcessorRun\" failed"))
+						  "Call to \"SItemGetInt\" failed"))
 				goto quit_error;
+			if (value > 0)
+				should_skip = TRUE;
 		}
-		else
+
+		if (!should_skip)
 		{
-			/* we can't do normalization, hope for the best and set
-			 * the token as the word. Token is name feature of token
-			 * item.
-			 */
-			token = SItemGetObject(tokenItem, "name", error);
-			if (S_CHK_ERR(error, S_CONTERR,
-						  "Run",
-						  "Call to \"SItemGetObject\" failed"))
-				goto quit_error;
+			/* Give the item to the normalization feature processor, if
+			* any. Normalization feature processor can set daughter items
+			* in Word relation, return would be NULL.
+			*/
+			if (normProcessor)
+			{
+				SFeatProcessorRun(normProcessor, tokenItem, error);
+				if (S_CHK_ERR(error, S_CONTERR,
+							"Run",
+							"Call to \"SFeatProcessorRun\" failed"))
+					goto quit_error;
+			}
+			else
+			{
+				/* we can't do normalization, hope for the best and set
+				* the token as the word. Token is name feature of token
+				* item.
+				*/
+				token = SItemGetObject(tokenItem, "name", error);
+				if (S_CHK_ERR(error, S_CONTERR,
+							"Run",
+							"Call to \"SItemGetObject\" failed"))
+					goto quit_error;
 
-			/* create word item as daughter of token item, NULL
-			 * shared content
-			 */
-			wordItem = SItemAddDaughter(tokenItem, NULL, error);
-			if (S_CHK_ERR(error, S_CONTERR,
-						  "Run",
-						  "Call to \"SItemAddDaughter\" failed"))
-				goto quit_error;
+				/* create word item as daughter of token item, NULL
+				* shared content
+				*/
+				wordItem = SItemAddDaughter(tokenItem, NULL, error);
+				if (S_CHK_ERR(error, S_CONTERR,
+							"Run",
+							"Call to \"SItemAddDaughter\" failed"))
+					goto quit_error;
 
-			/* get and lowercase token string */
-			token_string = SObjectGetString(token, error);
-			if (S_CHK_ERR(error, S_CONTERR,
-						  "Run",
-						  "Call to \"SItemGetObject\" failed"))
-				goto quit_error;
+				/* get and lowercase token string */
+				token_string = SObjectGetString(token, error);
+				if (S_CHK_ERR(error, S_CONTERR,
+							"Run",
+							"Call to \"SItemGetObject\" failed"))
+					goto quit_error;
 
-			token_string_lc = s_strdup(token_string, error);
-			if (S_CHK_ERR(error, S_CONTERR,
-						  "Run",
-						  "Call to \"s_strdup\" failed"))
-				goto quit_error;
+				token_string_lc = s_strdup(token_string, error);
+				if (S_CHK_ERR(error, S_CONTERR,
+							"Run",
+							"Call to \"s_strdup\" failed"))
+					goto quit_error;
 
-			s_strlwr(token_string_lc, error);
-			if (S_CHK_ERR(error, S_CONTERR,
-						  "Run",
-						  "Call to \"s_strlwr\" failed"))
-				goto quit_error;
+				s_strlwr(token_string_lc, error);
+				if (S_CHK_ERR(error, S_CONTERR,
+							"Run",
+							"Call to \"s_strlwr\" failed"))
+					goto quit_error;
 
-			/* set the token lowercase as the word item's name */
-			SItemSetString(wordItem, "name", token_string_lc, error);
-			if (S_CHK_ERR(error, S_CONTERR,
-						  "Run",
-						  "Call to \"SItemSetObject\" failed"))
-				goto quit_error;
+				/* set the token lowercase as the word item's name */
+				SItemSetString(wordItem, "name", token_string_lc, error);
+				if (S_CHK_ERR(error, S_CONTERR,
+							"Run",
+							"Call to \"SItemSetObject\" failed"))
+					goto quit_error;
 
-			S_FREE(token_string_lc);
+				S_FREE(token_string_lc);
 
-			/* and create a new word item in word relation, shared
-			 * content it token relation's word item.
-			 */
-			SRelationAppend(wordRel, wordItem, error);
-			if (S_CHK_ERR(error, S_CONTERR,
-						  "Run",
-						  "Call to \"SItemSetObject\" failed"))
-				goto quit_error;
+				/* and create a new word item in word relation, shared
+				* content it token relation's word item.
+				*/
+				SRelationAppend(wordRel, wordItem, error);
+				if (S_CHK_ERR(error, S_CONTERR,
+							"Run",
+							"Call to \"SItemSetObject\" failed"))
+					goto quit_error;
+			}
 		}
 
 		tokenItem = SItemNext(tokenItem, error);

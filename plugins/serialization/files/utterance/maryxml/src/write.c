@@ -565,7 +565,7 @@ S_LOCAL void s_write_utt_maryxml(const SUtterance *utt, SDatasource *ds, s_erc *
 						"Call to \"SItemPathToItem\" failed"))
 				goto s_write_utt_exit;
 
-			if (newTokenPhrase != currentPhrase)
+			if (newTokenPhrase != NULL && newTokenPhrase != currentPhrase)
 			{
 				/* close and reopen s tag */
 				rc = xmlTextWriterEndElement(writer);

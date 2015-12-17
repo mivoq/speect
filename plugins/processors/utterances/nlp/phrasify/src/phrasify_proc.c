@@ -271,29 +271,47 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 					  "Failed to get word item's token item"))
 			goto quit_error;
 
-		/* get token's post punctuation */
-		is_present = SItemFeatureIsPresent(tokenItem, "postpunc", error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "Run",
-					  "Call to \"SItemFeatureIsPresent\" failed"))
-			goto quit_error;
-
 		/* get last word in token */
 		lastWordInToken = SItemLastDaughter(tokenItem, error);
 		if (S_CHK_ERR(error, S_CONTERR,
-					  "Run",
-					  "Failed to get last daughter of token item"))
+			"Run",
+		"Failed to get last daughter of token item"))
 			goto quit_error;
+
+		/* check if the next token is punctuation */
+		is_present = FALSE;
+		tokenItem = SItemNext(tokenItem, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "Run",
+					  "Call to \"SItemNext\" failed"))
+			goto quit_error;
+		if (tokenItem != NULL)
+		{
+			is_present = SItemFeatureIsPresent(tokenItem, "IsPunctuation", error);
+			if (S_CHK_ERR(error, S_CONTERR,
+						"Run",
+						"Call to \"SItemFeatureIsPresent\" failed"))
+				goto quit_error;
+			if (is_present)
+			{
+				sint32 value = SItemGetInt(tokenItem, "IsPunctuation", error);
+				if (S_CHK_ERR(error, S_CONTERR,
+							"Run",
+							"Call to \"SItemGetInt\" failed"))
+					goto quit_error;
+				is_present = (value > 0);
+			}
+		}
 
 		if ((is_present) && (wordAsToken == lastWordInToken))
 		{
 			char *ptr;
 
 
-			post_punc = SItemGetString(tokenItem, "postpunc", error);
+			post_punc = SItemGetName(tokenItem, error);
 			if (S_CHK_ERR(error, S_CONTERR,
 						  "Run",
-						  "Call to \"SItemGetString\" failed"))
+						  "Call to \"SItemGetName\" failed"))
 				goto quit_error;
 
 			/* check if it is in the end_punc list */

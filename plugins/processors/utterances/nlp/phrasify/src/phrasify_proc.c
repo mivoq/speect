@@ -315,10 +315,10 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 				goto quit_error;
 
 			/* check if it is in the end_punc list */
-			ptr = s_strstr(end_punc, post_punc, error);
+			ptr = s_strpbrk(post_punc, end_punc, error);
 			if (S_CHK_ERR(error, S_CONTERR,
 						  "Run",
-						  "Call to \"s_strstr\" failed"))
+						  "Call to \"s_strpbrk\" failed"))
 				goto quit_error;
 
 			if (ptr != NULL)

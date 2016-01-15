@@ -269,8 +269,6 @@ static void call_hunpos(const SHunposUttProc *hunposProc, const SItem* relation_
 		{
 			data[tokens_count] = current_token;
 
-			char* NAME = SItemGetName(current_token, error);
-
 			/* check if it's a safe cut point */
 			s_bool is_present = SItemFeatureIsPresent(current_token, "IsPunctuation", error);
 			if (S_CHK_ERR(error, S_CONTERR,

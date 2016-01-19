@@ -51,6 +51,7 @@
 /************************************************************************************/
 
 #define MAX_PHONE_NAME_LENGTH 8
+#define SELFPARAMETERTYPE SHTSLabelsConfigurableFeatProc
 
 
 /************************************************************************************/
@@ -86,7 +87,7 @@ static s_bool segment_is_pause(const SItem *item, s_erc *error);
  * p4 the next phoneme identity
  * p5 the phoneme after the next phoneme identity
  */
-static char *create_phone_context(const SFeatProcessor *self, const SItem *item, s_erc *error);
+static char *create_phone_context(const SELFPARAMETERTYPE *self, const SItem *item, s_erc *error);
 
 
 /* p6_p7
@@ -94,9 +95,9 @@ static char *create_phone_context(const SFeatProcessor *self, const SItem *item,
  * p6 position of the current phoneme identity in the current syllable (forward)
  * p7 position of the current phoneme identity in the current syllable (backward)
  */
-static char *create_syl_context(const SFeatProcessor *self, const SItem *item, s_erc *error);
+static char *create_syl_context(const SELFPARAMETERTYPE *self, const SItem *item, s_erc *error);
 
-static char *create_syl_context_pause(const SFeatProcessor *self, const SItem *item, s_erc *error);
+static char *create_syl_context_pause(const SELFPARAMETERTYPE *self, const SItem *item, s_erc *error);
 
 
 /* /A:a1_a2_a3
@@ -105,9 +106,9 @@ static char *create_syl_context_pause(const SFeatProcessor *self, const SItem *i
  * a2 whether the previous syllable accented or not (0: not accented, 1: accented)
  * a3 the number of phonemes in the previous syllable
  */
-static char *create_A_context(const SFeatProcessor *self, const SItem *item, s_erc *error);
+static char *create_A_context(const SELFPARAMETERTYPE *self, const SItem *item, s_erc *error);
 
-static char *create_A_context_pause(const SFeatProcessor *self, const SItem *item, s_erc *error);
+static char *create_A_context_pause(const SELFPARAMETERTYPE *self, const SItem *item, s_erc *error);
 
 
 /* /B:b1-b2-b3@b4-b5&b6-b7#b8-b9$b10-b11!b12-b13;b14-b15|b16
@@ -129,9 +130,9 @@ static char *create_A_context_pause(const SFeatProcessor *self, const SItem *ite
  * b15 the number of syllables from the current syllable to the next accented syllable
  * b16 name of the vowel of the current syllable
  */
-static char *create_B_context(const SFeatProcessor *self, const SItem *item, s_erc *error);
+static char *create_B_context(const SELFPARAMETERTYPE *self, const SItem *item, s_erc *error);
 
-static char *create_B_context_pause(const SFeatProcessor *self, const SItem *item, s_erc *error);
+static char *create_B_context_pause(const SELFPARAMETERTYPE *self, const SItem *item, s_erc *error);
 
 
 /* /C:c1+c2+c3
@@ -140,9 +141,9 @@ static char *create_B_context_pause(const SFeatProcessor *self, const SItem *ite
  * c2 whether the next syllable accented or not (0: not accented, 1: accented)
  * c3 the number of phonemes in the next syllable
  */
-static char *create_C_context(const SFeatProcessor *self, const SItem *item, s_erc *error);
+static char *create_C_context(const SELFPARAMETERTYPE *self, const SItem *item, s_erc *error);
 
-static char *create_C_context_pause(const SFeatProcessor *self, const SItem *item, s_erc *error);
+static char *create_C_context_pause(const SELFPARAMETERTYPE *self, const SItem *item, s_erc *error);
 
 
 /* /D:d1_d2
@@ -150,9 +151,9 @@ static char *create_C_context_pause(const SFeatProcessor *self, const SItem *ite
  * d1 gpos (guess part-of-speech) of the previous word
  * d2 the number of syllables in the previous word
  */
-static char *create_D_context(const SFeatProcessor *self, const SItem *item, s_erc *error);
+static char *create_D_context(const SELFPARAMETERTYPE *self, const SItem *item, s_erc *error);
 
-static char *create_D_context_pause(const SFeatProcessor *self, const SItem *item, s_erc *error);
+static char *create_D_context_pause(const SELFPARAMETERTYPE *self, const SItem *item, s_erc *error);
 
 
 /* /E:e1+e2@e3+e4&e5+e6#e7+e8
@@ -166,9 +167,9 @@ static char *create_D_context_pause(const SFeatProcessor *self, const SItem *ite
  * e7 the number of words from the previous content word to the current word
  * e8 the number of words from the current word to the next content word
  */
-static char *create_E_context(const SFeatProcessor *self, const SItem *item, s_erc *error);
+static char *create_E_context(const SELFPARAMETERTYPE *self, const SItem *item, s_erc *error);
 
-static char *create_E_context_pause(const SFeatProcessor *self, const SItem *item, s_erc *error);
+static char *create_E_context_pause(const SELFPARAMETERTYPE *self, const SItem *item, s_erc *error);
 
 
 /* /F:f1_f2
@@ -176,9 +177,9 @@ static char *create_E_context_pause(const SFeatProcessor *self, const SItem *ite
  * f1 gpos (guess part-of-speech) of the next word
  * f2 the number of syllables in the next word
  */
-static char *create_F_context(const SFeatProcessor *self, const SItem *item, s_erc *error);
+static char *create_F_context(const SELFPARAMETERTYPE *self, const SItem *item, s_erc *error);
 
-static char *create_F_context_pause(const SFeatProcessor *self, const SItem *item, s_erc *error);
+static char *create_F_context_pause(const SELFPARAMETERTYPE *self, const SItem *item, s_erc *error);
 
 
 /* /G:g1_g2
@@ -186,9 +187,9 @@ static char *create_F_context_pause(const SFeatProcessor *self, const SItem *ite
  * g1 the number of syllables in the previous phrase
  * g2 the number of words in the previous phrase
  */
-static char *create_G_context(const SFeatProcessor *self, const SItem *item, s_erc *error);
+static char *create_G_context(const SELFPARAMETERTYPE *self, const SItem *item, s_erc *error);
 
-static char *create_G_context_pause(const SFeatProcessor *self, const SItem *item, s_erc *error);
+static char *create_G_context_pause(const SELFPARAMETERTYPE *self, const SItem *item, s_erc *error);
 
 
 /* /H:h1=h2@h3=h4|h5
@@ -199,9 +200,9 @@ static char *create_G_context_pause(const SFeatProcessor *self, const SItem *ite
  * h4 position of the current phrase in utterence (backward)
  * h5 TOBI endtone of the current phrase
  */
-static char *create_H_context(const SFeatProcessor *self, const SItem *item, s_erc *error);
+static char *create_H_context(const SELFPARAMETERTYPE *self, const SItem *item, s_erc *error);
 
-static char *create_H_context_pause(const SFeatProcessor *self, const SItem *item, s_erc *error);
+static char *create_H_context_pause(const SELFPARAMETERTYPE *self, const SItem *item, s_erc *error);
 
 
 /* /I:i1_i2
@@ -209,9 +210,9 @@ static char *create_H_context_pause(const SFeatProcessor *self, const SItem *ite
  * i1 the number of syllables in the next phrase
  * i2 the number of words in the next phrase
  */
-static char *create_I_context(const SFeatProcessor *self, const SItem *item, s_erc *error);
+static char *create_I_context(const SELFPARAMETERTYPE *self, const SItem *item, s_erc *error);
 
-static char *create_I_context_pause(const SFeatProcessor *self, const SItem *item, s_erc *error);
+static char *create_I_context_pause(const SELFPARAMETERTYPE *self, const SItem *item, s_erc *error);
 
 
 /* /J:j1+j2-j3
@@ -220,7 +221,7 @@ static char *create_I_context_pause(const SFeatProcessor *self, const SItem *ite
  * j2 the number of words in this utternce
  * j3 the number of phrases in this utterence
  */
-static char *create_J_context(const SFeatProcessor *self, const SItem *item, s_erc *error);
+static char *create_J_context(const SELFPARAMETERTYPE *self, const SItem *item, s_erc *error);
 
 /* note that pauses use create_J_context as well */
 
@@ -409,7 +410,7 @@ static s_bool segment_is_pause(const SItem *item, s_erc *error)
  * p4 the next phoneme identity
  * p5 the phoneme after the next phoneme identity
  */
-static char *create_phone_context(const SFeatProcessor *self, const SItem *item, s_erc *error)
+static char *create_phone_context(const SELFPARAMETERTYPE *self, const SItem *item, s_erc *error)
 {
 	char *p_context;
 	char p1[MAX_PHONE_NAME_LENGTH] = "";
@@ -558,7 +559,7 @@ static char *create_phone_context(const SFeatProcessor *self, const SItem *item,
  * p6 position of the current phoneme identity in the current syllable (forward)
  * p7 position of the current phoneme identity in the current syllable (backward)
  */
-static char *create_syl_context(const SFeatProcessor *self, const SItem *item, s_erc *error)
+static char *create_syl_context(const SELFPARAMETERTYPE *self, const SItem *item, s_erc *error)
 {
 	SObject *dFeat;
 	char *syl_context;
@@ -623,7 +624,7 @@ static char *create_syl_context(const SFeatProcessor *self, const SItem *item, s
 
 /* differs from create_phone_syl_context in that all is "x", pause does not
  * have a syllable */
-static char *create_syl_context_pause(const SFeatProcessor *self, const SItem *item, s_erc *error)
+static char *create_syl_context_pause(const SELFPARAMETERTYPE *self, const SItem *item, s_erc *error)
 {
 	char *syl_context;
 	const char *all_x = "x_x";
@@ -650,9 +651,8 @@ static char *create_syl_context_pause(const SFeatProcessor *self, const SItem *i
  * a2 whether the previous syllable accented or not (0: not accented, 1: accented)
  * a3 the number of phonemes in the previous syllable
  */
-static char *create_A_context(const SFeatProcessor *self, const SItem *item, s_erc *error)
+static char *create_A_context(const SELFPARAMETERTYPE *self, const SItem *item, s_erc *error)
 {
-	SHTSLabelsConfigurableFeatProc *HTSProc = (SHTSLabelsConfigurableFeatProc*)self;
 	const SObject *featPath;
 	SObject *dFeat;
 	char *a_context;
@@ -662,7 +662,7 @@ static char *create_A_context(const SFeatProcessor *self, const SItem *item, s_e
 
 	S_CLR_ERR(error);
 
-	if (HTSProc == NULL)
+	if (self == NULL)
 	{
 		S_CTX_ERR(error, S_FAILURE,
 				  "create_A_context",
@@ -672,7 +672,7 @@ static char *create_A_context(const SFeatProcessor *self, const SItem *item, s_e
 
 	/*  a1 */
 	a1 = 0;
-	if (HTSProc->enable_stress)
+	if (self->enable_stress)
 	{
 		featPath = SItemPathToFeature(item, "R:SylStructure.parent.R:Syllable.p.stress",
 									error);
@@ -693,7 +693,7 @@ static char *create_A_context(const SFeatProcessor *self, const SItem *item, s_e
 
 	/*  a2 */
 	a2 = 0;
-	if (HTSProc->enable_accent)
+	if (self->enable_accent)
 	{
 		featPath = SItemPathToFeature(item, "R:SylStructure.parent.R:Syllable.p.accent",
 									error);
@@ -746,9 +746,8 @@ static char *create_A_context(const SFeatProcessor *self, const SItem *item, s_e
 
 /* differs from create_A_context in that previous phone's syllable is queried
  * and not previous syllable */
-static char *create_A_context_pause(const SFeatProcessor *self, const SItem *item, s_erc *error)
+static char *create_A_context_pause(const SELFPARAMETERTYPE *self, const SItem *item, s_erc *error)
 {
-	SHTSLabelsConfigurableFeatProc *HTSProc = (SHTSLabelsConfigurableFeatProc*)self;
 	const SObject *featPath;
 	SObject *dFeat;
 	char *a_context;
@@ -759,7 +758,7 @@ static char *create_A_context_pause(const SFeatProcessor *self, const SItem *ite
 
 	S_CLR_ERR(error);
 
-	if (HTSProc == NULL)
+	if (self == NULL)
 	{
 		S_CTX_ERR(error, S_FAILURE,
 				  "create_A_context_pause",
@@ -769,7 +768,7 @@ static char *create_A_context_pause(const SFeatProcessor *self, const SItem *ite
 
 	/*  a1 */
 	a1 = 0;
-	if (HTSProc->enable_stress)
+	if (self->enable_stress)
 	{
 		featPath = SItemPathToFeature(item, "p.R:SylStructure.parent.R:Syllable.stress",
 									error);
@@ -790,7 +789,7 @@ static char *create_A_context_pause(const SFeatProcessor *self, const SItem *ite
 
 	/*  a2 */
 	a2 = 0;
-	if (HTSProc->enable_accent)
+	if (self->enable_accent)
 	{
 		featPath = SItemPathToFeature(item, "p.R:SylStructure.parent.R:Syllable.accent",
 									error);
@@ -861,9 +860,8 @@ static char *create_A_context_pause(const SFeatProcessor *self, const SItem *ite
  * b15 the number of syllables from the current syllable to the next accented syllable
  * b16 name of the vowel of the current syllable
  */
-static char *create_B_context(const SFeatProcessor *self, const SItem *item, s_erc *error)
+static char *create_B_context(const SELFPARAMETERTYPE *self, const SItem *item, s_erc *error)
 {
-	SHTSLabelsConfigurableFeatProc *HTSProc = (SHTSLabelsConfigurableFeatProc*)self;
 	const SObject *featPath;
 	SObject *dFeat;
 	char *b_context;
@@ -887,7 +885,7 @@ static char *create_B_context(const SFeatProcessor *self, const SItem *item, s_e
 
 	S_CLR_ERR(error);
 
-	if (HTSProc == NULL)
+	if (self == NULL)
 	{
 		S_CTX_ERR(error, S_FAILURE,
 				  "create_B_context",
@@ -897,7 +895,7 @@ static char *create_B_context(const SFeatProcessor *self, const SItem *item, s_e
 
 	/* b1 */
 	b1 = 0;
-	if (HTSProc->enable_stress)
+	if (self->enable_stress)
 	{
 		featPath = SItemPathToFeature(item, "R:SylStructure.parent.R:Syllable.stress",
 									error);
@@ -918,7 +916,7 @@ static char *create_B_context(const SFeatProcessor *self, const SItem *item, s_e
 
 	/*  b2 */
 	b2 = 0;
-	if (HTSProc->enable_accent)
+	if (self->enable_accent)
 	{
 		featPath = SItemPathToFeature(item, "R:SylStructure.parent.R:Syllable.accent",
 									error);
@@ -1056,7 +1054,7 @@ static char *create_B_context(const SFeatProcessor *self, const SItem *item, s_e
 	}
 
 
-	if (HTSProc->enable_stress)
+	if (self->enable_stress)
 	{
 		/* b8 */
 		dFeat = SItemPathToFeatProc(item, "R:SylStructure.parent.R:Syllable.syllable_stress_in",
@@ -1105,7 +1103,7 @@ static char *create_B_context(const SFeatProcessor *self, const SItem *item, s_e
 		}
 	}
 
-	if (HTSProc->enable_accent)
+	if (self->enable_accent)
 	{
 		/* b10 */
 		dFeat = SItemPathToFeatProc(item, "R:SylStructure.parent.R:Syllable.syllable_accent_in",
@@ -1156,7 +1154,7 @@ static char *create_B_context(const SFeatProcessor *self, const SItem *item, s_e
 	}
 
 
-	if (HTSProc->enable_stress)
+	if (self->enable_stress)
 	{
 		/* b12 */
 		dFeat = SItemPathToFeatProc(item, "R:SylStructure.parent.R:Syllable.syllable_stress_all_in",
@@ -1207,7 +1205,7 @@ static char *create_B_context(const SFeatProcessor *self, const SItem *item, s_e
 	}
 
 
-	if (HTSProc->enable_accent)
+	if (self->enable_accent)
 	{
 		/* b14 */
 		dFeat = SItemPathToFeatProc(item, "R:SylStructure.parent.R:Syllable.syllable_accent_all_in",
@@ -1280,17 +1278,17 @@ static char *create_B_context(const SFeatProcessor *self, const SItem *item, s_e
 		b16 = "novowel";
 	}
 
-	if (HTSProc->enable_stress && HTSProc->enable_accent)
+	if (self->enable_stress && self->enable_accent)
 	{
 		s_asprintf(&b_context, error, "/B:%d-%d-%d@%d-%d&%d-%d#%d-%d$%d-%d!%d-%d;%d-%d|%s",
 				b1, b2, b3, b4, b5, b6, b7, b8, b9, b10, b11, b12, b13, b14, b15, b16);
 	}
-	else if (HTSProc->enable_stress)
+	else if (self->enable_stress)
 	{
 		s_asprintf(&b_context, error, "/B:%d-%d-%d@%d-%d&%d-%d#%d-%d$x-x!%d-%d;x-x|%s",
 			   b1, b2, b3, b4, b5, b6, b7, b8, b9, b12, b13, b16);
 	}
-	else if (HTSProc->enable_accent)
+	else if (self->enable_accent)
 	{
 		s_asprintf(&b_context, error, "/B:%d-%d-%d@%d-%d&%d-%d#x-x$%d-%d!x-x;%d-%d|%s",
 			   b1, b2, b3, b4, b5, b6, b7, b10, b11, b14, b15, b16);
@@ -1316,7 +1314,7 @@ static char *create_B_context(const SFeatProcessor *self, const SItem *item, s_e
 
 /* differs from create_B_context in that all is "x", pause does not
  * have a syllable */
-static char *create_B_context_pause(const SFeatProcessor *self, const SItem *item, s_erc *error)
+static char *create_B_context_pause(const SELFPARAMETERTYPE *self, const SItem *item, s_erc *error)
 {
 	char *b_context;
 	const char *all_x = "/B:x-x-x@x-x&x-x#x-x$x-x!x-x;x-x|x";
@@ -1343,9 +1341,8 @@ static char *create_B_context_pause(const SFeatProcessor *self, const SItem *ite
  * c2 whether the next syllable accented or not (0: not accented, 1: accented)
  * c3 the number of phonemes in the next syllable
  */
-static char *create_C_context(const SFeatProcessor *self, const SItem *item, s_erc *error)
+static char *create_C_context(const SELFPARAMETERTYPE *self, const SItem *item, s_erc *error)
 {
-	SHTSLabelsConfigurableFeatProc *HTSProc = (SHTSLabelsConfigurableFeatProc*)self;
 	const SObject *featPath;
 	SObject *dFeat;
 	char *c_context;
@@ -1356,7 +1353,7 @@ static char *create_C_context(const SFeatProcessor *self, const SItem *item, s_e
 
 	S_CLR_ERR(error);
 	
-	if (HTSProc == NULL)
+	if (self == NULL)
 	{
 		S_CTX_ERR(error, S_FAILURE,
 				  "create_C_context",
@@ -1366,7 +1363,7 @@ static char *create_C_context(const SFeatProcessor *self, const SItem *item, s_e
 
 	/* c1 */
 	c1 = 0;
-	if (HTSProc->enable_stress)
+	if (self->enable_stress)
 	{
 		featPath = SItemPathToFeature(item, "R:SylStructure.parent.R:Syllable.n.stress",
 									error);
@@ -1390,7 +1387,7 @@ static char *create_C_context(const SFeatProcessor *self, const SItem *item, s_e
 
 	/* c2 */
 	c2 = 0;
-	if (HTSProc->enable_accent)
+	if (self->enable_accent)
 	{
 		featPath = SItemPathToFeature(item, "R:SylStructure.parent.R:Syllable.n.accent",
 									error);
@@ -1444,9 +1441,8 @@ static char *create_C_context(const SFeatProcessor *self, const SItem *item, s_e
 
 /* differs from create_C_context in that next phone's syllable is queried
  * and not next syllable */
-static char *create_C_context_pause(const SFeatProcessor *self, const SItem *item, s_erc *error)
+static char *create_C_context_pause(const SELFPARAMETERTYPE *self, const SItem *item, s_erc *error)
 {
-	SHTSLabelsConfigurableFeatProc *HTSProc = (SHTSLabelsConfigurableFeatProc*)self;
 	const SObject *featPath;
 	SObject *dFeat;
 	char *c_context;
@@ -1457,7 +1453,7 @@ static char *create_C_context_pause(const SFeatProcessor *self, const SItem *ite
 
 	S_CLR_ERR(error);
 	
-	if (HTSProc == NULL)
+	if (self == NULL)
 	{
 		S_CTX_ERR(error, S_FAILURE,
 				  "create_C_context_pause",
@@ -1467,7 +1463,7 @@ static char *create_C_context_pause(const SFeatProcessor *self, const SItem *ite
 
 	/* c1 */
 	c1 = 0;
-	if (HTSProc->enable_stress)
+	if (self->enable_stress)
 	{
 		featPath = SItemPathToFeature(item, "n.R:SylStructure.parent.R:Syllable.stress",
 									error);
@@ -1491,7 +1487,7 @@ static char *create_C_context_pause(const SFeatProcessor *self, const SItem *ite
 
 	/* c2 */
 	c2 = 0;
-	if (HTSProc->enable_accent)
+	if (self->enable_accent)
 	{
 		featPath = SItemPathToFeature(item, "n.R:SylStructure.parent.R:Syllable.accent",
 									error);
@@ -1548,9 +1544,8 @@ static char *create_C_context_pause(const SFeatProcessor *self, const SItem *ite
  * d1 gpos (guess part-of-speech) of the previous word
  * d2 the number of syllables in the previous word
  */
-static char *create_D_context(const SFeatProcessor *self, const SItem *item, s_erc *error)
+static char *create_D_context(const SELFPARAMETERTYPE *self, const SItem *item, s_erc *error)
 {
-	SHTSLabelsConfigurableFeatProc *HTSProc = (SHTSLabelsConfigurableFeatProc*)self;
 	SObject *dFeat;
 	const SObject *featPath;
 	char *d_context;
@@ -1560,7 +1555,7 @@ static char *create_D_context(const SFeatProcessor *self, const SItem *item, s_e
 
 	S_CLR_ERR(error);
 	
-	if (HTSProc == NULL)
+	if (self == NULL)
 	{
 		S_CTX_ERR(error, S_FAILURE,
 				  "create_D_context",
@@ -1569,7 +1564,7 @@ static char *create_D_context(const SFeatProcessor *self, const SItem *item, s_e
 	}
 
 	/* d1 */
-	if (HTSProc->enable_gpos)
+	if (self->enable_gpos)
 	{
 		featPath = SItemPathToFeature(item, "R:SylStructure.parent.parent.R:Word.p.pos",
 									error);
@@ -1632,9 +1627,8 @@ static char *create_D_context(const SFeatProcessor *self, const SItem *item, s_e
 
 /* differs from create_D_context in that previous phone's word is queried
  * and not previous word */
-static char *create_D_context_pause(const SFeatProcessor *self, const SItem *item, s_erc *error)
+static char *create_D_context_pause(const SELFPARAMETERTYPE *self, const SItem *item, s_erc *error)
 {
-	SHTSLabelsConfigurableFeatProc *HTSProc = (SHTSLabelsConfigurableFeatProc*)self;
 	SObject *dFeat;
 	const SObject *featPath;
 	char *d_context;
@@ -1644,7 +1638,7 @@ static char *create_D_context_pause(const SFeatProcessor *self, const SItem *ite
 
 	S_CLR_ERR(error);
 	
-	if (HTSProc == NULL)
+	if (self == NULL)
 	{
 		S_CTX_ERR(error, S_FAILURE,
 				  "create_D_context_pause",
@@ -1653,7 +1647,7 @@ static char *create_D_context_pause(const SFeatProcessor *self, const SItem *ite
 	}
 
 	/* d1 */
-	if (HTSProc->enable_gpos)
+	if (self->enable_gpos)
 	{
 		featPath = SItemPathToFeature(item, "p.R:SylStructure.parent.parent.R:Word.pos",
 									error);
@@ -1724,9 +1718,8 @@ static char *create_D_context_pause(const SFeatProcessor *self, const SItem *ite
  * e7 the number of words from the previous content word to the current word
  * e8 the number of words from the current word to the next content word
  */
-static char *create_E_context(const SFeatProcessor *self, const SItem *item, s_erc *error)
+static char *create_E_context(const SELFPARAMETERTYPE *self, const SItem *item, s_erc *error)
 {
-	SHTSLabelsConfigurableFeatProc *HTSProc = (SHTSLabelsConfigurableFeatProc*)self;
 	const SObject *featPath;
 	SObject *dFeat;
 	char *e_context;
@@ -1742,7 +1735,7 @@ static char *create_E_context(const SFeatProcessor *self, const SItem *item, s_e
 
 	S_CLR_ERR(error);
 	
-	if (HTSProc == NULL)
+	if (self == NULL)
 	{
 		S_CTX_ERR(error, S_FAILURE,
 				  "create_E_context",
@@ -1751,7 +1744,7 @@ static char *create_E_context(const SFeatProcessor *self, const SItem *item, s_e
 	}
 
 	/* e1 */
-	if (HTSProc->enable_gpos)
+	if (self->enable_gpos)
 	{
 		featPath = SItemPathToFeature(item, "R:SylStructure.parent.parent.R:Word.pos",
 									error);
@@ -1848,7 +1841,7 @@ static char *create_E_context(const SFeatProcessor *self, const SItem *item, s_e
 	}
 
 
-	if (HTSProc->enable_word_content)
+	if (self->enable_word_content)
 	{
 		/* e5 */
 		dFeat = SItemPathToFeatProc(item, "R:SylStructure.parent.parent.R:Word.word_content_in",
@@ -1967,7 +1960,7 @@ static char *create_E_context(const SFeatProcessor *self, const SItem *item, s_e
 
 /* differs from create_E_context in that all is "x", pause does not
  * have a word */
-static char *create_E_context_pause(const SFeatProcessor *self, const SItem *item, s_erc *error)
+static char *create_E_context_pause(const SELFPARAMETERTYPE *self, const SItem *item, s_erc *error)
 {
 	char *e_context;
 	const char *all_x = "/E:0+0@0+0&0+0#0+0";
@@ -1993,9 +1986,8 @@ static char *create_E_context_pause(const SFeatProcessor *self, const SItem *ite
  * f1 gpos (guess part-of-speech) of the next word
  * f2 the number of syllables in the next word
  */
-static char *create_F_context(const SFeatProcessor *self, const SItem *item, s_erc *error)
+static char *create_F_context(const SELFPARAMETERTYPE *self, const SItem *item, s_erc *error)
 {
-	SHTSLabelsConfigurableFeatProc *HTSProc = (SHTSLabelsConfigurableFeatProc*)self;
 	const SObject *featPath;
 	SObject *dFeat;
 	char *f_context;
@@ -2005,7 +1997,7 @@ static char *create_F_context(const SFeatProcessor *self, const SItem *item, s_e
 
 	S_CLR_ERR(error);
 
-	if (HTSProc == NULL)
+	if (self == NULL)
 	{
 		S_CTX_ERR(error, S_FAILURE,
 				  "create_F_context",
@@ -2014,7 +2006,7 @@ static char *create_F_context(const SFeatProcessor *self, const SItem *item, s_e
 	}
 
 	/* f1 */
-	if (HTSProc->enable_gpos)
+	if (self->enable_gpos)
 	{
 		featPath = SItemPathToFeature(item, "R:SylStructure.parent.parent.R:Word.n.pos",
 									error);
@@ -2076,9 +2068,8 @@ static char *create_F_context(const SFeatProcessor *self, const SItem *item, s_e
 
 /* differs from create_F_context in that next phone's word is queried
  * and not next word */
-static char *create_F_context_pause(const SFeatProcessor *self, const SItem *item, s_erc *error)
+static char *create_F_context_pause(const SELFPARAMETERTYPE *self, const SItem *item, s_erc *error)
 {
-	SHTSLabelsConfigurableFeatProc *HTSProc = (SHTSLabelsConfigurableFeatProc*)self;
 	const SObject *featPath;
 	SObject *dFeat;
 	char *f_context;
@@ -2088,7 +2079,7 @@ static char *create_F_context_pause(const SFeatProcessor *self, const SItem *ite
 
 	S_CLR_ERR(error);
 
-	if (HTSProc == NULL)
+	if (self == NULL)
 	{
 		S_CTX_ERR(error, S_FAILURE,
 				  "create_F_context_pause",
@@ -2097,7 +2088,7 @@ static char *create_F_context_pause(const SFeatProcessor *self, const SItem *ite
 	}
 	
 	/* f1 */
-	if (HTSProc->enable_gpos)
+	if (self->enable_gpos)
 	{
 		featPath = SItemPathToFeature(item, "n.R:SylStructure.parent.parent.R:Word.pos",
 									error);
@@ -2162,7 +2153,7 @@ static char *create_F_context_pause(const SFeatProcessor *self, const SItem *ite
  * g1 the number of syllables in the previous phrase
  * g2 the number of words in the previous phrase
  */
-static char *create_G_context(const SFeatProcessor *self, const SItem *item, s_erc *error)
+static char *create_G_context(const SELFPARAMETERTYPE *self, const SItem *item, s_erc *error)
 {
 	SObject *dFeat;
 	char *g_context;
@@ -2232,7 +2223,7 @@ static char *create_G_context(const SFeatProcessor *self, const SItem *item, s_e
 
 /* differs from create_G_context in that previous phone's phrase is queried
  * and not previous phrase */
-static char *create_G_context_pause(const SFeatProcessor *self, const SItem *item, s_erc *error)
+static char *create_G_context_pause(const SELFPARAMETERTYPE *self, const SItem *item, s_erc *error)
 {
 	SObject *dFeat;
 	char *g_context;
@@ -2308,9 +2299,8 @@ static char *create_G_context_pause(const SFeatProcessor *self, const SItem *ite
  * h4 position of the current phrase in utterence (backward)
  * h5 TOBI endtone of the current phrase
  */
-static char *create_H_context(const SFeatProcessor *self, const SItem *item, s_erc *error)
+static char *create_H_context(const SELFPARAMETERTYPE *self, const SItem *item, s_erc *error)
 {
-	SHTSLabelsConfigurableFeatProc *HTSProc = (SHTSLabelsConfigurableFeatProc*)self;
 	SObject *dFeat;
 	const SObject *featPath;
 	char *h_context;
@@ -2323,7 +2313,7 @@ static char *create_H_context(const SFeatProcessor *self, const SItem *item, s_e
 
 	S_CLR_ERR(error);
 
-	if (HTSProc == NULL)
+	if (self == NULL)
 	{
 		S_CTX_ERR(error, S_FAILURE,
 				  "create_H_context",
@@ -2425,7 +2415,7 @@ static char *create_H_context(const SFeatProcessor *self, const SItem *item, s_e
 	}
 
 	/* h5 */
-	if (HTSProc->enable_tobi)
+	if (self->enable_tobi)
 	{
 		/* item, syllable, word, phrase, last word, last syllable */
 		featPath = SItemPathToFeature(item, "R:SylStructure.parent.parent.R:Phrase.parent.daughtern.R:SylStructure.daughtern.endtone",
@@ -2466,9 +2456,8 @@ static char *create_H_context(const SFeatProcessor *self, const SItem *item, s_e
 /* differs from create_H_context in that either next or previous
  * phone's phrase is used (if prev exits, use, else next)
  */
-static char *create_H_context_pause(const SFeatProcessor *self, const SItem *item, s_erc *error)
+static char *create_H_context_pause(const SELFPARAMETERTYPE *self, const SItem *item, s_erc *error)
 {
-	SHTSLabelsConfigurableFeatProc *HTSProc = (SHTSLabelsConfigurableFeatProc*)self;
 	const SItem *tmp;
 	s_bool use_next;
 	SObject *dFeat;
@@ -2483,7 +2472,7 @@ static char *create_H_context_pause(const SFeatProcessor *self, const SItem *ite
 
 	S_CLR_ERR(error);
 
-	if (HTSProc == NULL)
+	if (self == NULL)
 	{
 		S_CTX_ERR(error, S_FAILURE,
 				  "create_H_context_pause",
@@ -2633,7 +2622,7 @@ static char *create_H_context_pause(const SFeatProcessor *self, const SItem *ite
 
 
 	/* h5 */
-	if (HTSProc->enable_tobi)
+	if (self->enable_tobi)
 	{
 		/* item, syllable, word, phrase, last word, last syllable */
 		if (use_next)
@@ -2685,7 +2674,7 @@ static char *create_H_context_pause(const SFeatProcessor *self, const SItem *ite
  * i1 the number of syllables in the next phrase
  * i2 the number of words in the next phrase
  */
-static char *create_I_context(const SFeatProcessor *self, const SItem *item, s_erc *error)
+static char *create_I_context(const SELFPARAMETERTYPE *self, const SItem *item, s_erc *error)
 {
 	SObject *dFeat;
 	char *i_context;
@@ -2755,7 +2744,7 @@ static char *create_I_context(const SFeatProcessor *self, const SItem *item, s_e
 
 /* differs from create_I_context in that next phone's phrase is queried
  * and not next phrase */
-static char *create_I_context_pause(const SFeatProcessor *self, const SItem *item, s_erc *error)
+static char *create_I_context_pause(const SELFPARAMETERTYPE *self, const SItem *item, s_erc *error)
 {
 	SObject *dFeat;
 	char *i_context;
@@ -2829,7 +2818,7 @@ static char *create_I_context_pause(const SFeatProcessor *self, const SItem *ite
  * j2 the number of words in this utternce
  * j3 the number of phrases in this utterence
  */
-static char *create_J_context(const SFeatProcessor *self, const SItem *item, s_erc *error)
+static char *create_J_context(const SELFPARAMETERTYPE *self, const SItem *item, s_erc *error)
 {
 	SObject *dFeat;
 	char *j_context;
@@ -2988,7 +2977,7 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 		goto quit_error;
 
 	/* get phone context */
-	tmp = create_phone_context(self, segItem, error);
+	tmp = create_phone_context(HTSProc, segItem, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Run",
 				  "Call to \"create_phone_context\" failed"))
@@ -3005,7 +2994,7 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 	if (is_pause)
 	{
 		/* syllable context */
-		tmp = create_syl_context_pause(self, segItem, error);
+		tmp = create_syl_context_pause(HTSProc, segItem, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "Run",
 					  "Call to \"create_syl_context_pause\" failed"))
@@ -3022,7 +3011,7 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 		/* A context */
 		if (HTSProc->enable_A_context)
 		{
-			tmp = create_A_context_pause(self, segItem, error);
+			tmp = create_A_context_pause(HTSProc, segItem, error);
 			if (S_CHK_ERR(error, S_CONTERR,
 						"Run",
 						"Call to \"create_A_context_pause\" failed"))
@@ -3040,7 +3029,7 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 		/* B context */
 		if (HTSProc->enable_B_context)
 		{
-			tmp = create_B_context_pause(self, segItem, error);
+			tmp = create_B_context_pause(HTSProc, segItem, error);
 			if (S_CHK_ERR(error, S_CONTERR,
 						"Run",
 						"Call to \"create_B_context_pause\" failed"))
@@ -3058,7 +3047,7 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 		/* C context */
 		if (HTSProc->enable_C_context)
 		{
-			tmp = create_C_context_pause(self, segItem, error);
+			tmp = create_C_context_pause(HTSProc, segItem, error);
 			if (S_CHK_ERR(error, S_CONTERR,
 						"Run",
 						"Call to \"create_C_context_pause\" failed"))
@@ -3076,7 +3065,7 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 		/* D context */
 		if (HTSProc->enable_D_context)
 		{
-			tmp = create_D_context_pause(self, segItem, error);
+			tmp = create_D_context_pause(HTSProc, segItem, error);
 			if (S_CHK_ERR(error, S_CONTERR,
 						"Run",
 						"Call to \"create_D_context_pause\" failed"))
@@ -3094,7 +3083,7 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 		/* E context */
 		if (HTSProc->enable_E_context)
 		{
-			tmp = create_E_context_pause(self, segItem, error);
+			tmp = create_E_context_pause(HTSProc, segItem, error);
 			if (S_CHK_ERR(error, S_CONTERR,
 						"Run",
 						"Call to \"create_E_context_pause\" failed"))
@@ -3112,7 +3101,7 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 		/* F context */
 		if (HTSProc->enable_F_context)
 		{
-			tmp = create_F_context_pause(self, segItem, error);
+			tmp = create_F_context_pause(HTSProc, segItem, error);
 			if (S_CHK_ERR(error, S_CONTERR,
 						"Run",
 						"Call to \"create_F_context_pause\" failed"))
@@ -3130,7 +3119,7 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 		/* G context */
 		if (HTSProc->enable_G_context)
 		{
-			tmp = create_G_context_pause(self, segItem, error);
+			tmp = create_G_context_pause(HTSProc, segItem, error);
 			if (S_CHK_ERR(error, S_CONTERR,
 						"Run",
 						"Call to \"create_G_context_pause\" failed"))
@@ -3148,7 +3137,7 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 		/* H context */
 		if (HTSProc->enable_H_context)
 		{
-			tmp = create_H_context_pause(self, segItem, error);
+			tmp = create_H_context_pause(HTSProc, segItem, error);
 			if (S_CHK_ERR(error, S_CONTERR,
 						"Run",
 						"Call to \"create_H_context_pause\" failed"))
@@ -3166,7 +3155,7 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 		/* I context */
 		if (HTSProc->enable_I_context)
 		{
-			tmp = create_I_context_pause(self, segItem, error);
+			tmp = create_I_context_pause(HTSProc, segItem, error);
 			if (S_CHK_ERR(error, S_CONTERR,
 						"Run",
 						"Call to \"create_I_context_pause\" failed"))
@@ -3184,7 +3173,7 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 	else
 	{
 		/* syllable context */
-		tmp = create_syl_context(self, segItem, error);
+		tmp = create_syl_context(HTSProc, segItem, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "Run",
 					  "Call to \"create_syl_context\" failed"))
@@ -3201,7 +3190,7 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 		/* A context */
 		if (HTSProc->enable_A_context)
 		{
-			tmp = create_A_context(self, segItem, error);
+			tmp = create_A_context(HTSProc, segItem, error);
 			if (S_CHK_ERR(error, S_CONTERR,
 						"Run",
 						"Call to \"create_A_context\" failed"))
@@ -3219,7 +3208,7 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 		/* B context */
 		if (HTSProc->enable_B_context)
 		{
-			tmp = create_B_context(self, segItem, error);
+			tmp = create_B_context(HTSProc, segItem, error);
 			if (S_CHK_ERR(error, S_CONTERR,
 						"Run",
 						"Call to \"create_B_context\" failed"))
@@ -3237,7 +3226,7 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 		/* C context */
 		if (HTSProc->enable_C_context)
 		{
-			tmp = create_C_context(self, segItem, error);
+			tmp = create_C_context(HTSProc, segItem, error);
 			if (S_CHK_ERR(error, S_CONTERR,
 						"Run",
 						"Call to \"create_C_context\" failed"))
@@ -3255,7 +3244,7 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 		/* D context */
 		if (HTSProc->enable_D_context)
 		{
-			tmp = create_D_context(self, segItem, error);
+			tmp = create_D_context(HTSProc, segItem, error);
 			if (S_CHK_ERR(error, S_CONTERR,
 						"Run",
 						"Call to \"create_D_context\" failed"))
@@ -3273,7 +3262,7 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 		/* E context */
 		if (HTSProc->enable_E_context)
 		{
-			tmp = create_E_context(self, segItem, error);
+			tmp = create_E_context(HTSProc, segItem, error);
 			if (S_CHK_ERR(error, S_CONTERR,
 						"Run",
 						"Call to \"create_E_context\" failed"))
@@ -3291,7 +3280,7 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 		/* F context */
 		if (HTSProc->enable_F_context)
 		{
-			tmp = create_F_context(self, segItem, error);
+			tmp = create_F_context(HTSProc, segItem, error);
 			if (S_CHK_ERR(error, S_CONTERR,
 						"Run",
 						"Call to \"create_F_context\" failed"))
@@ -3309,7 +3298,7 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 		/* G context */
 		if (HTSProc->enable_G_context)
 		{
-			tmp = create_G_context(self, segItem, error);
+			tmp = create_G_context(HTSProc, segItem, error);
 			if (S_CHK_ERR(error, S_CONTERR,
 						"Run",
 						"Call to \"create_G_context\" failed"))
@@ -3327,7 +3316,7 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 		/* H context */
 		if (HTSProc->enable_H_context)
 		{
-			tmp = create_H_context(self, segItem, error);
+			tmp = create_H_context(HTSProc, segItem, error);
 			if (S_CHK_ERR(error, S_CONTERR,
 						"Run",
 						"Call to \"create_H_context\" failed"))
@@ -3345,7 +3334,7 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 		/* I context */
 		if (HTSProc->enable_I_context)
 		{
-			tmp = create_I_context(self, segItem, error);
+			tmp = create_I_context(HTSProc, segItem, error);
 			if (S_CHK_ERR(error, S_CONTERR,
 						"Run",
 						"Call to \"create_I_context\" failed"))
@@ -3362,7 +3351,7 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 	}
 
 	/* J context */
-	tmp = create_J_context(self, segItem, error);
+	tmp = create_J_context(HTSProc, segItem, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Run",
 				  "Call to \"create_J_context\" failed"))

@@ -1,0 +1,2377 @@
+/************************************************************************************/
+/* Copyright (c) 2010-2011 The Department of Arts and Culture,                      */
+/* The Government of the Republic of South Africa.                                  */
+/*                                                                                  */
+/* Contributors:  Meraka Institute, CSIR, South Africa.                             */
+/*                                                                                  */
+/* Permission is hereby granted, free of charge, to any person obtaining a copy     */
+/* of this software and associated documentation files (the "Software"), to deal    */
+/* in the Software without restriction, including without limitation the rights     */
+/* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell        */
+/* copies of the Software, and to permit persons to whom the Software is            */
+/* furnished to do so, subject to the following conditions:                         */
+/* The above copyright notice and this permission notice shall be included in       */
+/* all copies or substantial portions of the Software.                              */
+/*                                                                                  */
+/* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR       */
+/* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,         */
+/* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE      */
+/* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER           */
+/* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,    */
+/* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN        */
+/* THE SOFTWARE.                                                                    */
+/*                                                                                  */
+/************************************************************************************/
+/*                                                                                  */
+/* AUTHOR  : Simone Daminato                                                        */
+/* DATE    : December 2015                                                          */
+/*                                                                                  */
+/************************************************************************************/
+/*                                                                                  */
+/* Generate data for HTS Labels for italian voices.                                 */
+/*                                                                                  */
+/*                                                                                  */
+/************************************************************************************/
+
+
+/************************************************************************************/
+/*                                                                                  */
+/* Modules used                                                                     */
+/*                                                                                  */
+/************************************************************************************/
+
+#include "hts_data_collector.h"
+#include "phoneset.h"
+
+
+/************************************************************************************/
+/*                                                                                  */
+/* Defines                                                                          */
+/*                                                                                  */
+/************************************************************************************/
+
+#define MAX_PHONE_NAME_LENGTH 8
+#define SELFPARAMETERTYPE SHTSLabelsDataCollectorFeatProc
+
+
+/************************************************************************************/
+/*                                                                                  */
+/* Static variables                                                                 */
+/*                                                                                  */
+/************************************************************************************/
+
+/* SHTSLabelsConfigurableFeatProc class declaration. */
+static SHTSLabelsDataCollectorFeatProcClass HTSLabelsDataCollectorFeatProcClass;
+
+
+/************************************************************************************/
+/*                                                                                  */
+/* Static function prototypes                                                       */
+/*                                                                                  */
+/************************************************************************************/
+
+static sint32 get_stress_level(const SObject *stressFeat, s_erc *error);
+
+static sint32 get_accent_level(const SObject *accentFeat, s_erc *error);
+
+static s_bool segment_is_pause(const SItem *item, s_erc *error);
+
+
+/*
+ * creates the phoneme context data
+ */
+static void create_phone_context(SELFPARAMETERTYPE *self, const SItem *item, s_erc *error);
+
+
+/*
+ * creates the syllable context data
+ */
+static void create_syl_context(SELFPARAMETERTYPE *self, const SItem *item, s_erc *error);
+
+/*
+ * creates the syllable context data in case it is a pause.
+ */
+static void create_syl_context_pause(SELFPARAMETERTYPE *self, const SItem *item, s_erc *error);
+
+/*
+ * creates the word context data
+ */
+static void create_word_context(SELFPARAMETERTYPE *self, const SItem *item, s_erc *error);
+
+/*
+ * creates the word context data in case it is a pause.
+ */
+static void create_word_context_pause(SELFPARAMETERTYPE *self, const SItem *item, s_erc *error);
+
+/*
+ * creates the phrase context data
+ */
+static void create_phrase_context(SELFPARAMETERTYPE *self, const SItem *item, s_erc *error);
+
+/*
+ * creates the phrase context data in case it is a pause.
+ * differs from create_phrase_context in that either next or previous
+ * phone's phrase is used (if prev exists use it, else use next)
+ */
+static void create_phrase_context_pause(SELFPARAMETERTYPE *self, const SItem *item, s_erc *error);
+
+/*
+ * creates the utterance context data
+ */
+static void create_utterance_context(SELFPARAMETERTYPE *self, const SItem *item, s_erc *error);
+
+/*
+ * creates the utterance context data in case it is a pause.
+ */
+static void create_utterance_context_pause(SELFPARAMETERTYPE *self, const SItem *item, s_erc *error);
+
+/*
+ * creates the stress context data
+ */
+static void create_stress_context(SELFPARAMETERTYPE *self, const SItem *item, s_erc *error);
+
+/*
+ * creates the stress context data
+ * Differs from create_stress_context in that previous/next phone's syllable is queried
+ * and not previous/next syllable
+ */
+static void create_stress_context_pause(SELFPARAMETERTYPE *self, const SItem *item, s_erc *error);
+
+/*
+ * creates the accent context data
+ */
+static void create_accent_context(SELFPARAMETERTYPE *self, const SItem *item, s_erc *error);
+
+/*
+ * creates the accent context data
+ * Differs from create_accent_context in that previous/next phone's syllable is queried
+ * and not previous/next syllable
+ */
+static void create_accent_context_pause(SELFPARAMETERTYPE *self, const SItem *item, s_erc *error);
+
+/************************************************************************************/
+/*                                                                                  */
+/* Function implementations                                                         */
+/*                                                                                  */
+/************************************************************************************/
+
+
+S_API s_bool SHTSLabelDataCollectorFeatureIsPresent(const SHTSLabelsDataCollectorFeatProc *self,
+						    const char *name,
+						    s_erc *error)
+{
+	s_bool feat_present;
+
+
+	S_CLR_ERR(error);
+
+	if (self == NULL)
+	{
+		S_CTX_ERR(error, S_ARGERROR,
+					  "SHTSLabelDataCollectorFeatureIsPresent",
+					  "Argument \"self\" is NULL");
+		return FALSE;
+	}
+
+	if (name == NULL)
+	{
+		S_CTX_ERR(error, S_ARGERROR,
+					  "SHTSLabelDataCollectorFeatureIsPresent",
+					  "Argument \"name\" is NULL");
+		return FALSE;
+	}
+
+	feat_present = SMapObjectPresent(self->features, name, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "SHTSLabelDataCollectorFeatureIsPresent",
+				  "Call to \"SMapObjectPresent\" failed"))
+		return FALSE;
+
+	return feat_present;
+}
+
+S_API const SObject *SHTSLabelDataCollectorGetFeature(const SHTSLabelsDataCollectorFeatProc *self, const char *name,
+						      s_erc *error)
+{
+	const SObject *object;
+
+
+	S_CLR_ERR(error);
+
+	if (self == NULL)
+	{
+		S_CTX_ERR(error, S_ARGERROR,
+					"SHTSLabelDataCollectorGetFeature",
+					"Argument \"self\" is NULL");
+		return NULL;
+	}
+
+	if (name == NULL)
+	{
+		S_CTX_ERR(error, S_ARGERROR,
+					"SHTSLabelDataCollectorGetFeature",
+					"Argument \"name\" is NULL");
+		return NULL;
+	}
+
+	object = SMapGetObject(self->features, name, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "SHTSLabelDataCollectorGetFeature",
+				  "Call to \"SMapGetObject\" failed"))
+		return NULL;
+
+	return object;
+}
+
+S_API void SHTSLabelDataCollectorSetFeature(SHTSLabelsDataCollectorFeatProc *self, const char *name,
+					    const SObject *object, s_erc *error)
+{
+	S_CLR_ERR(error);
+
+	if (self == NULL)
+	{
+		S_CTX_ERR(error, S_ARGERROR,
+					"SHTSLabelDataCollectorSetFeature",
+					"Argument \"self\" is NULL");
+		return;
+	}
+
+	if (name == NULL)
+	{
+		S_CTX_ERR(error, S_ARGERROR,
+					"SHTSLabelDataCollectorSetFeature",
+					"Argument \"name\" is NULL");
+		return;
+	}
+
+	if (object == NULL)
+	{
+		S_CTX_ERR(error, S_ARGERROR,
+					"SHTSLabelDataCollectorSetFeature",
+					"Argument \"object\" is NULL");
+		return;
+	}
+
+	SMapSetObject(self->features, name, object, error);
+	S_CHK_ERR(error, S_CONTERR,
+				"SHTSLabelDataCollectorSetFeature",
+				"Call to \"SMapSetObject\" failed");
+}
+
+
+S_API void SHTSLabelDataCollectorDelFeature(SHTSLabelsDataCollectorFeatProc *self, const char *name,
+					    s_erc *error)
+{
+	s_bool feat_present;
+
+
+	S_CLR_ERR(error);
+
+	if (self == NULL)
+	{
+		S_CTX_ERR(error, S_ARGERROR,
+					"SHTSLabelDataCollectorDelFeature",
+					"Argument \"self\" is NULL");
+		return;
+	}
+
+	if (name == NULL)
+	{
+		S_CTX_ERR(error, S_ARGERROR,
+					"SHTSLabelDataCollectorDelFeature",
+					"Argument \"name\" is NULL");
+		return;
+	}
+
+	feat_present = SHTSLabelDataCollectorFeatureIsPresent(self, name, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				"SHTSLabelDataCollectorDelFeature",
+				"Call to \"SUttProcessorFeatPresent\" failed"))
+		return;
+
+	if (feat_present)
+	{
+		SMapObjectDelete(self->features, name, error);
+		S_CHK_ERR(error, S_CONTERR,
+					"SHTSLabelDataCollectorDelFeature",
+					"Call to \"SMapObjectDelete\" failed");
+	}
+}
+
+
+
+/************************************************************************************/
+/*                                                                                  */
+/* Plug-in class registration/free                                                  */
+/*                                                                                  */
+/************************************************************************************/
+
+
+/* local functions to register and free classes */
+S_LOCAL void _s_hts_labels_configurable_class_reg(s_erc *error)
+{
+	S_CLR_ERR(error);
+	s_class_reg(S_OBJECTCLASS(&HTSLabelsDataCollectorFeatProcClass), error);
+	S_CHK_ERR(error, S_CONTERR,
+			  "_s_hts_labels_configurable_class_reg",
+			  "Failed to register SHTSLabelsConfigurableFeatProc");
+}
+
+
+S_LOCAL void _s_hts_labels_configurable_class_free(s_erc *error)
+{
+	S_CLR_ERR(error);
+	s_class_free(S_OBJECTCLASS(&HTSLabelsDataCollectorFeatProcClass), error);
+	S_CHK_ERR(error, S_CONTERR,
+			  "_s_hts_labels_configurable_class_free",
+			  "Failed to free SHTSLabelsConfigurableFeatProc");
+}
+
+
+/************************************************************************************/
+/*                                                                                  */
+/* Static function implementations                                                  */
+/*                                                                                  */
+/************************************************************************************/
+
+/*
+ * this is for Georg's stress levels:
+ * unstressed : 0
+ * primary    : 1
+ * secondary  : 2
+ */
+static sint32 get_stress_level(const SObject *stressFeat, s_erc *error)
+{
+	const char *stress_feat;
+
+
+	S_CLR_ERR(error);
+	stress_feat = SObjectGetString(stressFeat, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "get_stress_level",
+				  "Call to \"SObjectGetString\" failed"))
+		return 0;
+
+	if (s_strcmp(stress_feat, "unstressed", error) == 0)
+	{
+		S_CHK_ERR(error, S_CONTERR,
+				  "get_stress_level",
+				  "Call to \"s_strcmp\" failed");
+		return 0;
+	}
+
+	if (s_strcmp(stress_feat, "primary", error) == 0)
+	{
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "get_stress_level",
+					  "Call to \"s_strcmp\" failed"))
+			return 0;
+
+		return 1;
+	}
+
+	if (s_strcmp(stress_feat, "secondary", error) == 0)
+	{
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "get_stress_level",
+					  "Call to \"s_strcmp\" failed"))
+			return 0;
+
+		return 2;
+	}
+
+	return 0; /* unknown */
+}
+
+
+/*
+ * this is for Georg's accent levels:
+ * unaccented : 0
+ * accented   : 1
+ */
+static sint32 get_accent_level(const SObject *accentFeat, s_erc *error)
+{
+	const char *accent_feat;
+
+
+	S_CLR_ERR(error);
+	accent_feat = SObjectGetString(accentFeat, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "get_accent_level",
+				  "Call to \"SObjectGetString\" failed"))
+		return 0;
+
+	if (s_strcmp(accent_feat, "unaccented", error) == 0)
+	{
+		S_CHK_ERR(error, S_CONTERR,
+				  "get_accent_level",
+				  "Call to \"s_strcmp\" failed");
+		return 0;
+	}
+
+	if (s_strcmp(accent_feat, "accented", error) == 0)
+	{
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "get_accent_level",
+					  "Call to \"s_strcmp\" failed"))
+			return 0;
+
+		return 1;
+	}
+
+	return 0; /* unknown */
+}
+
+
+static s_bool segment_is_pause(const SItem *item, s_erc *error)
+{
+	const SVoice *voice;
+	const SPhoneset *phoneset;
+	s_bool is_pause;
+
+
+	/* we cannot use _get_phoneset (as in syllable_vowel processor)
+	 * here because the pause items do not have tokens
+	 */
+	S_CLR_ERR(error);
+
+	voice = SItemVoice(item, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "segment_is_pause",
+				  "Call to \"SItemVoice\" failed"))
+		return FALSE;
+
+	if (voice == NULL)
+	{
+		S_CTX_ERR(error, S_FAILURE,
+				  "segment_is_pause",
+				  "Item voice is NULL, voice is required to get phoneset");
+		return FALSE;
+	}
+
+	phoneset = S_PHONESET(SVoiceGetData(voice, "phoneset", error));
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "segment_is_pause",
+				  "Call to \"SVoiceGetData\" failed"))
+		return FALSE;
+
+	if (phoneset == NULL)
+	{
+		S_CTX_ERR(error, S_FAILURE,
+				  "segment_is_pause",
+				  "Phoneset is NULL, phoneset is required to get silence phone");
+		return FALSE;
+	}
+
+	is_pause = S_PHONESET_CALL(phoneset, phone_has_feature)(phoneset,
+															SItemGetName(item, error),
+															"pause",
+															error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "segment_is_pause",
+				  "Call to \"phone_has_feature/SItemGetName\" failed"))
+		return FALSE;
+
+	return is_pause;
+}
+
+
+/*
+ * creates the phoneme context data
+ */
+static void create_phone_context(SELFPARAMETERTYPE *self, const SItem *item, s_erc *error)
+{
+	const SObject *featPath;
+
+	S_CLR_ERR(error);
+
+	/* p.p.name */
+	featPath = SItemPathToFeature(item, "p.p.name", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "create_phone_context",
+				  "Call to \"SItemPathToFeature\" failed"))
+		return;
+
+	if (featPath != NULL)
+	{
+		SHTSLabelDataCollectorSetFeature(self, "p.p.phone", featPath, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_phone_context",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			return;
+
+	}
+
+	/* p.name */
+	featPath = SItemPathToFeature(item, "p.name", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "create_phone_context",
+				  "Call to \"SItemPathToFeature\" failed"))
+		return;
+
+	if (featPath != NULL)
+	{
+		SHTSLabelDataCollectorSetFeature(self, "p.phone", featPath, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_phone_context",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			return;
+	}
+
+	/* name */
+	featPath = SItemPathToFeature(item, "name", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "create_phone_context",
+				  "Call to \"SItemGetName\" failed"))
+		return;
+
+	if (featPath != NULL)
+	{
+		SHTSLabelDataCollectorSetFeature(self, "phone", featPath, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_phone_context",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			return;
+	}
+
+	/* n.name */
+	featPath = SItemPathToFeature(item, "n.name", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "create_phone_context",
+				  "Call to \"SItemPathToFeature\" failed"))
+		return;
+
+	if (featPath != NULL)
+	{
+		SHTSLabelDataCollectorSetFeature(self, "n.phone", featPath, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_phone_context",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			return;
+	}
+
+	/* n.n.name */
+	featPath = SItemPathToFeature(item, "n.n.name", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "create_phone_context",
+				  "Call to \"SItemPathToFeature\" failed"))
+		return;
+
+	if (featPath != NULL)
+	{
+		SHTSLabelDataCollectorSetFeature(self, "n.n.phone", featPath, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_phone_context",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			return;
+	}
+}
+
+
+/*
+ * creates the syllable context data
+ */
+static void create_syl_context(SELFPARAMETERTYPE* self, const SItem* item, s_erc* error)
+{
+	const SObject *dFeat;
+
+	S_CLR_ERR(error);
+
+	/* pos from start */
+	dFeat = SItemPathToFeatProc(item, "segment_pos_syl", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "create_syl_context",
+				  "Call to \"SItemPathToFeatProc\" failed"))
+		goto syl_context_cleanup;
+
+	if (dFeat != NULL)
+	{
+		SHTSLabelDataCollectorSetFeature(self, "phones.from.syl.start", dFeat, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_syl_context",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			goto syl_context_cleanup;
+
+		S_DELETE(dFeat, "create_syl_context", error);
+	}
+
+	/* pos from end */
+	dFeat = SItemPathToFeatProc(item, "segment_pos_syl_rev", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "create_syl_context",
+				  "Call to \"SItemPathToFeatProc\" failed"))
+		goto syl_context_cleanup;
+
+	if (dFeat != NULL)
+	{
+		SHTSLabelDataCollectorSetFeature(self, "phones.from.syl.end", dFeat, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_syl_context",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			goto syl_context_cleanup;
+
+		S_DELETE(dFeat, "create_syl_context", error);
+	}
+
+	/* number of phonemes in the previous syllable */
+	dFeat = SItemPathToFeatProc(item, "R:SylStructure.parent.R:Syllable.p.syllable_num_phones", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "create_syl_context",
+				  "Call to \"SItemPathToFeatProc\" failed"))
+		goto syl_context_cleanup;
+
+	if (dFeat != NULL)
+	{
+		SHTSLabelDataCollectorSetFeature(self, "p.syl.phones.num", dFeat, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_syl_context",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			goto syl_context_cleanup;
+
+		S_DELETE(dFeat, "create_syl_context", error);
+	}
+
+	/* number of phonemes in this syllable */
+	dFeat = SItemPathToFeatProc(item, "R:SylStructure.parent.R:Syllable.syllable_num_phones", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "create_syl_context",
+				  "Call to \"SItemPathToFeatProc\" failed"))
+		goto syl_context_cleanup;
+
+	if (dFeat != NULL)
+	{
+		SHTSLabelDataCollectorSetFeature(self, "syl.phones.num", dFeat, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_syl_context",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			goto syl_context_cleanup;
+
+		S_DELETE(dFeat, "create_syl_context", error);
+	}
+
+	/* number of phonemes in the next syllable */
+	dFeat = SItemPathToFeatProc(item, "R:SylStructure.parent.R:Syllable.n.syllable_num_phones", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "create_syl_context",
+				  "Call to \"SItemPathToFeatProc\" failed"))
+		goto syl_context_cleanup;
+
+	if (dFeat != NULL)
+	{
+		SHTSLabelDataCollectorSetFeature(self, "n.syl.phones.num", dFeat, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_syl_context",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			goto syl_context_cleanup;
+
+		S_DELETE(dFeat, "create_syl_context", error);
+	}
+
+	/* name of the vowel in the current syllable */
+	dFeat = SItemPathToFeatProc(item, "R:SylStructure.parent.R:Syllable.syllable_vowel", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "create_syl_context",
+				  "Call to \"SItemPathToFeatProc\" failed"))
+		goto syl_context_cleanup;
+
+	if (dFeat != NULL)
+	{
+		SHTSLabelDataCollectorSetFeature(self, "vowel.name", dFeat, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_syl_context",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			goto syl_context_cleanup;
+
+		S_DELETE(dFeat, "create_syl_context", error);
+	}
+
+	return;
+
+syl_context_cleanup:
+	S_DELETE(dFeat, "create_syl_context", error);
+}
+
+/*
+ * creates the syllable context data in case of a pause
+ */
+static void create_syl_context_pause(SELFPARAMETERTYPE* self, const SItem* item, s_erc* error)
+{
+	const SObject *dFeat;
+
+	S_CLR_ERR(error);
+
+	/* pos from start and end doesn't make sense*/
+
+	/* number of phonemes in the previous syllable */
+	dFeat = SItemPathToFeatProc(item, "p.R:SylStructure.parent.R:Syllable.syllable_num_phones", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "create_syl_context_pause",
+				  "Call to \"SItemPathToFeatProc\" failed"))
+		goto syl_context_pause_cleanup;
+
+	if (dFeat != NULL)
+	{
+		SHTSLabelDataCollectorSetFeature(self, "p.syl.phones.num", dFeat, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_syl_context_pause",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			goto syl_context_pause_cleanup;
+
+		S_DELETE(dFeat, "create_syl_context_pause", error);
+	}
+
+	/* number of phonemes in this syllable: not in pause */
+
+	/* number of phonemes in the next syllable */
+	dFeat = SItemPathToFeatProc(item, "n.R:SylStructure.parent.R:Syllable.syllable_num_phones", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "create_syl_context_pause",
+				  "Call to \"SItemPathToFeatProc\" failed"))
+		goto syl_context_pause_cleanup;
+
+	if (dFeat != NULL)
+	{
+		SHTSLabelDataCollectorSetFeature(self, "n.syl.phones.num", dFeat, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_syl_context_pause",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			goto syl_context_pause_cleanup;
+
+		S_DELETE(dFeat, "create_syl_context_pause", error);
+	}
+
+	return;
+
+syl_context_pause_cleanup:
+	S_DELETE(dFeat, "create_syl_context_pause", error);
+}
+
+/*
+ * creates the word context data
+ */
+static void create_word_context(SELFPARAMETERTYPE *self, const SItem *item, s_erc *error)
+{
+	const SObject *dFeat;
+
+	S_CLR_ERR(error);
+
+	/* number of syllables before this one */
+	dFeat = SItemPathToFeatProc(item, "R:SylStructure.parent.R:Syllable.syllable_pos_word", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "create_word_context",
+				  "Call to \"SItemPathToFeatProc\" failed"))
+		goto word_context_cleanup;
+
+	if (dFeat != NULL)
+	{
+		SHTSLabelDataCollectorSetFeature(self, "syls.from.word.start", dFeat, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_word_context",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			goto word_context_cleanup;
+
+		S_DELETE(dFeat, "create_word_context", error);
+	}
+
+	/* number of syllables after this one */
+	dFeat = SItemPathToFeatProc(item, "R:SylStructure.parent.R:Syllable.syllable_pos_word_rev", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "create_word_context",
+				  "Call to \"SItemPathToFeatProc\" failed"))
+		goto word_context_cleanup;
+
+	if (dFeat != NULL)
+	{
+		SHTSLabelDataCollectorSetFeature(self, "syls.from.word.end", dFeat, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_word_context",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			goto word_context_cleanup;
+
+		S_DELETE(dFeat, "create_word_context", error);
+	}
+
+	/* guess-part-of-speech of previous word */
+	dFeat = SItemPathToFeatProc(item, "R:SylStructure.parent.parent.R:Word.p.pos", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "create_word_context",
+				  "Call to \"SItemPathToFeatProc\" failed"))
+		goto word_context_cleanup;
+
+	if (dFeat != NULL)
+	{
+		SHTSLabelDataCollectorSetFeature(self, "p.word.gpos", dFeat, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_word_context",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			goto word_context_cleanup;
+
+		S_DELETE(dFeat, "create_word_context", error);
+	}
+
+	/* guess-part-of-speech of this word */
+	dFeat = SItemPathToFeatProc(item, "R:SylStructure.parent.parent.R:Word.pos", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "create_word_context",
+				  "Call to \"SItemPathToFeatProc\" failed"))
+		goto word_context_cleanup;
+
+	if (dFeat != NULL)
+	{
+		SHTSLabelDataCollectorSetFeature(self, "word.gpos", dFeat, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_word_context",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			goto word_context_cleanup;
+
+		S_DELETE(dFeat, "create_word_context", error);
+	}
+
+	/* guess-part-of-speech of next word */
+	dFeat = SItemPathToFeatProc(item, "R:SylStructure.parent.parent.R:Word.n.pos", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "create_word_context",
+				  "Call to \"SItemPathToFeatProc\" failed"))
+		goto word_context_cleanup;
+
+	if (dFeat != NULL)
+	{
+		SHTSLabelDataCollectorSetFeature(self, "n.word.gpos", dFeat, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_word_context",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			goto word_context_cleanup;
+
+		S_DELETE(dFeat, "create_word_context", error);
+	}
+
+	/* the number of syllables in the previous word */
+	dFeat = SItemPathToFeatProc(item, "R:SylStructure.parent.parent.R:Word.p.word_num_syls", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "create_word_context",
+				  "Call to \"SItemPathToFeatProc\" failed"))
+		goto word_context_cleanup;
+
+	if (dFeat != NULL)
+	{
+		SHTSLabelDataCollectorSetFeature(self, "p.word.syls.num", dFeat, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_word_context",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			goto word_context_cleanup;
+
+		S_DELETE(dFeat, "create_word_context", error);
+	}
+
+	/* the number of syllables in this word */
+	dFeat = SItemPathToFeatProc(item, "R:SylStructure.parent.parent.R:Word.word_num_syls", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "create_word_context",
+				  "Call to \"SItemPathToFeatProc\" failed"))
+		goto word_context_cleanup;
+
+	if (dFeat != NULL)
+	{
+		SHTSLabelDataCollectorSetFeature(self, "word.syls.num", dFeat, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_word_context",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			goto word_context_cleanup;
+
+		S_DELETE(dFeat, "create_word_context", error);
+	}
+
+	/* the number of syllables in the next word */
+	dFeat = SItemPathToFeatProc(item, "R:SylStructure.parent.parent.R:Word.n.word_num_syls", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "create_word_context",
+				  "Call to \"SItemPathToFeatProc\" failed"))
+		goto word_context_cleanup;
+
+	if (dFeat != NULL)
+	{
+		SHTSLabelDataCollectorSetFeature(self, "n.word.syls.num", dFeat, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_word_context",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			goto word_context_cleanup;
+
+		S_DELETE(dFeat, "create_word_context", error);
+	}
+
+word_context_cleanup:
+	S_DELETE(dFeat, "create_word_context", error);
+}
+
+/*
+ * creates the word context data in case it is a pause.
+ */
+static void create_word_context_pause(SELFPARAMETERTYPE *self, const SItem *item, s_erc *error)
+{
+	const SObject *dFeat;
+
+	S_CLR_ERR(error);
+
+	/* guess-part-of-speech of previous word */
+	dFeat = SItemPathToFeatProc(item, "p.R:SylStructure.parent.parent.R:Word.pos", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "create_word_context_pause",
+				  "Call to \"SItemPathToFeatProc\" failed"))
+		goto word_context_pause_cleanup;
+
+	if (dFeat != NULL)
+	{
+		SHTSLabelDataCollectorSetFeature(self, "p.word.gpos", dFeat, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_word_context_pause",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			goto word_context_pause_cleanup;
+
+		S_DELETE(dFeat, "create_word_context_pause", error);
+	}
+
+	/* guess-part-of-speech of this word: not possible */
+
+	/* guess-part-of-speech of next word */
+	dFeat = SItemPathToFeatProc(item, "n.R:SylStructure.parent.parent.R:Word.pos", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "create_word_context_pause",
+				  "Call to \"SItemPathToFeatProc\" failed"))
+		goto word_context_pause_cleanup;
+
+	if (dFeat != NULL)
+	{
+		SHTSLabelDataCollectorSetFeature(self, "n.word.gpos", dFeat, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_word_context_pause",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			goto word_context_pause_cleanup;
+
+		S_DELETE(dFeat, "create_word_context_pause", error);
+	}
+
+	/* the number of syllables in the previous word */
+	dFeat = SItemPathToFeatProc(item, "p.R:SylStructure.parent.parent.R:Word.word_num_syls", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "create_word_context_pause",
+				  "Call to \"SItemPathToFeatProc\" failed"))
+		goto word_context_pause_cleanup;
+
+	if (dFeat != NULL)
+	{
+		SHTSLabelDataCollectorSetFeature(self, "p.word.syls.num", dFeat, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_word_context_pause",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			goto word_context_pause_cleanup;
+
+		S_DELETE(dFeat, "create_word_context_pause", error);
+	}
+
+	/* the number of syllables in this word: not possible */
+
+	/* the number of syllables in the next word */
+	dFeat = SItemPathToFeatProc(item, "n.R:SylStructure.parent.parent.R:Word.word_num_syls", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "create_word_context_pause",
+				  "Call to \"SItemPathToFeatProc\" failed"))
+		goto word_context_pause_cleanup;
+
+	if (dFeat != NULL)
+	{
+		SHTSLabelDataCollectorSetFeature(self, "n.word.syls.num", dFeat, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_word_context_pause",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			goto word_context_pause_cleanup;
+
+		S_DELETE(dFeat, "create_word_context_pause", error);
+	}
+
+word_context_pause_cleanup:
+	S_DELETE(dFeat, "create_word_context_pause", error);
+}
+
+/*
+ * creates the phrase context data
+ */
+static void create_phrase_context(SELFPARAMETERTYPE *self, const SItem *item, s_erc *error)
+{
+	const SObject *dFeat;
+
+	S_CLR_ERR(error);
+
+	/* number of syllables before this one */
+	dFeat = SItemPathToFeatProc(item, "R:SylStructure.parent.R:Syllable.syllable_pos_phrase", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "create_phrase_context",
+				  "Call to \"SItemPathToFeatProc\" failed"))
+		goto phrase_context_cleanup;
+
+	if (dFeat != NULL)
+	{
+		SHTSLabelDataCollectorSetFeature(self, "syls.from.phrase.start", dFeat, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_phrase_context",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			goto phrase_context_cleanup;
+
+		S_DELETE(dFeat, "create_phrase_context", error);
+	}
+
+	/* number of syllables after this one */
+	dFeat = SItemPathToFeatProc(item, "R:SylStructure.parent.R:Syllable.syllable_pos_phrase_rev", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "create_phrase_context",
+				  "Call to \"SItemPathToFeatProc\" failed"))
+		goto phrase_context_cleanup;
+
+	if (dFeat != NULL)
+	{
+		SHTSLabelDataCollectorSetFeature(self, "syls.from.phrase.end", dFeat, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_phrase_context",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			goto phrase_context_cleanup;
+
+		S_DELETE(dFeat, "create_phrase_context", error);
+	}
+
+	/* number of words before this in phrase */
+	dFeat = SItemPathToFeatProc(item, "R:SylStructure.parent.parent.R:Word.word_pos_phrase", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "create_phrase_context",
+				  "Call to \"SItemPathToFeatProc\" failed"))
+		goto phrase_context_cleanup;
+
+	if (dFeat != NULL)
+	{
+		SHTSLabelDataCollectorSetFeature(self, "words.from.phrase.start", dFeat, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_phrase_context",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			goto phrase_context_cleanup;
+
+		S_DELETE(dFeat, "create_phrase_context", error);
+	}
+
+	/* number of words after this in phrase */
+	dFeat = SItemPathToFeatProc(item, "R:SylStructure.parent.parent.R:Word.word_pos_phrase_rev", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "create_phrase_context",
+				  "Call to \"SItemPathToFeatProc\" failed"))
+		goto phrase_context_cleanup;
+
+	if (dFeat != NULL)
+	{
+		SHTSLabelDataCollectorSetFeature(self, "words.from.phrase.end", dFeat, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_phrase_context",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			goto phrase_context_cleanup;
+
+		S_DELETE(dFeat, "create_phrase_context", error);
+	}
+
+	/* the number of content words before the current word in the current phrase */
+	dFeat = SItemPathToFeatProc(item, "R:SylStructure.parent.parent.R:Word.word_content_in", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "create_phrase_context",
+				  "Call to \"SItemPathToFeatProc\" failed"))
+		goto phrase_context_cleanup;
+
+	if (dFeat != NULL)
+	{
+		SHTSLabelDataCollectorSetFeature(self, "content.words.before", dFeat, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_phrase_context",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			goto phrase_context_cleanup;
+
+		S_DELETE(dFeat, "create_phrase_context", error);
+	}
+
+	/* the number of content words after the current word in the current phrase */
+	dFeat = SItemPathToFeatProc(item, "R:SylStructure.parent.parent.R:Word.word_content_out", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "create_phrase_context",
+				  "Call to \"SItemPathToFeatProc\" failed"))
+		goto phrase_context_cleanup;
+
+	if (dFeat != NULL)
+	{
+		SHTSLabelDataCollectorSetFeature(self, "content.words.after", dFeat, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_phrase_context",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			goto phrase_context_cleanup;
+
+		S_DELETE(dFeat, "create_phrase_context", error);
+	}
+
+	/* the number of words from the previous content word to the current word */
+	dFeat = SItemPathToFeatProc(item, "R:SylStructure.parent.parent.R:Word.word_content_all_in", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "create_phrase_context",
+				  "Call to \"SItemPathToFeatProc\" failed"))
+		goto phrase_context_cleanup;
+
+	if (dFeat != NULL)
+	{
+		SHTSLabelDataCollectorSetFeature(self, "words.from.prev.cont", dFeat, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_phrase_context",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			goto phrase_context_cleanup;
+
+		S_DELETE(dFeat, "create_phrase_context", error);
+	}
+
+	/* the number of words from the current word to the next content word */
+	dFeat = SItemPathToFeatProc(item, "R:SylStructure.parent.parent.R:Word.word_content_all_out", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "create_phrase_context",
+				  "Call to \"SItemPathToFeatProc\" failed"))
+		goto phrase_context_cleanup;
+
+	if (dFeat != NULL)
+	{
+		SHTSLabelDataCollectorSetFeature(self, "words.from.next.cont", dFeat, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_phrase_context",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			goto phrase_context_cleanup;
+
+		S_DELETE(dFeat, "create_phrase_context", error);
+	}
+
+	/* the number of syllables in the previous phrase */
+	dFeat = SItemPathToFeatProc(item, "R:SylStructure.parent.parent.R:Phrase.parent.p.phrase_num_syls", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "create_phrase_context",
+				  "Call to \"SItemPathToFeatProc\" failed"))
+		goto phrase_context_cleanup;
+
+	if (dFeat != NULL)
+	{
+		SHTSLabelDataCollectorSetFeature(self, "p.phrase.syls.num", dFeat, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_phrase_context",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			goto phrase_context_cleanup;
+
+		S_DELETE(dFeat, "create_phrase_context", error);
+	}
+
+	/* the number of syllables in this phrase */
+	dFeat = SItemPathToFeatProc(item, "R:SylStructure.parent.parent.R:Phrase.parent.phrase_num_syls", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "create_phrase_context",
+				  "Call to \"SItemPathToFeatProc\" failed"))
+		goto phrase_context_cleanup;
+
+	if (dFeat != NULL)
+	{
+		SHTSLabelDataCollectorSetFeature(self, "phrase.syls.num", dFeat, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_phrase_context",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			goto phrase_context_cleanup;
+
+		S_DELETE(dFeat, "create_phrase_context", error);
+	}
+
+	/* the number of syllables in the next phrase */
+	dFeat = SItemPathToFeatProc(item, "R:SylStructure.parent.parent.R:Phrase.parent.n.phrase_num_syls", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "create_phrase_context",
+				  "Call to \"SItemPathToFeatProc\" failed"))
+		goto phrase_context_cleanup;
+
+	if (dFeat != NULL)
+	{
+		SHTSLabelDataCollectorSetFeature(self, "n.phrase.syls.num", dFeat, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_phrase_context",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			goto phrase_context_cleanup;
+
+		S_DELETE(dFeat, "create_phrase_context", error);
+	}
+
+	/* the number of words in the previous phrase */
+	dFeat = SItemPathToFeatProc(item, "R:SylStructure.parent.parent.R:Phrase.parent.p.phrase_num_words", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "create_phrase_context",
+				  "Call to \"SItemPathToFeatProc\" failed"))
+		goto phrase_context_cleanup;
+
+	if (dFeat != NULL)
+	{
+		SHTSLabelDataCollectorSetFeature(self, "p.phrase.words.num", dFeat, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_phrase_context",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			goto phrase_context_cleanup;
+
+		S_DELETE(dFeat, "create_phrase_context", error);
+	}
+
+	/* the number of words in this phrase */
+	dFeat = SItemPathToFeatProc(item, "R:SylStructure.parent.parent.R:Phrase.parent.phrase_num_words", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "create_phrase_context",
+				  "Call to \"SItemPathToFeatProc\" failed"))
+		goto phrase_context_cleanup;
+
+	if (dFeat != NULL)
+	{
+		SHTSLabelDataCollectorSetFeature(self, "phrase.words.num", dFeat, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_phrase_context",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			goto phrase_context_cleanup;
+
+		S_DELETE(dFeat, "create_phrase_context", error);
+	}
+
+	/* the number of words in the next phrase */
+	dFeat = SItemPathToFeatProc(item, "R:SylStructure.parent.parent.R:Phrase.parent.n.phrase_num_words", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "create_phrase_context",
+				  "Call to \"SItemPathToFeatProc\" failed"))
+		goto phrase_context_cleanup;
+
+	if (dFeat != NULL)
+	{
+		SHTSLabelDataCollectorSetFeature(self, "n.phrase.words.num", dFeat, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_phrase_context",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			goto phrase_context_cleanup;
+
+		S_DELETE(dFeat, "create_phrase_context", error);
+	}
+
+	/* TOBI endtone of the current phrase */
+	/* item, syllable, word, phrase, last word, last syllable */
+	dFeat = SItemPathToFeature(item, "R:SylStructure.parent.parent.R:Phrase.parent.daughtern.R:SylStructure.daughtern.endtone",
+								error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "create_phrase_context",
+				  "Call to \"SItemPathToFeatProc\" failed"))
+		goto phrase_context_cleanup;
+
+	if (dFeat != NULL)
+	{
+		SHTSLabelDataCollectorSetFeature(self, "tobi.endtone", dFeat, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_phrase_context",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			goto phrase_context_cleanup;
+
+		S_DELETE(dFeat, "create_phrase_context", error);
+	}
+
+phrase_context_cleanup:
+	S_DELETE(dFeat, "create_phrase_context", error);
+}
+
+/*
+ * creates the phrase context data in case it is a pause.
+ * differs from create_phrase_context in that either next or previous
+ * phone's phrase is used (if prev exists use it, else use next)
+ */
+static void create_phrase_context_pause(SELFPARAMETERTYPE *self, const SItem *item, s_erc *error)
+{
+	const SObject *dFeat;
+	SItem *tmp;
+	s_bool use_next;
+
+	S_CLR_ERR(error);
+
+	tmp = SItemPrev(item, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "create_phrase_context_pause",
+				  "Call to \"SItemPrev\" failed"))
+		return;
+
+	if (tmp != NULL)
+		use_next = FALSE;
+	else
+		use_next = TRUE;
+
+	/* the number of syllables in the previous phrase */
+	dFeat = SItemPathToFeatProc(item, "p.R:SylStructure.parent.parent.R:Phrase.parent.phrase_num_syls", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "create_phrase_context_pause",
+				  "Call to \"SItemPathToFeatProc\" failed"))
+		goto phrase_context_pause_cleanup;
+
+	if (dFeat != NULL)
+	{
+		SHTSLabelDataCollectorSetFeature(self, "p.phrase.syls.num", dFeat, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_phrase_context_pause",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			goto phrase_context_pause_cleanup;
+
+		S_DELETE(dFeat, "create_phrase_context_pause", error);
+	}
+
+	/* the number of syllables in this phrase */
+	if (use_next)
+	{
+		dFeat = SItemPathToFeatProc(item, "n.R:SylStructure.parent.parent.R:Phrase.parent.phrase_num_syls",
+								   error);
+	}
+	else
+	{
+		dFeat = SItemPathToFeatProc(item, "p.R:SylStructure.parent.parent.R:Phrase.parent.phrase_num_syls",
+								   error);
+	}
+	dFeat = SItemPathToFeatProc(item, "R:SylStructure.parent.parent.R:Phrase.parent.phrase_num_syls", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "create_phrase_context_pause",
+				  "Call to \"SItemPathToFeatProc\" failed"))
+		goto phrase_context_pause_cleanup;
+
+	if (dFeat != NULL)
+	{
+		SHTSLabelDataCollectorSetFeature(self, "phrase.syls.num", dFeat, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_phrase_context_pause",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			goto phrase_context_pause_cleanup;
+
+		S_DELETE(dFeat, "create_phrase_context_pause", error);
+	}
+
+	/* the number of syllables in the next phrase */
+	dFeat = SItemPathToFeatProc(item, "n.R:SylStructure.parent.parent.R:Phrase.parent.phrase_num_syls", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "create_phrase_context_pause",
+				  "Call to \"SItemPathToFeatProc\" failed"))
+		goto phrase_context_pause_cleanup;
+
+	if (dFeat != NULL)
+	{
+		SHTSLabelDataCollectorSetFeature(self, "n.phrase.syls.num", dFeat, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_phrase_context_pause",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			goto phrase_context_pause_cleanup;
+
+		S_DELETE(dFeat, "create_phrase_context_pause", error);
+	}
+
+	/* the number of words in the previous phrase */
+	dFeat = SItemPathToFeatProc(item, "p.R:SylStructure.parent.parent.R:Phrase.parent.phrase_num_words", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "create_phrase_context_pause",
+				  "Call to \"SItemPathToFeatProc\" failed"))
+		goto phrase_context_pause_cleanup;
+
+	if (dFeat != NULL)
+	{
+		SHTSLabelDataCollectorSetFeature(self, "p.phrase.words.num", dFeat, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_phrase_context_pause",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			goto phrase_context_pause_cleanup;
+
+		S_DELETE(dFeat, "create_phrase_context_pause", error);
+	}
+
+	/* the number of words in the this phrase */
+	if (use_next)
+	{
+		dFeat = SItemPathToFeatProc(item, "n.R:SylStructure.parent.parent.R:Phrase.parent.phrase_num_words",
+								   error);
+	}
+	else
+	{
+		dFeat = SItemPathToFeatProc(item, "p.R:SylStructure.parent.parent.R:Phrase.parent.phrase_num_words",
+								   error);
+	}
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "create_phrase_context_pause",
+				  "Call to \"SItemPathToFeatProc\" failed"))
+		goto phrase_context_pause_cleanup;
+
+	if (dFeat != NULL)
+	{
+		SHTSLabelDataCollectorSetFeature(self, "phrase.words.num", dFeat, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_phrase_context_pause",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			goto phrase_context_pause_cleanup;
+
+		S_DELETE(dFeat, "create_phrase_context_pause", error);
+	}
+
+	/* the number of words in the next phrase */
+	dFeat = SItemPathToFeatProc(item, "n.R:SylStructure.parent.parent.R:Phrase.parent.phrase_num_words", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "create_phrase_context_pause",
+				  "Call to \"SItemPathToFeatProc\" failed"))
+		goto phrase_context_pause_cleanup;
+
+	if (dFeat != NULL)
+	{
+		SHTSLabelDataCollectorSetFeature(self, "n.phrase.words.num", dFeat, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_phrase_context_pause",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			goto phrase_context_pause_cleanup;
+
+		S_DELETE(dFeat, "create_phrase_context_pause", error);
+	}
+
+	/* TOBI endtone of the current phrase */
+	/* item, syllable, word, phrase, last word, last syllable */
+	if (use_next)
+	{
+		dFeat = SItemPathToFeature(item, "n.R:SylStructure.parent.parent.R:Phrase.parent.daughtern.R:SylStructure.daughtern.endtone",
+									error);
+	}
+	else
+	{
+		dFeat = SItemPathToFeature(item, "p.R:SylStructure.parent.parent.R:Phrase.parent.daughtern.R:SylStructure.daughtern.endtone",
+									error);
+	}
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "create_phrase_context_pause",
+				  "Call to \"SItemPathToFeatProc\" failed"))
+		goto phrase_context_pause_cleanup;
+
+	if (dFeat != NULL)
+	{
+		SHTSLabelDataCollectorSetFeature(self, "tobi.endtone", dFeat, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_phrase_context_pause",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			goto phrase_context_pause_cleanup;
+
+		S_DELETE(dFeat, "create_phrase_context_pause", error);
+	}
+
+phrase_context_pause_cleanup:
+	S_DELETE(dFeat, "create_phrase_context_pause", error);
+}
+
+/*
+ * creates the utterance context data
+ */
+static void create_utterance_context(SELFPARAMETERTYPE *self, const SItem *item, s_erc *error)
+{
+	const SObject *dFeat;
+
+	S_CLR_ERR(error);
+
+	/* number of phrases before this in utterance */
+	dFeat = SItemPathToFeatProc(item, "R:SylStructure.parent.parent.R:Phrase.parent.phrase_pos_utt", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "create_utterance_context",
+				  "Call to \"SItemPathToFeatProc\" failed"))
+		goto create_utterance_context_cleanup;
+
+	if (dFeat != NULL)
+	{
+		SHTSLabelDataCollectorSetFeature(self, "phrases.from.utt.start", dFeat, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_utterance_context",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			goto create_utterance_context_cleanup;
+
+		S_DELETE(dFeat, "create_utterance_context", error);
+	}
+
+	/* number of phrases after this in utterance */
+	dFeat = SItemPathToFeatProc(item, "R:SylStructure.parent.parent.R:Phrase.parent.phrase_pos_utt_rev", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "create_utterance_context",
+				  "Call to \"SItemPathToFeatProc\" failed"))
+		goto create_utterance_context_cleanup;
+
+	if (dFeat != NULL)
+	{
+		SHTSLabelDataCollectorSetFeature(self, "phrases.from.utt.end", dFeat, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_utterance_context",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			goto create_utterance_context_cleanup;
+
+		S_DELETE(dFeat, "create_utterance_context", error);
+	}
+
+	/* the number of syllables in this utterence */
+	dFeat = SItemPathToFeatProc(item, "utt_num_syls", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "create_utterance_context",
+				  "Call to \"SItemPathToFeatProc\" failed"))
+		goto create_utterance_context_cleanup;
+
+	if (dFeat != NULL)
+	{
+		SHTSLabelDataCollectorSetFeature(self, "utterance.syls.num", dFeat, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_utterance_context",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			goto create_utterance_context_cleanup;
+
+		S_DELETE(dFeat, "create_utterance_context", error);
+	}
+
+	/* the number of words in this utterence */
+	dFeat = SItemPathToFeatProc(item, "utt_num_words", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "create_utterance_context",
+				  "Call to \"SItemPathToFeatProc\" failed"))
+		goto create_utterance_context_cleanup;
+
+	if (dFeat != NULL)
+	{
+		SHTSLabelDataCollectorSetFeature(self, "utterance.words.num", dFeat, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_utterance_context",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			goto create_utterance_context_cleanup;
+
+		S_DELETE(dFeat, "create_utterance_context", error);
+	}
+
+	/* the number of phrases in this utterence */
+	dFeat = SItemPathToFeatProc(item, "utt_num_phrases", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "create_utterance_context",
+				  "Call to \"SItemPathToFeatProc\" failed"))
+		goto create_utterance_context_cleanup;
+
+	if (dFeat != NULL)
+	{
+		SHTSLabelDataCollectorSetFeature(self, "utterance.phrases.num", dFeat, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_utterance_context",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			goto create_utterance_context_cleanup;
+
+		S_DELETE(dFeat, "create_utterance_context", error);
+	}
+
+create_utterance_context_cleanup:
+	S_DELETE(dFeat, "create_utterance_context", error);
+}
+
+/*
+ * creates the utterance context data in case it is a pause.
+ */
+static void create_utterance_context_pause(SELFPARAMETERTYPE *self, const SItem *item, s_erc *error)
+{
+	const SObject *dFeat;
+	SItem *tmp;
+	s_bool use_next;
+
+	S_CLR_ERR(error);
+
+	tmp = SItemPrev(item, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "create_utterance_context_pause",
+				  "Call to \"SItemPrev\" failed"))
+		return;
+
+	if (tmp != NULL)
+		use_next = FALSE;
+	else
+		use_next = TRUE;
+
+	/* number of phrases before this in utterance */
+	if (use_next)
+	{
+		dFeat = SItemPathToFeatProc(item, "n.R:SylStructure.parent.parent.R:Phrase.parent.phrase_pos_utt",
+								   error);
+	}
+	else
+	{
+		dFeat = SItemPathToFeatProc(item, "p.R:SylStructure.parent.parent.R:Phrase.parent.phrase_pos_utt",
+								   error);
+	}
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "create_utterance_context_pause",
+				  "Call to \"SItemPathToFeatProc\" failed"))
+		goto create_utterance_context_pause_cleanup;
+
+	if (dFeat != NULL)
+	{
+		SHTSLabelDataCollectorSetFeature(self, "phrases.from.utt.start", dFeat, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_utterance_context_pause",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			goto create_utterance_context_pause_cleanup;
+
+		S_DELETE(dFeat, "create_utterance_context_pause", error);
+	}
+
+	/* number of phrases after this in utterance */
+	if (use_next)
+	{
+		dFeat = SItemPathToFeatProc(item, "n.R:SylStructure.parent.parent.R:Phrase.parent.phrase_pos_utt_rev",
+								   error);
+	}
+	else
+	{
+		dFeat = SItemPathToFeatProc(item, "p.R:SylStructure.parent.parent.R:Phrase.parent.phrase_pos_utt_rev",
+								   error);
+	}
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "create_utterance_context_pause",
+				  "Call to \"SItemPathToFeatProc\" failed"))
+		goto create_utterance_context_pause_cleanup;
+
+	if (dFeat != NULL)
+	{
+		SHTSLabelDataCollectorSetFeature(self, "phrases.from.utt.end", dFeat, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_utterance_context_pause",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			goto create_utterance_context_pause_cleanup;
+
+		S_DELETE(dFeat, "create_utterance_context_pause", error);
+	}
+
+	/* the number of syllables in this utterence */
+	dFeat = SItemPathToFeatProc(item, "utt_num_syls", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "create_utterance_context_pause",
+				  "Call to \"SItemPathToFeatProc\" failed"))
+		goto create_utterance_context_pause_cleanup;
+
+	if (dFeat != NULL)
+	{
+		SHTSLabelDataCollectorSetFeature(self, "utterance.syls.num", dFeat, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_utterance_context_pause",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			goto create_utterance_context_pause_cleanup;
+
+		S_DELETE(dFeat, "create_utterance_context_pause", error);
+	}
+
+	/* the number of words in this utterence */
+	dFeat = SItemPathToFeatProc(item, "utt_num_words", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "create_utterance_context_pause",
+				  "Call to \"SItemPathToFeatProc\" failed"))
+		goto create_utterance_context_pause_cleanup;
+
+	if (dFeat != NULL)
+	{
+		SHTSLabelDataCollectorSetFeature(self, "utterance.words.num", dFeat, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_utterance_context_pause",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			goto create_utterance_context_pause_cleanup;
+
+		S_DELETE(dFeat, "create_utterance_context_pause", error);
+	}
+
+	/* the number of phrases in this utterence */
+	dFeat = SItemPathToFeatProc(item, "utt_num_phrases", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "create_utterance_context_pause",
+				  "Call to \"SItemPathToFeatProc\" failed"))
+		goto create_utterance_context_pause_cleanup;
+
+	if (dFeat != NULL)
+	{
+		SHTSLabelDataCollectorSetFeature(self, "utterance.phrases.num", dFeat, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_utterance_context_pause",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			goto create_utterance_context_pause_cleanup;
+
+		S_DELETE(dFeat, "create_utterance_context_pause", error);
+	}
+
+create_utterance_context_pause_cleanup:
+	S_DELETE(dFeat, "create_utterance_context_pause", error);
+}
+
+/*
+ * creates the stress context data
+ */
+static void create_stress_context(SELFPARAMETERTYPE *self, const SItem *item, s_erc *error)
+{
+	const SObject *featPath;
+	sint32 level;
+
+	S_CLR_ERR(error);
+
+	/* previous syllable stress */
+	featPath = SItemPathToFeature(item, "R:SylStructure.parent.R:Syllable.p.stress",
+				      error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "create_stress_context",
+				  "Call to \"SItemPathToFeature\" failed"))
+		goto stress_cleanup;
+
+	if (featPath != NULL)
+	{
+		level = get_stress_level(featPath, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_stress_context",
+					  "Call to \"get_stress_level\" failed"))
+			goto stress_cleanup;
+		featPath = SObjectSetInt(level, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_stress_context",
+					  "Call to \"SObjectSetInt\" failed"))
+			goto stress_cleanup;
+
+		SHTSLabelDataCollectorSetFeature(self, "p.stress", featPath, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_stress_context",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			goto stress_cleanup;
+		S_DELETE(featPath, "create_stress_context", error);
+	}
+
+	/* current syllable stress */
+	featPath = SItemPathToFeature(item, "R:SylStructure.parent.R:Syllable.stress",
+				      error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "create_stress_context",
+				  "Call to \"SItemPathToFeature\" failed"))
+		goto stress_cleanup;
+
+	if (featPath != NULL)
+	{
+		level = get_stress_level(featPath, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_stress_context",
+					  "Call to \"get_stress_level\" failed"))
+			goto stress_cleanup;
+		featPath = SObjectSetInt(level, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+						"create_stress_context",
+						"Call to \"SObjectSetInt\" failed"))
+			goto stress_cleanup;
+
+		SHTSLabelDataCollectorSetFeature(self, "stress", featPath, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_stress_context",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			goto stress_cleanup;
+		S_DELETE(featPath, "create_stress_context", error);
+	}
+
+	/* next syllable stress */
+	featPath = SItemPathToFeature(item, "R:SylStructure.parent.R:Syllable.n.stress",
+				      error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "create_stress_context",
+				  "Call to \"SItemPathToFeature\" failed"))
+		goto stress_cleanup;
+
+	if (featPath != NULL)
+	{
+		level = get_stress_level(featPath, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_stress_context",
+					  "Call to \"get_stress_level\" failed"))
+			goto stress_cleanup;
+		featPath = SObjectSetInt(level, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_stress_context",
+					  "Call to \"SObjectSetInt\" failed"))
+			goto stress_cleanup;
+
+		SHTSLabelDataCollectorSetFeature(self, "n.stress", featPath, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_stress_context",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			goto stress_cleanup;
+		S_DELETE(featPath, "create_stress_context", error);
+	}
+
+	/* the number of stressed syllables before the current syllable in the current phrase */
+	featPath = SItemPathToFeature(item, "R:SylStructure.parent.R:Syllable.syllable_stress_in", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "create_stress_context",
+				  "Call to \"SItemPathToFeature\" failed"))
+		goto stress_cleanup;
+
+	if (featPath != NULL)
+	{
+		SHTSLabelDataCollectorSetFeature(self, "stressed.syls.before", featPath, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_stress_context",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			goto stress_cleanup;
+	}
+
+	/* the number of stressed syllables after the current syllable in the current phrase */
+	featPath = SItemPathToFeature(item, "R:SylStructure.parent.R:Syllable.syllable_stress_out", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "create_stress_context",
+				  "Call to \"SItemPathToFeature\" failed"))
+		goto stress_cleanup;
+
+	if (featPath != NULL)
+	{
+		SHTSLabelDataCollectorSetFeature(self, "stressed.syls.after", featPath, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_stress_context",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			goto stress_cleanup;
+	}
+
+	/* the number of syllables from the previous stressed syllable to the current syllable */
+	featPath = SItemPathToFeature(item, "R:SylStructure.parent.R:Syllable.syllable_stress_all_in", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "create_stress_context",
+				  "Call to \"SItemPathToFeature\" failed"))
+		goto stress_cleanup;
+
+	if (featPath != NULL)
+	{
+		SHTSLabelDataCollectorSetFeature(self, "syls.from.prev.stress", featPath, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_stress_context",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			goto stress_cleanup;
+	}
+
+	/* the number of syllables from the current syllable to the next stressed syllable */
+	featPath = SItemPathToFeature(item, "R:SylStructure.parent.R:Syllable.syllable_stress_all_out", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "create_stress_context",
+				  "Call to \"SItemPathToFeature\" failed"))
+		goto stress_cleanup;
+
+	if (featPath != NULL)
+	{
+		SHTSLabelDataCollectorSetFeature(self, "syls.to.next.stress", featPath, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_stress_context",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			goto stress_cleanup;
+	}
+
+	return;
+
+stress_cleanup:
+	S_DELETE(featPath, "create_stress_context", error);
+}
+
+/*
+ * creates the stress context data
+ * differs from create_stress_context in that previous/next phone's syllable is queried
+ * and not previous/next syllable
+ */
+static void create_stress_context_pause(SELFPARAMETERTYPE *self, const SItem *item, s_erc *error)
+{
+	const SObject *featPath;
+	sint32 level;
+
+	S_CLR_ERR(error);
+
+	/* previous syllable stress */
+	featPath = SItemPathToFeature(item, "p.R:SylStructure.parent.R:Syllable.stress",
+				      error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "create_stress_context_pause",
+				  "Call to \"SItemPathToFeature\" failed"))
+		goto stress_pause_cleanup;
+
+	if (featPath != NULL)
+	{
+		level = get_stress_level(featPath, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_stress_context_pause",
+					  "Call to \"get_stress_level\" failed"))
+			goto stress_pause_cleanup;
+		featPath = SObjectSetInt(level, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_stress_context_pause",
+					  "Call to \"SObjectSetInt\" failed"))
+			goto stress_pause_cleanup;
+
+		SHTSLabelDataCollectorSetFeature(self, "p.stress", featPath, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_stress_context_pause",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			goto stress_pause_cleanup;
+		S_DELETE(featPath, "create_stress_context_pause", error);
+	}
+
+	/* current syllable stress: not present in pause */
+
+	/* next syllable stress */
+	featPath = SItemPathToFeature(item, "n.R:SylStructure.parent.R:Syllable.stress",
+				      error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "create_stress_context_pause",
+				  "Call to \"SItemPathToFeature\" failed"))
+		goto stress_pause_cleanup;
+
+	if (featPath != NULL)
+	{
+		level = get_stress_level(featPath, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_stress_context_pause",
+					  "Call to \"get_stress_level\" failed"))
+			goto stress_pause_cleanup;
+		featPath = SObjectSetInt(level, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_stress_context_pause",
+					  "Call to \"SObjectSetInt\" failed"))
+			goto stress_pause_cleanup;
+
+		SHTSLabelDataCollectorSetFeature(self, "n.stress", featPath, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_stress_context_pause",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			goto stress_pause_cleanup;
+		S_DELETE(featPath, "create_stress_context_pause", error);
+	}
+
+	return;
+
+stress_pause_cleanup:
+	S_DELETE(featPath, "create_stress_context_pause", error);
+}
+
+/*
+ * creates the accent context data
+ */
+static void create_accent_context(SELFPARAMETERTYPE *self, const SItem *item, s_erc *error)
+{
+	const SObject *featPath;
+	sint32 level;
+
+	S_CLR_ERR(error);
+
+	/* previous syllable accent */
+	featPath = SItemPathToFeature(item, "R:SylStructure.parent.R:Syllable.p.accent",
+				      error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "create_accent_context",
+				  "Call to \"SItemPathToFeature\" failed"))
+		goto accent_cleanup;
+
+	if (featPath != NULL)
+	{
+		level = get_stress_level(featPath, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_accent_context",
+					  "Call to \"get_stress_level\" failed"))
+			goto accent_cleanup;
+		featPath = SObjectSetInt(level, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_accent_context",
+					  "Call to \"SObjectSetInt\" failed"))
+			goto accent_cleanup;
+
+		SHTSLabelDataCollectorSetFeature(self, "p.accent", featPath, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_accent_context",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			goto accent_cleanup;
+		S_DELETE(featPath, "create_accent_context", error);
+	}
+
+	/* current syllable accent */
+	featPath = SItemPathToFeature(item, "R:SylStructure.parent.R:Syllable.accent",
+					error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "create_accent_context",
+				  "Call to \"SItemPathToFeature\" failed"))
+		goto accent_cleanup;
+
+	if (featPath != NULL)
+	{
+		level = get_stress_level(featPath, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_accent_context",
+					  "Call to \"get_stress_level\" failed"))
+			goto accent_cleanup;
+		featPath = SObjectSetInt(level, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_accent_context",
+					  "Call to \"SObjectSetInt\" failed"))
+			goto accent_cleanup;
+
+		SHTSLabelDataCollectorSetFeature(self, "accent", featPath, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_accent_context",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			goto accent_cleanup;
+		S_DELETE(featPath, "create_accent_context", error);
+	}
+
+	/* next syllable accent */
+	featPath = SItemPathToFeature(item, "R:SylStructure.parent.R:Syllable.n.accent",
+					error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "create_accent_context",
+				  "Call to \"SItemPathToFeature\" failed"))
+		goto accent_cleanup;
+
+	if (featPath != NULL)
+	{
+		level = get_stress_level(featPath, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_accent_context",
+					  "Call to \"get_stress_level\" failed"))
+			goto accent_cleanup;
+		featPath = SObjectSetInt(level, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_accent_context",
+					  "Call to \"SObjectSetInt\" failed"))
+			goto accent_cleanup;
+
+		SHTSLabelDataCollectorSetFeature(self, "n.accent", featPath, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_accent_context",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			goto accent_cleanup;
+		S_DELETE(featPath, "create_accent_context", error);
+	}
+
+	/* the number of acceted syllables before the current syllable in the current phrase */
+	featPath = SItemPathToFeature(item, "R:SylStructure.parent.R:Syllable.syllable_accent_in", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "create_accent_context",
+				  "Call to \"SItemPathToFeature\" failed"))
+		goto accent_cleanup;
+
+	if (featPath != NULL)
+	{
+		SHTSLabelDataCollectorSetFeature(self, "accented.syls.before", featPath, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_accent_context",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			goto accent_cleanup;
+	}
+
+	/* the number of stressed syllables after the current syllable in the current phrase */
+	featPath = SItemPathToFeature(item, "R:SylStructure.parent.R:Syllable.syllable_accent_out", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "create_accent_context",
+				  "Call to \"SItemPathToFeature\" failed"))
+		goto accent_cleanup;
+
+	if (featPath != NULL)
+	{
+		SHTSLabelDataCollectorSetFeature(self, "accented.syls.after", featPath, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_accent_context",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			goto accent_cleanup;
+	}
+
+	/* the number of syllables from the previous accented syllable to the current syllable */
+	featPath = SItemPathToFeature(item, "R:SylStructure.parent.R:Syllable.syllable_accent_all_in", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "create_accent_context",
+				  "Call to \"SItemPathToFeature\" failed"))
+		goto accent_cleanup;
+
+	if (featPath != NULL)
+	{
+		SHTSLabelDataCollectorSetFeature(self, "syls.from.prev.accent", featPath, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_accent_context",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			goto accent_cleanup;
+	}
+
+	/* the number of syllables from the current syllable to the next accented syllable */
+	featPath = SItemPathToFeature(item, "R:SylStructure.parent.R:Syllable.syllable_accent_all_out", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "create_accent_context",
+				  "Call to \"SItemPathToFeature\" failed"))
+		goto accent_cleanup;
+
+	if (featPath != NULL)
+	{
+		SHTSLabelDataCollectorSetFeature(self, "syls.to.next.accent", featPath, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_accent_context",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			goto accent_cleanup;
+	}
+
+	return;
+
+accent_cleanup:
+	S_DELETE(featPath, "create_accent_context", error);
+}
+
+/*
+ * creates the accent context data
+ * differs from create_accent_context in that previous/next phone's syllable is queried
+ * and not previous/next syllable
+ */
+static void create_accent_context_pause(SELFPARAMETERTYPE *self, const SItem *item, s_erc *error)
+{
+	const SObject *featPath;
+	sint32 level;
+
+	S_CLR_ERR(error);
+
+	/* previous syllable accent */
+	featPath = SItemPathToFeature(item, "p.R:SylStructure.parent.R:Syllable.accent",
+				      error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "create_accent_context_pause",
+				  "Call to \"SItemPathToFeature\" failed"))
+		goto accent_pause_cleanup;
+
+	if (featPath != NULL)
+	{
+		level = get_accent_level(featPath, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_accent_context_pause",
+					  "Call to \"get_accent_level\" failed"))
+			goto accent_pause_cleanup;
+		featPath = SObjectSetInt(level, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_accent_context_pause",
+					  "Call to \"SObjectSetInt\" failed"))
+			goto accent_pause_cleanup;
+
+		SHTSLabelDataCollectorSetFeature(self, "p.accent", featPath, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_accent_context_pause",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			goto accent_pause_cleanup;
+		S_DELETE(featPath, "create_accent_context_pause", error);
+	}
+
+	/* current syllable accent: not present in pause */
+
+	/* next syllable accent */
+	featPath = SItemPathToFeature(item, "n.R:SylStructure.parent.R:Syllable.accent",
+					error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "create_accent_context_pause",
+				  "Call to \"SItemPathToFeature\" failed"))
+		goto accent_pause_cleanup;
+
+	if (featPath != NULL)
+	{
+		level = get_accent_level(featPath, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_accent_context_pause",
+					  "Call to \"get_accent_level\" failed"))
+			goto accent_pause_cleanup;
+		featPath = SObjectSetInt(level, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_accent_context_pause",
+					  "Call to \"SObjectSetInt\" failed"))
+			goto accent_pause_cleanup;
+
+		SHTSLabelDataCollectorSetFeature(self, "n.accent", featPath, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_accent_context_pause",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			goto accent_pause_cleanup;
+		S_DELETE(featPath, "create_accent_context_pause", error);
+	}
+
+	return;
+
+accent_pause_cleanup:
+	S_DELETE(featPath, "create_accent_context_pause", error);
+}
+
+
+/************************************************************************************/
+/*                                                                                  */
+/* Static class function implementations                                            */
+/*                                                                                  */
+/************************************************************************************/
+
+static void Init(void *obj, s_erc *error)
+{
+	S_CLR_ERR(error);
+
+	SHTSLabelsDataCollectorFeatProc *self = obj;
+
+	S_CLR_ERR(error);
+
+	self->features = S_MAP(S_NEW(SMapHashTable, error));
+	if (S_CHK_ERR(error, S_CONTERR,
+			  "InitLabelsDataCollector",
+			  "Failed to create new map-list features"))
+		self->features = NULL;
+}
+
+static void Dispose(void *obj, s_erc *error)
+{
+	S_CLR_ERR(error);
+	SObjectDecRef(obj);
+}
+
+
+static SObject *Run(const SFeatProcessor *self, const SItem *item,
+					s_erc *error)
+{
+	SELFPARAMETERTYPE *HTSProc = (SELFPARAMETERTYPE *)self;
+	const SItem *segItem;
+	s_bool is_pause;
+
+
+	S_CLR_ERR(error);
+
+	if (item == NULL)
+		return NULL;
+
+	segItem = SItemAs(item, "Segment", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "Run",
+				  "Call to \"SItemAs\" failed"))
+		goto quit_error;
+
+	if (segItem == NULL)
+		return NULL;
+
+	is_pause = segment_is_pause(segItem, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "Run",
+				  "Call to \"segment_is_pause\" failed"))
+		goto quit_error;
+
+	/* get phone context */
+	create_phone_context(HTSProc, segItem, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "Run",
+				  "Call to \"create_phone_context\" failed"))
+		goto quit_error;
+
+	if (is_pause)
+	{
+		/* syllable context */
+		create_syl_context_pause(HTSProc, segItem, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "Run",
+					  "Call to \"create_syl_context_pause\" failed"))
+			goto quit_error;
+
+		/* word context */
+		create_word_context_pause(HTSProc, segItem, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "Run",
+					  "Call to \"create_word_context_pause\" failed"))
+			goto quit_error;
+
+		/* phrase context */
+		create_phrase_context_pause(HTSProc, segItem, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "Run",
+					  "Call to \"create_phrase_context_pause\" failed"))
+			goto quit_error;
+
+		/* utterance context */
+		create_utterance_context_pause(HTSProc, segItem, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "Run",
+					  "Call to \"create_utterance_context_pause\" failed"))
+			goto quit_error;
+
+		/* stress context */
+		create_stress_context_pause(HTSProc, segItem, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "Run",
+					  "Call to \"create_stress_context_pause\" failed"))
+			goto quit_error;
+
+		/* accent context */
+		create_accent_context_pause(HTSProc, segItem, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "Run",
+					  "Call to \"create_accent_context_pause\" failed"))
+			goto quit_error;
+	}
+	else
+	{
+		/* syllable context */
+		create_syl_context(HTSProc, segItem, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "Run",
+					  "Call to \"create_syl_context\" failed"))
+			goto quit_error;
+
+		/* word context */
+		create_word_context(HTSProc, segItem, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "Run",
+					  "Call to \"create_word_context\" failed"))
+			goto quit_error;
+
+		/* phrase context */
+		create_phrase_context(HTSProc, segItem, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "Run",
+					  "Call to \"create_phrase_context\" failed"))
+			goto quit_error;
+
+		/* utterance context */
+		create_utterance_context(HTSProc, segItem, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "Run",
+					  "Call to \"create_utterance_context\" failed"))
+			goto quit_error;
+
+		/* stress context */
+		create_stress_context(HTSProc, segItem, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "Run",
+					  "Call to \"create_stress_context\" failed"))
+			goto quit_error;
+
+		/* accent context */
+		create_accent_context(HTSProc, segItem, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "Run",
+					  "Call to \"create_accent_context\" failed"))
+			goto quit_error;
+	}
+
+	/* prepare the object to be returned */
+	SObjectIncRef((SObject*) self);
+
+	/* all OK here */
+// 	return (SObject*) self;
+
+	/* error cleanup */
+quit_error:
+	return NULL;
+}
+
+
+/************************************************************************************/
+/*                                                                                  */
+/* SHTSLabelsConfigurableFeatProc class initialization                                   */
+/*                                                                                  */
+/************************************************************************************/
+
+static SHTSLabelsDataCollectorFeatProcClass HTSLabelsDataCollectorFeatProcClass =
+{
+	/* SObjectClass */
+	{
+		"SFeatProcessor:SHTSLabelsDataCollectorFeatProc",
+		sizeof(SHTSLabelsDataCollectorFeatProc),
+		{ 0, 1},
+		Init,            /* init    */
+		NULL,            /* destroy */
+		Dispose,         /* dispose */
+		NULL,            /* compare */
+		NULL,            /* print   */
+		NULL,            /* copy    */
+	},
+	/* SFeatProcessorClass */
+	Run                  /* run     */
+};

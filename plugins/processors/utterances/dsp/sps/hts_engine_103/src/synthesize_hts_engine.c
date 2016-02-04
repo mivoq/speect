@@ -240,7 +240,7 @@ static hts_params *get_hts_engine_params(const SMap *features, s_erc *error)
 
 		scomp = s_strcmp("TRUE", tmp, error);
 		if (S_CHK_ERR(error, S_CONTERR,
-					  "set_viterbi_params",
+					  "get_hts_engine_params",
 					  "Call to \"s_strcmp\" failed"))
 			goto quit_error;
 

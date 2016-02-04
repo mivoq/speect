@@ -477,22 +477,34 @@ static s_bool test_phone_cluster(const SPhoneset *phoneset, const char *cluster,
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "test_phone_cluster",
 					  "Call to \"SIteratorObject\" failed"))
+		{
+			S_DELETE(itr, "test_phone_cluster", error);
 			return FALSE;
+		}
 
 		wellformed = SObjectGetString(tmp, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "test_phone_cluster",
 					  "Call to \"SObjectGetString\" failed"))
+		{
+			S_DELETE(itr, "test_phone_cluster", error);
 			return FALSE;
+		}
 
 		comp = s_strcmp(cluster, wellformed, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "test_phone_cluster",
 					  "Call to \"SObjectGetString\" failed"))
+		{
+			S_DELETE(itr, "test_phone_cluster", error);
 			return FALSE;
+		}
 
 		if (comp == 0)
+		{
+			S_DELETE(itr, "test_phone_cluster", error);
 			return TRUE;
+		}
 
 		itr = SIteratorNext(itr);
 	}

@@ -1,3 +1,4 @@
+
 /************************************************************************************/
 /* Copyright (c) 2008-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
@@ -102,7 +103,7 @@ S_BEGIN_C_DECLS
  * @todo add reference that this type must have been registered.
  */
 #define S_NEW(OBJTYPE, ERROR)					\
-	((OBJTYPE*)SObjectNewFromName((# OBJTYPE), (ERROR)))
+	((OBJTYPE*)SObjectNewFromName((S_TOSTRING(OBJTYPE)), (ERROR)))
 
 
 /**
@@ -293,7 +294,7 @@ S_BEGIN_C_DECLS
  * @return Pointer to Object casted to OBJTYPE, or #NULL on error.
  */
 #define S_CAST_SAFE(OBJECT, OBJTYPE, ERROR)							\
-	((OBJTYPE*)s_safe_cast(S_OBJECT(OBJECT), ( # OBJTYPE), ERROR))
+	((OBJTYPE*)s_safe_cast(S_OBJECT(OBJECT), (S_TOSTRING(OBJTYPE)), ERROR))
 
 
 /**
@@ -449,7 +450,7 @@ S_BEGIN_C_DECLS
  * @return Pointer to the class of object type (of type OBJTYPECLASS*).
  */
 #define S_FIND_CLASS(OBJTYPE, ERROR)						\
-	((S_CONCAT(OBJTYPE, Class)*)s_class_find((# OBJTYPE), (ERROR)))
+	((S_CONCAT(OBJTYPE, Class)*)s_class_find((S_TOSTRING(OBJTYPE)), (ERROR)))
 
 
 /**

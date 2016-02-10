@@ -113,10 +113,9 @@
 
 /**
  * @ingroup SFeatureProc
- * @defgroup SHTSLabelsConfigurableFeatProc Generate data for HTS Labels for italian voices.
+ * @defgroup SHTSLabelsDataCollectorFeatProc Generate data for HTS Labels for italian voices.
  * @{
  */
-
 
 /************************************************************************************/
 /*                                                                                  */
@@ -133,6 +132,59 @@
 /*                                                                                  */
 /************************************************************************************/
 S_BEGIN_C_DECLS
+
+
+/************************************************************************************/
+/*                                                                                  */
+/* Macros                                                                           */
+/*                                                                                  */
+/************************************************************************************/
+
+/**
+ * @hideinitializer
+ * Return the given #SHTSLabelsDataCollectorFeatProc child/parent class object as a
+ * #SHTSLabelsDataCollectorFeatProc object.
+ *
+ * @param SELF The given object.
+ *
+ * @return Given object as #SHTSLabelsDataCollectorFeatProc* type.
+ * @note This casting is not safety checked.
+ */
+#define S_HTSLABELSDATACOLLECTOR(SELF)    ((SHTSLabelsDataCollectorFeatProc *)(SELF))
+
+
+/**
+ * @hideinitializer
+ * Call the given function method of the given #SHTSLabelsDataCollectorFeatProc,
+ * see full description #S_SHTSLABELSDATACOLLECTOR_CALL for usage.
+ *
+ * @param SELF The given #SHTSLabelsDataCollectorFeatProc*.
+ * @param FUNC The function method of the given object to call.
+ *
+ * @note This casting is not safety checked.
+ * @note Example usage: @code S_SHTSLABELSDATACOLLECTOR_CALL(self, func)(param1, param2, ..., paramN); @endcode
+ * where @c param1, @c param2, ..., @c paramN are the parameters
+ * passed to the object function @c func.
+ */
+#define S_HTSLABELSDATACOLLECTOR_CALL(SELF, FUNC)					\
+	((SHTSLabelsDataCollectorFeatProcClass *)S_OBJECT_CLS(SELF))->FUNC
+
+
+/**
+ * @hideinitializer
+ * Test if the given function method of the given #SHTSLabelsDataCollectorFeatProc
+ * can be called.
+ *
+ * @param SELF The given #SHTSLabelsDataCollectorFeatProc*.
+ * @param FUNC The function method of the given object to check.
+ *
+ * @return #TRUE if function can be called, otherwise #FALSE.
+ *
+ * @note This casting is not safety checked.
+ */
+#define S_HTSLABELSDATACOLLECTOR_METH_VALID(SELF, FUNC)		\
+	S_HTSLABELSDATACOLLECTOR_CALL(SELF, FUNC) ? TRUE : FALSE
+
 
 
 /************************************************************************************/
@@ -173,66 +225,43 @@ typedef struct
  * class. Does not add any new methods, therefore exactly the same as
  * #SFeatProcessorClass.
  */
-typedef SFeatProcessorClass SHTSLabelsDataCollectorFeatProcClass;
+typedef struct
+{
+	/* Class members */
+	/**
+	 * @protected Inherit from #SFeatProcessorClass.
+	 */
+	SFeatProcessorClass _inherit;
+
+	/* Class methods */
+	/**
+	 * Get the label data feature object of the named key.
+	 *
+	 * @param self The given SHTSLabelsDataCollectorFeatProc.
+	 * @param key The string key of the feature object to get.
+	 * @param error Error code.
+	 *
+	 * @return Pointer to the feature object of the named key, or @a NULL if
+	 * feature of named key is not present in SHTSLabelsDataCollectorFeatProc.
+	 */
+	const SObject 	*(*get_feature) 	(const SHTSLabelsDataCollectorFeatProc *self, const char *key,
+											s_erc *error);
+
+	/**
+	 * Query if the label data has the named feature.
+	 *
+	 * @param self The given SHTSLabelsDataCollectorFeatProc.
+	 * @param key The string key of the feature for which the query is done.
+	 * @param error Error code.
+	 *
+	 * @return @c TRUE if the feature is defined,
+	 * else @c FALSE.
+	 */
+	s_bool 		(*has_feature) 	(const SHTSLabelsDataCollectorFeatProc *self, const char *key,
+											s_erc *error);
 
 
-/************************************************************************************/
-/*                                                                                  */
-/* Function prototypes                                                              */
-/*                                                                                  */
-/************************************************************************************/
-
-
-/**
- * Query if named feature is present in the given Label Data Collector.
- * @public @memberof SHTSLabelsDataCollectorFeatProc
- * @param self The given Label Data Collector.
- * @param name The feature name.
- * @param error Error code.
- * @return #TRUE if present or #FALSE if not.
- */
-S_API s_bool SHTSLabelDataCollectorFeatureIsPresent(const SHTSLabelsDataCollectorFeatProc *self,
-					   const char *name,
-					   s_erc *error);
-
-
-/**
- * Get the feature object of the named key from the given Label Data Collector.
- * @public @memberof SUttProcessor
- * @param self The given Label Data Collector.
- * @param key The string key of the feature processor object to get.
- * @param error Error code.
- * @return Pointer to #SObject object feature value.
- */
-S_API const SObject *SHTSLabelDataCollectorGetFeature(const SHTSLabelsDataCollectorFeatProc *self, const char *name,
-					     s_erc *error);
-
-
-/**
- * Set the feature of the named key to the given Label Data Collector.
- * If the named key already exists then it's #SObject will be deleted
- * (if not referenced) and replaced.
- * @public @memberof SUttProcessor
- * @param self The given Label Data Collector.
- * @param key The string key of the feature object to set.
- * @param object The feature object (value).
- * @param error Error code.
- */
-S_API void SHTSLabelDataCollectorSetFeature(SHTSLabelsDataCollectorFeatProc *self, const char *name,
-				   const SObject *object, s_erc *error);
-
-
-/**
- * Delete the feature of the named key of the the given Label Data Collector.
- * The key is removed and the feature object deleted if it is not referenced.
- * @public @memberof SUttProcessor
- * @param self The given Label Data Collector.
- * @param name The feature name (key).
- * @param error Error code.
- */
-S_API void SHTSLabelDataCollectorDelFeature(SHTSLabelsDataCollectorFeatProc *self, const char *name,
-				   s_erc *error);
-
+} SHTSLabelsDataCollectorFeatProcClass;
 
 /************************************************************************************/
 /*                                                                                  */

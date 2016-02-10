@@ -1,4 +1,3 @@
-
 /************************************************************************************/
 /* Copyright (c) 2008-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */

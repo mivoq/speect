@@ -114,6 +114,7 @@ int main(int argc, char **argv) {
   SPlugin *riffAudio = NULL;
   SPlugin *textGrid = NULL;
   SPlugin *maryXML = NULL;
+  SPlugin *HTSLabelsToXML = NULL;
   struct Config config;
   char *textgrid_file = NULL;
   char *maryxml_file = NULL;
@@ -179,6 +180,15 @@ int main(int argc, char **argv) {
     goto quit;
 
   SPCT_PRINT_AND_WAIT("loaded maryxml plug-in, loading voice, press ENTER\n");
+  
+  /* load maryxml plug-in, so that we can save the maryxml */
+  HTSLabelsToXML = s_pm_load_plugin("utt_htslabelsexport.spi", &error);
+  if (S_CHK_ERR(&error, S_CONTERR,
+		"main",
+		"Call to \"s_pm_load_plugin\" failed"))
+    goto quit;
+
+  SPCT_PRINT_AND_WAIT("loaded htslabelsexport plug-in, loading voice, press ENTER\n");
 
   /* load voice */
   voice = s_vm_load_voice(config.voicefile, &error);
@@ -262,8 +272,26 @@ int main(int argc, char **argv) {
       }
 
     S_FREE(maryxml_file);
+    
+    /* save htslabels */
+    s_asprintf(&maryxml_file, &error, "%s%s", config.wavfile, ".htslabels.XML");
+    if (S_CHK_ERR(&error, S_CONTERR,
+		  "main",
+		  "Call to \"s_asprinf\" failed"))
+      goto quit;
 
-    SPCT_PRINT_AND_WAIT("saved maryxml, press ENTER\n");
+    SObjectSave(S_OBJECT(utt), maryxml_file, "spct_utt_htslabelsXML", &error);
+    if (S_CHK_ERR(&error, S_CONTERR,
+		  "main",
+		  "Call to \"SObjectSave\" failed"))
+      {
+	S_FREE(maryxml_file);
+	goto quit;
+      }
+
+    S_FREE(maryxml_file);
+
+    SPCT_PRINT_AND_WAIT("saved htslabels, press ENTER\n");
   }
 
  quit:
@@ -292,6 +320,11 @@ int main(int argc, char **argv) {
 
   if (maryXML != NULL)
     S_DELETE(maryXML, "main", &error);
+  
+   SPCT_PRINT_AND_WAIT("deleting HTSLabelsToXML plug-in, press ENTER\n");
+
+  if (HTSLabelsToXML != NULL)
+    S_DELETE(HTSLabelsToXML, "main", &error);
 
   SPCT_PRINT_AND_WAIT("quiting speect, press ENTER\n");
 

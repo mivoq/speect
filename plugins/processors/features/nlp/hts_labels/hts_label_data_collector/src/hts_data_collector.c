@@ -659,7 +659,6 @@ static void create_syl_context(SELFPARAMETERTYPE* self, const SItem* item, s_erc
 					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
 			goto syl_context_cleanup;
 
-		//S_DELETE(dFeat, "create_syl_context", error);
 	}
 
 	/* pos from end */
@@ -676,7 +675,6 @@ static void create_syl_context(SELFPARAMETERTYPE* self, const SItem* item, s_erc
 					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
 			goto syl_context_cleanup;
 
-		//S_DELETE(dFeat, "create_syl_context", error);
 	}
 
 	/* number of phonemes in the previous syllable */
@@ -693,7 +691,6 @@ static void create_syl_context(SELFPARAMETERTYPE* self, const SItem* item, s_erc
 					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
 			goto syl_context_cleanup;
 
-		//S_DELETE(dFeat, "create_syl_context", error);
 	}
 
 	/* number of phonemes in this syllable */
@@ -710,7 +707,6 @@ static void create_syl_context(SELFPARAMETERTYPE* self, const SItem* item, s_erc
 					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
 			goto syl_context_cleanup;
 
-		//S_DELETE(dFeat, "create_syl_context", error);
 	}
 
 	/* number of phonemes in the next syllable */
@@ -727,7 +723,6 @@ static void create_syl_context(SELFPARAMETERTYPE* self, const SItem* item, s_erc
 					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
 			goto syl_context_cleanup;
 
-		//S_DELETE(dFeat, "create_syl_context", error);
 	}
 
 	/* name of the vowel in the current syllable */
@@ -744,7 +739,6 @@ static void create_syl_context(SELFPARAMETERTYPE* self, const SItem* item, s_erc
 					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
 			goto syl_context_cleanup;
 
-		//S_DELETE(dFeat, "create_syl_context", error);
 	}
 
 	return;
@@ -779,7 +773,6 @@ static void create_syl_context_pause(SELFPARAMETERTYPE* self, const SItem* item,
 					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
 			goto syl_context_pause_cleanup;
 
-		//S_DELETE(dFeat, "create_syl_context_pause", error);
 	}
 
 	/* number of phonemes in this syllable: not in pause */
@@ -798,7 +791,6 @@ static void create_syl_context_pause(SELFPARAMETERTYPE* self, const SItem* item,
 					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
 			goto syl_context_pause_cleanup;
 
-		//S_DELETE(dFeat, "create_syl_context_pause", error);
 	}
 
 	return;
@@ -831,7 +823,6 @@ static void create_word_context(SELFPARAMETERTYPE *self, const SItem *item, s_er
 					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
 			goto word_context_cleanup;
 
-		//S_DELETE(dFeat, "create_word_context", error);
 	}
 
 	/* number of syllables after this one */
@@ -848,7 +839,6 @@ static void create_word_context(SELFPARAMETERTYPE *self, const SItem *item, s_er
 					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
 			goto word_context_cleanup;
 
-		//S_DELETE(dFeat, "create_word_context", error);
 	}
 
 	/* guess-part-of-speech of previous word */
@@ -865,7 +855,6 @@ static void create_word_context(SELFPARAMETERTYPE *self, const SItem *item, s_er
 					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
 			goto word_context_cleanup;
 
-		//S_DELETE(dFeat, "create_word_context", error);
 	}
 
 	/* guess-part-of-speech of this word */
@@ -882,7 +871,6 @@ static void create_word_context(SELFPARAMETERTYPE *self, const SItem *item, s_er
 					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
 			goto word_context_cleanup;
 
-		//S_DELETE(dFeat, "create_word_context", error);
 	}
 
 	/* guess-part-of-speech of next word */
@@ -899,7 +887,6 @@ static void create_word_context(SELFPARAMETERTYPE *self, const SItem *item, s_er
 					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
 			goto word_context_cleanup;
 
-		//S_DELETE(dFeat, "create_word_context", error);
 	}
 
 	/* the number of syllables in the previous word */
@@ -916,7 +903,6 @@ static void create_word_context(SELFPARAMETERTYPE *self, const SItem *item, s_er
 					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
 			goto word_context_cleanup;
 
-		//S_DELETE(dFeat, "create_word_context", error);
 	}
 
 	/* the number of syllables in this word */
@@ -933,7 +919,6 @@ static void create_word_context(SELFPARAMETERTYPE *self, const SItem *item, s_er
 					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
 			goto word_context_cleanup;
 
-		//S_DELETE(dFeat, "create_word_context", error);
 	}
 
 	/* the number of syllables in the next word */
@@ -950,7 +935,6 @@ static void create_word_context(SELFPARAMETERTYPE *self, const SItem *item, s_er
 					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
 			goto word_context_cleanup;
 
-		//S_DELETE(dFeat, "create_word_context", error);
 	}
 
 word_context_cleanup:
@@ -981,7 +965,6 @@ static void create_word_context_pause(SELFPARAMETERTYPE *self, const SItem *item
 					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
 			goto word_context_pause_cleanup;
 
-		//S_DELETE(dFeat, "create_word_context_pause", error);
 	}
 
 	/* guess-part-of-speech of this word: not possible */
@@ -1000,7 +983,6 @@ static void create_word_context_pause(SELFPARAMETERTYPE *self, const SItem *item
 					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
 			goto word_context_pause_cleanup;
 
-		//S_DELETE(dFeat, "create_word_context_pause", error);
 	}
 
 	/* the number of syllables in the previous word */
@@ -1017,7 +999,6 @@ static void create_word_context_pause(SELFPARAMETERTYPE *self, const SItem *item
 					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
 			goto word_context_pause_cleanup;
 
-		//S_DELETE(dFeat, "create_word_context_pause", error);
 	}
 
 	/* the number of syllables in this word: not possible */
@@ -1036,7 +1017,6 @@ static void create_word_context_pause(SELFPARAMETERTYPE *self, const SItem *item
 					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
 			goto word_context_pause_cleanup;
 
-		//S_DELETE(dFeat, "create_word_context_pause", error);
 	}
 
 word_context_pause_cleanup:
@@ -1067,7 +1047,6 @@ static void create_phrase_context(SELFPARAMETERTYPE *self, const SItem *item, s_
 					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
 			goto phrase_context_cleanup;
 
-		//S_DELETE(dFeat, "create_phrase_context", error);
 	}
 
 	/* number of syllables after this one */
@@ -1084,7 +1063,6 @@ static void create_phrase_context(SELFPARAMETERTYPE *self, const SItem *item, s_
 					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
 			goto phrase_context_cleanup;
 
-		//S_DELETE(dFeat, "create_phrase_context", error);
 	}
 
 	/* number of words before this in phrase */
@@ -1101,7 +1079,6 @@ static void create_phrase_context(SELFPARAMETERTYPE *self, const SItem *item, s_
 					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
 			goto phrase_context_cleanup;
 
-		//S_DELETE(dFeat, "create_phrase_context", error);
 	}
 
 	/* number of words after this in phrase */
@@ -1118,7 +1095,6 @@ static void create_phrase_context(SELFPARAMETERTYPE *self, const SItem *item, s_
 					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
 			goto phrase_context_cleanup;
 
-		//S_DELETE(dFeat, "create_phrase_context", error);
 	}
 
 	/* the number of content words before the current word in the current phrase */
@@ -1135,7 +1111,6 @@ static void create_phrase_context(SELFPARAMETERTYPE *self, const SItem *item, s_
 					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
 			goto phrase_context_cleanup;
 
-		//S_DELETE(dFeat, "create_phrase_context", error);
 	}
 
 	/* the number of content words after the current word in the current phrase */
@@ -1152,7 +1127,7 @@ static void create_phrase_context(SELFPARAMETERTYPE *self, const SItem *item, s_
 					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
 			goto phrase_context_cleanup;
 
-		//S_DELETE(dFeat, "create_phrase_context", error);
+
 	}
 
 	/* the number of words from the previous content word to the current word */
@@ -1169,7 +1144,7 @@ static void create_phrase_context(SELFPARAMETERTYPE *self, const SItem *item, s_
 					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
 			goto phrase_context_cleanup;
 
-		//S_DELETE(dFeat, "create_phrase_context", error);
+
 	}
 
 	/* the number of words from the current word to the next content word */
@@ -1186,7 +1161,7 @@ static void create_phrase_context(SELFPARAMETERTYPE *self, const SItem *item, s_
 					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
 			goto phrase_context_cleanup;
 
-		//S_DELETE(dFeat, "create_phrase_context", error);
+
 	}
 
 	/* the number of syllables in the previous phrase */
@@ -1203,7 +1178,7 @@ static void create_phrase_context(SELFPARAMETERTYPE *self, const SItem *item, s_
 					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
 			goto phrase_context_cleanup;
 
-		//S_DELETE(dFeat, "create_phrase_context", error);
+
 	}
 
 	/* the number of syllables in this phrase */
@@ -1220,7 +1195,6 @@ static void create_phrase_context(SELFPARAMETERTYPE *self, const SItem *item, s_
 					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
 			goto phrase_context_cleanup;
 
-		//S_DELETE(dFeat, "create_phrase_context", error);
 	}
 
 	/* the number of syllables in the next phrase */
@@ -1237,7 +1211,6 @@ static void create_phrase_context(SELFPARAMETERTYPE *self, const SItem *item, s_
 					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
 			goto phrase_context_cleanup;
 
-		//S_DELETE(dFeat, "create_phrase_context", error);
 	}
 
 	/* the number of words in the previous phrase */
@@ -1254,7 +1227,6 @@ static void create_phrase_context(SELFPARAMETERTYPE *self, const SItem *item, s_
 					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
 			goto phrase_context_cleanup;
 
-		//S_DELETE(dFeat, "create_phrase_context", error);
 	}
 
 	/* the number of words in this phrase */
@@ -1271,7 +1243,6 @@ static void create_phrase_context(SELFPARAMETERTYPE *self, const SItem *item, s_
 					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
 			goto phrase_context_cleanup;
 
-		//S_DELETE(dFeat, "create_phrase_context", error);
 	}
 
 	/* the number of words in the next phrase */
@@ -1288,7 +1259,6 @@ static void create_phrase_context(SELFPARAMETERTYPE *self, const SItem *item, s_
 					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
 			goto phrase_context_cleanup;
 
-		//S_DELETE(dFeat, "create_phrase_context", error);
 	}
 
 	/* TOBI endtone of the current phrase */
@@ -1307,7 +1277,6 @@ static void create_phrase_context(SELFPARAMETERTYPE *self, const SItem *item, s_
 					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
 			goto phrase_context_cleanup;
 
-		//S_DELETE(dFeat, "create_phrase_context", error);
 	}
 
 phrase_context_cleanup:
@@ -1353,7 +1322,6 @@ static void create_phrase_context_pause(SELFPARAMETERTYPE *self, const SItem *it
 					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
 			goto phrase_context_pause_cleanup;
 
-		//S_DELETE(dFeat, "create_phrase_context_pause", error);
 	}
 
 	/* the number of syllables in this phrase */
@@ -1380,7 +1348,6 @@ static void create_phrase_context_pause(SELFPARAMETERTYPE *self, const SItem *it
 					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
 			goto phrase_context_pause_cleanup;
 
-		//S_DELETE(dFeat, "create_phrase_context_pause", error);
 	}
 
 	/* the number of syllables in the next phrase */
@@ -1397,7 +1364,6 @@ static void create_phrase_context_pause(SELFPARAMETERTYPE *self, const SItem *it
 					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
 			goto phrase_context_pause_cleanup;
 
-		//S_DELETE(dFeat, "create_phrase_context_pause", error);
 	}
 
 	/* the number of words in the previous phrase */
@@ -1414,7 +1380,6 @@ static void create_phrase_context_pause(SELFPARAMETERTYPE *self, const SItem *it
 					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
 			goto phrase_context_pause_cleanup;
 
-		//S_DELETE(dFeat, "create_phrase_context_pause", error);
 	}
 
 	/* the number of words in the this phrase */
@@ -1440,7 +1405,6 @@ static void create_phrase_context_pause(SELFPARAMETERTYPE *self, const SItem *it
 					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
 			goto phrase_context_pause_cleanup;
 
-		//S_DELETE(dFeat, "create_phrase_context_pause", error);
 	}
 
 	/* the number of words in the next phrase */
@@ -1457,7 +1421,6 @@ static void create_phrase_context_pause(SELFPARAMETERTYPE *self, const SItem *it
 					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
 			goto phrase_context_pause_cleanup;
 
-		//S_DELETE(dFeat, "create_phrase_context_pause", error);
 	}
 
 	/* TOBI endtone of the current phrase */
@@ -1484,7 +1447,6 @@ static void create_phrase_context_pause(SELFPARAMETERTYPE *self, const SItem *it
 					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
 			goto phrase_context_pause_cleanup;
 
-		//S_DELETE(dFeat, "create_phrase_context_pause", error);
 	}
 
 phrase_context_pause_cleanup:
@@ -1515,7 +1477,6 @@ static void create_utterance_context(SELFPARAMETERTYPE *self, const SItem *item,
 					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
 			goto create_utterance_context_cleanup;
 
-		//S_DELETE(dFeat, "create_utterance_context", error);
 	}
 
 	/* number of phrases after this in utterance */
@@ -1532,7 +1493,6 @@ static void create_utterance_context(SELFPARAMETERTYPE *self, const SItem *item,
 					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
 			goto create_utterance_context_cleanup;
 
-		//S_DELETE(dFeat, "create_utterance_context", error);
 	}
 
 	/* the number of syllables in this utterence */
@@ -1549,7 +1509,6 @@ static void create_utterance_context(SELFPARAMETERTYPE *self, const SItem *item,
 					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
 			goto create_utterance_context_cleanup;
 
-		//S_DELETE(dFeat, "create_utterance_context", error);
 	}
 
 	/* the number of words in this utterence */
@@ -1566,7 +1525,6 @@ static void create_utterance_context(SELFPARAMETERTYPE *self, const SItem *item,
 					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
 			goto create_utterance_context_cleanup;
 
-		//S_DELETE(dFeat, "create_utterance_context", error);
 	}
 
 	/* the number of phrases in this utterence */
@@ -1583,7 +1541,6 @@ static void create_utterance_context(SELFPARAMETERTYPE *self, const SItem *item,
 					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
 			goto create_utterance_context_cleanup;
 
-		//S_DELETE(dFeat, "create_utterance_context", error);
 	}
 
 create_utterance_context_cleanup:
@@ -1636,7 +1593,6 @@ static void create_utterance_context_pause(SELFPARAMETERTYPE *self, const SItem 
 					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
 			goto create_utterance_context_pause_cleanup;
 
-		//S_DELETE(dFeat, "create_utterance_context_pause", error);
 	}
 
 	/* number of phrases after this in utterance */
@@ -1662,7 +1618,6 @@ static void create_utterance_context_pause(SELFPARAMETERTYPE *self, const SItem 
 					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
 			goto create_utterance_context_pause_cleanup;
 
-		//S_DELETE(dFeat, "create_utterance_context_pause", error);
 	}
 
 	/* the number of syllables in this utterence */
@@ -1679,7 +1634,6 @@ static void create_utterance_context_pause(SELFPARAMETERTYPE *self, const SItem 
 					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
 			goto create_utterance_context_pause_cleanup;
 
-		//S_DELETE(dFeat, "create_utterance_context_pause", error);
 	}
 
 	/* the number of words in this utterence */
@@ -1696,7 +1650,6 @@ static void create_utterance_context_pause(SELFPARAMETERTYPE *self, const SItem 
 					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
 			goto create_utterance_context_pause_cleanup;
 
-		//S_DELETE(dFeat, "create_utterance_context_pause", error);
 	}
 
 	/* the number of phrases in this utterence */
@@ -1713,7 +1666,6 @@ static void create_utterance_context_pause(SELFPARAMETERTYPE *self, const SItem 
 					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
 			goto create_utterance_context_pause_cleanup;
 
-		//S_DELETE(dFeat, "create_utterance_context_pause", error);
 	}
 
 create_utterance_context_pause_cleanup:

@@ -1098,7 +1098,7 @@ static void create_phrase_context(SELFPARAMETERTYPE *self, const SItem *item, s_
 	}
 
 	/* the number of content words before the current word in the current phrase */
-	dFeat = SItemPathToFeatProc(item, "R:SylStructure.parent.parent.R:Word.word_content_in", error);
+	/*dFeat = SItemPathToFeatProc(item, "R:SylStructure.parent.parent.R:Word.word_content_in", error);
 	S_CHK_ERR(error, S_CONTERR,
 				  "create_phrase_context",
 				  "Call to \"SItemPathToFeatProc\" failed");
@@ -1111,10 +1111,10 @@ static void create_phrase_context(SELFPARAMETERTYPE *self, const SItem *item, s_
 					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
 			goto phrase_context_cleanup;
 
-	}
+	}*/
 
 	/* the number of content words after the current word in the current phrase */
-	dFeat = SItemPathToFeatProc(item, "R:SylStructure.parent.parent.R:Word.word_content_out", error);
+	/*dFeat = SItemPathToFeatProc(item, "R:SylStructure.parent.parent.R:Word.word_content_out", error);
 	S_CHK_ERR(error, S_CONTERR,
 				  "create_phrase_context",
 				  "Call to \"SItemPathToFeatProc\" failed");
@@ -1128,10 +1128,10 @@ static void create_phrase_context(SELFPARAMETERTYPE *self, const SItem *item, s_
 			goto phrase_context_cleanup;
 
 
-	}
+	}*/
 
 	/* the number of words from the previous content word to the current word */
-	dFeat = SItemPathToFeatProc(item, "R:SylStructure.parent.parent.R:Word.word_content_all_in", error);
+	/*dFeat = SItemPathToFeatProc(item, "R:SylStructure.parent.parent.R:Word.word_content_all_in", error);
 	S_CHK_ERR(error, S_CONTERR,
 				  "create_phrase_context",
 				  "Call to \"SItemPathToFeatProc\" failed");
@@ -1144,11 +1144,10 @@ static void create_phrase_context(SELFPARAMETERTYPE *self, const SItem *item, s_
 					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
 			goto phrase_context_cleanup;
 
-
-	}
+	}*/
 
 	/* the number of words from the current word to the next content word */
-	dFeat = SItemPathToFeatProc(item, "R:SylStructure.parent.parent.R:Word.word_content_all_out", error);
+	/*dFeat = SItemPathToFeatProc(item, "R:SylStructure.parent.parent.R:Word.word_content_all_out", error);
 	S_CHK_ERR(error, S_CONTERR,
 				  "create_phrase_context",
 				  "Call to \"SItemPathToFeatProc\" failed");
@@ -1160,9 +1159,7 @@ static void create_phrase_context(SELFPARAMETERTYPE *self, const SItem *item, s_
 					  "create_phrase_context",
 					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
 			goto phrase_context_cleanup;
-
-
-	}
+	}*/
 
 	/* the number of syllables in the previous phrase */
 	dFeat = SItemPathToFeatProc(item, "R:SylStructure.parent.parent.R:Phrase.parent.p.phrase_num_syls", error);

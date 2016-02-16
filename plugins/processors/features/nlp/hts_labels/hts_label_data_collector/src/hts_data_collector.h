@@ -52,6 +52,7 @@
 /*      - 'p.word.syls.num'       : int : number of syls in the previous word       */
 /*      - 'word.syls.num'         : int : number of syls in this word               */
 /*      - 'n.word.syls.num'       : int : number of syls in the next word           */
+/*      - 'word.phones.num'       : int : number of phones in this word             */
 /*      - 'p.word.gpos'           : string : guess-part-of-speech of previous word  */
 /*      - 'word.gpos'             : string : guess-part-of-speech of this word      */
 /*      - 'n.word.gpos'           : string : guess-part-of-speech of next word      */

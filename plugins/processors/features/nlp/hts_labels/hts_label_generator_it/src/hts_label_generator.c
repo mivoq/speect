@@ -442,36 +442,12 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 				  "Execution of \"EXTRACTPHONEME\" failed"))
 		goto quit_error;
 
-
-
-	/* f48: syls_to_next_stressed */
-	EXTRACTFEATURE(data, "syls.to.next.stress", SObjectGetInt, "f48=%d|", "f48=0|", resultString, error);
+	/* f55: word.phones.num */
+	EXTRACTFEATURE(data, "word.phones.num", SObjectGetInt, "f55=%d|", "f55=0|", resultString, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Run",
 				  "Execution of \"EXTRACTFEATURE\" failed"))
 		goto quit_error;
-
-	/* f6: next_accent */
-	EXTRACTFEATURE(data, "n.accent", SObjectGetInt, "f6=%d|", "f6=0|", resultString, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "Run",
-				  "Execution of \"EXTRACTFEATURE\" failed"))
-		goto quit_error;
-
-	/* f22: pos in syl */
-	EXTRACTFEATURE(data, "phones.from.syl.start", SObjectGetInt, "f22=%d|", "f22=0|", resultString, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "Run",
-				  "Execution of \"EXTRACTFEATURE\" failed"))
-		goto quit_error;
-
-	/* f22: pos in syl */
-	EXTRACTFEATURE(data, "phones.from.syl.start", SObjectGetInt, "f22=%d|", "f22=0|", resultString, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "Run",
-				  "Execution of \"EXTRACTFEATURE\" failed"))
-		goto quit_error;
-
 
 	return SObjectSetString(resultString, error);
 

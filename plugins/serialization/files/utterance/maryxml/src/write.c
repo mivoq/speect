@@ -371,22 +371,21 @@ S_LOCAL void s_write_utt_maryxml(const SUtterance *utt, SDatasource *ds, s_erc *
 		goto s_write_utt_exit;
 	}
 
-	/* take the language if present, else default to en-US */
-	isPresent = SUtteranceFeatureIsPresent(utt, "lang-code", error);
+	SVoice* voice = SUtteranceVoice(utt, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 		"s_write_utt_maryxml",
-		"Call to \"SUtteranceFeatureIsPresent\" failed"))
-		goto s_write_utt_exit;;
+		"Call to \"SUtteranceVoice\" failed"))
+		goto s_write_utt_exit;
 
-	const char* lang = "en-US";
+	const char* lang = SVoiceGetLangCode(voice, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+		"s_write_utt_maryxml",
+		"Call to \"SVoiceGetLangCode\" failed"))
+		goto s_write_utt_exit;
 
-	if (isPresent)
+	if (lang == NULL)
 	{
-		lang = SObjectGetString(SUtteranceGetFeature(utt, "lang-code", error), error);
-		if (S_CHK_ERR(error, S_CONTERR,
-			"s_write_utt_maryxml",
-			"Call to \"SUtteranceGetFeature\" failed"))
-			goto s_write_utt_exit;;
+		lang = "en-US";
 	}
 	rc = xmlTextWriterWriteFormatAttributeNS(writer, BAD_CAST "xml", BAD_CAST "lang", NULL, lang);
 	if (rc < 0) {

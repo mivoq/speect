@@ -118,6 +118,7 @@ int main(int argc, char **argv) {
   struct Config config;
   char *textgrid_file = NULL;
   char *maryxml_file = NULL;
+  char *htslabels_file = NULL;
   int isText;
 
   SPCT_PRINT_AND_WAIT("going to initialize speect, press ENTER\n");
@@ -274,22 +275,22 @@ int main(int argc, char **argv) {
     S_FREE(maryxml_file);
     
     /* save htslabels */
-    s_asprintf(&maryxml_file, &error, "%s%s", config.wavfile, ".htslabels.XML");
+    s_asprintf(&htslabels_file, &error, "%s%s", config.wavfile, ".htslabels.XML");
     if (S_CHK_ERR(&error, S_CONTERR,
 		  "main",
 		  "Call to \"s_asprinf\" failed"))
       goto quit;
 
-    SObjectSave(S_OBJECT(utt), maryxml_file, "spct_utt_htslabelsXML", &error);
+    SObjectSave(S_OBJECT(utt), htslabels_file, "spct_utt_htslabelsXML", &error);
     if (S_CHK_ERR(&error, S_CONTERR,
 		  "main",
 		  "Call to \"SObjectSave\" failed"))
       {
-	S_FREE(maryxml_file);
+	S_FREE(htslabels_file);
 	goto quit;
       }
 
-    S_FREE(maryxml_file);
+    S_FREE(htslabels_file);
 
     SPCT_PRINT_AND_WAIT("saved htslabels, press ENTER\n");
   }

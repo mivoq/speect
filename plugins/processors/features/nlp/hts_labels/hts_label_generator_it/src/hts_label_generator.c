@@ -277,7 +277,7 @@ static void LoadConfiguration(SHTSLabelsGeneratorItFeatProc *self, const SItem *
 		return;
 	}
 
-	self->specialPhones = S_MAP(SMapGetObject(labelsGenerator_data, "special phones it", error));
+	self->specialPhones = S_MAP(SMapGetObject(labelsGenerator_data, "phones_map", error));
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "LoadConfiguration",
 				  "Call to \"SMapGetObject\" failed"))
@@ -286,11 +286,11 @@ static void LoadConfiguration(SHTSLabelsGeneratorItFeatProc *self, const SItem *
 	{
 		S_CTX_ERR(error, S_FAILURE,
 				  "LoadConfiguration",
-				  "Failed to get \"special phones it\" map from voice features");
+				  "Failed to get \"phones_map\" map from voice features");
 		return;
 	}
 
-	self->nullPhoneme = SMapGetString(labelsGenerator_data, "null phoneme it", error);
+	self->nullPhoneme = SMapGetString(labelsGenerator_data, "null_phone", error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "LoadConfiguration",
 				  "Call to \"SMapGetString\" failed"))
@@ -299,7 +299,7 @@ static void LoadConfiguration(SHTSLabelsGeneratorItFeatProc *self, const SItem *
 	{
 		S_CTX_ERR(error, S_FAILURE,
 				  "LoadConfiguration",
-				  "Failed to get \"null phoneme it\" string from voice features");
+				  "Failed to get \"null_phone\" string from voice features");
 		return;
 	}
 
@@ -333,11 +333,7 @@ static void Destroy(void *obj, s_erc *error)
 	S_CLR_ERR(error);
 
 	SHTSLabelsGeneratorItFeatProc* self = (SHTSLabelsGeneratorItFeatProc*) obj;
-	if (self->specialPhones != NULL)
-	{
-		SObjectDecRef((SObject*)self->specialPhones);
-		self->specialPhones = NULL;
-	}
+	self->specialPhones = NULL;
 	self->nullPhoneme = NULL;
 }
 
@@ -369,7 +365,7 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 		{
 			S_CTX_ERR(error, S_FAILURE,
 				  "Run",
-				  "Failed to load null phoneme string.");
+				  "Failed to load null phone string.");
 			goto quit_error;
 		}
 	}
@@ -442,8 +438,8 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 				  "Execution of \"EXTRACTPHONEME\" failed"))
 		goto quit_error;
 
-	/* f55: word.phones.num */
-	EXTRACTFEATURE(data, "word.phones.num", SObjectGetInt, "f55=%d|", "f55=0|", resultString, error);
+	/* f58: word.phones.num */
+	EXTRACTFEATURE(data, "word.phones.num", SObjectGetInt, "f58=%d|", "f58=0|", resultString, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Run",
 				  "Execution of \"EXTRACTFEATURE\" failed"))

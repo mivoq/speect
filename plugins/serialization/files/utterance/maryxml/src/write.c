@@ -70,7 +70,7 @@ static int _ds_close(void * context)
 	SDatasource * ds = (SDatasource*) context;
 	S_CLR_ERR(&error);
 	if (ds != NULL)
-		S_DELETE(ds, "s_write_utt_textgrid", &error);
+		S_DELETE(ds, "s_write_utt_maryxml", &error);
 	if (S_CHK_ERR(&error, S_CONTERR,
 		      "s_write_utt_maryxml",
 		      "Call to \"xmlOutputClose\" failed"))
@@ -433,7 +433,7 @@ S_LOCAL void s_write_utt_maryxml(const SUtterance *utt, SDatasource *ds, s_erc *
 			goto s_write_utt_exit;
 	}
 
-	/* iterate throught the tokens */
+	/* iterate through the tokens */
 	while (itrTokens != NULL)
 	{
 		/* get this token's data: name and pos */
@@ -457,7 +457,7 @@ S_LOCAL void s_write_utt_maryxml(const SUtterance *utt, SDatasource *ds, s_erc *
 				goto s_write_utt_exit;
 		}
 
-		const SItem* itrWord = SItemPathToItem(itrTokens, "daughter.R:Word.name",error);
+		const SItem* itrWord = SItemPathToItem(itrTokens, "daughter.R:Word.name", error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					"s_write_utt_maryxml",
 					"Call to \"SItemPathToItem\" failed"))

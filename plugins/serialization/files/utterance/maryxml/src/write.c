@@ -3,6 +3,7 @@
 /*                                                                                  */
 /* Contributors:  Matteo Lisotto                                                    */
 /*                Simone Daminato                                                   */
+/*                Giovanni Mazzocchin                                               */
 /*                                                                                  */
 /* Permission is hereby granted, free of charge, to any person obtaining a copy     */
 /* of this software and associated documentation files (the "Software"), to deal    */
@@ -78,7 +79,109 @@ static int _ds_close(void * context)
 	return 0;
 }
 
-static void write_t_tag(xmlTextWriterPtr writer, const char* content, const char* pos, const char* segments, s_erc *error)
+static void write_syllable_tags(xmlTextWriterPtr writer, const SItem* wordSItem, s_erc* error)
+{
+	int rc;
+	S_CLR_ERR(error);
+
+	if (wordSItem == NULL)
+	{
+		S_CTX_ERR(error, S_CONTERR,
+				  "write_syllable_tags",
+				   "no content to write in the tags");
+		return;
+	}
+
+	/* get the first syllable of the current word */
+	const SItem* itrSyllables = SItemPathToItem(wordSItem, "R:SylStructure.daughter",error);
+	if (S_CHK_ERR(error, S_CONTERR,
+		"write_word",
+		"Call to \"SItemPathToItem\" failed"))
+		return;
+
+	/* for each syllable */
+	while (itrSyllables != NULL)
+	{
+	    /* open syllable tag */
+		rc = xmlTextWriterStartElement(writer, BAD_CAST "syllable");
+		if (rc < 0)
+		{
+			S_CTX_ERR(error, S_CONTERR,
+				  "write_syllable_tags",
+				  "Call to \"xmlTextWriterStartElement\" failed");
+			return;
+		}
+		/* get the first segment */
+		const SItem* itrSegments = SItemDaughter(itrSyllables, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+			"write_syllable_tags",
+			"Call to \"SItemDaughter\" failed"))
+			return;
+
+		/* loop for ph tags */
+		while (itrSegments != NULL)
+		{
+			rc = xmlTextWriterStartElement(writer, BAD_CAST "ph");
+			if (rc < 0)
+			{
+				S_CTX_ERR(error, S_CONTERR,
+					   "write_syllable_tags",
+					   "Call to \"xmlTextWriterStartElement\" failed");
+				return;
+			}
+			/* get segment content */
+			const char* segmentName = SItemGetName(itrSegments, error);
+			if (S_CHK_ERR(error, S_CONTERR,
+				"write_syllable_tags",
+				"Call to \"SItemGetName\" failed"))
+				return;
+
+			rc = xmlTextWriterWriteAttribute(writer, BAD_CAST "p", BAD_CAST segmentName);
+			if (rc < 0)
+			{
+				S_CTX_ERR(error, S_CONTERR,
+					   "write_syllable_tags",
+					   "Call to \"xmlTextWriterWriteAttribute\" failed");
+				return;
+			}
+
+			rc = xmlTextWriterEndElement(writer);
+			if (rc < 0)
+			{
+				S_CTX_ERR(error, S_CONTERR,
+					  "write_syllable_tags",
+					  "Call to \"xmlTextWriterEndElement\" failed");
+				return;
+			}
+
+			/* get the next segment */
+			itrSegments = SItemNext(itrSegments, error);
+			if (S_CHK_ERR(error, S_CONTERR,
+				"write_syllable_tags",
+				"Call to \"SItemNext\" failed"))
+				return;
+		}
+
+		/* close syllable tag */
+		rc = xmlTextWriterEndElement(writer);
+		if (rc < 0)
+		{
+			S_CTX_ERR(error, S_CONTERR,
+				"write_syllable_tags",
+				"Call to \"xmlTextWriterEndElement\" failed");
+			return;
+		}
+		/* get next syllable */
+		/* get the next syllable of the word */
+		itrSyllables = SItemNext(itrSyllables, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+			"write_syllable_tags",
+			"Call to \"SItemNext\" failed"))
+			return;
+		}
+}
+
+static void write_t_tag(xmlTextWriterPtr writer, const char* content, const SItem* wordSItem, const char* pos, const char* segments, s_erc *error)
 {
 	int rc;
 
@@ -136,6 +239,14 @@ static void write_t_tag(xmlTextWriterPtr writer, const char* content, const char
 				  "write_t_tag",
 				  "Call to \"xmlTextWriterWriteString\" failed");
 		return;
+	}
+
+	/* call write_syllable_tags */
+	/* there's not any syllable when wordSItem is NULL */
+	if (wordSItem)
+	{
+		S_CLR_ERR(error);
+		write_syllable_tags(writer, wordSItem, error);
 	}
 
 	/* close t tag */
@@ -253,7 +364,7 @@ static void write_word(xmlTextWriterPtr writer, const SItem* wordSItem, const ch
 	if (word != NULL /* && s_strcmp(word, "", error) != 0 */)
 	{
 		/* write the word */
-		write_t_tag(writer, word, pos_string, segments_string, error);
+		write_t_tag(writer, word, wordSItem, pos_string, segments_string, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					"write_word",
 					"Call to \"write_t_tag\" failed"))
@@ -541,7 +652,7 @@ S_LOCAL void s_write_utt_maryxml(const SUtterance *utt, SDatasource *ds, s_erc *
 		else
 		{
 			/* fallback in case we have only tokens */
-			write_t_tag(writer, TokenName, pos_string, NULL, error);
+			write_t_tag(writer, TokenName, itrWord, pos_string, NULL, error);
 			if (S_CHK_ERR(error, S_CONTERR,
 						"s_write_utt_maryxml",
 						"Call to \"write_t_tag\" failed"))

@@ -23,7 +23,7 @@ with four relations and their items. The relations are:
      * ``Word`` - where the items are the words in the utterance.
      * ``Syllable`` - the items are the syllables in the words.
      * ``Segment`` - the items represent phones in the words.
-     * ``SylStruct`` - a relation that connects the ``Word``, ``Syllable`` and
+     * ``SylStructure`` - a relation that connects the ``Word``, ``Syllable`` and
        ``Segment`` relations.
 
 Note that for brevity the phones of the word "fifth" have been
@@ -66,13 +66,13 @@ The traversal of the graph is done with four basic functions,
 In the ``Word``, ``Syllable`` and ``Segment`` relations we can see
 that **all** items are connected, i.e. all items have a *previous* and
 a *next* item (except of course the head and tail items), while this
-is not the case for the ``SylStruct`` relation. The ``SylStruct``
+is not the case for the ``SylStructure`` relation. The ``SylStructure``
 relation's items have breaks in between certain items.
 
 
 .. rubric:: Parent and Daughter
 
-The ``SylStruct`` relation's items have *parent* and *daughter* nodes,
+The ``SylStructure`` relation's items have *parent* and *daughter* nodes,
 which the other three relations do not have. Each item has **one**
 parent node, for example, the ``/eh/`` phone's parent is the first
 ``Syllable`` relation item. An item may have multiple daughter nodes,
@@ -94,7 +94,7 @@ Each item is a unique node in the graph, but items may share their
 conceptually items that share their contents can be viewed as the same
 item. For example in :ref:`figure 4 <figure_hrg>`, one can see that
 all the items in the ``Word`` relation share their contents with the
-top level of items in the ``SylStruct`` relation.
+top level of items in the ``SylStructure`` relation.
 
 This concept enables us to switch relations while traversing:
 
@@ -102,7 +102,7 @@ This concept enables us to switch relations while traversing:
 
 Lets start traversing the ``Segment`` relation from left to
 right. None of the item's have a *parent* item, but we can switch to
-the ``SylStruct`` relation with the *as relation* function, from where
+the ``SylStructure`` relation with the *as relation* function, from where
 we can find parent items in the form of the ``syl`` items.
 
 .. rubric:: *In* relation
@@ -110,7 +110,7 @@ we can find parent items in the form of the ``syl`` items.
 While still traversing the ``Segment`` relation, we can query each
 item if it shares it's content with an item in another relation (*in
 relation*). While all the ``Segment`` relation items do share their
-content with items in the ``SylStruct`` relation, none of them share
+content with items in the ``SylStructure`` relation, none of them share
 content with any items in the ``Word`` relation.
 
 
@@ -152,7 +152,7 @@ word ("twenty") as it is in the ``Segment`` relation (``/iy/`` item).
 Now we want to traverse to the first ``Syllable`` item of the next
 word. We would have to call the following sequence of functions:
 
-     * *as relation* ``SylStruct``
+     * *as relation* ``SylStructure``
      * *parent*
      * *parent*
      * *next*
@@ -165,7 +165,7 @@ represent a traversal or content switch function. For example, the
 following token string will execute exactly the same sequence of
 functions::
 
-	  R:SylStruct.parent.parent.n.daughter.R:Syllable
+	  R:SylStructure.parent.parent.n.daughter.R:Syllable
 
 The possible tokens are:
 
@@ -185,11 +185,11 @@ processor* name to the end of the path. Let's say for example that we
 have a feature processor, named "syltone", that can calculate a
 syllable item's tone. The path can then be::
 
-	  R:SylStruct.parent.parent.n.daughter.R:Syllable.syltone
+	  R:SylStructure.parent.parent.n.daughter.R:Syllable.syltone
      
 The same can also be done for any named feature of an item, for example::
 
-	  R:SylStruct.parent.parent.n.name
+	  R:SylStructure.parent.parent.n.name
 
 will return "fifth", as that is the name of the second ``Word``
 relation item in :ref:`figure 4 <figure_hrg>`.

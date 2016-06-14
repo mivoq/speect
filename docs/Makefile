@@ -4,6 +4,7 @@
 # You can set these variables from the command line.
 SPHINXOPTS    =
 SPHINXBUILD   = sphinx-build
+SPHINXEXTDIR  = sphinxext
 PAPER         =
 BUILDDIR      = build
 DOXYDIR       = doxygen
@@ -17,7 +18,7 @@ ALLSPHINXOPTS   = -d $(BUILDDIR)/doctrees $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) sou
 # the i18n builder cannot share the environment and doctrees with the others
 I18NSPHINXOPTS  = $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) source
 
-.PHONY: help clean html dirhtml singlehtml pickle json htmlhelp qthelp devhelp epub latex latexpdf text man changes linkcheck doctest gettext
+.PHONY: help clean html dirhtml singlehtml pickle json htmlhelp qthelp devhelp epub latex latexpdf text man changes linkcheck doctest gettext sphinxext_clean doxygen_clean
 
 help:
 	@echo "Please use \`make <target>' where <target> is one of"
@@ -46,13 +47,18 @@ help:
 doxygen_clean:
 	-rm -rf $(DOXYDIR)/*
 
+sphinxext_clean:
+	-rm -f $(SPHINXEXTDIR)/doxybridge/*.pyc       \
+               $(SPHINXEXTDIR)/doxybridge/*/*.pyc     \
+               $(SPHINXEXTDIR)/doxybridge/*/*/*.pyc   \
+               $(SPHINXEXTDIR)/doxybridge/*/*/*/*.pyc
+
 doxygen_make:
 	-mkdir -p $(DOXYDIR)
 	$(DOXYGEN) $(DOXYFILE)
 
-clean:
+clean: doxygen_clean sphinxext_clean
 	-rm -rf $(BUILDDIR)/*
-	make doxygen_clean
 
 html:
 	make doxygen_make

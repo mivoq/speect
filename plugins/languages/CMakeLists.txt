@@ -17,5 +17,5 @@
 add_subdirectory(english)
 add_subdirectory(isizulu)
 add_subdirectory(kiswahili)
-
+add_subdirectory(italian)
 

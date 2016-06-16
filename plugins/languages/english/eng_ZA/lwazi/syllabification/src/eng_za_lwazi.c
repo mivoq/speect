@@ -1740,7 +1740,7 @@ static SList *Syllabify(const SSyllabification *self, const SItem *word,
 	phoneset = (SPhoneset*)SVoiceGetData(voice, "phoneset", error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Syllabify",
-				  "Call to \"SVoiceGetFeature\" failed"))
+				  "Call to \"SVoiceGetData\" failed"))
 		goto quit_error;
 
 	if (phoneset == NULL)

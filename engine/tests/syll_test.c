@@ -52,6 +52,7 @@
 /************************************************************************************/
 
 #define SPCT_WAIT_MEM 0
+#define MAX_PHONEME_LENGTH 10
 
 /* this is a simple macro to wait for user input so that we can do
  * memory testing, it does nothing if SPCT_WAIT_MEM is 0.
@@ -138,8 +139,6 @@ int main(int argc, char **argv)
     return 1;
   }
   
-  /* ########################## AFTER speect_init() */
-
   SPCT_PRINT_AND_WAIT("initialized speect, parsing options, press ENTER\n");
 
   init(&argc, argv, &config, &error);
@@ -156,9 +155,7 @@ int main(int argc, char **argv)
       goto quit;
       
   SPCT_PRINT_AND_WAIT("loaded voice, doing synthesis, press ENTER\n");
-
-  /* ########################## AFTER s_vm_load_voice() */
-  
+   
   const SUttProcessor *uttProc = SVoiceGetUttProc(voice, "LexLookup", &error);
   if (S_CHK_ERR(&error, S_CONTERR,
 				"main",
@@ -172,7 +169,6 @@ int main(int argc, char **argv)
 				"Call to \"S_NEW\" failed"))
       goto quit;    
       
-  /* it works */ 
   wordRel = S_NEW(SRelation, &error);
   if (S_CHK_ERR(&error, S_CONTERR,
 				"main",
@@ -190,15 +186,13 @@ int main(int argc, char **argv)
 				"main",
 				"Call to \"S_NEW\" failed"))
 	  goto quit;
- 
-  /* Utterance initialization ############# */
+
   SUtteranceInit(&utt, voice, &error);
   if (S_CHK_ERR(&error, S_CONTERR,
 				"main",
 				"Call to \"SUtteranceInit\" failed"))
       goto quit;
   
-  /* ###################################### */
   SRelationInit(&wordRel, "wordRel", &error);
   if (S_CHK_ERR(&error, S_CONTERR,
 				"main",
@@ -211,13 +205,11 @@ int main(int argc, char **argv)
 				"Call to \"SUtteranceSetRelation\" failed"))
 	  goto quit;
   
-  /* CORRECT, KEEP IT  ############### */
   SItemInit(&wordItem, wordRel, NULL, &error);
   if (S_CHK_ERR(&error, S_CONTERR,
 				"main",
 				"Call to \"SItemInit\" failed"))
       goto quit;
-  /* ################# */  
   
   SItemSetName(wordItem, "ciao", &error);
   if (S_CHK_ERR(&error, S_CONTERR,
@@ -225,8 +217,6 @@ int main(int argc, char **argv)
 				"Call to \"SItemSetName\" failed"))
       goto quit;
      
-  /* INPUT LOOP AND SYLLABIFICATION FROM HERE ################### */
-  
   SSyllabification* syllab = (SSyllabification*)SVoiceGetData(voice , "syllabification", &error);
 
   if (syllab == NULL)
@@ -245,12 +235,12 @@ int main(int argc, char **argv)
   size_t dimBuffer = sizeof(buffer); 
   ssize_t input_size = 0;
   /* 'inter_buffer' for phonemes in the lines */
-  char* inter_buffer = malloc(sizeof(char) * 4);
+  char* inter_buffer = malloc(sizeof(char) * (MAX_PHONEME_LENGTH + 1));
    
   input_size = getline(&buffer, &dimBuffer, stdin);	
   while (input_size != -1)
   {
-	   phones = S_LIST(S_NEW(SListList, &error)); 
+	   phones = S_LIST(S_NEW(SListList, &error));
        if (S_CHK_ERR(&error, S_CONTERR,
 				     "main",
 				     "Call to \"S_NEW\" failed"))
@@ -259,31 +249,27 @@ int main(int argc, char **argv)
 	   int j = 0;
 	   while (buffer[j] != '\0')
 	   {
+			int k;
+			int inter_buffer_c;
+			
 			if (!isspace(buffer[j]))
 			{
 				inter_buffer[0] = buffer[j];
 				
-				if (!isspace(buffer[j + 1]) && buffer[j + 1] != '\0')
+				k = j + 1;
+				inter_buffer_c = 1;
+				
+				while (!isspace(buffer[k]) && inter_buffer_c < MAX_PHONEME_LENGTH)
 				{
-						inter_buffer[1] = buffer[j + 1];
-						if (isspace(buffer[j + 2]))
-						{
-							inter_buffer[2] = '\0';
-							j++;
-						}
-						else{
-							if (buffer[j + 2] != '\0')
-							{
-								inter_buffer[2] = buffer[j + 2];
-								inter_buffer[3] = '\0';
-								j += 2;
-							}
-						}
-				}
-				else{
-					inter_buffer[1] = '\0';
+					inter_buffer[inter_buffer_c] = buffer[k];
+					
+					inter_buffer_c++;
+					k++;
 				}
 				
+				j += (inter_buffer_c - 1);
+				inter_buffer[inter_buffer_c] = '\0';
+		
 				/* for each phoneme in the line, put it in 'ph' */
 				SObject* ph = SObjectSetString(inter_buffer, &error);
 				

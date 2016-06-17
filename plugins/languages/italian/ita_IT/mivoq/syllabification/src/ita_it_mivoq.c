@@ -66,7 +66,7 @@ static SSyllabItaItMivoqClass SyllabItaItMivoqClass; /* SSyllabItaItMivoq class 
 /*                                                                                  */
 /************************************************************************************/
 
-static enum PhoneLevels {occlusive, fricative, nasal, lateral, s, vibrant, approximant, vowel, error_level};
+enum PhoneLevels {occlusive, fricative, nasal, lateral, s, vibrant, approximant, vowel, error_level};
 
 static s_bool phone_is_vowel(const SPhoneset *phoneset, const char *phone, s_erc *error);
 
@@ -267,8 +267,6 @@ static s_bool phone_is_vibrant(const SPhoneset *phoneset, const char *phone, s_e
 				  "Call to method \"phone_has_feature\" failed"))
 		return FALSE;
 	
-	
-	
 	if (present && !present_1)
 		return TRUE;
 	
@@ -371,7 +369,7 @@ static enum PhoneLevels phone_is_what(const SPhoneset* phoneset, const char* pho
 				  "phone_is_what",
 				  "Call to \"phone_is_vowel\" failed"))
 		return error_level;
-	
+	 
 	s_bool is_occlusive = phone_is_occlusive(phoneset, phone, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "phone_is_what",
@@ -557,8 +555,9 @@ static SList *Syllabify(const SSyllabification *self, const SItem *word,
 {
 	const SPhoneset *phoneset;
 	const SVoice *voice;
-		
-	SList *syllables = NULL;      /* should be returned */
+	
+	/* should be returned */	
+	SList *syllables = NULL;
 	SList *syl;
 	const SObject *tmp;
 	const char *phone_string;
@@ -639,7 +638,8 @@ static SList *Syllabify(const SSyllabification *self, const SItem *word,
 		goto quit_error;
 	
 	/* counter for the loop */
-	sint32 i = 0;
+	size_t i = 0;
+	
 	/* I need a list to keep the indexes marking the beginning of the syllables */
 	SList* indexes = S_LIST(S_NEW(SListList, error)); 
     if (S_CHK_ERR(error, S_CONTERR,
@@ -716,11 +716,11 @@ static SList *Syllabify(const SSyllabification *self, const SItem *word,
 			/* set it to TRUE when phonemes' series changes direction */
 			s_bool direc_changed = FALSE;
 			
-			sint32 j = i - 1;
-			SObject *tmp_1 = SListNth(phoneList, j, error);
+			size_t j = i - 1;
+			const SObject *tmp_1 = SListNth(phoneList, j, error);
 			if (S_CHK_ERR(error, S_CONTERR,
 						  "Syllabify",
-					  "Call to \"SListNth\" failed"))
+					      "Call to \"SListNth\" failed"))
 				goto quit_error;
 					
 			const char* phone_string_1 = SObjectGetString(tmp_1, error);
@@ -748,13 +748,15 @@ static SList *Syllabify(const SSyllabification *self, const SItem *word,
 			
 			while (!test_vowel && !direc_changed)
 			{
-				tmp_1 = SListNth(phoneList, j, error);
+				const SObject *tmp_2 = SListNth(phoneList, j, error);
+				
 				if (S_CHK_ERR(error, S_CONTERR,
 		     				  "Syllabify",
 						  "Call to \"SListNth\" failed"))
 		    		goto quit_error;
 					
-				phone_string_1 = SObjectGetString(tmp_1, error);
+				phone_string_1 = SObjectGetString(tmp_2, error);
+
 				if (S_CHK_ERR(error, S_CONTERR,
 							  "Syllabify",
 							  "Call to \"SObjectGetString\" failed"))
@@ -766,8 +768,8 @@ static SList *Syllabify(const SSyllabification *self, const SItem *word,
 						     "Call to \"SObjectGetString\" failed"))
 					goto quit_error;
 				
-			    	phone_level_pp = phone_level_p;
-			    	phone_level_p = phone_level;
+			    phone_level_pp = phone_level_p;
+			    phone_level_p = phone_level;
 				phone_level = phone_is_what(phoneset, phone_string_1, error);
 				if (S_CHK_ERR(error, S_CONTERR,
 					   		  "Syllabify",
@@ -821,7 +823,7 @@ static SList *Syllabify(const SSyllabification *self, const SItem *word,
 				j--;
 			}/*end of inner while*/
 		}
-		
+	
 		i++;
 	}/* end of outer while */		
       	  
@@ -834,12 +836,12 @@ static SList *Syllabify(const SSyllabification *self, const SItem *word,
 	/*LAST LOOP*/	
 	
 	int indexes_size = SListSize(indexes, error);
-	uint32 j = 0;
+	int j = 0;
 	
 	while (j < indexes_size)
 	{
-		SObject* kObj = SListNth(indexes, j, error);
-		SObject* kObj_1;
+		const SObject *kObj = SListNth(indexes, j, error);
+		const SObject* kObj_1;
 		if (j < indexes_size - 1)
 		{
 			 kObj_1 = SListNth(indexes, j + 1, error);
@@ -854,7 +856,6 @@ static SList *Syllabify(const SSyllabification *self, const SItem *word,
 		}
 		else
 		{
-			/* k1 = list_size (phoneList's size) */
 			k1 = list_size;
 		}
 		
@@ -867,14 +868,14 @@ static SList *Syllabify(const SSyllabification *self, const SItem *word,
 		while (k < k1)
 		{
 		    /* get the k-th element in phoneList as a SObject* */
-			SObject *tmp = SListNth(phoneList, k, error);
+			const SObject *tmp = SListNth(phoneList, k, error);
 			if (S_CHK_ERR(error, S_CONTERR,
 						  "Syllabify",
 						  "Call to \"SListNth\" failed"))
 			    goto quit_error;
 			
 			/* get the string from the k-th element in phoneList*/
-			char *phone_string = SObjectGetString(tmp, error);
+			const char *phone_string = SObjectGetString(tmp, error);
 			if (S_CHK_ERR(error, S_CONTERR,
 						  "Syllabify",
 						  "Call to \"SObjectGetString\" failed"))

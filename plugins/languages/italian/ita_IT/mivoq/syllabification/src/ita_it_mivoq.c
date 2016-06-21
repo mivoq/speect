@@ -29,8 +29,8 @@
 /*                                                                                  */
 /* A Standard Italian (ita-it) syllabification class                                */
 /* implementation for the Mivoq project. Based on Pietro Maturi,                    */
-/* "I suoni delle lingue, i suoni dell'italiano"	                                */
-/*                        							                                */
+/* "I suoni delle lingue, i suoni dell'italiano"	                            */
+/*                        							    */
 /************************************************************************************/
 
 
@@ -99,8 +99,8 @@ S_LOCAL void _s_syllab_ita_it_mivoq_class_reg(s_erc *error)
 	S_CLR_ERR(error);
 	s_class_reg(S_OBJECTCLASS(&SyllabItaItMivoqClass), error);
 	S_CHK_ERR(error, S_CONTERR,
-			  "_s_syllab_ita_it_mivoq_class_reg",
-			  "Failed to register SSyllabItaItMivoqClass");
+		  "_s_syllab_ita_it_mivoq_class_reg",
+		  "Failed to register SSyllabItaItMivoqClass");
 }
 
 
@@ -109,8 +109,8 @@ S_LOCAL void _s_syllab_ita_it_mivoq_class_free(s_erc *error)
 	S_CLR_ERR(error);
 	s_class_free(S_OBJECTCLASS(&SyllabItaItMivoqClass), error);
 	S_CHK_ERR(error, S_CONTERR,
-			  "_s_syllab_ita_it_mivoq_class_free",
-			  "Failed to free SSyllabItaItMivoqClass");
+		  "_s_syllab_ita_it_mivoq_class_free",
+		  "Failed to free SSyllabItaItMivoqClass");
 }
 
 
@@ -123,19 +123,19 @@ S_LOCAL void _s_syllab_ita_it_mivoq_class_free(s_erc *error)
 static s_bool phone_is_vowel(const SPhoneset *phoneset, const char *phone, s_erc *error)
 {
 	s_bool present;
-	
+
 	S_CLR_ERR(error);
 	present = S_PHONESET_CALL(phoneset, phone_has_feature)(phoneset, phone,
-														  "vowel",
-														   error);
-    if (S_CHK_ERR(error, S_CONTERR,
-				  "phone_is_vowel",
-				  "Call to method \"phone_has_feature\" failed"))
+							       "vowel",
+							       error);
+	if (S_CHK_ERR(error, S_CONTERR,
+		      "phone_is_vowel",
+		      "Call to method \"phone_has_feature\" failed"))
 		return FALSE;
-		
+
 	if (present)
 		return TRUE;
-	
+
 	return FALSE;
 }
 
@@ -143,19 +143,19 @@ static s_bool phone_is_vowel(const SPhoneset *phoneset, const char *phone, s_erc
 static s_bool phone_is_occlusive(const SPhoneset *phoneset, const char *phone, s_erc *error)
 {
 	s_bool present;
-	
+
 	S_CLR_ERR(error);
 	present = S_PHONESET_CALL(phoneset, phone_has_feature)(phoneset, phone,
-														   "manner_plosive",
-															error);
+							       "manner_plosive",
+							       error);
 	if (S_CHK_ERR(error, S_CONTERR,
-				  "phone_is_occlusive",
-				  "Call to method \"phone_has_feature\" failed"))
+		      "phone_is_occlusive",
+		      "Call to method \"phone_has_feature\" failed"))
 		return FALSE;
-	
+
 	if (present)
 		return TRUE;
-	
+
 	return FALSE;
 }
 
@@ -164,19 +164,19 @@ static s_bool phone_is_occlusive(const SPhoneset *phoneset, const char *phone, s
 static s_bool phone_is_nasal(const SPhoneset *phoneset, const char *phone, s_erc *error)
 {
 	s_bool present;
-	
+
 	S_CLR_ERR(error);
 	present = S_PHONESET_CALL(phoneset, phone_has_feature)(phoneset, phone,
-														   "manner_nasal",
-														   error);
-    if (S_CHK_ERR(error, S_CONTERR,
-				  "phone_is_nasal",
-				  "Call to method \"phone_has_feature\" failed"))
+							       "manner_nasal",
+							       error);
+	if (S_CHK_ERR(error, S_CONTERR,
+		      "phone_is_nasal",
+		      "Call to method \"phone_has_feature\" failed"))
 		return FALSE;
-		
+
 	if (present)
 		return TRUE;
-	
+
 	return FALSE;
 }
 
@@ -189,35 +189,35 @@ static s_bool phone_is_fricative(const SPhoneset *phoneset, const char *phone, s
 	s_bool present_0;
 	/* use to keep out 's', using phone_is_s internal function */
 	s_bool present_1;
-	
-	
+
+
 	S_CLR_ERR(error);
 	present = S_PHONESET_CALL(phoneset, phone_has_feature)(phoneset, phone,
-														   "manner_fricative",
-														    error);
+							       "manner_fricative",
+							       error);
 	if (S_CHK_ERR(error, S_CONTERR,
-				  "phone_is_fricative",
-				  "Call to method \"phone_has_feature\" failed"))
+		      "phone_is_fricative",
+		      "Call to method \"phone_has_feature\" failed"))
 		return FALSE;
-		
+
 	present_0 = S_PHONESET_CALL(phoneset, phone_has_feature)(phoneset, phone,
-															 "manner_affricate",
-															  error);
+								 "manner_affricate",
+								 error);
 	if (S_CHK_ERR(error, S_CONTERR,
-				  "phone_is_fricative",
-				  "Call to method \"phone_has_feature\" failed"))
+		      "phone_is_fricative",
+		      "Call to method \"phone_has_feature\" failed"))
 		return FALSE;
-														
-	
+
+
 	present_1 = phone_is_s(phoneset, phone, error);
 	if (S_CHK_ERR(error, S_CONTERR,
-				  "phone_is_fricative",
-				  "Call to method \"phone_is_s\" failed"))
+		      "phone_is_fricative",
+		      "Call to method \"phone_is_s\" failed"))
 		return FALSE;
-		
+
 	if ((present || present_0) && !present_1)
 		return TRUE;
-		
+
 	return FALSE;
 }
 
@@ -225,20 +225,20 @@ static s_bool phone_is_fricative(const SPhoneset *phoneset, const char *phone, s
 static s_bool phone_is_lateral(const SPhoneset *phoneset, const char *phone, s_erc *error)
 {
 	s_bool present;
-	
+
 	S_CLR_ERR(error);
 	present = S_PHONESET_CALL(phoneset, phone_has_feature)(phoneset, phone,
-														   "manner_lateral",
-															error);
-															
+							       "manner_lateral",
+							       error);
+
 	if (S_CHK_ERR(error, S_CONTERR,
-			      "phone_is_lateral",
-				  "Call to method \"phone_has_feature\" failed"))
+		      "phone_is_lateral",
+		      "Call to method \"phone_has_feature\" failed"))
 		return FALSE;
-	
+
 	if (present)
 		return TRUE;
-	
+
 	return FALSE;
 }
 
@@ -248,59 +248,59 @@ static s_bool phone_is_vibrant(const SPhoneset *phoneset, const char *phone, s_e
 {
 	s_bool present;
 	s_bool present_1;
-	
+
 	S_CLR_ERR(error);
 	present = S_PHONESET_CALL(phoneset, phone_has_feature)(phoneset, phone,
-														   "manner_liquid",
-															error);
-															
+							       "manner_liquid",
+							       error);
+
 	if (S_CHK_ERR(error, S_CONTERR,
-			      "phone_is_vibrant",
-				  "Call to method \"phone_has_feature\" failed"))
+		      "phone_is_vibrant",
+		      "Call to method \"phone_has_feature\" failed"))
 		return FALSE;
-		
+
 	present_1 = S_PHONESET_CALL(phoneset, phone_has_feature)(phoneset, phone,
-														     "manner_lateral",
-															  error);															
+								 "manner_lateral",
+								 error);
 	if (S_CHK_ERR(error, S_CONTERR,
-			      "phone_is_vibrant",
-				  "Call to method \"phone_has_feature\" failed"))
+		      "phone_is_vibrant",
+		      "Call to method \"phone_has_feature\" failed"))
 		return FALSE;
-	
+
 	if (present && !present_1)
 		return TRUE;
-	
+
 	return FALSE;
 }
 
-/* s (voiceless and voiced (represented through 'z')) 
+/* s (voiceless and voiced (represented through 'z'))
  * place_alveolar AND manner_strident */
 static s_bool phone_is_s(const SPhoneset *phoneset, const char *phone, s_erc *error)
 {
 	s_bool present;
 	s_bool present_1;
-	
+
 	S_CLR_ERR(error);
 	present = S_PHONESET_CALL(phoneset, phone_has_feature)(phoneset, phone,
-														   "place_alveolar",
-														   error);
+							       "place_alveolar",
+							       error);
 	if (S_CHK_ERR(error, S_CONTERR,
-			      "phone_is_s",
-				  "Call to method \"phone_has_feature\" failed"))
+		      "phone_is_s",
+		      "Call to method \"phone_has_feature\" failed"))
 		return FALSE;
-	
+
 	present_1 = S_PHONESET_CALL(phoneset, phone_has_feature)(phoneset, phone,
-														     "manner_strident",
-															  error);															
+								 "manner_strident",
+								 error);
 	if (S_CHK_ERR(error, S_CONTERR,
-			      "phone_is_s",
-				  "Call to method \"phone_has_feature\" failed"))
+		      "phone_is_s",
+		      "Call to method \"phone_has_feature\" failed"))
 		return FALSE;
-		
-	if (present && present_1)	
+
+	if (present && present_1)
 		return TRUE;
-		
-	return FALSE;										   
+
+	return FALSE;
 }
 
 /* check for 'manner_approximant', but keep out r (using phone_is_vibrant) and laterals
@@ -310,106 +310,106 @@ static s_bool phone_is_approximant(const SPhoneset *phoneset, const char *phone,
 	s_bool present;
 	s_bool present_1;
 	s_bool present_2;
-	
+
 	S_CLR_ERR(error);
 	present = S_PHONESET_CALL(phoneset, phone_has_feature)(phoneset, phone,
-														   "manner_approximant",
-														   error);
+							       "manner_approximant",
+							       error);
 	if (S_CHK_ERR(error, S_CONTERR,
-			      "phone_is_approximant",
-				  "Call to method \"phone_has_feature\" failed"))
+		      "phone_is_approximant",
+		      "Call to method \"phone_has_feature\" failed"))
 		return FALSE;
-	
+
 	present_1 = phone_is_vibrant(phoneset, phone, error);
-																
+
 	if (S_CHK_ERR(error, S_CONTERR,
-			      "phone_is_approximant",
-				  "Call to method \"phone_has_feature\" failed"))
-		return FALSE;		
-		
-	present_2 = S_PHONESET_CALL(phoneset, phone_has_feature)(phoneset, phone,
-														     "manner_lateral",
-														      error);
-	if (S_CHK_ERR(error, S_CONTERR,
-			      "phone_is_approximant",
-				  "Call to method \"phone_has_feature\" failed"))
+		      "phone_is_approximant",
+		      "Call to method \"phone_has_feature\" failed"))
 		return FALSE;
-		
-		
-	if (present && !present_1 && !present_2)	
+
+	present_2 = S_PHONESET_CALL(phoneset, phone_has_feature)(phoneset, phone,
+								 "manner_lateral",
+								 error);
+	if (S_CHK_ERR(error, S_CONTERR,
+		      "phone_is_approximant",
+		      "Call to method \"phone_has_feature\" failed"))
+		return FALSE;
+
+
+	if (present && !present_1 && !present_2)
 		return TRUE;
-		
-	return FALSE;										   
+
+	return FALSE;
 }
 
 static enum PhoneLevels phone_is_what(const SPhoneset* phoneset, const char* phone, s_erc *error)
 {
 	/*  *** ITALIAN SOUNDS SERIES (in increasing intensity, with a symbolic number for comparing them):
 	 * 	-consonants
-	 * 	  << occlusives   (0) 
-	 *    << fricatives   (1) 
-	 *    << nasals 	  (2) 
+	 * 	  << occlusives   (0)
+	 *    << fricatives   (1)
+	 *    << nasals 	  (2)
 	 *    << laterals 	  (3)
 	 *    << 's' 		  (4)
-	 *    << vibrants 	  (5) 
-	 *    << approximants (6) 
-	 *    << vowels		  (7)	
-	 * 
-	 * 	 EXCEPTIONS: 
+	 *    << vibrants 	  (5)
+	 *    << approximants (6)
+	 *    << vowels		  (7)
+	 *
+	 * 	 EXCEPTIONS:
 	 * 		- occlusive + nasal (mainly in words of foreign origin)
 	 * 		- occlusive + occlusive
 	 * 		- lateral   + 's'
 	 * 		- 'n'		+ 's'
 	 * */
-	
+
 	enum PhoneLevels phone_level;
-	
+
 	s_bool is_vowel = phone_is_vowel(phoneset, phone, error);
 	if (S_CHK_ERR(error, S_CONTERR,
-				  "phone_is_what",
-				  "Call to \"phone_is_vowel\" failed"))
+		      "phone_is_what",
+		      "Call to \"phone_is_vowel\" failed"))
 		return error_level;
-	 
+
 	s_bool is_occlusive = phone_is_occlusive(phoneset, phone, error);
 	if (S_CHK_ERR(error, S_CONTERR,
-				  "phone_is_what",
-				  "Call to \"phone_is_occlusive\" failed"))
+		      "phone_is_what",
+		      "Call to \"phone_is_occlusive\" failed"))
 		return error_level;
-	
+
 	s_bool is_fricative = phone_is_fricative(phoneset, phone, error);
 	if (S_CHK_ERR(error, S_CONTERR,
-				  "phone_is_what",
-				  "Call to \"phone_is_fricative\" failed"))
+		      "phone_is_what",
+		      "Call to \"phone_is_fricative\" failed"))
 		return error_level;
-	
+
 	s_bool is_nasal = phone_is_nasal(phoneset, phone, error);
 	if (S_CHK_ERR(error, S_CONTERR,
-				  "phone_is_what",
-				  "Call to \"phone_is_nasal\" failed"))
+		      "phone_is_what",
+		      "Call to \"phone_is_nasal\" failed"))
 		return error_level;
-		
+
 	s_bool is_lateral = phone_is_lateral(phoneset, phone, error);
 	if (S_CHK_ERR(error, S_CONTERR,
-				  "phone_is_what",
-				  "Call to \"phone_is_lateral\" failed"))
+		      "phone_is_what",
+		      "Call to \"phone_is_lateral\" failed"))
 		return error_level;
-	
+
 	s_bool is_vibrant = phone_is_vibrant(phoneset, phone, error);
 	if (S_CHK_ERR(error, S_CONTERR,
-				  "phone_is_what",
-				  "Call to \"phone_is_vibrant\" failed"))
+		      "phone_is_what",
+		      "Call to \"phone_is_vibrant\" failed"))
 		return error_level;
-	
+
 	s_bool is_s = phone_is_s(phoneset, phone, error);
 	if (S_CHK_ERR(error, S_CONTERR,
-				  "phone_is_what",
-				  "Call to \"phone_is_s\" failed"))
+		      "phone_is_what",
+		      "Call to \"phone_is_s\" failed"))
 		return error_level;
-		
+
 	s_bool is_approximant = phone_is_approximant(phoneset, phone, error);
 	if (S_CHK_ERR(error, S_CONTERR,
-				  "phone_is_what",
-				  "Call to \"phone_is_approximant\" failed"))
+		      "phone_is_what",
+		      "Call to \"phone_is_approximant\" failed"))
 		return error_level;
 
 	if (is_vowel)
@@ -427,7 +427,7 @@ static enum PhoneLevels phone_is_what(const SPhoneset* phoneset, const char* pho
 	else if (is_nasal)
 	{
 		phone_level = nasal;
-	}	
+	}
 	else if (is_lateral)
 	{
 		phone_level = lateral;
@@ -444,7 +444,7 @@ static enum PhoneLevels phone_is_what(const SPhoneset* phoneset, const char* pho
 	{
 		phone_level = approximant;
 	}
-	
+
 	return phone_level;
 }
 
@@ -517,7 +517,7 @@ static const s_version *SGetVersion(const SSyllabification *self, s_erc *error)
 
 
 static const SObject *GetFeature(const SSyllabification *self, const char *key,
-								 s_erc *error)
+				 s_erc *error)
 {
 	const SObject *feature;
 
@@ -526,8 +526,8 @@ static const SObject *GetFeature(const SSyllabification *self, const char *key,
 	if (key == NULL)
 	{
 		S_CTX_ERR(error, S_ARGERROR,
-				  "GetFeature",
-				  "Argument \"key\" is NULL");
+			  "GetFeature",
+			  "Argument \"key\" is NULL");
 		return NULL;
 	}
 
@@ -536,8 +536,8 @@ static const SObject *GetFeature(const SSyllabification *self, const char *key,
 
 	feature = SMapGetObjectDef(self->features, key, NULL, error);
 	if (S_CHK_ERR(error, S_CONTERR,
-				  "GetFeature",
-				  "Call to \"SMapGetObjectDef\" failed"))
+		      "GetFeature",
+		      "Call to \"SMapGetObjectDef\" failed"))
 		return NULL;
 
 	return feature;
@@ -551,154 +551,154 @@ static const SObject *GetFeature(const SSyllabification *self, const char *key,
  */
 
 static SList *Syllabify(const SSyllabification *self, const SItem *word,
-						const SList *phoneList, s_erc *error)
+			const SList *phoneList, s_erc *error)
 {
 	const SPhoneset *phoneset;
 	const SVoice *voice;
-	
-	/* should be returned */	
+
+	/* should be returned */
 	SList *syllables = NULL;
 	SList *syl;
 	const SObject *tmp;
 	const char *phone_string;
-	
+
 	/* size used for the first loop */
 	size_t list_size;
 
 	/* store for 'is_...' functions */
-	s_bool test_phone = FALSE;    
-	
+	s_bool test_phone = FALSE;
+
 
 	S_CLR_ERR(error);
 
 	if (word == NULL)
 	{
 		S_CTX_ERR(error, S_ARGERROR,
-				  "Syllabify",
-				  "Argument \"word\" is NULL");
+			  "Syllabify",
+			  "Argument \"word\" is NULL");
 		goto quit_error;
 	}
 
 	if (phoneList == NULL)
 	{
 		S_CTX_ERR(error, S_ARGERROR,
-				  "Syllabify",
-				  "Argument \"phoneList\" is NULL");
+			  "Syllabify",
+			  "Argument \"phoneList\" is NULL");
 		goto quit_error;
 	}
 
 	if (S_CHK_ERR(error, S_CONTERR,
-				  "Syllabify",
-				  "Call to \"SListCopy\" failed"))
+		      "Syllabify",
+		      "Call to \"SListCopy\" failed"))
 		goto quit_error;
-	
+
 	/* get the voice */
 	voice = SItemVoice(word, error);
 	if (S_CHK_ERR(error, S_CONTERR,
-				  "Syllabify",
-				  "Call to \"SItemVoice\" failed"))
+		      "Syllabify",
+		      "Call to \"SItemVoice\" failed"))
 		goto quit_error;
 
 	if (voice == NULL)
 	{
 		S_CTX_ERR(error, S_CONTERR,
-				  "Syllabify",
-				  "Syllabification requires a voice, through the voice "
-				  "syllabification gets access to a phoneset");
+			  "Syllabify",
+			  "Syllabification requires a voice, through the voice "
+			  "syllabification gets access to a phoneset");
 		goto quit_error;
 	}
 
 	phoneset = (SPhoneset*)SVoiceGetData(voice, "phoneset", error);
 	if (S_CHK_ERR(error, S_CONTERR,
-				  "Syllabify",
-				  "Call to \"SVoiceGetFeature\" failed"))
+		      "Syllabify",
+		      "Call to \"SVoiceGetFeature\" failed"))
 		goto quit_error;
 
 
 	if (phoneset == NULL)
 	{
 		S_CTX_ERR(error, S_CONTERR,
-				  "Syllabify",
-				  "Syllabification requires a phoneset, none found in voice features");
+			  "Syllabify",
+			  "Syllabification requires a phoneset, none found in voice features");
 		goto quit_error;
 	}
 
 	/* create syllables list */
 	syllables = S_LIST(S_NEW(SListList, error));
 	if (S_CHK_ERR(error, S_CONTERR,
-				  "Syllabify",
-				  "Failed to create new 'SList' object"))
+		      "Syllabify",
+		      "Failed to create new 'SList' object"))
 		goto quit_error;
-    
-    list_size = SListSize(phoneList, error);
-    
-    if (S_CHK_ERR(error, S_CONTERR,
-				  "Syllabify",
-				  "Call to \"SListSize\" failed"))
+
+	list_size = SListSize(phoneList, error);
+
+	if (S_CHK_ERR(error, S_CONTERR,
+		      "Syllabify",
+		      "Call to \"SListSize\" failed"))
 		goto quit_error;
-	
+
 	/* counter for the loop */
 	size_t i = 0;
-	
+
 	/* I need a list to keep the indexes marking the beginning of the syllables */
-	SList* indexes = S_LIST(S_NEW(SListList, error)); 
-    if (S_CHK_ERR(error, S_CONTERR,
-				  "main",
-				  "Call to \"S_NEW\" failed"))
-	   goto quit_error;
+	SList* indexes = S_LIST(S_NEW(SListList, error));
+	if (S_CHK_ERR(error, S_CONTERR,
+		      "main",
+		      "Call to \"S_NEW\" failed"))
+		goto quit_error;
 
 	/* create an object containing the sint32 index */
 	SObject* obj_ind = SObjectSetInt(i, error);
 	SListAppend(indexes, obj_ind, error);
 	if (S_CHK_ERR(error, S_CONTERR,
-					  "Syllabify",
-					  "Call to \"SListAppend\" failed"))
+		      "Syllabify",
+		      "Call to \"SListAppend\" failed"))
 		goto quit_error;
-			
+
 	/* first loop for finding the division points, until the first vowel */
 	while (i < list_size && !test_phone)
 	{
 		tmp = SListNth(phoneList, i, error);
 		if (S_CHK_ERR(error, S_CONTERR,
-					  "Syllabify",
-					  "Call to \"SListNth\" failed"))
+			      "Syllabify",
+			      "Call to \"SListNth\" failed"))
 			goto quit_error;
 
 		/* 'phone_string' is analyzed */
 		phone_string = SObjectGetString(tmp, error);
 		if (S_CHK_ERR(error, S_CONTERR,
-					  "Syllabify",
-					  "Call to \"SObjectGetString\" failed"))
+			      "Syllabify",
+			      "Call to \"SObjectGetString\" failed"))
 			goto quit_error;
-			
+
 		test_phone = phone_is_vowel(phoneset, phone_string, error);
 		i++;
 	}
-	
+
 	/* this loop starts after the first vowel of 'phoneList' */
 	while (i < list_size)
 	{
 		tmp = SListNth(phoneList, i, error);
 		if (S_CHK_ERR(error, S_CONTERR,
-					  "Syllabify",
-					  "Call to \"SListNth\" failed"))
+			      "Syllabify",
+			      "Call to \"SListNth\" failed"))
 			goto quit_error;
 
 		/* 'phone_string' is analyzed (using 'phone_is_*' functions) */
 		phone_string = SObjectGetString(tmp, error);
 		if (S_CHK_ERR(error, S_CONTERR,
-					  "Syllabify",
-					  "Call to \"SObjectGetString\" failed"))
+			      "Syllabify",
+			      "Call to \"SObjectGetString\" failed"))
 			goto quit_error;
-		
-		
+
+
 		/* test for each vowel */
 		s_bool is_vowel = phone_is_vowel(phoneset, phone_string, error);
 		if (S_CHK_ERR(error, S_CONTERR,
-					  "Syllabify",
-					  "Call to \"phone_is_vowel\" failed"))
+			      "Syllabify",
+			      "Call to \"phone_is_vowel\" failed"))
 			goto quit_error;
-		
+
 		/* if there was a vowel in the i-th position, begin a backward going loop */
 		if (is_vowel)
 		{
@@ -706,85 +706,85 @@ static SList *Syllabify(const SSyllabification *self, const SItem *word,
 			   checking for direction from here */
 			enum PhoneLevels phone_level = vowel;
 			if (S_CHK_ERR(error, S_CONTERR,
-						  "Syllabify",
-					      "Call to \"phone_is_vowel\" failed"))
+				      "Syllabify",
+				      "Call to \"phone_is_vowel\" failed"))
 				goto quit_error;
-			
+
 			/* variables used for direction control */
 			enum PhoneLevels phone_level_p = phone_level;
 			enum PhoneLevels phone_level_pp = phone_level_p;
 			/* set it to TRUE when phonemes' series changes direction */
 			s_bool direc_changed = FALSE;
-			
+
 			size_t j = i - 1;
 			const SObject *tmp_1 = SListNth(phoneList, j, error);
 			if (S_CHK_ERR(error, S_CONTERR,
-						  "Syllabify",
-					      "Call to \"SListNth\" failed"))
+				      "Syllabify",
+				      "Call to \"SListNth\" failed"))
 				goto quit_error;
-					
+
 			const char* phone_string_1 = SObjectGetString(tmp_1, error);
 			if (S_CHK_ERR(error, S_CONTERR,
-						  "Syllabify",
-						  "Call to \"SObjectGetString\" failed"))
+				      "Syllabify",
+				      "Call to \"SObjectGetString\" failed"))
 				goto quit_error;
 			/* stay in the loop as long as the phone at j isn't a vowel */
 			s_bool test_vowel = phone_is_vowel(phoneset, phone_string_1, error);
 			if (S_CHK_ERR(error, S_CONTERR,
-						  "Syllabify",
-						  "Call to \"phone_is_vowel\" failed"))
+				      "Syllabify",
+				      "Call to \"phone_is_vowel\" failed"))
 				goto quit_error;
-				
+
 			/* this check solves the problem with adjacent vowels */
 			if (test_vowel)
 			{
 				SObject* obj_ind = SObjectSetInt(j + 1, error);
 				SListAppend(indexes, obj_ind, error);
 				if (S_CHK_ERR(error, S_CONTERR,
-							  "Syllabify",
-						      "Call to \"SListAppend\" failed"))	
-	     			    goto quit_error;
+					      "Syllabify",
+					      "Call to \"SListAppend\" failed"))
+					goto quit_error;
 			}
-			
+
 			while (!test_vowel && !direc_changed)
 			{
 				const SObject *tmp_2 = SListNth(phoneList, j, error);
-				
+
 				if (S_CHK_ERR(error, S_CONTERR,
-		     				  "Syllabify",
-						  "Call to \"SListNth\" failed"))
-		    		goto quit_error;
-					
+					      "Syllabify",
+					      "Call to \"SListNth\" failed"))
+					goto quit_error;
+
 				phone_string_1 = SObjectGetString(tmp_2, error);
 
 				if (S_CHK_ERR(error, S_CONTERR,
-							  "Syllabify",
-							  "Call to \"SObjectGetString\" failed"))
-				    goto quit_error;
-				
+					      "Syllabify",
+					      "Call to \"SObjectGetString\" failed"))
+					goto quit_error;
+
 				test_vowel = phone_is_vowel(phoneset, phone_string_1, error);
 				if (S_CHK_ERR(error, S_CONTERR,
-						     "Syllabify",
-						     "Call to \"SObjectGetString\" failed"))
+					      "Syllabify",
+					      "Call to \"SObjectGetString\" failed"))
 					goto quit_error;
-				
-			    phone_level_pp = phone_level_p;
-			    phone_level_p = phone_level;
+
+				phone_level_pp = phone_level_p;
+				phone_level_p = phone_level;
 				phone_level = phone_is_what(phoneset, phone_string_1, error);
 				if (S_CHK_ERR(error, S_CONTERR,
-					   		  "Syllabify",
-							  "Call to \"phone_is_what\" failed"))
+					      "Syllabify",
+					      "Call to \"phone_is_what\" failed"))
 					goto quit_error;
-				
+
 				/* check for previous direction */
 				s_bool is_dec = phone_level_p < phone_level_pp;
-				/* to adjacent approximants */	
+				/* to adjacent approximants */
 				if ((phone_level_p == phone_level_pp) && (phone_level_p == approximant))
 				{
 					is_dec = TRUE;
 				}
 				s_bool is_dec_c = phone_level > phone_level_p;
-				/* to adjacent approximants */	
+				/* to adjacent approximants */
 				if ((phone_level == phone_level_p) && (phone_level != approximant))
 				{
 					is_dec_c = TRUE;
@@ -802,7 +802,7 @@ static SList *Syllabify(const SSyllabification *self, const SItem *word,
 					is_dec_c = TRUE;
 				}
 				/* the direction check only works with at least two previous elements,
-				 * so it begins this control from j < i - 1 (so we have i - 1 and i) */			
+				 * so it begins this control from j < i - 1 (so we have i - 1 and i) */
 				if (j < i - 1)
 				{
 					if (is_dec)
@@ -812,44 +812,44 @@ static SList *Syllabify(const SSyllabification *self, const SItem *word,
 							SObject* obj_ind = SObjectSetInt(j + 1, error);
 							SListAppend(indexes, obj_ind, error);
 							if (S_CHK_ERR(error, S_CONTERR,
-			  							  "Syllabify",
-										"Call to \"SListAppend\" failed"))
-							    goto quit_error;
-							
-						    direc_changed = TRUE;
+								      "Syllabify",
+								      "Call to \"SListAppend\" failed"))
+								goto quit_error;
+
+							direc_changed = TRUE;
 						}
 					}
-				}	
+				}
 				j--;
 			}/*end of inner while*/
 		}
-	
+
 		i++;
-	}/* end of outer while */		
-      	  
+	}/* end of outer while */
+
 	/* PROCEDURE EXAMPLE: indexes = [0, 2, 4, 7]
 	 * - loop from 0 to 1 and add to syl, then add syl to syllables
 	 * - loop from 2 to 3 and add to syl, then add syl to syllables
 	 * - etc...
 	 * *
 	 */
-	/*LAST LOOP*/	
-	
+	/*LAST LOOP*/
+
 	int indexes_size = SListSize(indexes, error);
 	int j = 0;
-	
+
 	while (j < indexes_size)
 	{
 		const SObject *kObj = SListNth(indexes, j, error);
 		const SObject* kObj_1;
 		if (j < indexes_size - 1)
 		{
-			 kObj_1 = SListNth(indexes, j + 1, error);
+			kObj_1 = SListNth(indexes, j + 1, error);
 		}
-		
+
 		sint32 k = SObjectGetInt(kObj, error);
 		sint32 k1;
-		
+
 		if (j < indexes_size - 1)
 		{
 			k1 = SObjectGetInt(kObj_1, error);
@@ -858,53 +858,53 @@ static SList *Syllabify(const SSyllabification *self, const SItem *word,
 		{
 			k1 = list_size;
 		}
-		
+
 		syl = S_LIST(S_NEW(SListList, error));
 		if (S_CHK_ERR(error, S_CONTERR,
-					  "Syllabify",
-					  "Call to \"S_LIST\" failed"))
+			      "Syllabify",
+			      "Call to \"S_LIST\" failed"))
 			goto quit_error;
-			
+
 		while (k < k1)
 		{
-		    /* get the k-th element in phoneList as a SObject* */
+			/* get the k-th element in phoneList as a SObject* */
 			const SObject *tmp = SListNth(phoneList, k, error);
 			if (S_CHK_ERR(error, S_CONTERR,
-						  "Syllabify",
-						  "Call to \"SListNth\" failed"))
-			    goto quit_error;
-			
+				      "Syllabify",
+				      "Call to \"SListNth\" failed"))
+				goto quit_error;
+
 			/* get the string from the k-th element in phoneList*/
 			const char *phone_string = SObjectGetString(tmp, error);
 			if (S_CHK_ERR(error, S_CONTERR,
-						  "Syllabify",
-						  "Call to \"SObjectGetString\" failed"))
+				      "Syllabify",
+				      "Call to \"SObjectGetString\" failed"))
 				goto quit_error;
-		    
-		    /* create a SObject* with the k-th phone in phoneList, then push
-		     * this SObject* to 'syl' SList, which should contains all the phonemes 
-		     * in the current syllable */
-		    
-		    SObject* segm_object = SObjectSetString(phone_string, error);		    
-		    SListPush(syl, segm_object, error);
-		    if (S_CHK_ERR(error, S_CONTERR,
-						  "Syllabify",
-						  "Call to \"SListPush/SObjectSetString\" failed"))
-				goto quit_error;	
+
+			/* create a SObject* with the k-th phone in phoneList, then push
+			 * this SObject* to 'syl' SList, which should contains all the phonemes
+			 * in the current syllable */
+
+			SObject* segm_object = SObjectSetString(phone_string, error);
+			SListPush(syl, segm_object, error);
+			if (S_CHK_ERR(error, S_CONTERR,
+				      "Syllabify",
+				      "Call to \"SListPush/SObjectSetString\" failed"))
+				goto quit_error;
 			k++;
 		}  //end of inner while
-		
+
 		/* push on 'syllables' list */
 		SListPush(syllables, S_OBJECT(syl), error);
 		if (S_CHK_ERR(error, S_CONTERR,
-					  "Syllabify",
-					  "Call to \"SListPush\" failed"))
+			      "Syllabify",
+			      "Call to \"SListPush\" failed"))
 			goto quit_error;
-		
+
 		j++;
 	} /* end of outer while */
-    
-    return syllables;
+
+	return syllables;
 
 quit_error:
 	if (syllables != NULL)
@@ -948,4 +948,3 @@ static SSyllabItaItMivoqClass SyllabItaItMivoqClass =
 	GetFeature,          /* get_feature     */
 	Syllabify            /* syllabify       */
 };
-

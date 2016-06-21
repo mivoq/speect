@@ -122,30 +122,37 @@ static s_bool phone_is_vowel(const SPhoneset *phoneset, const char *phone, s_erc
 
 	return FALSE;
 }
-
+/**
+ * This function return sonority level of phones, according to some of their features
+ * the sonority level is mostly in increasing order, with the major exception of
+ * strident + alveolar sounds (s and z) for which sonority level is higher than
+ * expected. The exception has been introduced in order to cope with Italian
+ * syllabification.
+ *
+ * Sonority scale:
+ *    << occlusives   (0)
+ *    << fricatives   (1)
+ *    << nasals 	  (2)
+ *    << laterals 	  (3)
+ *    << 's' 		  (4)
+ *    << vibrants 	  (5)
+ *    << approximants (6)
+ *    << vowels		  (7)
+ *
+ * By using this scale, Italian syllabification algorithm can be
+ * simplified as follow: given a list of 0 or more consonants between
+ * two vowels v1 and v2, the syllable containing v2 starts when the
+ * sonority level does not decrease while moving backward on the
+ * consonants sequence to v1.
+ * With the following exceptions:
+ *  - all approximants belong to the same syllable
+ *  - occlusive + nasal (mainly in words of foreign origin) should be splitted
+ *  - occlusive + occlusive
+ *  - lateral   + 's' should be splitted
+ *  - nasal + 's' should be splitted
+ * */
 static enum PhoneLevels phone_sonority_level(const SPhoneset* phoneset, const char* phone, s_erc *error)
 {
-	/*  *** ITALIAN SOUNDS SERIES (in increasing intensity, with a symbolic number for comparing them):
-	 * 	-consonants
-	 * 	  << occlusives   (0)
-	 *    << fricatives   (1)
-	 *    << nasals 	  (2)
-	 *    << laterals 	  (3)
-	 *    << 's' 		  (4)
-	 *    << vibrants 	  (5)
-	 *    << approximants (6)
-	 *    << vowels		  (7)
-	 *
-	 * 	 EXCEPTIONS:
-	 * 		- occlusive + nasal (mainly in words of foreign origin)
-	 * 		- occlusive + occlusive
-	 * 		- lateral   + 's'
-	 * 		- 'n'		+ 's'
-	 * */
-
-	enum PhoneLevels phone_level;
-
-
 	s_bool has_feature;
 	S_CLR_ERR(error);
 
@@ -248,7 +255,7 @@ static enum PhoneLevels phone_sonority_level(const SPhoneset* phoneset, const ch
 	if (has_feature)
 		return fricative;
 
-	return phone_level;
+	return error_level;
 }
 
 /************************************************************************************/

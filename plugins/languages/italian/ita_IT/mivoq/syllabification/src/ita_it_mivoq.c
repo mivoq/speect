@@ -68,23 +68,7 @@ static SSyllabItaItMivoqClass SyllabItaItMivoqClass; /* SSyllabItaItMivoq class 
 
 enum PhoneLevels {occlusive, fricative, nasal, lateral, s, vibrant, approximant, vowel, error_level};
 
-static s_bool phone_is_vowel(const SPhoneset *phoneset, const char *phone, s_erc *error);
-
-static s_bool phone_is_occlusive(const SPhoneset *phoneset, const char *phone, s_erc *error);
-
-static s_bool phone_is_fricative(const SPhoneset *phoneset, const char *phone, s_erc *error);
-
-static s_bool phone_is_nasal(const SPhoneset *phoneset, const char *phone, s_erc *error);
-
-static s_bool phone_is_lateral(const SPhoneset *phoneset, const char *phone, s_erc *error);
-
-static s_bool phone_is_s(const SPhoneset *phoneset, const char *phone, s_erc *error);
-
-static s_bool phone_is_vibrant(const SPhoneset *phoneset, const char *phone, s_erc *error);
-
-static s_bool phone_is_approximant(const SPhoneset *phoneset, const char *phone, s_erc *error);
-
-static enum PhoneLevels phone_is_what(const SPhoneset* phoneset, const char* phone, s_erc *error);
+static enum PhoneLevels phone_sonority_level(const SPhoneset* phoneset, const char* phone, s_erc *error);
 
 /************************************************************************************/
 /*                                                                                  */
@@ -139,210 +123,7 @@ static s_bool phone_is_vowel(const SPhoneset *phoneset, const char *phone, s_erc
 	return FALSE;
 }
 
-/* b, bb, p, pp, k, kk, g, gg */
-static s_bool phone_is_occlusive(const SPhoneset *phoneset, const char *phone, s_erc *error)
-{
-	s_bool present;
-
-	S_CLR_ERR(error);
-	present = S_PHONESET_CALL(phoneset, phone_has_feature)(phoneset, phone,
-							       "manner_plosive",
-							       error);
-	if (S_CHK_ERR(error, S_CONTERR,
-		      "phone_is_occlusive",
-		      "Call to method \"phone_has_feature\" failed"))
-		return FALSE;
-
-	if (present)
-		return TRUE;
-
-	return FALSE;
-}
-
-
-/* m, n, gn */
-static s_bool phone_is_nasal(const SPhoneset *phoneset, const char *phone, s_erc *error)
-{
-	s_bool present;
-
-	S_CLR_ERR(error);
-	present = S_PHONESET_CALL(phoneset, phone_has_feature)(phoneset, phone,
-							       "manner_nasal",
-							       error);
-	if (S_CHK_ERR(error, S_CONTERR,
-		      "phone_is_nasal",
-		      "Call to method \"phone_has_feature\" failed"))
-		return FALSE;
-
-	if (present)
-		return TRUE;
-
-	return FALSE;
-}
-
-/* f, v, h, tS, etc... -> fricatives + affricates
- * manner_fricative but not 's' */
-static s_bool phone_is_fricative(const SPhoneset *phoneset, const char *phone, s_erc *error)
-{
-	s_bool present;
-	/* used for affricates */
-	s_bool present_0;
-	/* use to keep out 's', using phone_is_s internal function */
-	s_bool present_1;
-
-
-	S_CLR_ERR(error);
-	present = S_PHONESET_CALL(phoneset, phone_has_feature)(phoneset, phone,
-							       "manner_fricative",
-							       error);
-	if (S_CHK_ERR(error, S_CONTERR,
-		      "phone_is_fricative",
-		      "Call to method \"phone_has_feature\" failed"))
-		return FALSE;
-
-	present_0 = S_PHONESET_CALL(phoneset, phone_has_feature)(phoneset, phone,
-								 "manner_affricate",
-								 error);
-	if (S_CHK_ERR(error, S_CONTERR,
-		      "phone_is_fricative",
-		      "Call to method \"phone_has_feature\" failed"))
-		return FALSE;
-
-
-	present_1 = phone_is_s(phoneset, phone, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-		      "phone_is_fricative",
-		      "Call to method \"phone_is_s\" failed"))
-		return FALSE;
-
-	if ((present || present_0) && !present_1)
-		return TRUE;
-
-	return FALSE;
-}
-
-/* l, LL, l, ll */
-static s_bool phone_is_lateral(const SPhoneset *phoneset, const char *phone, s_erc *error)
-{
-	s_bool present;
-
-	S_CLR_ERR(error);
-	present = S_PHONESET_CALL(phoneset, phone_has_feature)(phoneset, phone,
-							       "manner_lateral",
-							       error);
-
-	if (S_CHK_ERR(error, S_CONTERR,
-		      "phone_is_lateral",
-		      "Call to method \"phone_has_feature\" failed"))
-		return FALSE;
-
-	if (present)
-		return TRUE;
-
-	return FALSE;
-}
-
-/* phone_is_vibrant (r): here r is considered liquid and not lateral */
-/* r */
-static s_bool phone_is_vibrant(const SPhoneset *phoneset, const char *phone, s_erc *error)
-{
-	s_bool present;
-	s_bool present_1;
-
-	S_CLR_ERR(error);
-	present = S_PHONESET_CALL(phoneset, phone_has_feature)(phoneset, phone,
-							       "manner_liquid",
-							       error);
-
-	if (S_CHK_ERR(error, S_CONTERR,
-		      "phone_is_vibrant",
-		      "Call to method \"phone_has_feature\" failed"))
-		return FALSE;
-
-	present_1 = S_PHONESET_CALL(phoneset, phone_has_feature)(phoneset, phone,
-								 "manner_lateral",
-								 error);
-	if (S_CHK_ERR(error, S_CONTERR,
-		      "phone_is_vibrant",
-		      "Call to method \"phone_has_feature\" failed"))
-		return FALSE;
-
-	if (present && !present_1)
-		return TRUE;
-
-	return FALSE;
-}
-
-/* s (voiceless and voiced (represented through 'z'))
- * place_alveolar AND manner_strident */
-static s_bool phone_is_s(const SPhoneset *phoneset, const char *phone, s_erc *error)
-{
-	s_bool present;
-	s_bool present_1;
-
-	S_CLR_ERR(error);
-	present = S_PHONESET_CALL(phoneset, phone_has_feature)(phoneset, phone,
-							       "place_alveolar",
-							       error);
-	if (S_CHK_ERR(error, S_CONTERR,
-		      "phone_is_s",
-		      "Call to method \"phone_has_feature\" failed"))
-		return FALSE;
-
-	present_1 = S_PHONESET_CALL(phoneset, phone_has_feature)(phoneset, phone,
-								 "manner_strident",
-								 error);
-	if (S_CHK_ERR(error, S_CONTERR,
-		      "phone_is_s",
-		      "Call to method \"phone_has_feature\" failed"))
-		return FALSE;
-
-	if (present && present_1)
-		return TRUE;
-
-	return FALSE;
-}
-
-/* check for 'manner_approximant', but keep out r (using phone_is_vibrant) and laterals
- *  j, w */
-static s_bool phone_is_approximant(const SPhoneset *phoneset, const char *phone, s_erc *error)
-{
-	s_bool present;
-	s_bool present_1;
-	s_bool present_2;
-
-	S_CLR_ERR(error);
-	present = S_PHONESET_CALL(phoneset, phone_has_feature)(phoneset, phone,
-							       "manner_approximant",
-							       error);
-	if (S_CHK_ERR(error, S_CONTERR,
-		      "phone_is_approximant",
-		      "Call to method \"phone_has_feature\" failed"))
-		return FALSE;
-
-	present_1 = phone_is_vibrant(phoneset, phone, error);
-
-	if (S_CHK_ERR(error, S_CONTERR,
-		      "phone_is_approximant",
-		      "Call to method \"phone_has_feature\" failed"))
-		return FALSE;
-
-	present_2 = S_PHONESET_CALL(phoneset, phone_has_feature)(phoneset, phone,
-								 "manner_lateral",
-								 error);
-	if (S_CHK_ERR(error, S_CONTERR,
-		      "phone_is_approximant",
-		      "Call to method \"phone_has_feature\" failed"))
-		return FALSE;
-
-
-	if (present && !present_1 && !present_2)
-		return TRUE;
-
-	return FALSE;
-}
-
-static enum PhoneLevels phone_is_what(const SPhoneset* phoneset, const char* phone, s_erc *error)
+static enum PhoneLevels phone_sonority_level(const SPhoneset* phoneset, const char* phone, s_erc *error)
 {
 	/*  *** ITALIAN SOUNDS SERIES (in increasing intensity, with a symbolic number for comparing them):
 	 * 	-consonants
@@ -364,86 +145,108 @@ static enum PhoneLevels phone_is_what(const SPhoneset* phoneset, const char* pho
 
 	enum PhoneLevels phone_level;
 
-	s_bool is_vowel = phone_is_vowel(phoneset, phone, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-		      "phone_is_what",
-		      "Call to \"phone_is_vowel\" failed"))
-		return error_level;
 
-	s_bool is_occlusive = phone_is_occlusive(phoneset, phone, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-		      "phone_is_what",
-		      "Call to \"phone_is_occlusive\" failed"))
-		return error_level;
+	s_bool has_feature;
+	S_CLR_ERR(error);
 
-	s_bool is_fricative = phone_is_fricative(phoneset, phone, error);
+	/* Check if phone is a vowel */
+	has_feature = S_PHONESET_CALL(phoneset, phone_has_feature)(phoneset, phone,
+							       "vowel",
+							       error);
 	if (S_CHK_ERR(error, S_CONTERR,
-		      "phone_is_what",
-		      "Call to \"phone_is_fricative\" failed"))
+		      "phone_sonority_level",
+		      "Call to method \"phone_has_feature\" failed"))
 		return error_level;
-
-	s_bool is_nasal = phone_is_nasal(phoneset, phone, error);
+	if (has_feature)
+		return vowel;
+	/* Check if phone is an occlusive */
+	has_feature = S_PHONESET_CALL(phoneset, phone_has_feature)(phoneset, phone,
+							       "manner_plosive",
+							       error);
 	if (S_CHK_ERR(error, S_CONTERR,
-		      "phone_is_what",
-		      "Call to \"phone_is_nasal\" failed"))
+		      "phone_sonority_level",
+		      "Call to method \"phone_has_feature\" failed"))
 		return error_level;
-
-	s_bool is_lateral = phone_is_lateral(phoneset, phone, error);
+	if (has_feature)
+		return occlusive;
+	/* Check if phone is an nasal */
+	has_feature = S_PHONESET_CALL(phoneset, phone_has_feature)(phoneset, phone,
+							       "manner_nasal",
+							       error);
 	if (S_CHK_ERR(error, S_CONTERR,
-		      "phone_is_what",
-		      "Call to \"phone_is_lateral\" failed"))
+		      "phone_sonority_level",
+		      "Call to method \"phone_has_feature\" failed"))
 		return error_level;
-
-	s_bool is_vibrant = phone_is_vibrant(phoneset, phone, error);
+	if (has_feature)
+		return nasal;
+	/* Check if phone is an lateral */
+	has_feature = S_PHONESET_CALL(phoneset, phone_has_feature)(phoneset, phone,
+							       "manner_lateral",
+							       error);
 	if (S_CHK_ERR(error, S_CONTERR,
-		      "phone_is_what",
-		      "Call to \"phone_is_vibrant\" failed"))
+		      "phone_sonority_level",
+		      "Call to method \"phone_has_feature\" failed"))
 		return error_level;
-
-	s_bool is_s = phone_is_s(phoneset, phone, error);
+	if (has_feature)
+		return lateral;
+	/* Check if phone is a vibrant (liquid+not lateral) */
+	has_feature = S_PHONESET_CALL(phoneset, phone_has_feature)(phoneset, phone,
+							       "manner_liquid",
+							       error);
 	if (S_CHK_ERR(error, S_CONTERR,
-		      "phone_is_what",
-		      "Call to \"phone_is_s\" failed"))
+		      "phone_sonority_level",
+		      "Call to method \"phone_has_feature\" failed"))
 		return error_level;
-
-	s_bool is_approximant = phone_is_approximant(phoneset, phone, error);
+	if (has_feature)
+		return vibrant;
+	/* Check if phone is an approximant (approximant+not vibrant+not lateral) */
+	has_feature = S_PHONESET_CALL(phoneset, phone_has_feature)(phoneset, phone,
+							       "manner_approximant",
+							       error);
 	if (S_CHK_ERR(error, S_CONTERR,
-		      "phone_is_what",
-		      "Call to \"phone_is_approximant\" failed"))
+		      "phone_sonority_level",
+		      "Call to method \"phone_has_feature\" failed"))
 		return error_level;
-
-	if (is_vowel)
-	{
-		phone_level = vowel;
+	if (has_feature)
+		return approximant;
+	/* Check if phone is an s (strident+alveolar) */
+	has_feature = S_PHONESET_CALL(phoneset, phone_has_feature)(phoneset, phone,
+							       "manner_strident",
+							       error);
+	if (S_CHK_ERR(error, S_CONTERR,
+		      "phone_sonority_level",
+		      "Call to method \"phone_has_feature\" failed"))
+		return error_level;
+	if (has_feature) {
+		has_feature = S_PHONESET_CALL(phoneset, phone_has_feature)(phoneset, phone,
+									   "place_alveolar",
+									   error);
+		if (S_CHK_ERR(error, S_CONTERR,
+			      "phone_sonority_level",
+			      "Call to method \"phone_has_feature\" failed"))
+			return error_level;
+		if (has_feature)
+			return s;
 	}
-	else if (is_occlusive)
-	{
-		phone_level = occlusive;
-	}
-	else if (is_fricative)
-	{
-		phone_level = fricative;
-	}
-	else if (is_nasal)
-	{
-		phone_level = nasal;
-	}
-	else if (is_lateral)
-	{
-		phone_level = lateral;
-	}
-	else if (is_s)
-	{
-		phone_level = s;
-	}
-	else if (is_vibrant)
-	{
-		phone_level = vibrant;
-	}
-	else if (is_approximant)
-	{
-		phone_level = approximant;
-	}
+	/* Check if phone is a fricative ((fricative or affricate)+not s) */
+	has_feature = S_PHONESET_CALL(phoneset, phone_has_feature)(phoneset, phone,
+							       "manner_fricative",
+							       error);
+	if (S_CHK_ERR(error, S_CONTERR,
+		      "phone_sonority_level",
+		      "Call to method \"phone_has_feature\" failed"))
+		return error_level;
+	if (has_feature)
+		return fricative;
+	has_feature = S_PHONESET_CALL(phoneset, phone_has_feature)(phoneset, phone,
+							       "manner_affricate",
+							       error);
+	if (S_CHK_ERR(error, S_CONTERR,
+		      "phone_sonority_level",
+		      "Call to method \"phone_has_feature\" failed"))
+		return error_level;
+	if (has_feature)
+		return fricative;
 
 	return phone_level;
 }
@@ -770,10 +573,10 @@ static SList *Syllabify(const SSyllabification *self, const SItem *word,
 
 				phone_level_pp = phone_level_p;
 				phone_level_p = phone_level;
-				phone_level = phone_is_what(phoneset, phone_string_1, error);
+				phone_level = phone_sonority_level(phoneset, phone_string_1, error);
 				if (S_CHK_ERR(error, S_CONTERR,
 					      "Syllabify",
-					      "Call to \"phone_is_what\" failed"))
+					      "Call to \"phone_sonority_level\" failed"))
 					goto quit_error;
 
 				/* check for previous direction */

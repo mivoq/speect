@@ -797,6 +797,10 @@ static SList *Syllabify(const SSyllabification *self, const SItem *word,
 				{
 					is_dec_c = TRUE;
 				}
+				if ((phone_level == nasal) && (phone_level_p == lateral))
+				{
+					is_dec_c = TRUE;
+				}
 				if ((phone_level == lateral) && (phone_level_p == s))
 				{
 					is_dec_c = TRUE;

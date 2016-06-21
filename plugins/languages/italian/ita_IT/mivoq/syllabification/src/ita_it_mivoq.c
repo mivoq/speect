@@ -778,13 +778,13 @@ static SList *Syllabify(const SSyllabification *self, const SItem *word,
 
 				/* check for previous direction */
 				s_bool is_dec = phone_level_p < phone_level_pp;
-				/* to adjacent approximants */
+				/* two adjacent approximants should not be splitted */
 				if ((phone_level_p == phone_level_pp) && (phone_level_p == approximant))
 				{
 					is_dec = TRUE;
 				}
 				s_bool is_dec_c = phone_level > phone_level_p;
-				/* to adjacent approximants */
+				/* two adjacent approximants should not be splitted */
 				if ((phone_level == phone_level_p) && (phone_level != approximant))
 				{
 					is_dec_c = TRUE;

@@ -397,11 +397,6 @@ static SList *Syllabify(const SSyllabification *self, const SItem *word,
 		goto quit_error;
 	}
 
-	if (S_CHK_ERR(error, S_CONTERR,
-		      "Syllabify",
-		      "Call to \"SListCopy\" failed"))
-		goto quit_error;
-
 	/* get the voice */
 	voice = SItemVoice(word, error);
 	if (S_CHK_ERR(error, S_CONTERR,
@@ -418,12 +413,12 @@ static SList *Syllabify(const SSyllabification *self, const SItem *word,
 		goto quit_error;
 	}
 
+	/* get the phoneset */
 	phoneset = (SPhoneset*)SVoiceGetData(voice, "phoneset", error);
 	if (S_CHK_ERR(error, S_CONTERR,
 		      "Syllabify",
 		      "Call to \"SVoiceGetFeature\" failed"))
 		goto quit_error;
-
 
 	if (phoneset == NULL)
 	{
@@ -437,32 +432,33 @@ static SList *Syllabify(const SSyllabification *self, const SItem *word,
 	syllables = S_LIST(S_NEW(SListList, error));
 	if (S_CHK_ERR(error, S_CONTERR,
 		      "Syllabify",
-		      "Failed to create new 'SList' object"))
+		      "Failed to create new 'SListList' object"))
 		goto quit_error;
-
-	list_size = SListSize(phoneList, error);
-
-	if (S_CHK_ERR(error, S_CONTERR,
-		      "Syllabify",
-		      "Call to \"SListSize\" failed"))
-		goto quit_error;
-
-	/* counter for the loop */
-	size_t i = 0;
 
 	/* I need a list to keep the indexes marking the beginning of the syllables */
 	SList* indexes = S_LIST(S_NEW(SListList, error));
 	if (S_CHK_ERR(error, S_CONTERR,
 		      "main",
-		      "Call to \"S_NEW\" failed"))
+		      "Failed to create new 'SListList' object"))
 		goto quit_error;
 
+
+	/* counter for the loop */
+	size_t i = 0;
 	/* create an object containing the sint32 index */
 	SObject* obj_ind = SObjectSetInt(i, error);
 	SListAppend(indexes, obj_ind, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 		      "Syllabify",
 		      "Call to \"SListAppend\" failed"))
+		goto quit_error;
+	size_t latest_head = 0;
+
+	list_size = SListSize(phoneList, error);
+
+	if (S_CHK_ERR(error, S_CONTERR,
+		      "Syllabify",
+		      "Call to \"SListSize\" failed"))
 		goto quit_error;
 
 	/* first loop for finding the division points, until the first vowel */

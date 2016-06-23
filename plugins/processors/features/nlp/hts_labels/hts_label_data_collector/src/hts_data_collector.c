@@ -342,7 +342,7 @@ S_API void SHTSLabelDataCollectorDelFeature(SHTSLabelsDataCollectorFeatProc *sel
 					"Argument \"name\" is NULL");
 		return;
 	}
-	
+
 	if (!S_HTSLABELSDATACOLLECTOR_METH_VALID(self, has_feature))
 	{
 		S_CTX_ERR(error, S_METHINVLD,
@@ -2213,7 +2213,7 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 
 
 	S_CLR_ERR(error);
-	
+
 	SELFPARAMETERTYPE *HTSProc = S_NEW( SELFPARAMETERTYPE, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Run",
@@ -2335,6 +2335,8 @@ quit_error:
 		S_DELETE(HTSProc, "error destruction in Run", error);
 	}
 	return NULL;
+
+	S_UNUSED(self);
 }
 
 

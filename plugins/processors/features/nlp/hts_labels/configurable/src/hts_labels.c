@@ -551,6 +551,8 @@ static char *create_phone_context(const SELFPARAMETERTYPE *self, const SItem *it
 		return NULL;
 
 	return p_context;
+
+	S_UNUSED(self);
 }
 
 
@@ -620,6 +622,8 @@ static char *create_syl_context(const SELFPARAMETERTYPE *self, const SItem *item
 		return NULL;
 
 	return syl_context;
+
+	S_UNUSED(self);
 }
 
 /* differs from create_phone_syl_context in that all is "x", pause does not
@@ -641,6 +645,7 @@ static char *create_syl_context_pause(const SELFPARAMETERTYPE *self, const SItem
 
 	return syl_context;
 
+	S_UNUSED(self);
 	S_UNUSED(item);
 }
 
@@ -1331,6 +1336,7 @@ static char *create_B_context_pause(const SELFPARAMETERTYPE *self, const SItem *
 
 	return b_context;
 
+	S_UNUSED(self);
 	S_UNUSED(item);
 }
 
@@ -1352,7 +1358,7 @@ static char *create_C_context(const SELFPARAMETERTYPE *self, const SItem *item, 
 
 
 	S_CLR_ERR(error);
-	
+
 	if (self == NULL)
 	{
 		S_CTX_ERR(error, S_FAILURE,
@@ -1452,7 +1458,7 @@ static char *create_C_context_pause(const SELFPARAMETERTYPE *self, const SItem *
 
 
 	S_CLR_ERR(error);
-	
+
 	if (self == NULL)
 	{
 		S_CTX_ERR(error, S_FAILURE,
@@ -1554,7 +1560,7 @@ static char *create_D_context(const SELFPARAMETERTYPE *self, const SItem *item, 
 
 
 	S_CLR_ERR(error);
-	
+
 	if (self == NULL)
 	{
 		S_CTX_ERR(error, S_FAILURE,
@@ -1637,7 +1643,7 @@ static char *create_D_context_pause(const SELFPARAMETERTYPE *self, const SItem *
 
 
 	S_CLR_ERR(error);
-	
+
 	if (self == NULL)
 	{
 		S_CTX_ERR(error, S_FAILURE,
@@ -1734,7 +1740,7 @@ static char *create_E_context(const SELFPARAMETERTYPE *self, const SItem *item, 
 
 
 	S_CLR_ERR(error);
-	
+
 	if (self == NULL)
 	{
 		S_CTX_ERR(error, S_FAILURE,
@@ -1977,6 +1983,7 @@ static char *create_E_context_pause(const SELFPARAMETERTYPE *self, const SItem *
 
 	return e_context;
 
+	S_UNUSED(self);
 	S_UNUSED(item);
 }
 
@@ -2086,7 +2093,7 @@ static char *create_F_context_pause(const SELFPARAMETERTYPE *self, const SItem *
 				  "Parameter 'self' is not valid");
 		return NULL;
 	}
-	
+
 	/* f1 */
 	if (self->enable_gpos)
 	{
@@ -2218,6 +2225,8 @@ static char *create_G_context(const SELFPARAMETERTYPE *self, const SItem *item, 
 		return NULL;
 
 	return g_context;
+
+	S_UNUSED(self);
 }
 
 
@@ -2288,6 +2297,8 @@ static char *create_G_context_pause(const SELFPARAMETERTYPE *self, const SItem *
 		return NULL;
 
 	return g_context;
+
+	S_UNUSED(self);
 }
 
 
@@ -2739,6 +2750,8 @@ static char *create_I_context(const SELFPARAMETERTYPE *self, const SItem *item, 
 		return NULL;
 
 	return i_context;
+
+	S_UNUSED(self);
 }
 
 
@@ -2809,6 +2822,8 @@ static char *create_I_context_pause(const SELFPARAMETERTYPE *self, const SItem *
 		return NULL;
 
 	return i_context;
+
+	S_UNUSED(self);
 }
 
 
@@ -2907,6 +2922,8 @@ static char *create_J_context(const SELFPARAMETERTYPE *self, const SItem *item, 
 		return NULL;
 
 	return j_context;
+
+	S_UNUSED(self);
 }
 
 
@@ -2919,7 +2936,7 @@ static char *create_J_context(const SELFPARAMETERTYPE *self, const SItem *item, 
 static void Init(void *obj, s_erc *error)
 {
 	SHTSLabelsConfigurableFeatProc *self = obj;
-	
+
 	self->enable_A_context = FALSE;
 	self->enable_B_context = FALSE;
 	self->enable_C_context = FALSE;
@@ -2934,7 +2951,7 @@ static void Init(void *obj, s_erc *error)
 	self->enable_gpos = FALSE;
 	self->enable_word_content = FALSE;
 	self->enable_tobi = FALSE;
-	
+
 	S_CLR_ERR(error);
 }
 

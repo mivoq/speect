@@ -55,7 +55,7 @@
 /**
  * @hideinitializer
  * @def EXTRACTFEATURE
- * Exctract from @a data the feature with key @a featureName.
+ * Extract from @a data the feature with key @a featureName.
  * The feature then is unboxed using the function @a unboxingFunction,
  * a string is generated as defined by @a outputString, and appended to
  * @a appendTo.
@@ -113,10 +113,10 @@ do {														\
 /**
  * @hideinitializer
  * @def EXTRACTPHONEME
- * Exctract from @a data the phoneme with key @a featureName.
+ * Extract from @a data the phoneme with key @a featureName.
  * The feature then is unboxed, fixed using @c CheckPhoneme, and a string is generated
  * as defined by @a outputString, and appended to @a appendTo.
- * If the feature @a featureName is not present,  @a nullPhoneme (took from @c self)
+ * If the feature @a featureName is not present,  @a nullPhoneme (taken from @c self)
  * is used instead.
  *
  * @param self self pointer (type #SHTSLabelsGeneratorItFeatProc*)
@@ -444,6 +444,95 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 				  "Run",
 				  "Execution of \"EXTRACTFEATURE\" failed"))
 		goto quit_error;
+		
+	/**** syllable context ****/
+	/* f34: phones.from.syl.start */
+	EXTRACTFEATURE(data, "phones.from.syl.start", SObjectGetInt, "f34=%d|", "f34=0|", resultString, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+			      "Run",
+				  "Execution of \"EXTRACTFEATURE\" failed"))
+		goto quit_error;
+	
+	/* f33: phones.from.syl.end */
+	EXTRACTFEATURE(data, "phones.from.syl.end", SObjectGetInt, "f33=%d|", "f33=0|", resultString, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "Run",
+				  "Execution of \"EXTRACTFEATURE\", failed"))
+		goto quit_error;
+	
+	/* f47: syl.phones.num */
+	EXTRACTFEATURE(data, "syl.phones.num", SObjectGetInt, "f47=%d|", "f47=0|", resultString, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "Run",
+				  "Execution of \"EXTRACTFEATURE\", failed"))
+		goto quit_error;
+	
+	/* f?: vowel.name 
+	   cannot find the hts f# code for this feature */	
+	
+	/**** word context ****/
+	/* f53: syls.from.word.start */
+	EXTRACTFEATURE(data, "syl.from.word.start", SObjectGetInt, "f53=%d|", "f53=0|", resultString, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "Run",
+				  "Execution of \"EXTRACTFEATURE\", failed"))
+		goto quit_error;
+
+	/* f52: syls.from.word.end */
+	EXTRACTFEATURE(data, "syl.from.word.end", SObjectGetInt, "f52=%d|", "f52=0|", resultString, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "Run",
+				  "Execution of \"EXTRACTFEATURE\", failed"))
+		goto quit_error;
+	
+	/* f59: word.syls.num */
+	EXTRACTFEATURE(data, "word.syls.num", SObjectGetInt, "f59=%d|", "f59=0|", resultString, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "Run",
+				  "Execution of \"EXTRACTFEATURE\", failed"))
+		goto quit_error;
+	
+	/* f58: word.phones.num */
+	EXTRACTFEATURE(data, "word.phones.num", SObjectGetInt, "f58=%d|", "f58=0|", resultString, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "Run",
+				  "Execution of \"EXTRACTFEATURE\", failed"))
+		goto quit_error;
+		
+	/* f?: word.gpos
+	   cannot find the hts f# code for this feature */
+	
+	/**** phrase context ****/
+	/* f44: syls.from.phrase.start */
+	EXTRACTFEATURE(data, "syls.from.phrase.start", SObjectGetInt, "f44=%d|", "f44=0|", resultString, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "Run",
+				  "Execution of \"EXTRACTFEATURE\", failed"))
+		goto quit_error;
+	
+	/* f48: syls.from.phrase.end */
+	EXTRACTFEATURE(data, "syls.from.phrase.end", SObjectGetInt, "f48=%d|", "f48=0|", resultString, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "Run",
+				  "Execution of \"EXTRACTFEATURE\", failed"))
+		goto quit_error;
+	
+	/* f18: phrase.syls.num */
+	EXTRACTFEATURE(data, "phrase.syls.num", SObjectGetInt, "f18=%d|", "f18=0|", resultString, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "Run",
+				  "Execution of \"EXTRACTFEATURE\", failed"))
+		goto quit_error;
+		
+	/* f19: phrase.words.num*/
+	EXTRACTFEATURE(data, "phrase.words.num", SObjectGetInt, "f19=%d|", "f19=0|", resultString, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "Run",
+				  "Execution of \"EXTRACTFEATURE\", failed"))
+		goto quit_error;
+		
+	
+	 
 
 	return SObjectSetString(resultString, error);
 

@@ -113,7 +113,7 @@ int main(int argc, char **argv)
 	/* the syllabification can be started from the voice */
 	const SVoice *voice = NULL;
 
-	const SRelation *wordRel = NULL;
+	SRelation *wordRel = NULL;
 
 	SUtterance *utt = NULL;
 
@@ -206,10 +206,10 @@ int main(int argc, char **argv)
 		if (S_CHK_ERR(&error, S_CONTERR,
 			      "main",
 			      "Call to \"SMapGetObjectDef\" failed"))
-			return;
+			goto quit;
 	}
 
-	const char* buffer = NULL;
+	char* buffer = NULL;
 	size_t buffer_size = 0;
 	ssize_t buffer_length = 0;
 
@@ -284,7 +284,7 @@ int main(int argc, char **argv)
 
 		while (k < syllables_list_size)
 		{
-			SList* syl_list = SListNth(syllablesPhones, k, &error);
+			const SList* syl_list = (const SList*) SListNth(syllablesPhones, k, &error);
 			if (S_CHK_ERR(&error, S_CONTERR,
 				      "main",
 				      "Call to method \"SListNth\" failed"))
@@ -299,7 +299,7 @@ int main(int argc, char **argv)
 			uint32 l = 0;
 			while (l < syl_list_size)
 			{
-				SObject* ph = SListNth(syl_list, l, &error);
+				const SObject* ph = SListNth(syl_list, l, &error);
 				if (S_CHK_ERR(&error, S_CONTERR,
 					      "main",
 					      "Call to method \"SListNth\" failed"))

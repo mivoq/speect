@@ -482,7 +482,7 @@ S_LOCAL void s_write_utt_maryxml(const SUtterance *utt, SDatasource *ds, s_erc *
 		goto s_write_utt_exit;
 	}
 
-	SVoice* voice = SUtteranceVoice(utt, error);
+	const SVoice* voice = SUtteranceVoice(utt, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 		"s_write_utt_maryxml",
 		"Call to \"SUtteranceVoice\" failed"))

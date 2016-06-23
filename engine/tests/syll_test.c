@@ -2,6 +2,7 @@
 /* Copyright (c) 2015 Mivoq SRL <info@mivoq.it>                                     */
 /*                                                                                  */
 /* Contributors: Giovanni Mazzocchin                                                */
+/*               Giulio Paci                                                        */
 /*                                                                                  */
 /* Copyright (c) 2009-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
@@ -168,25 +169,6 @@ int main(int argc, char **argv)
 		      "Call to \"S_NEW\" failed"))
 		goto quit;
 
-	/* it works */
-	wordRel = S_NEW(SRelation, &error);
-	if (S_CHK_ERR(&error, S_CONTERR,
-		      "main",
-		      "Call to \"S_NEW\" failed"))
-		goto quit;
-
-	wordItem = S_NEW(SItem, &error);
-	if (S_CHK_ERR(&error, S_CONTERR,
-		      "main",
-		      "Call to \"S_NEW\" failed"))
-		goto quit;
-
-	phones = S_LIST(S_NEW(SListList, &error));
-	if (S_CHK_ERR(&error, S_CONTERR,
-		      "main",
-		      "Call to \"S_NEW\" failed"))
-		goto quit;
-
 	/* Utterance initialization */
 	SUtteranceInit(&utt, voice, &error);
 	if (S_CHK_ERR(&error, S_CONTERR,
@@ -194,22 +176,17 @@ int main(int argc, char **argv)
 		      "Call to \"SUtteranceInit\" failed"))
 		goto quit;
 
-	SRelationInit(&wordRel, "wordRel", &error);
+	/* Create new relation */
+	wordRel = SUtteranceNewRelation(utt, "Word", &error);
 	if (S_CHK_ERR(&error, S_CONTERR,
 		      "main",
-		      "Call to \"SRelationInit\" failed"))
+		      "Call to \"NewRelation\" failed"))
 		goto quit;
 
-	SUtteranceSetRelation(utt, wordRel, &error);
+	wordItem = SRelationAppend(wordRel, NULL, &error);
 	if (S_CHK_ERR(&error, S_CONTERR,
 		      "main",
-		      "Call to \"SUtteranceSetRelation\" failed"))
-		goto quit;
-
-	SItemInit(&wordItem, wordRel, NULL, &error);
-	if (S_CHK_ERR(&error, S_CONTERR,
-		      "main",
-		      "Call to \"SItemInit\" failed"))
+		      "Call to \"SRelationAppend\" failed"))
 		goto quit;
 
 	SItemSetName(wordItem, "", &error);
@@ -232,17 +209,15 @@ int main(int argc, char **argv)
 			return;
 	}
 
-	/* 'buffer' for input lines */
-	char* buffer = malloc(sizeof(char) * 200);
-	size_t dimBuffer = sizeof(buffer);
-	ssize_t input_size = 0;
-	/* 'inter_buffer' for phonemes in the lines */
-	char* inter_buffer = malloc(sizeof(char) * (MAX_PHONEME_LENGTH + 1));
+	const char* buffer = NULL;
+	size_t buffer_size = 0;
+	ssize_t buffer_length = 0;
 
 	SPCT_PRINT_AND_WAIT("everything ready to perform syllabification, press ENTER\n");
+	char inter_buffer[MAX_PHONEME_LENGTH+1] = {0};
 
-	input_size = getline(&buffer, &dimBuffer, stdin);
-	while (input_size != -1)
+	buffer_length = getline(&buffer, &buffer_size, stdin);
+	while (buffer_length != -1)
 	{
 		phones = S_LIST(S_NEW(SListList, &error));
 		if (S_CHK_ERR(&error, S_CONTERR,
@@ -351,30 +326,32 @@ int main(int argc, char **argv)
 		}
 		fprintf(stdout, "\n");
 
-		input_size = getline(&buffer, &dimBuffer, stdin);
+
+		if (syllablesPhones != NULL)
+			S_DELETE(syllablesPhones, "main", &error);
+
+		if (phones != NULL)
+			S_DELETE(phones, "main", &error);
+		phones = NULL;
+		buffer_length = getline(&buffer, &buffer_size, stdin);
 	}
 
-	free(buffer);
-	free(inter_buffer);
-
 quit:
-	SPCT_PRINT_AND_WAIT("deleting relation, press ENTER\n");
+	SPCT_PRINT_AND_WAIT("deleting iteration support structures, press ENTER\n");
 
-	SUtteranceDelRelation(utt, "wordRel", &error);
-	if (S_CHK_ERR(&error, S_CONTERR,
-		      "main",
-		      "Call to method \"SUtteranceDelRelation\" failed"))
-		goto quit;
+	if (buffer != NULL)
+		free(buffer);
+
+	if (phones != NULL)
+		S_DELETE(phones, "main", &error);
+
+	if (syllablesPhones != NULL)
+		S_DELETE(syllablesPhones, "main", &error);
 
 	SPCT_PRINT_AND_WAIT("deleting utterance, press ENTER\n");
 
 	if (utt != NULL)
 		S_DELETE(utt, "main", &error);
-
-	SPCT_PRINT_AND_WAIT("deleting phones, press ENTER\n");
-
-	if (phones != NULL)
-		S_DELETE(phones, "main", &error);
 
 	SPCT_PRINT_AND_WAIT("deleting voice, press ENTER\n");
 

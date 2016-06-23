@@ -342,11 +342,8 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 {
 	SHTSLabelsGeneratorItFeatProc* labelGenerator = (SHTSLabelsGeneratorItFeatProc*) self;
 	const SHTSLabelsDataCollectorFeatProc *data;
-	const SObject *feature;
 	char *resultString = NULL;
 	char *tmp = NULL;
-	char *phone = NULL;
-	s_bool isPresent;
 
 	S_CLR_ERR(error);
 
@@ -444,7 +441,7 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 				  "Run",
 				  "Execution of \"EXTRACTFEATURE\" failed"))
 		goto quit_error;
-		
+
 	/**** syllable context ****/
 	/* f34: phones.from.syl.start */
 	EXTRACTFEATURE(data, "phones.from.syl.start", SObjectGetInt, "f34=%d|", "f34=0|", resultString, error);
@@ -452,24 +449,24 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 			      "Run",
 				  "Execution of \"EXTRACTFEATURE\" failed"))
 		goto quit_error;
-	
+
 	/* f33: phones.from.syl.end */
 	EXTRACTFEATURE(data, "phones.from.syl.end", SObjectGetInt, "f33=%d|", "f33=0|", resultString, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Run",
 				  "Execution of \"EXTRACTFEATURE\", failed"))
 		goto quit_error;
-	
+
 	/* f47: syl.phones.num */
 	EXTRACTFEATURE(data, "syl.phones.num", SObjectGetInt, "f47=%d|", "f47=0|", resultString, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Run",
 				  "Execution of \"EXTRACTFEATURE\", failed"))
 		goto quit_error;
-	
-	/* f?: vowel.name 
-	   cannot find the hts f# code for this feature */	
-	
+
+	/* f?: vowel.name
+	   cannot find the hts f# code for this feature */
+
 	/**** word context ****/
 	/* f53: syls.from.word.start */
 	EXTRACTFEATURE(data, "syl.from.word.start", SObjectGetInt, "f53=%d|", "f53=0|", resultString, error);
@@ -484,24 +481,24 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 				  "Run",
 				  "Execution of \"EXTRACTFEATURE\", failed"))
 		goto quit_error;
-	
+
 	/* f59: word.syls.num */
 	EXTRACTFEATURE(data, "word.syls.num", SObjectGetInt, "f59=%d|", "f59=0|", resultString, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Run",
 				  "Execution of \"EXTRACTFEATURE\", failed"))
 		goto quit_error;
-	
+
 	/* f58: word.phones.num */
 	EXTRACTFEATURE(data, "word.phones.num", SObjectGetInt, "f58=%d|", "f58=0|", resultString, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Run",
 				  "Execution of \"EXTRACTFEATURE\", failed"))
 		goto quit_error;
-		
+
 	/* f?: word.gpos
 	   cannot find the hts f# code for this feature */
-	
+
 	/**** phrase context ****/
 	/* f44: syls.from.phrase.start */
 	EXTRACTFEATURE(data, "syls.from.phrase.start", SObjectGetInt, "f44=%d|", "f44=0|", resultString, error);
@@ -509,30 +506,30 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 				  "Run",
 				  "Execution of \"EXTRACTFEATURE\", failed"))
 		goto quit_error;
-	
+
 	/* f48: syls.from.phrase.end */
 	EXTRACTFEATURE(data, "syls.from.phrase.end", SObjectGetInt, "f48=%d|", "f48=0|", resultString, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Run",
 				  "Execution of \"EXTRACTFEATURE\", failed"))
 		goto quit_error;
-	
+
 	/* f18: phrase.syls.num */
 	EXTRACTFEATURE(data, "phrase.syls.num", SObjectGetInt, "f18=%d|", "f18=0|", resultString, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Run",
 				  "Execution of \"EXTRACTFEATURE\", failed"))
 		goto quit_error;
-		
+
 	/* f19: phrase.words.num*/
 	EXTRACTFEATURE(data, "phrase.words.num", SObjectGetInt, "f19=%d|", "f19=0|", resultString, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Run",
 				  "Execution of \"EXTRACTFEATURE\", failed"))
 		goto quit_error;
-		
-	
-	 
+
+
+
 
 	return SObjectSetString(resultString, error);
 

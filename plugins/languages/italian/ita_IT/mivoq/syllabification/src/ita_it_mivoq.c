@@ -713,15 +713,17 @@ static SList *Syllabify(const SSyllabification *self, const SItem *word,
 
 		j++;
 	} /* end of outer while */
+	if (indexes != NULL)
+		S_DELETE(indexes, "Syllabify", error);
 
 	return syllables;
 
 quit_error:
+	if (indexes != NULL)
+		S_DELETE(indexes, "Syllabify", error);
+
 	if (syllables != NULL)
 		S_DELETE(syllables, "Syllabify", error);
-
-	if (phoneList != NULL)
-		S_DELETE(phoneList, "Syllabify", error);
 
 	return NULL;
 

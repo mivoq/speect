@@ -327,7 +327,7 @@ int main(int argc, char **argv) {
   if (HTSLabelsToXML != NULL)
     S_DELETE(HTSLabelsToXML, "main", &error);
 
-  SPCT_PRINT_AND_WAIT("quiting speect, press ENTER\n");
+  SPCT_PRINT_AND_WAIT("quitting speect, press ENTER\n");
 
   /*
    * quit speect

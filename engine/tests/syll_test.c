@@ -347,8 +347,7 @@ int main(int argc, char **argv)
 	   fprintf(stdout, "\n");
 	  
 	   input_size = getline(&buffer, &dimBuffer, stdin);
-  }   
-      
+  }    
 
   free(buffer);
   free(inter_buffer);
@@ -362,8 +361,25 @@ int main(int argc, char **argv)
 
   SPCT_PRINT_AND_WAIT("deleting voice, press ENTER\n");
 
+  
+  /* ########################## */
+  
+  
+
+  if (phones != NULL)
+  {
+	S_DELETE(phones, "main", &error);
+  }
   if (voice != NULL)
+  {
     S_DELETE(voice, "main", &error);
+  }
+  
+  SUtteranceDelRelation(utt, "wordRel", &error);
+  if (S_CHK_ERR(&error, S_CONTERR,
+		        	  "main",
+				      "Call to method \"SUtteranceDelRelation\" failed"))
+	  goto quit;
   
   SPCT_PRINT_AND_WAIT("quitting speect, press ENTER\n");
 

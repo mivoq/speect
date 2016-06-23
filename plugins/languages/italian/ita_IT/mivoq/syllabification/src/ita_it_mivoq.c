@@ -452,7 +452,6 @@ static SList *Syllabify(const SSyllabification *self, const SItem *word,
 		      "Syllabify",
 		      "Call to \"SListAppend\" failed"))
 		goto quit_error;
-	size_t latest_head = 0;
 
 	list_size = SListSize(phoneList, error);
 

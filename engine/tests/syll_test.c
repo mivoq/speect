@@ -59,22 +59,22 @@
  */
 #if SPCT_WAIT_MEM
 #  define SPCT_PRINT_AND_WAIT(STR)		\
-  do {						\
-    printf(STR);				\
-    getchar();					\
-  } while (0)
+	do {					\
+		printf(STR);			\
+		getchar();			\
+	} while (0)
 #else /* SPCT_WAIT_MEM == 0 */
 #  define SPCT_PRINT_AND_WAIT(STR)
 #endif
 
 /************************************************************************************/
 /*                                                                                  */
-/*  Structs                                                                          */
+/*  Structs                                                                         */
 /*                                                                                  */
 /************************************************************************************/
 
 struct Config {
-  const char * voicefile;
+	const char * voicefile;
 };
 
 /************************************************************************************/
@@ -84,12 +84,11 @@ struct Config {
 /************************************************************************************/
 
 static void usage(int rv) {
-  printf("usage: speect_test -t TEXT -v VOICEFILE\n"
-	 "  Converts text in TEXT, with voice specification in VOICEFILE\n"
-	 "  to a step indicated in UTTERANCE_TYPE or to a waveform in WAVEFILE or.\n"
-	 "  None of the arguments are optional.\n"
-	 "  --help      Output usage string\n");
-  exit(rv);
+	printf("usage: speect_test -v VOICEFILE\n"
+	       "  Load a syllabifier from the voice specification in VOICEFILE\n"
+	       "  and syllabifies phones on standard input.\n"
+	       "  --help      Output usage string\n");
+	exit(rv);
 }
 
 /************************************************************************************/
@@ -106,348 +105,348 @@ int init (int *, char ** , struct Config *, s_erc *);
 /*                                                                                  */
 /************************************************************************************/
 
-int main(int argc, char **argv) 
+int main(int argc, char **argv)
 {
-  s_erc error = S_SUCCESS;
-  
-  /* the syllabification can be started from the voice */
-  const SVoice *voice;
-  
-  const SRelation *wordRel;
- 
-  SUtterance *utt = NULL;
-  
-  /* I must set a voice for this item */
-  SItem *wordItem = NULL;
-  
-  SList *phones = NULL; 
-  
-  SList *syllablesPhones; 
-  
-  /* Config type will handle the command line input */
-  struct Config config = {0};
+	s_erc error = S_SUCCESS;
 
-  SPCT_PRINT_AND_WAIT("going to initialize speect, press ENTER\n");
+	/* the syllabification can be started from the voice */
+	const SVoice *voice = NULL;
 
-  /*
-   * initialize speect
-   */
-  error = speect_init(NULL);
-  if (error != S_SUCCESS) 
-  {
-    printf("Failed to initialize Speect\n");
-    return 1;
-  }
-  
-  SPCT_PRINT_AND_WAIT("initialized speect, parsing options, press ENTER\n");
+	const SRelation *wordRel = NULL;
 
-  init(&argc, argv, &config, &error);
-  if (S_CHK_ERR(&error, S_CONTERR,
-				"main",
-				"Failed to load arguments"))
-      goto quit;
+	SUtterance *utt = NULL;
 
-  /* load voice, initializations */
-  voice = s_vm_load_voice(config.voicefile, &error);
-  if (S_CHK_ERR(&error, S_CONTERR,
-				"main",
-				"Call to \"s_vm_load_voice\" failed"))
-      goto quit;
-      
-  SPCT_PRINT_AND_WAIT("loaded voice, doing synthesis, press ENTER\n");
-   
-  const SUttProcessor *uttProc = SVoiceGetUttProc(voice, "LexLookup", &error);
-  if (S_CHK_ERR(&error, S_CONTERR,
-				"main",
-				"Call to \"SVoiceGetUttProc\" failed"))
-      goto quit;
- 
-  
-  utt = S_NEW(SUtterance, &error);
-  if (S_CHK_ERR(&error, S_CONTERR,
-				"main",
-				"Call to \"S_NEW\" failed"))
-      goto quit;    
-      
-  wordRel = S_NEW(SRelation, &error);
-  if (S_CHK_ERR(&error, S_CONTERR,
-				"main",
-				"Call to \"S_NEW\" failed"))
-      goto quit;
- 
-  wordItem = S_NEW(SItem, &error);
-  if (S_CHK_ERR(&error, S_CONTERR,
-				"main",
-				"Call to \"S_NEW\" failed"))
-      goto quit;
-      
-  phones = S_LIST(S_NEW(SListList, &error)); 
-  if (S_CHK_ERR(&error, S_CONTERR,
-				"main",
-				"Call to \"S_NEW\" failed"))
-	  goto quit;
+	SItem *wordItem = NULL;
 
-  SUtteranceInit(&utt, voice, &error);
-  if (S_CHK_ERR(&error, S_CONTERR,
-				"main",
-				"Call to \"SUtteranceInit\" failed"))
-      goto quit;
-  
-  SRelationInit(&wordRel, "wordRel", &error);
-  if (S_CHK_ERR(&error, S_CONTERR,
-				"main",
-				"Call to \"SRelationInit\" failed"))
-      goto quit;
-  
-  SUtteranceSetRelation(utt, wordRel, &error);
-  if (S_CHK_ERR(&error, S_CONTERR,
-				"main",
-				"Call to \"SUtteranceSetRelation\" failed"))
-	  goto quit;
-  
-  SItemInit(&wordItem, wordRel, NULL, &error);
-  if (S_CHK_ERR(&error, S_CONTERR,
-				"main",
-				"Call to \"SItemInit\" failed"))
-      goto quit;
-  
-  SItemSetName(wordItem, "ciao", &error);
-  if (S_CHK_ERR(&error, S_CONTERR,
-				"main",
-				"Call to \"SItemSetName\" failed"))
-      goto quit;
-     
-  SSyllabification* syllab = (SSyllabification*)SVoiceGetData(voice , "syllabification", &error);
+	SList *phones = NULL;
 
-  if (syllab == NULL)
-  {
-	  syllab = (SSyllabification*)SMapGetObjectDef(uttProc -> features , "_syll_func", NULL,
-												   &error);
-												   
-	  if (S_CHK_ERR(&error, S_CONTERR,
-					"main",
-				    "Call to \"SMapGetObjectDef\" failed"))
-			return;		
-  }
-  
-  /* 'buffer' for input lines */
-  char* buffer = malloc(sizeof(char) * 200);  
-  size_t dimBuffer = sizeof(buffer); 
-  ssize_t input_size = 0;
-  /* 'inter_buffer' for phonemes in the lines */
-  char* inter_buffer = malloc(sizeof(char) * (MAX_PHONEME_LENGTH + 1));
-   
-  input_size = getline(&buffer, &dimBuffer, stdin);	
-  while (input_size != -1)
-  {
-	   phones = S_LIST(S_NEW(SListList, &error));
-       if (S_CHK_ERR(&error, S_CONTERR,
-				     "main",
-				     "Call to \"S_NEW\" failed"))
-	       goto quit;
-	   
-	   int j = 0;
-	   while (buffer[j] != '\0')
-	   {
+	SList *syllablesPhones = NULL;
+
+	/* Config type will handle the command line input */
+	struct Config config = {0};
+
+	SPCT_PRINT_AND_WAIT("going to initialize speect, press ENTER\n");
+
+	/*
+	 * initialize speect
+	 */
+	error = speect_init(NULL);
+	if (error != S_SUCCESS) {
+		printf("Failed to initialize Speect\n");
+		return 1;
+	}
+
+	SPCT_PRINT_AND_WAIT("initialized speect, parsing options, press ENTER\n");
+
+	init(&argc, argv, &config, &error);
+	if (S_CHK_ERR(&error, S_CONTERR,
+		      "main",
+		      "Failed to load arguments"))
+		goto quit;
+
+	SPCT_PRINT_AND_WAIT("loading voice, press ENTER\n");
+
+	/* load voice */
+	voice = s_vm_load_voice(config.voicefile, &error);
+	if (S_CHK_ERR(&error, S_CONTERR,
+		      "main",
+		      "Call to \"s_vm_load_voice\" failed"))
+		goto quit;
+
+	SPCT_PRINT_AND_WAIT("loaded voice, doing syllabification, press ENTER\n");
+
+	const SUttProcessor *uttProc = SVoiceGetUttProc(voice, "LexLookup", &error);
+	if (S_CHK_ERR(&error, S_CONTERR,
+		      "main",
+		      "Call to \"SVoiceGetUttProc\" failed"))
+		goto quit;
+
+
+	utt = S_NEW(SUtterance, &error);
+	if (S_CHK_ERR(&error, S_CONTERR,
+		      "main",
+		      "Call to \"S_NEW\" failed"))
+		goto quit;
+
+	/* it works */
+	wordRel = S_NEW(SRelation, &error);
+	if (S_CHK_ERR(&error, S_CONTERR,
+		      "main",
+		      "Call to \"S_NEW\" failed"))
+		goto quit;
+
+	wordItem = S_NEW(SItem, &error);
+	if (S_CHK_ERR(&error, S_CONTERR,
+		      "main",
+		      "Call to \"S_NEW\" failed"))
+		goto quit;
+
+	phones = S_LIST(S_NEW(SListList, &error));
+	if (S_CHK_ERR(&error, S_CONTERR,
+		      "main",
+		      "Call to \"S_NEW\" failed"))
+		goto quit;
+
+	/* Utterance initialization */
+	SUtteranceInit(&utt, voice, &error);
+	if (S_CHK_ERR(&error, S_CONTERR,
+		      "main",
+		      "Call to \"SUtteranceInit\" failed"))
+		goto quit;
+
+	SRelationInit(&wordRel, "wordRel", &error);
+	if (S_CHK_ERR(&error, S_CONTERR,
+		      "main",
+		      "Call to \"SRelationInit\" failed"))
+		goto quit;
+
+	SUtteranceSetRelation(utt, wordRel, &error);
+	if (S_CHK_ERR(&error, S_CONTERR,
+		      "main",
+		      "Call to \"SUtteranceSetRelation\" failed"))
+		goto quit;
+
+	SItemInit(&wordItem, wordRel, NULL, &error);
+	if (S_CHK_ERR(&error, S_CONTERR,
+		      "main",
+		      "Call to \"SItemInit\" failed"))
+		goto quit;
+
+	SItemSetName(wordItem, "", &error);
+	if (S_CHK_ERR(&error, S_CONTERR,
+		      "main",
+		      "Call to \"SItemSetName\" failed"))
+		goto quit;
+
+	SPCT_PRINT_AND_WAIT("load syllabification function, press ENTER\n");
+
+	SSyllabification* syllab = (SSyllabification*)SVoiceGetData(voice , "syllabification", &error);
+	if (syllab == NULL)
+	{
+		syllab = (SSyllabification*)SMapGetObjectDef(uttProc -> features , "_syll_func", NULL,
+							     &error);
+
+		if (S_CHK_ERR(&error, S_CONTERR,
+			      "main",
+			      "Call to \"SMapGetObjectDef\" failed"))
+			return;
+	}
+
+	/* 'buffer' for input lines */
+	char* buffer = malloc(sizeof(char) * 200);
+	size_t dimBuffer = sizeof(buffer);
+	ssize_t input_size = 0;
+	/* 'inter_buffer' for phonemes in the lines */
+	char* inter_buffer = malloc(sizeof(char) * (MAX_PHONEME_LENGTH + 1));
+
+	SPCT_PRINT_AND_WAIT("everything ready to perform syllabification, press ENTER\n");
+
+	input_size = getline(&buffer, &dimBuffer, stdin);
+	while (input_size != -1)
+	{
+		phones = S_LIST(S_NEW(SListList, &error));
+		if (S_CHK_ERR(&error, S_CONTERR,
+			      "main",
+			      "Call to \"S_NEW\" failed"))
+			goto quit;
+
+		int j = 0;
+		while (buffer[j] != '\0')
+		{
 			int k;
 			int inter_buffer_c;
-			
+
 			if (!isspace(buffer[j]))
 			{
 				inter_buffer[0] = buffer[j];
-				
+
 				k = j + 1;
 				inter_buffer_c = 1;
-				
+
 				while (!isspace(buffer[k]) && inter_buffer_c < MAX_PHONEME_LENGTH)
 				{
 					inter_buffer[inter_buffer_c] = buffer[k];
-					
+
 					inter_buffer_c++;
 					k++;
 				}
-				
+
 				j += (inter_buffer_c - 1);
 				inter_buffer[inter_buffer_c] = '\0';
-		
+
 				/* for each phoneme in the line, put it in 'ph' */
 				SObject* ph = SObjectSetString(inter_buffer, &error);
-				
+
 				/* then add ph to the phoneme list */
-				SListAppend(phones, ph, &error);  
+				SListAppend(phones, ph, &error);
 				if (S_CHK_ERR(&error, S_CONTERR,
-							  "main",
-							  "Call to \"SListAppend\" failed"))
-					goto quit;	
+					      "main",
+					      "Call to \"SListAppend\" failed"))
+					goto quit;
 			}
 			j++;
 		}
-		/* ################# SYLLABIFICATION CALL #################
-		   here syllabify phones by the plugin call */
+
+		SPCT_PRINT_AND_WAIT("run syllabification on next phones string, press ENTER\n");
+		syllablesPhones = NULL;
 		syllablesPhones = S_SYLLABIFICATION_CALL(syllab, syllabify)(syllab,
-																    wordItem,
-																    phones,
-																    &error);
+									    wordItem,
+									    phones,
+									    &error);
 		if (S_CHK_ERR(&error, S_CONTERR,
-					  "main",
-				      "Call to method \"syllabify\" failed"))
-		    goto quit;
-		    
-		
-		/* PRINT LOOP */    
-		uint32 k = 0; 
+			      "main",
+			      "Call to method \"syllabify\" failed"))
+			goto quit;
+
+
+		/* PRINT LOOP */
+		uint32 k = 0;
 		size_t syllables_list_size = SListSize(syllablesPhones, &error);
 		if (S_CHK_ERR(&error, S_CONTERR,
-		        	  "main",
-				      "Call to method \"SListSize\" failed"))
-		    goto quit;
-   
-        while (k < syllables_list_size)
-        {
+			      "main",
+			      "Call to method \"SListSize\" failed"))
+			goto quit;
+
+		while (k < syllables_list_size)
+		{
 			SList* syl_list = SListNth(syllablesPhones, k, &error);
 			if (S_CHK_ERR(&error, S_CONTERR,
-						  "main",
-				          "Call to method \"SListNth\" failed"))
-		        goto quit;
-		  
-	        size_t syl_list_size = SListSize(syl_list, &error);
-	        if (S_CHK_ERR(&error, S_CONTERR,
-		          		  "main",
-				          "Call to method \"SListSize\" failed"))
-		        goto quit;
-	   
-	        uint32 l = 0;
-	        while (l < syl_list_size)
-	        {
+				      "main",
+				      "Call to method \"SListNth\" failed"))
+				goto quit;
+
+			size_t syl_list_size = SListSize(syl_list, &error);
+			if (S_CHK_ERR(&error, S_CONTERR,
+				      "main",
+				      "Call to method \"SListSize\" failed"))
+				goto quit;
+
+			uint32 l = 0;
+			while (l < syl_list_size)
+			{
 				SObject* ph = SListNth(syl_list, l, &error);
 				if (S_CHK_ERR(&error, S_CONTERR,
-							  "main",
-				              "Call to method \"SListNth\" failed"))
-				    goto quit;
-				
-			    const char* phone_string = SObjectGetString(ph, &error);
-			    if (S_CHK_ERR(&error, S_CONTERR,
-							  "main",
-				              "Call to method \"SObjectGetString\" failed"))
-				    goto quit;
-		
-			    fprintf(stdout, "%s", phone_string);
-			    if (l < syl_list_size - 1){
+					      "main",
+					      "Call to method \"SListNth\" failed"))
+					goto quit;
+
+				const char* phone_string = SObjectGetString(ph, &error);
+				if (S_CHK_ERR(&error, S_CONTERR,
+					      "main",
+					      "Call to method \"SObjectGetString\" failed"))
+					goto quit;
+
+				fprintf(stdout, "%s", phone_string);
+				if (l < syl_list_size - 1){
 					fprintf(stdout, " ");
 				}
-			
-		        l++;
+
+				l++;
 			}
 			if (k < syllables_list_size - 1)
-			{	
+			{
 				fprintf(stdout, " - ");
 			}
 			k++;
-	   }
-	   fprintf(stdout, "\n");
-	  
-	   input_size = getline(&buffer, &dimBuffer, stdin);
-  }    
+		}
+		fprintf(stdout, "\n");
 
-  free(buffer);
-  free(inter_buffer);
+		input_size = getline(&buffer, &dimBuffer, stdin);
+	}
 
-  SPCT_PRINT_AND_WAIT("synthesized utterance, getting audio object, press ENTER\n");
-      
-  goto quit;
+	free(buffer);
+	free(inter_buffer);
 
- quit:
-  SPCT_PRINT_AND_WAIT("deleting utterance, press ENTER\n");
+quit:
+	SPCT_PRINT_AND_WAIT("deleting relation, press ENTER\n");
 
-  SPCT_PRINT_AND_WAIT("deleting voice, press ENTER\n");
+	SUtteranceDelRelation(utt, "wordRel", &error);
+	if (S_CHK_ERR(&error, S_CONTERR,
+		      "main",
+		      "Call to method \"SUtteranceDelRelation\" failed"))
+		goto quit;
 
-  
-  /* ########################## */
-  
-  
+	SPCT_PRINT_AND_WAIT("deleting utterance, press ENTER\n");
 
-  if (phones != NULL)
-  {
-	S_DELETE(phones, "main", &error);
-  }
-  if (voice != NULL)
-  {
-    S_DELETE(voice, "main", &error);
-  }
-  
-  SUtteranceDelRelation(utt, "wordRel", &error);
-  if (S_CHK_ERR(&error, S_CONTERR,
-		        	  "main",
-				      "Call to method \"SUtteranceDelRelation\" failed"))
-	  goto quit;
-  
-  SPCT_PRINT_AND_WAIT("quitting speect, press ENTER\n");
+	if (utt != NULL)
+		S_DELETE(utt, "main", &error);
 
-  /*
-   * quit speect
-   */
-  error = speect_quit();
-  if (error != S_SUCCESS)
-    {
-      printf("Call to 'speect_quit' failed\n");
-      return 1;
-    }
+	SPCT_PRINT_AND_WAIT("deleting phones, press ENTER\n");
 
-  SPCT_PRINT_AND_WAIT("done, press ENTER\n");
+	if (phones != NULL)
+		S_DELETE(phones, "main", &error);
 
-  return 0;
+	SPCT_PRINT_AND_WAIT("deleting voice, press ENTER\n");
+
+	if (voice != NULL)
+		S_DELETE(voice, "main", &error);
+
+	SPCT_PRINT_AND_WAIT("quitting speect, press ENTER\n");
+
+	/*
+	 * quit speect
+	 */
+	error = speect_quit();
+	if (error != S_SUCCESS)
+	{
+		printf("Call to 'speect_quit' failed\n");
+		return 1;
+	}
+
+	SPCT_PRINT_AND_WAIT("done, press ENTER\n");
+
+	return 0;
 }
 
 int init (int *argc, char **argv, struct Config *config, s_erc *error) {
-  int scomp;
-  int i;
-  int j = 0;
-  
-  for (i = 1; i < *argc; i++) 
-  {
-    scomp = s_strcmp(argv[i], "-h", error);
-    if (S_CHK_ERR(error, S_CONTERR,
-		  "init",
-		  "Call to \"s_strcmp\" failed"))		  
-      goto returnFunction;
+	int scomp;
+	int i;
+	int j = 0;
 
-    if (scomp == 0)
-      usage(0);
+	for (i = 1; i < *argc; i++)
+	{
+		scomp = s_strcmp(argv[i], "-h", error);
+		if (S_CHK_ERR(error, S_CONTERR,
+			      "init",
+			      "Call to \"s_strcmp\" failed"))
+			goto returnFunction;
 
-    scomp = s_strcmp(argv[i], "--help", error);
-    if (S_CHK_ERR(error, S_CONTERR,
-		  "init",
-		  "Call to \"s_strcmp\" failed"))
-      goto returnFunction;
+		if (scomp == 0)
+			usage(0);
 
-    if (scomp == 0)
-      usage(0);
+		scomp = s_strcmp(argv[i], "--help", error);
+		if (S_CHK_ERR(error, S_CONTERR,
+			      "init",
+			      "Call to \"s_strcmp\" failed"))
+			goto returnFunction;
 
-    scomp = s_strcmp(argv[i],"-v", error);
-    if (S_CHK_ERR(error, S_CONTERR,
-				  "init",
-				  "Call to \"s_strcmp\" failed"))
-        goto returnFunction;
+		if (scomp == 0)
+			usage(0);
 
-    if ((scomp == 0) && (i + 1 < *argc))
-    {
-		config -> voicefile = argv[i + 1];
-		i++;
-		j += 2;
-    }
+		scomp = s_strcmp(argv[i],"-v", error);
+		if (S_CHK_ERR(error, S_CONTERR,
+			      "init",
+			      "Call to \"s_strcmp\" failed"))
+			goto returnFunction;
 
-  }
+		if ((scomp == 0) && (i + 1 < *argc))
+		{
+			config -> voicefile = argv[i + 1];
+			i++;
+			j += 2;
+		}
 
-  if ((config -> voicefile == NULL)) {
-    S_CTX_ERR(error, S_ARGERROR,
-	      "init",
-	      "Arguments are not optional, see usage");
-    usage(1);
-  }
+	}
 
-  returnFunction:
-  argv = argv + j;
-  *argc = *argc - j;
- 
-  return i;
+	if ((config -> voicefile == NULL)) {
+		S_CTX_ERR(error, S_ARGERROR,
+			  "init",
+			  "Arguments are not optional, see usage");
+		usage(1);
+	}
+
+returnFunction:
+	argv = argv + j;
+	*argc = *argc - j;
+	return i;
 }

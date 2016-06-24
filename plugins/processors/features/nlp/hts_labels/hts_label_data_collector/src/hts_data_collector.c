@@ -1558,6 +1558,7 @@ static void create_utterance_context(SELFPARAMETERTYPE *self, const SItem *item,
 
 	}
 
+	return;
 create_utterance_context_cleanup:
 	if (dFeat != NULL)
 		S_DELETE(dFeat, "create_utterance_context", error);
@@ -1683,6 +1684,7 @@ static void create_utterance_context_pause(SELFPARAMETERTYPE *self, const SItem 
 
 	}
 
+	return;
 create_utterance_context_pause_cleanup:
 	if (dFeat != NULL)
 		S_DELETE(dFeat, "create_utterance_context_pause", error);

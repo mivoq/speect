@@ -464,6 +464,13 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 				  "Execution of \"EXTRACTFEATURE\", failed"))
 		goto quit_error;
 
+	/* f38: utterance.phrases.num */
+	EXTRACTFEATURE(data, "utterance.phrases.num", SObjectGetInt, "f38=%d|", "f38=0|", resultString, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "Run",
+				  "Execution of \"EXTRACTFEATURE\", failed"))
+		goto quit_error;
+
 	/* f?: vowel.name
 	   cannot find the hts f# code for this feature */
 
@@ -484,13 +491,6 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 
 	/* f59: word.syls.num */
 	EXTRACTFEATURE(data, "word.syls.num", SObjectGetInt, "f59=%d|", "f59=0|", resultString, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "Run",
-				  "Execution of \"EXTRACTFEATURE\", failed"))
-		goto quit_error;
-
-	/* f58: word.phones.num */
-	EXTRACTFEATURE(data, "word.phones.num", SObjectGetInt, "f58=%d|", "f58=0|", resultString, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Run",
 				  "Execution of \"EXTRACTFEATURE\", failed"))
@@ -528,9 +528,7 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 				  "Execution of \"EXTRACTFEATURE\", failed"))
 		goto quit_error;
 
-
-
-
+	s_sappend(&resultString, "|", error);
 	return SObjectSetString(resultString, error);
 
 	/* error cleanup */

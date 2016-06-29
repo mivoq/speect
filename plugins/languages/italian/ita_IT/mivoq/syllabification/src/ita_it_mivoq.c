@@ -507,19 +507,10 @@ static SList *Syllabify(const SSyllabification *self, const SItem *word,
 		/* if there was a vowel in the i-th position, begin a backward going loop */
 		if (is_vowel)
 		{
-			/* get the level of the current vowel at i, and start
-			   checking for direction from here */
-			enum PhoneLevels phone_level = vowel;
-			if (S_CHK_ERR(error, S_CONTERR,
-				      "Syllabify",
-				      "Call to \"phone_is_vowel\" failed"))
-				goto quit_error;
-
 			/* variables used for direction control */
+			/* set the initial sonority level to vowel */
+			enum PhoneLevels phone_level = vowel;
 			enum PhoneLevels phone_level_p = phone_level;
-			enum PhoneLevels phone_level_pp = phone_level_p;
-			/* set it to TRUE when phonemes' series changes direction */
-			s_bool direc_changed = FALSE;
 
 			size_t j = i - 1;
 			const SObject *tmp_1 = SListNth(phoneList, j, error);
@@ -550,8 +541,8 @@ static SList *Syllabify(const SSyllabification *self, const SItem *word,
 					      "Call to \"SListAppend\" failed"))
 					goto quit_error;
 			}
-
-			while (!test_vowel && !direc_changed)
+			s_bool is_dec_c = FALSE;
+			while (!test_vowel && !is_dec_c)
 			{
 				const SObject *tmp_2 = SListNth(phoneList, j, error);
 
@@ -573,7 +564,6 @@ static SList *Syllabify(const SSyllabification *self, const SItem *word,
 					      "Call to \"SObjectGetString\" failed"))
 					goto quit_error;
 
-				phone_level_pp = phone_level_p;
 				phone_level_p = phone_level;
 				phone_level = phone_sonority_level(phoneset, phone_string_1, error);
 				if (S_CHK_ERR(error, S_CONTERR,
@@ -582,13 +572,7 @@ static SList *Syllabify(const SSyllabification *self, const SItem *word,
 					goto quit_error;
 
 				/* check for previous direction */
-				s_bool is_dec = phone_level_p < phone_level_pp;
-				/* two adjacent approximants should not be splitted */
-				if ((phone_level_p == phone_level_pp) && (phone_level_p == approximant))
-				{
-					is_dec = TRUE;
-				}
-				s_bool is_dec_c = phone_level > phone_level_p;
+				is_dec_c = phone_level > phone_level_p;
 				/* two adjacent approximants should not be splitted */
 				if ((phone_level == phone_level_p) && (phone_level != approximant))
 				{
@@ -614,19 +598,14 @@ static SList *Syllabify(const SSyllabification *self, const SItem *word,
 				 * so it begins this control from j < i - 1 (so we have i - 1 and i) */
 				if (j < i - 1)
 				{
-					if (is_dec)
+					if (is_dec_c)
 					{
-						if (is_dec_c)
-						{
-							SObject* obj_ind = SObjectSetInt(j + 1, error);
-							SListAppend(indexes, obj_ind, error);
-							if (S_CHK_ERR(error, S_CONTERR,
-								      "Syllabify",
-								      "Call to \"SListAppend\" failed"))
-								goto quit_error;
-
-							direc_changed = TRUE;
-						}
+						SObject* obj_ind = SObjectSetInt(j + 1, error);
+						SListAppend(indexes, obj_ind, error);
+						if (S_CHK_ERR(error, S_CONTERR,
+							      "Syllabify",
+							      "Call to \"SListAppend\" failed"))
+							goto quit_error;
 					}
 				}
 				j--;

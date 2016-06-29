@@ -159,7 +159,7 @@ int main(int argc, char **argv) {
 		"Call to \"s_pm_load_plugin\" failed"))
     goto quit;
 
-    
+
 
 
   SPCT_PRINT_AND_WAIT("loaded audio riff plug-in, loading voice, press ENTER\n");
@@ -181,7 +181,7 @@ int main(int argc, char **argv) {
     goto quit;
 
   SPCT_PRINT_AND_WAIT("loaded maryxml plug-in, loading voice, press ENTER\n");
-  
+
   /* load maryxml plug-in, so that we can save the maryxml */
   HTSLabelsToXML = s_pm_load_plugin("utt_htslabelsexport.spi", &error);
   if (S_CHK_ERR(&error, S_CONTERR,
@@ -273,7 +273,7 @@ int main(int argc, char **argv) {
       }
 
     S_FREE(maryxml_file);
-    
+
     /* save htslabels */
     s_asprintf(&htslabels_file, &error, "%s%s", config.wavfile, ".htslabels.XML");
     if (S_CHK_ERR(&error, S_CONTERR,
@@ -321,7 +321,7 @@ int main(int argc, char **argv) {
 
   if (maryXML != NULL)
     S_DELETE(maryXML, "main", &error);
-  
+
    SPCT_PRINT_AND_WAIT("deleting HTSLabelsToXML plug-in, press ENTER\n");
 
   if (HTSLabelsToXML != NULL)
@@ -352,7 +352,7 @@ int init (int * argc, char ** argv, struct Config * config, s_erc * error) {
     scomp = s_strcmp(argv[i],"-h", error);
     if (S_CHK_ERR(error, S_CONTERR,
 		  "init",
-		  "Call to \"s_strcmp\" failed"))		  
+		  "Call to \"s_strcmp\" failed"))
       goto returnFunction;
 
     if (scomp == 0)

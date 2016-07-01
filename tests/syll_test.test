@@ -1,0 +1,40 @@
+#!/bin/sh
+
+set -e;
+
+echo 1..1
+
+PATH="$2"/engine/tests:"$PATH"
+
+TEST_NO=0
+PASSED_TEST_NO=0
+
+test_start() {
+    TEST_NO=$((TEST_NO+1))
+    TEST_RES="not ok"
+    TEST_TITLE="$1"
+}
+
+test_end() {
+    if [ x"$1" = xSKIP ]
+    then
+	TEST_RES=ok
+	echo "$TEST_RES $TEST_NO - $TEST_TITLE # $1 $2"
+    else
+	echo "$TEST_RES $TEST_NO - $TEST_TITLE"
+    fi
+    if [ x"$TEST_RES" = xok ]
+    then
+	PASSED_TEST_NO=$((PASSED_TEST_NO+1))
+    fi
+}
+
+test_start "syll_test should syllabify \"a b a\""
+RES=`echo a b a | syll_test -v "$1"`
+if [ x"$RES" = x"a - b a" ]
+then
+    TEST_RES=ok
+fi
+test_end
+
+exit $((TEST_NO-PASSED_TEST_NO))

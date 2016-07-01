@@ -114,3 +114,8 @@ endif(NOT NO_SWIG)
 if(WANT_DOCS)
   add_subdirectory(docs)
 endif(WANT_DOCS)
+
+enable_testing()
+
+add_subdirectory(tests)
+

@@ -1,0 +1,20 @@
+  {
+    "lexicon-definition" :
+      {
+	"name" : "Italian IT",
+	"language" : "italian",
+	"lang-code" : "ita-IT",
+	"description" : "Standard Italian pronunciation lexicon",
+	"version" :
+	  {
+	    "major" : 1,
+	    "minor" : 0
+	  }
+      },
+    "lexicon-entries" :
+      {
+          "a" : [{"phones" : ["a1"]}],
+          "b" : [{"phones" : ["b", "i1"]}]
+      }
+  }
+

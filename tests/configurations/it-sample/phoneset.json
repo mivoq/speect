@@ -1,0 +1,582 @@
+{
+    "features": {
+        "bursts": [
+            "b",
+            "d",
+            "k",
+            "t",
+            "g",
+            "p",
+            "ch",
+            "jh"
+        ],
+        "syllable_clusters": [
+            "VCV",
+            "VCCV",
+            "VCCCV",
+            "VCCCCV",
+            "VCGV",
+            "VCCGV",
+            "VCCCGV",
+            "VV"
+        ],
+        "wellformed_fricative_clusters": [
+            "fl",
+            "fr",
+            "thr",
+            "shr",
+            "thw",
+            "hw",
+            "fy",
+            "vy",
+            "thy",
+            "zy",
+            "hy"
+        ],
+        "wellformed_other_clusters": [
+            "my",
+            "ny",
+            "ly"
+        ],
+        "wellformed_plosive_clusters": [
+            "pl",
+            "bl",
+            "kl",
+            "gl",
+            "pr",
+            "br",
+            "tr",
+            "dr",
+            "kr",
+            "gr",
+            "tw",
+            "dw",
+            "gw",
+            "kw",
+            "py",
+            "by",
+            "ty",
+            "dy",
+            "ky",
+            "gy"
+        ],
+        "wellformed_s_clusters": [
+            "sp",
+            "st",
+            "sk",
+            "sm",
+            "sn",
+            "sf",
+            "sw",
+            "sl",
+            "sy",
+            "spl",
+            "spr",
+            "spy",
+            "smy",
+            "str",
+            "sty",
+            "skl",
+            "skr",
+            "skw",
+            "sky"
+        ],
+      "silence_phone": "pau",
+      "closure_phone": "pau_cl"
+    },
+    "phones": {
+        "E1": [
+            "stressed",
+            "vowel",
+            "class_sonorant",
+            "position_front",
+            "height_low",
+            "class_syllabic"
+        ],
+        "J": [
+            "voiced",
+            "place_palatal",
+            "consonant",
+            "manner_nasal",
+            "duration_short"
+        ],
+        "JJ": [
+            "duration_long",
+            "place_palatal",
+            "manner_nasal",
+            "consonant",
+            "voiced"
+        ],
+        "L": [
+            "place_palatal",
+            "manner_liquid",
+            "consonant",
+            "voiced",
+            "duration_short",
+			"manner_lateral"
+        ],
+        "LL": [
+            "duration_long",
+            "place_palatal",
+            "manner_liquid",
+            "consonant",
+            "voiced",
+            "manner_lateral"
+        ],
+        "NF": [
+            "duration_short",
+            "voiced",
+            "place_labiodental",
+            "manner_nasal",
+            "consonant"
+        ],
+        "NG": [
+            "place_velar",
+            "manner_nasal",
+            "consonant",
+            "class_sonorant",
+            "voiced",
+            "duration_short",
+            "class_consonantal"
+        ],
+        "O1": [
+            "height_low",
+            "position_back",
+            "class_syllabic",
+            "articulation_round",
+            "class_sonorant",
+            "stressed",
+            "vowel"
+        ],
+        "S": [
+            "duration_short",
+            "class_consonantal",
+            "place_post-alveolar",
+            "manner_fricative",
+            "consonant"
+        ],
+        "SS": [
+            "duration_long",
+            "class_consonantal",
+            "place_post-alveolar",
+            "manner_fricative",
+            "consonant"
+        ],
+        "Z": [
+            "place_post-alveolar",
+            "manner_fricative",
+            "consonant",
+            "voiced",
+            "class_consonantal",
+            "duration_short"
+        ],
+      "pau" : ["pause"],
+      "pau_cl" : ["closure"],
+      "pau_gs" : ["glottal-stop"],
+        "a": [
+            "position_central",
+            "height_verylow",
+            "class_syllabic",
+            "class_sonorant",
+            "vowel"
+        ],
+        "a1": [
+            "class_syllabic",
+            "position_central",
+            "height_verylow",
+            "class_sonorant",
+            "vowel",
+            "stressed"
+        ],
+        "b": [
+            "place_bilabial",
+            "manner_plosive",
+            "consonant",
+            "voiced",
+            "duration_short",
+            "class_consonantal"
+        ],
+        "bb": [
+            "consonant",
+            "place_bilabial",
+            "manner_plosive",
+            "voiced",
+            "duration_long",
+            "class_consonantal"
+        ],
+        "d": [
+            "class_consonantal",
+            "duration_short",
+            "manner_plosive",
+            "place_dental",
+            "consonant",
+            "voiced"
+        ],
+        "dZ": [
+            "voiced",
+            "place_palatal",
+            "manner_affricate",
+            "consonant",
+            "duration_short"
+        ],
+        "dd": [
+            "consonant",
+            "place_dental",
+            "manner_plosive",
+            "voiced",
+            "class_consonantal",
+            "duration_long"
+        ],
+        "ddZ": [
+            "duration_long",
+            "voiced",
+            "manner_affricate",
+            "place_palatal",
+            "consonant"
+        ],
+        "ddz": [
+            "duration_long",
+            "manner_affricate",
+            "place_alveolar",
+            "consonant",
+            "voiced"
+        ],
+        "dz": [
+            "voiced",
+            "place_alveolar",
+            "manner_affricate",
+            "consonant",
+            "duration_short"
+        ],
+        "e": [
+            "vowel",
+            "class_sonorant",
+            "class_syllabic",
+            "height_mid",
+            "position_front"
+        ],
+        "e1": [
+            "class_syllabic",
+            "position_front",
+            "height_mid",
+            "class_sonorant",
+            "vowel",
+            "stressed"
+        ],
+        "f": [
+            "place_labiodental",
+            "consonant",
+            "manner_fricative",
+            "class_consonantal",
+            "duration_short",
+            "manner_strident"
+        ],
+        "ff": [
+            "manner_strident",
+            "duration_long",
+            "class_consonantal",
+            "place_labiodental",
+            "consonant",
+            "manner_fricative"
+        ],
+        "g": [
+            "consonant",
+            "place_velar",
+            "manner_plosive",
+            "voiced",
+            "duration_short"
+        ],
+        "gg": [
+            "voiced",
+            "place_velar",
+            "manner_plosive",
+            "consonant",
+            "duration_long",
+            "class_consonantal"
+        ],
+        "h": [
+            "manner_fricative",
+            "place_glottal",
+            "consonant",
+            "duration_short",
+            "class_consonantal"
+        ],
+        "i": [
+            "class_syllabic",
+            "position_front",
+            "height_high",
+            "vowel",
+            "class_sonorant"
+        ],
+        "i1": [
+            "class_syllabic",
+            "position_front",
+            "height_high",
+            "vowel",
+            "stressed",
+            "class_sonorant"
+        ],
+        "j": [
+            "class_sonorant",
+            "voiced",
+            "manner_approximant",
+            "place_palatal",
+            "consonant",
+            "manner_glide",
+            "duration_short"
+        ],
+        "k": [
+            "class_consonantal",
+            "duration_short",
+            "place_velar",
+            "consonant",
+            "manner_plosive"
+        ],
+        "kk": [
+            "manner_plosive",
+            "place_velar",
+            "consonant",
+            "duration_long",
+            "class_consonantal"
+        ],
+        "l": [
+            "manner_approximant",
+            "class_consonantal",
+            "class_sonorant",
+            "voiced",
+            "place_alveolar",
+            "consonant",
+            "manner_liquid",
+            "manner_lateral",
+            "duration_short"
+        ],
+        "ll": [
+            "duration_long",
+            "manner_lateral",
+            "class_sonorant",
+            "voiced",
+            "manner_liquid",
+            "place_alveolar",
+            "consonant",
+            "class_consonantal",
+            "manner_approximant"
+        ],
+        "m": [
+            "class_sonorant",
+            "voiced",
+            "place_labial",
+            "consonant",
+            "manner_nasal",
+            "duration_short",
+            "class_consonantal"
+        ],
+        "mm": [
+            "class_consonantal",
+            "duration_long",
+            "voiced",
+            "class_sonorant",
+            "manner_nasal",
+            "place_labial",
+            "consonant"
+        ],
+        "n": [
+            "class_consonantal",
+            "duration_short",
+            "class_sonorant",
+            "voiced",
+            "place_alveolar",
+            "manner_nasal",
+            "consonant"
+        ],
+        "nn": [
+            "voiced",
+            "class_sonorant",
+            "consonant",
+            "place_alveolar",
+            "manner_nasal",
+            "class_consonantal",
+            "duration_long"
+        ],
+        "o": [
+            "articulation_round",
+            "class_syllabic",
+            "height_mid",
+            "position_back",
+            "vowel",
+            "class_sonorant"
+        ],
+        "o1": [
+            "vowel",
+            "stressed",
+            "class_sonorant",
+            "class_syllabic",
+            "articulation_round",
+            "height_mid",
+            "position_back"
+        ],
+        "p": [
+            "class_consonantal",
+            "duration_short",
+            "place_bilabial",
+            "consonant",
+            "manner_plosive"
+        ],
+        "pp": [
+            "duration_long",
+            "class_consonantal",
+            "consonant",
+            "place_bilabial",
+            "manner_plosive"
+        ],
+        "r": [
+            "duration_short",
+            "consonant",
+            "place_alveolar",
+            "manner_liquid",
+            "class_sonorant",
+            "voiced",
+            "class_consonantal",
+            "manner_approximant",
+			"manner_vibrant"
+        ],
+        "rr": [
+            "duration_long",
+            "consonant",
+            "place_alveolar",
+            "manner_liquid",
+            "class_sonorant",
+            "voiced",
+            "class_consonantal",
+            "manner_approximant",
+			"manner_vibrant"
+        ],
+        "s": [
+            "place_alveolar",
+            "manner_fricative",
+            "consonant",
+            "class_consonantal",
+            "duration_short",
+            "manner_strident"
+        ],
+        "ss": [
+            "manner_fricative",
+            "place_alveolar",
+            "consonant",
+            "class_consonantal",
+            "manner_strident",
+            "duration_long"
+        ],
+        "t": [
+            "class_consonantal",
+            "duration_short",
+            "place_dental",
+            "consonant",
+            "manner_plosive"
+        ],
+        "tS": [
+            "manner_affricate",
+            "place_palatal",
+            "consonant",
+            "duration_short"
+        ],
+        "ts": [
+            "consonant",
+            "place_alveolar",
+            "manner_affricate",
+            "duration_short"
+        ],
+        "tt": [
+            "duration_long",
+            "class_consonantal",
+            "manner_plosive",
+            "place_dental",
+            "consonant"
+        ],
+        "ttS": [
+            "consonant",
+            "place_palatal",
+            "manner_affricate",
+            "duration_long"
+        ],
+        "tts": [
+            "place_alveolar",
+            "manner_affricate",
+            "consonant",
+            "duration_long"
+        ],
+        "u": [
+            "articulation_round",
+            "class_syllabic",
+            "position_back",
+            "height_high",
+            "class_sonorant",
+            "vowel"
+        ],
+        "u1": [
+            "class_sonorant",
+            "stressed",
+            "vowel",
+            "articulation_round",
+            "class_syllabic",
+            "position_back",
+            "height_high"
+        ],
+        "v": [
+            "voiced",
+            "consonant",
+            "place_labiodental",
+            "manner_fricative",
+            "class_consonantal",
+            "duration_short",
+            "manner_strident"
+        ],
+        "vv": [
+            "consonant",
+            "place_labiodental",
+            "manner_fricative",
+            "voiced",
+            "duration_long",
+            "class_consonantal"
+        ],
+        "w": [
+            "manner_approximant",
+            "place_velar",
+            "voiced",
+            "class_sonorant",
+            "place_labial",
+            "consonant",
+            "manner_glide",
+            "duration_short"
+        ],
+        "z": [
+            "consonant",
+            "place_alveolar",
+            "manner_fricative",
+            "voiced",
+            "manner_strident",
+            "duration_short",
+            "class_consonantal"
+        ]
+    },
+    "phoneset-definition": {
+        "description": "Standard Italian phoneset",
+        "features": [
+            "height",
+            "position",
+            "articulation",
+            "manner",
+            "place",
+            "duration",
+            "class",
+            "class",
+            "manner"
+        ],
+        "lang-code": "ita-IT",
+        "language": "italian",
+        "name": "Italian SAMPA",
+        "version": {
+            "major": 1,
+            "minor": 0
+        }
+    }
+}

@@ -1,0 +1,16 @@
+The Speect it-sample test voice, version 0.1.
+
+    * Please see LICENSE for licensing information.
+    * This voice purpouse is to test Italian frontend modules:
+      it does not currently provide audio output capabilities.
+
+The voice consists of the folowing files:
+
+.
+├── addendum.json        <- user addendum
+├── g2p.spct             <- grapheme-to-phoneme rules
+├── lexicon.json         <- lexicon (based on cmudict.0.7a)
+├── LICENSE              <- licensing info
+├── phoneset.json        <- phoneset (based on cmudict.0.7a)
+├── README               <- this README file
+└── voice.json           <- Speect voice description

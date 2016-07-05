@@ -953,6 +953,8 @@ static void create_word_context(SELFPARAMETERTYPE *self, const SItem *item, s_er
 
 	}
 
+	return;
+
 word_context_cleanup:
 	if (dFeat != NULL)
 		S_DELETE(dFeat, "create_word_context", error);
@@ -1120,7 +1122,6 @@ static void create_phrase_context(SELFPARAMETERTYPE *self, const SItem *item, s_
 	S_CHK_ERR(error, S_CONTERR,
 				  "create_phrase_context",
 				  "Call to \"SItemPathToFeatProc\" failed");
-
 	if (dFeat != NULL)
 	{
 		SHTSLabelDataCollectorSetFeature(self, "content.words.before", dFeat, error);
@@ -1128,7 +1129,6 @@ static void create_phrase_context(SELFPARAMETERTYPE *self, const SItem *item, s_
 					  "create_phrase_context",
 					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
 			goto phrase_context_cleanup;
-
 	}*/
 
 	/* the number of content words after the current word in the current phrase */
@@ -1136,7 +1136,6 @@ static void create_phrase_context(SELFPARAMETERTYPE *self, const SItem *item, s_
 	S_CHK_ERR(error, S_CONTERR,
 				  "create_phrase_context",
 				  "Call to \"SItemPathToFeatProc\" failed");
-
 	if (dFeat != NULL)
 	{
 		SHTSLabelDataCollectorSetFeature(self, "content.words.after", dFeat, error);
@@ -1144,8 +1143,6 @@ static void create_phrase_context(SELFPARAMETERTYPE *self, const SItem *item, s_
 					  "create_phrase_context",
 					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
 			goto phrase_context_cleanup;
-
-
 	}*/
 
 	/* the number of words from the previous content word to the current word */
@@ -1153,7 +1150,6 @@ static void create_phrase_context(SELFPARAMETERTYPE *self, const SItem *item, s_
 	S_CHK_ERR(error, S_CONTERR,
 				  "create_phrase_context",
 				  "Call to \"SItemPathToFeatProc\" failed");
-
 	if (dFeat != NULL)
 	{
 		SHTSLabelDataCollectorSetFeature(self, "words.from.prev.cont", dFeat, error);
@@ -1161,7 +1157,6 @@ static void create_phrase_context(SELFPARAMETERTYPE *self, const SItem *item, s_
 					  "create_phrase_context",
 					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
 			goto phrase_context_cleanup;
-
 	}*/
 
 	/* the number of words from the current word to the next content word */
@@ -1169,7 +1164,6 @@ static void create_phrase_context(SELFPARAMETERTYPE *self, const SItem *item, s_
 	S_CHK_ERR(error, S_CONTERR,
 				  "create_phrase_context",
 				  "Call to \"SItemPathToFeatProc\" failed");
-
 	if (dFeat != NULL)
 	{
 		SHTSLabelDataCollectorSetFeature(self, "words.from.next.cont", dFeat, error);
@@ -1293,6 +1287,8 @@ static void create_phrase_context(SELFPARAMETERTYPE *self, const SItem *item, s_
 			goto phrase_context_cleanup;
 
 	}
+
+	return;
 
 phrase_context_cleanup:
 	if (dFeat)
@@ -1464,6 +1460,8 @@ static void create_phrase_context_pause(SELFPARAMETERTYPE *self, const SItem *it
 
 	}
 
+	return;
+
 phrase_context_pause_cleanup:
 	if (dFeat != NULL)
 		S_DELETE(dFeat, "create_phrase_context_pause", error);
@@ -1559,6 +1557,7 @@ static void create_utterance_context(SELFPARAMETERTYPE *self, const SItem *item,
 	}
 
 	return;
+
 create_utterance_context_cleanup:
 	if (dFeat != NULL)
 		S_DELETE(dFeat, "create_utterance_context", error);
@@ -1685,6 +1684,7 @@ static void create_utterance_context_pause(SELFPARAMETERTYPE *self, const SItem 
 	}
 
 	return;
+
 create_utterance_context_pause_cleanup:
 	if (dFeat != NULL)
 		S_DELETE(dFeat, "create_utterance_context_pause", error);

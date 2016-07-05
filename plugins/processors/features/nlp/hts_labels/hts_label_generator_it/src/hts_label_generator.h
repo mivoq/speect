@@ -96,6 +96,10 @@ typedef struct
 	 */
 	const char      *nullPhoneme;
 
+	/**
+	 * @protected SHTSLabelsGeneratorItFeatProc special features list.
+	 */
+	SMap		*specialFeatures;
 } SHTSLabelsGeneratorItFeatProc;
 
 

@@ -486,14 +486,19 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 				  "Execution of \"SMapGetKeys\" failed"))
 		goto quit_error;
 
-	/* counter for the loop on the map */
-	size_t i = 0;
-	while (i < featureMapSize)
+	/* iterator for the loop on the the map */
+    SIterator *itrFeatureMapList = S_ITERATOR_GET(featureMapKeysList, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "Run",
+				  "Execution of \"S_ITERATOR_GET\" failed"))
+		goto quit_error;
+
+	while (itrFeatureMapList != NULL)
 	{
-		const SObject *mapKey = SListNth(featureMapKeysList, i, error);
+		const SObject *mapKey = SIteratorObject(itrFeatureMapList, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 				  "Run",
-				  "Execution of \"SListNth\" failed"))
+				  "Execution of \"SIteratorObject\" failed"))
 			goto quit_error;
 
 		const char *keyString = SObjectGetString(mapKey, error);
@@ -529,7 +534,7 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 				goto quit_error;
 		}
 
-		i++;
+		itrFeatureMapList = SIteratorNext(itrFeatureMapList);
 	}
 
 	s_sappend(&resultString, "|", error);

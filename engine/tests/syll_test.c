@@ -276,18 +276,24 @@ int main(int argc, char **argv)
 
 		/* PRINT LOOP */
 		uint32 k = 0;
+		SIterator *itr_syllablesPhones = S_ITERATOR_GET(syllablesPhones, &error);
+		if (S_CHK_ERR(&error, S_CONTERR,
+				  "Run",
+				  "Execution of \"S_ITERATOR_GET\" failed"))
+			goto quit;
+
 		size_t syllables_list_size = SListSize(syllablesPhones, &error);
 		if (S_CHK_ERR(&error, S_CONTERR,
 			      "main",
 			      "Call to method \"SListSize\" failed"))
 			goto quit;
 
-		while (k < syllables_list_size)
+		while (itr_syllablesPhones != NULL)
 		{
-			const SList* syl_list = (const SList*) SListNth(syllablesPhones, k, &error);
+			const SList* syl_list = SIteratorObject(itr_syllablesPhones, &error);
 			if (S_CHK_ERR(&error, S_CONTERR,
 				      "main",
-				      "Call to method \"SListNth\" failed"))
+				      "Call to method \"SIteratorObject\" failed"))
 				goto quit;
 
 			size_t syl_list_size = SListSize(syl_list, &error);
@@ -297,12 +303,14 @@ int main(int argc, char **argv)
 				goto quit;
 
 			uint32 l = 0;
-			while (l < syl_list_size)
+			SIterator *itr_syl_list = S_ITERATOR_GET(syl_list, &error);
+			while (itr_syl_list != NULL)
 			{
-				const SObject* ph = SListNth(syl_list, l, &error);
+				const SObject* ph = SIteratorObject(itr_syl_list, &error);
+
 				if (S_CHK_ERR(&error, S_CONTERR,
 					      "main",
-					      "Call to method \"SListNth\" failed"))
+					      "Call to method \"SIteratorObject\" failed"))
 					goto quit;
 
 				const char* phone_string = SObjectGetString(ph, &error);
@@ -316,12 +324,15 @@ int main(int argc, char **argv)
 					fprintf(stdout, " ");
 				}
 
+				itr_syl_list = SIteratorNext(itr_syl_list);
 				l++;
 			}
 			if (k < syllables_list_size - 1)
 			{
 				fprintf(stdout, " - ");
 			}
+
+			itr_syllablesPhones = SIteratorNext(itr_syllablesPhones);
 			k++;
 		}
 		fprintf(stdout, "\n");

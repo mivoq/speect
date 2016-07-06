@@ -77,7 +77,9 @@ do {														\
 		const SObject *feature;										\
 		const char *featureStr = featureName;  								\
 		s_bool isPresent;										\
+		s_erc error2;											\
 		S_CLR_ERR(error);										\
+		S_CLR_ERR(&error2);										\
 														\
 		isPresent= S_HTSLABELSDATACOLLECTOR_CALL(data, has_feature)(data, featureName, error);		\
 		if (S_CHK_ERR(error, S_CONTERR,									\
@@ -96,7 +98,11 @@ do {														\
 					"EXTRACTFEATURE",	       						\
 					"Call to \"CheckFeature\" failed"))					\
 					break;									\
-			s_asprintf(&tmp, error, featureStr, unboxingFunction(feature, error)); 		\
+			s_asprintf(&tmp, error, featureStr, unboxingFunction(feature, &error2)); 		\
+			if (S_CHK_ERR(&error2, S_CONTERR,	       						\
+					"EXTRACTFEATURE",	       						\
+					"Call to \"unboxing function\" failed"))				\
+					break;									\
 			if (S_CHK_ERR(error, S_CONTERR,	       							\
 					"EXTRACTFEATURE",	       						\
 					"Call to \"s_asprintf\" failed"))					\

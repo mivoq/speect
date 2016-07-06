@@ -62,15 +62,14 @@
  * If the feature @a featureName is not present, @a defaultOutput is appended
  * to @a appendTo instead.
  *
+ * @param self self pointer (type #SHTSLabelsGeneratorItFeatProc*)
  * @param data Data container (type #SHTSLabelsDataCollectorFeatProc*).
  * @param featureName Key of the feature (type #char*).
  * @param unboxingFunction Function used to get data from the resulting SObject (type #void*).
- * @param outputString String to format the feature (type #char*).
- * @param defaultOutput Default string output, used if there isn't the given feature (type #char*).
  * @param appendTo String on which we append the output (type #char*).
  * @param ERROR Pointer to error code variable to set (type #s_erc*).
  */
-#define EXTRACTFEATURE(self, data, featureName, unboxingFunction, outputString, appendTo, error)		\
+#define EXTRACTFEATURE(self, data, featureName, unboxingFunction, appendTo, error)				\
 do {														\
 	char *tmp = NULL;											\
 	do {													\
@@ -510,7 +509,7 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 				  "Run",
 				  "Execution of \"s_strstr\" failed"))
 				goto quit_error;
-			EXTRACTFEATURE(labelGenerator, data, keyString, SObjectGetInt, "%s", resultString, error);
+			EXTRACTFEATURE(labelGenerator, data, keyString, SObjectGetInt, resultString, error);
 			if (S_CHK_ERR(error, S_CONTERR,
 				  "Run",
 				  "Execution of \"EXTRACTFEATURE\" failed"))
@@ -522,7 +521,7 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 				  "Run",
 				  "Execution of \"s_strstr\" failed"))
 				goto quit_error;
-			EXTRACTFEATURE(labelGenerator, data, keyString, SObjectGetString, "%s", resultString, error);
+			EXTRACTFEATURE(labelGenerator, data, keyString, SObjectGetString, resultString, error);
 			if (S_CHK_ERR(error, S_CONTERR,
 				  "Run",
 				  "Execution of \"EXTRACTFEATURE\" failed"))

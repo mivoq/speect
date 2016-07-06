@@ -76,7 +76,6 @@ do {														\
 	do {													\
 		const SObject *feature;										\
 		const char *featureStr = featureName;  								\
-		char *outputStringLoc = outputString;								\
 		s_bool isPresent;										\
 		S_CLR_ERR(error);										\
 														\
@@ -93,13 +92,15 @@ do {														\
 					"Call to \"SHTSLabelDataCollectorGetFeature\" failed"))			\
 				break;										\
 			CheckFeature(self, &featureStr, error);							\
-			/* now featureStr contains the hts code */     						\
-			s_asprintf(&outputStringLoc, error, featureStr, unboxingFunction(feature, error));	\
 			if (S_CHK_ERR(error, S_CONTERR,	       							\
 					"EXTRACTFEATURE",	       						\
 					"Call to \"CheckFeature\" failed"))					\
 					break;									\
-			s_asprintf(&tmp, error, outputStringLoc/* , unboxingFunction(feature, error) */);	\
+			s_asprintf(&tmp, error, featureStr, unboxingFunction(feature, error)); 		\
+			if (S_CHK_ERR(error, S_CONTERR,	       							\
+					"EXTRACTFEATURE",	       						\
+					"Call to \"s_asprintf\" failed"))					\
+					break;									\
 		}												\
 		s_sappend(&appendTo, tmp, error);								\
 		if (S_CHK_ERR(error, S_CONTERR,									\

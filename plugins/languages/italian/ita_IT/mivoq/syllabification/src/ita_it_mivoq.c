@@ -29,8 +29,8 @@
 /*                                                                                  */
 /* A Standard Italian (ita-it) syllabification class                                */
 /* implementation for the Mivoq project. Based on Pietro Maturi,                    */
-/* "I suoni delle lingue, i suoni dell'italiano"	                            */
-/*                        							    */
+/* "I suoni delle lingue, i suoni dell'italiano"	                                */
+/*                        							                                */
 /************************************************************************************/
 
 
@@ -56,8 +56,8 @@
 /* Static variables                                                                 */
 /*                                                                                  */
 /************************************************************************************/
-
-static SSyllabItaItMivoqClass SyllabItaItMivoqClass; /* SSyllabItaItMivoq class declaration. */
+/* SSyllabItaItMivoq class declaration. */
+static SSyllabItaItMivoqClass SyllabItaItMivoqClass;
 
 
 /************************************************************************************/
@@ -445,6 +445,12 @@ static SList *Syllabify(const SSyllabification *self, const SItem *word,
 
 	/* counter for the loop */
 	size_t i = 0;
+	SIterator *itr_phoneList = S_ITERATOR_GET(phoneList, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+		      "Syllabify",
+		      "Call to \"S_ITERATOR_GET\" failed"))
+		goto quit_error;
+
 	/* create an object containing the sint32 index */
 	SObject* obj_ind = SObjectSetInt(i, error);
 	SListAppend(indexes, obj_ind, error);
@@ -461,12 +467,12 @@ static SList *Syllabify(const SSyllabification *self, const SItem *word,
 		goto quit_error;
 
 	/* first loop for finding the division points, until the first vowel */
-	while (i < list_size && !test_phone)
+	while (itr_phoneList != NULL  && !test_phone)
 	{
-		tmp = SListNth(phoneList, i, error);
+		tmp = SIteratorObject(itr_phoneList, error);
 		if (S_CHK_ERR(error, S_CONTERR,
-			      "Syllabify",
-			      "Call to \"SListNth\" failed"))
+				  "Syllabify",
+				  "Call to method \"SIteratorObject\" failed"))
 			goto quit_error;
 
 		/* 'phone_string' is analyzed */
@@ -477,16 +483,18 @@ static SList *Syllabify(const SSyllabification *self, const SItem *word,
 			goto quit_error;
 
 		test_phone = phone_is_vowel(phoneset, phone_string, error);
+
+		itr_phoneList = SIteratorNext(itr_phoneList);
 		i++;
 	}
 
 	/* this loop starts after the first vowel of 'phoneList' */
-	while (i < list_size)
+	while (itr_phoneList != NULL)
 	{
-		tmp = SListNth(phoneList, i, error);
+		tmp = SIteratorObject(itr_phoneList, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 			      "Syllabify",
-			      "Call to \"SListNth\" failed"))
+			      "Call to \"SIteratorObject\" failed"))
 			goto quit_error;
 
 		/* 'phone_string' is analyzed (using 'phone_is_*' functions) */
@@ -612,6 +620,7 @@ static SList *Syllabify(const SSyllabification *self, const SItem *word,
 			}/*end of inner while*/
 		}
 
+		itr_phoneList = SIteratorNext(itr_phoneList);
 		i++;
 	}/* end of outer while */
 
@@ -624,11 +633,21 @@ static SList *Syllabify(const SSyllabification *self, const SItem *word,
 	/*LAST LOOP*/
 
 	int indexes_size = SListSize(indexes, error);
+	SIterator *itr_indexes = S_ITERATOR_GET(indexes, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+		      "Syllabify",
+		      "Call to \"S_ITERATOR_GET\" failed"))
+		goto quit_error;
 	int j = 0;
 
-	while (j < indexes_size)
+	while (itr_indexes != NULL)
 	{
-		const SObject *kObj = SListNth(indexes, j, error);
+		const SObject *kObj = SIteratorObject(itr_indexes, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+			      "Syllabify",
+			      "Call to \"SIteratorObject\" failed"))
+			goto quit_error;
+
 		const SObject* kObj_1;
 		if (j < indexes_size - 1)
 		{
@@ -689,6 +708,7 @@ static SList *Syllabify(const SSyllabification *self, const SItem *word,
 			      "Call to \"SListPush\" failed"))
 			goto quit_error;
 
+		itr_indexes = SIteratorNext(itr_indexes);
 		j++;
 	} /* end of outer while */
 	if (indexes != NULL)

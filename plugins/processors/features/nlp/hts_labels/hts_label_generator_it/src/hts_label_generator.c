@@ -70,12 +70,12 @@
  * @param appendTo String on which we append the output (type #char*).
  * @param ERROR Pointer to error code variable to set (type #s_erc*).
  */
-#define EXTRACTFEATURE(data, featureName, unboxingFunction, outputString, appendTo, error) 			\
+#define EXTRACTFEATURE(self, data, featureName, unboxingFunction, outputString, appendTo, error)		\
 do {														\
 	char *tmp = NULL;											\
 	do {													\
 		const SObject *feature;										\
-		char *featureStr = featureName;									\
+		const char *featureStr = featureName;  								\
 		char *outputStringLoc = outputString;								\
 		s_bool isPresent;										\
 		S_CLR_ERR(error);										\
@@ -132,7 +132,7 @@ do {														\
 	char *tmp = NULL;											\
 	do {													\
 		const SObject *feature;										\
-		char *phone;											\
+		const char *phone;										\
 		s_bool isPresent;										\
 		S_CLR_ERR(error);										\
 														\
@@ -320,14 +320,14 @@ static void LoadConfiguration(SHTSLabelsGeneratorItFeatProc *self, const SItem *
 
 }
 
-static void CheckPhoneme(SHTSLabelsGeneratorItFeatProc *self, char **phone, s_erc *error)
+static void CheckPhoneme(SHTSLabelsGeneratorItFeatProc *self, const char **phone, s_erc *error)
 {
 	S_CLR_ERR(error);
 
 	*phone = (char*) SMapGetStringDef(self->specialPhones, *phone, *phone, error);
 }
 
-static void CheckFeature(SHTSLabelsGeneratorItFeatProc *self, char **feature, s_erc *error)
+static void CheckFeature(SHTSLabelsGeneratorItFeatProc *self, const char **feature, s_erc *error)
 {
 	S_CLR_ERR(error);
 
@@ -483,7 +483,7 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 	size_t i = 0;
 	while (i < featureMapSize)
 	{
-		SObject *mapKey = SListNth(featureMapKeysList, i, error);
+		const SObject *mapKey = SListNth(featureMapKeysList, i, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 				  "Run",
 				  "Execution of \"SListNth\" failed"))
@@ -503,20 +503,19 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 				  "Run",
 				  "Execution of \"s_strstr\" failed"))
 				goto quit_error;
-			EXTRACTFEATURE(data, keyString, SObjectGetInt, "%s", resultString, error);
+			EXTRACTFEATURE(labelGenerator, data, keyString, SObjectGetInt, "%s", resultString, error);
 			if (S_CHK_ERR(error, S_CONTERR,
 				  "Run",
 				  "Execution of \"EXTRACTFEATURE\" failed"))
 				goto quit_error;
 		}
-
 		else if (s_strstr(value, "=%s", error ))
 		{
 			if (S_CHK_ERR(error, S_CONTERR,
 				  "Run",
 				  "Execution of \"s_strstr\" failed"))
 				goto quit_error;
-			EXTRACTFEATURE(data, keyString, SObjectGetString, "%s", resultString, error);
+			EXTRACTFEATURE(labelGenerator, data, keyString, SObjectGetString, "%s", resultString, error);
 			if (S_CHK_ERR(error, S_CONTERR,
 				  "Run",
 				  "Execution of \"EXTRACTFEATURE\" failed"))

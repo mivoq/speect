@@ -284,53 +284,70 @@ static void LoadConfiguration(SHTSLabelsGeneratorItFeatProc *self, const SItem *
 		return;
 	}
 
-	self->specialPhones = S_MAP(SMapGetObject(labelsGenerator_data, "phones_map", error));
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "LoadConfiguration",
-				  "Call to \"SMapGetObject\" failed"))
-		return;
-	if (self->specialPhones == NULL)
+	if (SMapObjectPresent(labelsGenerator_data, "phones_map", error))
 	{
-		S_CTX_ERR(error, S_FAILURE,
+		if (S_CHK_ERR(error, S_CONTERR,
 				  "LoadConfiguration",
-				  "Failed to get \"phones_map\" map from voice features");
-		return;
+				  "Call to \"SVoiceGetFeature\" failed"))
+			return;
+
+		self->specialPhones = S_MAP(SMapGetObject(labelsGenerator_data, "phones_map", error));
+		if (S_CHK_ERR(error, S_CONTERR,
+					"LoadConfiguration",
+					"Call to \"SMapGetObject\" failed"))
+			return;
+	}
+	/* if the map doesn't exist, set it to NULL for the caller */
+	else
+	{
+		self->specialPhones = NULL;
 	}
 
-	self->specialFeatures = S_MAP(SMapGetObject(labelsGenerator_data, "features_map_int", error));
-	if (S_CHK_ERR(error, S_CONTERR,
+        if (SMapObjectPresent(labelsGenerator_data, "features_map_int", error))
+        {
+		if (S_CHK_ERR(error, S_CONTERR,
 				  "LoadConfiguration",
-				  "Call to \"SMapGetObject\" failed"))
-		return;
+				  "Call to \"SVoiceGetFeature\" failed"))
+			return;
 
-	if (self->specialFeatures == NULL)
+		self->specialFeatures = S_MAP(SMapGetObject(labelsGenerator_data, "features_map_int", error));
+		if (S_CHK_ERR(error, S_CONTERR,
+					"LoadConfiguration",
+					"Call to \"SMapGetObject\" failed"))
+			return;
+	}
+	else
 	{
-		S_CTX_ERR(error, S_FAILURE,
-				  "LoadConfiguration",
-				  "Failed to get \"features_map\" map from voice features");
-		return;
+		self->specialFeatures = NULL;
 	}
 
-	self->nullPhoneme = SMapGetString(labelsGenerator_data, "null_phone", error);
-	if (S_CHK_ERR(error, S_CONTERR,
+	if (SMapObjectPresent(labelsGenerator_data, "null_phone", error))
+	{
+		if (S_CHK_ERR(error, S_CONTERR,
+				  "LoadConfiguration",
+				  "Call to \"SVoiceGetFeature\" failed"))
+			return;
+
+		self->nullPhoneme = SMapGetString(labelsGenerator_data, "null_phone", error);
+		if (S_CHK_ERR(error, S_CONTERR,
 				  "LoadConfiguration",
 				  "Call to \"SMapGetString\" failed"))
-		return;
-	if (self->nullPhoneme == NULL)
-	{
-		S_CTX_ERR(error, S_FAILURE,
-				  "LoadConfiguration",
-				  "Failed to get \"null_phone\" string from voice features");
-		return;
+			return;
 	}
-
+	else
+	{
+		self->nullPhoneme = NULL;
+	}
 }
 
 static void CheckPhoneme(SHTSLabelsGeneratorItFeatProc *self, const char **phone, s_erc *error)
 {
 	S_CLR_ERR(error);
 
-	*phone = (char*) SMapGetStringDef(self->specialPhones, *phone, *phone, error);
+	if (self->specialPhones != NULL)
+	{
+		*phone = (char*) SMapGetStringDef(self->specialPhones, *phone, *phone, error);
+	}
 }
 
 static void CheckFeature(SHTSLabelsGeneratorItFeatProc *self, const char **feature, s_erc *error)
@@ -394,13 +411,6 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 			S_CTX_ERR(error, S_FAILURE,
 				  "Run",
 				  "Failed to load null phone string.");
-			goto quit_error;
-		}
-		if (labelGenerator->specialFeatures == NULL)
-		{
-			S_CTX_ERR(error, S_FAILURE,
-				  "Run",
-				  "Failed to load special features string.");
 			goto quit_error;
 		}
 	}
@@ -474,50 +484,61 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 		goto quit_error;
 
 	/* Features */
-
-	/* iterator for the loop on the the map */
-	SIterator *itrFeatureMap = S_ITERATOR_GET(labelGenerator -> specialFeatures, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "Run",
-				  "Execution of \"S_ITERATOR_GET\" failed"))
-		goto quit_error;
-
-	while (itrFeatureMap != NULL)
+	SIterator *itrFeatureMap = NULL;
+	if (labelGenerator->specialFeatures != NULL)
 	{
-		const char *keyString = SIteratorKey(itrFeatureMap, error);
+		/* iterator for the loop on the the map */
+		itrFeatureMap = S_ITERATOR_GET(labelGenerator->specialFeatures, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 				  "Run",
-				  "Execution of \"SIteratorObject\" failed"))
+				  "Execution of \"S_ITERATOR_GET\" failed"))
 			goto quit_error;
 
-		const char *value = (char*) SMapGetStringDef(labelGenerator -> specialFeatures, keyString, keyString, error);
-		/* Call the right unboxing function */
-		if (s_strstr(value, "=%d", error ))
+		while (itrFeatureMap != NULL)
 		{
+			const char *keyString = SIteratorKey(itrFeatureMap, error);
 			if (S_CHK_ERR(error, S_CONTERR,
-				  "Run",
-				  "Execution of \"s_strstr\" failed"))
-				goto quit_error;
-			EXTRACTFEATURE(labelGenerator, data, keyString, SObjectGetInt, resultString, error);
-			if (S_CHK_ERR(error, S_CONTERR,
-				  "Run",
-				  "Execution of \"EXTRACTFEATURE\" failed"))
-				goto quit_error;
-		}
-		else if (s_strstr(value, "=%s", error ))
-		{
-			if (S_CHK_ERR(error, S_CONTERR,
-				  "Run",
-				  "Execution of \"s_strstr\" failed"))
-				goto quit_error;
-			EXTRACTFEATURE(labelGenerator, data, keyString, SObjectGetString, resultString, error);
-			if (S_CHK_ERR(error, S_CONTERR,
-				  "Run",
-				  "Execution of \"EXTRACTFEATURE\" failed"))
-				goto quit_error;
-		}
+					  "Run",
+				      "Execution of \"SIteratorObject\" failed"))
+			    goto quit_error;
 
-		itrFeatureMap = SIteratorNext(itrFeatureMap);
+			const char *value = (char*) SMapGetStringDef(labelGenerator->specialFeatures, keyString, keyString, error);
+			/* Call the right unboxing function */
+			if (s_strstr(value, "=%d", error ))
+			{
+				if (S_CHK_ERR(error, S_CONTERR,
+						  "Run",
+				          "Execution of \"s_strstr\" failed"))
+				    goto quit_error;
+
+				if (labelGenerator->specialFeatures != NULL)
+				{
+					EXTRACTFEATURE(labelGenerator, data, keyString, SObjectGetInt, resultString, error);
+					if (S_CHK_ERR(error, S_CONTERR,
+							  "Run",
+					          "Execution of \"EXTRACTFEATURE\" failed"))
+						goto quit_error;
+				}
+			}
+			else if (s_strstr(value, "=%s", error ))
+			{
+				if (S_CHK_ERR(error, S_CONTERR,
+						  "Run",
+				          "Execution of \"s_strstr\" failed"))
+				    goto quit_error;
+
+				if (labelGenerator->specialFeatures != NULL)
+				{
+					EXTRACTFEATURE(labelGenerator, data, keyString, SObjectGetString, resultString, error);
+					if (S_CHK_ERR(error, S_CONTERR,
+							  "Run",
+					          "Execution of \"EXTRACTFEATURE\" failed"))
+				        goto quit_error;
+				}
+			}
+
+			itrFeatureMap = SIteratorNext(itrFeatureMap);
+		}
 	}
 
 	s_sappend(&resultString, "|", error);
@@ -525,13 +546,23 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 
 	/* error cleanup */
 quit_error:
-	S_DELETE(data, "Run", error);
+	if (data != NULL)
+	{
+		S_DELETE(data, "Run", error);
+	}
 	if (itrFeatureMap != NULL)
 	{
 		S_DELETE(itrFeatureMap, "Run", error);
 	}
-	S_FREE(tmp);
-	S_FREE(resultString);
+	if (tmp != NULL)
+	{
+		S_FREE(tmp);
+	}
+	if (resultString != NULL)
+	{
+		S_FREE(resultString);
+	}
+
 	return NULL;
 
 	S_UNUSED(self);

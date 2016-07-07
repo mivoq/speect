@@ -29,8 +29,8 @@
 /*                                                                                  */
 /* A Standard Italian (ita-it) syllabification class                                */
 /* implementation for the Mivoq project. Based on Pietro Maturi,                    */
-/* "I suoni delle lingue, i suoni dell'italiano"	                            */
-/*                        							    */
+/* "I suoni delle lingue, i suoni dell'italiano"                                    */
+/*                                                                                  */
 /************************************************************************************/
 
 
@@ -130,14 +130,14 @@ static s_bool phone_is_vowel(const SPhoneset *phoneset, const char *phone, s_erc
  * syllabification.
  *
  * Sonority scale:
- *    << occlusives   (0)
- *    << fricatives   (1)
- *    << nasals 	  (2)
- *    << laterals 	  (3)
- *    << 's' 		  (4)
- *    << vibrants 	  (5)
- *    << approximants (6)
- *    << vowels		  (7)
+ *    << occlusives       (0)
+ *    << fricatives       (1)
+ *    << nasals           (2)
+ *    << laterals         (3)
+ *    << 's'              (4)
+ *    << vibrants         (5)
+ *    << approximants     (6)
+ *    << vowels           (7)
  *
  * By using this scale, Italian syllabification algorithm can be
  * simplified as follow: given a list of 0 or more consonants between

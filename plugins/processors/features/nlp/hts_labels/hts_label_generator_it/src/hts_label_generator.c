@@ -474,14 +474,9 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 		goto quit_error;
 
 	/* Features */
-	size_t featureMapSize = SMapSize(labelGenerator -> specialFeatures, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "Run",
-				  "Execution of \"SMapSize\" failed"))
-		goto quit_error;
 
 	/* iterator for the loop on the the map */
-	SIterator *itrFeatureMap = SContainerGetIterator(labelGenerator -> specialFeatures, error);
+	SIterator *itrFeatureMap = S_ITERATOR_GET(labelGenerator -> specialFeatures, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Run",
 				  "Execution of \"S_ITERATOR_GET\" failed"))
@@ -489,16 +484,10 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 
 	while (itrFeatureMap != NULL)
 	{
-		const SObject *mapKey = SIteratorKey(itrFeatureMap, error);
+		const char *keyString = SIteratorKey(itrFeatureMap, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 				  "Run",
 				  "Execution of \"SIteratorObject\" failed"))
-			goto quit_error;
-
-		const char *keyString = SObjectGetString(mapKey, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-				  "Run",
-				  "Execution of \"SObjectGetString\" failed"))
 			goto quit_error;
 
 		const char *value = (char*) SMapGetStringDef(labelGenerator -> specialFeatures, keyString, keyString, error);

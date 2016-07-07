@@ -290,7 +290,7 @@ int main(int argc, char **argv)
 
 		while (itr_syllablesPhones != NULL)
 		{
-			const SList* syl_list = SIteratorObject(itr_syllablesPhones, &error);
+			const SList* syl_list = (const SList*) SIteratorObject(itr_syllablesPhones, &error);
 			if (S_CHK_ERR(&error, S_CONTERR,
 				      "main",
 				      "Call to method \"SIteratorObject\" failed"))

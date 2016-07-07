@@ -480,22 +480,17 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 				  "Run",
 				  "Execution of \"SMapSize\" failed"))
 		goto quit_error;
-	SList *featureMapKeysList = SMapGetKeys(labelGenerator -> specialFeatures, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "Run",
-				  "Execution of \"SMapGetKeys\" failed"))
-		goto quit_error;
 
 	/* iterator for the loop on the the map */
-    SIterator *itrFeatureMapList = S_ITERATOR_GET(featureMapKeysList, error);
+	SIterator *itrFeatureMap = SContainerGetIterator(labelGenerator -> specialFeatures, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Run",
 				  "Execution of \"S_ITERATOR_GET\" failed"))
 		goto quit_error;
 
-	while (itrFeatureMapList != NULL)
+	while (itrFeatureMap != NULL)
 	{
-		const SObject *mapKey = SIteratorObject(itrFeatureMapList, error);
+		const SObject *mapKey = SIteratorKey(itrFeatureMap, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 				  "Run",
 				  "Execution of \"SIteratorObject\" failed"))
@@ -534,7 +529,7 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 				goto quit_error;
 		}
 
-		itrFeatureMapList = SIteratorNext(itrFeatureMapList);
+		itrFeatureMap = SIteratorNext(itrFeatureMap);
 	}
 
 	s_sappend(&resultString, "|", error);
@@ -543,6 +538,10 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 	/* error cleanup */
 quit_error:
 	S_DELETE(data, "Run", error);
+	if (itrFeatureMap != NULL)
+	{
+		S_DELETE(itrFeatureMap, "Run", error);
+	}
 	S_FREE(tmp);
 	S_FREE(resultString);
 	return NULL;

@@ -29,8 +29,8 @@
 /*                                                                                  */
 /* A Standard Italian (ita-it) syllabification class                                */
 /* implementation for the Mivoq project. Based on Pietro Maturi,                    */
-/* "I suoni delle lingue, i suoni dell'italiano"	                                */
-/*                        							                                */
+/* "I suoni delle lingue, i suoni dell'italiano"	                            */
+/*                        							    */
 /************************************************************************************/
 
 
@@ -722,6 +722,12 @@ quit_error:
 
 	if (syllables != NULL)
 		S_DELETE(syllables, "Syllabify", error);
+
+	if (itr_phoneList != NULL)
+		S_DELETE(itr_phoneList, "Syllabify", error);
+
+	if (itr_indexes != NULL)
+		S_DELETE(itr_phoneList, "Syllabify", error);
 
 	return NULL;
 

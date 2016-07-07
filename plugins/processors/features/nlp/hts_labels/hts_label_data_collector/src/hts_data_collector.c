@@ -1116,7 +1116,7 @@ static void create_phrase_context(SELFPARAMETERTYPE *self, const SItem *item, s_
 	}
 
 	/* The following lines are commented because the required features are, apparently,
-           missing and no plugin seems available to compute them. */
+	   missing and no plugin seems available to compute them. */
 	/* the number of content words before the current word in the current phrase */
 	/*dFeat = SItemPathToFeatProc(item, "R:SylStructure.parent.parent.R:Word.word_content_in", error);
 	S_CHK_ERR(error, S_CONTERR,
@@ -2328,7 +2328,7 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 	//SObjectIncRef((SObject*) HTSProc);
 
 	/* all OK here */
- 	return (SObject*) HTSProc;
+	return (SObject*) HTSProc;
 
 	/* error cleanup */
 quit_error:

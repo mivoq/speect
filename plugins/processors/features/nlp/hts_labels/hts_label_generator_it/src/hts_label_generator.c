@@ -74,7 +74,7 @@ do {														\
 	char *tmp = NULL;											\
 	do {													\
 		const SObject *feature;										\
-		const char *featureStr = featureName;  								\
+		const char *featureStr = featureName;								\
 		s_bool isPresent;										\
 		s_erc error2;											\
 		S_CLR_ERR(error);										\
@@ -93,17 +93,17 @@ do {														\
 					"Call to \"SHTSLabelDataCollectorGetFeature\" failed"))			\
 				break;										\
 			CheckFeature(self, &featureStr, error);							\
-			if (S_CHK_ERR(error, S_CONTERR,	       							\
-					"EXTRACTFEATURE",	       						\
+			if (S_CHK_ERR(error, S_CONTERR,								\
+					"EXTRACTFEATURE",							\
 					"Call to \"CheckFeature\" failed"))					\
 					break;									\
-			s_asprintf(&tmp, error, featureStr, unboxingFunction(feature, &error2)); 		\
-			if (S_CHK_ERR(&error2, S_CONTERR,	       						\
-					"EXTRACTFEATURE",	       						\
+			s_asprintf(&tmp, error, featureStr, unboxingFunction(feature, &error2));		\
+			if (S_CHK_ERR(&error2, S_CONTERR,							\
+					"EXTRACTFEATURE",							\
 					"Call to \"unboxing function\" failed"))				\
 					break;									\
-			if (S_CHK_ERR(error, S_CONTERR,	       							\
-					"EXTRACTFEATURE",	       						\
+			if (S_CHK_ERR(error, S_CONTERR,								\
+					"EXTRACTFEATURE",							\
 					"Call to \"s_asprintf\" failed"))					\
 					break;									\
 		}												\

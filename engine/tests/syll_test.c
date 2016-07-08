@@ -43,7 +43,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include "speect.h"
-#include "../../plugins/linguistic/syllabification/src/syllabification.h"
+#include "syllabification.h"
 
 
 /************************************************************************************/

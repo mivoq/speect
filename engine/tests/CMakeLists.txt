@@ -1,6 +1,7 @@
 speect_example(synth_test)
 speect_example(speect_test)
 speect_example(syll_test)
+target_include_directories(syll_test PRIVATE $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/plugins/linguistic/syllabification/src>)
 
 if(SPCT_UNIX OR SPCT_MACOSX)
   if(WANT_THREADS)

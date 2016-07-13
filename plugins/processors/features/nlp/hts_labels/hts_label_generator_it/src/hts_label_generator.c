@@ -303,8 +303,8 @@ static void LoadConfiguration(SHTSLabelsGeneratorItFeatProc *self, const SItem *
 		self->specialPhones = NULL;
 	}
 
-        if (SMapObjectPresent(labelsGenerator_data, "features_map_int", error))
-        {
+	if (SMapObjectPresent(labelsGenerator_data, "features_map_int", error))
+	{
 		if (S_CHK_ERR(error, S_CONTERR,
 				  "LoadConfiguration",
 				  "Call to \"SVoiceGetFeature\" failed"))
@@ -498,42 +498,42 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 		{
 			const char *keyString = SIteratorKey(itrFeatureMap, error);
 			if (S_CHK_ERR(error, S_CONTERR,
-					  "Run",
+				      "Run",
 				      "Execution of \"SIteratorObject\" failed"))
-			    goto quit_error;
+				goto quit_error;
 
 			const char *value = (char*) SMapGetStringDef(labelGenerator->specialFeatures, keyString, keyString, error);
 			/* Call the right unboxing function */
 			if (s_strstr(value, "=%d", error ))
 			{
 				if (S_CHK_ERR(error, S_CONTERR,
-						  "Run",
-				          "Execution of \"s_strstr\" failed"))
-				    goto quit_error;
+					      "Run",
+					      "Execution of \"s_strstr\" failed"))
+					goto quit_error;
 
 				if (labelGenerator->specialFeatures != NULL)
 				{
 					EXTRACTFEATURE(labelGenerator, data, keyString, SObjectGetInt, resultString, error);
 					if (S_CHK_ERR(error, S_CONTERR,
-							  "Run",
-					          "Execution of \"EXTRACTFEATURE\" failed"))
+						      "Run",
+						      "Execution of \"EXTRACTFEATURE\" failed"))
 						goto quit_error;
 				}
 			}
 			else if (s_strstr(value, "=%s", error ))
 			{
 				if (S_CHK_ERR(error, S_CONTERR,
-						  "Run",
-				          "Execution of \"s_strstr\" failed"))
-				    goto quit_error;
+					      "Run",
+					      "Execution of \"s_strstr\" failed"))
+					goto quit_error;
 
 				if (labelGenerator->specialFeatures != NULL)
 				{
 					EXTRACTFEATURE(labelGenerator, data, keyString, SObjectGetString, resultString, error);
 					if (S_CHK_ERR(error, S_CONTERR,
-							  "Run",
-					          "Execution of \"EXTRACTFEATURE\" failed"))
-				        goto quit_error;
+						      "Run",
+						      "Execution of \"EXTRACTFEATURE\" failed"))
+						goto quit_error;
 				}
 			}
 

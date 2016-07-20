@@ -353,6 +353,56 @@ static const SObject *GetFeature(const SSyllabification *self, const char *key,
 	return feature;
 }
 
+
+static SList *_get_syllable(const SList*phoneList, sint32 start, sint32 end, s_erc *error) {
+	SList *syl = NULL;
+	SObject* segm_object = NULL;
+	syl = S_LIST(S_NEW(SListList, error));
+	if (S_CHK_ERR(error, S_CONTERR,
+		      "_get_syllable",
+		      "Call to \"S_LIST\" failed"))
+		goto quit_error;
+
+	sint32 k = start;
+	while (k < end)
+	{
+		/* get the k-th element in phoneList as a SObject* */
+		const SObject *tmp = SListNth(phoneList, k, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+			      "_get_syllable",
+			      "Call to \"SListNth\" failed"))
+			goto quit_error;
+
+		/* get the string from the k-th element in phoneList*/
+		const char *phone_string = SObjectGetString(tmp, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+			      "_get_syllable",
+			      "Call to \"SObjectGetString\" failed"))
+			goto quit_error;
+
+		/* create a SObject* with the k-th phone in phoneList, then push
+		 * this SObject* to 'syl' SList, which should contains all the phonemes
+		 * in the current syllable */
+
+		segm_object = SObjectSetString(phone_string, error);
+		SListPush(syl, segm_object, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+			      "_get_syllable",
+			      "Call to \"SListPush/SObjectSetString\" failed"))
+			goto quit_error;
+		k++;
+	}  //end of inner while
+	return syl;
+quit_error:
+	if(segm_object != NULL) {
+		S_DELETE(segm_object, "_get_syllable", error);
+	}
+	if (syl != NULL) {
+		S_DELETE(syl, "_get_syllable", error);
+	}
+	return NULL;
+}
+
 /**
  * return a vallist of vallists where the primary list is syllables and the secondary
  * lists are the phones in the syllables. for example :
@@ -371,9 +421,6 @@ static SList *Syllabify(const SSyllabification *self, const SItem *word,
 	SList *syl;
 	const SObject *tmp;
 	const char *phone_string;
-
-	/* size used for the first loop */
-	size_t list_size;
 
 	/* store for 'is_...' functions */
 	s_bool test_phone = FALSE;
@@ -435,13 +482,6 @@ static SList *Syllabify(const SSyllabification *self, const SItem *word,
 		      "Failed to create new 'SListList' object"))
 		goto quit_error;
 
-	/* I need a list to keep the indexes marking the beginning of the syllables */
-	SList* indexes = S_LIST(S_NEW(SListList, error));
-	if (S_CHK_ERR(error, S_CONTERR,
-		      "main",
-		      "Failed to create new 'SListList' object"))
-		goto quit_error;
-
 
 	/* counter for the loop */
 	size_t i = 0;
@@ -451,20 +491,7 @@ static SList *Syllabify(const SSyllabification *self, const SItem *word,
 		      "Call to \"S_ITERATOR_GET\" failed"))
 		goto quit_error;
 
-	/* create an object containing the sint32 index */
-	SObject* obj_ind = SObjectSetInt(i, error);
-	SListAppend(indexes, obj_ind, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-		      "Syllabify",
-		      "Call to \"SListAppend\" failed"))
-		goto quit_error;
-
-	list_size = SListSize(phoneList, error);
-
-	if (S_CHK_ERR(error, S_CONTERR,
-		      "Syllabify",
-		      "Call to \"SListSize\" failed"))
-		goto quit_error;
+	size_t last_head = 0;
 
 	/* first loop for finding the division points, until the first vowel */
 	while (itr_phoneList != NULL  && !test_phone)
@@ -542,12 +569,20 @@ static SList *Syllabify(const SSyllabification *self, const SItem *word,
 			/* this check solves the problem with adjacent vowels */
 			if (test_vowel)
 			{
-				SObject* obj_ind = SObjectSetInt(j + 1, error);
-				SListAppend(indexes, obj_ind, error);
+				syl = _get_syllable(phoneList, last_head, j+1, error);
 				if (S_CHK_ERR(error, S_CONTERR,
 					      "Syllabify",
-					      "Call to \"SListAppend\" failed"))
+					      "Call to \"_get_syllable\" failed"))
 					goto quit_error;
+
+				/* push on 'syllables' list */
+				SListPush(syllables, S_OBJECT(syl), error);
+				if (S_CHK_ERR(error, S_CONTERR,
+					      "Syllabify",
+					      "Call to \"SListPush\" failed"))
+					goto quit_error;
+
+				last_head = j+1;
 			}
 			s_bool is_dec_c = FALSE;
 			while (!test_vowel && !is_dec_c)
@@ -608,12 +643,20 @@ static SList *Syllabify(const SSyllabification *self, const SItem *word,
 				{
 					if (is_dec_c)
 					{
-						SObject* obj_ind = SObjectSetInt(j + 1, error);
-						SListAppend(indexes, obj_ind, error);
+						syl = _get_syllable(phoneList, last_head, j+1, error);
 						if (S_CHK_ERR(error, S_CONTERR,
 							      "Syllabify",
-							      "Call to \"SListAppend\" failed"))
+							      "Call to \"_get_syllable\" failed"))
 							goto quit_error;
+
+						/* push on 'syllables' list */
+						SListPush(syllables, S_OBJECT(syl), error);
+						if (S_CHK_ERR(error, S_CONTERR,
+							      "Syllabify",
+							      "Call to \"SListPush\" failed"))
+							goto quit_error;
+
+						last_head = j+1;
 					}
 				}
 				j--;
@@ -623,83 +666,13 @@ static SList *Syllabify(const SSyllabification *self, const SItem *word,
 		itr_phoneList = SIteratorNext(itr_phoneList);
 		i++;
 	}/* end of outer while */
-
-	/* PROCEDURE EXAMPLE: indexes = [0, 2, 4, 7]
-	 * - loop from 0 to 1 and add to syl, then add syl to syllables
-	 * - loop from 2 to 3 and add to syl, then add syl to syllables
-	 * - etc...
-	 * *
-	 */
-	/*LAST LOOP*/
-
-	int indexes_size = SListSize(indexes, error);
-	SIterator *itr_indexes = S_ITERATOR_GET(indexes, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-		      "Syllabify",
-		      "Call to \"S_ITERATOR_GET\" failed"))
-		goto quit_error;
-	int j = 0;
-
-	while (itr_indexes != NULL)
+	if ((size_t)last_head < i)
 	{
-		const SObject *kObj = SIteratorObject(itr_indexes, error);
+		syl = _get_syllable(phoneList, last_head, i, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 			      "Syllabify",
-			      "Call to \"SIteratorObject\" failed"))
+			      "Call to \"_get_syllable\" failed"))
 			goto quit_error;
-
-		const SObject* kObj_1;
-		if (j < indexes_size - 1)
-		{
-			kObj_1 = SListNth(indexes, j + 1, error);
-		}
-
-		sint32 k = SObjectGetInt(kObj, error);
-		sint32 k1;
-
-		if (j < indexes_size - 1)
-		{
-			k1 = SObjectGetInt(kObj_1, error);
-		}
-		else
-		{
-			k1 = list_size;
-		}
-
-		syl = S_LIST(S_NEW(SListList, error));
-		if (S_CHK_ERR(error, S_CONTERR,
-			      "Syllabify",
-			      "Call to \"S_LIST\" failed"))
-			goto quit_error;
-
-		while (k < k1)
-		{
-			/* get the k-th element in phoneList as a SObject* */
-			const SObject *tmp = SListNth(phoneList, k, error);
-			if (S_CHK_ERR(error, S_CONTERR,
-				      "Syllabify",
-				      "Call to \"SListNth\" failed"))
-				goto quit_error;
-
-			/* get the string from the k-th element in phoneList*/
-			const char *phone_string = SObjectGetString(tmp, error);
-			if (S_CHK_ERR(error, S_CONTERR,
-				      "Syllabify",
-				      "Call to \"SObjectGetString\" failed"))
-				goto quit_error;
-
-			/* create a SObject* with the k-th phone in phoneList, then push
-			 * this SObject* to 'syl' SList, which should contains all the phonemes
-			 * in the current syllable */
-
-			SObject* segm_object = SObjectSetString(phone_string, error);
-			SListPush(syl, segm_object, error);
-			if (S_CHK_ERR(error, S_CONTERR,
-				      "Syllabify",
-				      "Call to \"SListPush/SObjectSetString\" failed"))
-				goto quit_error;
-			k++;
-		}  //end of inner while
 
 		/* push on 'syllables' list */
 		SListPush(syllables, S_OBJECT(syl), error);
@@ -707,26 +680,15 @@ static SList *Syllabify(const SSyllabification *self, const SItem *word,
 			      "Syllabify",
 			      "Call to \"SListPush\" failed"))
 			goto quit_error;
-
-		itr_indexes = SIteratorNext(itr_indexes);
-		j++;
-	} /* end of outer while */
-	if (indexes != NULL)
-		S_DELETE(indexes, "Syllabify", error);
+	}
 
 	return syllables;
 
 quit_error:
-	if (indexes != NULL)
-		S_DELETE(indexes, "Syllabify", error);
-
 	if (syllables != NULL)
 		S_DELETE(syllables, "Syllabify", error);
 
 	if (itr_phoneList != NULL)
-		S_DELETE(itr_phoneList, "Syllabify", error);
-
-	if (itr_indexes != NULL)
 		S_DELETE(itr_phoneList, "Syllabify", error);
 
 	return NULL;

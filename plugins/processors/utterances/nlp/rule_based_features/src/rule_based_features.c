@@ -354,7 +354,7 @@ static char* filterPosTag(const char *posTagStr, s_erc *error)
  * 	    2) if the first part decides for "interrog" type, there should be other controls
  * 	       to establish the sentence's complete type
  * */
-static void setSentenceType(SItem *phrase, s_erc *error)
+static void setSentenceType(SItem *phrase, const SMap *prosSymbols, s_erc *error)
 {
 	S_CLR_ERR(error);
 
@@ -373,7 +373,7 @@ static void setSentenceType(SItem *phrase, s_erc *error)
 		return;
 
 	SItem *tokenItem = SItemParent(wordAsToken, error);
-
+	SItem *firstTokenItem = tokenItem;
 
 	s_bool isPunct = SItemFeatureIsPresent(tokenItem, "IsPunctuation", error);
 	if (S_CHK_ERR(error, S_CONTERR,
@@ -420,11 +420,62 @@ static void setSentenceType(SItem *phrase, s_erc *error)
 			else if (s_strcmp(punctStr, "?", error) == 0)
 			{
 				isFinalPunct = TRUE;
-				SItemSetString(phrase, "type", "interrog", error);
+				const char *posValueStr = NULL;
+				char *posValueStr_filtered = NULL;
+				s_bool currPosInCurrList;
+				s_bool have_symbols = FALSE;
+
+				SMap* valueMap = NULL;
+				have_symbols = SMapObjectPresent(prosSymbols, "firstPosInQuestionW", error);
 				if (S_CHK_ERR(error, S_CONTERR,
-					      "setSentenceType",
-					      "Call to \"SItemSetString\" failed"))
-					return;
+					      "Run",
+					      "Call to \"SMapObjectPresent\" failed"))
+					goto quit_error;
+
+				if (have_symbols)
+				{
+					valueMap = S_CAST(SMapGetObject(prosSymbols, "firstPosInQuestionW", error), SMap, error);
+					if (S_CHK_ERR(error, S_CONTERR,
+						      "Run",
+						      "Call to \"SMapGetObject\" failed"))
+						goto quit_error;
+				}
+
+				posValueStr = SItemGetString(firstTokenItem, "POS", error);
+				if (S_CHK_ERR(error, S_CONTERR,
+					      "Run",
+					      "Call to \"SItemGetString\" failed"))
+					goto quit_error;
+
+				/* filter the current POS tag, remember to free the memory
+				 *  pointed to by 'posValueStr_filtered' pointer
+                                 */
+				posValueStr_filtered = filterPosTag(posValueStr, error);
+				if (S_CHK_ERR(error, S_CONTERR,
+					      "Run",
+					      "Call to \"filterPosTag\" failed"))
+					goto quit_error;
+
+				currPosInCurrList = searchStringMap(valueMap, posValueStr_filtered, error);
+				if (currPosInCurrList == TRUE)
+				{
+					SItemSetString(phrase, "type", "interrogW", error);
+					if (S_CHK_ERR(error, S_CONTERR,
+						      "setSentenceType",
+						      "Call to \"SItemSetString\" failed"))
+						return;
+				} else {
+					SItemSetString(phrase, "type", "interrog", error);
+					if (S_CHK_ERR(error, S_CONTERR,
+						      "setSentenceType",
+						      "Call to \"SItemSetString\" failed"))
+						return;
+                                }
+			quit_error:
+				if (posValueStr_filtered)
+				{
+					S_FREE(posValueStr_filtered);
+				}
 			}
 		}
 
@@ -479,7 +530,7 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 	const SItem* phraseItem_copy = phraseItem;
 	while (phraseItem_copy != NULL)
 	{
-		setSentenceType((SItem*)phraseItem_copy, error);
+		setSentenceType((SItem*)phraseItem_copy, prosSymbols, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 			      "Run",
 			      "Call to \"setSentenceType\" failed"))

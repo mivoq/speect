@@ -1,0 +1,47 @@
+This plugin implements Italian syllabification according to the syllable
+description and the syllabification rules described in
+
+ Pietro Maturi, "I suoni delle lingue, i suoni dell'italiano",
+
+using an algorithm proposed by Giulio Paci.
+
+The algorithm has been designed to:
+ - simplify the syllabification problem;
+ - minimize the exceptions (and avoiding the requirement of a database
+   of valid phones combination).
+
+The syllabification problem is described as the problem of finding the
+first phone of each syllable. As each syllable is allowed to contain
+at most one vowel, the first phone of each syllable is thus searched
+between two vowels.  Given a phones' sequence, the first phone is
+automatically identified as the first phone of the first syllable, and
+all the subsequent phones up to the first vowel are associated to the
+first syllable. Then the algorithm proceeds iteratively for each vowel
+in the sequence, by first looking at the position of the next vowel
+and then moving backward until the phone sonority level do not
+decrease. The decision to move backward, starting from the next vowel,
+instead of moving forward, starting from the current one allows the
+algorithm to implicitly respect both the "sonority level decrease" and
+the "maximum incipit" principles, by explicitly implementing only the
+first one.
+In order to minimize syllabification rules exceptions (mainly due to
+how sibilants behave in Italian), the sonority level of sibilants is
+higher than expected and the overall sonority scale is thus defined
+as:
+
+ occlusives < fricatives < nasals < laterals < sibilants < vibrants <
+approximants < vowels.
+
+Thanks to this scale the only required exceptions are that the following
+sequences belong to the same syllable:
+
+ - chains of approximants
+ - nasal + occlusive 
+ - sibilant + nasal
+ - sibilant + lateral
+ - lateral + nasal
+
+The algorithm has been successfully applied on several hundred of
+thousands preannotated sequences and it was able to perform reasonable
+syllabification even on non-standard phones sequences (e.g., foreign
+words).

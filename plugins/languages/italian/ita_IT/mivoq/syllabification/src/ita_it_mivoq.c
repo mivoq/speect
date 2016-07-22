@@ -558,49 +558,17 @@ static SList *Syllabify(const SSyllabification *self, const SItem *word,
 				      "Syllabify",
 				      "Call to \"SObjectGetString\" failed"))
 				goto quit_error;
-			/* stay in the loop as long as the phone at j isn't a vowel */
-			s_bool test_vowel = phone_is_vowel(phoneset, phone_string_1, error);
-			if (S_CHK_ERR(error, S_CONTERR,
-				      "Syllabify",
-				      "Call to \"phone_is_vowel\" failed"))
-				goto quit_error;
 
-			/* this check solves the problem with adjacent vowels */
-			if (test_vowel)
-			{
-				syl = _get_syllable(phoneList, last_head, j+1, error);
-				if (S_CHK_ERR(error, S_CONTERR,
-					      "Syllabify",
-					      "Call to \"_get_syllable\" failed"))
-					goto quit_error;
-
-				/* push on 'syllables' list */
-				SListPush(syllables, S_OBJECT(syl), error);
-				if (S_CHK_ERR(error, S_CONTERR,
-					      "Syllabify",
-					      "Call to \"SListPush\" failed"))
-					goto quit_error;
-
-				last_head = j+1;
-			}
 			s_bool is_dec_c = FALSE;
-			while (!test_vowel && !is_dec_c)
+			while (!is_dec_c)
 			{
 				const SObject *tmp_2 = SListNth(phoneList, j, error);
-
 				if (S_CHK_ERR(error, S_CONTERR,
 					      "Syllabify",
 					      "Call to \"SListNth\" failed"))
 					goto quit_error;
 
 				phone_string_1 = SObjectGetString(tmp_2, error);
-
-				if (S_CHK_ERR(error, S_CONTERR,
-					      "Syllabify",
-					      "Call to \"SObjectGetString\" failed"))
-					goto quit_error;
-
-				test_vowel = phone_is_vowel(phoneset, phone_string_1, error);
 				if (S_CHK_ERR(error, S_CONTERR,
 					      "Syllabify",
 					      "Call to \"SObjectGetString\" failed"))
@@ -638,7 +606,7 @@ static SList *Syllabify(const SSyllabification *self, const SItem *word,
 				}
 				/* the direction check only works with at least two previous elements,
 				 * so it begins this control from j < i - 1 (so we have i - 1 and i) */
-				if (j < i - 1)
+				if (j < i)
 				{
 					if (is_dec_c)
 					{
@@ -665,7 +633,7 @@ static SList *Syllabify(const SSyllabification *self, const SItem *word,
 		itr_phoneList = SIteratorNext(itr_phoneList);
 		i++;
 	}/* end of outer while */
-	if ((size_t)last_head < i)
+	if (last_head < i)
 	{
 		syl = _get_syllable(phoneList, last_head, i, error);
 		if (S_CHK_ERR(error, S_CONTERR,

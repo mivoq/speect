@@ -409,7 +409,6 @@ quit_error:
  * for mathematics phonelist is : (m , ae , th, ax, m, ae, t, ih, k, s)
  * syllfunc returns : ((m, ae), (th, ax), (m, ae), (t, ih, k, s))
  */
-
 static SList *Syllabify(const SSyllabification *self, const SItem *word,
 			const SList *phoneList, s_erc *error)
 {
@@ -475,25 +474,23 @@ static SList *Syllabify(const SSyllabification *self, const SItem *word,
 		goto quit_error;
 	}
 
-	/* create syllables list */
+	/* create output syllables list */
 	syllables = S_LIST(S_NEW(SListList, error));
 	if (S_CHK_ERR(error, S_CONTERR,
 		      "Syllabify",
 		      "Failed to create new 'SListList' object"))
 		goto quit_error;
 
-
-	/* counter for the loop */
-	size_t i = 0;
+	/* phones iterator */
 	SIterator *itr_phoneList = S_ITERATOR_GET(phoneList, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 		      "Syllabify",
 		      "Call to \"S_ITERATOR_GET\" failed"))
 		goto quit_error;
+	size_t i = 0;
 
+	/* associate the first phones to the first syllable, up to the first vowel */
 	size_t last_head = 0;
-
-	/* first loop for finding the division points, until the first vowel */
 	while (itr_phoneList != NULL  && !test_phone)
 	{
 		tmp = SIteratorObject(itr_phoneList, error);
@@ -515,7 +512,9 @@ static SList *Syllabify(const SSyllabification *self, const SItem *word,
 		i++;
 	}
 
-	/* this loop starts after the first vowel of 'phoneList' */
+	/* iteratively find the first phone of each syllable by first finding
+	 * the vowel of the next syllable and then looking backward for the
+	 * next syllable first phone */
 	while (itr_phoneList != NULL)
 	{
 		tmp = SIteratorObject(itr_phoneList, error);
@@ -524,7 +523,7 @@ static SList *Syllabify(const SSyllabification *self, const SItem *word,
 			      "Call to \"SIteratorObject\" failed"))
 			goto quit_error;
 
-		/* 'phone_string' is analyzed (using 'phone_is_*' functions) */
+		/* get phone name */
 		phone_string = SObjectGetString(tmp, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 			      "Syllabify",
@@ -532,14 +531,14 @@ static SList *Syllabify(const SSyllabification *self, const SItem *word,
 			goto quit_error;
 
 
-		/* test for each vowel */
+		/* check if the current phone is a vowel */
 		s_bool is_vowel = phone_is_vowel(phoneset, phone_string, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 			      "Syllabify",
 			      "Call to \"phone_is_vowel\" failed"))
 			goto quit_error;
 
-		/* if there was a vowel in the i-th position, begin a backward going loop */
+		/* if the current phone is a vowel at the i-th position, begin a backward loop */
 		if (is_vowel)
 		{
 			/* variables used for direction control */

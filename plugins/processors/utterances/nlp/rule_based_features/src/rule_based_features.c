@@ -221,7 +221,7 @@ static char* filterPosTag(const char *posTagStr, s_erc *error)
 	else if (posTagStr[0] == 'V')
 	{
 		int i = 0;
-		while (!isdigit(posTagStr[i]))
+		while (posTagStr[i] != '\0' && !isdigit(posTagStr[i]))
 		{
 			filteredPosTagStr[i] = posTagStr[i];
 			i++;

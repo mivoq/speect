@@ -77,7 +77,14 @@ S_BEGIN_C_DECLS
  * Typedef of the rulebasedfeatures utterance processor. Does not add any
  * new members, therefore exactly the same as #SUttProcessor.
  */
-typedef SUttProcessor SRuleBasedFeaturesUttProc;
+typedef struct
+{
+	SUttProcessor obj;
+
+	/* 'prosSymbols' holds the complete map read from voice.json's 'list definitions' */
+	/* Modified to contain SMaps and not SLists*/
+	SMap* prosSymbols;
+} SRuleBasedFeaturesUttProc;
 
 /**
  * Typedef of the rulebasedfeatures utterance processor class. Does not add any

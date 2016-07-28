@@ -116,8 +116,99 @@ S_LOCAL void _s_rule_based_features_class_free(s_erc *error)
 static void Initialize(SUttProcessor *self, const SVoice *voice, s_erc *error)
 {
 	S_CLR_ERR(error);
+	SRuleBasedFeaturesUttProc *castSelf = S_CAST(self, SRuleBasedFeaturesUttProc, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+		      "Initialize",
+		      "Call to S_CAST failed"))
+		goto quit_error;
 
-	S_UNUSED(self);
+	castSelf->prosSymbols = NULL;
+
+	s_bool have_symbols = SUttProcessorFeatureIsPresent(self, "list definitions", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+		      "Initialize",
+		      "Call to \"SUttProcessorFeatureIsPresent\" failed"))
+		goto quit_error;
+
+	/* no Prosody symbols defined */
+	if (have_symbols == FALSE)
+	{
+		return;
+	}
+
+	/* get the complete 'list definitions' map and put it into 'prosSymbols' SMap */
+	castSelf->prosSymbols = S_CAST(SUttProcessorGetFeature(self, "list definitions", error),
+			     SMap, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+		      "Initialize",
+		      "Failed to get 'list definitions' SMap feature"))
+		goto quit_error;
+
+	if (S_CHK_ERR(error, S_CONTERR,
+		      "Initialize",
+		      "Call to \"SUtteranceGetRelation\" failed"))
+		goto quit_error;
+
+	/* Get the iterator for the SMap */
+	SIterator *itrList = S_ITERATOR_GET(castSelf->prosSymbols, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+		      "Initialize",
+		      "Call to \"S_ITERATOR_GET\" failed"))
+		goto quit_error;
+
+	/* Loop that takes all SList in the SMap and export the elements in SMaps */
+	while( itrList != NULL ) {
+
+		const char *curStr = SIteratorKey(itrList, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+			      "Initialize",
+			      "Call to \"SIteratorKey\" failed"))
+			goto quit_error;
+
+		SList *valueList;
+		valueList = S_CAST(SMapGetObject(castSelf->prosSymbols, curStr, error), SList, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+				  "Initialize",
+				  "Call to \"SMapGetObject\" failed"))
+			goto quit_error;
+
+		/* Initializing a new SMap */
+		SMap *newCastMap= S_MAP(S_NEW(SMapHashTable, error));
+
+		SIterator *itrValueList = S_ITERATOR_GET(valueList, error);
+
+		while(itrValueList != NULL) {
+			const SObject *curValueObj = SIteratorObject(itrValueList, error);
+			if (S_CHK_ERR(error, S_CONTERR,
+					  "Initialize",
+					  "Call to \"SIteratorObject\" failed"))
+				goto quit_error;
+
+			const char *curValueStr = SObjectGetString(curValueObj, error);
+			if (S_CHK_ERR(error, S_CONTERR,
+					  "Initialize",
+					  "Call to \"SObjectGetString\" failed"))
+				goto quit_error;
+
+			/* Insert the string inside the map */
+			SMapSetString(newCastMap, curValueStr, curValueStr, error);
+			if (S_CHK_ERR(error, S_CONTERR,
+					  "Initialize",
+					  "Call to \"SMapSetObject\" failed"))
+				goto quit_error;
+
+			itrValueList = SIteratorNext(itrValueList);
+		}
+
+		/* Insertion of the SMap inside the SMap */
+		SMapSetObject(castSelf->prosSymbols, curStr, (SObject *) newCastMap, error);
+		itrList = SIteratorNext(itrList);
+	}
+
+	/* error cleanup */
+	quit_error:
+		return;
+
 	S_UNUSED(voice);
 }
 
@@ -135,46 +226,15 @@ static void Destroy(void *obj, s_erc *error)
 	S_UNUSED(obj);
 }
 
-static s_bool searchStringList(SList *list, char *str, s_erc *error)
+static s_bool searchStringMap(SMap *map, char *str, s_erc *error)
 {
 	S_CLR_ERR(error);
-	s_bool found = FALSE;
-	SIterator *itrList = NULL;
-	itrList = S_ITERATOR_GET(list, error);
+	/* Search for the word in the SMap, using it as a Key */
+	s_bool found= SMapObjectPresent(map, str, error);
 	if (S_CHK_ERR(error, S_CONTERR,
-		      "searchStringList",
-		      "Call to \"S_ITERATOR_GET\" failed"))
+			  "searchStringMap",
+			  "Call to \"SMapObjectPresent\" failed"))
 		return FALSE;
-
-	while (itrList != NULL && found == FALSE)
-	{
-		const SObject *curObj = SIteratorObject(itrList, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-			      "searchStringList",
-			      "Call to \"SIteratorObject\" failed"))
-			return FALSE;
-
-		const char *curStr = SObjectGetString(curObj, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-			      "searchStringList",
-			      "Call to \"SIteratorGetString\" failed"))
-			return FALSE;
-
-		if (s_strcmp(str, curStr, error) == 0)
-		{
-			found = TRUE;
-		}
-		itrList = SIteratorNext(itrList);
-		if (S_CHK_ERR(error, S_CONTERR,
-			      "searchStringList",
-			      "Call to \"SIteratorNext\" failed"))
-			return FALSE;
-	}
-
-	if (itrList != NULL)
-	{
-		S_DELETE(itrList, "searchStringList", error);
-	}
 
 	return found;
 }
@@ -396,32 +456,14 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 	   - ["è","ha","ho"]
 	   - ["A","B","I","N","NO","S","SA","SP","SW","V","X"]
 	*/
-	SList *valueList = NULL;
-	have_symbols = SUttProcessorFeatureIsPresent(self, "list definitions", error);
-	if (S_CHK_ERR(error, S_CONTERR,
-		      "Run",
-		      "Call to \"SUttProcessorFeatureIsPresent\" failed"))
-		goto quit_error;
+	/* 'valueMap' has the same use as valueList */
+	SMap *valueMap = NULL;
 
-	/* no Prosody symbols defined */
-	if (have_symbols == FALSE)
-	{
-		return;
-	}
+	/* Cast self processor to the SRuleBasedFeaturesUttProc*/
+	SRuleBasedFeaturesUttProc *castSelf = S_CAST(self, SRuleBasedFeaturesUttProc, error);
 
 	/* get the complete 'list definitions' map and put it into 'prosSymbols' SMap */
-	prosSymbols = S_CAST(SUttProcessorGetFeature(self, "list definitions", error),
-			     SMap, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-		      "Run",
-		      "Failed to get 'list definitions' SMap feature"))
-		goto quit_error;
-
-	if (S_CHK_ERR(error, S_CONTERR,
-		      "Run",
-		      "Call to \"SUtteranceGetRelation\" failed"))
-		goto quit_error;
-
+	prosSymbols = castSelf->prosSymbols;
 	phraseRel = SUtteranceGetRelation(utt, "Phrase", error);
 	if (S_CHK_ERR(error, S_CONTERR,
 		      "Run",
@@ -508,7 +550,7 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 
 				if (have_symbols)
 				{
-					valueList = S_CAST(SMapGetObject(prosSymbols, "pos_tonal_accent", error), SList, error);
+					valueMap = S_CAST(SMapGetObject(prosSymbols, "pos_tonal_accent", error), SMap, error);
 					if (S_CHK_ERR(error, S_CONTERR,
 						      "Run",
 						      "Call to \"SMapGetObject\" failed"))
@@ -531,8 +573,8 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 					      "Call to \"filterPosTag\" failed"))
 					goto quit_error;
 
-				/* check if the current POS tag exists in 'pos_tonal_accent' list */
-				currPosInCurrList = searchStringList(valueList, posValueStr_filtered, error);
+				/* check if the current POS tag exists in 'pos_tonal_accent' map */
+				currPosInCurrList = searchStringMap(valueMap, posValueStr_filtered, error);
 				if (currPosInCurrList == TRUE)
 				{
 					SItemSetString(tokenItem, "accent", "tone", error);
@@ -562,7 +604,7 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 
 				if (have_symbols)
 				{
-					valueList = S_CAST(SMapGetObject(prosSymbols, "pos_no_accent", error), SList, error);
+					valueMap = S_CAST(SMapGetObject(prosSymbols, "pos_no_accent", error), SMap, error);
 					if (S_CHK_ERR(error, S_CONTERR,
 						      "Run",
 						      "Call to \"SMapGetObject\" failed"))
@@ -585,8 +627,8 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 					      "Call to \"filterPosTag\" failed"))
 					goto quit_error;
 
-				/* check if the current POS tag exists in 'pos_tonal_accent' list */
-				currPosInCurrList = searchStringList(valueList, posValueStr_filtered, error);
+				/* check if the current POS tag exists in 'pos_no_accent' map */
+				currPosInCurrList = searchStringMap(valueMap, posValueStr_filtered, error);
 				if (currPosInCurrList == TRUE)
 				{
 					SItemSetString(tokenItem, "accent", "", error);

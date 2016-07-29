@@ -1270,6 +1270,23 @@ static void create_phrase_context(SELFPARAMETERTYPE *self, const SItem *item, s_
 
 	}
 
+
+	/* the type of the current phrase */
+	dFeat = SItemPathToFeature(item, "R:SylStructure.parent.parent.R:Phrase.parent.type", error);
+	S_CHK_ERR(error, S_CONTERR,
+				  "create_phrase_context",
+				  "Call to \"SItemPathToFeatProc\" failed");
+
+	if (dFeat != NULL)
+	{
+		SHTSLabelDataCollectorSetFeature(self, "phrase.type", dFeat, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_phrase_context",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			goto phrase_context_cleanup;
+
+	}
+
 	/* TOBI endtone of the current phrase */
 	/* item, syllable, word, phrase, last word, last syllable */
 	dFeat = SItemPathToFeature(item, "R:SylStructure.parent.parent.R:Phrase.parent.daughtern.R:SylStructure.daughtern.endtone",
@@ -1427,6 +1444,22 @@ static void create_phrase_context_pause(SELFPARAMETERTYPE *self, const SItem *it
 	if (dFeat != NULL)
 	{
 		SHTSLabelDataCollectorSetFeature(self, "n.phrase.words.num", dFeat, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_phrase_context_pause",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			goto phrase_context_pause_cleanup;
+
+	}
+
+	/* the type of the current phrase */
+	dFeat = SItemPathToFeature(item, "R:SylStructure.parent.parent.R:Phrase.parent.type", error);
+	S_CHK_ERR(error, S_CONTERR,
+				  "create_phrase_context_pause",
+				  "Call to \"SItemPathToFeatProc\" failed");
+
+	if (dFeat != NULL)
+	{
+		SHTSLabelDataCollectorSetFeature(self, "phrase.type", dFeat, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "create_phrase_context_pause",
 					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))

@@ -72,6 +72,7 @@
 /*      - 'content.words.after'   : int : number of content words after in phrase   */
 /*      - 'words.from.prev.cont'  : int : numb of words from the prev. content word */
 /*      - 'words.to.next.cont'    : int : numb of words to the next content word    */
+/*      - 'phrase.type'           : string : phrase's type (interrog, excl, decl)   */
 /*      - 'tobi.endtone'          : string : TOBI endtone of the current phrase     */
 /*                                                                                  */
 /*   utterance context:                                                             */

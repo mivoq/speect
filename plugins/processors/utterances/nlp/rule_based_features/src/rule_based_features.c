@@ -428,7 +428,7 @@ static void setSentenceType(SItem *phrase, const SMap *prosSymbols, s_erc *error
 				SMap* valueMap = NULL;
 				have_symbols = SMapObjectPresent(prosSymbols, "firstPosInQuestionW", error);
 				if (S_CHK_ERR(error, S_CONTERR,
-					      "Run",
+					      "SetSentenceType",
 					      "Call to \"SMapObjectPresent\" failed"))
 					goto quit_error;
 
@@ -436,14 +436,14 @@ static void setSentenceType(SItem *phrase, const SMap *prosSymbols, s_erc *error
 				{
 					valueMap = S_CAST(SMapGetObject(prosSymbols, "firstPosInQuestionW", error), SMap, error);
 					if (S_CHK_ERR(error, S_CONTERR,
-						      "Run",
+						      "SetSentenceType",
 						      "Call to \"SMapGetObject\" failed"))
 						goto quit_error;
 				}
 
 				posValueStr = SItemGetString(firstTokenItem, "POS", error);
 				if (S_CHK_ERR(error, S_CONTERR,
-					      "Run",
+					      "SetSentenceType",
 					      "Call to \"SItemGetString\" failed"))
 					goto quit_error;
 
@@ -452,7 +452,7 @@ static void setSentenceType(SItem *phrase, const SMap *prosSymbols, s_erc *error
                                  */
 				posValueStr_filtered = filterPosTag(posValueStr, error);
 				if (S_CHK_ERR(error, S_CONTERR,
-					      "Run",
+					      "SetSentenceType",
 					      "Call to \"filterPosTag\" failed"))
 					goto quit_error;
 

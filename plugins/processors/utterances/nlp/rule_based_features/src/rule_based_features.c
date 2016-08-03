@@ -239,7 +239,17 @@ static s_bool searchStringMap(SMap *map, char *str, s_erc *error)
 	return found;
 }
 
-static char* filterPosTag(const char *posTagStr, s_erc *error)
+static s_bool isASCIIUpper (char c)
+{
+	/* Here we rely on the fact that most compilers use ASCII */
+	if( c >= 'A' && c <= 'Z' )
+		return TRUE;
+
+	return FALSE;
+}
+
+/* Old PosTag Filter */
+static char* filterPosTagOld(const char *posTagStr, s_erc *error)
 {
 	S_CLR_ERR(error);
 	char *filteredPosTagStr = malloc(sizeof(char) * 10);
@@ -343,6 +353,188 @@ static char* filterPosTag(const char *posTagStr, s_erc *error)
 	}
 
 	return filteredPosTagStr;
+}
+
+static char* filterPosTag(const char *posTagStr, s_erc *error)
+{
+	S_CLR_ERR(error);
+	char *filteredPosTagStr = malloc(sizeof(char) * 10);
+	s_strcpy( filteredPosTagStr, posTagStr, error);
+
+	s_bool end = FALSE;
+	s_bool firstUpper = FALSE;
+	int i=0;
+
+	while( !end )
+	{
+		if( !firstUpper )
+		{
+			if( isASCIIUpper(filteredPosTagStr[i]) )
+				firstUpper = TRUE;
+		}
+		else
+		{
+			if( !isASCIIUpper(filteredPosTagStr[i]) )
+			{
+				filteredPosTagStr[i] = '\0';
+				end = TRUE;
+			}
+		}
+		i++;
+		if( filteredPosTagStr[i] == '\0' )
+			end = TRUE;
+	}
+
+	return filteredPosTagStr;
+}
+
+/* isFinalToken returns true if the word token is the last of the sentence
+ *
+ * */
+static s_bool isFinalToken (SItem *word, s_erc *error)
+{
+	const SItem *last = SItemPathToItem(word, "parent.daughtern", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+		      "isFinalToken",
+		      "Call to \"SItemPathToItem\" failed"))
+		return FALSE;
+
+	return word == last;
+}
+
+/* setProsodyPosition should find the type of the prosody position and
+ * set the token "accent" attribute to a TOBI format
+ *
+ * Nucleus = last token with accent "tone"
+ *
+ * Values:
+ * 	-nuclearParagraphFinal
+ * 	-nuclearNonParagraphFinal
+ *  -prenuclear
+ *  -postnuclear
+ *
+ * */
+static s_bool setProsodyPosition(const SItem *word, s_bool nucleusAssigned, s_erc *error)
+{
+	s_bool isFinalWord= isFinalToken(word, error);
+
+	SItem *wordInToken = SItemAs(word, "Token", error);
+		if (S_CHK_ERR(error, S_CONTERR,
+			      "setProsodyPosition",
+			      "Call to \"SItemAs\" failed"))
+			return FALSE;
+	SItem *tokenItem = SItemParent(wordInToken, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+			      "setProsodyPosition",
+			      "Call to \"SItemParent\" failed"))
+			return FALSE;
+
+	const char *accent= SItemGetString(tokenItem, "accent", error);
+		if (S_CHK_ERR(error, S_CONTERR,
+			      "setProsodyPosition",
+			      "Call to \"SItemGetString\" failed"))
+			return FALSE;
+
+	const char *prosodicPositionType;
+
+	if(nucleusAssigned)
+		prosodicPositionType = "prenuclear";
+	else
+	{
+		if( s_strcmp(accent, "tone", error) == 0)
+		{
+			nucleusAssigned = TRUE;
+
+			if(isFinalWord)
+				prosodicPositionType = "nuclearParagraphFinal";
+			else
+				prosodicPositionType = "nuclearNonParagraphFinal";
+		}
+		else
+			prosodicPositionType = "postnuclear";
+	}
+
+	SItemSetString(tokenItem, "prosodic_position_type", prosodicPositionType, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+			  "Run",
+			  "Call to \"SItemSetString\" failed"))
+		return FALSE;
+
+	/* Apply transformation rules of the accent*/
+	SItem *phrase= SItemPathToItem(word, "R:Phrase.parent", error);
+		if (S_CHK_ERR(error, S_CONTERR,
+			      "setProsodyPosition",
+			      "Call to \"SItemPathToItem\" failed"))
+			return FALSE;
+
+	const char *type= SItemGetString(phrase, "type", error);
+		if (S_CHK_ERR(error, S_CONTERR,
+			      "setProsodyPosition",
+			      "Call to \"SItemGetString\" failed"))
+			return FALSE;
+
+	if( s_strcmp( accent, "tone", error) == 0 )
+	{
+		/* Applying Rules for decl type sentence*/
+		if( s_strcmp( type, "decl", error) == 0)
+		{
+			if( s_strcmp( prosodicPositionType, "prenuclear", error) == 0 )
+			{
+				SItemSetString(tokenItem, "accent", "L+H*", error);
+			}
+			else if( s_strcmp( prosodicPositionType, "nuclearParagraphFinal", error ) == 0 ||
+			         s_strcmp( prosodicPositionType, "nuclearNonParagraphFinal", error ) == 0 )
+			{
+				SItemSetString(tokenItem, "accent", "H+L*", error);
+			}
+		}
+		/* Applying Rules for excl type sentence*/
+		else if( s_strcmp( type, "excl", error) == 0 )
+		{
+			if( s_strcmp( prosodicPositionType, "prenuclear", error) == 0 )
+			{
+				SItemSetString(tokenItem, "accent", "H*", error);
+			}
+			else if( s_strcmp( prosodicPositionType, "nuclearParagraphFinal", error ) == 0 ||
+			         s_strcmp( prosodicPositionType, "nuclearNonParagraphFinal", error ) == 0 )
+			{
+				SItemSetString(tokenItem, "accent", "H+L*", error);
+			}
+		}
+		/* Applying Rules for interrog type sentence*/
+		else if( s_strcmp( type, "interrog", error) == 0 ||
+		         s_strcmp( type, "interrogW", error) == 0 )
+		{
+			if( s_strcmp( prosodicPositionType, "prenuclear", error) == 0 )
+			{
+				SItemSetString(tokenItem, "accent", "H*", error);
+			}
+			else if( s_strcmp( prosodicPositionType, "nuclearParagraphFinal", error ) == 0 ||
+			         s_strcmp( prosodicPositionType, "nuclearNonParagraphFinal", error ) == 0 )
+			{
+				SItemSetString(tokenItem, "accent", "H+L*", error);
+			}
+		}
+
+		/* DEFAULT RULE to be applied if nothing worked*/
+		else
+		{
+			SItemSetString(tokenItem, "accent", "H*", error);
+		}
+
+		/* We can check only here for errors because there is only one
+		 * SItemSetString done (one for every leaf of the binary tree)
+		 * */
+		 if (S_CHK_ERR(error, S_CONTERR,
+			      "setProsodyPosition",
+			      "Call to \"SItemSetString\" failed"))
+			return FALSE;
+	}
+	/* NO ELSE because if no accent is set, then no accent is needed to be setted
+	 * */
+
+	return nucleusAssigned;
+
 }
 
 
@@ -543,6 +735,8 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 			goto quit_error;
 	}
 
+	const SItem* phrase = phraseItem;
+
 	/* loop on phraseItem, and
 	 * get the tokens for each phrase inside an inner loop,
 	 * looking at puncutation marks
@@ -635,63 +829,10 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 						goto quit_error;
 				}
 
-				if (posValueStr_filtered)
-				{
-					S_FREE(posValueStr_filtered);
-				}
-
-				/* ******************************* */
-				/* SECOND RULE:
-				 *  if the current word item's pos value is contained in the list
-				 *  "pos_no_accent" from "list definitions" map,
-				 * 		then -->	set current's item "accent" attribute to the value ""
-				 */
-
-				have_symbols = SMapObjectPresent(prosSymbols, "pos_no_accent", error);
-				if (S_CHK_ERR(error, S_CONTERR,
-					      "Run",
-					      "Call to \"SMapObjectPresent\" failed"))
-					goto quit_error;
-
-				if (have_symbols)
-				{
-					valueMap = S_CAST(SMapGetObject(prosSymbols, "pos_no_accent", error), SMap, error);
-					if (S_CHK_ERR(error, S_CONTERR,
-						      "Run",
-						      "Call to \"SMapGetObject\" failed"))
-						goto quit_error;
-				}
-
-				/* 'posValueStr' holds POS tag's value */
-				posValueStr = SItemGetString(tokenItem, "POS", error);
-				if (S_CHK_ERR(error, S_CONTERR,
-					      "Run",
-					      "Call to \"SItemGetString\" failed"))
-					goto quit_error;
-
-				/* filter the current POS tag, remember to free the memory
-				 *  pointed to by 'posValueStr_filtered' pointer
-			         */
-				posValueStr_filtered = filterPosTag(posValueStr, error);
-				if (S_CHK_ERR(error, S_CONTERR,
-					      "Run",
-					      "Call to \"filterPosTag\" failed"))
-					goto quit_error;
-
-				/* check if the current POS tag exists in 'pos_no_accent' map */
-				currPosInCurrList = searchStringMap(valueMap, posValueStr_filtered, error);
-				if (currPosInCurrList == TRUE)
-				{
-					SItemSetString(tokenItem, "accent", "", error);
-					if (S_CHK_ERR(error, S_CONTERR,
-						      "Run",
-						      "Call to \"SItemSetString\" failed"))
-						goto quit_error;
-				}
 				else
 				{
 					/* ******************************* */
-					/* THIRD RULE:
+					/* DEFAULT RULE:
 					 *   otherwise set "accent" feature to ""
 					 */
 					SItemSetString(tokenItem, "accent", "", error);
@@ -751,6 +892,49 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 		}
 
 		phraseItem = SItemNext(phraseItem, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+			      "Run",
+			      "Call to \"SItemNext\" failed"))
+			goto quit_error;
+	}
+
+	/* Now we iterate to define the ProsodyPositionType and the real tobi Accent */
+	/* The iteration start from the last token until the begin of the sentence */
+
+	while (phrase != NULL)
+	{
+		/* Save the initial word of the current phrase */
+		const SItem *wordBegin = SItemPathToItem(phrase, "daughter", error);
+		if (S_CHK_ERR(error, S_CONTERR,
+			      "Run",
+			      "Call to \"SItemPathToItem\" failed"))
+			goto quit_error;
+
+		/* Save the final word of the current phrase */
+		/* that will be used to iterate with setProsodyPosition*/
+		const SItem *wordEnd = SItemPathToItem(phrase, "daughtern", error);
+		if (S_CHK_ERR(error, S_CONTERR,
+			      "Run",
+			      "Call to \"SItemPathToItem\" failed"))
+			goto quit_error;
+
+		s_bool nucleusAssigned = FALSE;
+
+		while (wordBegin != wordEnd)
+		{
+			nucleusAssigned = setProsodyPosition(wordEnd,nucleusAssigned, error);
+
+			wordEnd = SItemPrev(wordEnd, error);
+			if (S_CHK_ERR(error, S_CONTERR,
+					  "Run",
+					  "Call to \"SItemPrev\" failed"))
+				goto quit_error;
+		}
+
+		/* call to setProsodyPosition on the first word, the flag of the cicle */
+		setProsodyPosition(wordEnd,nucleusAssigned, error);
+
+		phrase =  SItemNext(phrase, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 			      "Run",
 			      "Call to \"SItemNext\" failed"))

@@ -953,6 +953,22 @@ static void create_word_context(SELFPARAMETERTYPE *self, const SItem *item, s_er
 
 	}
 
+	/* type of accent of the current word*/
+	dFeat = SItemPathToFeature(item, "R:SylStructure.parent.parent.R:Token.parent.accent", error);
+	S_CHK_ERR(error, S_CONTERR,
+				  "create_word_context",
+				  "Call to \"SItemPathToFeatProc\" failed");
+
+	if (dFeat != NULL)
+	{
+		SHTSLabelDataCollectorSetFeature(self, "tobi.accent", dFeat, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_word_context",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			goto word_context_cleanup;
+
+	}
+
 	return;
 
 word_context_cleanup:
@@ -1036,6 +1052,23 @@ static void create_word_context_pause(SELFPARAMETERTYPE *self, const SItem *item
 			goto word_context_pause_cleanup;
 
 	}
+
+	/* type of tobi accent of the current word*/
+	dFeat = SItemPathToFeature(item, "R:SylStructure.parent.parent.R:Token.parent.accent", error);
+	S_CHK_ERR(error, S_CONTERR,
+				  "create_word_context_pause",
+				  "Call to \"SItemPathToFeatProc\" failed");
+
+	if (dFeat != NULL)
+	{
+		SHTSLabelDataCollectorSetFeature(self, "tobi.accent", dFeat, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_word_context_pause",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			goto word_context_pause_cleanup;
+
+	}
+
 
 word_context_pause_cleanup:
 	if (dFeat != NULL)

@@ -212,5 +212,6 @@ static SSegPosSylFeatProcClass SegPosSylFeatProcClass =
 		NULL,            /* copy    */
 	},
 	/* SFeatProcessorClass */
+	NULL,               /* initialize */
 	Run                  /* run     */
 };

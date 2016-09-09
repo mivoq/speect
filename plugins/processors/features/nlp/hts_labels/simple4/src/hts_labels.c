@@ -3140,5 +3140,6 @@ static SHTSLabelsSimple4FeatProcClass HTSLabelsSimple4FeatProcClass =
 		NULL,            /* copy    */
 	},
 	/* SFeatProcessorClass */
+	NULL,               /* initialize */
 	Run                  /* run     */
 };

@@ -197,5 +197,6 @@ static SSylPosTypeFeatProcClass SylPosTypeFeatProcClass =
 		NULL,            /* copy    */
 	},
 	/* SFeatProcessorClass */
+	NULL,               /* initialize */
 	Run                  /* run     */
 };

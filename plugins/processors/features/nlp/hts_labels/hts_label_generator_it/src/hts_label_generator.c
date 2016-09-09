@@ -590,5 +590,6 @@ static SHTSLabelsGeneratorItFeatProcClass HTSLabelsGeneratorItFeatProcClass =
 		NULL,            /* copy    */
 	},
 	/* SFeatProcessorClass */
+	NULL,               /* initialize */
 	Run                  /* run     */
 };

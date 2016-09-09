@@ -179,5 +179,6 @@ static SSylNumPhonesFeatProcClass SylNumPhonesFeatProcClass =
 		NULL,            /* copy    */
 	},
 	/* SFeatProcessorClass */
+	NULL,               /* initialize */
 	Run                  /* run     */
 };

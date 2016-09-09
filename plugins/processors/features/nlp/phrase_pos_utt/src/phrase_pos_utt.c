@@ -199,5 +199,6 @@ static SPhrasePosUttFeatProcClass PhrasePosUttFeatProcClass =
 		NULL,            /* copy    */
 	},
 	/* SFeatProcessorClass */
+	NULL,               /* initialize */
 	Run                  /* run     */
 };

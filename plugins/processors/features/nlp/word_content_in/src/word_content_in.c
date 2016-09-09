@@ -245,5 +245,6 @@ static SWordContentInFeatProcClass WordContentInFeatProcClass =
 		NULL,            /* copy    */
 	},
 	/* SFeatProcessorClass */
+	NULL,               /* initialize */
 	Run                  /* run     */
 };

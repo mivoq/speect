@@ -373,5 +373,6 @@ static SSylPosPhraseFeatProcClass SylPosPhraseFeatProcClass =
 		NULL,            /* copy    */
 	},
 	/* SFeatProcessorClass */
+	NULL,               /* initialize */
 	Run                  /* run     */
 };

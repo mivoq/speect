@@ -261,5 +261,6 @@ static SWordBreakFeatProcClass WordBreakFeatProcClass =
 		NULL,            /* copy    */
 	},
 	/* SFeatProcessorClass */
+	NULL,               /* initialize */
 	Run                  /* run     */
 };

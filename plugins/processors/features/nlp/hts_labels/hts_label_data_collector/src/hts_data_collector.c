@@ -2430,6 +2430,7 @@ static SHTSLabelsDataCollectorFeatProcClass HTSLabelsDataCollectorFeatProcClass 
 			NULL,            /* print   */
 			NULL,            /* copy    */
 		},
+		NULL,               /* initialize */
 		Run,                  /* run     */
 	},
 	/* HTSLabelsDataCollectorFeatProcClass */

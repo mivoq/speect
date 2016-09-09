@@ -213,5 +213,6 @@ static SSylPosWordRevFeatProcClass SylPosWordRevFeatProcClass =
 		NULL,            /* copy    */
 	},
 	/* SFeatProcessorClass */
+	NULL,               /* initialize */
 	Run                  /* run     */
 };

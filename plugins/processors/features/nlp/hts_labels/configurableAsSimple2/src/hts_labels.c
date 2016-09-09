@@ -3431,5 +3431,6 @@ static SHTSLabelsConfigurableAsSimple2FeatProcClass HTSLabelsConfigurableAsSimpl
 		NULL,            /* copy    */
 	},
 	/* SFeatProcessorClass */
+	NULL,               /* initialize */
 	Run                  /* run     */
 };

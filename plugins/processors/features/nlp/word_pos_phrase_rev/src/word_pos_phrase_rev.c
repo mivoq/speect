@@ -211,5 +211,6 @@ static SWordPosPhraseRevFeatProcClass WordPosPhraseRevFeatProcClass =
 		NULL,            /* copy    */
 	},
 	/* SFeatProcessorClass */
+	NULL,               /* initialize */
 	Run                  /* run     */
 };

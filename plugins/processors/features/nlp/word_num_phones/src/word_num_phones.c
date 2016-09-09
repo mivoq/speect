@@ -151,7 +151,7 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 					  "Run",
 					  "Call to \"SObjectGetInt\" failed"))
 			goto quit_error;
-		
+
 		itrItem = SItemNext(itrItem, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "Run",
@@ -200,5 +200,6 @@ static SWordNumPhonesFeatProcClass WordNumPhonesFeatProcClass =
 		NULL,            /* copy    */
 	},
 	/* SFeatProcessorClass */
+	NULL,               /* initialize */
 	Run                  /* run     */
 };

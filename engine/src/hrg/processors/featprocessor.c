@@ -139,7 +139,7 @@ static SFeatProcessorClass FeatProcessorClass; /* FeatProcessor class declaratio
 /*                                                                                  */
 /************************************************************************************/
 
-S_API void SFeatProcessorInit(SFeatProcessor **self, SMap *feat, s_erc *error)
+S_API void SFeatProcessorInit(SFeatProcessor **self, const SMap *feat, s_erc *error)
 {
 	S_CLR_ERR(error);
 
@@ -265,7 +265,3 @@ static SFeatProcessorClass FeatProcessorClass =
 	NULL,                     /* initialize */
 	NULL                      /* run     */
 };
-
-
-
-

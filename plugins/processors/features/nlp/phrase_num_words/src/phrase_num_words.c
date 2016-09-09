@@ -179,5 +179,6 @@ static SPhraseNumWordsFeatProcClass PhraseNumWordsFeatProcClass =
 		NULL,            /* copy    */
 	},
 	/* SFeatProcessorClass */
+	NULL,               /* initialize */
 	Run                  /* run     */
 };

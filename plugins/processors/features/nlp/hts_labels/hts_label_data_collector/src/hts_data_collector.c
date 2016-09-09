@@ -1303,9 +1303,8 @@ static void create_phrase_context(SELFPARAMETERTYPE *self, const SItem *item, s_
 
 	}
 
-
 	/* the type of the current phrase */
-	dFeat = SItemPathToFeature(item, "R:SylStructure.parent.parent.R:Phrase.parent.type", error);
+	dFeat = SItemPathToFeatProc(item, "R:SylStructure.parent.parent.R:Phrase.parent.phrase_type", error);
 	S_CHK_ERR(error, S_CONTERR,
 				  "create_phrase_context",
 				  "Call to \"SItemPathToFeatProc\" failed");

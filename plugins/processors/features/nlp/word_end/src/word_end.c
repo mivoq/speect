@@ -167,5 +167,6 @@ static SWordEndFeatProcClass WordEndFeatProcClass =
 		NULL,            /* copy    */
 	},
 	/* SFeatProcessorClass */
+	NULL,               /* initialize */
 	Run                  /* run     */
 };

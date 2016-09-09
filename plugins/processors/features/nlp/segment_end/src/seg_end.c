@@ -152,5 +152,6 @@ static SSegEndFeatProcClass SegEndFeatProcClass =
 		NULL,            /* copy    */
 	},
 	/* SFeatProcessorClass */
+	NULL,               /* initialize */
 	Run                  /* run     */
 };

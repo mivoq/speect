@@ -211,5 +211,6 @@ static SSylDurFeatProcClass SylDurFeatProcClass =
 		NULL,            /* copy    */
 	},
 	/* SFeatProcessorClass */
+	NULL,               /* initialize */
 	Run                  /* run     */
 };

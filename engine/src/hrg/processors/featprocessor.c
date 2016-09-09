@@ -139,6 +139,36 @@ static SFeatProcessorClass FeatProcessorClass; /* FeatProcessor class declaratio
 /*                                                                                  */
 /************************************************************************************/
 
+S_API void SFeatProcessorInit(SFeatProcessor **self, SMap *feat, s_erc *error)
+{
+	S_CLR_ERR(error);
+
+	if (self == NULL)
+	{
+		S_CTX_ERR(error, S_ARGERROR,
+				  "SFeatProcessorInit",
+				  "Argument \"self\" is NULL");
+		return;
+	}
+
+	if (!S_FEATPROCESSOR_METH_VALID((*self), initialize))
+	{
+		/* nothing to do */
+		return;
+	}
+
+	S_FEATPROCESSOR_CALL((*self), initialize)((*self), feat , error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "SFeatProcessorInit",
+				  "Failed to initialize feature processor"))
+	{
+		S_DELETE((*self), "SFeatProcessorInit", error);
+		*self = NULL;
+	}
+
+}
+
+
 S_API SObject *SFeatProcessorRun(const SFeatProcessor *self, const SItem *item, s_erc *error)
 {
 	SObject *extractedFeat;

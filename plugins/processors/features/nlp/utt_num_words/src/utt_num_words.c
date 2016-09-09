@@ -185,5 +185,6 @@ static SUttNumWordsFeatProcClass UttNumWordsFeatProcClass =
 		NULL,            /* copy    */
 	},
 	/* SFeatProcessorClass */
+	NULL,               /* initialize */
 	Run                  /* run     */
 };

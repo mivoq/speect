@@ -295,5 +295,6 @@ static SSylStressOutFeatProcClass SylStressOutFeatProcClass =
 		NULL,            /* copy    */
 	},
 	/* SFeatProcessorClass */
+	NULL,               /* initialize */
 	Run                  /* run     */
 };

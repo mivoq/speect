@@ -176,6 +176,22 @@ typedef struct
 	SObjectClass  _inherit;
 
   	/* Class methods */
+
+  	/**
+  	 * @protected Initialize function pointer.
+	 * Initialize the feature processor. Used for initialization of
+	 * the feature processor, if required, used for the load of
+	 * extra parameters needed.
+	 *
+	 * @param self The FeatProcessor to initialize.
+	 * @param voice The voice that the feature processor belongs to.
+	 * @param map that holds the configuration params from the voice.json
+	 * @param error Error code.
+	 *
+	 * @note Not necessarily implemented.
+  	 */
+  	void (* const initialize)(SFeatProcessor *self, SMap *feat, s_erc *error);
+
  	/**
 	 * @protected Run function pointer.
 	 * Execute the FeatProcessor on the given item.
@@ -197,6 +213,22 @@ typedef struct
 /* Function prototypes                                                              */
 /*                                                                                  */
 /************************************************************************************/
+
+/**
+ * Initialize the feature processor. Used for initialization of
+ * the feature processor features classes on loading of the
+ * voices.
+ * @public @memberof SFeatProcessor
+ *
+ * @param self The FeatProcessor to initialize.
+ * @param voice The voice that the utterance processor belongs to.
+ * @param feat The map holding the configurations to be loaded.
+ * @param error Error code.
+ *
+ * @note If this function failed the utterance processor is
+ * deleted and the @c self variable is set to @c NULL.
+ */
+S_API void SFeatProcessorInit(SFeatProcessor **self, SMap *feat, s_erc *error);
 
 /**
  * Execute the FeatProcessor on the given item.

@@ -218,5 +218,6 @@ static SSegPhonesetFeatureFeatProcClass SegPhonesetFeatureFeatProcClass =
 		NULL,            /* copy    */
 	},
 	/* SFeatProcessorClass */
+	NULL,               /* initialize */
 	Run                  /* run     */
 };

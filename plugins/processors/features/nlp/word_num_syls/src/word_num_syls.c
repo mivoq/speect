@@ -182,5 +182,6 @@ static SWordNumSylsFeatProcClass WordNumSylsFeatProcClass =
 		NULL,            /* copy    */
 	},
 	/* SFeatProcessorClass */
+	NULL,               /* initialize */
 	Run                  /* run     */
 };

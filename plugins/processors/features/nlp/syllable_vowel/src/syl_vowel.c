@@ -360,5 +360,6 @@ static SSylVowelFeatProcClass SylVowelFeatProcClass =
 		NULL,            /* copy    */
 	},
 	/* SFeatProcessorClass */
+	NULL,               /* initialize */
 	Run                  /* run     */
 };

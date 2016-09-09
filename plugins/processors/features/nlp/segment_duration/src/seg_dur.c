@@ -187,5 +187,6 @@ static SSegDurFeatProcClass SegDurFeatProcClass =
 		NULL,            /* copy    */
 	},
 	/* SFeatProcessorClass */
+	NULL,               /* initialize */
 	Run                  /* run     */
 };

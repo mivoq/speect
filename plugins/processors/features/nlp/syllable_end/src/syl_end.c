@@ -160,5 +160,6 @@ static SSylEndFeatProcClass SylEndFeatProcClass =
 		NULL,            /* copy    */
 	},
 	/* SFeatProcessorClass */
+	NULL,               /* initialize */
 	Run                  /* run     */
 };

@@ -185,5 +185,6 @@ static SUttNumSylsFeatProcClass UttNumSylsFeatProcClass =
 		NULL,            /* copy    */
 	},
 	/* SFeatProcessorClass */
+	NULL,               /* initialize */
 	Run                  /* run     */
 };

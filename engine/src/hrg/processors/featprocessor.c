@@ -262,6 +262,7 @@ static SFeatProcessorClass FeatProcessorClass =
 		NULL,                 /* print   */
 		NULL,                 /* copy    */
 	},
+	NULL,                     /* initialize */
 	NULL                      /* run     */
 };
 

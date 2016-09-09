@@ -2486,5 +2486,6 @@ static SHTSLabelsLwazi2FeatProcClass HTSLabelsLwazi2FeatProcClass =
 		NULL,            /* copy    */
 	},
 	/* SFeatProcessorClass */
+	NULL,               /* initialize */
 	Run                  /* run     */
 };

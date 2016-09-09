@@ -1,4 +1,8 @@
 /************************************************************************************/
+/* Copyright (c) Mivoq SRL                                                          */
+/*                                                                                  */
+/* Contributors:  Simone Daminato, Federico Rossetto, Giulio Paci                   */
+/*                                                                                  */
 /* Copyright (c) 2010-2011 The Department of Arts and Culture,                      */
 /* The Government of the Republic of South Africa.                                  */
 /*                                                                                  */

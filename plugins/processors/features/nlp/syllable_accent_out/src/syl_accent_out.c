@@ -284,5 +284,6 @@ static SSylAccentOutFeatProcClass SylAccentOutFeatProcClass =
 		NULL,            /* copy    */
 	},
 	/* SFeatProcessorClass */
+	NULL,               /* initialize */
 	Run                  /* run     */
 };

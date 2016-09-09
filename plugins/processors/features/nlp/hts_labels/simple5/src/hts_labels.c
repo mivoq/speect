@@ -691,7 +691,7 @@ static char *create_B_context(const SItem *item, s_erc *error)
 	S_CLR_ERR(error);
 
 	/* no stress/accented methods */
-	
+
 	/* b3 */
 	dFeat = SItemPathToFeatProc(item, "R:SylStructure.parent.R:Syllable.syllable_num_phones",
 							   error);
@@ -986,7 +986,7 @@ static char *create_D_context(const SItem *item, s_erc *error)
 	S_CLR_ERR(error);
 
 	/* we currently cannot compute d1 */
-	
+
 	/* d2 */
 	dFeat = SItemPathToFeatProc(item, "R:SylStructure.parent.parent.R:Word.p.word_num_syls",
 							   error);
@@ -1033,7 +1033,7 @@ static char *create_D_context_pause(const SItem *item, s_erc *error)
 	S_CLR_ERR(error);
 
 	/* we currently cannot compute d1 */
-	
+
 	/* d2 */
 	dFeat = SItemPathToFeatProc(item, "p.R:SylStructure.parent.parent.R:Word.word_num_syls",
 							   error);
@@ -1212,7 +1212,7 @@ static char *create_F_context(const SItem *item, s_erc *error)
 	S_CLR_ERR(error);
 
 	/* we currently cannot compute f1 */
-	
+
 	/* f2 */
 	dFeat = SItemPathToFeatProc(item, "R:SylStructure.parent.parent.R:Word.n.word_num_syls",
 							   error);
@@ -2396,5 +2396,6 @@ static SHTSLabelsSimple5FeatProcClass HTSLabelsSimple5FeatProcClass =
 		NULL,            /* copy    */
 	},
 	/* SFeatProcessorClass */
+	NULL,               /* initialize */
 	Run                  /* run     */
 };

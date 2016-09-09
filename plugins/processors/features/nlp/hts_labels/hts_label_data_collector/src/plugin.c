@@ -1,8 +1,7 @@
 /************************************************************************************/
-/* Copyright (c) 2010-2011 The Department of Arts and Culture,                      */
-/* The Government of the Republic of South Africa.                                  */
+/* Copyright (c) Mivoq SRL                                                          */
 /*                                                                                  */
-/* Contributors:  Meraka Institute, CSIR, South Africa.                             */
+/* Contributors:  Simone Daminato, Federico Rossetto, Giulio Paci                   */
 /*                                                                                  */
 /* Permission is hereby granted, free of charge, to any person obtaining a copy     */
 /* of this software and associated documentation files (the "Software"), to deal    */

@@ -221,14 +221,16 @@ typedef struct
  * @public @memberof SFeatProcessor
  *
  * @param self The FeatProcessor to initialize.
- * @param voice The voice that the utterance processor belongs to.
  * @param feat The map holding the configurations to be loaded.
+ *             The map is read only and is owned by the caller of this function
+ *             (i.e., if this information is needed after the initialization,
+ *             it is responsibility of the init function to deep copy it).
  * @param error Error code.
  *
  * @note If this function failed the utterance processor is
  * deleted and the @c self variable is set to @c NULL.
  */
-S_API void SFeatProcessorInit(SFeatProcessor **self, SMap *feat, s_erc *error);
+S_API void SFeatProcessorInit(SFeatProcessor **self, const SMap *feat, s_erc *error);
 
 /**
  * Execute the FeatProcessor on the given item.

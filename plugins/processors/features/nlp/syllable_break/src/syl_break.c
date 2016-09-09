@@ -314,5 +314,6 @@ static SSylBreakFeatProcClass SylBreakFeatProcClass =
 		NULL,            /* copy    */
 	},
 	/* SFeatProcessorClass */
+	NULL,               /* initialize */
 	Run                  /* run     */
 };

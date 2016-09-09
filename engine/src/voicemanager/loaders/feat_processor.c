@@ -64,6 +64,7 @@ S_LOCAL SMap *_s_load_voice_feature_processors(const SMap *voiceConfig,
 	const char *featproc_class;
 	const char *featproc_plugin;
 	const SMap *featProcInfo;
+	const SMap *featProcFeat;
 	SFeatProcessor *fProcessor;
 	SPlugin *plugin;
 	SList *featProcPlugins;
@@ -182,7 +183,7 @@ S_LOCAL SMap *_s_load_voice_feature_processors(const SMap *voiceConfig,
 		}
 
 		/*
-		 * featProcInfo must have "class" and "plug-in"
+		 * featProcInfo must have "class" and "plug-in" and optionally "features"
 		 */
 		featproc_class = SMapGetString(featProcInfo, "class", error);
 		if (S_CHK_ERR(error, S_CONTERR,
@@ -246,6 +247,73 @@ S_LOCAL SMap *_s_load_voice_feature_processors(const SMap *voiceConfig,
 			S_DELETE(featProcessors, "_s_load_voice_feature_processors", error);
 			S_DELETE(featProcPlugins, "_s_load_voice_feature_processors", error);
 			return NULL;
+		}
+
+		/* Check if this feature-processor has any defined features */
+		key_present = SMapObjectPresent(featProcInfo, "features", error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "_s_load_voice_feature_processors",
+					  "Call to \"SMapObjectPresent\" failed for \'class\' name of feature-processor \'%s\'",
+					  featproc_name))
+		{
+			S_DELETE(itr, "_s_load_voice_feature_processors", error);
+			S_DELETE(featProcessors, "_s_load_voice_feature_processors", error);
+			S_DELETE(featProcPlugins, "_s_load_voice_feature_processors", error);
+			return NULL;
+		}
+
+		if(key_present)
+		{
+			/* get feature-processors "features" */
+			tmp = SMapGetObject(featProcInfo, "features", error);
+			if (S_CHK_ERR(error, S_CONTERR,
+						  "_s_load_voice_feature_processors",
+						  "Call to \"SMapGetObject\" failed for \'features\' of feature-processor \'%s\'",
+						  featproc_name))
+			{
+				S_DELETE(itr, "_s_load_voice_feature_processors", error);
+				S_DELETE(featProcessors, "_s_load_voice_feature_processors", error);
+				S_DELETE(featProcPlugins, "_s_load_voice_feature_processors", error);
+				return NULL;
+			}
+
+			featProcFeat = S_CAST(tmp, SMap, error);
+			if (S_CHK_ERR(error, S_CONTERR,
+						  "_s_load_voice_feature_processors",
+						  "Call to \"S_CAST (SMap)\" failed for \'features\' of feature-processor \'%s\'",
+						  featproc_name))
+			{
+				S_DELETE(itr, "_s_load_voice_feature_processors", error);
+				S_DELETE(featProcessors, "_s_load_voice_feature_processors", error);
+				S_DELETE(featProcPlugins, "_s_load_voice_feature_processors", error);
+				return NULL;
+			}
+
+			SFeatProcessorInit(&fProcessor, featProcFeat, error);
+			if (S_CHK_ERR(error, S_CONTERR,
+						  "_s_load_voice_feature_processors",
+						  "Call to \"SFeatProcessorInit\" failed for \'features\' of feature-processor \'%s\'",
+						  featproc_name))
+			{
+				S_DELETE(itr, "_s_load_voice_feature_processors", error);
+				S_DELETE(featProcessors, "_s_load_voice_feature_processors", error);
+				S_DELETE(featProcPlugins, "_s_load_voice_feature_processors", error);
+				return NULL;
+			}
+		}
+		else
+		{
+			SFeatProcessorInit(&fProcessor, NULL, error);
+			if (S_CHK_ERR(error, S_CONTERR,
+						  "_s_load_voice_feature_processors",
+						  "Call to \"SFeatProcessorInit\" failed for \'features\' of feature-processor \'%s\'",
+						  featproc_name))
+			{
+				S_DELETE(itr, "_s_load_voice_feature_processors", error);
+				S_DELETE(featProcessors, "_s_load_voice_feature_processors", error);
+				S_DELETE(featProcPlugins, "_s_load_voice_feature_processors", error);
+				return NULL;
+			}
 		}
 
 		/* add the feature-processor to the map of feature-processors */

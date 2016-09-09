@@ -3431,5 +3431,6 @@ static SHTSLabelsConfigurableFeatProcClass HTSLabelsConfigurableFeatProcClass =
 		NULL,            /* copy    */
 	},
 	/* SFeatProcessorClass */
+	NULL,               /* initialize */
 	Run                  /* run     */
 };

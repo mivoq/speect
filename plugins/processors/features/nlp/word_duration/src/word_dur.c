@@ -233,5 +233,6 @@ static SWordDurFeatProcClass WordDurFeatProcClass =
 		NULL,            /* copy    */
 	},
 	/* SFeatProcessorClass */
+	NULL,               /* initialize */
 	Run                  /* run     */
 };

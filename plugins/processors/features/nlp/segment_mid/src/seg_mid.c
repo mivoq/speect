@@ -177,5 +177,6 @@ static SSegMidFeatProcClass SegMidFeatProcClass =
 		NULL,            /* copy    */
 	},
 	/* SFeatProcessorClass */
+	NULL,               /* initialize */
 	Run                  /* run     */
 };

@@ -272,5 +272,6 @@ static SSegNameMultilingualFeatProcClass SegNameMultilingualFeatProcClass =
 		NULL,            /* copy    */
 	},
 	/* SFeatProcessorClass */
+	NULL,               /* initialize */
 	Run                  /* run     */
 };

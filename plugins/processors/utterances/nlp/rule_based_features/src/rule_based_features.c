@@ -360,10 +360,16 @@ static s_bool setProsodyPosition(const SItem *word, s_bool nucleusAssigned, s_er
 			      "Call to \"SItemPathToItem\" failed"))
 			return FALSE;
 
-	const char *type= SItemGetString(phrase, "type", error);
+	SObject* extract = SItemPathToFeatProc(phrase, "phrase_type", error);
 		if (S_CHK_ERR(error, S_CONTERR,
 			      "setProsodyPosition",
-			      "Call to \"SItemGetString\" failed"))
+			      "Call to \"SItemPathToFeatProc\" failed"))
+			return FALSE;
+
+	const char *type = SObjectGetString(extract, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+			      "setProsodyPosition",
+			      "Call to \"SObjectGetString\" failed"))
 			return FALSE;
 
 	if( s_strcmp( accent, "tone", error) == 0 )
@@ -612,6 +618,7 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 		      "Call to \"SRelationHead\" failed"))
 		goto quit_error;
 
+/*
 	const SItem* phraseItem_copy = phraseItem;
 	while (phraseItem_copy != NULL)
 	{
@@ -627,6 +634,7 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 			      "Call to \"SItemNext\" failed"))
 			goto quit_error;
 	}
+	* */
 
 	const SItem* phrase = phraseItem;
 

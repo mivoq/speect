@@ -123,6 +123,10 @@ int main(int argc, char **argv)
 
 	SList *syllablesPhones = NULL;
 
+	char* buffer = NULL;
+	size_t buffer_size = 0;
+	ssize_t buffer_length = 0;
+
 	/* Config type will handle the command line input */
 	struct Config config = {0};
 
@@ -208,10 +212,6 @@ int main(int argc, char **argv)
 			      "Call to \"SMapGetObjectDef\" failed"))
 			goto quit;
 	}
-
-	char* buffer = NULL;
-	size_t buffer_size = 0;
-	ssize_t buffer_length = 0;
 
 	SPCT_PRINT_AND_WAIT("everything ready to perform syllabification, press ENTER\n");
 	char inter_buffer[MAX_PHONEME_LENGTH+1] = {0};

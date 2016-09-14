@@ -1115,6 +1115,7 @@ word_context_pause_cleanup:
 static void create_phrase_context(SELFPARAMETERTYPE *self, const SItem *item, s_erc *error)
 {
 	const SObject *dFeat;
+	int start = 0, end = 0;
 
 	S_CLR_ERR(error);
 
@@ -1123,6 +1124,11 @@ static void create_phrase_context(SELFPARAMETERTYPE *self, const SItem *item, s_
 	S_CHK_ERR(error, S_CONTERR,
 				  "create_phrase_context",
 				  "Call to \"SItemPathToFeatProc\" failed");
+
+	start = SObjectGetInt ( dFeat, error);
+	S_CHK_ERR(error, S_CONTERR,
+				  "create_phrase_context",
+				  "Call to \"SObjectGetInt\" failed");
 
 	if (dFeat != NULL)
 	{
@@ -1140,9 +1146,27 @@ static void create_phrase_context(SELFPARAMETERTYPE *self, const SItem *item, s_
 				  "create_phrase_context",
 				  "Call to \"SItemPathToFeatProc\" failed");
 
+	end = SObjectGetInt ( dFeat, error);
+	S_CHK_ERR(error, S_CONTERR,
+				  "create_phrase_context",
+				  "Call to \"SObjectGetInt\" failed");
+
 	if (dFeat != NULL)
 	{
 		SHTSLabelDataCollectorSetFeature(self, "syls.from.phrase.end", dFeat, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_phrase_context",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			goto phrase_context_cleanup;
+
+	}
+
+	/* number of syllables in this phrase */
+	dFeat = SObjectSetInt(start + end, error);
+
+	if (dFeat != NULL)
+	{
+		SHTSLabelDataCollectorSetFeature(self, "phrase.syls.num", dFeat, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "create_phrase_context",
 					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))

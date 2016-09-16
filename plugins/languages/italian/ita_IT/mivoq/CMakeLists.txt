@@ -15,5 +15,6 @@
 #------------------------------------------------------------------------------------#
 
 add_subdirectory(syllabification)
+add_subdirectory(syllable_stress)
 
 

@@ -46,6 +46,7 @@
 #include "lexicon.h"
 #include "g2p.h"
 #include "lexlookup_proc.h"
+#include "hrg/processors/featprocessor.h"
 
 
 /************************************************************************************/
@@ -199,6 +200,23 @@ static void Destroy(void *obj, s_erc *error)
 				  "Call to \"SMapObjectUnlink\" failed"))
 		return;
 
+	/* check if a stress plug-in is defined as a feature */
+	tmp = SMapGetObjectDef(self->features, "_syll_stress_plugin", NULL, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "Destroy",
+				  "Call to \"SMapGetObjectDef\" failed"))
+		return;
+
+	if (tmp == NULL)
+		return;
+
+	/* unlink it */
+	sylPlugin = (SPlugin*)SMapObjectUnlink(self->features, "_syll_stress_plugin", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "Destroy",
+				  "Call to \"SMapObjectUnlink\" failed"))
+		return;
+
 	/* get the syllabification function */
 	tmp = SMapGetObjectDef(self->features, "_syll_func", NULL, error);
 	if (S_CHK_ERR(error, S_CONTERR,
@@ -226,14 +244,50 @@ static void Dispose(void *obj, s_erc *error)
 	SObjectDecRef(obj);
 }
 
+static void s_compute_stresses ( SFeatProcessor* proc, SItem* word, s_erc *error )
+{
+	SItem *syllable = SItemPathToItem (word, "R:SylStructure.daughter", error);
+
+	while (syllable != NULL)
+	{
+		SObject* result = SFeatProcessorRun ( proc, syllable, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "s_compute_stresses",
+					  "Call to \"SItemPathToFeatProc\" failed"))
+			return;
+
+		int resultInt = SObjectGetInt ( result, error );
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "s_compute_stresses",
+					  "Call to \"SObjectGetInt\" failed"))
+			return;
+
+		SItemSetInt ( syllable, "stressed", resultInt, error );
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "s_compute_stresses",
+					  "Call to \"SItemSetInt\" failed"))
+			return;
+
+		syllable = SItemNext ( syllable, error );
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "s_compute_stresses",
+					  "Call to \"SItemNext\" failed"))
+			return;
+	}
+
+
+}
+
 
 static void Initialize(SUttProcessor *self, const SVoice *voice, s_erc *error)
 {
 	const SObject *tmp;
 	const SMap *syllInfo;
 	const char *plugin_name;
+	const char *featproc_class;
 	const char *class_name;
 	SPlugin *sylPlugin;
+	SFeatProcessor *stressProc;
 	SSyllabification *syllab;
 
 
@@ -313,6 +367,61 @@ static void Initialize(SUttProcessor *self, const SVoice *voice, s_erc *error)
 		return;
 	}
 
+	tmp = SMapGetObjectDef(self->features, "syllable stress processor", NULL, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "Initialize",
+				  "Call to \"SMapGetObjectDef\" failed"))
+		return;
+
+	/* nothing, return */
+	if (tmp == NULL)
+		return;
+
+	syllInfo = S_CAST(tmp, SMap, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "Initialize",
+				  "Call to \"S_CAST (SMap)\" failed"))
+		return;
+
+	plugin_name = SMapGetString(syllInfo, "plug-in", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "Initialize",
+				  "Call to \"SMapGetString\" failed"))
+		return;
+
+	if (plugin_name == NULL)
+		return;
+
+	featproc_class = SMapGetString(syllInfo, "class", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "Initialize",
+				  "Call to \"SMapGetString\" failed"))
+		return;
+
+	/* load the plug-in */
+	sylPlugin = s_pm_load_plugin(plugin_name, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "Initialize",
+				  "Call to \"s_pm_load_plugin\" failed"))
+		return;
+
+	stressProc  = S_FEATPROCESSOR(S_NEW_FROM_NAME(featproc_class, error));
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "Initialize",
+				  "Call to \"SNEW_FROM_NAME\" failed"))
+		return;
+
+	/* add him to the features */
+	SMapSetObject(self->features, "_syll_stress_plugin", S_OBJECT(stressProc), error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "Initialize",
+				  "Call to \"SMapSetObject\" failed"))
+	{
+		S_DELETE(sylPlugin, "Initialize", error);
+		return;
+	}
+
+
 	S_UNUSED(voice);
 }
 
@@ -329,6 +438,7 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 	SRelation *sylStructRel = NULL;
 	SRelation *segmentRel = NULL;
 	SItem *wordItem;
+	SItem *wordItemcopy;
 	char *downcase_word;
 	SList *phones;
 	s_bool syllabified;
@@ -396,6 +506,12 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 	 * phones and the associated structure.
 	 */
 	wordItem = (SItem*)SRelationHead(wordRel, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "Run",
+				  "Call to \"SRelationHead\" failed"))
+		goto quit_error;
+
+	wordItemcopy = (SItem*)SRelationHead(wordRel, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Run",
 				  "Call to \"SRelationHead\" failed"))
@@ -577,6 +693,34 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 
 		S_DELETE(syllablesPhones, "Run", error);
 continue_cycle:
+		wordItem = SItemNext(wordItem, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "Run",
+					  "Call to \"SItemNext\" failed"))
+			goto quit_error;
+	}
+
+	wordItem = wordItemcopy;
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "Run",
+				  "Call to \"SItemPathToItem\" failed"))
+		goto quit_error;
+
+	while (wordItem != NULL)
+	{
+		const SFeatProcessor* featproc = SUttProcessorGetFeature(self, "_syll_stress_plugin", error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "Run",
+					  "Call to \"SUttProcessorGetFeature\" failed"))
+			goto quit_error;
+
+
+		s_compute_stresses(featproc, wordItem, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "Run",
+					  "Call to \"s_compute_stresses\" failed"))
+			goto quit_error;
+
 		wordItem = SItemNext(wordItem, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "Run",

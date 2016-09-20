@@ -941,6 +941,21 @@ static void create_word_context(SELFPARAMETERTYPE *self, const SItem *item, s_er
 
 	}
 
+	/* the number of words from the beginning of the phrase */
+	dFeat = SItemPathToFeatProc(item, "R:SylStructure.parent.parent.R:Word.words_from_phrase_start", error);
+	S_CHK_ERR(error, S_CONTERR,
+				  "create_word_context",
+				  "Call to \"SItemPathToFeatProc\" failed");
+
+	if (dFeat != NULL)
+	{
+		SHTSLabelDataCollectorSetFeature(self, "words.from.phrase.start", dFeat, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_word_context",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			goto word_context_cleanup;
+	}
+
 	/* the number of syllables in the next word */
 	dFeat = SItemPathToFeatProc(item, "R:SylStructure.parent.parent.R:Word.n.word_num_syls", error);
 	S_CHK_ERR(error, S_CONTERR,

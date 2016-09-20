@@ -745,24 +745,6 @@ static void create_syl_context(SELFPARAMETERTYPE* self, const SItem* item, s_erc
 
 	}
 
-		/* get the stress of the current syllable */
-	dFeat = SItemPathToFeature(item, "R:SylStructure.parent.R:Syllable.stressed", error);
-	S_CHK_ERR(error, S_CONTERR,
-				  "create_syl_context",
-				  "Call to \"SItemPathToFeatProc\" failed");
-
-	if (dFeat != NULL)
-	{
-		SHTSLabelDataCollectorSetFeature(self, "stressed", dFeat, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "create_syl_context",
-					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
-			goto syl_context_cleanup;
-
-	}
-
-	return;
-
 syl_context_cleanup:
 	if (dFeat != NULL)
 		S_DELETE(dFeat, "create_syl_context", error);
@@ -1851,36 +1833,69 @@ create_utterance_context_pause_cleanup:
 static void create_stress_context(SELFPARAMETERTYPE *self, const SItem *item, s_erc *error)
 {
 	const SObject *featPath;
-	sint32 level;
+	const SObject *newfeatPath;
+	int level;
 
 	S_CLR_ERR(error);
 
-	/* previous syllable stress */
-	featPath = SItemPathToFeature(item, "R:SylStructure.parent.R:Syllable.p.stress",
-				      error);
+	/* previous previous syllable stress */
+	featPath = SItemPathToFeatProc(item, "p.p.stressed", error);
 	S_CHK_ERR(error, S_CONTERR,
 				  "create_stress_context",
 				  "Call to \"SItemPathToFeature\" failed");
 
 	if (featPath != NULL)
 	{
-		level = get_stress_level(featPath, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "create_stress_context",
-					  "Call to \"get_stress_level\" failed"))
-			goto stress_cleanup;
-		featPath = SObjectSetInt(level, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "create_stress_context",
-					  "Call to \"SObjectSetInt\" failed"))
-			goto stress_cleanup;
-
-		SHTSLabelDataCollectorSetFeature(self, "p.stress", featPath, error);
+		SHTSLabelDataCollectorSetFeature(self, "prev.prev.stress", featPath, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "create_stress_context",
 					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
 			goto stress_cleanup;
-		S_DELETE(featPath, "create_stress_context", error);
+	}
+
+	/* previous syllable stress */
+	featPath = SItemPathToFeatProc(item, "p.stressed", error);
+	S_CHK_ERR(error, S_CONTERR,
+				  "create_stress_context",
+				  "Call to \"SItemPathToFeature\" failed");
+
+	if (featPath != NULL)
+	{
+		SHTSLabelDataCollectorSetFeature(self, "prev.stress", featPath, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_stress_context",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			goto stress_cleanup;
+	}
+
+	/* next syllable stress */
+	featPath = SItemPathToFeatProc(item, "n.stressed", error);
+	S_CHK_ERR(error, S_CONTERR,
+				  "create_stress_context",
+				  "Call to \"SItemPathToFeature\" failed");
+
+	if (featPath != NULL)
+	{
+		SHTSLabelDataCollectorSetFeature(self, "next.stress", featPath, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_stress_context",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			goto stress_cleanup;
+	}
+
+	/* next next syllable stress */
+	featPath = SItemPathToFeatProc(item, "n.n.stressed", error);
+	S_CHK_ERR(error, S_CONTERR,
+				  "create_stress_context",
+				  "Call to \"SItemPathToFeature\" failed");
+
+	if (featPath != NULL)
+	{
+		SHTSLabelDataCollectorSetFeature(self, "next.next.stress", featPath, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_stress_context",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			goto stress_cleanup;
 	}
 
 	/* current syllable stress */
@@ -1897,50 +1912,21 @@ static void create_stress_context(SELFPARAMETERTYPE *self, const SItem *item, s_
 					  "create_stress_context",
 					  "Call to \"get_stress_level\" failed"))
 			goto stress_cleanup;
-		featPath = SObjectSetInt(level, error);
+		newfeatPath = SObjectSetInt(level, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 						"create_stress_context",
 						"Call to \"SObjectSetInt\" failed"))
 			goto stress_cleanup;
 
-		SHTSLabelDataCollectorSetFeature(self, "stress", featPath, error);
+		SHTSLabelDataCollectorSetFeature(self, "stress", newfeatPath, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "create_stress_context",
 					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
 			goto stress_cleanup;
-		S_DELETE(featPath, "create_stress_context", error);
-	}
-
-	/* next syllable stress */
-	featPath = SItemPathToFeature(item, "R:SylStructure.parent.R:Syllable.n.stress",
-				      error);
-	S_CHK_ERR(error, S_CONTERR,
-				  "create_stress_context",
-				  "Call to \"SItemPathToFeature\" failed");
-
-	if (featPath != NULL)
-	{
-		level = get_stress_level(featPath, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "create_stress_context",
-					  "Call to \"get_stress_level\" failed"))
-			goto stress_cleanup;
-		featPath = SObjectSetInt(level, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "create_stress_context",
-					  "Call to \"SObjectSetInt\" failed"))
-			goto stress_cleanup;
-
-		SHTSLabelDataCollectorSetFeature(self, "n.stress", featPath, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "create_stress_context",
-					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
-			goto stress_cleanup;
-		S_DELETE(featPath, "create_stress_context", error);
 	}
 
 	/* the number of stressed syllables before the current syllable in the current phrase */
-	featPath = SItemPathToFeature(item, "R:SylStructure.parent.R:Syllable.syllable_stress_in", error);
+	featPath = SItemPathToFeatProc(item, "R:SylStructure.parent.R:Syllable.syllable_stress_in", error);
 	S_CHK_ERR(error, S_CONTERR,
 				  "create_stress_context",
 				  "Call to \"SItemPathToFeature\" failed");
@@ -1955,7 +1941,7 @@ static void create_stress_context(SELFPARAMETERTYPE *self, const SItem *item, s_
 	}
 
 	/* the number of stressed syllables after the current syllable in the current phrase */
-	featPath = SItemPathToFeature(item, "R:SylStructure.parent.R:Syllable.syllable_stress_out", error);
+	featPath = SItemPathToFeatProc(item, "R:SylStructure.parent.R:Syllable.syllable_stress_out", error);
 	S_CHK_ERR(error, S_CONTERR,
 				  "create_stress_context",
 				  "Call to \"SItemPathToFeature\" failed");
@@ -1970,7 +1956,7 @@ static void create_stress_context(SELFPARAMETERTYPE *self, const SItem *item, s_
 	}
 
 	/* the number of syllables from the previous stressed syllable to the current syllable */
-	featPath = SItemPathToFeature(item, "R:SylStructure.parent.R:Syllable.syllable_stress_all_in", error);
+	featPath = SItemPathToFeatProc(item, "R:SylStructure.parent.R:Syllable.syllable_stress_all_in", error);
 	S_CHK_ERR(error, S_CONTERR,
 				  "create_stress_context",
 				  "Call to \"SItemPathToFeature\" failed");
@@ -1985,7 +1971,7 @@ static void create_stress_context(SELFPARAMETERTYPE *self, const SItem *item, s_
 	}
 
 	/* the number of syllables from the current syllable to the next stressed syllable */
-	featPath = SItemPathToFeature(item, "R:SylStructure.parent.R:Syllable.syllable_stress_all_out", error);
+	featPath = SItemPathToFeatProc(item, "R:SylStructure.parent.R:Syllable.syllable_stress_all_out", error);
 	S_CHK_ERR(error, S_CONTERR,
 				  "create_stress_context",
 				  "Call to \"SItemPathToFeature\" failed");

@@ -96,7 +96,7 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 					s_erc *error)
 {
 	SObject *extractedFeat = NULL;
-	sint32 stress = 0;
+	const char* stress = "unstressed";
 	s_bool has_feature;
 
 	S_CLR_ERR(error);
@@ -158,7 +158,7 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 			goto quit_error;
 
 		if( has_feature == TRUE )
-			stress = 1;
+			stress = "primary";
 
 		phone = SItemNext (phone, error);
 		if (S_CHK_ERR(error, S_CONTERR,
@@ -168,7 +168,7 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 
 	}
 
-	extractedFeat = SObjectSetInt(stress, error);
+	extractedFeat = SObjectSetString(stress, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Run",
 				  "Call to \"SObjectSetInt\" failed"))

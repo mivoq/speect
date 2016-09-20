@@ -39,6 +39,7 @@
 /************************************************************************************/
 
 
+#include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
@@ -84,12 +85,11 @@ struct Config {
 /*                                                                                  */
 /************************************************************************************/
 
-static void usage(int rv) {
-	printf("usage: speect_test -v VOICEFILE\n"
+static int usage(FILE*of) {
+	return fprintf(of, "usage: speect_test -v VOICEFILE\n"
 	       "  Load a syllabifier from the voice specification in VOICEFILE\n"
 	       "  and syllabifies phones on standard input.\n"
 	       "  --help      Output usage string\n");
-	exit(rv);
 }
 
 /************************************************************************************/
@@ -98,7 +98,7 @@ static void usage(int rv) {
 /*                                                                                  */
 /************************************************************************************/
 
-int init (int *, char ** , struct Config *, s_erc *);
+static int parse_arguments (int *, char ** , struct Config *);
 
 /************************************************************************************/
 /*                                                                                  */
@@ -130,6 +130,10 @@ int main(int argc, char **argv)
 	/* Config type will handle the command line input */
 	struct Config config = {0};
 
+	SPCT_PRINT_AND_WAIT("parsing options, press ENTER\n");
+
+	parse_arguments(&argc, argv, &config);
+
 	SPCT_PRINT_AND_WAIT("going to initialize speect, press ENTER\n");
 
 	/*
@@ -141,15 +145,7 @@ int main(int argc, char **argv)
 		return 1;
 	}
 
-	SPCT_PRINT_AND_WAIT("initialized speect, parsing options, press ENTER\n");
-
-	init(&argc, argv, &config, &error);
-	if (S_CHK_ERR(&error, S_CONTERR,
-		      "main",
-		      "Failed to load arguments"))
-		goto quit;
-
-	SPCT_PRINT_AND_WAIT("loading voice, press ENTER\n");
+	SPCT_PRINT_AND_WAIT("initialized speect, loading voice, press ENTER\n");
 
 	/* load voice */
 	voice = s_vm_load_voice(config.voicefile, &error);
@@ -386,54 +382,41 @@ quit:
 	return 0;
 }
 
-int init (int *argc, char **argv, struct Config *config, s_erc *error) {
+static int parse_arguments (int *argc, char **argv, struct Config *config) {
 	int scomp;
 	int i;
 	int j = 0;
 
 	for (i = 1; i < *argc; i++)
 	{
-		scomp = s_strcmp(argv[i], "-h", error);
-		if (S_CHK_ERR(error, S_CONTERR,
-			      "init",
-			      "Call to \"s_strcmp\" failed"))
-			goto returnFunction;
+		scomp = strcmp(argv[i], "-h");
+		if (scomp == 0) {
+			usage(stdout);
+			exit(0);
+		}
 
-		if (scomp == 0)
-			usage(0);
+		scomp = strcmp(argv[i], "--help");
 
-		scomp = s_strcmp(argv[i], "--help", error);
-		if (S_CHK_ERR(error, S_CONTERR,
-			      "init",
-			      "Call to \"s_strcmp\" failed"))
-			goto returnFunction;
+		if (scomp == 0) {
+			usage(stdout);
+			exit(0);
+		}
 
-		if (scomp == 0)
-			usage(0);
-
-		scomp = s_strcmp(argv[i],"-v", error);
-		if (S_CHK_ERR(error, S_CONTERR,
-			      "init",
-			      "Call to \"s_strcmp\" failed"))
-			goto returnFunction;
-
+		scomp = strcmp(argv[i],"-v");
 		if ((scomp == 0) && (i + 1 < *argc))
 		{
-			config -> voicefile = argv[i + 1];
+			config->voicefile = argv[i + 1];
 			i++;
 			j += 2;
 		}
 
 	}
 
-	if ((config -> voicefile == NULL)) {
-		S_CTX_ERR(error, S_ARGERROR,
-			  "init",
-			  "Arguments are not optional, see usage");
-		usage(1);
+	if ((config->voicefile == NULL)) {
+		fprintf(stderr, "%s\n", "Arguments are not optional, see usage");
+		usage(stderr);
+		exit(1);
 	}
-
-returnFunction:
 	argv = argv + j;
 	*argc = *argc - j;
 	return i;

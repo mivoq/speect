@@ -256,13 +256,13 @@ static void s_compute_stresses ( SFeatProcessor* proc, SItem* word, s_erc *error
 					  "Call to \"SItemPathToFeatProc\" failed"))
 			return;
 
-		int resultInt = SObjectGetInt ( result, error );
+		const char* resultString = SObjectGetString ( result, error );
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "s_compute_stresses",
 					  "Call to \"SObjectGetInt\" failed"))
 			return;
 
-		SItemSetInt ( syllable, "stressed", resultInt, error );
+		SItemSetString ( syllable, "stress", resultString, error );
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "s_compute_stresses",
 					  "Call to \"SItemSetInt\" failed"))

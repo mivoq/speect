@@ -65,57 +65,80 @@
  * @param self self pointer (type #SHTSLabelsGeneratorItFeatProc*)
  * @param data Data container (type #SHTSLabelsDataCollectorFeatProc*).
  * @param featureName Key of the feature (type #char*).
- * @param unboxingFunction Function used to get data from the resulting SObject (type #void*).
  * @param appendTo String on which we append the output (type #char*).
  * @param ERROR Pointer to error code variable to set (type #s_erc*).
  */
-#define EXTRACTFEATURE(self, data, featureName, unboxingFunction, appendTo, error)				\
-do {														\
-	char *tmp = NULL;											\
-	do {													\
-		const SObject *feature;										\
-		const char *featureStr = featureName;								\
-		s_bool isPresent;										\
-		s_erc error2;											\
-		S_CLR_ERR(error);										\
-		S_CLR_ERR(&error2);										\
-														\
-		isPresent= S_HTSLABELSDATACOLLECTOR_CALL(data, has_feature)(data, featureName, error);		\
-		if (S_CHK_ERR(error, S_CONTERR,									\
-					"EXTRACTFEATURE",							\
-					"Call to \"SHTSLabelDataCollectorFeatureIsPresent\" failed"))		\
-			break;											\
-		if (isPresent)											\
-		{												\
-			feature = S_HTSLABELSDATACOLLECTOR_CALL(data, get_feature)(data, featureName, error);	\
-			if (S_CHK_ERR(error, S_CONTERR,								\
-					"EXTRACTFEATURE",							\
-					"Call to \"SHTSLabelDataCollectorGetFeature\" failed"))			\
-				break;										\
-			CheckFeature(self, &featureStr, error);							\
-			if (S_CHK_ERR(error, S_CONTERR,								\
-					"EXTRACTFEATURE",							\
-					"Call to \"CheckFeature\" failed"))					\
-					break;									\
-			s_asprintf(&tmp, error, featureStr, unboxingFunction(feature, &error2));		\
-			if (S_CHK_ERR(&error2, S_CONTERR,							\
-					"EXTRACTFEATURE",							\
-					"Call to \"unboxing function\" failed"))				\
-					break;									\
-			if (S_CHK_ERR(error, S_CONTERR,								\
-					"EXTRACTFEATURE",							\
-					"Call to \"s_asprintf\" failed"))					\
-					break;									\
-		}												\
-		s_sappend(&appendTo, tmp, error);								\
-		if (S_CHK_ERR(error, S_CONTERR,									\
-					"EXTRACTFEATURE",							\
-					"Call to \"s_sappend\" failed"))					\
-			break;											\
-	} while(0);												\
-	if (tmp != NULL) S_FREE(tmp);										\
-} while(0);
+static int EXTRACTFEATURE(SHTSLabelsGeneratorItFeatProc *self, const SHTSLabelsDataCollectorFeatProc *data, const char *featureName, char **appendTo, s_erc *error){
+	if (self->specialFeatures != NULL)
+	{
+		char *tmp = NULL;
+		do {
+			const SObject *feature = NULL;
+			s_bool isPresent;
+			s_erc error2;
+			S_CLR_ERR(error);
+			S_CLR_ERR(&error2);
 
+			isPresent= S_HTSLABELSDATACOLLECTOR_CALL(data, has_feature)(data, featureName, error);
+			if (S_CHK_ERR(error, S_CONTERR,
+				      "EXTRACTFEATURE",
+				      "Call to \"SHTSLabelDataCollectorFeatureIsPresent\" failed"))
+				break;
+			if (isPresent)
+			{
+				feature = S_HTSLABELSDATACOLLECTOR_CALL(data, get_feature)(data, featureName, error);
+				if (S_CHK_ERR(error, S_CONTERR,
+					      "EXTRACTFEATURE",
+					      "Call to \"SHTSLabelDataCollectorGetFeature\" failed"))
+					break;
+			}
+			if (isPresent || TRUE) {
+				const char *value = (char*) SMapGetStringDef(self->specialFeatures, featureName, featureName, error);
+				/* Call the right unboxing function */
+				if (s_strstr(value, "=%d", error ))
+				{
+					if (S_CHK_ERR(error, S_CONTERR,
+						      "Run",
+						      "Execution of \"s_strstr\" failed"))
+						break;
+					s_asprintf(&tmp, error, value, (feature == NULL) ? 0 : SObjectGetInt(feature, &error2));
+					if (S_CHK_ERR(&error2, S_CONTERR,
+						      "EXTRACTFEATURE",
+						      "Call to \"unboxing function\" failed"))
+						break;
+					if (S_CHK_ERR(error, S_CONTERR,
+						      "EXTRACTFEATURE",
+						      "Call to \"s_asprintf\" failed"))
+						break;
+				}
+				else if (s_strstr(value, "=%s", error ))
+				{
+					if (S_CHK_ERR(error, S_CONTERR,
+						      "Run",
+						      "Execution of \"s_strstr\" failed"))
+						break;
+					s_asprintf(&tmp, error, value, (feature == NULL) ? "0" : SObjectGetString(feature, &error2));
+					if (S_CHK_ERR(&error2, S_CONTERR,
+						      "EXTRACTFEATURE",
+						      "Call to \"unboxing function\" failed"))
+						break;
+					if (S_CHK_ERR(error, S_CONTERR,
+						      "EXTRACTFEATURE",
+						      "Call to \"s_asprintf\" failed"))
+						break;
+
+				}
+			}
+			if (tmp != NULL) s_sappend(appendTo, tmp, error);
+			if (S_CHK_ERR(error, S_CONTERR,
+				      "EXTRACTFEATURE",
+				      "Call to \"s_sappend\" failed"))
+				break;
+		} while(0);
+		if (tmp != NULL) S_FREE(tmp);
+	}
+	return 0;
+}
 
 /**
  * @hideinitializer
@@ -350,13 +373,6 @@ static void CheckPhoneme(SHTSLabelsGeneratorItFeatProc *self, const char **phone
 	}
 }
 
-static void CheckFeature(SHTSLabelsGeneratorItFeatProc *self, const char **feature, s_erc *error)
-{
-	S_CLR_ERR(error);
-
-	*feature = (char*) SMapGetStringDef(self->specialFeatures, *feature, *feature, error);
-}
-
 static void Init(void *obj, s_erc *error)
 {
 	S_CLR_ERR(error);
@@ -502,45 +518,15 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 				      "Execution of \"SIteratorObject\" failed"))
 				goto quit_error;
 
-			const char *value = (char*) SMapGetStringDef(labelGenerator->specialFeatures, keyString, keyString, error);
-			/* Call the right unboxing function */
-			if (s_strstr(value, "=%d", error ))
-			{
-				if (S_CHK_ERR(error, S_CONTERR,
-					      "Run",
-					      "Execution of \"s_strstr\" failed"))
-					goto quit_error;
-
-				if (labelGenerator->specialFeatures != NULL)
-				{
-					EXTRACTFEATURE(labelGenerator, data, keyString, SObjectGetInt, resultString, error);
-					if (S_CHK_ERR(error, S_CONTERR,
-						      "Run",
-						      "Execution of \"EXTRACTFEATURE\" failed"))
-						goto quit_error;
-				}
-			}
-			else if (s_strstr(value, "=%s", error ))
-			{
-				if (S_CHK_ERR(error, S_CONTERR,
-					      "Run",
-					      "Execution of \"s_strstr\" failed"))
-					goto quit_error;
-
-				if (labelGenerator->specialFeatures != NULL)
-				{
-					EXTRACTFEATURE(labelGenerator, data, keyString, SObjectGetString, resultString, error);
-					if (S_CHK_ERR(error, S_CONTERR,
-						      "Run",
-						      "Execution of \"EXTRACTFEATURE\" failed"))
-						goto quit_error;
-				}
-			}
+			EXTRACTFEATURE(labelGenerator, data, keyString, &resultString, error);
+			if (S_CHK_ERR(error, S_CONTERR,
+				      "Run",
+				      "Execution of \"EXTRACTFEATURE\" failed"))
+				goto quit_error;
 
 			itrFeatureMap = SIteratorNext(itrFeatureMap);
 		}
 	}
-
 	s_sappend(&resultString, "|", error);
 	return SObjectSetString(resultString, error);
 

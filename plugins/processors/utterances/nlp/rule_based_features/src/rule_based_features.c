@@ -432,6 +432,42 @@ static s_bool setProsodyPosition(const SItem *word, s_bool nucleusAssigned, s_er
 	/* NO ELSE because if no accent is set, then no accent is needed to be setted
 	 * */
 
+	/*Now we iterate on the syllables of the word, to set the accent only on the
+	 * stressed one and set 0 on the other.
+	 * */
+	const char* stressed;
+	accent= SItemGetString(tokenItem, "accent", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+			  "setProsodyPosition",
+			  "Call to \"SItemGetString\" failed"))
+		return FALSE;
+
+	SItem *syll = SItemPathToItem(word, "R:SylStructure.daughter.R:Syllable", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+			  "setProsodyPosition",
+			  "Call to \"SItemPathToItem\" failed"))
+		return FALSE;
+
+	SItem *syllEnd = SItemPathToItem(word, "n.R:SylStructure.daughter.R:Syllable", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+			  "setProsodyPosition",
+			  "Call to \"SItemPathToItem\" failed"))
+		return FALSE;
+
+	while (syll != syllEnd)
+	{
+		stressed = SItemGetString(syll, "stress", error);
+		if (S_CHK_ERR(error, S_CONTERR,
+			  "setProsodyPosition",
+			  "Call to \"SItemGetString\" failed"))
+		return FALSE;
+
+		if(s_strcmp( stressed, "primary", error) == 0 && s_strcmp( accent, "", error) != 0 )
+			SItemSetString(syll, "accent", accent, error);
+
+		syll = SItemNext (syll, error);
+	}
+
 	return nucleusAssigned;
 
 }

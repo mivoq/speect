@@ -50,7 +50,68 @@
 /*                                                                                  */
 /************************************************************************************/
 
-#define MAX_PHONE_NAME_LENGTH 8
+static char* _s_escape_tobi_string (char* string, s_erc *error)
+{
+	char * result = NULL;
+	char tmp[6];
+	int i = 0;
+
+	if (string == NULL)
+		return NULL;
+
+	//Search for '*' and replace it with 'st'
+	//and for '%' and replace it with 'pc'
+
+	while (string[i] != '\0')
+	{
+
+
+		switch (string[i])
+		{
+			case '*':
+				s_sappend (&result, "st", error);
+				if (S_CHK_ERR(error, S_CONTERR,
+						  "_s_escape_tobi_string",
+						  "Call to \"s_sappend\" failed"))
+					break;
+
+				break;
+
+			case '%':
+				s_sappend (&result, "pc", error);
+				if (S_CHK_ERR(error, S_CONTERR,
+						  "_s_escape_tobi_string",
+						  "Call to \"s_sappend\" failed"))
+					break;
+
+				break;
+
+			default:
+				s_strncpy (tmp, string +i, 1, error);
+				if (S_CHK_ERR(error, S_CONTERR,
+						  "_s_escape_tobi_string",
+						  "Call to \"s_strncpy\" failed"))
+					break;
+
+				i += s_width(tmp, error) - 1;
+				if (S_CHK_ERR(error, S_CONTERR,
+						  "_s_escape_tobi_string",
+						  "Call to \"s_width\" failed"))
+					break;
+
+				s_sappend (&result, tmp, error);
+				if (S_CHK_ERR(error, S_CONTERR,
+						  "_s_escape_tobi_string",
+						  "Call to \"s_sappend\" failed"))
+					break;
+
+				break;
+		}
+		i++;
+	}
+	return result;
+}
+
 
 /**
  * @hideinitializer
@@ -126,6 +187,8 @@ static int EXTRACTFEATURE(SHTSLabelsGeneratorItFeatProc *self, const SHTSLabelsD
 						      "EXTRACTFEATURE",
 						      "Call to \"s_asprintf\" failed"))
 						break;
+
+					tmp = _s_escape_tobi_string (tmp, error);
 
 				}
 			}

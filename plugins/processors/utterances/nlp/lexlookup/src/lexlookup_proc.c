@@ -47,7 +47,7 @@
 #include "g2p.h"
 #include "lexlookup_proc.h"
 #include "hrg/processors/featprocessor.h"
-
+#include "phoneset.h"
 
 /************************************************************************************/
 /*                                                                                  */
@@ -249,7 +249,7 @@ static void Dispose(void *obj, s_erc *error)
 
 static void s_compute_stresses ( SFeatProcessor* proc, SItem* word, s_erc *error )
 {
-	SItem *syllable = SItemPathToItem (word, "R:SylStructure.daughter", error);
+	const SItem *syllable = SItemPathToItem (word, "R:SylStructure.daughter", error);
 
 	while (syllable != NULL)
 	{
@@ -278,6 +278,131 @@ static void s_compute_stresses ( SFeatProcessor* proc, SItem* word, s_erc *error
 			return;
 	}
 
+
+}
+
+static void s_compute_phonetic_features (SItem* word, s_erc *error )
+{
+	SItem *syllable;
+	SItem * phone;
+	SObject* result;
+	char* position_in_syllable_string = NULL;
+
+	/* Extract Phoneset from Voice*/
+	const SVoice* voice = SItemVoice (word, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "s_compute_phonetic_features",
+				  "Call to \"SItemGetVoice\" failed"))
+		return;
+
+	const SPhoneset* phoneset = (SPhoneset*)SVoiceGetData(voice, "phoneset", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "s_compute_phonetic_features",
+				  "Call to \"SVoiceGetData\" failed"))
+		return;
+
+	syllable = SItemPathToItem (word, "R:SylStructure.daughter", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "s_compute_phonetic_features",
+				  "Call to \"SItemPathToItem\" failed"))
+		return;
+	while (syllable != NULL)
+	{
+		phone = SItemDaughter(syllable, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+			      "s_compute_phonetic_features",
+			      "Call to \"SItemDaughter\" failed"))
+			return;
+
+		s_bool nucleusFound = FALSE;
+		while (phone != NULL)
+		{
+			const char* phone_value = SItemGetName(phone, error);
+			if (S_CHK_ERR(error, S_CONTERR,
+				      "s_compute_phonetic_features",
+				      "Call to \"SItemGetName\" failed"))
+				return;
+			s_bool isVowel = S_PHONESET_CALL(phoneset, phone_has_feature)
+				(phoneset,
+				 phone_value,
+				 "vowel",
+				 error);
+			if (S_CHK_ERR(error, S_CONTERR,
+				      "s_compute_phonetic_features",
+				      "Call to \"phone_has_feature\" failed"))
+				return;
+
+			if( isVowel )
+			{
+				nucleusFound = TRUE;
+				position_in_syllable_string = "nucleus";
+			}
+			else
+			{
+				if( nucleusFound == TRUE )
+					position_in_syllable_string = "coda";
+				else
+					position_in_syllable_string = "onset";
+			}
+
+			SItemSetString ( phone, "syllablepart", position_in_syllable_string, error );
+			if (S_CHK_ERR(error, S_CONTERR,
+						  "s_compute_phonetic_features",
+						  "Call to \"SItemSetString\" failed"))
+				return;
+
+			s_bool hasLong = S_PHONESET_CALL(phoneset, phone_has_feature)
+				(phoneset,
+				 phone_value,
+				 "duration_long",
+				 error);
+			if (S_CHK_ERR(error, S_CONTERR,
+				      "s_compute_phonetic_features",
+				      "Call to \"phone_has_feature\" failed"))
+				return;
+
+			s_bool hasShort = S_PHONESET_CALL(phoneset, phone_has_feature)
+				(phoneset,
+				 phone_value,
+				 "duration_short",
+				 error);
+			if (S_CHK_ERR(error, S_CONTERR,
+				      "s_compute_phonetic_features",
+				      "Call to \"phone_has_feature\" failed"))
+				return;
+
+			const char * feat = NULL;
+			if( hasLong )
+			{
+				feat = "+";
+			}
+			else if( hasShort )
+			{
+				feat = "-";
+			}
+
+			if(feat != NULL)
+			{
+				SItemSetString ( phone, "duration", feat, error );
+				if (S_CHK_ERR(error, S_CONTERR,
+					      "s_compute_phonetic_features",
+					      "Call to \"SItemSetString\" failed"))
+					return;
+			}
+
+			phone = SItemNext ( phone, error);
+			if (S_CHK_ERR(error, S_CONTERR,
+				      "s_compute_phonetic_features",
+				      "Call to \"SItemNext\" failed"))
+				return;
+		}
+
+		syllable = SItemNext (syllable, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+			      "s_compute_phonetic_features",
+			      "Call to \"SItemNext\" failed"))
+			return;
+	}
 
 }
 
@@ -722,6 +847,12 @@ continue_cycle:
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "Run",
 					  "Call to \"s_compute_stresses\" failed"))
+			goto quit_error;
+
+		s_compute_phonetic_features(wordItem, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "Run",
+					  "Call to \"s_compute_phonetic_features\" failed"))
 			goto quit_error;
 
 		wordItem = SItemNext(wordItem, error);

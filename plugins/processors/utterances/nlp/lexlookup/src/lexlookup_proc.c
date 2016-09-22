@@ -200,6 +200,25 @@ static void Destroy(void *obj, s_erc *error)
 				  "Call to \"SMapObjectUnlink\" failed"))
 		return;
 
+	/* get the syllabification function */
+	tmp = SMapGetObjectDef(self->features, "_syll_func", NULL, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "Destroy",
+				  "Call to \"SMapGetObjectDef\" failed"))
+		return;
+
+	if (tmp != NULL)
+	{
+		SMapObjectDelete(self->features, "_syll_func", error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "Destroy",
+					  "Call to \"SMapObjectDelete\" failed"))
+			return;
+	}
+
+	/* delete the plug-in */
+	S_DELETE(sylPlugin, "Destroy", error);
+
 	/* check if a stress plug-in is defined as a feature */
 	tmp = SMapGetObjectDef(self->features, "_syll_stress_plugin", NULL, error);
 	if (S_CHK_ERR(error, S_CONTERR,
@@ -216,22 +235,6 @@ static void Destroy(void *obj, s_erc *error)
 				  "Destroy",
 				  "Call to \"SMapObjectUnlink\" failed"))
 		return;
-
-	/* get the syllabification function */
-	tmp = SMapGetObjectDef(self->features, "_syll_func", NULL, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "Destroy",
-				  "Call to \"SMapGetObjectDef\" failed"))
-		return;
-
-	if (tmp != NULL)
-	{
-		SMapObjectDelete(self->features, "_syll_func", error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "Destroy",
-					  "Call to \"SMapObjectDelete\" failed"))
-			return;
-	}
 
 	/* delete the plug-in */
 	S_DELETE(sylPlugin, "Destroy", error);

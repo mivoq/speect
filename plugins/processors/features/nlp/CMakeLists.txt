@@ -65,9 +65,4 @@ add_subdirectory(phrase_type)
 add_subdirectory(utt_num_syls)
 add_subdirectory(utt_num_words)
 add_subdirectory(utt_num_phrases)
-
-
-if(HAVE_HTS) # set in speect/plugins/cmake/pluginOptions.cmake
-  add_subdirectory(hts_labels)
-endif(HAVE_HTS)
-
+add_subdirectory(hts_labels)

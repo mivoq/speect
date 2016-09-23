@@ -49,7 +49,7 @@
 /*                                                                                  */
 /************************************************************************************/
 
-#include "Windows.h"
+#include "windows.h"
 #include "include/common.h"
 #include "base/errdbg/errdbg.h"
 
@@ -97,4 +97,3 @@ S_END_C_DECLS
  */
 
 #endif /* _SPCT_STRING_WIN32_STRINGS_H__ */
-

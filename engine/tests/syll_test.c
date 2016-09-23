@@ -47,6 +47,76 @@
 #include "syllabification.h"
 
 
+ssize_t readdelim(char **lineptr, size_t  *n, int delim, FILE *stream)
+{
+	size_t tmpn;
+	char *tmplineptr;
+	ssize_t i;
+	int c;
+	if(feof(stream)) {
+		return -1;
+	}
+
+	if(*n<=0) {
+		tmpn = 32;
+		tmplineptr = (char*) realloc(*lineptr, tmpn);
+		if(tmplineptr!=NULL) {
+			*n = tmpn;
+			*lineptr = tmplineptr;
+		} else {
+			return -1;
+		}
+	}
+	if (!*lineptr) {
+		*lineptr = (char*) malloc(*n);
+		if(*lineptr == NULL) {
+			return -1;
+		}
+	}
+
+	i = 0;
+	while((c=getc(stream))!=EOF)
+	{
+		(*lineptr)[i]=(unsigned char)c;
+		i++;
+		if(c == delim) {
+			break;
+		}
+		if(i >= (ssize_t) (*n))
+		{
+			tmpn = (*n) *2;
+			tmplineptr = (char*) realloc(*lineptr, tmpn);
+			if(tmplineptr!=NULL) {
+				*n = tmpn;
+				*lineptr = tmplineptr;
+			} else {
+				return -1;
+			}
+		}
+	}
+	if(ferror(stream)) {
+		return -1;
+	}
+	if(i >= (ssize_t) (*n))
+	{
+		tmpn = (*n) +1;
+		tmplineptr = (char*) realloc(*lineptr, tmpn);
+		if(tmplineptr!=NULL) {
+			*n = tmpn;
+			*lineptr = tmplineptr;
+		} else {
+			return -1;
+		}
+	}
+	(*lineptr)[i]= '\0';
+	return i;
+}
+
+ssize_t readline(char **lineptr, size_t  *n, FILE *stream) {
+	return readdelim(lineptr, n, '\n', stream);
+}
+
+
 /************************************************************************************/
 /*                                                                                  */
 /* Macros                                                                           */
@@ -212,7 +282,7 @@ int main(int argc, char **argv)
 	SPCT_PRINT_AND_WAIT("everything ready to perform syllabification, press ENTER\n");
 	char inter_buffer[MAX_PHONEME_LENGTH+1] = {0};
 
-	buffer_length = getline(&buffer, &buffer_size, stdin);
+	buffer_length = readline(&buffer, &buffer_size, stdin);
 	while (buffer_length != -1)
 	{
 		phones = S_LIST(S_NEW(SListList, &error));
@@ -340,7 +410,7 @@ int main(int argc, char **argv)
 		if (phones != NULL)
 			S_DELETE(phones, "main", &error);
 		phones = NULL;
-		buffer_length = getline(&buffer, &buffer_size, stdin);
+		buffer_length = readline(&buffer, &buffer_size, stdin);
 	}
 
 quit:

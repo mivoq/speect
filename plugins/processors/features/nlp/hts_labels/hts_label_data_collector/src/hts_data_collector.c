@@ -1004,6 +1004,24 @@ static void create_syl_context(SELFPARAMETERTYPE* self, const SItem* item, s_erc
 
 	}
 
+	/* Position type of syllable in the word*/
+	dFeat = SItemPathToFeatProc(item, "R:SylStructure.parent.R:Syllable.syllable_pos_type", error);
+	S_CHK_ERR(error, S_CONTERR,
+				  "create_syl_context",
+				  "Call to \"SItemPathToFeatProc\" failed");
+
+	if (dFeat != NULL)
+	{
+		SHTSLabelDataCollectorSetFeature(self, "syllable.position.type", dFeat, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_syl_context",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			goto syl_context_cleanup;
+
+	}
+
+return;
+
 syl_context_cleanup:
 	if (dFeat != NULL)
 		S_DELETE(dFeat, "create_syl_context", error);

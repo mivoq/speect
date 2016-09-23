@@ -15,6 +15,8 @@
 #------------------------------------------------------------------------------------#
 
 find_package(LibXml2)
+
+if(LIBXML2_FOUND)
 include_directories(${LIBXML2_INCLUDE_DIR})
 add_definitions(${LIBXML2_DEFINITIONS})
 
@@ -59,5 +61,9 @@ speect_plugin_create(${LIBXML2_LIBRARIES})
 #                              SWIG wrappers                                         #
 #------------------------------------------------------------------------------------#
 
-add_subdirectory(swig)
+# Speect SWIG interface
+if(NOT NO_SWIG)
+  add_subdirectory(swig)
+endif(NOT NO_SWIG)
 
+endif(LIBXML2_FOUND)

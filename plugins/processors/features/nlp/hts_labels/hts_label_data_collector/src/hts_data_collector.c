@@ -846,6 +846,12 @@ static void create_syl_context(SELFPARAMETERTYPE* self, const SItem* item, s_erc
 					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
 			goto syl_context_cleanup;
 
+		SHTSLabelDataCollectorSetFeature(self, "position.in.syl", dFeat, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_syl_context",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			goto syl_context_cleanup;
+
 	}
 
 	/* pos from end */

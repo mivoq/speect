@@ -40,7 +40,7 @@
 /*                                                                                  */
 /************************************************************************************/
 
-#include <Windows.h>
+#include <windows.h>
 #include "base/strings/strings.h"
 #include "base/utils/platform/win32/win32_envvar.h"
 
@@ -126,4 +126,3 @@ S_LOCAL char *s_win32_getenv_plugin_path(s_erc *error)
 
 	return tmp;
 }
-

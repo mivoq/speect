@@ -72,4 +72,7 @@ speect_plugin_create(${SPCT_PYTHON_NATIVE_LIBRARY_TARGET} ${PYTHON_LIBRARIES})
 #                              SWIG wrappers                                         #
 #------------------------------------------------------------------------------------#
 
-add_subdirectory(swig)
+# Speect SWIG interface
+if(NOT NO_SWIG)
+  add_subdirectory(swig)
+endif(NOT NO_SWIG)

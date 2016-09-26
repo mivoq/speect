@@ -620,6 +620,7 @@ static SObject* compute_stress (const SItem *item, const char* path, s_erc *erro
 static void create_phone_context(SELFPARAMETERTYPE *self, const SItem *item, s_erc *error)
 {
 	const SObject *featPath;
+	int segStart=0, segTot=0;
 
 	S_CLR_ERR(error);
 
@@ -768,6 +769,61 @@ static void create_phone_context(SELFPARAMETERTYPE *self, const SItem *item, s_e
 			return;
 	}
 
+	/* Segments from the word start */
+	featPath = SItemPathToFeatProc(item, "segment_pos_word", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "create_phone_context",
+				  "Call to \"SItemPathToFeatProc\" failed"))
+		return;
+
+	if (featPath != NULL)
+	{
+		SHTSLabelDataCollectorSetFeature(self, "phones.from.word.start", featPath, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_phone_context",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			return;
+
+		segStart = SObjectGetInt (featPath, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_phone_context",
+					  "Call to \"SObjectGetInt\" failed"))
+			return;
+	}
+
+	/* Segments from the word end*/
+	featPath = SItemPathToFeatProc(item, "R:SylStructure.parent.parent.R:Word.word_num_phones", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "create_phone_context",
+				  "Call to \"SItemPathToFeatProc\" failed"))
+		return;
+
+	if (featPath != NULL)
+	{
+		segTot = SObjectGetInt (featPath, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_phone_context",
+					  "Call to \"SObjectGetInt\" failed"))
+			return;
+	}
+
+	if (segTot != 0)
+	{
+		featPath = SObjectSetInt ( segTot - segStart - 1, error );
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_phone_context",
+					  "Call to \"SObjectSetInt\" failed"))
+			return;
+
+		SHTSLabelDataCollectorSetFeature(self, "phones.to.word.end", featPath, error);
+			if (S_CHK_ERR(error, S_CONTERR,
+						  "create_phone_context",
+						  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+				return;
+	}
+
+
+	/* Phone next_is_pause */
 	SItem* segment = SItemNext (item, error );
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "create_phone_context",

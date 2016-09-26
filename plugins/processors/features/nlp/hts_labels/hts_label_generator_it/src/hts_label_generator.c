@@ -162,11 +162,12 @@ static int EXTRACTFEATURE(SHTSLabelsGeneratorItFeatProc *self, const SHTSLabelsD
 						      "Run",
 						      "Execution of \"s_strstr\" failed"))
 						break;
-					s_asprintf(&tmp, error, value, (feature == NULL) ? 0 : SObjectGetInt(feature, &error2));
-					if (S_CHK_ERR(&error2, S_CONTERR,
+					int itmp = (feature == NULL) ? 0 : SObjectGetInt(feature, error);
+					if (S_CHK_ERR(error, S_CONTERR,
 						      "EXTRACTFEATURE",
-						      "Call to \"unboxing function\" failed"))
+						      "Call to \"SObjectGetInt\" failed"))
 						break;
+					s_asprintf(&tmp, error, value, (itmp > 19)? 19 : itmp);
 					if (S_CHK_ERR(error, S_CONTERR,
 						      "EXTRACTFEATURE",
 						      "Call to \"s_asprintf\" failed"))
@@ -181,7 +182,7 @@ static int EXTRACTFEATURE(SHTSLabelsGeneratorItFeatProc *self, const SHTSLabelsD
 					s_asprintf(&tmp, error, value, (feature == NULL) ? "0" : SObjectGetString(feature, &error2));
 					if (S_CHK_ERR(&error2, S_CONTERR,
 						      "EXTRACTFEATURE",
-						      "Call to \"unboxing function\" failed"))
+						      "Call to \"SObjectGetString\" failed"))
 						break;
 					if (S_CHK_ERR(error, S_CONTERR,
 						      "EXTRACTFEATURE",

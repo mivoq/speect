@@ -1076,6 +1076,37 @@ static void create_syl_context(SELFPARAMETERTYPE* self, const SItem* item, s_erc
 
 	}
 
+	dFeat = SItemPathToFeatProc(item, "R:SylStructure.parent.R:Syllable.syllable_acc_from_phrase_start", error);
+	S_CHK_ERR(error, S_CONTERR,
+				  "create_syl_context",
+				  "Call to \"SItemPathToFeatProc\" failed");
+
+	if (dFeat != NULL)
+	{
+		SHTSLabelDataCollectorSetFeature(self, "syllable.acc.from.phrase.start", dFeat, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_syl_context",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			goto syl_context_cleanup;
+
+	}
+
+	dFeat = SItemPathToFeatProc(item, "R:SylStructure.parent.R:Syllable.syllable_acc_to_phrase_end", error);
+	S_CHK_ERR(error, S_CONTERR,
+				  "create_syl_context",
+				  "Call to \"SItemPathToFeatProc\" failed");
+
+	if (dFeat != NULL)
+	{
+		SHTSLabelDataCollectorSetFeature(self, "syllable.acc.to.phrase.end", dFeat, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_syl_context",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			goto syl_context_cleanup;
+
+	}
+
+
 return;
 
 syl_context_cleanup:
@@ -1129,6 +1160,37 @@ static void create_syl_context_pause(SELFPARAMETERTYPE* self, const SItem* item,
 	}
 
 	return;
+
+	dFeat = SItemPathToFeatProc(item, "R:SylStructure.parent.R:Syllable.syllable_acc_from_phrase_start", error);
+	S_CHK_ERR(error, S_CONTERR,
+				  "create_syl_context_pause",
+				  "Call to \"SItemPathToFeatProc\" failed");
+
+	if (dFeat != NULL)
+	{
+		SHTSLabelDataCollectorSetFeature(self, "syllable.acc.from.phrase.start", dFeat, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_syl_context_pause",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			goto syl_context_pause_cleanup;
+
+	}
+
+	dFeat = SItemPathToFeatProc(item, "R:SylStructure.parent.R:Syllable.syllable_acc_to_phrase_end", error);
+	S_CHK_ERR(error, S_CONTERR,
+				  "create_syl_context_pause",
+				  "Call to \"SItemPathToFeatProc\" failed");
+
+	if (dFeat != NULL)
+	{
+		SHTSLabelDataCollectorSetFeature(self, "syllable.acc.to.phrase.end", dFeat, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_syl_context_pause",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			goto syl_context_pause_cleanup;
+
+	}
+
 
 syl_context_pause_cleanup:
 	if (dFeat != NULL)

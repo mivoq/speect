@@ -23,7 +23,7 @@ speect_plugin_definition(Lexlookup_UttProc "SLexlookupUttProc" 1 0 0)
 
 set(description "An Utterance Processor class that does the lexical lookup (addendum, lexicon, g2p) of the words in the Word relation. Creates SylStructure, Syllable, and Phone relations")
 
-# Minimum required Speect Engine version 
+# Minimum required Speect Engine version
 set(major_min 1)
 set(minor_min 0)
 
@@ -38,7 +38,7 @@ include(lexicon)
 include(addendum)
 include(g2p)
 include(syllabification)
-
+include(phoneset)
 
 #------------------------------------------------------------------------------------#
 #                               Source files                                         #
@@ -53,4 +53,3 @@ include(sources)
 #------------------------------------------------------------------------------------#
 
 speect_plugin_create()
-

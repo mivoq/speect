@@ -16,3 +16,4 @@
 
 add_subdirectory(syls_acc_from_start)
 add_subdirectory(syls_acc_to_end)
+add_subdirectory(syls_to_next_acc)

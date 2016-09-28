@@ -1440,6 +1440,22 @@ static void create_word_context(SELFPARAMETERTYPE *self, const SItem *item, s_er
 
 	}
 
+	/* Number of words from the beginning of the utterance */
+	dFeat = SItemPathToFeatProc(item, "R:SylStructure.parent.parent.R:Word.words_from_utterance_start", error);
+	S_CHK_ERR(error, S_CONTERR,
+				  "create_word_context",
+				  "Call to \"SItemPathToFeatProc\" failed");
+
+	if (dFeat != NULL)
+	{
+		SHTSLabelDataCollectorSetFeature(self, "words.from.utterance.start", dFeat, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_word_context",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			goto word_context_cleanup;
+
+	}
+
 	return;
 
 word_context_cleanup:
@@ -1533,6 +1549,22 @@ static void create_word_context_pause(SELFPARAMETERTYPE *self, const SItem *item
 	if (dFeat != NULL)
 	{
 		SHTSLabelDataCollectorSetFeature(self, "tobi.accent", dFeat, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_word_context_pause",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			goto word_context_pause_cleanup;
+
+	}
+
+	/* Number of words from the beginning of the utterance */
+	dFeat = SItemPathToFeatProc(item, "R:SylStructure.parent.parent.R:Word.words_from_utterance_start", error);
+	S_CHK_ERR(error, S_CONTERR,
+				  "create_word_context_pause",
+				  "Call to \"SItemPathToFeatProc\" failed");
+
+	if (dFeat != NULL)
+	{
+		SHTSLabelDataCollectorSetFeature(self, "words.from.utterance.start", dFeat, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "create_word_context_pause",
 					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))

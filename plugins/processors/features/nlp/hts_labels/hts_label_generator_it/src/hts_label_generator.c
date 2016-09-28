@@ -53,7 +53,7 @@
 static char* _s_escape_tobi_string (char* string, s_erc *error)
 {
 	char * result = NULL;
-	char tmp[6];
+	char tmp[7];
 	int i = 0;
 
 	if (string == NULL)

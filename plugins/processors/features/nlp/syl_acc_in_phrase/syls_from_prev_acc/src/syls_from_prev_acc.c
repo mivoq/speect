@@ -103,7 +103,7 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 	if (item == NULL)
 		goto quit_error;
 
-	SItem *iteratorSyl =  SItemPathToItem (item,  "R:Syllable.p", error );
+	const SItem *iteratorSyl =  SItemPathToItem (item,  "R:Syllable.p", error );
 	if (S_CHK_ERR(error, S_CONTERR,
 			  "Run",
 			  "Call to \"SItemPathToItem\" failed"))

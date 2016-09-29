@@ -107,7 +107,7 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 	itrItem = item;
 	count = -1;
 
-	SItem* itrPhrase = SItemPathToItem(item, "R:Phrase.parent", error);
+	const SItem* itrPhrase = SItemPathToItem(item, "R:Phrase.parent", error);
 
 	while(itrPhrase != NULL)
 	{

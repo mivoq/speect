@@ -200,6 +200,7 @@ static SFeatProcessorCBClass FeatProcessorCBClass =
 			NULL,            /* copy    */
 		},
 		/* SFeatProcessorClass */
+		NULL,                /* initialize */
 		Run,                 /* run     */
 	},
 	SetCallback              /* set_callback */

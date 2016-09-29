@@ -81,13 +81,13 @@ S_LOCAL void _s_serialized_htslabels_utt_reg(s_erc *error)
 	S_CLR_ERR(error);
 	s_class_reg(S_OBJECTCLASS(&UttHTSLabelsExportClass), error);
 	if (S_CHK_ERR(error, S_CONTERR,
-			  "_s_serialized_htslabels_utt_reg",
-		          "Failed to register SUttHTSLabelsExportClass"))
+		      "_s_serialized_htslabels_utt_reg",
+		      "Failed to register SUttHTSLabelsExportClass"))
 		return;
 	SSerializedFileRegister(&UttHTSLabelsExportClass, error);
 	if (S_CHK_ERR(error, S_CONTERR,
-			  "_s_serialized_htslabels_utt_reg",
-		          "Failed to add serialized file class SUttHTSLabelsExportClass"))
+		      "_s_serialized_htslabels_utt_reg",
+		      "Failed to add serialized file class SUttHTSLabelsExportClass"))
 	{
 		s_erc local_err = S_SUCCESS;
 		s_class_free(S_OBJECTCLASS(&UttHTSLabelsExportClass), &local_err);
@@ -105,17 +105,17 @@ S_LOCAL void _s_serialized_htslabels_utt_free(s_erc *error)
 
 	SSerializedFileFree(&UttHTSLabelsExportClass, &local_err);
 	S_CHK_ERR(&local_err, S_CONTERR,
-			  "_s_serialized_htslabels_utt_free",
-			  "Failed to remove serialized file class SUttHTSLabelsExportClass");
+		  "_s_serialized_htslabels_utt_free",
+		  "Failed to remove serialized file class SUttHTSLabelsExportClass");
 
 	s_class_free(S_OBJECTCLASS(&UttHTSLabelsExportClass), error);
 	S_CHK_ERR(error, S_CONTERR,
-			  "_s_serialized_htslabels_utt_free",
-			  "Failed to free SUttHTSLabelsExportClass");
+		  "_s_serialized_htslabels_utt_free",
+		  "Failed to free SUttHTSLabelsExportClass");
 
 	if ((local_err != S_SUCCESS)
-		&& (error != NULL)
-		&& (*error == S_SUCCESS))
+	    && (error != NULL)
+	    && (*error == S_SUCCESS))
 		*error = local_err;
 }
 
@@ -136,9 +136,9 @@ static void Dispose(void *obj, s_erc *error)
 static SObject *Load(const char *path, s_erc *error)
 {
 	S_CTX_ERR(error, S_FAILURE,
-			  "Load",
-			  "Failed to load data from file '%s', load method not implemented",
-			  path);
+		  "Load",
+		  "Failed to load data from file '%s', load method not implemented",
+		  path);
 
 	return NULL;
 
@@ -186,8 +186,8 @@ static void Save(const SObject *object, const char *path, s_erc *error)
 	S_CLR_ERR(error);
 	ds = SFilesourceOpenFile(path, "wt", error);
 	if (S_CHK_ERR(error, S_CONTERR,
-				  "Save",
-				  "Call to \"SFilesourceOpenFile\" failed"))
+		      "Save",
+		      "Call to \"SFilesourceOpenFile\" failed"))
 		return;
 
 	out = xmlOutputBufferCreateIO(_ds_write,
@@ -244,33 +244,33 @@ static void Save(const SObject *object, const char *path, s_erc *error)
 			  "Call to \"xmlTextWriterWriteAttribute\" failed");
 		goto s_write_utt_exit;
 	}
-	
+
 
 	// print labels
 	/* get to the first syllable of the current word */
 	const SItem* itrSegments = SRelationHead(SUtteranceGetRelation(utt, "Segment", error), error);
 	if (S_CHK_ERR(error, S_CONTERR,
-		"Save",
-	       "Call to \"SItemPathToItem\" failed"))
+		      "Save",
+		      "Call to \"SItemPathToItem\" failed"))
  		goto s_write_utt_exit;
 	while (itrSegments != NULL)
 	{
 		/* get segment content */
 		const char* label = SItemGetString(itrSegments, "hts_label", error);
 		if (S_CHK_ERR(error, S_CONTERR,
-			"Save",
-			"Call to \"SItemGetName\" failed"))
+			      "Save",
+			      "Call to \"SItemGetName\" failed"))
 			goto s_write_utt_exit;
-			
-			/* get next segment */
-			itrSegments = SItemNext(itrSegments, error);
-			if (S_CHK_ERR(error, S_CONTERR,
-				"Save",
-				"Call to \"SItemNext\" failed"))
-				goto s_write_utt_exit;
-				
-				xmlTextWriterWriteElement(writer, BAD_CAST "label", BAD_CAST label);
-				
+
+		/* get next segment */
+		itrSegments = SItemNext(itrSegments, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+			      "Save",
+			      "Call to \"SItemNext\" failed"))
+			goto s_write_utt_exit;
+
+		xmlTextWriterWriteElement(writer, BAD_CAST "label", BAD_CAST label);
+
 	}
 
 	/* Close the tag xml */

@@ -412,7 +412,7 @@ static int parse_arguments (int *argc, char **argv, struct Config *config) {
 
 	}
 
-	if ((config->voicefile == NULL)) {
+	if (config->voicefile == NULL) {
 		fprintf(stderr, "%s\n", "Arguments are not optional, see usage");
 		usage(stderr);
 		exit(1);

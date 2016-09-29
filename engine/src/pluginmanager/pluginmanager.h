@@ -33,7 +33,7 @@
 /*                                                                                  */
 /************************************************************************************/
 
-#ifndef _SPCT_PLUGINMANAGER__H__
+#ifndef _SPCT_PLUGINMANAGER_H__
 #define _SPCT_PLUGINMANAGER_H__
 
 

@@ -102,19 +102,19 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 	if( item == NULL )
 		goto quit_error;
 
-	SItem *phone = SItemPathToItem (item, "R:SylStructure", error);;
+	const SItem *phone = SItemPathToItem (item, "R:SylStructure", error);;
 	if (S_CHK_ERR(error, S_CONTERR,
 			  "Run",
 			  "Call to \"SItemPathToItem\" failed"))
 		goto quit_error;
 
-	SItem *sylStart = SItemPathToItem (item, "R:SylStructure.parent.p", error);
+	const SItem *sylStart = SItemPathToItem (item, "R:SylStructure.parent.p", error);
 	if (S_CHK_ERR(error, S_CONTERR,
 			  "Run",
 			  "Call to \"SItemPathToItem\" failed"))
 		goto quit_error;
 
-	SItem *sylEnd = SItemPathToItem (item, "R:SylStructure.parent.parent.p.daughter", error);
+	const SItem *sylEnd = SItemPathToItem (item, "R:SylStructure.parent.parent.p.daughter", error);
 	if (S_CHK_ERR(error, S_CONTERR,
 			  "Run",
 			  "Call to \"SItemPathToItem\" failed"))

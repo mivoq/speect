@@ -93,7 +93,7 @@ static void Dispose(void *obj, s_erc *error)
 	SObjectDecRef(obj);
 }
 
-static void Initialize(SFeatProcessor *self, SMap* features, s_erc *error)
+static void Initialize(SFeatProcessor *self, const SMap* features, s_erc *error)
 {
 	S_CLR_ERR(error);
 
@@ -247,7 +247,7 @@ static char* filterPosTag(const char *posTagStr, s_erc *error)
  * 	    2) if the first part decides for "interrog" type, there should be other controls
  * 	       to establish the sentence's complete type
  * */
-static char* setSentenceType(SItem *phrase, SMap *prosSymbols, s_erc *error)
+static char* setSentenceType(const SItem *phrase, SMap *prosSymbols, s_erc *error)
 {
 	S_CLR_ERR(error);
 
@@ -259,13 +259,13 @@ static char* setSentenceType(SItem *phrase, SMap *prosSymbols, s_erc *error)
 	if (S_CHK_ERR(error, S_CONTERR,
 		      "setSentenceType",
 		      "Call to \"SItemPathToItem\" failed"))
-		return "";
+		return NULL;
 
 	SItem *wordAsToken = SItemAs(wordFromCurrentPhrase, "Token", error);
 	if (S_CHK_ERR(error, S_CONTERR,
 		      "setSentenceType",
 		      "Call to \"SItemAs\" failed"))
-		return "";
+		return NULL;
 
 	SItem *tokenItem = SItemParent(wordAsToken, error);
 	SItem *firstTokenItem = tokenItem;
@@ -274,7 +274,7 @@ static char* setSentenceType(SItem *phrase, SMap *prosSymbols, s_erc *error)
 	if (S_CHK_ERR(error, S_CONTERR,
 		      "setSentenceType",
 		      "Call to \"SItemFeatureIsPresent\" failed"))
-		return "";
+		return NULL;
 
 	s_bool isFinalPunct = FALSE;
 
@@ -284,7 +284,7 @@ static char* setSentenceType(SItem *phrase, SMap *prosSymbols, s_erc *error)
 		if (S_CHK_ERR(error, S_CONTERR,
 			      "setSentenceType",
 			      "Call to \"SItemFeatureIsPresent\" failed"))
-			return "";
+			return NULL;
 
 		if (isPunct)
 		{
@@ -292,7 +292,7 @@ static char* setSentenceType(SItem *phrase, SMap *prosSymbols, s_erc *error)
 			if (S_CHK_ERR(error, S_CONTERR,
 				      "setSentenceType",
 				      "Call to \"SItemGetName\" failed"))
-				return "";
+				return NULL;
 
 			if (s_strcmp(punctStr, ".", error) == 0)
 			{
@@ -367,7 +367,7 @@ static char* setSentenceType(SItem *phrase, SMap *prosSymbols, s_erc *error)
 		if (S_CHK_ERR(error, S_CONTERR,
 			      "setSentenceType",
 			      "Call to \"SItemNext\" failed"))
-			return "";
+			return NULL;
 	}
 	return result;
 }
@@ -390,7 +390,7 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 				  "Call to \"SetSentenceType\" failed"))
 		goto quit_error;
 
-	if( type == "" )
+	if( type == NULL )
 		goto quit_error;
 
 	extractedFeat = SObjectSetString( type, error);

@@ -1,0 +1,14 @@
+language: c
+sudo: required
+compiler:
+  - gcc
+  - clang
+
+install:
+  - sudo apt-get update
+  - sudo apt-get -y install cmake swig libxml2-dev python-dev python-sphinx doxygen
+script:
+  rm -fr tmp-build && mkdir -p tmp-build && cd tmp-build && cmake .. -DCMAKE_VERBOSE_MAKEFILE=on -DERROR_HANDLING=on -DWANT_TESTS=on -DWANT_EXAMPLES=on -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX:PATH="`pwd`"/install -DCMAKE_C_FLAGS="-Wall -Werror" && make
+branches:
+  only:
+    - master

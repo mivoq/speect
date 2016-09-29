@@ -101,13 +101,13 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 
 	S_CLR_ERR(error);
 
-	SItem *phone = SItemPathToItem (item, "daughter.R:Segment", error);
+	const SItem *phone = SItemPathToItem (item, "daughter.R:Segment", error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Run",
 				  "Call to \"SItemPathToItem\" failed"))
 		goto quit_error;
 
-	SItem *endPhone = SItemPathToItem (item, "n.daughter.R:Segment", error);
+	const SItem *endPhone = SItemPathToItem (item, "n.daughter.R:Segment", error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Run",
 				  "Call to \"SItemPathToItem\" failed"))
@@ -127,7 +127,7 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 
 	/* Extract Phoneset from Voice*/
 
-	SVoice* voice = SItemVoice (item, error);
+	const SVoice* voice = SItemVoice (item, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Run",
 				  "Call to \"SItemGetVoice\" failed"))

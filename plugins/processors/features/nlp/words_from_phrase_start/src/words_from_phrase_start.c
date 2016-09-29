@@ -95,7 +95,6 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 					s_erc *error)
 {
 	SObject *extractedFeat = NULL;
-	const SItem *itemInPhraseRel;
 	const SItem *itrItem;
 	sint32 count;
 

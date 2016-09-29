@@ -77,7 +77,7 @@ static SHunposUttProcClass HunposUttProcClass;
 /************************************************************************************/
 
 static void load_hunpos_data(const SMap *data, SHunposUttProc *hunposProc,
-							 const char *voice_base_path, s_erc *error);
+			     const char *voice_base_path, s_erc *error);
 
 static void clear_hunpos_data(SHunposUttProc *hunposProc, s_erc *error);
 
@@ -94,8 +94,8 @@ S_LOCAL void _s_hunpos_utt_proc_class_reg(s_erc *error)
 	S_CLR_ERR(error);
 	s_class_reg(S_OBJECTCLASS(&HunposUttProcClass), error);
 	S_CHK_ERR(error, S_CONTERR,
-			  "_s_hunpos_utt_proc_class_reg",
-			  "Failed to register SHunposUttProcClass");
+		  "_s_hunpos_utt_proc_class_reg",
+		  "Failed to register SHunposUttProcClass");
 }
 
 
@@ -104,8 +104,8 @@ S_LOCAL void _s_hunpos_utt_proc_class_free(s_erc *error)
 	S_CLR_ERR(error);
 	s_class_free(S_OBJECTCLASS(&HunposUttProcClass), error);
 	S_CHK_ERR(error, S_CONTERR,
-			  "_s_hunpos_utt_proc_class_free",
-			  "Failed to free SHunposUttProcClass");
+		  "_s_hunpos_utt_proc_class_free",
+		  "Failed to free SHunposUttProcClass");
 }
 
 
@@ -117,7 +117,7 @@ S_LOCAL void _s_hunpos_utt_proc_class_free(s_erc *error)
 
 
 static void load_hunpos_data(const SMap *data, SHunposUttProc *hunposProc,
-							 const char *voice_base_path, s_erc *error)
+			     const char *voice_base_path, s_erc *error)
 {
 	const SObject *tmp;
 	const char *mf_data = NULL;
@@ -128,54 +128,54 @@ static void load_hunpos_data(const SMap *data, SHunposUttProc *hunposProc,
 
 	/* max guessed tags */
 	hunposProc->max_guessed_tags = SMapGetIntDef(data, "max guessed tags",
-												 SPCT_DEF_MAX_GUESSED_TAGS, error);
+						     SPCT_DEF_MAX_GUESSED_TAGS, error);
 	if (S_CHK_ERR(error, S_CONTERR,
-				  "load_hunpos_data",
-				  "Call to \"SMapGetIntDef\" failed"))
+		      "load_hunpos_data",
+		      "Call to \"SMapGetIntDef\" failed"))
 		return;
 
 	/* theta */
 	hunposProc->theta = SMapGetIntDef(data, "theta",
-									  SPCT_DEF_THETA, error);
+					  SPCT_DEF_THETA, error);
 	if (S_CHK_ERR(error, S_CONTERR,
-				  "load_hunpos_data",
-				  "Call to \"SMapGetIntDef\" failed"))
+		      "load_hunpos_data",
+		      "Call to \"SMapGetIntDef\" failed"))
 		return;
 
 	/* max tokens */
 	hunposProc->max_tokens_number = SMapGetIntDef(data, "max_tokens_number",
-												 SPCT_DEF_MAX_TOKENS_NUMBER, error);
+						      SPCT_DEF_MAX_TOKENS_NUMBER, error);
 	if (S_CHK_ERR(error, S_CONTERR,
-		"load_hunpos_data",
-	       "Call to \"SMapGetIntDef\" failed"))
+		      "load_hunpos_data",
+		      "Call to \"SMapGetIntDef\" failed"))
 		return;
 
 	/* model file */
 	tmp = SMapGetObjectDef(data, "model file", NULL, error);
 	if (S_CHK_ERR(error, S_CONTERR,
-				  "load_hunpos_data",
-				  "Call to \"SMapGetObjectDef\" failed"))
+		      "load_hunpos_data",
+		      "Call to \"SMapGetObjectDef\" failed"))
 		return;
 
 	if (tmp == NULL)
 	{
 		S_CTX_ERR(error, S_FAILURE,
-				  "load_hunpos_data",
-				  "Failed to find 'model file' hunpos data entry");
+			  "load_hunpos_data",
+			  "Failed to find 'model file' hunpos data entry");
 		return;
 	}
 
 	mf_data = SObjectGetString(tmp, error);
 	if (S_CHK_ERR(error, S_CONTERR,
-				  "load_hunpos_data",
-				  "Call to \"SObjectGetString\" failed"))
+		      "load_hunpos_data",
+		      "Call to \"SObjectGetString\" failed"))
 		return;
 
 	hunposProc->model_file = s_path_combine(voice_base_path, mf_data,
-											error);
+						error);
 	if (S_CHK_ERR(error, S_CONTERR,
-				  "load_hunpos_data",
-				  "Call to \"s_path_combine\" failed"))
+		      "load_hunpos_data",
+		      "Call to \"s_path_combine\" failed"))
 		return;
 }
 
@@ -189,11 +189,11 @@ static void clear_hunpos_data(SHunposUttProc *hunposProc, s_erc *error)
 
 	if (hunposProc->hunpos_instance != NULL)
 		hunpos_tagger_destroy(hunposProc->hunpos_instance, error);
-		hunposProc->hunpos_instance = NULL;
-		if (S_CHK_ERR(error, S_CONTERR,
-				  "clear_hunpos_data",
-				  "Call to \"hunpos_tagger_destroy\" failed"))
-			return;
+	hunposProc->hunpos_instance = NULL;
+	if (S_CHK_ERR(error, S_CONTERR,
+		      "clear_hunpos_data",
+		      "Call to \"hunpos_tagger_destroy\" failed"))
+		return;
 }
 
 
@@ -203,8 +203,8 @@ static const char* read_token(void* data, int n, int* error)
 	SItem** nodeList = data;
 	const char* name =  SItemGetName(nodeList[n], &tmperror);
 	if (S_CHK_ERR(&tmperror, S_CONTERR,
-			"read_token",
-			"Call to \"SItemGetName\" failed"))
+		      "read_token",
+		      "Call to \"SItemGetName\" failed"))
 		*error = 1;
 	return name;
 }
@@ -215,8 +215,8 @@ static void set_tag(void* data, int n, const char * tag, int* error)
 	SItem** nodeList = data;
 	SItemSetString(nodeList[n], "POS", tag, &tmperror);
 	if (S_CHK_ERR(&tmperror, S_CONTERR,
-			"set_tag",
-			"Call to \"SItemSetString\" failed"))
+		      "set_tag",
+		      "Call to \"SItemSetString\" failed"))
 		*error = 1;
 }
 
@@ -249,8 +249,8 @@ static void call_hunpos(const SHunposUttProc *hunposProc, const SItem* relation_
 		/* go grab the first token of this phrase */
 		start_token = SItemPathToItem(relation_head, "R:Phrase.daughter.R:Token.parent", error);
 		if (S_CHK_ERR(error, S_CONTERR,
-			"call_hunpos",
-		"Call to \"SItemPathToItem\" failed"))
+			      "call_hunpos",
+			      "Call to \"SItemPathToItem\" failed"))
 			return;
 	}
 
@@ -272,8 +272,8 @@ static void call_hunpos(const SHunposUttProc *hunposProc, const SItem* relation_
 			/* check if it's a safe cut point */
 			s_bool is_present = SItemFeatureIsPresent(current_token, "IsPunctuation", error);
 			if (S_CHK_ERR(error, S_CONTERR,
-				"call_hunpos",
-				"Call to \"SItemFeatureIsPresent\" failed"))
+				      "call_hunpos",
+				      "Call to \"SItemFeatureIsPresent\" failed"))
 				return;
 			if (is_present)
 			{
@@ -288,8 +288,8 @@ static void call_hunpos(const SHunposUttProc *hunposProc, const SItem* relation_
 
 			current_token = SItemNext(current_token, error);
 			if (S_CHK_ERR(error, S_CONTERR,
-					  "call_hunpos",
-					  "Call to \"SItemNext\" failed"))
+				      "call_hunpos",
+				      "Call to \"SItemNext\" failed"))
 				return;
 
 			/* if we're using phrases, check if the current phrase finished */
@@ -299,8 +299,8 @@ static void call_hunpos(const SHunposUttProc *hunposProc, const SItem* relation_
 				{
 					const SItem* next_token_parent = SItemPathToItem(current_token, "R:Token.daughter.R:Phrase.parent", error);
 					if (S_CHK_ERR(error, S_CONTERR,
-								"call_hunpos",
-								"Call to \"SItemPathToItem\" failed"))
+						      "call_hunpos",
+						      "Call to \"SItemPathToItem\" failed"))
 						return;
 					if (next_token_parent != phrase_start_item)
 					{
@@ -326,8 +326,8 @@ static void call_hunpos(const SHunposUttProc *hunposProc, const SItem* relation_
 			tokens_count = last_safe_cut_count;
 			current_token = SItemNext(last_safe_cut_token, error);
 			if (S_CHK_ERR(error, S_CONTERR,
-					  "call_hunpos",
-					  "Call to \"SItemNext\" failed"))
+				      "call_hunpos",
+				      "Call to \"SItemNext\" failed"))
 				return;
 		}
 
@@ -398,35 +398,35 @@ static void Initialize(SUttProcessor *self, const SVoice *voice, s_erc *error)
 	/* get voice base path */
 	vcfgObject = SVoiceGetFeature(voice, "config_file", error);
 	if (S_CHK_ERR(error, S_CONTERR,
-				  "Initialize",
-				  "Call to \"SVoiceGetFeature\" failed, failed to get voice config file"))
+		      "Initialize",
+		      "Call to \"SVoiceGetFeature\" failed, failed to get voice config file"))
 		return;
 
 	voice_base_path = s_get_base_path(SObjectGetString(vcfgObject, error), error);
 	if (S_CHK_ERR(error, S_CONTERR,
-				  "Initialize",
-				  "Call to \"s_get_base_path/SObjectGetString\" failed"))
+		      "Initialize",
+		      "Call to \"s_get_base_path/SObjectGetString\" failed"))
 		return;
 
 	/* get the hunpos data map */
 	hunpos_data = S_MAP(SVoiceGetFeature(voice, "hunpos data", error));
 	if (S_CHK_ERR(error, S_CONTERR,
-				  "Initialize",
-				  "Call to \"SVoiceGetFeature\" failed"))
+		      "Initialize",
+		      "Call to \"SVoiceGetFeature\" failed"))
 		goto quit_error;
 
 	if (hunpos_data == NULL)
 	{
 		S_CTX_ERR(error, S_FAILURE,
-				  "Initialize",
-				  "Failed to get \"hunpos data\" map from voice features");
+			  "Initialize",
+			  "Failed to get \"hunpos data\" map from voice features");
 		goto quit_error;
 	}
 
 	load_hunpos_data(hunpos_data, hunposProc, voice_base_path, error);
 	if (S_CHK_ERR(error, S_CONTERR,
-				  "Initialize",
-				  "Call to \"load_hunpos_data\" failed"))
+		      "Initialize",
+		      "Call to \"load_hunpos_data\" failed"))
 		goto quit_error;
 
 
@@ -454,7 +454,7 @@ quit_error:
 
 
 static void Run(const SUttProcessor *self, SUtterance *utt,
-				s_erc *error)
+		s_erc *error)
 {
 	SHunposUttProc *hunposProc = (SHunposUttProc*)self;
 	const SRelation *relation;
@@ -469,39 +469,39 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 	/* we require the token relation */
 	is_present = SUtteranceRelationIsPresent(utt, "Token", error);
 	if (S_CHK_ERR(error, S_CONTERR,
-				  "Run",
-				  "Call to \"SUtteranceRelationIsPresent\" failed"))
+		      "Run",
+		      "Call to \"SUtteranceRelationIsPresent\" failed"))
 		return;
 
 	if (!is_present)
 	{
 		S_CTX_ERR(error, S_FAILURE,
-				  "Run",
-				  "Failed to find 'Token' relation in utterance");
+			  "Run",
+			  "Failed to find 'Token' relation in utterance");
 		return;
 	}
 
 	/* check if phrase relation is present */
 	is_phrase_present = SUtteranceRelationIsPresent(utt, "Phrase", error);
 	if (S_CHK_ERR(error, S_CONTERR,
-				  "Run",
-				  "Call to \"SUtteranceRelationIsPresent\" failed"))
+		      "Run",
+		      "Call to \"SUtteranceRelationIsPresent\" failed"))
 		return;
 
 	if (is_phrase_present)
 	{
 		relation = SUtteranceGetRelation(utt, "Phrase", error);
 		if (S_CHK_ERR(error, S_CONTERR,
-				  "Run",
-				  "Call to \"SUtteranceGetRelation\" failed"))
+			      "Run",
+			      "Call to \"SUtteranceGetRelation\" failed"))
 			return;
 	}
 	else
 	{
 		relation = SUtteranceGetRelation(utt, "Token", error);
 		if (S_CHK_ERR(error, S_CONTERR,
-					"Run",
-					"Call to \"SUtteranceGetRelation\" failed"))
+			      "Run",
+			      "Call to \"SUtteranceGetRelation\" failed"))
 			return;
 	}
 
@@ -510,8 +510,8 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 	 */
 	current_item = SRelationHead(relation, error);
 	if (S_CHK_ERR(error, S_CONTERR,
-				  "Run",
-				  "Call to \"SRelationHead\" failed"))
+		      "Run",
+		      "Call to \"SRelationHead\" failed"))
 		return;
 
 	/* alloc the needed structure */
@@ -551,4 +551,3 @@ static SHunposUttProcClass HunposUttProcClass =
 	Initialize,          /* initialize */
 	Run                  /* run        */
 };
-

@@ -420,6 +420,7 @@ static SList *Syllabify(const SSyllabification *self, const SItem *word,
 	SList *syl;
 	const SObject *tmp;
 	const char *phone_string;
+	SIterator *itr_phoneList = NULL;
 
 	/* store for 'is_...' functions */
 	s_bool test_phone = FALSE;
@@ -482,7 +483,7 @@ static SList *Syllabify(const SSyllabification *self, const SItem *word,
 		goto quit_error;
 
 	/* phones iterator */
-	SIterator *itr_phoneList = S_ITERATOR_GET(phoneList, error);
+	itr_phoneList = S_ITERATOR_GET(phoneList, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 		      "Syllabify",
 		      "Call to \"S_ITERATOR_GET\" failed"))

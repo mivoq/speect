@@ -103,7 +103,7 @@
  * where @c param1, @c param2, ..., @c paramN are the parameters passed to the object function
  * @c func.
  */
-#define S_TOKEN_CALL(SELF, FUNC)				\
+#define S_TOKEN_CALL(SELF, FUNC)			\
 	((STokenClass *)S_OBJECT_CLS(SELF))->FUNC
 
 
@@ -119,7 +119,7 @@
  *
  * @note This casting is not safety checked.
  */
-#define S_TOKEN_METH_VALID(SELF, FUNC)			\
+#define S_TOKEN_METH_VALID(SELF, FUNC)		\
 	S_TOKEN_CALL(SELF, FUNC) ? TRUE : FALSE
 
 
@@ -148,23 +148,23 @@ S_API const char *STokenGetWhitespace(const SToken *self, s_erc *error)
 	if (self == NULL)
 	{
 		S_CTX_ERR(error, S_ARGERROR,
-				  "STokenGetWhitespace",
-				  "Argument \"self\" is NULL");
+			  "STokenGetWhitespace",
+			  "Argument \"self\" is NULL");
 		return NULL;
 	}
 
 	if (!S_TOKEN_METH_VALID(self, get_whitespace))
 	{
 		S_WARNING(S_METHINVLD,
-				  "STokenGetWhitespace",
-				  "Token method \"get_whitespace\" not implemented");
+			  "STokenGetWhitespace",
+			  "Token method \"get_whitespace\" not implemented");
 		return NULL;
 	}
 
 	white_space = S_TOKEN_CALL(self, get_whitespace)(self, error);
 	if (S_CHK_ERR(error, S_CONTERR,
-				  "STokenGetWhitespace",
-				  "Call to class method \"get_whitespace\" failed"))
+		      "STokenGetWhitespace",
+		      "Call to class method \"get_whitespace\" failed"))
 		return NULL;
 
 	return white_space;
@@ -178,31 +178,31 @@ S_API void STokenSetWhitespace(SToken *self, const char *whitespace, s_erc *erro
 	if (self == NULL)
 	{
 		S_CTX_ERR(error, S_ARGERROR,
-				  "STokenSetWhitespace",
-				  "Argument \"self\" is NULL");
+			  "STokenSetWhitespace",
+			  "Argument \"self\" is NULL");
 		return;
 	}
 
 	if (whitespace == NULL)
 	{
 		S_CTX_ERR(error, S_ARGERROR,
-				  "STokenSetWhitespace",
-				  "Argument \"whitespace\" is NULL");
+			  "STokenSetWhitespace",
+			  "Argument \"whitespace\" is NULL");
 		return;
 	}
 
 	if (!S_TOKEN_METH_VALID(self, set_whitespace))
 	{
 		S_WARNING(S_METHINVLD,
-				  "STokenSetWhitespace",
-				  "Token method \"set_whitespace\" not implemented");
+			  "STokenSetWhitespace",
+			  "Token method \"set_whitespace\" not implemented");
 		return;
 	}
 
 	S_TOKEN_CALL(self, set_whitespace)(self, whitespace, error);
 	S_CHK_ERR(error, S_CONTERR,
-			  "STokenSetWhitespace",
-			  "Call to class method \"set_whitespace\" failed");
+		  "STokenSetWhitespace",
+		  "Call to class method \"set_whitespace\" failed");
 }
 
 
@@ -216,23 +216,23 @@ S_API const char *STokenGetPrePunc(const SToken *self, s_erc *error)
 	if (self == NULL)
 	{
 		S_CTX_ERR(error, S_ARGERROR,
-				  "STokenGetPrePunc",
-				  "Argument \"self\" is NULL");
+			  "STokenGetPrePunc",
+			  "Argument \"self\" is NULL");
 		return NULL;
 	}
 
 	if (!S_TOKEN_METH_VALID(self, get_pre_punc))
 	{
 		S_WARNING(S_METHINVLD,
-				  "STokenGetPrePunc",
-				  "Token method \"get_pre_punc\" not implemented");
+			  "STokenGetPrePunc",
+			  "Token method \"get_pre_punc\" not implemented");
 		return NULL;
 	}
 
 	pre_punc = S_TOKEN_CALL(self, get_pre_punc)(self, error);
 	if (S_CHK_ERR(error, S_CONTERR,
-				  "STokenGetPrePunc",
-				  "Call to class method \"get_pre_punc\" failed"))
+		      "STokenGetPrePunc",
+		      "Call to class method \"get_pre_punc\" failed"))
 		return NULL;
 
 	return pre_punc;
@@ -246,31 +246,31 @@ S_API void STokenSetPrePunc(SToken *self, const char *pre_punc, s_erc *error)
 	if (self == NULL)
 	{
 		S_CTX_ERR(error, S_ARGERROR,
-				  "STokenSetPrePunc",
-				  "Argument \"self\" is NULL");
+			  "STokenSetPrePunc",
+			  "Argument \"self\" is NULL");
 		return;
 	}
 
 	if (pre_punc == NULL)
 	{
 		S_CTX_ERR(error, S_ARGERROR,
-				  "STokenSetPrePunc",
-				  "Argument \"pre_punc\" is NULL");
+			  "STokenSetPrePunc",
+			  "Argument \"pre_punc\" is NULL");
 		return;
 	}
 
 	if (!S_TOKEN_METH_VALID(self, set_pre_punc))
 	{
 		S_WARNING(S_METHINVLD,
-				  "STokenSetPrePunc",
-				  "Token method \"set_pre_punc\" not implemented");
+			  "STokenSetPrePunc",
+			  "Token method \"set_pre_punc\" not implemented");
 		return;
 	}
 
 	S_TOKEN_CALL(self, set_pre_punc)(self, pre_punc, error);
 	S_CHK_ERR(error, S_CONTERR,
-			  "STokenSetPrePunc",
-			  "Call to class method \"set_pre_punc\" failed");
+		  "STokenSetPrePunc",
+		  "Call to class method \"set_pre_punc\" failed");
 }
 
 
@@ -284,23 +284,23 @@ S_API const char *STokenGetPostPunc(const SToken *self, s_erc *error)
 	if (self == NULL)
 	{
 		S_CTX_ERR(error, S_ARGERROR,
-				  "STokenGetPostPunc",
-				  "Argument \"self\" is NULL");
+			  "STokenGetPostPunc",
+			  "Argument \"self\" is NULL");
 		return NULL;
 	}
 
 	if (!S_TOKEN_METH_VALID(self, get_post_punc))
 	{
 		S_WARNING(S_METHINVLD,
-				  "STokenGetPostPunc",
-				  "Token method \"get_post_punc\" not implemented");
+			  "STokenGetPostPunc",
+			  "Token method \"get_post_punc\" not implemented");
 		return NULL;
 	}
 
 	post_punc = S_TOKEN_CALL(self, get_post_punc)(self, error);
 	if (S_CHK_ERR(error, S_CONTERR,
-				  "STokenGetPostPunc",
-				  "Call to class method \"get_post_punc\" failed"))
+		      "STokenGetPostPunc",
+		      "Call to class method \"get_post_punc\" failed"))
 		return NULL;
 
 	return post_punc;
@@ -314,31 +314,31 @@ S_API void STokenSetPostPunc(SToken *self, const char *post_punc, s_erc *error)
 	if (self == NULL)
 	{
 		S_CTX_ERR(error, S_ARGERROR,
-				  "STokenSetPostPunc",
-				  "Argument \"self\" is NULL");
+			  "STokenSetPostPunc",
+			  "Argument \"self\" is NULL");
 		return;
 	}
 
 	if (post_punc == NULL)
 	{
 		S_CTX_ERR(error, S_ARGERROR,
-				  "STokenSetPostPunc",
-				  "Argument \"post_punc\" is NULL");
+			  "STokenSetPostPunc",
+			  "Argument \"post_punc\" is NULL");
 		return;
 	}
 
 	if (!S_TOKEN_METH_VALID(self, set_post_punc))
 	{
 		S_WARNING(S_METHINVLD,
-				  "STokenSetPostPunc",
-				  "Token method \"set_post_punc\" not implemented");
+			  "STokenSetPostPunc",
+			  "Token method \"set_post_punc\" not implemented");
 		return;
 	}
 
 	S_TOKEN_CALL(self, set_post_punc)(self, post_punc, error);
 	S_CHK_ERR(error, S_CONTERR,
-			  "STokenSetPostPunc",
-			  "Call to class method \"set_post_punc\" failed");
+		  "STokenSetPostPunc",
+		  "Call to class method \"set_post_punc\" failed");
 }
 
 
@@ -353,23 +353,23 @@ S_API const char *STokenGetString(const SToken *self, s_erc *error)
 	if (self == NULL)
 	{
 		S_CTX_ERR(error, S_ARGERROR,
-				  "STokenGetString",
-				  "Argument \"self\" is NULL");
+			  "STokenGetString",
+			  "Argument \"self\" is NULL");
 		return NULL;
 	}
 
 	if (!S_TOKEN_METH_VALID(self, get_string))
 	{
 		S_WARNING(S_METHINVLD,
-				  "STokenGetString",
-				  "Token method \"get_string\" not implemented");
+			  "STokenGetString",
+			  "Token method \"get_string\" not implemented");
 		return NULL;
 	}
 
 	string = S_TOKEN_CALL(self, get_string)(self, error);
 	if (S_CHK_ERR(error, S_CONTERR,
-				  "STokenGetString",
-				  "Call to class method \"get_string\" failed"))
+		      "STokenGetString",
+		      "Call to class method \"get_string\" failed"))
 		return NULL;
 
 	return string;
@@ -383,31 +383,31 @@ S_API void STokenSetString(SToken *self, const char *string, s_erc *error)
 	if (self == NULL)
 	{
 		S_CTX_ERR(error, S_ARGERROR,
-				  "STokenSetString",
-				  "Argument \"self\" is NULL");
+			  "STokenSetString",
+			  "Argument \"self\" is NULL");
 		return;
 	}
 
 	if (string == NULL)
 	{
 		S_CTX_ERR(error, S_ARGERROR,
-				  "STokenSetString",
-				  "Argument \"string\" is NULL");
+			  "STokenSetString",
+			  "Argument \"string\" is NULL");
 		return;
 	}
 
 	if (!S_TOKEN_METH_VALID(self, set_string))
 	{
 		S_WARNING(S_METHINVLD,
-				  "STokenSetString",
-				  "Token method \"set_string\" not implemented");
+			  "STokenSetString",
+			  "Token method \"set_string\" not implemented");
 		return;
 	}
 
 	S_TOKEN_CALL(self, set_string)(self, string, error);
 	S_CHK_ERR(error, S_CONTERR,
-			  "STokenSetString",
-			  "Call to class method \"set_string\" failed");
+		  "STokenSetString",
+		  "Call to class method \"set_string\" failed");
 }
 
 
@@ -420,23 +420,23 @@ S_API size_t STokenGetByteStart(const SToken *self, s_erc *error)
 	if (self == NULL)
 	{
 		S_CTX_ERR(error, S_ARGERROR,
-				  "STokenGetByteStart",
-				  "Argument \"self\" is NULL");
+			  "STokenGetByteStart",
+			  "Argument \"self\" is NULL");
 		return 0;
 	}
 
 	if (!S_TOKEN_METH_VALID(self, get_byte_start))
 	{
 		S_WARNING(S_METHINVLD,
-				  "STokenGetByteStart",
-				  "Token method \"get_byte_start\" not implemented");
+			  "STokenGetByteStart",
+			  "Token method \"get_byte_start\" not implemented");
 		return 0;
 	}
 
 	byte_start = S_TOKEN_CALL(self, get_byte_start)(self, error);
 	if (S_CHK_ERR(error, S_CONTERR,
-				  "STokenGetByteStart",
-				  "Call to class method \"get_byte_start\" failed"))
+		      "STokenGetByteStart",
+		      "Call to class method \"get_byte_start\" failed"))
 		return 0;
 
 	return byte_start;
@@ -450,23 +450,23 @@ S_API void STokenSetByteStart(SToken *self, size_t byte_start, s_erc *error)
 	if (self == NULL)
 	{
 		S_CTX_ERR(error, S_ARGERROR,
-				  "STokenSetByteStart",
-				  "Argument \"self\" is NULL");
+			  "STokenSetByteStart",
+			  "Argument \"self\" is NULL");
 		return;
 	}
 
 	if (!S_TOKEN_METH_VALID(self, set_byte_start))
 	{
 		S_WARNING(S_METHINVLD,
-				  "STokenSetByteStart",
-				  "Token method \"set_byte_start\" not implemented");
+			  "STokenSetByteStart",
+			  "Token method \"set_byte_start\" not implemented");
 		return;
 	}
 
 	S_TOKEN_CALL(self, set_byte_start)(self, byte_start, error);
 	S_CHK_ERR(error, S_CONTERR,
-			  "STokenSetByteStart",
-			  "Call to class method \"set_byte_start\" failed");
+		  "STokenSetByteStart",
+		  "Call to class method \"set_byte_start\" failed");
 }
 
 
@@ -479,26 +479,26 @@ S_API size_t STokenGetByteEnd(const SToken *self, s_erc *error)
 	if (self == NULL)
 	{
 		S_CTX_ERR(error, S_ARGERROR,
-				  "STokenGetByteEnd",
-				  "Argument \"self\" is NULL");
+			  "STokenGetByteEnd",
+			  "Argument \"self\" is NULL");
 		return 0;
 	}
 
 	if (!S_TOKEN_METH_VALID(self, get_byte_end))
 	{
 		S_WARNING(S_METHINVLD,
-				  "STokenGetByteEnd",
-				  "Token method \"get_byte_end\" not implemented");
+			  "STokenGetByteEnd",
+			  "Token method \"get_byte_end\" not implemented");
 		return 0;
 	}
 
 	byte_end = S_TOKEN_CALL(self, get_byte_end)(self, error);
 	if (S_CHK_ERR(error, S_CONTERR,
-				  "STokenGetByteEnd",
-				  "Call to class method \"get_byte_end\" failed"))
+		      "STokenGetByteEnd",
+		      "Call to class method \"get_byte_end\" failed"))
 		return 0;
 
-		return byte_end;
+	return byte_end;
 }
 
 
@@ -509,23 +509,23 @@ S_API void STokenSetByteEnd(SToken *self, size_t byte_end, s_erc *error)
 	if (self == NULL)
 	{
 		S_CTX_ERR(error, S_ARGERROR,
-				  "STokenSetByteEnd",
-				  "Argument \"self\" is NULL");
+			  "STokenSetByteEnd",
+			  "Argument \"self\" is NULL");
 		return;
 	}
 
 	if (!S_TOKEN_METH_VALID(self, set_byte_end))
 	{
 		S_WARNING(S_METHINVLD,
-				  "STokenSetByteEnd",
-				  "Token method \"set_byte_end\" not implemented");
+			  "STokenSetByteEnd",
+			  "Token method \"set_byte_end\" not implemented");
 		return;
 	}
 
 	S_TOKEN_CALL(self, set_byte_end)(self, byte_end, error);
 	S_CHK_ERR(error, S_CONTERR,
-			  "STokenSetByteEnd",
-			  "Call to class method \"set_byte_end\" failed");
+		  "STokenSetByteEnd",
+		  "Call to class method \"set_byte_end\" failed");
 }
 
 /************************************************************************************/
@@ -592,8 +592,8 @@ static void SetWhiteSpace(SToken *self, const char *whitespace, s_erc *error)
 
 	self->whitespace = s_strdup(whitespace, error);
 	S_CHK_ERR(error, S_CONTERR,
-			  "SetWhiteSpace",
-			  "Call to \"s_strdup\" failed");
+		  "SetWhiteSpace",
+		  "Call to \"s_strdup\" failed");
 }
 
 
@@ -613,8 +613,8 @@ static void SetPrePunc(SToken *self, const char *pre_punc, s_erc *error)
 
 	self->pre_punc = s_strdup(pre_punc, error);
 	S_CHK_ERR(error, S_CONTERR,
-			  "SetPrePunc",
-			  "Call to \"s_strdup\" failed");
+		  "SetPrePunc",
+		  "Call to \"s_strdup\" failed");
 }
 
 
@@ -634,8 +634,8 @@ static void SetPostPunc(SToken *self, const char *post_punc, s_erc *error)
 
 	self->post_punc = s_strdup(post_punc, error);
 	S_CHK_ERR(error, S_CONTERR,
-			  "SetPostPunc",
-			  "Call to \"s_strdup\" failed");
+		  "SetPostPunc",
+		  "Call to \"s_strdup\" failed");
 }
 
 
@@ -655,8 +655,8 @@ static void SetString(SToken *self, const char *string, s_erc *error)
 
 	self->string = s_strdup(string, error);
 	S_CHK_ERR(error, S_CONTERR,
-			  "SetString",
-			  "Call to \"s_strdup\" failed");
+		  "SetString",
+		  "Call to \"s_strdup\" failed");
 }
 
 
@@ -700,8 +700,8 @@ S_LOCAL void _s_token_class_add(s_erc *error)
 	S_CLR_ERR(error);
 	s_class_add(S_OBJECTCLASS(&TokenClass), error);
 	S_CHK_ERR(error, S_CONTERR,
-			  "_s_token_class_add",
-			  "Failed to add STokenClass");
+		  "_s_token_class_add",
+		  "Failed to add STokenClass");
 }
 
 
@@ -739,4 +739,3 @@ static STokenClass TokenClass =
 	GetByteEnd,          /* get_byte_end   */
 	SetByteEnd           /* set_byte_end   */
 };
-

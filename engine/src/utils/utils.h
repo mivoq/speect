@@ -34,7 +34,7 @@
 /************************************************************************************/
 
 #ifndef _SPCT_UTILS_H__
-#define _SPCT_UTILS__H__
+#define _SPCT_UTILS_H__
 
 
 /**
@@ -110,4 +110,4 @@ S_END_C_DECLS
  * end documentation
  */
 
-#endif /* _SPCT_UTILS__H__ */
+#endif /* _SPCT_UTILS_H__ */

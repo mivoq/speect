@@ -5,16 +5,23 @@
 ##                                                                                  ##
 ######################################################################################
 ##                                                                                  ##
-## CMakeList for Long feature processor plug-in                                     ##
+## Source files for Phrase num words feature processor plug-in                      ##
 ##                                                                                  ##
 ##                                                                                  ##
 ######################################################################################
 
-#------------------------------------------------------------------------------------#
-#                        Plug-in directories                                         #
-#------------------------------------------------------------------------------------#
 
-add_subdirectory(next_punc)
-add_subdirectory(prev_punc)
-add_subdirectory(words_to_next_punc)
+######## source files ##################
+
+speect_plugin_sources(
+  src/plugin.c
+  src/words_to_next_punc.c
+  )
+
+
+######## header files ##################
+
+speect_plugin_headers(
+  src/words_to_next_punc.h
+  )
 

@@ -41,8 +41,8 @@
 int main()
 {
 	s_erc error = S_SUCCESS;
-	SUtterance *utt;
-	SRelation *rel;
+	SUtterance *utt = NULL;
+	SRelation *rel = NULL;
 	SItem *item;
 	SItem *item_daughter;
 
@@ -173,5 +173,3 @@ quit:
 
 	return 0;
 }
-
-

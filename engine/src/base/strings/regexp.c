@@ -216,6 +216,8 @@ typedef struct
 	uint32       *reol;
 } s_regex_ljunk;
 
+/* max character classes per program */
+#define	S_REGEX_NCLASS 16
 
 /*
  * Typedef of struct s_regex.
@@ -223,7 +225,7 @@ typedef struct
 struct s_regex
 {
 	s_regex_inst       *start_inst;      /*!< start pc */
-	s_regex_char_class  class[16];       /*!< data     */
+	s_regex_char_class  class[S_REGEX_NCLASS];       /*!< data     */
 	s_regex_inst        first_inst[5];   /*!< text     */
 };
 
@@ -236,12 +238,6 @@ typedef struct
 	s_regex_inst *first;
 	s_regex_inst *last;
 } s_regex_node;
-
-
-/* max character classes per program */
-static s_regex RePrOg;
-#define	S_REGEX_NCLASS	(sizeof(RePrOg.class)/sizeof(s_regex_char_class))
-
 
 /************************************************************************************/
 /*                                                                                  */

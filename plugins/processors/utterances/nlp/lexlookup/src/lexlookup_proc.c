@@ -247,9 +247,20 @@ static void Dispose(void *obj, s_erc *error)
 	SObjectDecRef(obj);
 }
 
-static void s_compute_stresses ( SFeatProcessor* proc, SItem* word, s_erc *error )
+static void s_compute_stresses ( const SFeatProcessor* proc, SItem* word, s_erc *error )
 {
-	const SItem *syllable = SItemPathToItem (word, "R:SylStructure.daughter", error);
+	S_CLR_ERR(error);
+	SItem *wordAsSylStructure = SItemAs(word, "SylStructure", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+		      "s_compute_stresses",
+		      "Call to \"SItemAs\" failed"))
+		return;
+
+	SItem *syllable = SItemDaughter(wordAsSylStructure, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+		      "s_compute_stresses",
+		      "Call to \"SItemDaughter\" failed"))
+		return;
 
 	while (syllable != NULL)
 	{
@@ -285,7 +296,6 @@ static void s_compute_phonetic_features (SItem* word, s_erc *error )
 {
 	SItem *syllable;
 	SItem * phone;
-	SObject* result;
 	char* position_in_syllable_string = NULL;
 
 	/* Extract Phoneset from Voice*/
@@ -300,12 +310,18 @@ static void s_compute_phonetic_features (SItem* word, s_erc *error )
 				  "s_compute_phonetic_features",
 				  "Call to \"SVoiceGetData\" failed"))
 		return;
-
-	syllable = SItemPathToItem (word, "R:SylStructure.daughter", error);
+	SItem *wordAsSylStructure = SItemAs(word, "SylStructure", error);
 	if (S_CHK_ERR(error, S_CONTERR,
-				  "s_compute_phonetic_features",
-				  "Call to \"SItemPathToItem\" failed"))
+		      "s_compute_stresses",
+		      "Call to \"SItemAs\" failed"))
 		return;
+
+	syllable = SItemDaughter(wordAsSylStructure, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+		      "s_compute_stresses",
+		      "Call to \"SItemDaughter\" failed"))
+		return;
+
 	while (syllable != NULL)
 	{
 		phone = SItemDaughter(syllable, error);

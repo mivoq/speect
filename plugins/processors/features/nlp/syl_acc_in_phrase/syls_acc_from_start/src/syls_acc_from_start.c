@@ -102,13 +102,13 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 	if (item == NULL)
 		goto quit_error;
 
-	SItem *iteratorSyl =  SItemPathToItem (item, "R:SylStructure.parent.R:Phrase.parent.daughter.R:SylStructure.daughter.R:Syllable", error );
+	const SItem *iteratorSyl =  SItemPathToItem (item, "R:SylStructure.parent.R:Phrase.parent.daughter.R:SylStructure.daughter.R:Syllable", error );
 	if (S_CHK_ERR(error, S_CONTERR,
 			  "Run",
 			  "Call to \"SItemPathToItem\" failed"))
 		return NULL;
 
-	SItem *currentSyl = SItemPathToItem (item, "R:Syllable", error);
+	const SItem *currentSyl = SItemPathToItem (item, "R:Syllable", error);
 	if (S_CHK_ERR(error, S_CONTERR,
 			  "Run",
 			  "Call to \"SItemPathToItem\" failed"))

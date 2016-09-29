@@ -190,7 +190,7 @@ typedef struct
 	 *
 	 * @note Not necessarily implemented.
   	 */
-  	void (* const initialize)(SFeatProcessor *self, SMap *feat, s_erc *error);
+	void (* const initialize)(SFeatProcessor *self, const SMap *feat, s_erc *error);
 
  	/**
 	 * @protected Run function pointer.

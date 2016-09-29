@@ -468,9 +468,10 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 					s_erc *error)
 {
 	SHTSLabelsGeneratorItFeatProc* labelGenerator = (SHTSLabelsGeneratorItFeatProc*) self;
-	const SHTSLabelsDataCollectorFeatProc *data;
+	const SHTSLabelsDataCollectorFeatProc *data = NULL;
 	char *resultString = NULL;
 	char *tmp = NULL;
+	SIterator *itrFeatureMap = NULL;
 
 	S_CLR_ERR(error);
 
@@ -564,7 +565,6 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 		goto quit_error;
 
 	/* Features */
-	SIterator *itrFeatureMap = NULL;
 	if (labelGenerator->specialFeatures != NULL)
 	{
 		/* iterator for the loop on the the map */

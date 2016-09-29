@@ -1515,6 +1515,22 @@ static void create_word_context(SELFPARAMETERTYPE *self, const SItem *item, s_er
 
 	}
 
+	/* Number of words to the ending of the utterance */
+	dFeat = SItemPathToFeatProc(item, "R:SylStructure.parent.parent.R:Word.words_from_utterance_end", error);
+	S_CHK_ERR(error, S_CONTERR,
+				  "create_word_context",
+				  "Call to \"SItemPathToFeatProc\" failed");
+
+	if (dFeat != NULL)
+	{
+		SHTSLabelDataCollectorSetFeature(self, "words.from.utterance.end", dFeat, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_word_context",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			goto word_context_cleanup;
+
+	}
+
 	/* Number of words to the next punctuation */
 	dFeat = SItemPathToFeatProc(item, "R:SylStructure.parent.parent.R:Word.words_to_next_punc", error);
 	S_CHK_ERR(error, S_CONTERR,
@@ -1688,6 +1704,22 @@ static void create_word_context_pause(SELFPARAMETERTYPE *self, const SItem *item
 	if (dFeat != NULL)
 	{
 		SHTSLabelDataCollectorSetFeature(self, "words.from.utterance.start", dFeat, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_word_context_pause",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			goto word_context_pause_cleanup;
+
+	}
+
+	/* Number of words to the ending of the utterance */
+	dFeat = SItemPathToFeatProc(item, "R:SylStructure.parent.parent.R:Word.words_from_utterance_end", error);
+	S_CHK_ERR(error, S_CONTERR,
+				  "create_word_context_pause",
+				  "Call to \"SItemPathToFeatProc\" failed");
+
+	if (dFeat != NULL)
+	{
+		SHTSLabelDataCollectorSetFeature(self, "words.from.utterance.end", dFeat, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "create_word_context_pause",
 					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))

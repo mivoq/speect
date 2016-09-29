@@ -1515,6 +1515,23 @@ static void create_word_context(SELFPARAMETERTYPE *self, const SItem *item, s_er
 
 	}
 
+	/* the next punctuation symbol */
+	dFeat = SItemPathToFeatProc(item, "R:SylStructure.parent.parent.R:Word.next_punc", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+		      "create_word_context",
+		      "Call to \"SItemPathToFeatProc\" failed"))
+		goto word_context_cleanup;
+
+	if (dFeat != NULL)
+	{
+		SHTSLabelDataCollectorSetFeature(self, "next.punc", dFeat, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_word_context",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			goto word_context_cleanup;
+
+	}
+
 	return;
 
 word_context_cleanup:
@@ -1631,6 +1648,22 @@ static void create_word_context_pause(SELFPARAMETERTYPE *self, const SItem *item
 
 	}
 
+	/* the next punctuation symbol */
+	dFeat = SItemPathToFeatProc(item, "R:SylStructure.parent.parent.R:Word.next_punc", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+		      "create_word_context_pause",
+		      "Call to \"SItemPathToFeatProc\" failed"))
+		goto word_context_pause_cleanup;
+
+	if (dFeat != NULL)
+	{
+		SHTSLabelDataCollectorSetFeature(self, "next.punc", dFeat, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_word_context_pause",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			goto word_context_pause_cleanup;
+
+	}
 
 word_context_pause_cleanup:
 	if (dFeat != NULL)

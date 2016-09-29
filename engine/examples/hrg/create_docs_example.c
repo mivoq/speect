@@ -70,7 +70,7 @@ static const word_syls lexical_info[] = {
 int main()
 {
 	s_erc error = S_SUCCESS;
-	SUtterance *utt;
+	SUtterance *utt = NULL;
 	SRelation *wordRel;
 	SRelation *sylRel;
 	SRelation *segmentRel;
@@ -298,5 +298,3 @@ quit:
 
 	return 0;
 }
-
-

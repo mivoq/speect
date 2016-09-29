@@ -93,7 +93,7 @@ static void Dispose(void *obj, s_erc *error)
 	SObjectDecRef(obj);
 }
 
-static void Initialize(SFeatProcessor *self, SMap* features, s_erc *error)
+static void Initialize(SFeatProcessor *self, const SMap* features, s_erc *error)
 {
 	S_CLR_ERR(error);
 
@@ -121,34 +121,12 @@ static void Initialize(SFeatProcessor *self, SMap* features, s_erc *error)
 		return;
 }
 
-static s_bool isASCIIUpper (char c)
-{
-	/* Here we rely on the fact that most compilers use ASCII */
-	if( c >= 'A' && c <= 'Z' )
-		return TRUE;
 
-	return FALSE;
-}
-
-static s_bool searchStringMap(SMap *map, char *str, s_erc *error)
-{
-	S_CLR_ERR(error);
-	/* Search for the punctuation in the SMap, using it as a Key */
-	s_bool found= SMapObjectPresent(map, str, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-			  "searchStringMap",
-			  "Call to \"SMapObjectPresent\" failed"))
-		return FALSE;
-
-	return found;
-}
-
-
-static char* setSentenceType(SItem *phrase, SMap *puncMap, s_erc *error)
+static const char* setSentenceType(const SItem *phrase, SMap *puncMap, s_erc *error)
 {
 	S_CLR_ERR(error);
 
-	char* result = "0";
+	const char* result = NULL;
 
 	/* types: "decl, "excl", "interrog" */
 	/* stop at sentence's last token */
@@ -156,35 +134,28 @@ static char* setSentenceType(SItem *phrase, SMap *puncMap, s_erc *error)
 	if (S_CHK_ERR(error, S_CONTERR,
 		      "setSentenceType",
 		      "Call to \"SItemPathToItem\" failed"))
-		return "";
+		return NULL;
 
 	SItem *wordAsToken = SItemAs(wordFromCurrentPhrase, "Token", error);
 	if (S_CHK_ERR(error, S_CONTERR,
 		      "setSentenceType",
 		      "Call to \"SItemAs\" failed"))
-		return "";
+		return NULL;
 
 	SItem *tokenItem = SItemParent(wordAsToken, error);
-	SItem *firstTokenItem = tokenItem;
 	tokenItem = SItemNext(tokenItem, error);
-
-	s_bool isPunct = SItemFeatureIsPresent(tokenItem, "IsPunctuation", error);
-	if (S_CHK_ERR(error, S_CONTERR,
-		      "setSentenceType",
-		      "Call to \"SItemFeatureIsPresent\" failed"))
-		return "";
 
 	const char *punctStr = SItemGetName(tokenItem, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 			  "setSentenceType",
 			  "Call to \"SItemGetName\" failed"))
-		return "";
+		return NULL;
 
-	s_bool found = searchStringMap(puncMap, punctStr, error);
+	s_bool found= SMapObjectPresent(puncMap, punctStr, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 			  "setSentenceType",
-			  "Call to \"searchStringMap\" failed"))
-		return "";
+			  "Call to \"SMapObjectPresent\" failed"))
+		return NULL;
 
 	result = punctStr;
 
@@ -195,21 +166,22 @@ static char* setSentenceType(SItem *phrase, SMap *puncMap, s_erc *error)
 		if (S_CHK_ERR(error, S_CONTERR,
 				  "setSentenceType",
 				  "Call to \"SMapGetString\" failed"))
-			return "";
+			return NULL;
 	}
 	else
 	{
-		result = "0";
+		result = NULL;
 	}
 
 	return result;
 }
 
+
 static SObject *Run(const SFeatProcessor *self, const SItem *item,
 					s_erc *error)
 {
 	SObject *extractedFeat = NULL;
-	char* type;
+	const char* type;
 
 	SPhrasePuncFeatProc *castSelf = S_CAST(self, SPhrasePuncFeatProc, error);
 	if (S_CHK_ERR(error, S_CONTERR,
@@ -223,7 +195,7 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 				  "Call to \"SetSentenceType\" failed"))
 		goto quit_error;
 
-	if( type == "" )
+	if( type == NULL )
 		goto quit_error;
 
 	extractedFeat = SObjectSetString( type, error);

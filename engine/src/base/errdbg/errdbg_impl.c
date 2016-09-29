@@ -551,7 +551,7 @@ S_API void _s_dbg(s_dbg_lvl level, const char *fmt, ...)
 		char *event_string;
 
 		/* not initialized, report error and print to stderr */
-		event_string = s_log_event_str(level);
+		event_string = s_log_event_str(dbglvl_2_evntlvl(level));
 		S_ERR_PRINT(S_FAILURE, "_s_dbg",
 					"Error and debugging module has not been initialized.\n"
 					"This will lead to undefined behaviour. Call s_errdbg_init(...)\n"

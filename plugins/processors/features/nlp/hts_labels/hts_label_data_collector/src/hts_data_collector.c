@@ -1136,6 +1136,21 @@ static void create_syl_context(SELFPARAMETERTYPE* self, const SItem* item, s_erc
 
 	}
 
+	dFeat = SItemPathToFeatProc(item, "R:SylStructure.parent.R:Syllable.next_accent", error);
+	S_CHK_ERR(error, S_CONTERR,
+				  "create_syl_context",
+				  "Call to \"SItemPathToFeatProc\" failed");
+
+	if (dFeat != NULL)
+	{
+		SHTSLabelDataCollectorSetFeature(self, "next.accent", dFeat, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_syl_context",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			goto syl_context_cleanup;
+
+	}
+
 
 return;
 
@@ -1246,6 +1261,21 @@ static void create_syl_context_pause(SELFPARAMETERTYPE* self, const SItem* item,
 		SHTSLabelDataCollectorSetFeature(self, "syllable.from.prev.accent", dFeat, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "v",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			goto syl_context_pause_cleanup;
+
+	}
+
+	dFeat = SItemPathToFeatProc(item, "R:SylStructure.parent.R:Syllable.next_accent", error);
+	S_CHK_ERR(error, S_CONTERR,
+				  "create_syl_context_pause",
+				  "Call to \"SItemPathToFeatProc\" failed");
+
+	if (dFeat != NULL)
+	{
+		SHTSLabelDataCollectorSetFeature(self, "next.accent", dFeat, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_syl_context_pause",
 					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
 			goto syl_context_pause_cleanup;
 

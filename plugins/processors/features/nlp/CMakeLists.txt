@@ -14,6 +14,7 @@
 #                        Plug-in directories                                         #
 #------------------------------------------------------------------------------------#
 
+add_subdirectory(accent)
 add_subdirectory(segment_duration)
 add_subdirectory(segment_end)
 add_subdirectory(segment_mid)

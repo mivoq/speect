@@ -15,4 +15,5 @@
 #------------------------------------------------------------------------------------#
 
 add_subdirectory(next_accent)
+add_subdirectory(prev_accent)
 

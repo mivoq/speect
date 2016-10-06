@@ -2351,7 +2351,7 @@ static void create_utterance_context(SELFPARAMETERTYPE *self, const SItem *item,
 	}
 
 	/* the number of words in this utterence */
-	dFeat = SItemPathToFeatProc(item, "utt_num_words", error);
+	dFeat = SItemPathToFeatProc(item, "R:SylStructure.parent.parent.R:Phrase.parent.utt_num_words", error);
 	S_CHK_ERR(error, S_CONTERR,
 				  "create_utterance_context",
 				  "Call to \"SItemPathToFeatProc\" failed");
@@ -2367,7 +2367,7 @@ static void create_utterance_context(SELFPARAMETERTYPE *self, const SItem *item,
 	}
 
 	/* the number of phrases in this utterence */
-	dFeat = SItemPathToFeatProc(item, "utt_num_phrases", error);
+	dFeat = SItemPathToFeatProc(item, "R:SylStructure.parent.parent.R:Phrase.parent.utt_num_phrases", error);
 	S_CHK_ERR(error, S_CONTERR,
 				  "create_utterance_context",
 				  "Call to \"SItemPathToFeatProc\" failed");
@@ -2478,7 +2478,7 @@ static void create_utterance_context_pause(SELFPARAMETERTYPE *self, const SItem 
 	}
 
 	/* the number of words in this utterence */
-	dFeat = SItemPathToFeatProc(item, "utt_num_words", error);
+	dFeat = SItemPathToFeatProc(item, "R:SylStructure.parent.parent.R:Phrase.parent.utt_num_words", error);
 	S_CHK_ERR(error, S_CONTERR,
 				  "create_utterance_context_pause",
 				  "Call to \"SItemPathToFeatProc\" failed");
@@ -2494,7 +2494,7 @@ static void create_utterance_context_pause(SELFPARAMETERTYPE *self, const SItem 
 	}
 
 	/* the number of phrases in this utterence */
-	dFeat = SItemPathToFeatProc(item, "utt_num_phrases", error);
+	dFeat = SItemPathToFeatProc(item, "R:SylStructure.parent.parent.R:Phrase.parent.utt_num_phrases", error);
 	S_CHK_ERR(error, S_CONTERR,
 				  "create_utterance_context_pause",
 				  "Call to \"SItemPathToFeatProc\" failed");

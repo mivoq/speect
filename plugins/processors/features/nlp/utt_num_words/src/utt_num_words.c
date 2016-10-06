@@ -96,9 +96,9 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 					s_erc *error)
 {
 	SObject *extractedFeat = NULL;
-	const SUtterance *utt;
-	const SRelation *wordRel;
 	const SItem *itr;
+	const SItem *itemInSentenceRel;
+	const SItem *itemNextSentencePhrase;
 	sint32 count;
 
 
@@ -107,41 +107,88 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 	if (item == NULL)
 		return NULL;
 
-	/* get utterance */
-	utt = SItemUtterance(item, error);
+	itemInSentenceRel = SItemAs(item, "Sentence", error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Run",
-				  "Call to \"SItemUtterance\" failed"))
+				  "Call to \"SItemRelation\" failed"))
 		goto quit_error;
 
-	if (utt == NULL)
+	/* If the itemInSentenceRel is NULL then the item is not a phrase
+	 * */
+	if ( itemInSentenceRel == NULL )
 		return NULL;
 
-	/* get Word relation */
-	wordRel = SUtteranceGetRelation(utt, "Word", error);
+
+	SItem * sentenceItem = SItemParent (itemInSentenceRel, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Run",
-				  "Call to \"SUtteranceGetRelation\" failed"))
+				  "Call to \"SItemParent\" failed"))
 		goto quit_error;
 
-	if (wordRel == NULL)
-		return NULL;
-
-	itr = SRelationHead(wordRel, error);
+	SItem * itrPhrase = SItemDaughter (sentenceItem, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Run",
-				  "Call to \"SRelationHead\" failed"))
+				  "Call to \"SItemDaughter\" failed"))
 		goto quit_error;
+
+	SItem * itrPhraseInPhrase = SItemAs (itrPhrase, "Phrase", error );
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "Run",
+				  "Call to \"SItemAs\" failed"))
+		goto quit_error;
+
+	itr = SItemDaughter ( itrPhraseInPhrase, error );
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "Run",
+				  "Call to \"SItemDaughter\" failed"))
+		goto quit_error;
+
+	SItem * nextSentence = SItemNext (sentenceItem, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "Run",
+				  "Call to \"SItemNext\" failed"))
+		goto quit_error;
+
+	if ( nextSentence != NULL )
+	{
+		itemNextSentencePhrase = SItemDaughter (nextSentence, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "Run",
+					  "Call to \"SItemDaughter\" failed"))
+			goto quit_error;
+
+		itemNextSentencePhrase = SItemAs (itemNextSentencePhrase, "Phrase", error );
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "Run",
+					  "Call to \"SItemAs\" failed"))
+			goto quit_error;
+	}
 
 	count = 0;
-	while (itr != NULL)
+	while ( itrPhraseInPhrase != itemNextSentencePhrase && itrPhraseInPhrase != NULL)
 	{
-		count++;
-		itr = SItemNext(itr, error);
+		while (itr != NULL)
+		{
+			count++;
+			itr = SItemNext(itr, error);
+			if (S_CHK_ERR(error, S_CONTERR,
+						  "Run",
+						  "Call to \"SItemNext\" failed"))
+				goto quit_error;
+		}
+
+		itrPhraseInPhrase = SItemNext (itrPhraseInPhrase, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "Run",
 					  "Call to \"SItemNext\" failed"))
 			goto quit_error;
+
+		if ( itrPhraseInPhrase != NULL )
+			itr = SItemDaughter ( itrPhraseInPhrase, error );
+			if (S_CHK_ERR(error, S_CONTERR,
+						  "Run",
+						  "Call to \"SItemDaughter\" failed"))
+				goto quit_error;
 	}
 
 	extractedFeat = SObjectSetInt(count, error);

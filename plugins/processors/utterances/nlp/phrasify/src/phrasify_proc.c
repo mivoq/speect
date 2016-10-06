@@ -172,6 +172,8 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 	SRelation *phraseRelation = NULL;
 	SItem *phraseItem = NULL;
 	const char *post_punc;
+	SRelation *sentenceRelation = NULL;
+	SItem *sentenceItem = NULL;
 
 
 	S_CLR_ERR(error);
@@ -211,6 +213,13 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 				  "Call to \"SUtteranceNewRelation\" failed"))
 		goto quit_error;
 
+	/* create Sentence relation */
+	sentenceRelation = SUtteranceNewRelation(utt, "Sentence", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "Run",
+				  "Call to \"SUtteranceNewRelation\" failed"))
+		goto quit_error;
+
 	/* start at the first item in the word relation, cast away
 	 * const, we want to add daughter items
 	 */
@@ -232,6 +241,14 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 			 * shared content) that is appended to phrase
 			 * relation. Will happen in first pass.
 			 */
+			sentenceItem = SRelationAppend(sentenceRelation, NULL, error);
+			if (S_CHK_ERR(error, S_CONTERR,
+						  "Run",
+						  "Call to \"SRelationAppend\" failed"))
+				goto quit_error;
+
+			/* Added on top a sentence item, for now is one on one with the phrase item
+			 * */
 			phraseItem = SRelationAppend(phraseRelation, NULL, error);
 			if (S_CHK_ERR(error, S_CONTERR,
 						  "Run",
@@ -243,6 +260,12 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 			if (S_CHK_ERR(error, S_CONTERR,
 						  "Run",
 						  "Call to \"SItemSetString\" failed"))
+				goto quit_error;
+
+			SItemAddDaughter(sentenceItem, phraseItem, error);
+			if (S_CHK_ERR(error, S_CONTERR,
+						  "Run",
+						  "Call to \"SItemAddDaughter\" failed"))
 				goto quit_error;
 		}
 

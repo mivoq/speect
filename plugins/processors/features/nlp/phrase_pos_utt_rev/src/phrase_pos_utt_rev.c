@@ -97,8 +97,7 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 					s_erc *error)
 {
 	SObject *extractedFeat = NULL;
-	const SRelation *phraseRel;
-	const SItem *itemInPhraseRel;
+	const SItem *itemInSentenceRel;
 	const SItem *itr;
 	sint32 count;
 
@@ -108,27 +107,19 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 	if (item == NULL)
 		return NULL;
 
-	/* phrase as in Phrase relation */
-	itemInPhraseRel = SItemAs(item, "Phrase", error);
-	if (S_CHK_ERR(error, S_CONTERR,
-				  "Run",
-				  "Call to \"SItemAs\" failed"))
-		goto quit_error;
-
-	if (itemInPhraseRel == NULL)
-		return NULL;
-
-	/* get Phrase relation */
-	phraseRel = SItemRelation(itemInPhraseRel, error);
+	itemInSentenceRel = SItemAs(item, "Sentence", error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Run",
 				  "Call to \"SItemRelation\" failed"))
 		goto quit_error;
 
-	if (phraseRel == NULL)
-		return NULL;
+	SItem * sentenceItem = SItemParent (itemInSentenceRel, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "Run",
+				  "Call to \"SItemParent\" failed"))
+		goto quit_error;
 
-	itr = SRelationTail(phraseRel, error);
+	itr = SItemLastDaughter (sentenceItem, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Run",
 				  "Call to \"SRelationHead\" failed"))
@@ -140,7 +131,7 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 		s_bool is_equal;
 
 
-		is_equal = SItemEqual(itr, itemInPhraseRel, error);
+		is_equal = SItemEqual(itr, itemInSentenceRel, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "Run",
 					  "Call to \"SItemEqual\" failed"))

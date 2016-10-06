@@ -96,45 +96,55 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 					s_erc *error)
 {
 	SObject *extractedFeat = NULL;
-	const SUtterance *utt;
-	const SRelation *phraseRel;
 	const SItem *itr;
+	const SItem *itemInSentenceRel;
+	const SItem *itemFinal = NULL;
 	sint32 count;
 
 
 	S_CLR_ERR(error);
 
-	if (item == NULL)
+	if ( item == NULL )
 		return NULL;
 
-	/* get utterance */
-	utt = SItemUtterance(item, error);
+	itemInSentenceRel = SItemAs(item, "Sentence", error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Run",
-				  "Call to \"SItemUtterance\" failed"))
+				  "Call to \"SItemRelation\" failed"))
 		goto quit_error;
 
-	if (utt == NULL)
+	/* If the itemInSentenceRel is NULL then the item is not a phrase
+	 * */
+	if ( itemInSentenceRel == NULL )
 		return NULL;
 
-	/* get Phrase relation */
-	phraseRel = SUtteranceGetRelation(utt, "Phrase", error);
+	SItem * sentenceItem = SItemParent (itemInSentenceRel, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Run",
-				  "Call to \"SUtteranceGetRelation\" failed"))
+				  "Call to \"SItemParent\" failed"))
 		goto quit_error;
 
-	if (phraseRel == NULL)
-		return NULL;
-
-	itr = SRelationHead(phraseRel, error);
+	itr = SItemDaughter (sentenceItem, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Run",
-				  "Call to \"SRelationHead\" failed"))
+				  "Call to \"SItemDaughter\" failed"))
 		goto quit_error;
+
+	SItem * nextSentence = SItemNext (sentenceItem, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "Run",
+				  "Call to \"SItemNext\" failed"))
+		goto quit_error;
+
+	if ( nextSentence != NULL )
+		itemFinal = SItemDaughter (nextSentence, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "Run",
+					  "Call to \"SItemDaughter\" failed"))
+			goto quit_error;
 
 	count = 0;
-	while (itr != NULL)
+	while (itr != itemFinal && itr != NULL)
 	{
 		count++;
 		itr = SItemNext(itr, error);

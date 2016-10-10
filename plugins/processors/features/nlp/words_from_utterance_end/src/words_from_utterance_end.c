@@ -97,6 +97,8 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 	SObject *extractedFeat = NULL;
 	const SItem *itrItem;
 	sint32 count;
+	s_bool found = FALSE;
+	s_bool wordFound = FALSE;
 
 
 	S_CLR_ERR(error);
@@ -105,24 +107,73 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 		return NULL;
 
 	itrItem = item;
-	count = -1;
+	count = 0;
 
 	const SItem* itrPhrase = SItemPathToItem(item, "R:Phrase.parent", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "Run",
+				  "Call to \"SItemPathToItem\" failed"))
+		goto quit_error;
 
-	while(itrPhrase != NULL)
+	const SItem* itrLastPhrase = SItemPathToItem(item,
+				             "R:Phrase.parent.R:Sentence.parent.n.daughter.R:Phrase",
+				             error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "Run",
+				  "Call to \"SItemPathToItem\" failed"))
+		goto quit_error;
+
+	const SItem* itrLastWord = SItemPathToItem(item, "R:Phrase.parent.daughtern", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "Run",
+				  "Call to \"SItemPathToItem\" failed"))
+		goto quit_error;
+
+	wordFound =  SItemEqual(itrItem, itrLastWord, error);
+			if (S_CHK_ERR(error, S_CONTERR,
+						  "Run",
+						  "Call to \"SItemEqual\" failed"))
+				goto quit_error;
+
+	while( found == FALSE && itrPhrase != NULL )
 	{
-		while (itrItem != NULL)
+		while ( wordFound == FALSE && itrItem != NULL )
 		{
 			count++;
+
 			itrItem = SItemNext(itrItem, error);
 			if (S_CHK_ERR(error, S_CONTERR,
 						  "Run",
 						  "Call to \"SItemNext\" failed"))
 				goto quit_error;
+
+			wordFound =  SItemEqual(itrItem, itrLastWord, error);
+			if (S_CHK_ERR(error, S_CONTERR,
+						  "Run",
+						  "Call to \"SItemEqual\" failed"))
+				goto quit_error;
 		}
 
 		itrPhrase = SItemNext (itrPhrase, error);
-		itrItem = SItemPathToItem(item, "daughtern", error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "Run",
+					  "Call to \"SItemNext\" failed"))
+			goto quit_error;
+
+		if (itrPhrase != NULL)
+		{
+			itrItem = SItemLastDaughter (itrPhrase, error);
+			if (S_CHK_ERR(error, S_CONTERR,
+						  "Run",
+						  "Call to \"SItemLastDaughter\" failed"))
+				goto quit_error;
+		}
+
+		found = SItemEqual ( itrPhrase, itrLastPhrase, error );
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "Run",
+					  "Call to \"SItemEqual\" failed"))
+			goto quit_error;
 
 	}
 

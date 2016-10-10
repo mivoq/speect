@@ -100,18 +100,74 @@ static void Initialize(SFeatProcessor *self,const SMap* features, s_erc *error)
 		      "Call to S_CAST failed"))
 		goto quit_error;
 
-	castSelf->symbols =  S_CAST( SMapGetObject(features , "pos punctuation", error),
-								SMap, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-			  "Initialize",
-			  "Call to \"SMapGetObject\" failed"))
-		goto quit_error;
-
-	castSelf->symbols = SMapCopy ( NULL , castSelf->symbols , error);
+	castSelf->symbols = SMapCopy ( NULL , features, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 			  "Initialize",
 			  "Call to \"SMapCopy\" failed"))
 		goto quit_error;
+
+	/* Get the iterator for the SMap */
+	SIterator *itrList = S_ITERATOR_GET(castSelf->symbols, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+		      "Initialize",
+		      "Call to \"S_ITERATOR_GET\" failed"))
+		goto quit_error;
+
+	while( itrList != NULL ) {
+
+		const char *curStr = SIteratorKey(itrList, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+			      "Initialize",
+			      "Call to \"SIteratorKey\" failed"))
+			goto quit_error;
+
+		SList *valueList;
+		valueList = S_CAST(SMapGetObject(castSelf->symbols, curStr, error), SList, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+				  "Initialize",
+				  "Call to \"SMapGetObject\" failed"))
+			goto quit_error;
+
+		/* Initializing a new SMap */
+		SMap *newCastMap= S_MAP(S_NEW(SMapHashTable, error));
+
+		SIterator *itrValueList = S_ITERATOR_GET(valueList, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+				  "Initialize",
+				  "Call to \"S_ITERATOR_GET\" failed"))
+			goto quit_error;
+
+		while(itrValueList != NULL) {
+			const SObject *curValueObj = SIteratorObject(itrValueList, error);
+			if (S_CHK_ERR(error, S_CONTERR,
+					  "Initialize",
+					  "Call to \"SIteratorObject\" failed"))
+				goto quit_error;
+
+			const char *curValueStr = SObjectGetString(curValueObj, error);
+			if (S_CHK_ERR(error, S_CONTERR,
+					  "Initialize",
+					  "Call to \"SObjectGetString\" failed"))
+				goto quit_error;
+
+			/* Insert the string inside the map */
+			SMapSetString(newCastMap, curValueStr, curValueStr, error);
+			if (S_CHK_ERR(error, S_CONTERR,
+					  "Initialize",
+					  "Call to \"SMapSetObject\" failed"))
+				goto quit_error;
+
+			itrValueList = SIteratorNext(itrValueList);
+		}
+
+		/* Insertion of the SMap inside the SMap */
+		SMapSetObject(castSelf->symbols, curStr, (SObject *) newCastMap, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "Initialize",
+					  "Call to \"SMapSetObject\" failed"))
+				goto quit_error;
+		itrList = SIteratorNext(itrList);
+	}
 
 	/* error cleanup */
 	quit_error:
@@ -137,6 +193,21 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 		return NULL;
 
 	itrItem = SItemPathToItem (item, "R:Token.parent", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "Run",
+				  "Call to \"SItemGetString\" failed"))
+		goto quit_error;
+
+	SMap* posPunctuation = S_CAST( SMapGetObject ( castSelf->symbols, "pos punctuation", error ), SMap, error );
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "Run",
+				  "Call to \"SMapGetObject\" failed"))
+		goto quit_error;
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "Run",
+				  "Call to \"S_CAST\" failed"))
+		goto quit_error;
+
 	count = -1;
 	s_bool found = FALSE;
 
@@ -145,20 +216,35 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 		count++;
 
 		s_bool hasPos = SItemFeatureIsPresent ( itrItem, "POS", error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "Run",
+					  "Call to \"SItemFeatureIsPresent\" failed"))
+			goto quit_error;
 
 		if (hasPos)
 		{
 			const char* keyPos = SItemGetString (itrItem, "POS", error);
+			if (S_CHK_ERR(error, S_CONTERR,
+						  "Run",
+						  "Call to \"SItemGetString\" failed"))
+				goto quit_error;
 
-			found= SMapObjectPresent(castSelf->symbols, keyPos, error);
+			found= SMapObjectPresent(posPunctuation, keyPos, error);
+			if (S_CHK_ERR(error, S_CONTERR,
+						  "Run",
+						  "Call to \"SMapObjectPresent\" failed"))
+				goto quit_error;
 		}
 
 		itrItem = SItemPrev(itrItem, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "Run",
-					  "Call to \"SItemNext\" failed"))
+					  "Call to \"SItemPrev\" failed"))
 			goto quit_error;
 	}
+
+	if(found)
+		count--;
 
 	extractedFeat = SObjectSetInt(count, error);
 	if (S_CHK_ERR(error, S_CONTERR,

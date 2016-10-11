@@ -136,12 +136,13 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 				  "Call to \"SItemNext\" failed"))
 		goto quit_error;
 
-	if ( nextSentence != NULL )
+	if ( nextSentence != NULL ) {
 		itemFinal = SItemDaughter (nextSentence, error);
 		if (S_CHK_ERR(error, S_CONTERR,
-					  "Run",
-					  "Call to \"SItemDaughter\" failed"))
+			      "Run",
+			      "Call to \"SItemDaughter\" failed"))
 			goto quit_error;
+	}
 
 	count = 0;
 	while (itr != itemFinal && itr != NULL)

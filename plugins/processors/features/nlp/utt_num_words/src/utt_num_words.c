@@ -183,12 +183,13 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 					  "Call to \"SItemNext\" failed"))
 			goto quit_error;
 
-		if ( itrPhraseInPhrase != NULL )
+		if ( itrPhraseInPhrase != NULL ) {
 			itr = SItemDaughter ( itrPhraseInPhrase, error );
 			if (S_CHK_ERR(error, S_CONTERR,
-						  "Run",
-						  "Call to \"SItemDaughter\" failed"))
+				      "Run",
+				      "Call to \"SItemDaughter\" failed"))
 				goto quit_error;
+		}
 	}
 
 	extractedFeat = SObjectSetInt(count, error);

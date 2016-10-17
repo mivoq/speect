@@ -696,6 +696,13 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 			}
 
 			tokenItem = SItemNext(tokenItem, error);
+			if (S_CHK_ERR(error, S_CONTERR,
+				      "Run",
+				      "Call to \"SItemNext\" failed"))
+				goto quit_error;
+			if(tokenItem == NULL) {
+				isStopPunct = TRUE;
+			}
 		}
 
 		phraseItem = SItemNext(phraseItem, error);

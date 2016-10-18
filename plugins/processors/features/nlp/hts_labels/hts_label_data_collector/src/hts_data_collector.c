@@ -2172,8 +2172,8 @@ static void create_phrase_context(SELFPARAMETERTYPE *self, const SItem *item, s_
 	}
 
 	/* TOBI endtone of the current phrase */
-	/* item, syllable, word, phrase, last word, last syllable */
-	dFeat = SItemPathToFeature(item, "R:SylStructure.parent.parent.R:Phrase.parent.daughtern.R:SylStructure.daughtern.endtone",
+	/* item, syllable, word, phrase */
+	dFeat = SItemPathToFeatProc(item, "R:SylStructure.parent.parent.R:Phrase.parent.phrase_endtone",
 								error);
 	S_CHK_ERR(error, S_CONTERR,
 				  "create_phrase_context",
@@ -2181,7 +2181,7 @@ static void create_phrase_context(SELFPARAMETERTYPE *self, const SItem *item, s_
 
 	if (dFeat != NULL)
 	{
-		SHTSLabelDataCollectorSetFeature(self, "tobi.endtone", dFeat, error);
+		SHTSLabelDataCollectorSetFeature(self, "phrase.endtone", dFeat, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "create_phrase_context",
 					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
@@ -2355,12 +2355,12 @@ static void create_phrase_context_pause(SELFPARAMETERTYPE *self, const SItem *it
 	/* item, syllable, word, phrase, last word, last syllable */
 	if (use_next)
 	{
-		dFeat = SItemPathToFeature(item, "n.R:SylStructure.parent.parent.R:Phrase.parent.daughtern.R:SylStructure.daughtern.endtone",
+		dFeat = SItemPathToFeature(item, "n.R:SylStructure.parent.parent.R:Phrase.parent.phrase_endtone",
 									error);
 	}
 	else
 	{
-		dFeat = SItemPathToFeature(item, "p.R:SylStructure.parent.parent.R:Phrase.parent.daughtern.R:SylStructure.daughtern.endtone",
+		dFeat = SItemPathToFeature(item, "p.R:SylStructure.parent.parent.R:Phrase.parent.phrase_endtone",
 									error);
 	}
 	S_CHK_ERR(error, S_CONTERR,
@@ -2369,7 +2369,7 @@ static void create_phrase_context_pause(SELFPARAMETERTYPE *self, const SItem *it
 
 	if (dFeat != NULL)
 	{
-		SHTSLabelDataCollectorSetFeature(self, "tobi.endtone", dFeat, error);
+		SHTSLabelDataCollectorSetFeature(self, "phrase.endtone", dFeat, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "create_phrase_context_pause",
 					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))

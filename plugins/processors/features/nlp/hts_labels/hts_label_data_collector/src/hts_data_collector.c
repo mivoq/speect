@@ -2189,6 +2189,22 @@ static void create_phrase_context(SELFPARAMETERTYPE *self, const SItem *item, s_
 
 	}
 
+	dFeat = SItemPathToFeatProc(item, "R:SylStructure.parent.parent.R:Phrase.parent.p.phrase_endtone",
+								error);
+	S_CHK_ERR(error, S_CONTERR,
+				  "create_phrase_context",
+				  "Call to \"SItemPathToFeatProc\" failed");
+
+	if (dFeat != NULL)
+	{
+		SHTSLabelDataCollectorSetFeature(self, "p.phrase.endtone", dFeat, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_phrase_context",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			goto phrase_context_cleanup;
+
+	}
+
 	return;
 
 phrase_context_cleanup:

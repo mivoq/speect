@@ -876,6 +876,22 @@ static void create_phone_context(SELFPARAMETERTYPE *self, const SItem *item, s_e
 		}
 	}
 
+	/* Break Index */
+	featPath = SItemPathToFeatProc (item, "breakindex", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "create_phone_context",
+				  "Call to \"SItemPathToFeatProc\" failed"))
+		return;
+
+	if (featPath != NULL)
+	{
+		SHTSLabelDataCollectorSetFeature(self, "break.index", featPath, error);
+			if (S_CHK_ERR(error, S_CONTERR,
+						  "create_phone_context",
+						  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+				return;
+	}
+
 }
 
 

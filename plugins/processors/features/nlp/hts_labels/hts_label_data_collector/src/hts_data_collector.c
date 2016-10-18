@@ -1197,6 +1197,21 @@ static void create_syl_context(SELFPARAMETERTYPE* self, const SItem* item, s_erc
 
 	}
 
+	dFeat = SItemPathToFeatProc(item, "R:SylStructure.parent.R:Syllable.p.syllable_break_marytts", error);
+	S_CHK_ERR(error, S_CONTERR,
+				  "create_syl_context",
+				  "Call to \"SItemPathToFeatProc\" failed");
+
+	if (dFeat != NULL)
+	{
+		SHTSLabelDataCollectorSetFeature(self, "p.syllable.break", dFeat, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "create_syl_context",
+					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
+			goto syl_context_cleanup;
+
+	}
+
 return;
 
 syl_context_cleanup:

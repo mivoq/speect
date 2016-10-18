@@ -15,6 +15,7 @@
 #------------------------------------------------------------------------------------#
 
 add_subdirectory(accent)
+add_subdirectory(breakindex)
 add_subdirectory(punctuation)
 add_subdirectory(segment_duration)
 add_subdirectory(segment_end)

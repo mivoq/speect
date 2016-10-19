@@ -1,0 +1,2 @@
+Part-of-speech utterance processor using 
+the crfsuite open source CRF tagger (https://github.com/chokkan/crfsuite)

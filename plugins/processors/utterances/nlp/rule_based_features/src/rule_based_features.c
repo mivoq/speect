@@ -138,7 +138,7 @@ static void Initialize(SUttProcessor *self, const SVoice *voice, s_erc *error)
 
 	/* get the complete 'list definitions' map and put it into 'prosSymbols' SMap */
 	castSelf->prosSymbols = S_CAST(SUttProcessorGetFeature(self, "list definitions", error),
-			     SMap, error);
+				       SMap, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 		      "Initialize",
 		      "Failed to get 'list definitions' SMap feature"))
@@ -168,8 +168,8 @@ static void Initialize(SUttProcessor *self, const SVoice *voice, s_erc *error)
 		SList *valueList;
 		valueList = S_CAST(SMapGetObject(castSelf->prosSymbols, curStr, error), SList, error);
 		if (S_CHK_ERR(error, S_CONTERR,
-				  "Initialize",
-				  "Call to \"SMapGetObject\" failed"))
+			      "Initialize",
+			      "Call to \"SMapGetObject\" failed"))
 			goto quit_error;
 
 		/* Initializing a new SMap */
@@ -180,21 +180,21 @@ static void Initialize(SUttProcessor *self, const SVoice *voice, s_erc *error)
 		while(itrValueList != NULL) {
 			const SObject *curValueObj = SIteratorObject(itrValueList, error);
 			if (S_CHK_ERR(error, S_CONTERR,
-					  "Initialize",
-					  "Call to \"SIteratorObject\" failed"))
+				      "Initialize",
+				      "Call to \"SIteratorObject\" failed"))
 				goto quit_error;
 
 			const char *curValueStr = SObjectGetString(curValueObj, error);
 			if (S_CHK_ERR(error, S_CONTERR,
-					  "Initialize",
-					  "Call to \"SObjectGetString\" failed"))
+				      "Initialize",
+				      "Call to \"SObjectGetString\" failed"))
 				goto quit_error;
 
 			/* Insert the string inside the map */
 			SMapSetString(newCastMap, curValueStr, curValueStr, error);
 			if (S_CHK_ERR(error, S_CONTERR,
-					  "Initialize",
-					  "Call to \"SMapSetObject\" failed"))
+				      "Initialize",
+				      "Call to \"SMapSetObject\" failed"))
 				goto quit_error;
 
 			itrValueList = SIteratorNext(itrValueList);
@@ -206,8 +206,8 @@ static void Initialize(SUttProcessor *self, const SVoice *voice, s_erc *error)
 	}
 
 	/* error cleanup */
-	quit_error:
-		return;
+quit_error:
+	return;
 
 	S_UNUSED(voice);
 }
@@ -232,8 +232,8 @@ static s_bool searchStringMap(SMap *map, char *str, s_erc *error)
 	/* Search for the word in the SMap, using it as a Key */
 	s_bool found= SMapObjectPresent(map, str, error);
 	if (S_CHK_ERR(error, S_CONTERR,
-			  "searchStringMap",
-			  "Call to \"SMapObjectPresent\" failed"))
+		      "searchStringMap",
+		      "Call to \"SMapObjectPresent\" failed"))
 		return FALSE;
 
 	return found;
@@ -312,21 +312,21 @@ static s_bool setProsodyPosition(const SItem *word, s_bool nucleusAssigned, s_er
 	s_bool isFinalWord= isFinalToken(word, error);
 
 	SItem *wordInToken = SItemAs(word, "Token", error);
-		if (S_CHK_ERR(error, S_CONTERR,
-			      "setProsodyPosition",
-			      "Call to \"SItemAs\" failed"))
-			return FALSE;
+	if (S_CHK_ERR(error, S_CONTERR,
+		      "setProsodyPosition",
+		      "Call to \"SItemAs\" failed"))
+		return FALSE;
 	SItem *tokenItem = SItemParent(wordInToken, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-			      "setProsodyPosition",
-			      "Call to \"SItemParent\" failed"))
-			return FALSE;
+	if (S_CHK_ERR(error, S_CONTERR,
+		      "setProsodyPosition",
+		      "Call to \"SItemParent\" failed"))
+		return FALSE;
 
 	const char *accent= SItemGetString(tokenItem, "accent", error);
-		if (S_CHK_ERR(error, S_CONTERR,
-			      "setProsodyPosition",
-			      "Call to \"SItemGetString\" failed"))
-			return FALSE;
+	if (S_CHK_ERR(error, S_CONTERR,
+		      "setProsodyPosition",
+		      "Call to \"SItemGetString\" failed"))
+		return FALSE;
 
 	const char *prosodicPositionType;
 
@@ -349,28 +349,28 @@ static s_bool setProsodyPosition(const SItem *word, s_bool nucleusAssigned, s_er
 
 	SItemSetString(tokenItem, "prosodic_position_type", prosodicPositionType, error);
 	if (S_CHK_ERR(error, S_CONTERR,
-			  "Run",
-			  "Call to \"SItemSetString\" failed"))
+		      "Run",
+		      "Call to \"SItemSetString\" failed"))
 		return FALSE;
 
 	/* Apply transformation rules of the accent*/
 	const SItem *phrase= SItemPathToItem(word, "R:Phrase.parent", error);
-		if (S_CHK_ERR(error, S_CONTERR,
-			      "setProsodyPosition",
-			      "Call to \"SItemPathToItem\" failed"))
-			return FALSE;
+	if (S_CHK_ERR(error, S_CONTERR,
+		      "setProsodyPosition",
+		      "Call to \"SItemPathToItem\" failed"))
+		return FALSE;
 
 	SObject* extract = SItemPathToFeatProc(phrase, "phrase_type", error);
-		if (S_CHK_ERR(error, S_CONTERR,
-			      "setProsodyPosition",
-			      "Call to \"SItemPathToFeatProc\" failed"))
-			return FALSE;
+	if (S_CHK_ERR(error, S_CONTERR,
+		      "setProsodyPosition",
+		      "Call to \"SItemPathToFeatProc\" failed"))
+		return FALSE;
 
 	const char *type = SObjectGetString(extract, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-			      "setProsodyPosition",
-			      "Call to \"SObjectGetString\" failed"))
-			return FALSE;
+	if (S_CHK_ERR(error, S_CONTERR,
+		      "setProsodyPosition",
+		      "Call to \"SObjectGetString\" failed"))
+		return FALSE;
 
 	if( s_strcmp( accent, "tone", error) == 0 )
 	{
@@ -424,7 +424,7 @@ static s_bool setProsodyPosition(const SItem *word, s_bool nucleusAssigned, s_er
 		/* We can check only here for errors because there is only one
 		 * SItemSetString done (one for every leaf of the binary tree)
 		 * */
-		 if (S_CHK_ERR(error, S_CONTERR,
+		if (S_CHK_ERR(error, S_CONTERR,
 			      "setProsodyPosition",
 			      "Call to \"SItemSetString\" failed"))
 			return FALSE;
@@ -438,14 +438,14 @@ static s_bool setProsodyPosition(const SItem *word, s_bool nucleusAssigned, s_er
 	const char* stressed;
 	accent= SItemGetString(tokenItem, "accent", error);
 	if (S_CHK_ERR(error, S_CONTERR,
-			  "setProsodyPosition",
-			  "Call to \"SItemGetString\" failed"))
+		      "setProsodyPosition",
+		      "Call to \"SItemGetString\" failed"))
 		return FALSE;
 
 	const SItem *syllEnd = SItemPathToItem(word, "n.R:SylStructure.daughter.R:Syllable", error);
 	if (S_CHK_ERR(error, S_CONTERR,
-			  "setProsodyPosition",
-			  "Call to \"SItemPathToItem\" failed"))
+		      "setProsodyPosition",
+		      "Call to \"SItemPathToItem\" failed"))
 		return FALSE;
 
 	SItem *wordInSylStructure = SItemAs(word, "SylStructure", error);
@@ -470,9 +470,9 @@ static s_bool setProsodyPosition(const SItem *word, s_bool nucleusAssigned, s_er
 	{
 		stressed = SItemGetString(syll, "stress", error);
 		if (S_CHK_ERR(error, S_CONTERR,
-			  "setProsodyPosition",
-			  "Call to \"SItemGetString\" failed"))
-		return FALSE;
+			      "setProsodyPosition",
+			      "Call to \"SItemGetString\" failed"))
+			return FALSE;
 
 		if(s_strcmp( stressed, "primary", error) == 0 && s_strcmp( accent, "", error) != 0 )
 			SItemSetString(syll, "accent", accent, error);
@@ -525,22 +525,22 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 		goto quit_error;
 
 /*
-	const SItem* phraseItem_copy = phraseItem;
-	while (phraseItem_copy != NULL)
-	{
-		setSentenceType((SItem*)phraseItem_copy, prosSymbols, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-			      "Run",
-			      "Call to \"setSentenceType\" failed"))
-			goto quit_error;
+  const SItem* phraseItem_copy = phraseItem;
+  while (phraseItem_copy != NULL)
+  {
+  setSentenceType((SItem*)phraseItem_copy, prosSymbols, error);
+  if (S_CHK_ERR(error, S_CONTERR,
+  "Run",
+  "Call to \"setSentenceType\" failed"))
+  goto quit_error;
 
-		phraseItem_copy = SItemNext(phraseItem_copy, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-			      "Run",
-			      "Call to \"SItemNext\" failed"))
-			goto quit_error;
-	}
-	* */
+  phraseItem_copy = SItemNext(phraseItem_copy, error);
+  if (S_CHK_ERR(error, S_CONTERR,
+  "Run",
+  "Call to \"SItemNext\" failed"))
+  goto quit_error;
+  }
+  * */
 
 	const SItem* phrase = phraseItem;
 
@@ -740,8 +740,8 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 
 			wordEnd = SItemPrev(wordEnd, error);
 			if (S_CHK_ERR(error, S_CONTERR,
-					  "Run",
-					  "Call to \"SItemPrev\" failed"))
+				      "Run",
+				      "Call to \"SItemPrev\" failed"))
 				goto quit_error;
 		}
 

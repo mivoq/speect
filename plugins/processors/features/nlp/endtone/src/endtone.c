@@ -97,8 +97,6 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 					s_erc *error)
 {
 	SObject *extractedFeat = NULL;
-	s_bool found = FALSE;
-
 
 	SItem* itemNext = SItemNext (item,error);
 	if (S_CHK_ERR(error, S_CONTERR,

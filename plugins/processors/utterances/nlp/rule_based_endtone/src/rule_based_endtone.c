@@ -111,21 +111,21 @@ static void setBoundary (SRelation * boundariesRelation, int bi, const char* ton
 /* Set of functions used to verify conditions on some item's attributes
  * to apply the tobi-endtone's rules for the break-index and Endtone */
 
-static s_bool matchStringValue (SItem *item, const char* path, const char* value, s_erc *error);
+static s_bool matchStringValue (const SItem *item, const char* path, const char* value, s_erc *error);
 
-static s_bool matchInlistStringValue (SItem *item, const char* path, SMap* value, s_erc *error);
+static s_bool matchInlistStringValue (const SItem *item, const char* path, SMap* value, s_erc *error);
 
-static s_bool matchIntValue (SItem *item, const char* path, int value, s_erc *error);
+static s_bool matchIntValue (const SItem *item, const char* path, int value, s_erc *error);
 
-static s_bool matchMajorEqualValue (SItem *item, const char* path, int value, s_erc *error);
+static s_bool matchMajorEqualValue (const SItem *item, const char* path, int value, s_erc *error);
 
-static int getFollowingTokensNum (SItem *item, s_erc *error);
+static int getFollowingTokensNum (const SItem *item, s_erc *error);
 
-static int getPreviousTokensNum (SItem *item, s_erc *error);
+static int getPreviousTokensNum (const SItem *item, s_erc *error);
 
 /* The function that applies all the rules on a single token */
 
-static void applyRules (SItem *token, SRelation * boundariesRelation, const SMap* symbols, s_erc *error);
+static void applyRules (const SItem *token, SRelation * boundariesRelation, const SMap* symbols, s_erc *error);
 
 /************************************************************************************/
 /*                                                                                  */
@@ -246,7 +246,7 @@ static void Destroy(void *obj, s_erc *error)
 	S_UNUSED(obj);
 }
 
-static s_bool searchStringMap(SMap *map, char *str, s_erc *error)
+static s_bool searchStringMap(const SMap *map, const char *str, s_erc *error)
 {
 	S_CLR_ERR(error);
 	/* Search for the word in the SMap, using it as a Key */
@@ -259,11 +259,11 @@ static s_bool searchStringMap(SMap *map, char *str, s_erc *error)
 	return found;
 }
 
-static s_bool matchStringValue (SItem *item, const char* path, const char* value, s_erc *error)
+static s_bool matchStringValue (const SItem *item, const char* path, const char* value, s_erc *error)
 {
 	s_bool result = FALSE;
 
-	SObject *target = SItemPathToFeature(item, path, error);
+	const SObject *target = SItemPathToFeature(item, path, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 			  "matchStringValue",
 			  "Call to \"SItemPathToFeature\" failed"))
@@ -299,11 +299,11 @@ static s_bool matchStringValue (SItem *item, const char* path, const char* value
 	return FALSE;
 }
 
-static s_bool matchInlistStringValue (SItem *item, const char* path, SMap* value, s_erc *error)
+static s_bool matchInlistStringValue (const SItem *item, const char* path, SMap* value, s_erc *error)
 {
 	s_bool result = FALSE;
 
-	SObject *target = SItemPathToFeature(item, path, error);
+	const SObject *target = SItemPathToFeature(item, path, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 			  "matchStringValue",
 			  "Call to \"SItemPathToFeature\" failed"))
@@ -339,11 +339,11 @@ static s_bool matchInlistStringValue (SItem *item, const char* path, SMap* value
 	return FALSE;
 }
 
-static s_bool matchIntValue (SItem *item, const char* path, int value, s_erc *error)
+static s_bool matchIntValue (const SItem *item, const char* path, int value, s_erc *error)
 {
 	s_bool result = FALSE;
 
-	SObject *target = SItemPathToFeature(item, path, error);
+	const SObject *target = SItemPathToFeature(item, path, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 			  "matchStringValue",
 			  "Call to \"SItemPathToFeature\" failed"))
@@ -405,11 +405,11 @@ static s_bool matchIntValue (SItem *item, const char* path, int value, s_erc *er
 	return FALSE;
 }
 
-static s_bool matchMajorEqualValue (SItem *item, const char* path, int value, s_erc *error)
+static s_bool matchMajorEqualValue (const SItem *item, const char* path, int value, s_erc *error)
 {
 	s_bool result = FALSE;
 
-	SObject *target = SItemPathToFeature(item, path, error);
+	const SObject *target = SItemPathToFeature(item, path, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 			  "matchStringValue",
 			  "Call to \"SItemPathToFeature\" failed"))
@@ -471,7 +471,7 @@ static s_bool matchMajorEqualValue (SItem *item, const char* path, int value, s_
 	return FALSE;
 }
 
-static int getFollowingTokensNum (SItem *item, s_erc *error)
+static int getFollowingTokensNum (const SItem *item, s_erc *error)
 {
 	int count = -1;
 
@@ -488,7 +488,7 @@ static int getFollowingTokensNum (SItem *item, s_erc *error)
 	return count;
 }
 
-static int getPreviousTokensNum (SItem *item, s_erc *error)
+static int getPreviousTokensNum (const SItem *item, s_erc *error)
 {
 	int count = -1;
 
@@ -510,7 +510,7 @@ static void setBoundary (SRelation * boundariesRelation, int bi, const char* ton
 	if (boundariesRelation == NULL )
 		return;
 
-	const SItem *boundaryItem = SRelationAppend ( boundariesRelation, NULL, error);
+	SItem *boundaryItem = SRelationAppend ( boundariesRelation, NULL, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 			  "setBoundary",
 			  "Call to \"SRelationAppend\" failed"))
@@ -541,34 +541,34 @@ static void setBoundary (SRelation * boundariesRelation, int bi, const char* ton
 	}
 }
 
-static void applyRules (SItem *token, SRelation * boundariesRelation, const SMap* symbols, s_erc *error)
+static void applyRules (const SItem *token, SRelation * boundariesRelation, const SMap* symbols, s_erc *error)
 {
 	s_bool found = FALSE;
-	SMap* posPunctuation = SMapGetObject ( symbols, "pos_punctuation", error );
+	SMap* posPunctuation = (SMap*) SMapGetObject ( symbols, "pos_punctuation", error );
 	if (S_CHK_ERR(error, S_CONTERR,
 			  "applyRules",
 			  "Call to \"SMapGetObject\" failed"))
 		return;
 
-	SMap* FFelipses = SMapGetObject ( symbols, "FFelipses", error );
+	SMap* FFelipses = (SMap*) SMapGetObject ( symbols, "FFelipses", error );
 	if (S_CHK_ERR(error, S_CONTERR,
 			  "applyRules",
 			  "Call to \"SMapGetObject\" failed"))
 		return;
 
-	SMap* FCcolonSemicolon = SMapGetObject ( symbols, "FCcolon-semicolon", error );
+	SMap* FCcolonSemicolon = (SMap*) SMapGetObject ( symbols, "FCcolon-semicolon", error );
 	if (S_CHK_ERR(error, S_CONTERR,
 			  "applyRules",
 			  "Call to \"SMapGetObject\" failed"))
 		return;
 
-	SMap* FBopen = SMapGetObject ( symbols, "FBopen", error );
+	SMap* FBopen = (SMap*) SMapGetObject ( symbols, "FBopen", error );
 	if (S_CHK_ERR(error, S_CONTERR,
 			  "applyRules",
 			  "Call to \"SMapGetObject\" failed"))
 		return;
 
-	SMap* FBclosed = SMapGetObject ( symbols, "FBclosed", error );
+	SMap* FBclosed = (SMap*) SMapGetObject ( symbols, "FBclosed", error );
 	if (S_CHK_ERR(error, S_CONTERR,
 			  "applyRules",
 			  "Call to \"SMapGetObject\" failed"))
@@ -1664,7 +1664,6 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 	/* loop on phraseItem(s) */
 	const SItem *tokenItem = NULL;
 	const SItem *wordItem = NULL;
-	s_bool have_symbols;
 	/* 'prosSymbols' holds the complete map read from voice.json's 'list definitions' */
 	const SMap *prosSymbols = NULL;
 

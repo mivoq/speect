@@ -126,8 +126,6 @@ static void plugin_register_function(s_erc *error)
 	S_CLR_ERR(error);
 
 	/* register plug-in classes here */
-
-	/* register plug-in classes here */
 	_s_syl_break_marytts_class_reg(error);
 	S_CHK_ERR(error, S_CONTERR,
 			  SPCT_PLUGIN_REG_STR,

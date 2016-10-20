@@ -97,9 +97,8 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 					s_erc *error)
 {
 	SObject *extractedFeat = NULL;
-	s_bool found = FALSE;
 
-	SItem* itemNext =  SItemPathToItem (item, "R:SylStructure.parent.parent.daughtern.daughtern", error);
+	const SItem* itemNext =  SItemPathToItem (item, "R:SylStructure.parent.parent.daughtern.daughtern", error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Run",
 				  "Call to \"SItemNext\" failed"))
@@ -113,7 +112,7 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 
 	if ( itemNext == item && item != NULL )
 	{
-		SItem *boundary = SItemPathToItem ( item, "parent.parent", error);
+		const SItem *boundary = SItemPathToItem ( item, "parent.parent", error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "Run",
 					  "Call to \"SItemParent\" failed"))

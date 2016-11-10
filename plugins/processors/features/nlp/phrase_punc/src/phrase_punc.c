@@ -86,6 +86,22 @@ S_LOCAL void _s_phrase_punc_class_free(s_erc *error)
 /* Static class function implementations                                            */
 /*                                                                                  */
 /************************************************************************************/
+static void Destroy(void *obj, s_erc *error)
+{
+	S_CLR_ERR(error);
+	SPhrasePuncFeatProc *castSelf = S_CAST(obj, SPhrasePuncFeatProc, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+		      "Destroy",
+		      "Call to S_CAST failed"))
+		return;
+
+	if(castSelf->symbols != NULL) {
+		/* delete the symbols map */
+		S_DELETE(castSelf->symbols, "Destroy", error);
+		castSelf->symbols = NULL;
+	}
+}
+
 
 static void Dispose(void *obj, s_erc *error)
 {
@@ -232,7 +248,7 @@ static SPhrasePuncFeatProcClass PhrasePuncFeatProcClass =
 		sizeof(SPhrasePuncFeatProc),
 		{ 0, 1},
 		NULL,            /* init    */
-		NULL,            /* destroy */
+		Destroy,            /* destroy */
 		Dispose,         /* dispose */
 		NULL,            /* compare */
 		NULL,            /* print   */

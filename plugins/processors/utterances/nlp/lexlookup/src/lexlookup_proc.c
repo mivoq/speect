@@ -220,7 +220,7 @@ static void Destroy(void *obj, s_erc *error)
 	S_DELETE(sylPlugin, "Destroy", error);
 
 	/* check if a stress plug-in is defined as a feature */
-	tmp = SMapGetObjectDef(self->features, "_syll_stress_plugin", NULL, error);
+	tmp = SMapGetObjectDef(self->features, "_stress_func_plugin", NULL, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Destroy",
 				  "Call to \"SMapGetObjectDef\" failed"))
@@ -230,11 +230,27 @@ static void Destroy(void *obj, s_erc *error)
 		return;
 
 	/* unlink it */
-	sylPlugin = (SPlugin*)SMapObjectUnlink(self->features, "_syll_stress_plugin", error);
+	sylPlugin = (SPlugin*)SMapObjectUnlink(self->features, "_stress_func_plugin", error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Destroy",
 				  "Call to \"SMapObjectUnlink\" failed"))
 		return;
+
+	/* get the stress function */
+	tmp = SMapGetObjectDef(self->features, "_stress_func", NULL, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "Destroy",
+				  "Call to \"SMapGetObjectDef\" failed"))
+		return;
+
+	if (tmp != NULL)
+	{
+		SMapObjectDelete(self->features, "_stress_func", error);
+		if (S_CHK_ERR(error, S_CONTERR,
+					  "Destroy",
+					  "Call to \"SMapObjectDelete\" failed"))
+			return;
+	}
 
 	/* delete the plug-in */
 	S_DELETE(sylPlugin, "Destroy", error);
@@ -511,6 +527,8 @@ static void Initialize(SUttProcessor *self, const SVoice *voice, s_erc *error)
 		return;
 	}
 
+	/* check if a stress function is defined as a feature,
+	 * and if so, create the stress object */
 	tmp = SMapGetObjectDef(self->features, "syllable stress processor", NULL, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Initialize",
@@ -555,8 +573,18 @@ static void Initialize(SUttProcessor *self, const SVoice *voice, s_erc *error)
 				  "Call to \"SNEW_FROM_NAME\" failed"))
 		return;
 
-	/* add him to the features */
-	SMapSetObject(self->features, "_syll_stress_plugin", S_OBJECT(stressProc), error);
+	/* add them to the features */
+	SMapSetObject(self->features, "_stress_func_plugin", S_OBJECT(sylPlugin), error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "Initialize",
+				  "Call to \"SMapSetObject\" failed"))
+	{
+		S_DELETE(stressProc, "Initialize", error);
+		S_DELETE(sylPlugin, "Initialize", error);
+		return;
+	}
+
+	SMapSetObject(self->features, "_stress_func", S_OBJECT(stressProc), error);
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "Initialize",
 				  "Call to \"SMapSetObject\" failed"))
@@ -852,7 +880,7 @@ continue_cycle:
 
 	while (wordItem != NULL)
 	{
-		const SFeatProcessor* featproc = SUttProcessorGetFeature(self, "_syll_stress_plugin", error);
+		const SFeatProcessor* featproc = SUttProcessorGetFeature(self, "_stress_func", error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "Run",
 					  "Call to \"SUttProcessorGetFeature\" failed"))

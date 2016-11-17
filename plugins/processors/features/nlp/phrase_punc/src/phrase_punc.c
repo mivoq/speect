@@ -160,6 +160,10 @@ static const char* setSentenceType(const SItem *phrase, SMap *puncMap, s_erc *er
 
 	SItem *tokenItem = SItemParent(wordAsToken, error);
 	tokenItem = SItemNext(tokenItem, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+			  "setSentenceType",
+			  "Call to \"SItemNext\" failed"))
+		return NULL;
 
 	const char *punctStr = SItemGetName(tokenItem, error);
 	if (S_CHK_ERR(error, S_CONTERR,

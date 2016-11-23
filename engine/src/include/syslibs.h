@@ -65,6 +65,13 @@
 #  include <windows.h>
 #endif
 
+/*
+ * Include <BaseTsd.h> and define ssize_t if build on MSVC
+ */
+#ifdef SPCT_MSVC
+#  include <BaseTsd.h>
+typedef SSIZE_T ssize_t;
+#endif
 
 /*
  * Include <sys/types.h> if it is available.

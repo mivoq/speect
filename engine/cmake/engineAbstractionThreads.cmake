@@ -100,13 +100,11 @@ configure_file(${CMAKE_SOURCE_DIR}/engine/config/threads_impl.h.in
 #                               installation                                         #
 #------------------------------------------------------------------------------------#
 
-if(SPCT_UNIX)
-  install(FILES ${CMAKE_SOURCE_DIR}/engine/src/base/threads/platform/${SPCT_THREADS_SPECIFIC_IMPL}
-    DESTINATION include/speect/engine/base/threads/platform/${SPCT_THREADS_SPECIFIC_IMPL_DIR}/)
+install(FILES ${CMAKE_SOURCE_DIR}/engine/src/base/threads/platform/${SPCT_THREADS_SPECIFIC_IMPL}
+  DESTINATION include/speect/engine/base/threads/platform/${SPCT_THREADS_SPECIFIC_IMPL_DIR}/)
 
-  install(FILES ${CMAKE_BINARY_DIR}/engine/src/base/threads/platform/threads_impl.h
-    DESTINATION include/speect/engine/base/threads/platform)
-endif(SPCT_UNIX)
+install(FILES ${CMAKE_BINARY_DIR}/engine/src/base/threads/platform/threads_impl.h
+  DESTINATION include/speect/engine/base/threads/platform)
 
 
 #------------------------------------------------------------------------------------#

@@ -31,6 +31,4 @@ configure_file(${CMAKE_SOURCE_DIR}/engine/config/plugin_path_install.cmake.in
 #                   Set the installation script (UNIX only)                          #
 #------------------------------------------------------------------------------------#
 
-if(SPCT_UNIX)
-  install(SCRIPT ${CMAKE_BINARY_DIR}/engine/cmake/plugin_path_install.cmake)
-endif(SPCT_UNIX)
+install(SCRIPT ${CMAKE_BINARY_DIR}/engine/cmake/plugin_path_install.cmake)

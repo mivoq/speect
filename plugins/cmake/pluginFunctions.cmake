@@ -244,47 +244,42 @@ function(speect_plugin_create)
 
   ################################# Installation #######################################
   
-  if(SPCT_UNIX)
- 
-    # get plugin directory structure
-    string(LENGTH ${CMAKE_SOURCE_DIR}/plugins/ length_plugin_main)
-    string(LENGTH ${CMAKE_CURRENT_SOURCE_DIR} length_plugin_current)
-    math(EXPR length_plugin_name "${length_plugin_current} - ${length_plugin_main}")
-    string(SUBSTRING ${CMAKE_CURRENT_SOURCE_DIR}  
-      ${length_plugin_main} ${length_plugin_name} plugin_dir)
+  # get plugin directory structure
+  string(LENGTH ${CMAKE_SOURCE_DIR}/plugins/ length_plugin_main)
+  string(LENGTH ${CMAKE_CURRENT_SOURCE_DIR} length_plugin_current)
+  math(EXPR length_plugin_name "${length_plugin_current} - ${length_plugin_main}")
+  string(SUBSTRING ${CMAKE_CURRENT_SOURCE_DIR}  
+    ${length_plugin_main} ${length_plugin_name} plugin_dir)
     
-    # Install header files.  
-    install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/src/"
-      DESTINATION include/speect/plugins/${plugin_dir}
-      FILES_MATCHING PATTERN "*.h"
-      PATTERN "platform" EXCLUDE)
+  # Install header files.  
+  install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/src/"
+    DESTINATION include/speect/plugins/${plugin_dir}
+    FILES_MATCHING PATTERN "*.h"
+    PATTERN "platform" EXCLUDE)
 
-    install(DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/src/"
-      DESTINATION include/speect/plugins/${plugin_dir}
-      FILES_MATCHING PATTERN "*.h"
-      PATTERN "platform" EXCLUDE)
+  install(DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/src/"
+    DESTINATION include/speect/plugins/${plugin_dir}
+    FILES_MATCHING PATTERN "*.h"
+    PATTERN "platform" EXCLUDE)
   
-    # Install plug-in library
-    install(TARGETS ${plugin_lowercase_name}_plugin
-      DESTINATION "lib${LIB_SUFFIX}/speect/plugins"
-      )
+  # Install plug-in library
+  install(TARGETS ${plugin_lowercase_name}_plugin
+    DESTINATION "lib${LIB_SUFFIX}/speect/plugins"
+    )
 
-    # For Config file installation
-    list(LENGTH ${plugin_lowercase_name}_INCLUDE_DIRS num_dirs)
-    list(APPEND PLUGIN_INFO 
-      ${num_dirs} 
-      ${plugin_lowercase_name} 
-      ${${plugin_lowercase_name}_VERSION_MAJOR}
-      ${${plugin_lowercase_name}_VERSION_MINOR}
-      ${${plugin_lowercase_name}_INCLUDE_DIRS}
-      )
+  # For Config file installation
+  list(LENGTH ${plugin_lowercase_name}_INCLUDE_DIRS num_dirs)
+  list(APPEND PLUGIN_INFO 
+    ${num_dirs} 
+    ${plugin_lowercase_name} 
+    ${${plugin_lowercase_name}_VERSION_MAJOR}
+    ${${plugin_lowercase_name}_VERSION_MINOR}
+    ${${plugin_lowercase_name}_INCLUDE_DIRS}
+    )
 
-    set(tmplist ${SPCT_PLUGIN_LIST})
-    list(APPEND tmplist ${PLUGIN_INFO})
-    set(SPCT_PLUGIN_LIST ${tmplist} CACHE INTERNAL "Speect Engine include directories")
-    
-
-  endif(SPCT_UNIX)
+  set(tmplist ${SPCT_PLUGIN_LIST})
+  list(APPEND tmplist ${PLUGIN_INFO})
+  set(SPCT_PLUGIN_LIST ${tmplist} CACHE INTERNAL "Speect Engine include directories")
 
   ################################# Config file ########################################
 

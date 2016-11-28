@@ -75,6 +75,4 @@ add_subdirectory(languages)
 configure_file(${CMAKE_SOURCE_DIR}/plugins/config/pluginInstall.cmake.in 
   ${CMAKE_BINARY_DIR}/plugins/cmake/pluginInstall.cmake @ONLY)
 
-if(SPCT_UNIX)
-  install(SCRIPT ${CMAKE_BINARY_DIR}/plugins/cmake/pluginInstall.cmake)
-endif(SPCT_UNIX)
+install(SCRIPT ${CMAKE_BINARY_DIR}/plugins/cmake/pluginInstall.cmake)

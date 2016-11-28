@@ -71,13 +71,11 @@ configure_file(${CMAKE_SOURCE_DIR}/engine/config/envvar_impl.h.in
 #                               installation                                         #
 #------------------------------------------------------------------------------------#
 
-if(SPCT_UNIX)
-  install(FILES ${CMAKE_SOURCE_DIR}/engine/src/base/utils/platform/${SPCT_ENVVAR_SPECIFIC_IMPL}
-    DESTINATION include/speect/engine/base/utils/platform/${SPCT_ENVVAR_SPECIFIC_IMPL_DIR}/)
+install(FILES ${CMAKE_SOURCE_DIR}/engine/src/base/utils/platform/${SPCT_ENVVAR_SPECIFIC_IMPL}
+  DESTINATION include/speect/engine/base/utils/platform/${SPCT_ENVVAR_SPECIFIC_IMPL_DIR}/)
 
-  install(FILES ${CMAKE_BINARY_DIR}/engine/src/base/utils/platform/envvar_impl.h
-    DESTINATION include/speect/engine/base/utils/platform)
-endif(SPCT_UNIX)
+install(FILES ${CMAKE_BINARY_DIR}/engine/src/base/utils/platform/envvar_impl.h
+  DESTINATION include/speect/engine/base/utils/platform)
 
 
 #------------------------------------------------------------------------------------#

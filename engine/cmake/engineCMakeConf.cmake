@@ -40,6 +40,4 @@ export(TARGETS SPCT_LIBRARIES
 #                   Set the installation script (UNIX only)                          #
 #------------------------------------------------------------------------------------#
 
-if(SPCT_UNIX)
-  install(SCRIPT ${CMAKE_BINARY_DIR}/engine/cmake/speect_conf_install.cmake)
-endif(SPCT_UNIX)
+install(SCRIPT ${CMAKE_BINARY_DIR}/engine/cmake/speect_conf_install.cmake)

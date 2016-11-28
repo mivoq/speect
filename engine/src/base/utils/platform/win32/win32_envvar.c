@@ -94,7 +94,7 @@ S_LOCAL char *s_win32_envvar_get(const char *name, s_erc *error)
 	if (key_value == NULL)
 		return NULL;
 
-	ev_sys = s_strdup_clib(key_value);
+	ev_sys = s_strdup_clib((char*)key_value);
 	if (ev_sys == NULL)
 	{
 		S_ERR_PRINT(S_FAILURE, "s_win32_envvar_get",

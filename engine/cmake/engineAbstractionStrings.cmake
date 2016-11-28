@@ -63,12 +63,10 @@ configure_file(${CMAKE_SOURCE_DIR}/engine/config/strings_impl.h.in
 #                               installation                                         #
 #------------------------------------------------------------------------------------#
 
-if(SPCT_UNIX)
-  install(FILES ${CMAKE_SOURCE_DIR}/engine/src/base/strings/platform/${SPCT_STRINGS_SPECIFIC_IMPL}
-    DESTINATION include/speect/engine/base/strings/platform/${SPCT_STRINGS_SPECIFIC_IMPL_DIR}/)
+install(FILES ${CMAKE_SOURCE_DIR}/engine/src/base/strings/platform/${SPCT_STRINGS_SPECIFIC_IMPL}
+  DESTINATION include/speect/engine/base/strings/platform/${SPCT_STRINGS_SPECIFIC_IMPL_DIR}/)
 
-  install(FILES ${CMAKE_BINARY_DIR}/engine/src/base/strings/platform/strings_impl.h
-    DESTINATION include/speect/engine/base/strings/platform)
-endif(SPCT_UNIX)
+install(FILES ${CMAKE_BINARY_DIR}/engine/src/base/strings/platform/strings_impl.h
+  DESTINATION include/speect/engine/base/strings/platform)
 
 

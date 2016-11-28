@@ -16,19 +16,11 @@
 #         Plug-in path (see speect/engine/cmake/enginePluginPathLoader.cmake)        #
 #------------------------------------------------------------------------------------#
 
-if(SPCT_UNIX)
-  set(SPCT_BUILD_PLUGIN_PATH "${CMAKE_BINARY_DIR}/plugins/lib")
-  mark_as_advanced(SPCT_BUILD_PLUGIN_PATH)
+set(SPCT_BUILD_PLUGIN_PATH "${CMAKE_BINARY_DIR}/plugins/lib")
+mark_as_advanced(SPCT_BUILD_PLUGIN_PATH)
 
-  set(SPCT_INSTALL_PLUGIN_PATH "${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX}/speect/plugins")
-  mark_as_advanced(SPCT_INSTALL_PLUGIN_PATH)
-else(SPCT_UNIX)
-  set(SPCT_BUILD_PLUGIN_PATH "${CMAKE_BINARY_DIR}/plugins/lib")
-  mark_as_advanced(SPCT_BUILD_PLUGIN_PATH)
-
-  set(SPCT_INSTALL_PLUGIN_PATH "")
-  mark_as_advanced(SPCT_INSTALL_PLUGIN_PATH)
-endif(SPCT_UNIX)
+set(SPCT_INSTALL_PLUGIN_PATH "${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX}/speect/plugins")
+mark_as_advanced(SPCT_INSTALL_PLUGIN_PATH)
 
 
 #------------------------------------------------------------------------------------#

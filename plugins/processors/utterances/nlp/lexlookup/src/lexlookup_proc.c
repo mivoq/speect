@@ -278,33 +278,40 @@ static void s_compute_stresses ( const SFeatProcessor* proc, SItem* word, s_erc 
 		      "Call to \"SItemDaughter\" failed"))
 		return;
 
+	SObject* result = NULL;
 	while (syllable != NULL)
 	{
-		SObject* result = SFeatProcessorRun ( proc, syllable, error);
+		result = SFeatProcessorRun ( proc, syllable, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "s_compute_stresses",
 					  "Call to \"SItemPathToFeatProc\" failed"))
-			return;
+			goto s_compute_stresses_cleanup;
 
 		const char* resultString = SObjectGetString ( result, error );
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "s_compute_stresses",
 					  "Call to \"SObjectGetInt\" failed"))
-			return;
+			goto s_compute_stresses_cleanup;
 
 		SItemSetString ( syllable, "stress", resultString, error );
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "s_compute_stresses",
 					  "Call to \"SItemSetInt\" failed"))
-			return;
+			goto s_compute_stresses_cleanup;
 
 		syllable = SItemNext ( syllable, error );
 		if (S_CHK_ERR(error, S_CONTERR,
 					  "s_compute_stresses",
 					  "Call to \"SItemNext\" failed"))
-			return;
+			goto s_compute_stresses_cleanup;
+		if(result != NULL) {
+			S_DELETE(result, "s_compute_stresses", error);
+		}
 	}
-
+s_compute_stresses_cleanup:
+	if(result != NULL) {
+		S_DELETE(result, "s_compute_stresses", error);
+	}
 
 }
 

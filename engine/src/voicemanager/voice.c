@@ -216,7 +216,7 @@ S_API SUtterance *SVoiceSynthUtt(const SVoice *self, const char *utt_type,
 				  "Call to class method \"synth_utt\" failed"))
 	{
 		s_mutex_unlock((s_mutex*)&self->voice_mutex);
-		return NULL;
+		return utt;
 	}
 
 	s_mutex_unlock((s_mutex*)&self->voice_mutex);
@@ -1909,7 +1909,10 @@ static SUtterance *SynthUtt(const SVoice *self, const char *utt_type,
 	if (S_CHK_ERR(error, S_CONTERR,
 				  "SynthUtt",
 				  "Failed to initialize new utterance"))
+	{
+		S_DELETE(utt, "SynthUtt", error);
 		return NULL;
+	}
 
 	SUtteranceSetFeature(utt, "input", input, error);
 	if (S_CHK_ERR(error, S_CONTERR,
@@ -2096,6 +2099,3 @@ static SVoiceClass VoiceClass =
 	SynthUtt,          /* synth_utt    */
 	ReSynthUtt         /* re_synth_utt */
 };
-
-
-

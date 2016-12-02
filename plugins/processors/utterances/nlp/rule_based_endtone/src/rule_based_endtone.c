@@ -263,19 +263,21 @@ static s_bool matchStringValue (const SItem *item, const char* path, const char*
 {
 	s_bool result = FALSE;
 
+	const SObject *target_p = NULL;
 	const SObject *target = SItemPathToFeature(item, path, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 			  "matchStringValue",
 			  "Call to \"SItemPathToFeature\" failed"))
-		return FALSE;
+		goto match_string_value_return;
 
 	if (target == NULL)
 	{
-		target = SItemPathToFeatProc(item, path, error);
+		target_p = SItemPathToFeatProc(item, path, error);
+		target = target_p;
 		if (S_CHK_ERR(error, S_CONTERR,
 				  "matchStringValue",
 				  "Call to \"SItemPathToFeature\" failed"))
-			return FALSE;
+			goto match_string_value_return;
 	}
 
 	if (target != NULL)
@@ -285,24 +287,27 @@ static s_bool matchStringValue (const SItem *item, const char* path, const char*
 		if (S_CHK_ERR(error, S_CONTERR,
 				  "matchStringValue",
 				  "Call to \"SObjectGetString\" failed"))
-			return FALSE;
+			goto match_string_value_return;
 
 		result = (s_strcmp(value, match, error) == 0);
 		if (S_CHK_ERR(error, S_CONTERR,
 				  "matchStringValue",
 				  "Call to \"s_strcmp\" failed"))
-			return FALSE;
-
-		return result;
+			goto match_string_value_return;
 	}
-
-	return FALSE;
+match_string_value_return:
+	if (target_p != NULL)
+	{
+		S_DELETE(target_p, "matchStringValue", error);
+	}
+	return result;
 }
 
 static s_bool matchInlistStringValue (const SItem *item, const char* path, SMap* value, s_erc *error)
 {
 	s_bool result = FALSE;
 
+	const SObject *target_p = NULL;
 	const SObject *target = SItemPathToFeature(item, path, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 			  "matchStringValue",
@@ -311,11 +316,12 @@ static s_bool matchInlistStringValue (const SItem *item, const char* path, SMap*
 
 	if (target == NULL)
 	{
-		target = SItemPathToFeatProc(item, path, error);
+		target_p = SItemPathToFeatProc(item, path, error);
+		target = target_p;
 		if (S_CHK_ERR(error, S_CONTERR,
 				  "matchStringValue",
 				  "Call to \"SItemPathToFeature\" failed"))
-			return FALSE;
+			goto match_in_list_string_value_return;
 	}
 
 	if (target != NULL)
@@ -325,37 +331,44 @@ static s_bool matchInlistStringValue (const SItem *item, const char* path, SMap*
 		if (S_CHK_ERR(error, S_CONTERR,
 				  "matchStringValue",
 				  "Call to \"SObjectGetString\" failed"))
-			return FALSE;
+			goto match_in_list_string_value_return;
 
 		result = searchStringMap (value, match, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 				  "matchStringValue",
 				  "Call to \"searchStringMap\" failed"))
-			return FALSE;
+			goto match_in_list_string_value_return;
 
 		return result;
 	}
 
-	return FALSE;
+match_in_list_string_value_return:
+	if (target_p != NULL)
+	{
+		S_DELETE(target_p, "matchInListStringValue", error);
+	}
+	return result;
 }
 
 static s_bool matchIntValue (const SItem *item, const char* path, int value, s_erc *error)
 {
 	s_bool result = FALSE;
 
+	const SObject *target_p = NULL;
 	const SObject *target = SItemPathToFeature(item, path, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 			  "matchStringValue",
 			  "Call to \"SItemPathToFeature\" failed"))
-		return FALSE;
+		goto match_int_value_return;
 
 	if (target == NULL)
 	{
-		target = SItemPathToFeatProc(item, path, error);
+		target_p = SItemPathToFeatProc(item, path, error);
+		target = target_p;
 		if (S_CHK_ERR(error, S_CONTERR,
 				  "matchStringValue",
 				  "Call to \"SItemPathToFeature\" failed"))
-			return FALSE;
+			goto match_int_value_return;
 	}
 
 	if (target == NULL && s_strcmp (path, "PreviousTokens", error) == 0)
@@ -364,13 +377,14 @@ static s_bool matchIntValue (const SItem *item, const char* path, int value, s_e
 		if (S_CHK_ERR(error, S_CONTERR,
 				  "matchStringValue",
 				  "Call to \"getPreviousTokensNum\" failed"))
-			return FALSE;
+			goto match_int_value_return;
 
-		target = SObjectSetInt(tmp, error);
+		target_p = SObjectSetInt(tmp, error);
+		target = target_p;
 		if (S_CHK_ERR(error, S_CONTERR,
 				  "matchStringValue",
 				  "Call to \"SObjectSetInt\" failed"))
-			return FALSE;
+			goto match_int_value_return;
 	}
 
 	if (target == NULL && s_strcmp (path, "FollowingTokens", error) == 0)
@@ -379,13 +393,14 @@ static s_bool matchIntValue (const SItem *item, const char* path, int value, s_e
 		if (S_CHK_ERR(error, S_CONTERR,
 				  "matchStringValue",
 				  "Call to \"getPreviousTokensNum\" failed"))
-			return FALSE;
+			goto match_int_value_return;
 
-		target = SObjectSetInt(tmp, error);
+		target_p = SObjectSetInt(tmp, error);
+		target = target_p;
 		if (S_CHK_ERR(error, S_CONTERR,
 				  "matchStringValue",
 				  "Call to \"SObjectSetInt\" failed"))
-			return FALSE;
+			goto match_int_value_return;
 	}
 
 	if (target != NULL)
@@ -395,33 +410,40 @@ static s_bool matchIntValue (const SItem *item, const char* path, int value, s_e
 		if (S_CHK_ERR(error, S_CONTERR,
 				  "matchStringValue",
 				  "Call to \"SObjectGetInt\" failed"))
-			return FALSE;
+			goto match_int_value_return;
 
 		result = ( match == value );
 
-		return result;
+		goto match_int_value_return;
 	}
 
-	return FALSE;
+match_int_value_return:
+	if (target_p != NULL)
+	{
+		S_DELETE(target_p, "matchIntValue", error);
+	}
+	return result;
 }
 
 static s_bool matchMajorEqualValue (const SItem *item, const char* path, int value, s_erc *error)
 {
 	s_bool result = FALSE;
 
+	const SObject *target_p = NULL;
 	const SObject *target = SItemPathToFeature(item, path, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 			  "matchStringValue",
 			  "Call to \"SItemPathToFeature\" failed"))
-		return FALSE;
+		goto match_major_equal_value_return;
 
 	if (target == NULL)
 	{
-		target = SItemPathToFeatProc(item, path, error);
+		target_p = SItemPathToFeatProc(item, path, error);
+		target = target_p;
 		if (S_CHK_ERR(error, S_CONTERR,
 				  "matchStringValue",
 				  "Call to \"SItemPathToFeature\" failed"))
-			return FALSE;
+			goto match_major_equal_value_return;
 	}
 
 	if (target == NULL && s_strcmp (path, "PreviousTokens", error) == 0)
@@ -430,13 +452,14 @@ static s_bool matchMajorEqualValue (const SItem *item, const char* path, int val
 		if (S_CHK_ERR(error, S_CONTERR,
 				  "matchStringValue",
 				  "Call to \"getPreviousTokensNum\" failed"))
-			return FALSE;
+			goto match_major_equal_value_return;
 
-		target = SObjectSetInt(tmp, error);
+		target_p = SObjectSetInt(tmp, error);
+		target = target_p;
 		if (S_CHK_ERR(error, S_CONTERR,
 				  "matchStringValue",
 				  "Call to \"SObjectSetInt\" failed"))
-			return FALSE;
+			goto match_major_equal_value_return;
 	}
 
 	if (target == NULL && s_strcmp (path, "FollowingTokens", error) == 0)
@@ -445,13 +468,14 @@ static s_bool matchMajorEqualValue (const SItem *item, const char* path, int val
 		if (S_CHK_ERR(error, S_CONTERR,
 				  "matchStringValue",
 				  "Call to \"getPreviousTokensNum\" failed"))
-			return FALSE;
+			goto match_major_equal_value_return;
 
-		target = SObjectSetInt(tmp, error);
+		target_p = SObjectSetInt(tmp, error);
+		target = target_p;
 		if (S_CHK_ERR(error, S_CONTERR,
 				  "matchStringValue",
 				  "Call to \"SObjectSetInt\" failed"))
-			return FALSE;
+			goto match_major_equal_value_return;
 	}
 
 	if (target != NULL)
@@ -461,14 +485,19 @@ static s_bool matchMajorEqualValue (const SItem *item, const char* path, int val
 		if (S_CHK_ERR(error, S_CONTERR,
 				  "matchStringValue",
 				  "Call to \"SObjectGetInt\" failed"))
-			return FALSE;
+			goto match_major_equal_value_return;
 
 		result = ( match >= value );
 
-		return result;
+		goto match_major_equal_value_return;
 	}
 
-	return FALSE;
+match_major_equal_value_return:
+	if (target_p != NULL)
+	{
+		S_DELETE(target_p, "matchMajorEqualValue", error);
+	}
+	return result;
 }
 
 static int getFollowingTokensNum (const SItem *item, s_erc *error)

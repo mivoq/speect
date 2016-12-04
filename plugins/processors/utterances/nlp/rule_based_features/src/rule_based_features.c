@@ -309,6 +309,7 @@ static s_bool isFinalToken (const SItem *word, s_erc *error)
  * */
 static s_bool setProsodyPosition(const SItem *word, s_bool nucleusAssigned, s_erc *error)
 {
+	s_bool result = FALSE;
 	s_bool isFinalWord= isFinalToken(word, error);
 
 	SItem *wordInToken = SItemAs(word, "Token", error);
@@ -363,14 +364,16 @@ static s_bool setProsodyPosition(const SItem *word, s_bool nucleusAssigned, s_er
 	SObject* extract = SItemPathToFeatProc(phrase, "phrase_type", error);
 	if (S_CHK_ERR(error, S_CONTERR,
 		      "setProsodyPosition",
-		      "Call to \"SItemPathToFeatProc\" failed"))
-		return FALSE;
+		      "Call to \"SItemPathToFeatProc\" failed")) {
+		goto set_prosody_position_cleanup;
+	}
 
 	const char *type = SObjectGetString(extract, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 		      "setProsodyPosition",
-		      "Call to \"SObjectGetString\" failed"))
-		return FALSE;
+		      "Call to \"SObjectGetString\" failed")) {
+		goto set_prosody_position_cleanup;
+	}
 
 	if( s_strcmp( accent, "tone", error) == 0 )
 	{
@@ -427,7 +430,7 @@ static s_bool setProsodyPosition(const SItem *word, s_bool nucleusAssigned, s_er
 		if (S_CHK_ERR(error, S_CONTERR,
 			      "setProsodyPosition",
 			      "Call to \"SItemSetString\" failed"))
-			return FALSE;
+			goto set_prosody_position_cleanup;
 	}
 	/* NO ELSE because if no accent is set, then no accent is needed to be setted
 	 * */
@@ -440,31 +443,31 @@ static s_bool setProsodyPosition(const SItem *word, s_bool nucleusAssigned, s_er
 	if (S_CHK_ERR(error, S_CONTERR,
 		      "setProsodyPosition",
 		      "Call to \"SItemGetString\" failed"))
-		return FALSE;
+		goto set_prosody_position_cleanup;
 
 	const SItem *syllEnd = SItemPathToItem(word, "n.R:SylStructure.daughter.R:Syllable", error);
 	if (S_CHK_ERR(error, S_CONTERR,
 		      "setProsodyPosition",
 		      "Call to \"SItemPathToItem\" failed"))
-		return FALSE;
+		goto set_prosody_position_cleanup;
 
 	SItem *wordInSylStructure = SItemAs(word, "SylStructure", error);
 	if (S_CHK_ERR(error, S_CONTERR,
 		      "setProsodyPosition",
 		      "Call to \"SItemAs\" failed"))
-		return FALSE;
+		goto set_prosody_position_cleanup;
 
 	SItem *syllAsSylStructure = SItemDaughter(wordInSylStructure, error);
 	if (S_CHK_ERR(error, S_CONTERR,
 		      "setProsodyPosition",
 		      "Call to \"SItemDaughter\" failed"))
-		return FALSE;
+		goto set_prosody_position_cleanup;
 
 	SItem *syll = SItemAs(syllAsSylStructure, "Syllable", error);
 	if (S_CHK_ERR(error, S_CONTERR,
 		      "setProsodyPosition",
 		      "Call to \"SItemAs\" failed"))
-		return FALSE;
+		goto set_prosody_position_cleanup;
 
 	while (syll != syllEnd)
 	{
@@ -472,7 +475,7 @@ static s_bool setProsodyPosition(const SItem *word, s_bool nucleusAssigned, s_er
 		if (S_CHK_ERR(error, S_CONTERR,
 			      "setProsodyPosition",
 			      "Call to \"SItemGetString\" failed"))
-			return FALSE;
+			goto set_prosody_position_cleanup;
 
 		if(s_strcmp( stressed, "primary", error) == 0 && s_strcmp( accent, "", error) != 0 )
 			SItemSetString(syll, "accent", accent, error);
@@ -480,8 +483,15 @@ static s_bool setProsodyPosition(const SItem *word, s_bool nucleusAssigned, s_er
 		syll = SItemNext (syll, error);
 	}
 
+	if(extract != NULL) {
+		S_DELETE(extract, "setProsodyPosition", error);
+	}
 	return nucleusAssigned;
-
+set_prosody_position_cleanup:
+	if(extract != NULL) {
+		S_DELETE(extract, "setProsodyPosition", error);
+	}
+	return result;
 }
 
 

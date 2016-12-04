@@ -802,9 +802,12 @@ static void create_phone_context(SELFPARAMETERTYPE *self, const SItem *item, s_e
 	{
 		segTot = SObjectGetInt (featPath, error);
 		if (S_CHK_ERR(error, S_CONTERR,
-					  "create_phone_context",
-					  "Call to \"SObjectGetInt\" failed"))
+			      "create_phone_context",
+			      "Call to \"SObjectGetInt\" failed")) {
+			S_DELETE(featPath, "create_phone_context", error);
 			return;
+		}
+		S_DELETE(featPath, "create_phone_context", error);
 	}
 
 	if (segTot != 0)
@@ -2253,16 +2256,6 @@ static void create_phrase_context_pause(SELFPARAMETERTYPE *self, const SItem *it
 	}
 
 	/* the number of syllables in this phrase */
-	if (use_next)
-	{
-		dFeat = SItemPathToFeatProc(item, "n.R:SylStructure.parent.parent.R:Phrase.parent.phrase_num_syls",
-								   error);
-	}
-	else
-	{
-		dFeat = SItemPathToFeatProc(item, "p.R:SylStructure.parent.parent.R:Phrase.parent.phrase_num_syls",
-								   error);
-	}
 	dFeat = SItemPathToFeatProc(item, "R:SylStructure.parent.parent.R:Phrase.parent.phrase_num_syls", error);
 	S_CHK_ERR(error, S_CONTERR,
 				  "create_phrase_context_pause",
@@ -2925,7 +2918,6 @@ static void create_accent_context(SELFPARAMETERTYPE *self, const SItem *item, s_
 					  "create_accent_context",
 					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
 			goto accent_cleanup;
-		S_DELETE(featPath, "create_accent_context", error);
 	}
 
 	/* current syllable accent */
@@ -2953,7 +2945,6 @@ static void create_accent_context(SELFPARAMETERTYPE *self, const SItem *item, s_
 					  "create_accent_context",
 					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
 			goto accent_cleanup;
-		S_DELETE(featPath, "create_accent_context", error);
 	}
 
 	/* next syllable accent */
@@ -2981,7 +2972,6 @@ static void create_accent_context(SELFPARAMETERTYPE *self, const SItem *item, s_
 					  "create_accent_context",
 					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
 			goto accent_cleanup;
-		S_DELETE(featPath, "create_accent_context", error);
 	}
 
 	/* the number of acceted syllables before the current syllable in the current phrase */
@@ -3118,7 +3108,6 @@ static void create_accent_context_pause(SELFPARAMETERTYPE *self, const SItem *it
 					  "create_accent_context_pause",
 					  "Call to \"SHTSLabelDataCollectorSetFeature\" failed"))
 			goto accent_pause_cleanup;
-		S_DELETE(featPath, "create_accent_context_pause", error);
 	}
 
 	return;
@@ -3141,8 +3130,6 @@ static void Init(void *obj, s_erc *error)
 
 	SHTSLabelsDataCollectorFeatProc *self = obj;
 
-	S_CLR_ERR(error);
-
 	self->features = S_MAP(S_NEW(SMapList, error));
 	if (S_CHK_ERR(error, S_CONTERR,
 			  "InitLabelsDataCollector",
@@ -3158,10 +3145,9 @@ static void Dispose(void *obj, s_erc *error)
 
 static void Destroy(void *obj, s_erc *error)
 {
-	SHTSLabelsDataCollectorFeatProc *self = obj;
-
-
 	S_CLR_ERR(error);
+
+	SHTSLabelsDataCollectorFeatProc *self = obj;
 
 	if (self->features != NULL)
 		S_DELETE(self->features, "Destroy", error);
@@ -3171,7 +3157,6 @@ static void Destroy(void *obj, s_erc *error)
 static SObject *Run(const SFeatProcessor *self, const SItem *item,
 					s_erc *error)
 {
-	//SELFPARAMETERTYPE *HTSProc = (SELFPARAMETERTYPE *)self;
 	const SItem *segItem;
 	s_bool is_pause;
 

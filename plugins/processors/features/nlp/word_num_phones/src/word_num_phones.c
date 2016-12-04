@@ -151,6 +151,8 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 					  "Run",
 					  "Call to \"SObjectGetInt\" failed"))
 			goto quit_error;
+		if (feature != NULL)
+			S_DELETE(feature, "Run", error);
 
 		itrItem = SItemNext(itrItem, error);
 		if (S_CHK_ERR(error, S_CONTERR,
@@ -172,6 +174,8 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 quit_error:
 	if (extractedFeat != NULL)
 		S_DELETE(extractedFeat, "Run", error);
+	if (feature != NULL)
+		S_DELETE(feature, "Run", error);
 
 	return NULL;
 

@@ -267,7 +267,7 @@ static char* setSentenceType(const SItem *phrase, SMap *prosSymbols, s_erc *erro
 {
 	S_CLR_ERR(error);
 
-	char* result;
+	char* result = "decl";
 
 	/* types: "decl, "excl", "interrog" */
 	/* stop at sentence's last token */
@@ -384,6 +384,9 @@ static char* setSentenceType(const SItem *phrase, SMap *prosSymbols, s_erc *erro
 			      "setSentenceType",
 			      "Call to \"SItemNext\" failed"))
 			return NULL;
+		if(tokenItem == NULL) {
+			isFinalPunct = TRUE;
+		}
 	}
 	return result;
 }

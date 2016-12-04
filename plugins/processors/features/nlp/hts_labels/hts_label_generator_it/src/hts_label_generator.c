@@ -50,37 +50,34 @@
 /*                                                                                  */
 /************************************************************************************/
 
-static char* _s_escape_tobi_string (char* string, s_erc *error)
+static void _s_append_maryhts_escaped_string (char**appendTo, const char* string, s_erc *error)
 {
-	char * result = NULL;
 	char tmp[7];
 	int i = 0;
 
 	if (string == NULL)
-		return NULL;
+		return;
 
 	//Search for '*' and replace it with 'st'
 	//and for '%' and replace it with 'pc'
 
 	while (string[i] != '\0')
 	{
-
-
 		switch (string[i])
 		{
 			case '*':
-				s_sappend (&result, "st", error);
+				s_sappend (appendTo, "st", error);
 				if (S_CHK_ERR(error, S_CONTERR,
-						  "_s_escape_tobi_string",
+						  "_s_append_maryhts_escaped_string",
 						  "Call to \"s_sappend\" failed"))
 					break;
 
 				break;
 
 			case '%':
-				s_sappend (&result, "pc", error);
+				s_sappend (appendTo, "pc", error);
 				if (S_CHK_ERR(error, S_CONTERR,
-						  "_s_escape_tobi_string",
+						  "_s_append_maryhts_escaped_string",
 						  "Call to \"s_sappend\" failed"))
 					break;
 
@@ -89,19 +86,19 @@ static char* _s_escape_tobi_string (char* string, s_erc *error)
 			default:
 				s_strncpy (tmp, string +i, 1, error);
 				if (S_CHK_ERR(error, S_CONTERR,
-						  "_s_escape_tobi_string",
+						  "_s_append_maryhts_escaped_string",
 						  "Call to \"s_strncpy\" failed"))
 					break;
 
 				i += s_width(tmp, error) - 1;
 				if (S_CHK_ERR(error, S_CONTERR,
-						  "_s_escape_tobi_string",
+						  "_s_append_maryhts_escaped_string",
 						  "Call to \"s_width\" failed"))
 					break;
 
-				s_sappend (&result, tmp, error);
+				s_sappend (appendTo, tmp, error);
 				if (S_CHK_ERR(error, S_CONTERR,
-						  "_s_escape_tobi_string",
+						  "_s_append_maryhts_escaped_string",
 						  "Call to \"s_sappend\" failed"))
 					break;
 
@@ -109,7 +106,7 @@ static char* _s_escape_tobi_string (char* string, s_erc *error)
 		}
 		i++;
 	}
-	return result;
+	return;
 }
 
 
@@ -172,6 +169,15 @@ static int EXTRACTFEATURE(SHTSLabelsGeneratorItFeatProc *self, const SHTSLabelsD
 						      "EXTRACTFEATURE",
 						      "Call to \"s_asprintf\" failed"))
 						break;
+					if (tmp != NULL) {
+						s_sappend(appendTo, tmp, error);
+						if (S_CHK_ERR(error, S_CONTERR,
+							      "EXTRACTFEATURE",
+							      "Call to \"s_sappend\" failed")) {
+							S_FREE(tmp);
+							break;
+						}
+					}
 				}
 				else if (s_strstr(value, "=%s", error ))
 				{
@@ -189,15 +195,16 @@ static int EXTRACTFEATURE(SHTSLabelsGeneratorItFeatProc *self, const SHTSLabelsD
 						      "Call to \"s_asprintf\" failed"))
 						break;
 
-					tmp = _s_escape_tobi_string (tmp, error);
+					_s_append_maryhts_escaped_string (appendTo, tmp, error);
+					if (S_CHK_ERR(error, S_CONTERR,
+						      "EXTRACTFEATURE",
+						      "Call to \"_s_append_maryhts_escaped_string\" failed")) {
+						S_FREE(tmp);
+						break;
+					}
 
 				}
 			}
-			if (tmp != NULL) s_sappend(appendTo, tmp, error);
-			if (S_CHK_ERR(error, S_CONTERR,
-				      "EXTRACTFEATURE",
-				      "Call to \"s_sappend\" failed"))
-				break;
 		} while(0);
 		if (tmp != NULL) S_FREE(tmp);
 	}
@@ -470,8 +477,8 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 	SHTSLabelsGeneratorItFeatProc* labelGenerator = (SHTSLabelsGeneratorItFeatProc*) self;
 	const SHTSLabelsDataCollectorFeatProc *data = NULL;
 	char *resultString = NULL;
-	char *tmp = NULL;
 	SIterator *itrFeatureMap = NULL;
+	SObject *result = NULL;
 
 	S_CLR_ERR(error);
 
@@ -592,7 +599,7 @@ static SObject *Run(const SFeatProcessor *self, const SItem *item,
 		}
 	}
 	s_sappend(&resultString, "|", error);
-	return SObjectSetString(resultString, error);
+	result = SObjectSetString(resultString, error);
 
 	/* error cleanup */
 quit_error:
@@ -604,16 +611,12 @@ quit_error:
 	{
 		S_DELETE(itrFeatureMap, "Run", error);
 	}
-	if (tmp != NULL)
-	{
-		S_FREE(tmp);
-	}
 	if (resultString != NULL)
 	{
 		S_FREE(resultString);
 	}
 
-	return NULL;
+	return result;
 
 	S_UNUSED(self);
 }

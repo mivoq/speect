@@ -527,7 +527,7 @@ static int getPreviousTokensNum (const SItem *item, s_erc *error)
 
 		item = SItemPrev (item, error);
 		if (S_CHK_ERR(error, S_CONTERR,
-				  "getFollowingTokensNum",
+				  "getPreviousTokensNum",
 				  "Call to \"SItemPrev\" failed"))
 			return 0;
 	}

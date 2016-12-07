@@ -392,7 +392,7 @@ static s_bool matchIntValue (const SItem *item, const char* path, int value, s_e
 		int tmp = getFollowingTokensNum(item, error);
 		if (S_CHK_ERR(error, S_CONTERR,
 				  "matchStringValue",
-				  "Call to \"getPreviousTokensNum\" failed"))
+				  "Call to \"getFollowingTokensNum\" failed"))
 			goto match_int_value_return;
 
 		target_p = SObjectSetInt(tmp, error);

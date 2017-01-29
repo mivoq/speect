@@ -403,6 +403,51 @@ S_API void SObjectSave(const SObject *object, const char *path,
 			  "Call to \"SSerializedFileSave\" failed");
 }
 
+S_API void SObjectSaveToDatasource(const SObject *object, SDatasource *ds,
+					   const char *format, s_erc *error)
+{
+	const SSerializedFile *serializedFile;
+
+
+	S_CLR_ERR(error);
+
+	if (object == NULL)
+	{
+		S_CTX_ERR(error, S_ARGERROR,
+				  "SObjectSaveToDatasource",
+				  "Argument \"object\" is NULL");
+		return;
+	}
+
+	if (ds == NULL)
+	{
+		S_CTX_ERR(error, S_ARGERROR,
+				  "SObjectSaveToDatasource",
+				  "Argument \"ds\" is NULL");
+		return;
+	}
+
+	if (format == NULL)
+	{
+		S_CTX_ERR(error, S_ARGERROR,
+				  "SObjectSaveToDatasource",
+				  "Argument \"format\" is NULL");
+		return;
+	}
+
+	/* get the serializedFileClass object */
+	serializedFile = get_file_object(format, error);
+	if (S_CHK_ERR(error, S_CONTERR,
+				  "SObjectSaveToDatasource",
+				  "Call to \"get_file_object\" failed"))
+		return;
+
+	SSerializedFileSaveToDatasource(serializedFile, object, ds, error);
+	S_CHK_ERR(error, S_CONTERR,
+			  "SObjectSaveToDatasource",
+			  "Call to \"SSerializedFileSave\" failed");
+}
+
 
 S_API SObject *SObjectLoad(const char *path, const char *format, s_erc *error)
 {

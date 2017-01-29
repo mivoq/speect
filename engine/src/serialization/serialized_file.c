@@ -189,6 +189,49 @@ S_LOCAL void SSerializedFileSave(const SSerializedFile *self, const SObject *obj
 			  "Class file method \"save\" failed");
 }
 
+S_LOCAL void SSerializedFileSaveToDatasource(const SSerializedFile *self, const SObject *object,
+	SDatasource *ds, s_erc *error)
+{
+	S_CLR_ERR(error);
+
+	if (self == NULL)
+	{
+		S_CTX_ERR(error, S_ARGERROR,
+			"SSerializedFileSaveToDatasource",
+			"Argument \"self\" is NULL");
+		return;
+	}
+
+	if (object == NULL)
+	{
+		S_CTX_ERR(error, S_ARGERROR,
+			"SSerializedFileSaveToDatasource",
+			"Argument \"object\" is NULL");
+		return;
+	}
+
+	if (ds == NULL)
+	{
+		S_CTX_ERR(error, S_ARGERROR,
+			"SSerializedFileSaveToDatasource",
+			"Argument \"path\" is NULL");
+		return;
+	}
+
+	if (!S_SERIALIZED_FILE_METH_VALID(self, save_to_datasource))
+	{
+		S_WARNING(S_METHINVLD,
+			"SSerializedFileSaveToDatasource",
+			"Serialized file method \"save_to_datasource\" not implemented");
+		return;
+	}
+
+	S_SERIALIZED_FILE_CALL(self, save_to_datasource)(object, ds, error);
+	S_CHK_ERR(error, S_CONTERR,
+		"SSerializedFileSaveToDatasource",
+		"Class file method \"save_to_datasource\" failed");
+}
+
 
 /************************************************************************************/
 /*                                                                                  */

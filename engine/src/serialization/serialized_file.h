@@ -139,6 +139,18 @@ typedef struct
 	 */
 	void     (* const save) (const SObject *object, const char *path,
 							 s_erc *error);
+
+	/**
+	 * @protected SaveToDatasource function pointer.
+	 * Save the given object to the given datasource.
+	 *
+	 * @param object The object to save.
+	 * @param ds The datasource where data will be stored.
+	 * @param error Error code.
+	 */
+	void      (* const save_to_datasource) (const SObject *object, SDatasource* ds,
+                                            s_erc *error);
+
 } SSerializedFileClass;
 
 
@@ -175,6 +187,19 @@ S_LOCAL SObject *SSerializedFileLoad(const SSerializedFile *self, const char *pa
  */
 S_LOCAL void SSerializedFileSave(const SSerializedFile *self, const SObject *object,
 								 const char *path, s_erc *error);
+
+/**
+ * Save an object to a data source. This is just a
+ * wrapper function for the class method and used internally by #SObjectSaveToDataSource
+ *
+ * @private
+ * @param self The SSerializedFile handler.
+ * @param object The object to save.
+ * @param path The full path and file name of the object file.
+ * @param error Error code.
+ */
+S_LOCAL void SSerializedFileSaveToDatasource(const SSerializedFile *self, const SObject *object,
+								 SDatasource* ds, s_erc *error);
 
 
 /**

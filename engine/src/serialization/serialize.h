@@ -189,6 +189,19 @@ S_API void SObjectSave(const SObject *object, const char *path, const char *form
 
 
 /**
+ * Save the given object in the given format to the given datasource.
+ * @public @memberof SObject
+ *
+ * @param object The object to save.
+ * @param ds The datasource where data will be stored.
+ * @param format The format in which the object should be saved.
+ * @param error Error code.
+ */
+S_API void SObjectSaveToDatasource(const SObject *object, SDatasource* ds, const char *format,
+                                   s_erc *error);
+
+
+/**
  * Load data of an object in the given format from the given path.
  * @public @memberof SObject
  *

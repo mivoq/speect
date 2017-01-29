@@ -157,6 +157,18 @@ static void Save(const SObject *object, const char *path, s_erc *error)
 			  "Call to \"s_write_audio_riff_16\" failed");
 }
 
+static void SaveToDatasource(const SObject *object, SDatasource* ds, s_erc *error)
+{
+	SAudio *audio = S_AUDIO(object);
+
+
+	S_CLR_ERR(error);
+	s_write_audio_riff_16_to_datasource(audio, ds, error);
+	S_CHK_ERR(error, S_CONTERR,
+		"Save",
+		"Call to \"s_write_audio_riff_16\" failed");
+}
+
 
 /************************************************************************************/
 /*                                                                                  */
@@ -179,7 +191,8 @@ static SRIFFAudioFileClass RIFFAudioFileClass =
 		NULL,                  /* copy    */
 	},
 	/* SSerializedFileClass */
-	"riff",                    /* format  */
-	Load,                      /* load    */
-	Save                       /* save    */
+	"riff",                    /* format             */
+	Load,                      /* load               */
+	Save,                      /* save               */
+	SaveToDatasource           /* save to datasource */
 };

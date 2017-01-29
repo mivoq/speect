@@ -105,6 +105,16 @@ S_LOCAL void _s_serialized_riff_audio_free(s_erc *error);
  */
 S_LOCAL void s_write_audio_riff_16(const SAudio *audio, const char *path, s_erc *error);
 
+/**
+* Write an SAudio object in RIFF format to the datasource.
+*
+* @param path The datasource of the RIFF format audio
+* to write.
+* @param error Error code.
+*
+*/
+S_LOCAL void s_write_audio_riff_16_to_datasource(const SAudio *audio, SDatasource *ds, s_erc *error);
+
 
 /************************************************************************************/
 /*                                                                                  */

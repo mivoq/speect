@@ -59,6 +59,7 @@
 #include "datasources/data_source.h"      /* Abstract class from which other data sources can be derived. */
 #include "datasources/file_source.h"      /* Class for reading from and writing to files.                 */
 #include "datasources/mmapfile_source.h"  /* Class for reading from memory mapped files.                  */
+#include "datasources/generic_source.h"   /* Class for reading from and writing to generic sources.       */
 #include "datasources/data_reader.h"      /* Abstract _structured_ data format reader class.              */
 #include "datasources/data_writer.h"      /* Abstract _structured_ data format writer class.              */
 #include "datasources/load_real.h"        /* Data source reading and writing floating point values.       */

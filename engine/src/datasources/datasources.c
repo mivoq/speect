@@ -87,6 +87,12 @@ S_LOCAL void _s_datasources_init(s_erc *error)
 				  "Failed to initialize SDataWriter class"))
 		local_err = *error;
 
+	_s_generic_source_class_add(error);
+	if (S_CHK_ERR(error, S_CONTERR,
+		"_s_datasources_init",
+		"Failed to initialize SGenericsource class"))
+		local_err = *error;
+
 	/* if there was an error local_err will have it */
 	if ((local_err != S_SUCCESS) && (*error == S_SUCCESS))
 		*error = local_err;

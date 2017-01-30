@@ -95,6 +95,7 @@ set(SPCT_SRC_FILES
     src/datasources/data_writer.c
     src/datasources/datasources.c  
     src/datasources/file_source.c  
+    src/datasources/generic_source.c
     src/datasources/load_int.c
     src/datasources/load_real.c
     src/datasources/mmapfile_source.c  
@@ -278,6 +279,7 @@ set(SPCT_SRC_INCLUDE_FILES
    src/datasources/datasources.h
    src/datasources/data_writer.h
    src/datasources/file_source.h
+   src/datasources/generic_source.h
    src/datasources/load_int.h
    src/datasources/load_real.h
    src/datasources/mmapfile.h

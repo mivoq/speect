@@ -33,3 +33,7 @@ endif(HAVE_HUNPOS)
 if(WANT_CRFSUITE_POSTAGGER)
   add_subdirectory(crfsuite_postagger)
 endif(WANT_CRFSUITE_POSTAGGER)
+
+if(WANT_TEXTEXP_NORMALIZER)
+  add_subdirectory(textexp_normalizer)
+endif(WANT_TEXTEXP_NORMALIZER)

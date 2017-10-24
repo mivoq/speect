@@ -25,7 +25,7 @@ mark_as_advanced(SPCT_VERSION_RELEASE)
 
 if(EXISTS "${CMAKE_SOURCE_DIR}/.git")
   # this is a git repo, get version info from git
-  execute_process(COMMAND git describe --abbrev=4 HEAD
+  execute_process(COMMAND git describe --abbrev=4 --always HEAD
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
     OUTPUT_VARIABLE TMP_VERSION
     OUTPUT_STRIP_TRAILING_WHITESPACE)

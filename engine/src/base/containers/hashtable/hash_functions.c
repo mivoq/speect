@@ -88,10 +88,11 @@ S_LOCAL uint32 s_hashword(const uint32 *k, size_t length, uint32 initval)
 	/*------------------------------------------- handle the last 3 uint32's */
 	switch(length)                     /* all the case statements fall through */
 	{
-	case 3 : c+=k[2];
-	case 2 : b+=k[1];
+	case 3 : c+=k[2]; /* fall through */
+	case 2 : b+=k[1]; /* fall through */
 	case 1 : a+=k[0];
 		S_FINAL(a,b,c);
+		/* fall through */
 	case 0:     /* case 0: nothing left to add */
 		break;
 	}
@@ -132,10 +133,11 @@ S_LOCAL void s_hashword2(const uint32 *k, size_t length, uint32 *pc, uint32 *pb)
 	/*------------------------------------------- handle the last 3 uint32_t's */
 	switch(length)                     /* all the case statements fall through */
 	{
-	case 3 : c+=k[2];
-	case 2 : b+=k[1];
+	case 3 : c+=k[2]; /* fall through */
+	case 2 : b+=k[1]; /* fall through */
 	case 1 : a+=k[0];
-	S_FINAL(a,b,c);
+		S_FINAL(a,b,c);
+		/* fall through */
 	case 0:     /* case 0: nothing left to add */
 	break;
 	}
@@ -312,17 +314,17 @@ S_LOCAL uint32 s_hashlittle(const void *key, size_t length, uint32 initval)
 		/*-------------------------------- last block: affect all 32 bits of (c) */
 		switch(length)                   /* all the case statements fall through */
 		{
-		case 12: c+=((uint32)k[11])<<24;
-		case 11: c+=((uint32)k[10])<<16;
-		case 10: c+=((uint32)k[9])<<8;
-		case 9 : c+=k[8];
-		case 8 : b+=((uint32)k[7])<<24;
-		case 7 : b+=((uint32)k[6])<<16;
-		case 6 : b+=((uint32)k[5])<<8;
-		case 5 : b+=k[4];
-		case 4 : a+=((uint32)k[3])<<24;
-		case 3 : a+=((uint32)k[2])<<16;
-		case 2 : a+=((uint32)k[1])<<8;
+		case 12: c+=((uint32)k[11])<<24; /* fall through */
+		case 11: c+=((uint32)k[10])<<16; /* fall through */
+		case 10: c+=((uint32)k[9])<<8; /* fall through */
+		case 9 : c+=k[8]; /* fall through */
+		case 8 : b+=((uint32)k[7])<<24; /* fall through */
+		case 7 : b+=((uint32)k[6])<<16; /* fall through */
+		case 6 : b+=((uint32)k[5])<<8; /* fall through */
+		case 5 : b+=k[4]; /* fall through */
+		case 4 : a+=((uint32)k[3])<<24; /* fall through */
+		case 3 : a+=((uint32)k[2])<<16; /* fall through */
+		case 2 : a+=((uint32)k[1])<<8; /* fall through */
 		case 1 : a+=k[0];
 			break;
 		case 0 : return c;
@@ -486,17 +488,17 @@ S_LOCAL void s_hashlittle2(const uint32 *key, size_t length, uint32 *pc, uint32 
 		/*-------------------------------- last block: affect all 32 bits of (c) */
 		switch(length)                   /* all the case statements fall through */
 		{
-		case 12: c+=((uint32)k[11])<<24;
-		case 11: c+=((uint32)k[10])<<16;
-		case 10: c+=((uint32)k[9])<<8;
-		case 9 : c+=k[8];
-		case 8 : b+=((uint32)k[7])<<24;
-		case 7 : b+=((uint32)k[6])<<16;
-		case 6 : b+=((uint32)k[5])<<8;
-		case 5 : b+=k[4];
-		case 4 : a+=((uint32)k[3])<<24;
-		case 3 : a+=((uint32)k[2])<<16;
-		case 2 : a+=((uint32)k[1])<<8;
+		case 12: c+=((uint32)k[11])<<24; /* fall through */
+		case 11: c+=((uint32)k[10])<<16; /* fall through */
+		case 10: c+=((uint32)k[9])<<8; /* fall through */
+		case 9 : c+=k[8]; /* fall through */
+		case 8 : b+=((uint32)k[7])<<24; /* fall through */
+		case 7 : b+=((uint32)k[6])<<16; /* fall through */
+		case 6 : b+=((uint32)k[5])<<8; /* fall through */
+		case 5 : b+=k[4]; /* fall through */
+		case 4 : a+=((uint32)k[3])<<24; /* fall through */
+		case 3 : a+=((uint32)k[2])<<16; /* fall through */
+		case 2 : a+=((uint32)k[1])<<8; /* fall through */
 		case 1 : a+=k[0];
 			break;
 		case 0 : *pc=c; *pb=b; return;  /* zero length strings require no mixing */
@@ -607,17 +609,17 @@ S_LOCAL uint32 s_hashbig(const void *key, size_t length, uint32 initval)
 		/*-------------------------------- last block: affect all 32 bits of (c) */
 		switch(length)                   /* all the case statements fall through */
 		{
-		case 12: c+=k[11];
-		case 11: c+=((uint32)k[10])<<8;
-		case 10: c+=((uint32)k[9])<<16;
-		case 9 : c+=((uint32)k[8])<<24;
-		case 8 : b+=k[7];
-		case 7 : b+=((uint32)k[6])<<8;
-		case 6 : b+=((uint32)k[5])<<16;
-		case 5 : b+=((uint32)k[4])<<24;
-		case 4 : a+=k[3];
-		case 3 : a+=((uint32)k[2])<<8;
-		case 2 : a+=((uint32)k[1])<<16;
+		case 12: c+=k[11]; /* fall through */
+		case 11: c+=((uint32)k[10])<<8; /* fall through */
+		case 10: c+=((uint32)k[9])<<16; /* fall through */
+		case 9 : c+=((uint32)k[8])<<24; /* fall through */
+		case 8 : b+=k[7]; /* fall through */
+		case 7 : b+=((uint32)k[6])<<8; /* fall through */
+		case 6 : b+=((uint32)k[5])<<16; /* fall through */
+		case 5 : b+=((uint32)k[4])<<24; /* fall through */
+		case 4 : a+=k[3]; /* fall through */
+		case 3 : a+=((uint32)k[2])<<8; /* fall through */
+		case 2 : a+=((uint32)k[1])<<16; /* fall through */
 		case 1 : a+=((uint32)k[0])<<24;
 			break;
 		case 0 : return c;
@@ -731,17 +733,17 @@ S_LOCAL void s_hashbig2(const uint32 *key, size_t length, uint32 *pc, uint32 *pb
 		/*-------------------------------- last block: affect all 32 bits of (c) */
 		switch(length)                   /* all the case statements fall through */
 		{
-		case 12: c+=k[11];
-		case 11: c+=((uint32)k[10])<<8;
-		case 10: c+=((uint32)k[9])<<16;
-		case 9 : c+=((uint32)k[8])<<24;
-		case 8 : b+=k[7];
-		case 7 : b+=((uint32)k[6])<<8;
-		case 6 : b+=((uint32)k[5])<<16;
-		case 5 : b+=((uint32)k[4])<<24;
-		case 4 : a+=k[3];
-		case 3 : a+=((uint32)k[2])<<8;
-		case 2 : a+=((uint32)k[1])<<16;
+		case 12: c+=k[11]; /* fall through */
+		case 11: c+=((uint32)k[10])<<8; /* fall through */
+		case 10: c+=((uint32)k[9])<<16; /* fall through */
+		case 9 : c+=((uint32)k[8])<<24; /* fall through */
+		case 8 : b+=k[7]; /* fall through */
+		case 7 : b+=((uint32)k[6])<<8; /* fall through */
+		case 6 : b+=((uint32)k[5])<<16; /* fall through */
+		case 5 : b+=((uint32)k[4])<<24; /* fall through */
+		case 4 : a+=k[3]; /* fall through */
+		case 3 : a+=((uint32)k[2])<<8; /* fall through */
+		case 2 : a+=((uint32)k[1])<<16; /* fall through */
 		case 1 : a+=((uint32)k[0])<<24;
 			break;
 		case 0 : *pc=c; *pb=b; return;  /* zero length strings require no mixing */

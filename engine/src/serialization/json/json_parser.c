@@ -749,8 +749,8 @@ around_again:
 				(void) s_json_state_pop(self, error);
 				goto around_again;
 			}
-			/* intentional fall-through */
 		}
+		/* intentional fall-through */
 		case S_JSON_TOK_COLON:
 		case S_JSON_TOK_COMMA:
 		case S_JSON_TOK_RIGHT_BRACKET:
@@ -890,6 +890,7 @@ around_again:
 				(void) s_json_state_pop(self, error);
 				goto around_again;
 			}
+			/* intentional fall-through */
 		default:
 			s_json_state_set(self, S_JSON_STATE_PARSE_ERROR, error);
 			if (S_CHK_ERR(error, S_CONTERR,

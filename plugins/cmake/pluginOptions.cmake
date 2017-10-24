@@ -80,3 +80,6 @@ endif(HUNPOS_INCLUDE AND HUNPOS_LIB)
 
 # WANT_CRFSUITE_POSTAGGER used in speect/plugins/processors/utterances/nlp/CMakeLists.txt
 option(WANT_CRFSUITE_POSTAGGER "Enable crfsuite pos-tagger utterance processor." off)
+
+# WANT_TEXTEXP_NORMALIZER used in speect/plugins/processors/utterances/nlp/CMakeLists.txt
+option(WANT_TEXTEXP_NORMALIZER "Enable textexp normalizer utterance processor." off)

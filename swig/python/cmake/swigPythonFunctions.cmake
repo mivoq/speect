@@ -349,7 +349,11 @@ macro(speect_plugin_swig_python_wrapper)
   set(SWIG_MODULE_${plugin_lowercase_name}_EXTRA_DEPS "${swig_deps}")
 
   # create the wrapper with SWIG
-  swig_add_module(${plugin_lowercase_name} python ${CMAKE_CURRENT_BINARY_DIR}/${plugin_lowercase_name}.i)
+  if (${CMAKE_VERSION} VERSION_LESS "3.8.0")
+    swig_add_module(${plugin_lowercase_name} python ${CMAKE_CURRENT_BINARY_DIR}/${plugin_lowercase_name}.i)
+  else()
+    swig_add_library(${plugin_lowercase_name} LANGUAGE python SOURCES ${CMAKE_CURRENT_BINARY_DIR}/${plugin_lowercase_name}.i)
+  endif()
 
   # link with Python and Speect Engine
   swig_link_libraries(${plugin_lowercase_name} 

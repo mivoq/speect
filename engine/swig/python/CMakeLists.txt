@@ -131,8 +131,12 @@ set_source_files_properties(${CMAKE_SWIG_OUTDIR}/speectPYTHON_wrap.c
 set(SWIG_MODULE_speect_EXTRA_DEPS "${SPCT_SWIG_PYTHON_DEPS}")
 
 # create the Python Speect Engine wrapper (C and Python files)
-swig_add_module(speect python ${CMAKE_BINARY_DIR}/engine/swig/python/speect.i)
-
+if (${CMAKE_VERSION} VERSION_LESS "3.8.0")
+  swig_add_module(speect python ${CMAKE_BINARY_DIR}/engine/swig/python/speect.i)
+else()
+  swig_add_library(speect LANGUAGE python SOURCES ${CMAKE_BINARY_DIR}/engine/swig/python/speect.i)
+endif()
+  
 # link with Python and Speect Engine
 swig_link_libraries(speect 
   ${PYTHON_LIBRARIES} 

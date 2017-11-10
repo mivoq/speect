@@ -17,16 +17,16 @@
 #------------------------------------------------------------------------------------#
 
 # this is the file included by other projects
-configure_file(${CMAKE_SOURCE_DIR}/engine/config/SpeectConf.cmake.in 
-    ${CMAKE_BINARY_DIR}/engine/SpeectConf.cmake @ONLY)
+configure_file(${CMAKE_SPEECT_SOURCE_DIR}/engine/config/SpeectConf.cmake.in 
+    ${CMAKE_SPEECT_BINARY_DIR}/engine/SpeectConf.cmake @ONLY)
 
 
 #------------------------------------------------------------------------------------#
 #             Configure the SpeectConf.cmake installation script                     #
 #------------------------------------------------------------------------------------#
 
-configure_file(${CMAKE_SOURCE_DIR}/engine/config/speect_conf_install.cmake.in 
-  ${CMAKE_BINARY_DIR}/engine/cmake/speect_conf_install.cmake @ONLY)
+configure_file(${CMAKE_SPEECT_SOURCE_DIR}/engine/config/speect_conf_install.cmake.in 
+  ${CMAKE_SPEECT_BINARY_DIR}/engine/cmake/speect_conf_install.cmake @ONLY)
 
 
 #------------------------------------------------------------------------------------#
@@ -40,4 +40,4 @@ export(TARGETS SPCT_LIBRARIES
 #                   Set the installation script (UNIX only)                          #
 #------------------------------------------------------------------------------------#
 
-install(SCRIPT ${CMAKE_BINARY_DIR}/engine/cmake/speect_conf_install.cmake)
+install(SCRIPT ${CMAKE_SPEECT_BINARY_DIR}/engine/cmake/speect_conf_install.cmake)

@@ -4,10 +4,6 @@ branches:
   only:
     - master
 
-matrix:
-  allow_failures:
-    - os: osx
-
 sudo: required
 
 osx_image: xcode8

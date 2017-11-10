@@ -23,21 +23,21 @@ mark_as_advanced(SPCT_VERSION_RELEASE)
 #        Get Speect version info from, git or file or default                        #
 #------------------------------------------------------------------------------------#
 
-if(EXISTS "${CMAKE_SOURCE_DIR}/.git")
+if(EXISTS "${CMAKE_SPEECT_SOURCE_DIR}/.git")
   # this is a git repo, get version info from git
   execute_process(COMMAND git describe --abbrev=4 --always HEAD
-    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    WORKING_DIRECTORY ${CMAKE_SPEECT_SOURCE_DIR}
     OUTPUT_VARIABLE TMP_VERSION
     OUTPUT_STRIP_TRAILING_WHITESPACE)
   # write info to file
-  file(WRITE "${CMAKE_SOURCE_DIR}/VERSION" ${TMP_VERSION})
-elseif(EXISTS "${CMAKE_SOURCE_DIR}/VERSION")
+  file(WRITE "${CMAKE_SPEECT_SOURCE_DIR}/VERSION" ${TMP_VERSION})
+elseif(EXISTS "${CMAKE_SPEECT_SOURCE_DIR}/VERSION")
   # this is a release tarball, read version from file
-  file(READ "${CMAKE_SOURCE_DIR}/VERSION" TMP_VERSION LIMIT 64)
-else(EXISTS "${CMAKE_SOURCE_DIR}/VERSION")
+  file(READ "${CMAKE_SPEECT_SOURCE_DIR}/VERSION" TMP_VERSION LIMIT 64)
+else(EXISTS "${CMAKE_SPEECT_SOURCE_DIR}/VERSION")
   # use default
   set(TMP_VERSION "v1.1.0" CACHE STRING "Speect default version" FORCE)
-endif(EXISTS "${CMAKE_SOURCE_DIR}/.git")
+endif(EXISTS "${CMAKE_SPEECT_SOURCE_DIR}/.git")
 
 if(TMP_VERSION MATCHES "^v(.*)")
   string(REGEX REPLACE "^v(.*)" "\\1" TMP_VERSION ${TMP_VERSION})

@@ -75,3 +75,7 @@ set(HUNPOS_LIB CACHE FILEPATH "hunpos POS tagger library location (full path and
 if(HUNPOS_INCLUDE AND HUNPOS_LIB)
   set(HAVE_HUNPOS "on" CACHE BOOL "Variable to check if hunpos has been defined")
 endif(HUNPOS_INCLUDE AND HUNPOS_LIB)
+
+# Specific utterance processosors
+# WANT_CRFSUITE used in speect/plugins/processors/utterances/nlp/CMakeLists.txt
+option(WANT_CRFSUITE_POSTAGGER "Enable crfsuite pos-tagger utterance processor." off)

@@ -26,7 +26,7 @@ project(speect_plugins C)
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
 # directory where plug-in configuration files are generated #
-set(SPCT_PLUGINS_CMAKECONF_DIR ${CMAKE_BINARY_DIR}/plugins/cmakeconf)
+set(SPCT_PLUGINS_CMAKECONF_DIR ${CMAKE_SPEECT_BINARY_DIR}/plugins/cmakeconf)
 
 # append plug-in configuration directory to cmake module path
 list(APPEND CMAKE_MODULE_PATH ${SPCT_PLUGINS_CMAKECONF_DIR})
@@ -49,7 +49,7 @@ set(SPCT_PLUGIN_NAMES_LIST "" CACHE INTERNAL "List of lowercase Speect plug-in n
 
 if(NOT NO_SWIG)
   # append plug-in SWIG Python functions
-  list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/swig/cmake)
+  list(APPEND CMAKE_MODULE_PATH ${CMAKE_SPEECT_SOURCE_DIR}/swig/cmake)
 
   # Functions, also includes SWIG langauge specific functions
   include(swigCommonFunctions)
@@ -72,7 +72,7 @@ add_subdirectory(languages)
 #                            Installation scripts                                    #
 #------------------------------------------------------------------------------------#
 
-configure_file(${CMAKE_SOURCE_DIR}/plugins/config/pluginInstall.cmake.in 
-  ${CMAKE_BINARY_DIR}/plugins/cmake/pluginInstall.cmake @ONLY)
+configure_file(${CMAKE_SPEECT_SOURCE_DIR}/plugins/config/pluginInstall.cmake.in 
+  ${CMAKE_SPEECT_BINARY_DIR}/plugins/cmake/pluginInstall.cmake @ONLY)
 
-install(SCRIPT ${CMAKE_BINARY_DIR}/plugins/cmake/pluginInstall.cmake)
+install(SCRIPT ${CMAKE_SPEECT_BINARY_DIR}/plugins/cmake/pluginInstall.cmake)

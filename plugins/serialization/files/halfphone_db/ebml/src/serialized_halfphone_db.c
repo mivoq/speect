@@ -189,5 +189,6 @@ static SEBMLHalfphoneDBFileClass EBMLHalfphoneDBFileClass =
 	/* SSerializedFileClass */
 	"spct_halfphone_db",       /* format  */
 	Load,                      /* load    */
-	Save                       /* save    */
+	Save,                      /* save    */
+	NULL                       /* save_to_datasource */
 };

@@ -1726,12 +1726,17 @@ static void Run(const SUttProcessor *self, SUtterance *utt,
 				  "Call to \"SItemDaughter\" failed"))
 			return;
 
-		if ( wordItem != NULL )
+		while ( wordItem != NULL )
 		{
 			SRelationAppend ( boundariesRel, wordItem, error );
 			if (S_CHK_ERR(error, S_CONTERR,
 					  "Run",
 					  "Call to \"SRelationAppend\" failed"))
+				return;
+			wordItem = SItemNext(wordItem, error);
+			if (S_CHK_ERR(error, S_CONTERR,
+					  "Run",
+					  "Call to \"SItemNext\" failed"))
 				return;
 		}
 

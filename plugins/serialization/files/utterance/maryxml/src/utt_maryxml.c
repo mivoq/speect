@@ -186,5 +186,6 @@ static SMaryXMLUttFileClass MaryXMLUttFileClass =
 	/* SSerializedFileClass */
 	"spct_utt_maryxml", 	   /* format  */
 	Load,                      /* load    */
-	Save                       /* save    */
+	Save,                      /* save    */
+	NULL                       /* save_to_datasource */
 };

@@ -184,5 +184,6 @@ static SJSONSyllabificationRewritesFileClass JSONSyllabificationRewritesFileClas
 	/* SSerializedFileClass */
 	"spct_syllabification_rewrites_json",    /* format  */
 	Load,                                    /* load    */
-	Save                                     /* save    */
+	Save,                      /* save    */
+	NULL                       /* save_to_datasource */
 };

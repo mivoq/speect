@@ -53,13 +53,13 @@ include(ebml)
 include_directories(${SPCT_PYTHON_NATIVE_INCLUDE_DIRS})
 
 # has speect_find_python macro
-include(${CMAKE_SOURCE_DIR}/swig/python/cmake/swigPythonFunctions.cmake)
+include(${CMAKE_SPEECT_SOURCE_DIR}/swig/python/cmake/swigPythonFunctions.cmake)
 
 # find Python
 speect_find_python()
 
 # has speect_include_python_directories macro
-include(${CMAKE_SOURCE_DIR}/swig/python/cmake/swigPythonFunctions.cmake)
+include(${CMAKE_SPEECT_SOURCE_DIR}/swig/python/cmake/swigPythonFunctions.cmake)
 
 # include Python
 speect_include_python_directories()

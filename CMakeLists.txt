@@ -15,10 +15,9 @@
 #                           Build directory check                                    #
 #------------------------------------------------------------------------------------#
 
-if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
+if(${CMAKE_CURRENT_SOURCE_DIR} STREQUAL ${CMAKE_CURRENT_BINARY_DIR})
   message(FATAL_ERROR "Speect cannot be build in the source directory. See the INSTALL file for more information.")
-endif(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
-
+endif(${CMAKE_CURRENT_SOURCE_DIR} STREQUAL ${CMAKE_CURRENT_BINARY_DIR})
 
 #------------------------------------------------------------------------------------#
 #                                Build type                                          #
@@ -42,6 +41,9 @@ endif(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
 message(STATUS "cmake for project \"Speect\"")
 project(speect C)
 
+set(CMAKE_SPEECT_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
+set(CMAKE_SPEECT_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR})
+
 
 #------------------------------------------------------------------------------------#
 #                          CMake minimum version                                     #
@@ -54,7 +56,7 @@ cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 #                             Get all CMake modules                                  #
 #------------------------------------------------------------------------------------#
 
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_SPEECT_SOURCE_DIR}/cmake)
 
 # CMake compatibility functions
 include(cmakeCompat)

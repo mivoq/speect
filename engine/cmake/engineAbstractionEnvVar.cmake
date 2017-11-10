@@ -31,7 +31,7 @@ set(SPCT_INCLUDE_POSIX_ENVVAR_FILES
 if(SPCT_UNIX OR SPCT_MACOSX)
   set(SPCT_ENVVAR_SPECIFIC_IMPL "${SPCT_INCLUDE_POSIX_ENVVAR_FILES}")
   set(SPCT_ENVVAR_SPECIFIC_IMPL_DIR "posix")
-  list(APPEND SPCT_LIBRARY_SOURCES "${CMAKE_SOURCE_DIR}/engine/src/base/utils/platform/${SPCT_SRC_POSIX_ENVVAR_FILES}")
+  list(APPEND SPCT_LIBRARY_SOURCES "${CMAKE_SPEECT_SOURCE_DIR}/engine/src/base/utils/platform/${SPCT_SRC_POSIX_ENVVAR_FILES}")
 
   set(SPCT_ENVVAR_SUPPORT 1)
 endif(SPCT_UNIX OR SPCT_MACOSX)
@@ -53,7 +53,7 @@ set(SPCT_INCLUDE_WIN32_ENVVAR_FILES
 if(SPCT_WIN32)
   set(SPCT_ENVVAR_SPECIFIC_IMPL "${SPCT_INCLUDE_WIN32_ENVVAR_FILES}")
   set(SPCT_ENVVAR_SPECIFIC_IMPL_DIR "win32")
-  list(APPEND SPCT_LIBRARY_SOURCES "${CMAKE_SOURCE_DIR}/engine/src/base/utils/platform/${SPCT_SRC_WIN32_ENVVAR_FILES}")
+  list(APPEND SPCT_LIBRARY_SOURCES "${CMAKE_SPEECT_SOURCE_DIR}/engine/src/base/utils/platform/${SPCT_SRC_WIN32_ENVVAR_FILES}")
 
   set(SPCT_ENVVAR_SUPPORT 1)
 endif(SPCT_WIN32)
@@ -63,18 +63,18 @@ endif(SPCT_WIN32)
 #                               engine header                                        #
 #------------------------------------------------------------------------------------#
 
-configure_file(${CMAKE_SOURCE_DIR}/engine/config/envvar_impl.h.in 
-  ${CMAKE_BINARY_DIR}/engine/src/base/utils/platform/envvar_impl.h)
+configure_file(${CMAKE_SPEECT_SOURCE_DIR}/engine/config/envvar_impl.h.in 
+  ${CMAKE_SPEECT_BINARY_DIR}/engine/src/base/utils/platform/envvar_impl.h)
 
 
 #------------------------------------------------------------------------------------#
 #                               installation                                         #
 #------------------------------------------------------------------------------------#
 
-install(FILES ${CMAKE_SOURCE_DIR}/engine/src/base/utils/platform/${SPCT_ENVVAR_SPECIFIC_IMPL}
+install(FILES ${CMAKE_SPEECT_SOURCE_DIR}/engine/src/base/utils/platform/${SPCT_ENVVAR_SPECIFIC_IMPL}
   DESTINATION include/speect/engine/base/utils/platform/${SPCT_ENVVAR_SPECIFIC_IMPL_DIR}/)
 
-install(FILES ${CMAKE_BINARY_DIR}/engine/src/base/utils/platform/envvar_impl.h
+install(FILES ${CMAKE_SPEECT_BINARY_DIR}/engine/src/base/utils/platform/envvar_impl.h
   DESTINATION include/speect/engine/base/utils/platform)
 
 

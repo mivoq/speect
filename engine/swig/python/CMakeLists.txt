@@ -28,8 +28,8 @@ include_directories(${SPCT_PYTHON_NATIVE_INCLUDE_DIRS})
 # that we can use the CMake variable SPCT_SWIG_PYTHON_SRC_FILES when the file
 # is included in other projects
 
-configure_file(${CMAKE_SOURCE_DIR}/engine/swig/python/config/engineSWIGpython.cmake.in 
-  ${CMAKE_BINARY_DIR}/engine/swig/python/cmake/engineSWIGpython.cmake)
+configure_file(${CMAKE_SPEECT_SOURCE_DIR}/engine/swig/python/config/engineSWIGpython.cmake.in 
+  ${CMAKE_SPEECT_BINARY_DIR}/engine/swig/python/cmake/engineSWIGpython.cmake)
 
 
 #------------------------------------------------------------------------------------#
@@ -37,10 +37,10 @@ configure_file(${CMAKE_SOURCE_DIR}/engine/swig/python/config/engineSWIGpython.cm
 #------------------------------------------------------------------------------------#
 
 # provides the source list, SPCT_SWIG_COMMON_SRC_FILES
-include(${CMAKE_BINARY_DIR}/engine/swig/common/cmake/engineSWIGcommon.cmake)
+include(${CMAKE_SPEECT_BINARY_DIR}/engine/swig/common/cmake/engineSWIGcommon.cmake)
 
 # provides the source list, SPCT_SWIG_PYTHON_SRC_FILES
-include(${CMAKE_BINARY_DIR}/engine/swig/python/cmake/engineSWIGpython.cmake)
+include(${CMAKE_SPEECT_BINARY_DIR}/engine/swig/python/cmake/engineSWIGpython.cmake)
 
 list(APPEND SPCT_SWIG_PYTHON_DEPS
   ${SPCT_SWIG_COMMON_SRC_FILES} 
@@ -59,7 +59,7 @@ include(${SWIG_USE_FILE})  # UseSWIG.cmake, provides swig functions
 #################################### Python ##########################################
 
 # has speect_include_python_directories and speect_find_python macros
-include(${CMAKE_SOURCE_DIR}/swig/python/cmake/swigPythonFunctions.cmake)
+include(${CMAKE_SPEECT_SOURCE_DIR}/swig/python/cmake/swigPythonFunctions.cmake)
 
 # find Python
 speect_find_python()
@@ -77,8 +77,8 @@ include_directories(${SPCT_INCLUDE_DIRS})
 #                              Generate speect.i                                     #
 #------------------------------------------------------------------------------------#
 
-configure_file(${CMAKE_SOURCE_DIR}/engine/swig/python/config/speect.i.in 
-  ${CMAKE_BINARY_DIR}/engine/swig/python/speect.i) 
+configure_file(${CMAKE_SPEECT_SOURCE_DIR}/engine/swig/python/config/speect.i.in 
+  ${CMAKE_SPEECT_BINARY_DIR}/engine/swig/python/speect.i) 
 
 
 #------------------------------------------------------------------------------------#
@@ -97,7 +97,7 @@ set(CMAKE_C_FLAGS "")
 speect_plugin_swig_python_flags()
 
 # add flags for Python Speect Engine wrapper generation
-set_source_files_properties(${CMAKE_BINARY_DIR}/engine/swig/python/speect.i 
+set_source_files_properties(${CMAKE_SPEECT_BINARY_DIR}/engine/swig/python/speect.i 
   PROPERTIES 
   SWIG_FLAGS "${SPCT_SWIG_FLAGS}"
   GENERATED TRUE
@@ -109,7 +109,7 @@ set_source_files_properties(${CMAKE_BINARY_DIR}/engine/swig/python/speect.i
 #                                 CMAKE_SWIG_OUTDIR                                  #
 #------------------------------------------------------------------------------------#
 
-set(CMAKE_SWIG_OUTDIR ${CMAKE_BINARY_DIR}/swig/python/speect)
+set(CMAKE_SWIG_OUTDIR ${CMAKE_SPEECT_BINARY_DIR}/swig/python/speect)
 
 #------------------------------------------------------------------------------------#
 #                              speectPYTHON_wrap.c flags                             #
@@ -132,9 +132,9 @@ set(SWIG_MODULE_speect_EXTRA_DEPS "${SPCT_SWIG_PYTHON_DEPS}")
 
 # create the Python Speect Engine wrapper (C and Python files)
 if (${CMAKE_VERSION} VERSION_LESS "3.8.0")
-  swig_add_module(speect python ${CMAKE_BINARY_DIR}/engine/swig/python/speect.i)
+  swig_add_module(speect python ${CMAKE_SPEECT_BINARY_DIR}/engine/swig/python/speect.i)
 else()
-  swig_add_library(speect LANGUAGE python SOURCES ${CMAKE_BINARY_DIR}/engine/swig/python/speect.i)
+  swig_add_library(speect LANGUAGE python SOURCES ${CMAKE_SPEECT_BINARY_DIR}/engine/swig/python/speect.i)
 endif()
   
 # link with Python and Speect Engine
@@ -146,6 +146,6 @@ swig_link_libraries(speect
 # set the output directory
 set_target_properties(${SWIG_MODULE_speect_REAL_NAME}
   PROPERTIES
-  LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/swig/python/speect/lib
-  RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/swig/python/speect/lib
+  LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SPEECT_BINARY_DIR}/swig/python/speect/lib
+  RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SPEECT_BINARY_DIR}/swig/python/speect/lib
 )

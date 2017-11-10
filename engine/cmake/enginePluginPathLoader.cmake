@@ -18,5 +18,5 @@
 # Note that the SPCT_INSTALL_PLUGIN_PATH and SPCT_BUILD_PLUGIN_PATH variables in
 # plugin_path.c.in are set in speect/cmake/spctSettings.cmake
 
-configure_file(${CMAKE_SOURCE_DIR}/engine/config/plugin_path.c.in 
-  ${CMAKE_BINARY_DIR}/engine/src/main/plugin_path.c)
+configure_file(${CMAKE_SPEECT_SOURCE_DIR}/engine/config/plugin_path.c.in 
+  ${CMAKE_SPEECT_BINARY_DIR}/engine/src/main/plugin_path.c)

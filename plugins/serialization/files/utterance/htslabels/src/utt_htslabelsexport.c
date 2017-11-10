@@ -319,5 +319,6 @@ static SUttHTSLabelsExportClass UttHTSLabelsExportClass =
 	/* SSerializedFileClass */
 	"spct_utt_htslabelsXML",       /* format  */
 	Load,                          /* load    */
-	Save                           /* save    */
+	Save,                      /* save    */
+	NULL                       /* save_to_datasource */
 };

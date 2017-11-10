@@ -131,8 +131,8 @@ macro(speect_plugin_swig_python_interface)
 
   # import the Speect Engine Python interface
   file(APPEND ${filename} "/* import the Speect Engine Python interface */\n")
-  file(APPEND ${filename} "%import \"${CMAKE_BINARY_DIR}/engine/swig/python/speect.i\"\n\n")
-  list(APPEND swig_deps ${CMAKE_BINARY_DIR}/engine/swig/python/speect.i)
+  file(APPEND ${filename} "%import \"${CMAKE_SPEECT_BINARY_DIR}/engine/swig/python/speect.i\"\n\n")
+  list(APPEND swig_deps ${CMAKE_SPEECT_BINARY_DIR}/engine/swig/python/speect.i)
 
   # include the Python docstrings
   if(swig_python_docstrings)
@@ -280,7 +280,7 @@ macro(speect_find_python)
     
     # add the directory that this file resides in to the CMake module path
     # so that we can use FindPythonLibsSpeect.cmake
-    list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/swig/python/cmake)
+    list(APPEND CMAKE_MODULE_PATH ${CMAKE_SPEECT_SOURCE_DIR}/swig/python/cmake)
     if(WANT_PYTHON_3)
       # Additional Python versions to search for. Stops when it finds one,
       # so later versions first.
@@ -336,7 +336,7 @@ macro(speect_plugin_swig_python_wrapper)
   set(CMAKE_C_FLAGS "")
 
   # SWIG Python wrapper output directory
-  set(CMAKE_SWIG_OUTDIR ${CMAKE_BINARY_DIR}/swig/python/speect)
+  set(CMAKE_SWIG_OUTDIR ${CMAKE_SPEECT_BINARY_DIR}/swig/python/speect)
   
   # wrapper file properties
   set_source_files_properties(${CMAKE_SWIG_OUTDIR}/${plugin_lowercase_name}PYTHON_wrap.c 
@@ -364,8 +364,8 @@ macro(speect_plugin_swig_python_wrapper)
   # set the output directory
   set_target_properties(${SWIG_MODULE_${plugin_lowercase_name}_REAL_NAME}
     PROPERTIES
-    LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/swig/python/speect/lib
-    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/swig/python/speect/lib
+    LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SPEECT_BINARY_DIR}/swig/python/speect/lib
+    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SPEECT_BINARY_DIR}/swig/python/speect/lib
     )
 endmacro(speect_plugin_swig_python_wrapper)
 

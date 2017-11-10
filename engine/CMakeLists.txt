@@ -81,8 +81,8 @@ include(engineAbstractionStrings)
 #------------------------------------------------------------------------------------#
 
 # All relevant variables must be set before here
-configure_file(${CMAKE_SOURCE_DIR}/engine/config/spctconfig.h.in 
-  ${CMAKE_BINARY_DIR}/engine/src/include/spctconfig.h)
+configure_file(${CMAKE_SPEECT_SOURCE_DIR}/engine/config/spctconfig.h.in 
+  ${CMAKE_SPEECT_BINARY_DIR}/engine/src/include/spctconfig.h)
 
 
 #------------------------------------------------------------------------------------#

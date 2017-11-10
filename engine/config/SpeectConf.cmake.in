@@ -33,7 +33,7 @@ set(WANT_PYTHON_WRAPPER "@WANT_PYTHON_WRAPPER@")
 #
 # SWIG interface includes
 #
-set(SPEECT_PYTHON_WRAPPER_INCLUDE_PATH "@CMAKE_SOURCE_DIR@/engine/swig/python")
+set(SPEECT_PYTHON_WRAPPER_INCLUDE_PATH "@CMAKE_SPEECT_SOURCE_DIR@/engine/swig/python")
 
 
 #

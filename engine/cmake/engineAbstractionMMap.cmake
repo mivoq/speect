@@ -34,7 +34,7 @@ if(SPCT_UNIX OR SPCT_MACOSX)
       AND SPCT_HAVE_FCNTL_H AND SPCT_HAVE_UNISTD_H)
     set(SPCT_MMAP_SPECIFIC_IMPL_INCLUDES "${SPCT_INCLUDE_POSIX_MMAP_FILES}")
     set(SPCT_MMAP_SPECIFIC_IMPL_DIR "posix")
-    list(APPEND SPCT_LIBRARY_SOURCES "${CMAKE_SOURCE_DIR}/engine/src/datasources/platform/${SPCT_SRC_POSIX_MMAP_FILES}")
+    list(APPEND SPCT_LIBRARY_SOURCES "${CMAKE_SPEECT_SOURCE_DIR}/engine/src/datasources/platform/${SPCT_SRC_POSIX_MMAP_FILES}")
 
     set(SPCT_MMAP_SUPPORT 1)
   elseif(SPCT_HAVE_SYS_TYPES_H AND SPCT_HAVE_SYS_STAT_H AND SPCT_HAVE_SYS_MMAN_H
@@ -60,7 +60,7 @@ set(SPCT_INCLUDE_WIN32_MMAP_FILES
 if(SPCT_WIN32)
   set(SPCT_MMAP_SPECIFIC_IMPL_INCLUDES "${SPCT_INCLUDE_WIN32_MMAP_FILES}")
   set(SPCT_MMAP_SPECIFIC_IMPL_DIR "win32")
-  list(APPEND SPCT_LIBRARY_SOURCES "${CMAKE_SOURCE_DIR}/engine/src/datasources/platform/${SPCT_SRC_WIN32_MMAP_FILES}")
+  list(APPEND SPCT_LIBRARY_SOURCES "${CMAKE_SPEECT_SOURCE_DIR}/engine/src/datasources/platform/${SPCT_SRC_WIN32_MMAP_FILES}")
 
   set(SPCT_MMAP_SUPPORT 1)
 endif(SPCT_WIN32)
@@ -70,18 +70,18 @@ endif(SPCT_WIN32)
 #                               engine header                                        #
 #------------------------------------------------------------------------------------#
 
-configure_file(${CMAKE_SOURCE_DIR}/engine/config/mmapfile_impl.h.in 
-  ${CMAKE_BINARY_DIR}/engine/src/datasources/platform/mmapfile_impl.h)
+configure_file(${CMAKE_SPEECT_SOURCE_DIR}/engine/config/mmapfile_impl.h.in 
+  ${CMAKE_SPEECT_BINARY_DIR}/engine/src/datasources/platform/mmapfile_impl.h)
 
 
 #------------------------------------------------------------------------------------#
 #                               installation                                         #
 #------------------------------------------------------------------------------------#
 
-install(FILES ${CMAKE_SOURCE_DIR}/engine/src/datasources/platform/${SPCT_MMAP_SPECIFIC_IMPL_INCLUDES}
+install(FILES ${CMAKE_SPEECT_SOURCE_DIR}/engine/src/datasources/platform/${SPCT_MMAP_SPECIFIC_IMPL_INCLUDES}
   DESTINATION include/speect/engine/datasources/platform/${SPCT_MMAP_SPECIFIC_IMPL_DIR}/)
 
-install(FILES ${CMAKE_BINARY_DIR}/engine/src/datasources/platform/mmapfile_impl.h
+install(FILES ${CMAKE_SPEECT_BINARY_DIR}/engine/src/datasources/platform/mmapfile_impl.h
   DESTINATION include/speect/engine/datasources/platform)
 
 

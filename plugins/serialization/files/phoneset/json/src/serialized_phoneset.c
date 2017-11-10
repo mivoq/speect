@@ -182,5 +182,6 @@ static SJSONPhonesetFileClass JSONPhonesetFileClass =
 	/* SSerializedFileClass */
 	"spct_phoneset",           /* format  */
 	Load,                      /* load    */
-	Save                       /* save    */
+	Save,                      /* save    */
+	NULL                       /* save_to_datasource */
 };

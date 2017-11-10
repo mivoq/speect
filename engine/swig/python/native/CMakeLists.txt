@@ -37,7 +37,7 @@ add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/swigpyrun.h
 #------------------------------------------------------------------------------------#
 
 # has speect_include_python_directories and speect_find_python macros
-include(${CMAKE_SOURCE_DIR}/swig/python/cmake/swigPythonFunctions.cmake)
+include(${CMAKE_SPEECT_SOURCE_DIR}/swig/python/cmake/swigPythonFunctions.cmake)
 
 # find Python 
 speect_find_python()

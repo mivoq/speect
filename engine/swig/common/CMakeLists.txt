@@ -19,8 +19,8 @@
 # that we can use the CMake variable SPCT_SWIG_COMMON_SRC_FILES when the file
 # is included in other projects
 
-configure_file(${CMAKE_SOURCE_DIR}/engine/swig/common/config/engineSWIGcommon.cmake.in 
-  ${CMAKE_BINARY_DIR}/engine/swig/common/cmake/engineSWIGcommon.cmake)
+configure_file(${CMAKE_SPEECT_SOURCE_DIR}/engine/swig/common/config/engineSWIGcommon.cmake.in 
+  ${CMAKE_SPEECT_BINARY_DIR}/engine/swig/common/cmake/engineSWIGcommon.cmake)
 
 
 #------------------------------------------------------------------------------------#
@@ -29,6 +29,6 @@ configure_file(${CMAKE_SOURCE_DIR}/engine/swig/common/config/engineSWIGcommon.cm
 
 # generate the interface file
 
-configure_file(${CMAKE_SOURCE_DIR}/engine/swig/common/config/speect_common.i.in 
-  ${CMAKE_BINARY_DIR}/engine/swig/common/speect_common.i)
+configure_file(${CMAKE_SPEECT_SOURCE_DIR}/engine/swig/common/config/speect_common.i.in 
+  ${CMAKE_SPEECT_BINARY_DIR}/engine/swig/common/speect_common.i)
 

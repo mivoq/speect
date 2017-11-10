@@ -31,7 +31,7 @@ if(SPCT_WIN32)
   set(SPCT_STRINGS_SPECIFIC_IMPL "${SPCT_INCLUDE_WIN32_STRINGS_FILES}")
   set(SPCT_STRINGS_SPECIFIC_IMPL_DIR "win32")
 
-  list(APPEND SPCT_LIBRARY_SOURCES "${CMAKE_SOURCE_DIR}/engine/src/base/strings/platform/${SPCT_SRC_WIN32_STRINGS_FILES}")
+  list(APPEND SPCT_LIBRARY_SOURCES "${CMAKE_SPEECT_SOURCE_DIR}/engine/src/base/strings/platform/${SPCT_SRC_WIN32_STRINGS_FILES}")
 
   set(SPCT_STRINGS_SUPPORT 1)
 endif(SPCT_WIN32)
@@ -55,18 +55,18 @@ endif(NOT SPCT_STRINGS_SUPPORT)
 #                               engine header                                        #
 #------------------------------------------------------------------------------------#
 
-configure_file(${CMAKE_SOURCE_DIR}/engine/config/strings_impl.h.in 
-  ${CMAKE_BINARY_DIR}/engine/src/base/strings/platform/strings_impl.h)
+configure_file(${CMAKE_SPEECT_SOURCE_DIR}/engine/config/strings_impl.h.in 
+  ${CMAKE_SPEECT_BINARY_DIR}/engine/src/base/strings/platform/strings_impl.h)
 
 
 #------------------------------------------------------------------------------------#
 #                               installation                                         #
 #------------------------------------------------------------------------------------#
 
-install(FILES ${CMAKE_SOURCE_DIR}/engine/src/base/strings/platform/${SPCT_STRINGS_SPECIFIC_IMPL}
+install(FILES ${CMAKE_SPEECT_SOURCE_DIR}/engine/src/base/strings/platform/${SPCT_STRINGS_SPECIFIC_IMPL}
   DESTINATION include/speect/engine/base/strings/platform/${SPCT_STRINGS_SPECIFIC_IMPL_DIR}/)
 
-install(FILES ${CMAKE_BINARY_DIR}/engine/src/base/strings/platform/strings_impl.h
+install(FILES ${CMAKE_SPEECT_BINARY_DIR}/engine/src/base/strings/platform/strings_impl.h
   DESTINATION include/speect/engine/base/strings/platform)
 
 

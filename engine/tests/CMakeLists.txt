@@ -3,7 +3,7 @@ speect_example(speect_test)
 speect_example(syll_test)
 
 if (NOT CMAKE_VERSION VERSION_LESS 2.8.12)
-  target_include_directories(syll_test PRIVATE $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/plugins/linguistic/syllabification/src>)
+  target_include_directories(syll_test PRIVATE $<BUILD_INTERFACE:${CMAKE_SPEECT_SOURCE_DIR}/plugins/linguistic/syllabification/src>)
 else()
   include_directories(../../plugins/linguistic/syllabification/src)
 endif()

@@ -28,7 +28,7 @@ if(SPCT_UNIX OR SPCT_MACOSX)
   set(SPCT_TYPES_SPECIFIC_IMPL "${SPCT_INCLUDE_POSIX_TYPES_FILES}")
   set(SPCT_TYPES_SPECIFIC_IMPL_DIR "posix")
   
-  list(APPEND SPCT_LIBRARY_SOURCES "${CMAKE_SOURCE_DIR}/engine/src/base/utils/platform/${SPCT_TYPES_SPECIFIC_IMPL}")
+  list(APPEND SPCT_LIBRARY_SOURCES "${CMAKE_SPEECT_SOURCE_DIR}/engine/src/base/utils/platform/${SPCT_TYPES_SPECIFIC_IMPL}")
   set(SPCT_TYPES_SUPPORT 1)
 endif(SPCT_UNIX OR SPCT_MACOSX)
 
@@ -45,7 +45,7 @@ if(SPCT_WIN32)
   set(SPCT_TYPES_SPECIFIC_IMPL "${SPCT_INCLUDE_WIN32_TYPES_FILES}")
   set(SPCT_TYPES_SPECIFIC_IMPL_DIR "win32")
 
-  list(APPEND SPCT_LIBRARY_SOURCES "${CMAKE_SOURCE_DIR}/engine/src/base/utils/platform/${SPCT_TYPES_SPECIFIC_IMPL}")
+  list(APPEND SPCT_LIBRARY_SOURCES "${CMAKE_SPEECT_SOURCE_DIR}/engine/src/base/utils/platform/${SPCT_TYPES_SPECIFIC_IMPL}")
   set(SPCT_TYPES_SUPPORT 1)
 endif(SPCT_WIN32)
 
@@ -54,18 +54,18 @@ endif(SPCT_WIN32)
 #                               engine header                                        #
 #------------------------------------------------------------------------------------#
 
-configure_file(${CMAKE_SOURCE_DIR}/engine/config/types_impl.h.in 
-  ${CMAKE_BINARY_DIR}/engine/src/base/utils/platform/types_impl.h)
+configure_file(${CMAKE_SPEECT_SOURCE_DIR}/engine/config/types_impl.h.in 
+  ${CMAKE_SPEECT_BINARY_DIR}/engine/src/base/utils/platform/types_impl.h)
 
 
 #------------------------------------------------------------------------------------#
 #                               installation                                         #
 #------------------------------------------------------------------------------------#
 
-install(FILES ${CMAKE_SOURCE_DIR}/engine/src/base/utils/platform/${SPCT_TYPES_SPECIFIC_IMPL}
+install(FILES ${CMAKE_SPEECT_SOURCE_DIR}/engine/src/base/utils/platform/${SPCT_TYPES_SPECIFIC_IMPL}
   DESTINATION include/speect/engine/base/utils/platform/${SPCT_TYPES_SPECIFIC_IMPL_DIR}/)
 
-install(FILES ${CMAKE_BINARY_DIR}/engine/src/base/utils/platform/types_impl.h
+install(FILES ${CMAKE_SPEECT_BINARY_DIR}/engine/src/base/utils/platform/types_impl.h
   DESTINATION include/speect/engine/base/utils/platform)
 
 

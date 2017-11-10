@@ -16,8 +16,8 @@
 
 # Set the plug-in source and binary dirs, because the installation script does not
 # load the CMake cache variables.
-set(PLUGIN_SOURCE_DIR "@CMAKE_SOURCE_DIR@/plugins")
-set(PLUGIN_BINARY_DIR "@CMAKE_BINARY_DIR@/plugins")
+set(PLUGIN_SOURCE_DIR "@CMAKE_SPEECT_SOURCE_DIR@/plugins")
+set(PLUGIN_BINARY_DIR "@CMAKE_SPEECT_BINARY_DIR@/plugins")
 
 # set the list of Speect plug-ins that have been processed by 
 # the speect_plugin_create function in plugins/cmake/pluginFunctions.cmake

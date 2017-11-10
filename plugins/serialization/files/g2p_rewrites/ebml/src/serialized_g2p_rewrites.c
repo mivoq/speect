@@ -189,5 +189,6 @@ static SEBMLG2PRewritesFileClass EBMLG2PRewritesFileClass =
 	/* SSerializedFileClass */
 	"spct_g2p_rewrites",       /* format  */
 	Load,                      /* load    */
-	Save                       /* save    */
+	Save,                      /* save    */
+	NULL                       /* save_to_datasource */
 };

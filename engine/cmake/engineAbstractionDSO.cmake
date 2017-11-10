@@ -33,7 +33,7 @@ if(SPCT_UNIX OR SPCT_MACOSX)
   if(SPCT_HAVE_DLFCN_H)    
     set(SPCT_DSO_SPECIFIC_IMPL_INCLUDES "${SPCT_INCLUDE_POSIX_DSO_FILES}")
     set(SPCT_DSO_SPECIFIC_IMPL_DIR "posix")
-    list(APPEND SPCT_LIBRARY_SOURCES "${CMAKE_SOURCE_DIR}/engine/src/pluginmanager/platform/${SPCT_SRC_POSIX_DSO_FILES}")
+    list(APPEND SPCT_LIBRARY_SOURCES "${CMAKE_SPEECT_SOURCE_DIR}/engine/src/pluginmanager/platform/${SPCT_SRC_POSIX_DSO_FILES}")
     list(APPEND SPCT_PLATFORM_LIBS dl)
     
     set(SPCT_DSO_SUPPORT 1)
@@ -59,7 +59,7 @@ set(SPCT_INCLUDE_WIN32_DSO_FILES
 if(SPCT_WIN32)
   set(SPCT_DSO_SPECIFIC_IMPL_INCLUDES "${SPCT_INCLUDE_WIN32_DSO_FILES}")
   set(SPCT_DSO_SPECIFIC_IMPL_DIR "win32")
-  list(APPEND SPCT_LIBRARY_SOURCES "${CMAKE_SOURCE_DIR}/engine/src/pluginmanager/platform/${SPCT_SRC_WIN32_DSO_FILES}")
+  list(APPEND SPCT_LIBRARY_SOURCES "${CMAKE_SPEECT_SOURCE_DIR}/engine/src/pluginmanager/platform/${SPCT_SRC_WIN32_DSO_FILES}")
 
   set(SPCT_DSO_SUPPORT 1)
 endif(SPCT_WIN32)
@@ -69,18 +69,18 @@ endif(SPCT_WIN32)
 #                               engine header                                        #
 #------------------------------------------------------------------------------------#
 
-configure_file(${CMAKE_SOURCE_DIR}/engine/config/dynamic_loading_impl.h.in 
-  ${CMAKE_BINARY_DIR}/engine/src/pluginmanager/platform/dynamic_loading_impl.h)
+configure_file(${CMAKE_SPEECT_SOURCE_DIR}/engine/config/dynamic_loading_impl.h.in 
+  ${CMAKE_SPEECT_BINARY_DIR}/engine/src/pluginmanager/platform/dynamic_loading_impl.h)
 
 
 #------------------------------------------------------------------------------------#
 #                               installation                                         #
 #------------------------------------------------------------------------------------#
 
-install(FILES ${CMAKE_SOURCE_DIR}/engine/src/pluginmanager/platform/${SPCT_DSO_SPECIFIC_IMPL_INCLUDES}
+install(FILES ${CMAKE_SPEECT_SOURCE_DIR}/engine/src/pluginmanager/platform/${SPCT_DSO_SPECIFIC_IMPL_INCLUDES}
   DESTINATION include/speect/engine/pluginmanager/platform/${SPCT_DSO_SPECIFIC_IMPL_DIR}/)
 
-install(FILES ${CMAKE_BINARY_DIR}/engine/src/pluginmanager/platform/dynamic_loading_impl.h
+install(FILES ${CMAKE_SPEECT_BINARY_DIR}/engine/src/pluginmanager/platform/dynamic_loading_impl.h
   DESTINATION include/speect/engine/pluginmanager/platform)
 
 

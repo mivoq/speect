@@ -53,7 +53,7 @@
 /*                                                                                  */
 /************************************************************************************/
 
-%include "${CMAKE_SOURCE_DIR}/engine/swig/common/speect_typemaps.i"
+%include "${CMAKE_SPEECT_SOURCE_DIR}/engine/swig/common/speect_typemaps.i"
 
 
 /************************************************************************************/
@@ -77,9 +77,9 @@
 /*                                                                                  */
 /************************************************************************************/
 
-%include "${CMAKE_SOURCE_DIR}/engine/swig/common/errdbg_common.c"
+%include "${CMAKE_SPEECT_SOURCE_DIR}/engine/swig/common/errdbg_common.c"
 
-%include "${CMAKE_SOURCE_DIR}/engine/swig/common/misc_common.c"
+%include "${CMAKE_SPEECT_SOURCE_DIR}/engine/swig/common/misc_common.c"
 
 
 /************************************************************************************/
@@ -89,33 +89,33 @@
 /************************************************************************************/
 
 /* SIterator */
-%include "${CMAKE_SOURCE_DIR}/engine/swig/common/iterator_common.c"
+%include "${CMAKE_SPEECT_SOURCE_DIR}/engine/swig/common/iterator_common.c"
 
 /* SObject */
-%include "${CMAKE_SOURCE_DIR}/engine/swig/common/object_common.c"
+%include "${CMAKE_SPEECT_SOURCE_DIR}/engine/swig/common/object_common.c"
 
 /* SUtterance */
-%include "${CMAKE_SOURCE_DIR}/engine/swig/common/utterance_common.c"
+%include "${CMAKE_SPEECT_SOURCE_DIR}/engine/swig/common/utterance_common.c"
 
 /* SRelation */
-%include "${CMAKE_SOURCE_DIR}/engine/swig/common/relation_itr_common.c"
-%include "${CMAKE_SOURCE_DIR}/engine/swig/common/relation_common.c"
+%include "${CMAKE_SPEECT_SOURCE_DIR}/engine/swig/common/relation_itr_common.c"
+%include "${CMAKE_SPEECT_SOURCE_DIR}/engine/swig/common/relation_common.c"
 
 /* SMap */
-%include "${CMAKE_SOURCE_DIR}/engine/swig/common/map_common.c"
+%include "${CMAKE_SPEECT_SOURCE_DIR}/engine/swig/common/map_common.c"
 
 /* SList */
-%include "${CMAKE_SOURCE_DIR}/engine/swig/common/list_common.c"
+%include "${CMAKE_SPEECT_SOURCE_DIR}/engine/swig/common/list_common.c"
 
 /* SItem */
-%include "${CMAKE_SOURCE_DIR}/engine/swig/common/item_common.c"
+%include "${CMAKE_SPEECT_SOURCE_DIR}/engine/swig/common/item_common.c"
 
 /* SVoice */
-%include "${CMAKE_SOURCE_DIR}/engine/swig/common/voice_common.c"
+%include "${CMAKE_SPEECT_SOURCE_DIR}/engine/swig/common/voice_common.c"
 
 /* SPlugin */
-%include "${CMAKE_SOURCE_DIR}/engine/swig/common/plugin_common.c"
+%include "${CMAKE_SPEECT_SOURCE_DIR}/engine/swig/common/plugin_common.c"
 
 /* SUttProcessor */
-%include "${CMAKE_SOURCE_DIR}/engine/swig/common/utt_processor_common.c"
+%include "${CMAKE_SPEECT_SOURCE_DIR}/engine/swig/common/utt_processor_common.c"
 

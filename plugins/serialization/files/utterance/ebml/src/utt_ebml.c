@@ -198,5 +198,6 @@ static SEbmlUttFileClass EbmlUttFileClass =
 	/* SSerializedFileClass */
 	"spct_utt",                /* format  */
 	Load,                      /* load    */
-	Save                       /* save    */
+	Save,                      /* save    */
+	NULL                       /* save_to_datasource */
 };

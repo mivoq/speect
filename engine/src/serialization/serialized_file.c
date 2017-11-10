@@ -283,9 +283,8 @@ static SSerializedFileClass SerializedFileClass =
 		NULL,                  /* copy    */
 	},
 	/* SSerializedFileClass */
-	NULL,                      /* format  */
-	NULL,                      /* load    */
-	NULL                       /* save    */
+	NULL,                      /* format             */
+	NULL,                      /* load               */
+	NULL,                      /* save               */
+	NULL                       /* save_to_datasource */
 };
-
-

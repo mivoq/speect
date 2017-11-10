@@ -163,7 +163,7 @@ endmacro(speect_plugin_include_dirs)
 # The Speect Engine directories will be included, as well as all headers in the plug-in's
 # source (src) directory. Optional parameters, which are libraries to link with,
 # can be given in a list form. Installation paths for UNIX system types will be set and
-# the binary path output will be CMAKE_BINARY_DIR/plugins/lib
+# the binary path output will be CMAKE_SPEECT_BINARY_DIR/plugins/lib
 #
 # A plug-in CMake configuration file will also be created. This configuration file can be
 # included in other plug-in CMakeLists.txt to include their header files.
@@ -229,8 +229,8 @@ function(speect_plugin_create)
     OUTPUT_NAME ${plugin_lowercase_name}
     PREFIX ""
     SUFFIX ".spi"
-    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/plugins/lib"
-    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/plugins/lib"
+    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SPEECT_BINARY_DIR}/plugins/lib"
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SPEECT_BINARY_DIR}/plugins/lib"
     )
 
   # link with Speect library
@@ -245,7 +245,7 @@ function(speect_plugin_create)
   ################################# Installation #######################################
   
   # get plugin directory structure
-  string(LENGTH ${CMAKE_SOURCE_DIR}/plugins/ length_plugin_main)
+  string(LENGTH ${CMAKE_SPEECT_SOURCE_DIR}/plugins/ length_plugin_main)
   string(LENGTH ${CMAKE_CURRENT_SOURCE_DIR} length_plugin_current)
   math(EXPR length_plugin_name "${length_plugin_current} - ${length_plugin_main}")
   string(SUBSTRING ${CMAKE_CURRENT_SOURCE_DIR}  
@@ -288,8 +288,8 @@ function(speect_plugin_create)
   set(tmp_version_minor ${${plugin_lowercase_name}_VERSION_MINOR})
 
   list(REMOVE_DUPLICATES tmp_name)
-  configure_file(${CMAKE_SOURCE_DIR}/plugins/config/pluginConf.cmake.in 
-    ${CMAKE_BINARY_DIR}/plugins/cmakeconf/${plugin_lowercase_name}.cmake @ONLY)
+  configure_file(${CMAKE_SPEECT_SOURCE_DIR}/plugins/config/pluginConf.cmake.in 
+    ${CMAKE_SPEECT_BINARY_DIR}/plugins/cmakeconf/${plugin_lowercase_name}.cmake @ONLY)
 
  
 endfunction(speect_plugin_create)
@@ -326,7 +326,7 @@ macro(speect_plugin_configure_info description major_min minor_min)
   set(plugin_major ${${plugin_lowercase_name}_VERSION_MAJOR})
   set(plugin_minor ${${plugin_lowercase_name}_VERSION_MINOR})
   
-  configure_file(${CMAKE_SOURCE_DIR}/plugins/config/plugin_info.h.in
+  configure_file(${CMAKE_SPEECT_SOURCE_DIR}/plugins/config/plugin_info.h.in
     ${CMAKE_CURRENT_BINARY_DIR}/src/plugin_info.h @ONLY)
 endmacro(speect_plugin_configure_info)
 

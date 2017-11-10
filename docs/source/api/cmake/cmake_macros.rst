@@ -141,7 +141,7 @@ API
    The Speect Engine directories will be included, as well as all headers in the plug-in's
    source (src) directory. Optional parameters, which are libraries to link with,
    can be given in a list form. Installation paths for UNIX system types will be set and
-   the binary path output will be ``CMAKE_BINARY_DIR/plugins/lib``.
+   the binary path output will be ``CMAKE_SPEECT_BINARY_DIR/plugins/lib``.
 
    A plug-in CMake configuration file will also be created. This configuration file can be
    included in other plug-in CMakeLists.txt to include their header files.

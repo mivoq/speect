@@ -196,7 +196,7 @@ typedef SDatasourceClass SGenericsourceClass;
  *
  * @return Pointer to the newly created data source.
  */
-S_API SDatasource *SGenericsourceOpen(const void *ptr, const char *mode, SIOFunctions* io_functs, s_erc *error);
+S_API SDatasource *SGenericsourceOpen(void *ptr, const char *mode, SIOFunctions* io_functs, s_erc *error);
 
 
 /**
@@ -221,4 +221,3 @@ S_END_C_DECLS
  */
 
 #endif /* _SPCT_GENERIC_SOURCE_H__ */
-

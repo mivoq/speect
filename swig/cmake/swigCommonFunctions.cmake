@@ -15,10 +15,10 @@
 #                    Set the Speect Engine SWIG common interface                     #
 #------------------------------------------------------------------------------------#
 
-set(SPCT_SWIG_COMMON_INTERFACE ${CMAKE_BINARY_DIR}/engine/swig/common/speect_common.i)
+set(SPCT_SWIG_COMMON_INTERFACE ${CMAKE_SPEECT_BINARY_DIR}/engine/swig/common/speect_common.i)
 
 # get the list of files that above depends on, provides SPCT_SWIG_PYTHON_SRC_FILES
-include(${CMAKE_BINARY_DIR}/engine/swig/common/cmake/engineSWIGcommon.cmake)
+include(${CMAKE_SPEECT_BINARY_DIR}/engine/swig/common/cmake/engineSWIGcommon.cmake)
 
 # set SPCT_ENGINE_SWIG_COMMON_INTERFACE dependencies
 set_source_files_properties(SPCT_SWIG_COMMON_INTERFACE
@@ -34,5 +34,5 @@ set_source_files_properties(SPCT_SWIG_COMMON_INTERFACE
 
 if(WANT_PYTHON_WRAPPER)
   # include plug-in SWIG Python common cmake file
-  include(${CMAKE_SOURCE_DIR}/swig/python/cmake/swigPythonCommonFunctions.cmake)
+  include(${CMAKE_SPEECT_SOURCE_DIR}/swig/python/cmake/swigPythonCommonFunctions.cmake)
 endif(WANT_PYTHON_WRAPPER)

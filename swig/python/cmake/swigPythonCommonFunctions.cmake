@@ -16,7 +16,7 @@
 #------------------------------------------------------------------------------------#
 
 # include plug-in SWIG Python settings
-include(${CMAKE_SOURCE_DIR}/swig/python/cmake/swigPythonSettings.cmake)
+include(${CMAKE_SPEECT_SOURCE_DIR}/swig/python/cmake/swigPythonSettings.cmake)
 
 # include plug-in SWIG Python functions
-include(${CMAKE_SOURCE_DIR}/swig/python/cmake/swigPythonFunctions.cmake)
+include(${CMAKE_SPEECT_SOURCE_DIR}/swig/python/cmake/swigPythonFunctions.cmake)

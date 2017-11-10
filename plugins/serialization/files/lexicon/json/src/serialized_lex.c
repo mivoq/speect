@@ -182,5 +182,7 @@ static SJSONLexiconFileClass JSONLexiconFileClass =
 	/* SSerializedFileClass */
 	"spct_lexicon",            /* format  */
 	Load,                      /* load    */
-	Save                       /* save    */
+	Save,                      /* save    */
+	NULL                       /* save_to_datasource */
+
 };

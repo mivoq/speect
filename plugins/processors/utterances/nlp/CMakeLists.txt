@@ -29,3 +29,7 @@ add_subdirectory(uttbreak)
 if(HAVE_HUNPOS)
   add_subdirectory(hunpos)
 endif(HAVE_HUNPOS)
+
+if(WANT_CRFSUITE_POSTAGGER)
+  add_subdirectory(crfsuite_postagger)
+endif(WANT_CRFSUITE_POSTAGGER)

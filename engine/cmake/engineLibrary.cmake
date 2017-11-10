@@ -17,8 +17,8 @@
 
 # Search for C header files in these directories.
 list(APPEND SPCT_INCLUDE_DIRS_TMP
-  ${CMAKE_SOURCE_DIR}/engine/src
-  ${CMAKE_BINARY_DIR}/engine/src)
+  ${CMAKE_SPEECT_SOURCE_DIR}/engine/src
+  ${CMAKE_SPEECT_BINARY_DIR}/engine/src)
 
 include_directories(${SPCT_INCLUDE_DIRS_TMP})
 
@@ -32,7 +32,7 @@ set(SPCT_INCLUDE_DIRS ${SPCT_INCLUDE_DIRS_TMP}
 #------------------------------------------------------------------------------------#
 
 # Put libraries into `lib'.
-set(SPCT_LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR}/engine/lib)
+set(SPCT_LIBRARY_OUTPUT_PATH ${CMAKE_SPEECT_BINARY_DIR}/engine/lib)
 
 
 #------------------------------------------------------------------------------------#
@@ -112,12 +112,12 @@ set(SPCT_LIBRARIES_TARGET SPCT_LIBRARIES
 ###################################### UNIX #########################################
 
 # Install header files.  
-install(DIRECTORY "${CMAKE_SOURCE_DIR}/engine/src/"
+install(DIRECTORY "${CMAKE_SPEECT_SOURCE_DIR}/engine/src/"
   DESTINATION include/speect/engine
   FILES_MATCHING PATTERN "*.h"
   PATTERN "platform" EXCLUDE)
 
-install(DIRECTORY "${CMAKE_BINARY_DIR}/engine/src/"
+install(DIRECTORY "${CMAKE_SPEECT_BINARY_DIR}/engine/src/"
   DESTINATION include/speect/engine
   FILES_MATCHING PATTERN "*.h"
   PATTERN "platform" EXCLUDE)

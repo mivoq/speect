@@ -77,5 +77,6 @@ if(HUNPOS_INCLUDE AND HUNPOS_LIB)
 endif(HUNPOS_INCLUDE AND HUNPOS_LIB)
 
 # Specific utterance processosors
-# WANT_CRFSUITE used in speect/plugins/processors/utterances/nlp/CMakeLists.txt
+
+# WANT_CRFSUITE_POSTAGGER used in speect/plugins/processors/utterances/nlp/CMakeLists.txt
 option(WANT_CRFSUITE_POSTAGGER "Enable crfsuite pos-tagger utterance processor." off)

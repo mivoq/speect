@@ -52,7 +52,7 @@
 /************************************************************************************/
 
 #include "speect.h"
-#include "../../../../build/crfsuite-0.12-build/include/crfsuite.h"
+#include "crfsuite.h"
 
 
 /************************************************************************************/
@@ -139,4 +139,3 @@ S_END_C_DECLS
  */
 
 #endif /* _SPCT_PLUGIN_UTTPROCESSOR_CRFSUITE_H__ */
-

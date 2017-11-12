@@ -66,15 +66,33 @@ endif(HTS_ENGINE_INCLUDE_106 AND HTS_ENGINE_LIB_106)
 #                                 hunpos POS tagger                                  #
 #------------------------------------------------------------------------------------#
 
-# HAVE_HUNPOS used in speect/plugins/processors/utterances/nlp/CMakeLists.txt
-unset(HAVE_HUNPOS CACHE)
-mark_as_advanced(HAVE_HUNPOS)
+# WANT_HUNPOS_POSTAGGER used in speect/plugins/processors/utterances/nlp/CMakeLists.txt
+option(WANT_HUNPOS_POSTAGGER "Enable hunpos pos-tagger utterance processor." off)
 
-set(HUNPOS_INCLUDE CACHE PATH "Path to hunpos POS tagger include directory")
-set(HUNPOS_LIB CACHE FILEPATH "hunpos POS tagger library location (full path and library)")
-if(HUNPOS_INCLUDE AND HUNPOS_LIB)
-  set(HAVE_HUNPOS "on" CACHE BOOL "Variable to check if hunpos has been defined")
-endif(HUNPOS_INCLUDE AND HUNPOS_LIB)
+# Backward compatibility option
+if(HUNPOS_INCLUDE)
+  set(HUNPOS_INCLUDE_DIRS ${HUNPOS_INCLUDE})
+endif(HUNPOS_INCLUDE)
+if(HUNPOS_LIB)
+  set(HUNPOS_LIBRARIES ${HUNPOS_LIB})
+endif(HUNPOS_LIB)
+if(HUNPOS_LIB AND HUNPOS_INCLUDE)
+  set(WANT_HUNPOS_POSTAGGER ON)
+endif(HUNPOS_LIB AND HUNPOS_INCLUDE)
+
+if(WANT_HUNPOS_POSTAGGER)
+  find_package(hunpos)
+  # HAVE_HUNPOS used in speect/plugins/processors/utterances/nlp/CMakeLists.txt
+  unset(HAVE_HUNPOS CACHE)
+  mark_as_advanced(HAVE_HUNPOS)
+
+  if(HUNPOS_INCLUDE_DIRS AND HUNPOS_LIBRARIES)
+    set(HAVE_HUNPOS "on" CACHE BOOL "Variable to check if hunpos has been defined")
+  endif(HUNPOS_INCLUDE_DIRS AND HUNPOS_LIBRARIES)
+  if(NOT HAVE_HUNPOS)
+    message(FATAL_ERROR "Hunpos library not found!")
+  endif(NOT HAVE_HUNPOS)
+endif(WANT_HUNPOS_POSTAGGER)
 
 # Specific utterance processosors
 

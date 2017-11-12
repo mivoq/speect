@@ -26,9 +26,9 @@ add_subdirectory(morphdecomp)
 add_subdirectory(uttbreak)
 
 # Also see speect/plugins/cmake/pluginOptions.cmake
-if(HAVE_HUNPOS)
+if(WANT_HUNPOS_POSTAGGER)
   add_subdirectory(hunpos)
-endif(HAVE_HUNPOS)
+endif(WANT_HUNPOS_POSTAGGER)
 
 if(WANT_CRFSUITE_POSTAGGER)
   add_subdirectory(crfsuite_postagger)

@@ -153,6 +153,7 @@ S_LOCAL void _s_hts_engine_synth_utt_proc_105_class_free(s_erc *error)
 static void check_and_change_rate_volume(SHTSEngineSynthUttProc105 *HTSsynth,
 	const SUtterance *utt, s_erc *error)
 {
+	s_bool utt_feature_is_present=FALSE;
 	const SObject *tmp;
 	float var;
 
@@ -160,50 +161,65 @@ static void check_and_change_rate_volume(SHTSEngineSynthUttProc105 *HTSsynth,
 	S_CLR_ERR(error);
 
 	/* get rate feature */
-	tmp = SUtteranceGetFeature(utt, "rate", error);
+	utt_feature_is_present = SUtteranceFeatureIsPresent(utt, "rate", error);
 	if (S_CHK_ERR(error, S_CONTERR,
-		"check_and_change_rate_volume",
-		"Call to \"SUtteranceGetFeature\" failed"))
-		return;
-
-	if (tmp != NULL)
-	{
-		var = SObjectGetFloat(tmp, error);
-		if (S_CHK_ERR(error, S_CONTERR,
 			"check_and_change_rate_volume",
-			"Call to \"SObjectGetFloat\" failed"))
+			"Call to \"SUtteranceFeatureIsPresent\" failed"))
 			return;
 
-		if (var != 1.0)
-			HTS_Label_set_speech_speed(&(HTSsynth->engine.label), var);
+	if (utt_feature_is_present)
+	{
+		tmp = SUtteranceGetFeature(utt, "rate", error);
+		if (S_CHK_ERR(error, S_CONTERR,
+		              "check_and_change_rate_volume",
+		              "Call to \"SUtteranceGetFeature\" failed"))
+			return;
+
+		if (tmp!=NULL) {
+			var = SObjectGetFloat(tmp, error);
+			if (S_CHK_ERR(error, S_CONTERR,
+			              "check_and_change_rate_volume",
+			              "Call to \"SObjectGetFloat\" failed"))
+				return;
+
+			if (var != 1.0f)
+				HTS_Label_set_speech_speed(&(HTSsynth->engine.label), var);
+		}
 	}
 
 	/* get volume feature */
-	tmp = SUtteranceGetFeature(utt, "volume", error);
+	utt_feature_is_present = SUtteranceFeatureIsPresent(utt, "volume", error);
 	if (S_CHK_ERR(error, S_CONTERR,
-		"check_and_change_rate_volume",
-		"Call to \"SUtteranceGetFeature\" failed"))
-		return;
+			"check_and_change_rate_volume",
+			"Call to \"SUtteranceFeatureIsPresent\" failed"))
+			return;
 
-	if (tmp == NULL)
-		return;
+	if (utt_feature_is_present)
+	{
+		tmp = SUtteranceGetFeature(utt, "volume", error);
+		if (S_CHK_ERR(error, S_CONTERR,
+		              "check_and_change_rate_volume",
+		              "Call to \"SUtteranceGetFeature\" failed"))
+			return;
 
-	var = SObjectGetFloat(tmp, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-		"check_and_change_rate_volume",
-		"Call to \"SObjectGetFloat\" failed"))
-		return;
+		if (tmp!=NULL) {
+			var = SObjectGetFloat(tmp, error);
+			if (S_CHK_ERR(error, S_CONTERR,
+			              "check_and_change_rate_volume",
+			              "Call to \"SObjectGetFloat\" failed"))
+				return;
 
-	if (var == 1.0)
-		return;
-	else
-		HTS_Engine_set_volume(&(HTSsynth->engine), var);
+			if (var != 1.0f)
+				HTS_Engine_set_volume(&(HTSsynth->engine), var);
+		}
+	}
 }
 
 
 static void check_and_change_tone(SHTSEngineSynthUttProc105 *HTSsynth,
 	const SUtterance *utt, s_erc *error)
 {
+	s_bool utt_feature_is_present=FALSE;
 	const SObject *tmp;
 	float var;
 
@@ -212,33 +228,40 @@ static void check_and_change_tone(SHTSEngineSynthUttProc105 *HTSsynth,
 
 
 	/* get half-tone feature */
-	tmp = SUtteranceGetFeature(utt, "half-tone", error);
+	utt_feature_is_present = SUtteranceFeatureIsPresent(utt, "half-tone", error);
 	if (S_CHK_ERR(error, S_CONTERR,
-		"check_and_change_tone",
-		"Call to \"SUtteranceGetFeature\" failed"))
+	              "check_and_change_rate_volume",
+	              "Call to \"SUtteranceFeatureIsPresent\" failed"))
 		return;
 
-	if (tmp == NULL)
-		return;
+	if (utt_feature_is_present) {
+		tmp = SUtteranceGetFeature(utt, "half-tone", error);
+		if (S_CHK_ERR(error, S_CONTERR,
+		              "check_and_change_tone",
+		              "Call to \"SUtteranceGetFeature\" failed"))
+			return;
 
-	var = SObjectGetFloat(tmp, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-		"check_and_change_tone",
-		"Call to \"SObjectGetFloat\" failed"))
-		return;
+		if (tmp!=NULL) {
+			var = SObjectGetFloat(tmp, error);
+			if (S_CHK_ERR(error, S_CONTERR,
+			              "check_and_change_tone",
+			              "Call to \"SObjectGetFloat\" failed"))
+				return;
 
-	if (var != 0.0)
-	{
-		int i;
-		double f;
+			if (var != 0.0f)
+			{
+				int i;
+				double f;
 
-		for (i = 0; i < HTS_SStreamSet_get_total_state(&(HTSsynth->engine.sss)); i++)
-		{
-			f = HTS_SStreamSet_get_mean(&(HTSsynth->engine.sss), 1, i, 0); /* logf0 is stream 1 */
-			f += var * log(2.0) / 12;
-			if (f < log(10.0))
-				f = log(10.0);
-			HTS_SStreamSet_set_mean(&(HTSsynth->engine.sss), 1, i, 0, f);
+				for (i = 0; i < HTS_SStreamSet_get_total_state(&(HTSsynth->engine.sss)); i++)
+				{
+					f = HTS_SStreamSet_get_mean(&(HTSsynth->engine.sss), 1, i, 0); /* logf0 is stream 1 */
+					f += var * log(2.0) / 12;
+					if (f < log(10.0))
+						f = log(10.0);
+					HTS_SStreamSet_set_mean(&(HTSsynth->engine.sss), 1, i, 0, f);
+				}
+			}
 		}
 	}
 }

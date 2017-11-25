@@ -885,20 +885,31 @@ continue_cycle:
 				  "Call to \"SItemPathToItem\" failed"))
 		goto quit_error;
 
+	is_present = SUttProcessorFeatureIsPresent(self, "_stress_func", error);
+	if (S_CHK_ERR(error, S_CONTERR,
+	              "Run",
+	              "Call to \"SUttProcessorFeatureIsPresent\" failed"))
+		goto quit_error;
+
+	const SFeatProcessor* stress_featproc = NULL;
+	if(is_present) {
+		stress_featproc = SUttProcessorGetFeature(self, "_stress_func", error);
+		if (S_CHK_ERR(error, S_CONTERR,
+		              "Run",
+		              "Call to \"SUttProcessorGetFeature\" failed"))
+			goto quit_error;
+	}
+
 	while (wordItem != NULL)
 	{
-		const SFeatProcessor* featproc = SUttProcessorGetFeature(self, "_stress_func", error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "Run",
-					  "Call to \"SUttProcessorGetFeature\" failed"))
-			goto quit_error;
 
-
-		s_compute_stresses(featproc, wordItem, error);
-		if (S_CHK_ERR(error, S_CONTERR,
-					  "Run",
-					  "Call to \"s_compute_stresses\" failed"))
-			goto quit_error;
+		if(stress_featproc) {
+			s_compute_stresses(stress_featproc, wordItem, error);
+			if (S_CHK_ERR(error, S_CONTERR,
+			              "Run",
+			              "Call to \"s_compute_stresses\" failed"))
+				goto quit_error;
+		}
 
 		s_compute_phonetic_features(wordItem, error);
 		if (S_CHK_ERR(error, S_CONTERR,

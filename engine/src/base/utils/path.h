@@ -108,7 +108,10 @@ S_API char *s_path_combine(const char *base_path, const char *filename,
 
 
 /**
- * Get the base path of the given absolute file name.
+ * Get the base path of the given file name.
+ * This function is functionally equivalent to the Posix dirname
+ * function, but its arguments are not modified and the returned
+ * string should be freed by the caller.
  *
  * @param absolute_filename The absolute file name.
  * @param error Error code.
@@ -117,7 +120,7 @@ S_API char *s_path_combine(const char *base_path, const char *filename,
  *
  * @note Caller is responsible for memory of returned string.
  */
-S_API char *s_get_base_path(const char *absolute_filename, s_erc *error);
+S_API char *s_get_base_path(const char *filename, s_erc *error);
 
 
 /************************************************************************************/
@@ -134,4 +137,3 @@ S_END_C_DECLS
  */
 
 #endif /* _SPCT_PATH_H__ */
-

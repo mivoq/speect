@@ -13,3 +13,6 @@ if(SPCT_UNIX OR SPCT_MACOSX)
     speect_example(synth_threads_test pthread)
   endif(WANT_THREADS)
 endif(SPCT_UNIX OR SPCT_MACOSX)
+
+add_executable(path base/utils/path.c)
+target_link_libraries(path ${SPCT_LIBRARIES_TARGET})

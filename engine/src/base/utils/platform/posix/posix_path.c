@@ -66,7 +66,7 @@ static s_bool s_posix_path_is_absolute(const char *path, s_erc *error);
 /* if filename is absolute, just copy it to dest. Otherwise, build a
    path to it by considering it is relative to base_path. URL are
    supported. */
-S_LOCAL char *s_posix_path_combine(const char *base_path, const char *filename, s_erc *error)
+S_API char *s_posix_path_combine(const char *base_path, const char *filename, s_erc *error)
 {
 	const char *p;
 	const char *p1;
@@ -189,7 +189,7 @@ static char *s_strdupupto(const char *src, const char *to, s_erc *error)
 }
 
 /* get the base path of the given path and file name */
-S_LOCAL char *s_posix_get_base_path(const char *path, s_erc *error)
+S_API char *s_posix_get_base_path(const char *path, s_erc *error)
 {
 	char *base_path;
 	const char *ptr;

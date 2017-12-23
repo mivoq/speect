@@ -66,7 +66,7 @@ static s_bool s_win32_path_is_absolute(const char *path, s_erc *error);
 /* if filename is absolute, just copy it to dest. Otherwise, build a
    path to it by considering it is relative to base_path. URL are
    supported. */
-S_LOCAL char *s_win32_path_combine(const char *base_path, const char *filename, s_erc *error)
+S_API char *s_win32_path_combine(const char *base_path, const char *filename, s_erc *error)
 {
 	const char *p;
 	const char *p1;
@@ -183,7 +183,7 @@ S_LOCAL char *s_win32_path_combine(const char *base_path, const char *filename, 
 
 
 /* get the base path of the given absolute path and file name */
-S_LOCAL char *s_win32_get_base_path(const char *absolute_filename, s_erc *error)
+S_API char *s_win32_get_base_path(const char *absolute_filename, s_erc *error)
 {
 	char *base_path;
 	const char *ptr;

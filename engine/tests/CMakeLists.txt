@@ -16,3 +16,10 @@ endif(SPCT_UNIX OR SPCT_MACOSX)
 
 add_executable(path base/utils/path.c)
 target_link_libraries(path ${SPCT_LIBRARIES_TARGET})
+
+
+add_executable(posix_path base/utils/platform/posix/posix_path.c)
+target_link_libraries(posix_path ${SPCT_LIBRARIES_TARGET})
+
+add_executable(win32_path base/utils/platform/win32/win32_path.c)
+target_link_libraries(win32_path ${SPCT_LIBRARIES_TARGET})

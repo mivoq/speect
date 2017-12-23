@@ -72,18 +72,26 @@ S_API char *s_win32_path_combine(const char *base_path, const char *filename, s_
 	const char *p1;
 	size_t len;
 	s_bool is_absolute;
-	char *combined_path;
+	char *combined_path = NULL;
 	char *tmp;
-	uint32 c;
+	char last_sep = '/';
 
-
+	if(filename == NULL)
+	{
+		filename = "";
+	}
 	S_CLR_ERR(error);
-	is_absolute = s_win32_path_is_absolute(filename, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-		      "s_win32_path_combine",
-		      "Call to \"s_win32_path_is_absolute\" failed"))
-		return NULL;
-
+	if( (base_path == NULL) || (*base_path == '\0') )
+	{
+		/* if base path is empty, consider only filename */
+		is_absolute = TRUE;
+	} else {
+		is_absolute = s_win32_path_is_absolute(filename, error);
+		if (S_CHK_ERR(error, S_CONTERR,
+		              "s_win32_path_combine",
+		              "Call to \"s_win32_path_is_absolute\" failed"))
+			return NULL;
+	}
 	if (is_absolute)
 	{
 		combined_path = s_strdup(filename, error);
@@ -96,25 +104,10 @@ S_API char *s_win32_path_combine(const char *base_path, const char *filename, s_
 	}
 
 	/* sanity, check that path does end with '/' or '\' */
-	len = s_strlen(base_path, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-		      "s_win32_path_combine",
-		      "Call to \"s_strlen\" failed"))
-		return NULL;
-
-	c = s_getat(base_path, (uint)(len - 1), error);
-	if (S_CHK_ERR(error, S_CONTERR,
-		      "s_win32_path_combine",
-		      "Call to \"s_getat\" failed"))
-		return NULL;
-
-	if ((c != '/') && (c != '\\'))
-	{
-		S_CTX_ERR(error, S_FAILURE,
-			  "s_win32_path_combine",
-			  "Given base path \"%s\" does not end with a '/' or '\\' ",
-			  base_path);
-		return NULL;
+	len = strlen(base_path);
+	while(len > 0 && ((base_path[len - 1] == '/' || base_path[len - 1] == '\\'))) {
+		len--;
+		last_sep = base_path[len];
 	}
 
 	p = s_strchr(base_path, ':', error);
@@ -128,34 +121,12 @@ S_API char *s_win32_path_combine(const char *base_path, const char *filename, s_
 	else
 		p = base_path;
 
-	p1 = s_strrchr(base_path, '/', error);
-	if (S_CHK_ERR(error, S_CONTERR,
-		      "s_win32_path_combine",
-		      "Call to \"s_strrchr\" failed"))
-		return NULL;
-
-	/* win32 */
-	{
-		const char *p2;
-		p2 = s_strrchr(base_path, '\\', error);
-		if (S_CHK_ERR(error, S_CONTERR,
-			      "s_win32_path_combine",
-			      "Call to \"s_strrchr\" failed"))
-			return NULL;
-
-		if (!p1 || p2 > p1)
-			p1 = p2;
-	}
-
-	if (p1)
-		p1++;
-	else
-		p1 = base_path;
-
+	p1 = base_path+len;
 	if (p1 > p)
 		p = p1;
 
 	len = p - base_path;
+	len++;
 	tmp = S_CALLOC(char, len + 1);
 	if (tmp == NULL)
 	{
@@ -164,8 +135,8 @@ S_API char *s_win32_path_combine(const char *base_path, const char *filename, s_
 			  "Failed to allocate memory for 'char' object");
 		return NULL;
 	}
-
-	memcpy(tmp, base_path, len);
+	memcpy(tmp, base_path, len-1);
+	tmp[len-1] = last_sep;
 	tmp[len] = '\0';
 
 	s_asprintf(&combined_path, error, "%s%s", tmp, filename);
@@ -181,90 +152,117 @@ S_API char *s_win32_path_combine(const char *base_path, const char *filename, s_
 	return combined_path;
 }
 
+static char *s_strdupupto(const char *src, const char *to, s_erc *error)
+{
+        char *s;
+        size_t size;
 
-/* get the base path of the given absolute path and file name */
-S_API char *s_win32_get_base_path(const char *absolute_filename, s_erc *error)
+
+        S_CLR_ERR(error);
+
+        if (src == NULL)
+                return NULL;
+
+        size = to-src+1;
+
+        s = S_MALLOC(char, size+1);
+
+        if (s == NULL)
+        {
+                S_FTL_ERR(error, S_MEMERROR,
+                                  "s_strdupupto",
+                                  "Failed to allocate memory to new string");
+        }
+        else
+        {
+                s_strzcpy(s, src, size, error);
+
+                if (S_CHK_ERR(error, S_CONTERR,
+                                          "s_strdupupto",
+                                          "String copy error"))
+                {
+                        S_FREE(s);
+                        return NULL;
+                }
+        }
+        s[size] = '\0';
+
+        return s;
+}
+
+/* get the base path of the given path and file name */
+S_API char *s_win32_get_base_path(const char *path, s_erc *error)
 {
 	char *base_path;
 	const char *ptr;
-	size_t plen;
-	uint32 c;
-	s_bool is_absolute;
-
-
+	const char *ptr2;
+	ptr = NULL;
 	S_CLR_ERR(error);
-	if (absolute_filename == NULL)
-	{
-		S_CTX_ERR(error, S_ARGERROR,
-			  "s_win32_get_base_path",
-			  "Argument \"absolute_filename\" is NULL");
-		return NULL;
-	}
-
-	is_absolute = s_win32_path_is_absolute(absolute_filename, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-		      "s_win32_get_base_path",
-		      "Call to \"s_win32_path_is_absolute\" failed"))
-		return NULL;
-
-	if (!is_absolute)
-	{
-		S_CTX_ERR(error, S_FAILURE,
-			  "s_win32_get_base_path",
-			  "Given absolute file name \"%s\" is not absolute",
-			  absolute_filename);
-		return NULL;
-	}
-
-	/* sanity, check that path does not end with '/' or '\\' */
-	plen = s_strlen(absolute_filename, error);
-	if (S_CHK_ERR(error, S_CONTERR,
-		      "s_win32_get_base_path",
-		      "Call to \"s_strlen\" failed"))
-		return NULL;
-
-	c = s_getat(absolute_filename, (uint)(plen - 1), error);
-	if (S_CHK_ERR(error, S_CONTERR,
-		      "s_win32_get_base_path",
-		      "Call to \"s_getat\" failed"))
-		return NULL;
-
-	if ((c == '/') || (c == '\\'))
-	{
-		S_CTX_ERR(error, S_FAILURE,
-			  "s_win32_get_base_path",
-			  "Given absolute filename \"%s\" ends with a '/' or '\\' ",
-			  absolute_filename);
-		return NULL;
-	}
-
-	/* get last path separator */
-	ptr = s_strrchr(absolute_filename, '/', error);
-	if (S_CHK_ERR(error, S_CONTERR,
-		      "s_win32_get_base_path",
-		      "Call to \"s_strrchr\" failed"))
-		return NULL;
-
-	/* win32 */
-	{
-		const char *p2;
-		p2 = s_strrchr(absolute_filename, '\\', error);
+	if(path != NULL) {
+		ptr = s_strrchr(path, '/', error);
 		if (S_CHK_ERR(error, S_CONTERR,
-			      "s_win32_get_base_path",
-			      "Call to \"s_strrchr\" failed"))
+		              "s_posix_get_base_path",
+		              "Call to \"s_strrchr\" failed"))
 			return NULL;
-
-		if (!ptr || p2 > ptr)
-			ptr = p2;
+		ptr2 = s_strrchr(path, '\\', error);
+		if (S_CHK_ERR(error, S_CONTERR,
+		              "s_posix_get_base_path",
+		              "Call to \"s_strrchr\" failed"))
+			return NULL;
+		if(ptr == NULL || ptr2>ptr) {
+			ptr = ptr2;
+		}
+		if (ptr != NULL)
+		{
+			if(ptr[1] == 0)
+			{
+				while((ptr > path) && (*ptr == '/' || *ptr == '\\'))
+				{
+					ptr--;
+				}
+				if( (ptr > path) && (*ptr != ':') ) {
+					while((ptr > path) && !(*ptr == '/' || *ptr == '\\'))
+					{
+						ptr--;
+					}
+					if(!(*ptr == '/' || *ptr == '\\') && (ptr == path)) {
+						path=".";
+						ptr=path;
+					} else {
+						while((ptr > path) && (*ptr == '/' || *ptr == '\\'))
+						{
+							ptr--;
+						}
+					}
+				}
+			} else {
+				while((ptr > path) && (*ptr == '/' || *ptr == '\\'))
+				{
+					ptr--;
+				}
+			}
+			if(!(*ptr == '/' || *ptr == '\\')) {
+				ptr++;
+			}
+			if(ptr == path) {
+				ptr++;
+			}
+		} else {
+			path=".";
+			ptr=path;
+		}
+	} else {
+		path=".";
+		ptr=path;
+	}
+	if(ptr == path) {
+		ptr++;
 	}
 
-	if (ptr != NULL)
-		ptr++;  /* add '/' or '\\' to end of base_path */
-
-	base_path = s_sbefore(absolute_filename, ptr, error);
+	base_path = s_strdupupto(path, ptr, error);
 	if (S_CHK_ERR(error, S_CONTERR,
-		      "s_win32_get_base_path",
-		      "Call to \"s_sbefore\" failed"))
+	              "s_posix_get_base_path",
+	              "Call to \"s_sbefore\" failed"))
 		return NULL;
 
 
@@ -277,6 +275,10 @@ S_API char *s_win32_get_base_path(const char *absolute_filename, s_erc *error)
 /* Static function implementations                                                  */
 /*                                                                                  */
 /************************************************************************************/
+static s_bool is_protocol_name_character(uint32 c)
+{
+	return (((c <= 'z') && (c >= 'a')) || (c == '+') || (c == '-') || (c == '_') || ((c <= 'Z') && (c >= 'A')) || ((c <= '9') && (c >= '0')));
+}
 
 static s_bool s_win32_path_is_absolute(const char *path, s_erc *error)
 {
@@ -294,19 +296,19 @@ static s_bool s_win32_path_is_absolute(const char *path, s_erc *error)
 	}
 
 	/* specific case for names like: "\\.\d:" */
-	if (*path == '/' || *path == '\\')
-		return TRUE;
-
-	p = s_strchr(path, ':', error);
-	if (S_CHK_ERR(error, S_CONTERR,
-		      "s_win32_path_is_absolute",
-		      "Call to \"s_strchr\" failed"))
-		return FALSE;
-
-	if (p)
+	p = path;
+	while(is_protocol_name_character(*p))
+	{
 		p++;
+	}
+	if(*p == ':')
+	{
+		p++;
+	}
 	else
+	{
 		p = path;
+	}
 
 	if (*p == '/' || *p == '\\')
 		return TRUE;

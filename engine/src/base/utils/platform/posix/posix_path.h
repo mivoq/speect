@@ -83,11 +83,11 @@ S_BEGIN_C_DECLS
 /*                                                                                  */
 /************************************************************************************/
 
-S_LOCAL char *s_posix_path_combine(const char *base_path, const char *filename,
+S_API char *s_posix_path_combine(const char *base_path, const char *filename,
 								   s_erc *error);
 
 
-S_LOCAL char *s_posix_get_base_path(const char *absolute_filename, s_erc *error);
+S_API char *s_posix_get_base_path(const char *absolute_filename, s_erc *error);
 
 
 /***********************************************************************************/

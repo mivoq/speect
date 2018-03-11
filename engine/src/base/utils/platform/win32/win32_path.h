@@ -63,22 +63,6 @@ S_BEGIN_C_DECLS
 
 /************************************************************************************/
 /*                                                                                  */
-/* Macros                                                                           */
-/*                                                                                  */
-/************************************************************************************/
-
-/* defines of the WIN32 path functions wrappers */
-
-#define _S_PATH_COMBINE(BASEPATH, FILENAME, ERROR)	\
-	s_win32_path_combine(BASEPATH, FILENAME, ERROR)
-
-
-#define _S_GET_BASE_PATH(ABSOLUTE_FILENAME, ERROR)	\
-	s_win32_get_base_path(ABSOLUTE_FILENAME, ERROR)
-
-
-/************************************************************************************/
-/*                                                                                  */
 /* Function prototypes                                                              */
 /*                                                                                  */
 /************************************************************************************/

@@ -45,6 +45,22 @@
 
 /************************************************************************************/
 /*                                                                                  */
+/* Macros                                                                           */
+/*                                                                                  */
+/************************************************************************************/
+
+/* defines of the default path functions wrappers */
+
+#define _S_PATH_COMBINE(BASEPATH, FILENAME, ERROR)	\
+	s_@SPCT_PATH_SPECIFIC_IMPL_VARIANT@_path_combine(BASEPATH, FILENAME, ERROR)
+
+
+#define _S_GET_BASE_PATH(ABSOLUTE_FILENAME, ERROR)	\
+	s_@SPCT_PATH_SPECIFIC_IMPL_VARIANT@_get_base_path(ABSOLUTE_FILENAME, ERROR)
+
+
+/************************************************************************************/
+/*                                                                                  */
 /* Modules used (Platform file path functions)                                      */
 /*                                                                                  */
 /************************************************************************************/
